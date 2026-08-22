@@ -16,6 +16,10 @@ from ..rules.node_capability_shapes import (
     fixed_target_effect_sequence_node_capabilities,
 )
 from ..util import stable_json
+from .fixed_counter_trigger_nodes import (
+    FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
+    FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
+)
 from .direct_target import (
     DIRECT_NONCREATURE_SUBTYPES,
     DirectPermanentTargetSpec,
@@ -35,7 +39,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v5"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v7"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -46,19 +50,8 @@ TARGET_TEMPLATE_IDS = frozenset(
     {STANDALONE_TEMPLATE_ID, SEQUENCE_TEMPLATE_ID}
 )
 COMPOSING_TEMPLATE_IDS = frozenset(
-    {
-        "fixed-counter-step-trigger-v1",
-        "fixed-counter-controlled-land-entry-trigger-v1",
-        "fixed-counter-controller-spell-cast-trigger-v1",
-        "fixed-counter-controller-life-gain-trigger-v1",
-        "fixed-counter-controller-card-draw-trigger-v1",
-        "fixed-counter-controller-second-draw-trigger-v1",
-        "fixed-counter-permanent-entry-trigger-v1",
-        "fixed-counter-artifact-entry-trigger-v1",
-        "fixed-counter-creature-entry-trigger-v1",
-        "fixed-counter-enchantment-entry-trigger-v1",
-        "fixed-counter-creature-death-trigger-v1",
-    }
+    FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS
+    | FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS
 )
 SUPPORTED_CONTEXTS = (
     "activated_ability",

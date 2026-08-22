@@ -42,6 +42,7 @@ _AUXILIARY_MECHANICS = frozenset(
         "cr-601-casting-spells",
         "cr-603-handling-triggered-abilities",
         "exhaust",
+        "fixed-typed-event-effect-trigger",
         "generated_oracle_ir",
         "spell_resolution",
         "triggered_ability",

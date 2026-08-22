@@ -321,6 +321,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "fixed-counter-event-trigger": (
         "counter.producer.fixed_event_trigger",
     ),
+    "fixed-typed-event-effect-trigger": (
+        "trigger.effect.fixed_event",
+    ),
     "optional-fixed-counter-event-trigger": (
         "counter.producer.optional_fixed_event_trigger",
     ),

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 129,
+  "registry_version": 130,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4426,6 +4426,33 @@
       "dependency_fail_closed_rationale": "This event detector produces immutable occurrence facts; stack placement and effect results are declared separately by each CardProgram.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_zone_trigger_detection_mutant_is_killed suppresses ordinary normalized event derivation and test_counter_event_derivation_mutant_is_killed suppresses counter-event derivation; the focused occurrence assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.effect.fixed_event",
+      "version": 1,
+      "official_rules": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compose one source-spanned closed normalized-event binding with one independently reviewed mandatory typed effect body, then use ordinary APNAP placement, target selection, and body-specific resolution owners.",
+        "inputs": ["one represented beginning-of-step, controlled-land-entry, controller-cast, controller-life-gain, controller-draw, or public zone-change binding", "one mandatory exact typed effect body", "current battlefield source and controller", "immutable normalized event facts", "body-specific target schema and capability closure"],
+        "outputs": ["one ordinary triggered CardProgram", "one immutable typed event predicate", "ordinary APNAP trigger placement", "controller-scoped target selection when required", "body-specific typed effect execution", "exact continuation replay"],
+        "exclusions": ["optional trigger bodies", "counter-placement bodies retained by the fixed counter trigger capability", "intervening-if, reflexive, state, delayed, one-or-more, and combined-event triggers", "event bindings outside the closed normalized vocabulary", "bodies without one exact reviewed typed effect template", "granted, copied, or removed abilities outside the shared typed ability-presence boundary", "type-changing stack interactions outside the trusted cast-characteristic boundary"]
+      },
+      "dependencies": ["trigger.placement.apnap"],
+      "implementation_components": ["quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node", "quorune.rules.casting.commit._dispatch_cast_events", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.player_result_events.dispatch_card_draw_event", "quorune.player_result_events.dispatch_life_gain_event", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.trigger_processing.collect_trigger_items"],
+      "positive_tests": ["test_fixed_typed_event_effect_triggers_compile_closed_bodies"],
+      "negative_tests": ["test_fixed_typed_event_effect_trigger_variants_remain_material", "test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed"],
+      "interaction_tests": ["test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays"],
+      "multiplayer_tests": ["test_fixed_typed_event_effect_triggers_share_four_player_apnap_batch"],
+      "privacy_tests": ["test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays"],
+      "replay_tests": ["test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The compiler retains a material residual when this composition boundary, APNAP placement, a normalized event owner, target selection, or any body-specific effect capability is unavailable.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler mutation removes the shared composition call; source-span and exact-program assertions reject the survivor while the runtime witnesses require the normalized event to reach the typed body.",
       "blockers": [],
       "status": "trusted"
     },

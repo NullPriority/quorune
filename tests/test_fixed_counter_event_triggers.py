@@ -20,6 +20,9 @@ from quorune.damage_modifier_state import (
 from quorune.effect_runtime import dispatch_effect
 from quorune.compiler.fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_MECHANIC,
+    FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
+    FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC,
+    FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
     OPTIONAL_COUNTER_PLACEMENT_OPERATION,
     OPTIONAL_FIXED_COUNTER_EVENT_TRIGGER_MECHANIC,
     FixedCounterTriggerBinding,
@@ -67,25 +70,15 @@ from scripts.build_test_database import build_fixture_database
 
 
 REGISTRY_PATH = ROOT / "quorune" / "rules" / "capability-registry.json"
-TEMPLATE_IDS = {
-    "fixed-counter-step-trigger-v1",
-    "fixed-counter-controlled-land-entry-trigger-v1",
-    "fixed-counter-controller-spell-cast-trigger-v1",
-    "fixed-counter-controller-life-gain-trigger-v1",
-    "fixed-counter-controller-card-draw-trigger-v1",
-    "fixed-counter-controller-second-draw-trigger-v1",
-    "fixed-counter-permanent-entry-trigger-v1",
-    "fixed-counter-artifact-entry-trigger-v1",
-    "fixed-counter-creature-entry-trigger-v1",
-    "fixed-counter-enchantment-entry-trigger-v1",
-    "fixed-counter-subtype-entry-trigger-v1",
-    "fixed-counter-creature-death-trigger-v1",
-}
+TEMPLATE_IDS = set(FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS)
 OPTIONAL_TEMPLATE_IDS = {
     template_id.removesuffix("-v1") + "-optional-v1"
     for template_id in TEMPLATE_IDS
 }
 ALL_TEMPLATE_IDS = TEMPLATE_IDS | OPTIONAL_TEMPLATE_IDS
+FIXED_TYPED_EVENT_TEMPLATE_IDS = set(
+    FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS
+)
 
 
 def focused_database(directory: str) -> CardDatabase:
@@ -99,6 +92,10 @@ def focused_database(directory: str) -> CardDatabase:
             / "tests"
             / "fixtures"
             / "fixed-counter-event-trigger-cards.json",
+            ROOT
+            / "tests"
+            / "fixtures"
+            / "fixed-typed-event-trigger-cards.json",
         ],
         database,
     )
@@ -129,6 +126,214 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             ),
             capability_registry=self.capabilities,
             capability_profile="commander_review",
+        )
+
+    def test_fixed_typed_event_effect_triggers_compile_closed_bodies(self):
+        cases = (
+            (
+                "At the beginning of your upkeep, draw a card.",
+                "Artifact",
+                "step.begin",
+                "draw",
+                "fixed-typed-effect-step-trigger-v1",
+            ),
+            (
+                "Landfall — Whenever a land you control enters, create a "
+                "1/1 white Human creature token.",
+                "Creature — Elemental",
+                "land.enter",
+                "create_token",
+                "fixed-typed-effect-controlled-land-entry-trigger-v1",
+            ),
+            (
+                "Whenever you cast a noncreature spell, surveil 1.",
+                "Creature — Human Wizard",
+                "spell.cast",
+                "surveil",
+                "fixed-typed-effect-controller-spell-cast-trigger-v1",
+            ),
+            (
+                "Whenever you gain life, each opponent loses 1 life.",
+                "Creature — Avatar",
+                "life.gained",
+                "lose_life_each_opponent",
+                "fixed-typed-effect-controller-life-gain-trigger-v1",
+            ),
+            (
+                "Whenever you draw a card, this creature deals 1 damage "
+                "to any target.",
+                "Creature — Wizard",
+                "card.drawn",
+                "damage",
+                "fixed-typed-effect-controller-card-draw-trigger-v1",
+            ),
+            (
+                "Whenever you draw your second card each turn, scry 1.",
+                "Creature — Faerie",
+                "card.second_draw",
+                "scry",
+                "fixed-typed-effect-controller-second-draw-trigger-v1",
+            ),
+            (
+                "Whenever another creature you control enters, you gain "
+                "1 life.",
+                "Enchantment",
+                "creature.enter",
+                "life",
+                "fixed-typed-effect-creature-entry-trigger-v1",
+            ),
+            (
+                "Whenever another Vampire you control enters, target "
+                "creature gets +1/+1 until end of turn.",
+                "Creature — Vampire Knight",
+                "permanent.enter",
+                "modify_stats_until_end_of_turn",
+                "fixed-typed-effect-subtype-entry-trigger-v1",
+            ),
+            (
+                "Whenever a creature dies, draw a card.",
+                "Artifact",
+                "creature.dies",
+                "draw",
+                "fixed-typed-effect-creature-death-trigger-v1",
+            ),
+        )
+        for text, type_line, event, operation, template_id in cases:
+            with self.subTest(text=text):
+                record = replace(
+                    self.db.lookup("Scheduled Counter Trigger Fixture"),
+                    name="Compiler Fixture",
+                    oracle_text=text,
+                    type_line=type_line,
+                    keywords=(),
+                    faces=(),
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                TargetEffectCorpusCollector().observe(record, ir)
+                self.assertEqual("exact", ir.status)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertEqual(event, node.event)
+                self.assertIn(operation, {
+                    str(effect.get("op") or "")
+                    for effect in node.effects
+                })
+                self.assertIn(
+                    FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC,
+                    node.mechanics,
+                )
+                self.assertIn(
+                    "trigger.effect.fixed_event",
+                    node.capability_dependencies,
+                )
+                self.assertIn(
+                    "trigger.placement.apnap",
+                    node.capability_closure,
+                )
+                programs = [
+                    program
+                    for program in generated_programs(
+                        self.db,
+                        record,
+                        trust_level="trusted",
+                        capability_registry=self.capabilities,
+                        capability_profile="commander_review",
+                    )
+                    if program.provenance.get("template_id") == template_id
+                ]
+                self.assertEqual(1, len(programs))
+                self.assertTrue(programs[0].capability_closure["trusted"])
+
+        counter = self.compile(
+            "At the beginning of your upkeep, put a charge counter on "
+            "this artifact."
+        )
+        counter_node = next(
+            value
+            for value in counter.faces[0].nodes
+            if value.template_id == "fixed-counter-step-trigger-v1"
+        )
+        self.assertIn(
+            FIXED_COUNTER_EVENT_TRIGGER_MECHANIC,
+            counter_node.mechanics,
+        )
+        self.assertNotIn(
+            FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC,
+            counter_node.mechanics,
+        )
+
+    def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
+        cases = (
+            "At the beginning of your upkeep, you may draw a card.",
+            "At the beginning of your upkeep, if you have no cards in hand, "
+            "draw a card.",
+            "Whenever an opponent casts a spell, draw a card.",
+            "When you do, draw a card.",
+            "At the beginning of your upkeep, choose one —",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertNotEqual("exact", ir.status)
+                self.assertFalse(
+                    any(
+                        node.template_id in FIXED_TYPED_EVENT_TEMPLATE_IDS
+                        for node in ir.faces[0].nodes
+                    )
+                )
+                self.assertTrue(ir.faces[0].residuals)
+
+    def test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed(
+        self,
+    ):
+        text = "At the beginning of your upkeep, draw a card."
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        dependency = next(
+            row
+            for row in registry["capabilities"]
+            if row["id"] == "trigger.effect.fixed_event"
+        )
+        dependency["status"] = "blocked"
+        dependency["blockers"] = ["focused fixed-event mutation"]
+        blocked = compile_oracle_card(
+            replace(
+                self.db.lookup("Scheduled Counter Trigger Fixture"),
+                name="Compiler Fixture",
+                oracle_text=text,
+                keywords=(),
+                faces=(),
+            ),
+            capability_registry=CapabilityRegistry(registry),
+            capability_profile="commander_review",
+        )
+        self.assertNotEqual("exact", blocked.status)
+        self.assertIn(
+            "capability:status:trigger.effect.fixed_event:blocked",
+            {
+                blocker
+                for residual in blocked.faces[0].residuals
+                for blocker in residual.blockers
+            },
+        )
+
+        with patch(
+            "quorune.oracle_ir.fixed_typed_event_effect_trigger_node",
+            return_value=None,
+        ):
+            mutated = self.compile(text)
+        self.assertNotEqual("exact", mutated.status)
+        self.assertFalse(
+            any(
+                node.template_id in FIXED_TYPED_EVENT_TEMPLATE_IDS
+                for node in mutated.faces[0].nodes
+            )
         )
 
     def test_source_named_artifact_entry_player_counter_trigger_compiles_exactly(
@@ -1257,6 +1462,27 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
                 capability_profile="commander_review",
             )
             if program.provenance.get("template_id") in ALL_TEMPLATE_IDS
+        ]
+        self.assertEqual(1, len(programs))
+        engine.semantics.put(programs[0])
+        return programs[0]
+
+    def register_typed_event_trigger(
+        self,
+        engine,
+        source: CardInstance,
+    ):
+        programs = [
+            program
+            for program in generated_programs(
+                self.db,
+                self.db.by_oracle_id(source.oracle_id),
+                trust_level="trusted",
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            )
+            if program.provenance.get("template_id")
+            in FIXED_TYPED_EVENT_TEMPLATE_IDS
         ]
         self.assertEqual(1, len(programs))
         engine.semantics.put(programs[0])
@@ -2446,6 +2672,119 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
                 object_id: dict(card.counters)
                 for object_id, card in engine.state.cards.items()
             },
+        )
+
+    def test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays(
+        self,
+    ):
+        session = self.session(121001, players=4)
+        engine = session.engine
+        engine.state.active_player = "C"
+        source = self.add_card(
+            engine,
+            seat="C",
+            name="Typed Scheduled Target Trigger Fixture",
+            ref="typed-target-trigger-source",
+            zone="battlefield",
+        )
+        target = self.add_card(
+            engine,
+            seat="C",
+            name="Scute Swarm",
+            ref="typed-target-trigger-target",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="C", step="beginning_combat"),
+        )
+        engine._stabilize()
+
+        self.assertEqual(program.key, engine.state.stack[-1].semantic_key)
+        self.assertEqual("semantic.target", engine.state.pending_decision.kind)
+        projector = StateProjector(self.db, engine.state)
+        for seat in ("A", "B", "D"):
+            self.assertIsNone(projector._decision(f"pilot:{seat}"))
+        projected = projector._decision("pilot:C")
+        self.assertIsNotNone(projected)
+        self.assertNotIn(source.object_id, json.dumps(projected, sort_keys=True))
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        selected = session.act(
+            "pilot:C",
+            {"action_id": "choose", "targets": [target.ref]},
+        )
+        self.assertTrue(selected.ok, selected.summary)
+        for seat in ("C", "D", "A", "B"):
+            passed = session.act(
+                f"pilot:{seat}",
+                {"action_id": "pass"},
+            )
+            self.assertTrue(passed.ok, passed.summary)
+
+        self.assertEqual(3, engine._numeric_stat(target.object_id, "power"))
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "fixed-typed-event-trigger-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_fixed_typed_event_effect_triggers_share_four_player_apnap_batch(
+        self,
+    ):
+        session = self.session(121002, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        source_a = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Each Upkeep Life Trigger Fixture",
+            ref="typed-apnap-source-a",
+            zone="battlefield",
+        )
+        source_c = self.add_card(
+            engine,
+            seat="C",
+            name="Typed Each Upkeep Life Trigger Fixture",
+            ref="typed-apnap-source-c",
+            zone="battlefield",
+        )
+        self.register_typed_event_trigger(engine, source_a)
+        self.register_typed_event_trigger(engine, source_c)
+
+        items = collect_trigger_items(
+            engine,
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        self.assertEqual({"A", "C"}, {item.controller for item in items})
+        self.assertTrue(
+            all(
+                item.semantic_key in {
+                    program.key
+                    for program in engine.semantics.programs()
+                    if program.provenance.get("template_id")
+                    in FIXED_TYPED_EVENT_TEMPLATE_IDS
+                }
+                for item in items
+            )
+        )
+        enqueue_trigger_batch(engine, items)
+        self.assertEqual(1, len(engine.state.pending_trigger_batches))
+        self.assertEqual(
+            ["A", "B", "C", "D"],
+            list(engine.state.pending_trigger_batches[0].apnap_order),
+        )
+        engine._stabilize()
+        self.assertEqual(
+            ["A", "C"],
+            [item.controller for item in engine.state.stack[-2:]],
         )
 
 

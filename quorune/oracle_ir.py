@@ -49,7 +49,7 @@ from .compiler.fixed_effect_clause_sequences import (
     fixed_effect_clause_sequence_template,
 )
 from .compiler.fixed_counter_trigger_nodes import (
-    fixed_counter_event_trigger_node,
+    fixed_typed_event_effect_trigger_node,
 )
 from .compiler.fixed_keyword_entry_nodes import fixed_keyword_entry_nodes
 from .compiler.explore_templates import single_explore_effect_template
@@ -114,7 +114,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v115"
+ORACLE_COMPILER_VERSION = "oracle-ir-v116"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -938,7 +938,7 @@ def _typed_additional_cost_face(
     )
 
 
-def _activated_or_fixed_counter_trigger_node(
+def _activated_or_fixed_event_trigger_node(
     *,
     node_id: str,
     line: str,
@@ -963,7 +963,7 @@ def _activated_or_fixed_counter_trigger_node(
     )
     if activated is not None:
         return activated
-    return fixed_counter_event_trigger_node(
+    return fixed_typed_event_effect_trigger_node(
         node_id=node_id, line=line, material_line=material_line, span=span,
         card_name=card_name, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
@@ -1131,7 +1131,7 @@ def _compile_face(
             nodes.extend(keyword_nodes)
             continue
 
-        ability_node = _activated_or_fixed_counter_trigger_node(
+        ability_node = _activated_or_fixed_event_trigger_node(
             node_id=node_id, line=line, material_line=material_line, span=span,
             card_name=face_name or record.name, type_line=type_line,
             keywords=keywords, trusted_mechanics=trusted_mechanics,

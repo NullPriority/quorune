@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "d12ba7e69f7f6d7529d003f95f4c96f573b0c7039defeee31f0dd23435e54fc0"
+verified: "1b5b38f1d191bdf98e9e43dfc2432aeab7b7a1c89d33098b9fac11de7599e3f6"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -44,12 +44,16 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Devoted Grafkeeper // Departed Soulkeeper | 174 | 23 | 6 | 6 | 6 | 7 | `blocked` |
 | Invasion of Moag // Bloomwielder Dryads | 173 | 20 | 6 | 4 | 5 | 16 | `blocked` |
 | Miles Morales // Ultimate Spider-Man | 172 | 24 | 6 | 5 | 6 | 11 | `blocked` |
+| Invasion of Tolvada // The Broken Sky | 171 | 18 | 6 | 4 | 6 | 17 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 171 | 14 | 5 | 5 | 11 | 18 | `blocked` |
 | Invasion of Kaladesh // Aetherwing, Golden-Scale Flagship | 170 | 18 | 5 | 5 | 6 | 17 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 170 | 17 | 6 | 5 | 10 | 8 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 169 | 19 | 6 | 6 | 11 | 10 | `blocked` |
 | Gwen Stacy // Ghost-Spider | 168 | 22 | 5 | 5 | 8 | 13 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 168 | 16 | 5 | 4 | 5 | 22 | `blocked` |
+| Invasion of Theros // Ephara, Ever-Sheltering | 168 | 18 | 5 | 4 | 6 | 18 | `blocked` |
+| Optimus Prime, Hero // Optimus Prime, Autobot Leader | 168 | 21 | 5 | 6 | 4 | 16 | `blocked` |
+| Lunarch Veteran // Luminous Phantom | 167 | 22 | 6 | 5 | 6 | 7 | `blocked` |
 | Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
 | Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
 | Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
@@ -59,8 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Titania, Gaea Incarnate | 165 | 23 | 6 | 4 | 6 | 11 | `blocked` |
 | Heliod, Sun-Crowned | 162 | 23 | 4 | 4 | 4 | 20 | `blocked` |
 | Invasion of Vryn // Overloaded Mage-Ring | 162 | 12 | 5 | 3 | 8 | 24 | `blocked` |
-| Path of Mettle // Metzali, Tower of Triumph | 162 | 19 | 5 | 6 | 6 | 10 | `blocked` |
-| Aethersphere Harvester | 161 | 16 | 5 | 4 | 6 | 22 | `blocked` |
-| Covetous Castaway // Ghostly Castigator | 161 | 20 | 6 | 5 | 6 | 7 | `blocked` |
-| Faithbound Judge // Sinner's Judgment | 161 | 20 | 5 | 7 | 6 | 1 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

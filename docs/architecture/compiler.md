@@ -417,22 +417,27 @@ revalidation as a single direct target. Variable limits, subtype or other
 combat-state predicates, and compound instructions remain
 source-spanned residuals.
 
-`compiler/fixed_counter_trigger_nodes.py` composes that already typed effect
-body with closed normalized-event bindings for represented beginnings of
-steps; a land entering under the source controller's control; a noncreature or
-instant-or-sorcery spell cast by the source controller; controller life gains,
-card draws, and exact second draws; and public artifact, creature,
-enchantment, or permanent entries plus creature deaths. The public zone-change
-grammar lowers only closed controller, opponent, source-exclusion, and token
-predicates. It consumes the normalized owner's current entry facts or
-predeparture last-known facts and does not perform a characteristic query of
-its own. The binding emits only an immutable event predicate and ordinary
-triggered node; APNAP placement, target revalidation, replacement suspension,
-and counter mutation stay with their existing owners. Cast-or-copy, opponent
-or arbitrary casts, broader land-entry relations, subtype- or
-characteristic-qualified zone changes, one-or-more aggregation, combined
-events, intervening-if, optional, variable, linked, movement, removal, and
-unrepresented compound bodies remain material. Spell-cast type predicates
+`compiler/fixed_counter_trigger_nodes.py` owns one shared closed normalized-
+event binding for represented beginnings of steps; a land entering under the
+source controller's control; a noncreature or instant-or-sorcery spell cast by
+the source controller; controller life gains, card draws, and exact second
+draws; and public artifact, creature, enchantment, or permanent entries plus
+creature deaths. A mandatory body may compose with that binding only when the
+body already lowers through one reviewed typed effect owner with a trusted
+capability closure. Counter-producing bodies retain their counter-specific
+capability and optional-choice wrapper rather than entering a second trigger
+path.
+
+The public zone-change grammar lowers only closed controller, opponent,
+source-exclusion, token, and single-subtype predicates. It consumes the
+normalized owner's current entry facts or predeparture last-known facts and
+does not perform a characteristic query of its own. The binding emits only an
+immutable event predicate and ordinary triggered node; APNAP placement, target
+selection and revalidation, replacement suspension, and effect mutation stay
+with their existing owners. Cast-or-copy, opponent or arbitrary casts, broader
+land-entry relations, characteristic-qualified zone changes, one-or-more
+aggregation, combined events, intervening-if, reflexive, optional, variable,
+linked, and unrepresented bodies remain material. Spell-cast type predicates
 explicitly exclude type-changing stack interactions until their
 characteristic boundary is trusted.
 

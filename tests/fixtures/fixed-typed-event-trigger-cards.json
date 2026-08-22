@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "fixed_typed_event_trigger_card_data",
+  "source": "Scryfall-compatible Oracle subset for fixed typed event-effect trigger tests",
+  "cards": [
+    {
+      "oracle_id": "12100000-0000-4000-8000-000000000001",
+      "name": "Typed Scheduled Target Trigger Fixture",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of combat on your turn, target creature you control gets +2/+0 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-22",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "12100000-0000-4000-8000-000000000002",
+      "name": "Typed Each Upkeep Life Trigger Fixture",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of each upkeep, you gain 1 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-22",
+      "legalities": {"commander": "legal"}
+    }
+  ]
+}
