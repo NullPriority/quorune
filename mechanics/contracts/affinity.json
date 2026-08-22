@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "affinity",
   "official_name": "Affinity",
   "effective_date": "2026-08-07",
@@ -8,48 +8,52 @@
   "rule_references": ["601.2f", "601.2g", "601.2h", "702.41", "702.41a", "702.41b"],
   "glossary_references": ["affinity"],
   "dependencies": [],
-  "coverage_status": "trusted",
-  "trust_level": "trusted",
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
   "behavior": {
     "zones": ["the selected card is otherwise authorized to be cast and is represented by a trusted face-pinned CardProgram"],
-    "objects": ["phased-in permanents currently controlled by the caster whose effective card types include artifact"],
+    "objects": ["phased-in permanents currently controlled by the caster that match the compiled closed Affinity quality's effective-characteristic query union"],
     "events": ["cast offer generation", "cast proposal validation", "cast-cost payment"],
-    "state_reads": ["announced post-modification total cost", "current effective card types", "controller", "phasing state"],
+    "state_reads": ["announced post-modification total cost", "current effective card types, subtypes, supertypes, and token status", "controller", "phasing state"],
     "state_writes": [],
-    "costs": ["each printed Affinity for artifacts instance reduces only the generic component of the spell's total cost by one for each qualifying artifact", "the generic component cannot be reduced below zero"],
+    "costs": ["each printed represented Affinity instance reduces only the generic component of the spell's total cost by one for each permanent matching its compiled quality union", "one permanent matching several branches of the same quality is counted once", "the generic component cannot be reduced below zero"],
     "timing": ["the qualifying artifact count is evaluated while determining the spell's payable total cost"],
     "targets": [],
     "choices": [],
     "hidden_information": ["the spell remains visible only to seats legally entitled to see its origin zone until casting makes it public", "the reduction reads only public battlefield characteristics"],
     "apnap": [],
-    "layers": ["artifact status comes from the canonical current effective-characteristic query"],
+    "layers": ["quality matching comes from the canonical current effective-characteristic query", "dynamic type-changing interactions use that same cycle-safe boundary", "layer-6 addition or removal of Affinity itself remains outside this slice until the shared ability-applicability query exists"],
     "replacement_effects": ["cost-payment replacement effects are outside this bounded family and fail closed"],
     "copy": ["a copied spell was not cast and does not use Affinity"],
     "control_change": ["only artifacts currently controlled by the caster contribute"],
     "zone_change": ["only permanents currently present on the battlefield contribute"],
     "source_leaves": ["the spell's selected face and compiled descriptor are revalidated before payment"]
   },
-  "variants": ["multiple printed instances apply independently and cumulatively", "Affinity parameters other than artifacts, dynamically granted or removed Affinity, and Affinity-equivalent rules text remain unsupported"],
+  "variants": ["closed type, subtype, supertype, token, outlaw, snow-land, and historic-permanent qualities", "multiple printed instances apply independently and cumulatively", "qualities outside the closed grammar, dynamically granted or removed Affinity, and Affinity-equivalent rules text remain unsupported"],
   "witness_cards": [
     {
       "name": "Myr Enforcer",
       "oracle_id": "2d8e1054-654f-42e8-8c29-12c3cf13a3eb"
+    },
+    {
+      "name": "Banish to Another Universe",
+      "oracle_id": "ae6ef097-bd52-4bf8-81a8-2e6c643fc805"
     }
   ],
   "rulings": [],
   "test_ids": [
-    "test_affinity_for_artifacts_compiles_face_pinned_typed_program",
-    "test_affinity_descriptor_and_unsupported_grammar_fail_closed",
-    "test_affinity_compiler_mutant_is_killed",
-    "test_typed_affinity_counts_only_active_controlled_artifacts",
+    "test_affinity_quality_compiles_closed_effective_queries",
+    "test_affinity_query_descriptor_and_unknown_quality_fail_closed",
+    "test_affinity_counts_effective_union_and_excludes_opponents",
     "test_raw_affinity_keyword_without_compiled_descriptor_fails_closed",
-    "test_affinity_runtime_mutant_is_killed",
     "test_typed_affinity_cast_replays_exactly"
   ],
   "implementation": {
     "component": "quorune.rules.casting.costs._apply_affinity",
-    "version": "affinity-artifact-count-payment-v1"
+    "version": "typed-affinity-effective-query-v2",
+    "capability_ids": ["casting.payment.affinity"],
+    "supported_slice": "Printed Affinity for one closed compiler quality on the selected cast face, evaluated over current effective controlled phased-in permanents through canonical object queries."
   },
-  "known_blockers": [],
+  "known_blockers": ["Affinity qualities outside the closed compiler grammar", "granted, copied, removed, or text-changed Affinity until one shared ability-applicability query exists", "Affinity-equivalent rules text", "unrepresented cost-payment replacements, restrictions, and total-cost ordering interactions"],
   "review_status": "reviewed"
 }

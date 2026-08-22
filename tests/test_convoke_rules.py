@@ -213,15 +213,15 @@ class AffinityCompilerTests(unittest.TestCase):
 
         self.assertEqual("exact", ir.status)
         node = ir.faces[0].nodes[0]
-        self.assertEqual("affinity-artifact-count-payment-v1", node.template_id)
+        self.assertEqual("typed-affinity-effective-query-v2", node.template_id)
         self.assertEqual("stack", node.active_zone)
         self.assertEqual("cast.cost", node.event)
         self.assertEqual(
-            ("casting.payment.affinity_artifacts",),
+            ("casting.payment.affinity",),
             node.capability_dependencies,
         )
         self.assertEqual(
-            "casting.payment.affinity-artifacts.v1",
+            "casting.payment.affinity.v2",
             node.handlers[0]["handler_id"],
         )
         self.assertEqual(
@@ -264,8 +264,16 @@ class AffinityCompilerTests(unittest.TestCase):
 
     def test_affinity_descriptor_and_unsupported_grammar_fail_closed(self):
         registry = default_cast_cost_component_registry()
-        valid = affinity_handler_descriptor()
-        self.assertEqual((AffinitySpec(),), registry.lower(valid, None))
+        legacy = affinity_handler_descriptor()
+        self.assertEqual(
+            (AffinitySpec.for_quality("artifacts"),),
+            registry.lower(legacy, None),
+        )
+        valid = affinity_handler_descriptor(AffinitySpec.for_quality("creatures"))
+        self.assertEqual(
+            (AffinitySpec.for_quality("creatures"),),
+            registry.lower(valid, None),
+        )
         malformed_values = (
             {**valid, "unknown": True},
             {**valid, "schema_version": True},
@@ -273,7 +281,7 @@ class AffinityCompilerTests(unittest.TestCase):
             {**valid, "payment": []},
             {
                 **valid,
-                "payment": {**valid["payment"], "card_type": "creature"},
+                "payment": {**valid["payment"], "quality": "Phyrexians"},
             },
         )
         for malformed in malformed_values:
@@ -281,7 +289,7 @@ class AffinityCompilerTests(unittest.TestCase):
                 with self.assertRaises(SemanticNodeError):
                     registry.validate(malformed)
 
-        ir = self.compile("Affinity for creatures")
+        ir = self.compile("Affinity for Phyrexians")
         self.assertTrue(ir.material_residuals)
         self.assertTrue(
             any(
@@ -305,7 +313,7 @@ class AffinityCompilerTests(unittest.TestCase):
                 if node.event == "cast.cost"
             )
             self.assertEqual(
-                "casting.payment.affinity-artifacts.v1",
+                "casting.payment.affinity.v2",
                 node.handlers[0]["handler_id"],
             )
 

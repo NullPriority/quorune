@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d99c78d976f753f240446c877761ad545807e106514428aa23fa31ee612da0a8",
-  "declaration_source_fingerprint": "5c8dcaf0af2f8d08c78f2b77c984bd8da7516f087f6fe6d81929aa073f0e5726",
+  "registry_fingerprint": "99c750f3147f331af4a105d6618fad6d8349b6bb85b4043c5ceab2bf3a6cc4eb",
+  "declaration_source_fingerprint": "796a81d0c31ddb0742c4122d0a67d421b372463fd6894eaf1833a0fb2d450be9",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -5520,6 +5520,150 @@
       "applicability_note": "Replay the reduced cost offer, mana payment, stack transition, draw resolution, and final authoritative hash exactly."
     },
     {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_uses_shared_trigger_owner_with_reviewed_override",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Route both fixed-mana Evoke and the reviewed nonmana override through one typed cast marker and shared sacrifice-trigger owner."
+    },
+    {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_trigger_uses_ordinary_apnap_batching",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Materialize the Evoke sacrifice occurrence through the ordinary multiplayer APNAP trigger batch."
+    },
+    {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_cost_marks_and_sacrifices_on_entry",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of either the immutable Evoke cast marker or its shared sacrifice-on-entry trigger."
+    },
+    {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_evoke_nonmana_descriptor_and_raw_cost_fail_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject nonmana or malformed Evoke grammar unless an exact reviewed typed override owns the cost."
+    },
+    {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_fixed_and_hybrid_evoke_compile_to_typed_cost_options",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed ordinary and colored-hybrid Evoke costs to closed source-pinned alternative-cost branches."
+    },
+    {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_cost_marks_and_sacrifices_on_entry",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pay the represented alternative cost, retain its immutable marker, and sacrifice the entered permanent through the shared trigger."
+    },
+    {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_offer_keeps_hand_identity_private",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer the typed Evoke branch to its caster without exposing the hand card to opposing projections."
+    },
+    {
+      "capability_id": "casting.evoke.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_cast_and_trigger_replay_exactly",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the Evoke payment, entry, trigger placement, sacrifice, and final authoritative state hash exactly."
+    },
+    {
       "capability_id": "casting.flashback.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_flashback_rules.FixedManaFlashbackRuntimeTests.test_countered_flashback_uses_self_replacement_before_competing_destination",
@@ -6352,6 +6496,177 @@
       "applicability_note": "Replay the exact cast, multiplayer passes, face-down persistence, turn-up payment, public reveal, and final authoritative state hash."
     },
     {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_affinity_counts_effective_union_and_excludes_opponents",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Count each controlled historic permanent once across artifact, legendary, and Saga branches using effective characteristics."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_affinity_counts_effective_union_and_excludes_opponents",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude opposing and phased-out matching permanents from the caster's Affinity reduction in multiplayer state."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_affinity_counts_effective_union_and_excludes_opponents",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of effective-characteristic evaluation, union deduplication, controller scoping, or phasing exclusion with one exact remaining-cost assertion."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_query_descriptor_and_unknown_quality_fail_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject arbitrary object-query injection and Affinity qualities outside the closed compiler grammar."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_convoke_rules.AffinityRuntimeTests.test_raw_affinity_keyword_without_compiled_descriptor_fails_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Prove raw Oracle text and keyword metadata cannot substitute for a trusted selected-face Affinity descriptor."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_quality_compiles_closed_effective_queries",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile the represented Affinity qualities to canonical source-pinned effective-characteristic query unions."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_affinity_counts_effective_union_and_excludes_opponents",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply the compiled quality union to the canonical effective battlefield object boundary and exact generic total cost."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_affinity_counts_effective_union_and_excludes_opponents",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the Affinity spell private in hand while the reduction reads only public battlefield characteristics."
+    },
+    {
+      "capability_id": "casting.payment.affinity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_convoke_rules.AffinityRuntimeTests.test_typed_affinity_cast_replays_exactly",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the typed Affinity reduction, mana payment, spell movement, and authoritative state hash exactly."
+    },
+    {
       "capability_id": "casting.payment.affinity_artifacts",
       "evidence_class": "interaction",
       "test_id": "tests.test_convoke_rules.AffinityRuntimeTests.test_typed_affinity_counts_only_active_controlled_artifacts",
@@ -6807,6 +7122,299 @@
         "commander_review"
       ],
       "applicability_note": "Reject changed type, color, controller, tap, phase, or logical identity before spending mana, tapping a permanent, or moving the spell."
+    },
+    {
+      "capability_id": "casting.payment.delve",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_convoke_and_delve_compose_in_one_cast_payment",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose Delve and Convoke against one post-modification mana vector while committing both distinct physical costs transactionally."
+    },
+    {
+      "capability_id": "casting.payment.delve",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_offer_is_owner_scoped_and_private",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only the caster-owner's graveyard refs as Delve candidates in multiplayer state."
+    },
+    {
+      "capability_id": "casting.payment.delve",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_compiles_and_exiles_selected_graveyard_cards",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of generic reduction or transactional graveyard-to-exile payment through exact cost and zone assertions."
+    },
+    {
+      "capability_id": "casting.payment.delve",
+      "evidence_class": "negative",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_descriptor_raw_keyword_and_stale_plan_fail_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject malformed descriptors, raw keyword fallback, colored reduction, and stale physical or logical graveyard identity before mutation."
+    },
+    {
+      "capability_id": "casting.payment.delve",
+      "evidence_class": "positive",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_compiles_and_exiles_selected_graveyard_cards",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile ordinary Delve, pay only generic mana with selected owner-graveyard cards, and exile them through the casting transaction."
+    },
+    {
+      "capability_id": "casting.payment.delve",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_offer_is_owner_scoped_and_private",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the hand spell private while advertising Delve selections from its caster's public graveyard only."
+    },
+    {
+      "capability_id": "casting.payment.delve",
+      "evidence_class": "replay",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_cast_replays_exactly",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay selected graveyard identities, generic reduction, exile payment, and final authoritative state hash exactly."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_granted_and_printed_improvise_share_one_payment_owner",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Route printed Improvise and the reviewed typed next-spell grant through one artifact payment owner and one selection schema."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_offer_is_controller_scoped_and_private",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer only phased-in untapped artifacts controlled by the caster in multiplayer state."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_compiles_and_pays_only_generic_with_artifacts",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of generic-only contribution or transactional artifact tapping with exact cost and state assertions."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "negative",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_improvise_descriptor_and_raw_keyword_fail_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject malformed Improvise descriptors before a compiled node can receive exact trust."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "negative",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_raw_improvise_keyword_without_compiled_descriptor_fails_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Prove raw Oracle text and keyword metadata cannot substitute for a trusted selected-face Improvise descriptor."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "positive",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_compiles_and_pays_only_generic_with_artifacts",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile ordinary Improvise, pay only generic mana with controlled artifacts, and tap them through the casting transaction."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_offer_is_controller_scoped_and_private",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the hand spell private while exposing its artifact payment choice only to the caster."
+    },
+    {
+      "capability_id": "casting.payment.improvise",
+      "evidence_class": "replay",
+      "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_cast_replays_exactly",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay selected artifact identities, generic contribution, tap payment, and final authoritative state hash exactly."
     },
     {
       "capability_id": "casting.permission.one_shot_exile_without_mana",
@@ -44655,5 +45263,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "079325e76678f4bd201672f68891677cb744526c5c40b95acceb1ffed5d21dc5"
+  "fingerprint": "77e33415e486eb79c3ac5c1537ea6b9471a8e869baf6a758042cf2f798db6dc0"
 }

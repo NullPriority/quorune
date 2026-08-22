@@ -5,7 +5,19 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
-from ...compiled_cast_costs import compiled_affinity_specs, compiled_convoke_specs
+from ...casting_payment_keywords import (
+    AffinitySpec,
+    CastingPaymentKeywordError,
+    DelveCandidate,
+    DelvePaymentPlan,
+)
+from ...compiled_cast_costs import (
+    compiled_affinity_specs,
+    compiled_convoke_specs,
+    compiled_delve_specs,
+    compiled_evoke_specs,
+    compiled_improvise_specs,
+)
 from ...compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
@@ -21,6 +33,8 @@ from ...convoke import (
     find_convoke_plan,
     select_convoke_plan,
 )
+from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
+from ...object_query import object_matches_query, object_query_result
 from ...semantic_runtime.cast_costs import (
     active_fixed_spell_cost_reductions,
 )
@@ -85,20 +99,6 @@ class CastCostHost(Protocol):
         self, seat: str, card: Any, specification: Mapping[str, Any]
     ) -> list[str]: ...
 
-    def _payment_mechanic_candidates(
-        self, seat: str, kind: str
-    ) -> list[Any]: ...
-
-    def _tap_payment_plan(
-        self,
-        seat: str,
-        requirements: Mapping[str, int],
-        kind: str,
-        candidates: Sequence[Any],
-        *,
-        spend_context: Any,
-    ) -> tuple[dict[str, int], list[Any]] | None: ...
-
     def _cost_is_affordable(
         self,
         seat: str,
@@ -158,52 +158,44 @@ def _compiled_payment_mechanics(
     *,
     suppress_source_costs: bool = False,
 ) -> list[dict[str, Any]] | None:
-    """Resolve trusted compiled affinity and convoke payment mechanics."""
+    """Resolve trusted printed payment mechanics at the selected face."""
 
     if suppress_source_costs:
         mechanics: list[dict[str, Any]] = []
         if host.state.players[seat].stats.get("next_spell_improvise"):
-            mechanics.append({"kind": "improvise"})
+            mechanics.append({"kind": "improvise", "schema_version": 1})
         return mechanics
     mechanics = host._cost_payment_mechanics(record, schema)
-    declared_affinity = any(
-        str(value.get("kind") or "").casefold() == "affinity"
-        for value in mechanics
-    )
+    printed_keywords = {str(value).casefold() for value in record.keywords}
+    compiled_by_kind: dict[str, tuple[Any, ...]] = {
+        "affinity": compiled_affinity_specs(
+            host, record.oracle_id, spell_program=program
+        ),
+        "convoke": compiled_convoke_specs(
+            host, record.oracle_id, spell_program=program
+        ),
+        "delve": compiled_delve_specs(
+            host, record.oracle_id, spell_program=program
+        ),
+        "improvise": compiled_improvise_specs(
+            host, record.oracle_id, spell_program=program
+        ),
+    }
+    declared_kinds = {
+        str(value.get("kind") or "").casefold() for value in mechanics
+    }
     mechanics = [
         value
         for value in mechanics
-        if str(value.get("kind") or "").casefold() != "affinity"
+        if str(value.get("kind") or "").casefold()
+        not in compiled_by_kind
     ]
-    compiled_affinity = compiled_affinity_specs(
-        host,
-        record.oracle_id,
-        spell_program=program,
+    compiled_affinity = compiled_by_kind["affinity"]
+    mechanics.extend(
+        specification.to_payment_mechanic()
+        for specification in compiled_affinity
     )
-    if compiled_affinity:
-        mechanics.extend(
-            specification.to_payment_mechanic()
-            for specification in compiled_affinity
-        )
-    elif declared_affinity or "affinity" in {
-        str(value).casefold() for value in record.keywords
-    }:
-        return None
-
-    declared_convoke = any(
-        str(value.get("kind") or "").casefold() == "convoke"
-        for value in mechanics
-    )
-    mechanics = [
-        value
-        for value in mechanics
-        if str(value.get("kind") or "").casefold() != "convoke"
-    ]
-    compiled_convoke = compiled_convoke_specs(
-        host,
-        record.oracle_id,
-        spell_program=program,
-    )
+    compiled_convoke = compiled_by_kind["convoke"]
     if compiled_convoke:
         mechanics.append(
             {
@@ -211,13 +203,22 @@ def _compiled_payment_mechanics(
                 "schema_version": compiled_convoke[0].schema_version,
             }
         )
-    elif declared_convoke:
-        return None
+    compiled_delve = compiled_by_kind["delve"]
+    if compiled_delve:
+        mechanics.append(compiled_delve[0].to_dict())
+    compiled_improvise = compiled_by_kind["improvise"]
+    if compiled_improvise:
+        mechanics.append(compiled_improvise[0].to_dict())
+    for kind in compiled_by_kind:
+        declared = kind in declared_kinds
+        printed = kind in printed_keywords
+        if (declared or printed) and not compiled_by_kind[kind]:
+            return None
     if host.state.players[seat].stats.get("next_spell_improvise") and not any(
         str(value.get("kind") or "").casefold() == "improvise"
         for value in mechanics
     ):
-        mechanics.append({"kind": "improvise"})
+        mechanics.append({"kind": "improvise", "schema_version": 1})
     return mechanics
 
 
@@ -271,6 +272,51 @@ def _with_bestow_cost(
     return result
 
 
+def _with_evoke_cost(
+    host: CastCostHost,
+    record: Any,
+    program: Any,
+    schema: Mapping[str, Any],
+    *,
+    suppress_source_costs: bool,
+) -> dict[str, Any] | None:
+    """Add one trusted fixed-mana Evoke branch or reviewed override."""
+
+    result = copy.deepcopy(dict(schema))
+    alternate_costs = [dict(value) for value in result.get("alternate_costs", ())]
+    reviewed = [
+        value
+        for value in alternate_costs
+        if value.get(EVOKE_PAYMENT_FIELD) is not None
+    ]
+    if any(
+        not validate_evoke_payment_marker(value.get(EVOKE_PAYMENT_FIELD))
+        for value in reviewed
+    ):
+        return None
+    compiled = (
+        compiled_evoke_specs(
+            host,
+            record.oracle_id,
+            spell_program=program,
+        )
+        if not suppress_source_costs
+        else ()
+    )
+    if len(compiled) > 1 or (compiled and reviewed):
+        return None
+    if compiled:
+        alternate_costs.extend(compiled[0].cast_cost_options())
+    elif (
+        not suppress_source_costs
+        and "evoke" in {str(value).casefold() for value in record.keywords}
+        and len(reviewed) != 1
+    ):
+        return None
+    result["alternate_costs"] = alternate_costs
+    return result
+
+
 def _flashback_base_options(
     host: CastCostHost,
     seat: str,
@@ -298,6 +344,55 @@ def _flashback_base_options(
     if not force_without_mana_cost:
         result.append(flashback.cast_cost_option())
     return result
+
+
+def _cast_schema_and_mechanics(
+    host: CastCostHost,
+    seat: str,
+    card: Any,
+    program: Any,
+    *,
+    suppress_source_costs: bool,
+) -> tuple[dict[str, Any], list[dict[str, Any]]] | None:
+    """Resolve the trusted cost schema and typed payment-mechanic set."""
+
+    schema = (
+        {}
+        if suppress_source_costs
+        else dict(program.cost_schema or {}) if program else {}
+    )
+    for augment in (_with_kicker_cost, _with_bestow_cost):
+        schema = augment(
+            host,
+            card,
+            schema,
+            suppress_source_costs=suppress_source_costs,
+        )
+        if schema is None:
+            return None
+    record = host.card_record(card)
+    if record is None:
+        return None
+    schema = _with_evoke_cost(
+        host,
+        record,
+        program,
+        schema,
+        suppress_source_costs=suppress_source_costs,
+    )
+    if schema is None:
+        return None
+    mechanics = _compiled_payment_mechanics(
+        host,
+        seat,
+        record,
+        schema,
+        program,
+        suppress_source_costs=suppress_source_costs,
+    )
+    if mechanics is None:
+        return None
+    return schema, mechanics
 
 
 def _initial_options(
@@ -346,40 +441,16 @@ def _initial_options(
             x_value=int(x_value) if x_value is not None else None,
             hint=hint,
         )
-    schema = (
-        {}
-        if suppress_source_costs
-        else dict(program.cost_schema or {}) if program else {}
-    )
-    schema = _with_kicker_cost(
-        host,
-        card,
-        schema,
-        suppress_source_costs=suppress_source_costs,
-    )
-    if schema is None:
-        return None
-    schema = _with_bestow_cost(
-        host,
-        card,
-        schema,
-        suppress_source_costs=suppress_source_costs,
-    )
-    if schema is None:
-        return None
-    record = host.card_record(card)
-    if record is None:
-        return None
-    mechanics = _compiled_payment_mechanics(
+    resolved = _cast_schema_and_mechanics(
         host,
         seat,
-        record,
-        schema,
+        card,
         program,
         suppress_source_costs=suppress_source_costs,
     )
-    if mechanics is None:
+    if resolved is None:
         return None
+    schema, mechanics = resolved
     commander_tax = (
         2 * host.state.players[seat].commander_casts.get(card.oracle_id, 0)
         if card.zone == "command" and card.is_commander
@@ -501,27 +572,39 @@ def _apply_affinity(
     option: dict[str, Any],
     mechanic: Mapping[str, Any],
 ) -> None:
-    card_type = str(mechanic.get("card_type") or "artifact").casefold()
-    count = sum(
-        1
-        for object_id in host.state.players[seat].zones["battlefield"]
-        if host.state.cards[object_id].controller == seat
-        and not host.state.cards[object_id].phased_out
-        and card_type
-        in host._type_parts(
-            str(
-                host._effective_card_data(host.state.cards[object_id]).get(
-                    "type_line"
-                )
-                or ""
-            )
-        )[0]
-    )
+    try:
+        spec = AffinitySpec.from_dict(
+            {
+                key: mechanic[key]
+                for key in ("schema_version", "quality", "queries_any")
+            }
+        )
+    except (CastingPaymentKeywordError, KeyError, TypeError) as exc:
+        raise ValueError("Typed Affinity payment is malformed") from exc
+    count = 0
+    for object_id in host.state.players[seat].zones["battlefield"]:
+        card = host.state.cards[object_id]
+        if card.controller != seat or card.phased_out:
+            continue
+        effective = host._effective_card_data(card)
+        row = object_query_result(
+            card,
+            effective,
+            type_parts=host._type_parts(str(effective.get("type_line") or "")),
+            known_to_actor=True,
+            attached_to_ref=None,
+        )
+        if any(object_matches_query(row, query) for query in spec.queries_any):
+            count += 1
     option["requirements"]["GENERIC"] = max(
         0, int(option["requirements"]["GENERIC"]) - count
     )
     option.setdefault("cost_reductions", []).append(
-        {"kind": "affinity", "count": count, "card_type": card_type}
+        {
+            "kind": "affinity",
+            "count": count,
+            "quality": spec.quality,
+        }
     )
 
 
@@ -680,7 +763,7 @@ def _apply_improvise(
 ) -> bool:
     candidates = [
         card
-        for card in host._payment_mechanic_candidates(seat, "improvise")
+        for card in _improvise_candidates(host, seat)
         if card not in selected_cards
     ]
     field = "improvise_cards"
@@ -688,16 +771,16 @@ def _apply_improvise(
         "type": "object_ref_array",
         "minimum": 0,
         "maximum": min(
-            len(candidates), sum(option["requirements"].values())
+            len(candidates), int(option["requirements"]["GENERIC"])
         ),
         "legal_refs": [card.ref for card in candidates],
         "payment": "improvise",
     }
     if hint:
-        plan = host._tap_payment_plan(
+        plan = _find_improvise_plan(
+            host,
             seat,
             option["requirements"],
-            "improvise",
             candidates,
             spend_context=spend_context,
         )
@@ -730,6 +813,213 @@ def _apply_improvise(
     return True
 
 
+def _improvise_candidates(host: CastCostHost, seat: str) -> tuple[Any, ...]:
+    candidates: list[Any] = []
+    for object_id in host.state.players[seat].zones["battlefield"]:
+        card = host.state.cards[object_id]
+        if card.controller != seat or card.phased_out or card.tapped:
+            continue
+        data = host._effective_card_data(card)
+        types, _, _ = host._type_parts(str(data.get("type_line") or ""))
+        if "artifact" in types:
+            candidates.append(card)
+    return tuple(candidates)
+
+
+def _find_improvise_plan(
+    host: CastCostHost,
+    seat: str,
+    requirements: Mapping[str, int],
+    candidates: Sequence[Any],
+    *,
+    spend_context: Any,
+) -> tuple[dict[str, int], list[Any]] | None:
+    """Find a deterministic minimum-card Improvise payment."""
+
+    base = host._mana_vector(requirements)
+    best: tuple[dict[str, int], list[Any]] | None = None
+
+    def search(index: int, selected: list[Any]) -> None:
+        nonlocal best
+        if best is not None and len(selected) >= len(best[1]):
+            return
+        reduced = host._mana_vector(base)
+        if len(selected) > reduced["GENERIC"]:
+            return
+        reduced["GENERIC"] -= len(selected)
+        if host._cost_is_affordable(
+            seat,
+            reduced,
+            exclude_sources={card.object_id for card in selected},
+            spend_context=spend_context,
+        ):
+            best = (reduced, list(selected))
+            return
+        if index >= len(candidates):
+            return
+        search(index + 1, selected)
+        selected.append(candidates[index])
+        search(index + 1, selected)
+        selected.pop()
+
+    search(0, [])
+    return best
+
+
+def _delve_candidates(
+    host: CastCostHost,
+    seat: str,
+) -> tuple[DelveCandidate, ...]:
+    result: list[DelveCandidate] = []
+    for object_id in host.state.players[seat].zones["graveyard"]:
+        card = host.state.cards[object_id]
+        if card.zone != "graveyard" or card.owner != seat:
+            continue
+        result.append(
+            DelveCandidate(
+                ref=card.ref,
+                object_id=card.object_id,
+                logical_object_id=card.logical_object_id,
+            )
+        )
+    return tuple(result)
+
+
+def revalidate_delve_payment(
+    host: CastCostHost,
+    seat: str,
+    option: Mapping[str, Any],
+) -> DelvePaymentPlan | None:
+    raw = option.get("delve_payment")
+    if raw is None:
+        return None
+    if not isinstance(raw, Mapping):
+        raise CastingPaymentKeywordError("Delve payment snapshot must be an object")
+    plan = DelvePaymentPlan.from_dict(raw)
+    post_delve = plan.remaining_dict
+    final_requirements = canonical_mana_requirements(
+        option.get("requirements") or {}
+    )
+    raw_convoke = option.get("convoke_payment")
+    if raw_convoke is not None:
+        try:
+            convoke_plan = ConvokePaymentPlan.from_dict(raw_convoke)
+        except ConvokeError as exc:
+            raise CastingPaymentKeywordError(
+                "The payment following Delve has a malformed Convoke plan"
+            ) from exc
+        remainder_matches = (
+            convoke_plan.requirement_dict == post_delve
+            and convoke_plan.remaining_dict == final_requirements
+        )
+    else:
+        tap_refs = tuple(option.get("selected_tap_cost_cards", ()))
+        expected_final = dict(post_delve)
+        expected_final["GENERIC"] -= len(tap_refs)
+        remainder_matches = (
+            expected_final["GENERIC"] >= 0
+            and expected_final == final_requirements
+        )
+    if not remainder_matches:
+        raise CastingPaymentKeywordError(
+            "Delve payment remainder does not match the cast cost"
+        )
+    current_by_id = {
+        candidate.object_id: candidate
+        for candidate in _delve_candidates(host, seat)
+    }
+    for selected in plan.selected:
+        if current_by_id.get(selected.object_id) != selected:
+            raise CastingPaymentKeywordError(
+                "A selected Delve card changed zone or identity"
+            )
+    recorded = tuple(
+        str(ref)
+        for selection in option.get("selected_additional_costs", ())
+        if str(selection.get("kind") or "") == "delve"
+        for ref in selection.get("cards", ())
+    )
+    if recorded != plan.selected_refs:
+        raise CastingPaymentKeywordError(
+            "Delve payment refs do not match the cast-cost plan"
+        )
+    return plan
+
+
+def _apply_delve(
+    host: CastCostHost,
+    seat: str,
+    option: dict[str, Any],
+    response: Mapping[str, Any],
+    *,
+    hint: bool,
+    spend_context: Any,
+    followed_by_tap_payment: bool,
+    choice_schema: dict[str, Any],
+) -> bool:
+    candidates = _delve_candidates(host, seat)
+    original = canonical_mana_requirements(option["requirements"])
+    maximum = min(len(candidates), original["GENERIC"])
+    choice_schema["delve_cards"] = {
+        "type": "object_ref_array",
+        "minimum": 0,
+        "maximum": maximum,
+        "legal_refs": [candidate.ref for candidate in candidates],
+        "zone": "graveyard",
+        "destination": "exile",
+        "payment": "delve",
+    }
+    selected: tuple[DelveCandidate, ...]
+    if hint:
+        count = maximum if followed_by_tap_payment else -1
+        if not followed_by_tap_payment:
+            for candidate_count in range(maximum + 1):
+                remaining = dict(original)
+                remaining["GENERIC"] -= candidate_count
+                if host._cost_is_affordable(
+                    seat,
+                    remaining,
+                    spend_context=spend_context,
+                ):
+                    count = candidate_count
+                    break
+        if count < 0:
+            return False
+        selected = candidates[:count]
+        option.setdefault("recommended_payment_refs", {})["delve_cards"] = [
+            candidate.ref for candidate in selected
+        ]
+    else:
+        raw_values = response.get("delve_cards") or []
+        if not isinstance(raw_values, (list, tuple)) or any(
+            type(value) is not str for value in raw_values
+        ):
+            return False
+        values = tuple(raw_values)
+        by_ref = {candidate.ref: candidate for candidate in candidates}
+        if (
+            len(values) != len(set(values))
+            or len(values) > maximum
+            or any(value not in by_ref for value in values)
+        ):
+            return False
+        selected = tuple(by_ref[value] for value in values)
+    remaining = dict(original)
+    remaining["GENERIC"] -= len(selected)
+    plan = DelvePaymentPlan(
+        original_requirements=tuple(original.items()),
+        remaining_requirements=tuple(remaining.items()),
+        selected=selected,
+    )
+    option["requirements"] = remaining
+    option["delve_payment"] = plan.to_dict()
+    if selected:
+        option.setdefault("selected_additional_costs", []).append(
+            {"kind": "delve", "cards": list(plan.selected_refs)}
+        )
+    return True
+
+
 def _apply_payment_mechanics(
     host: CastCostHost,
     seat: str,
@@ -742,19 +1032,43 @@ def _apply_payment_mechanics(
 ) -> tuple[dict[str, Any], list[Any]] | None:
     choice_schema: dict[str, Any] = {}
     selected_cards: list[Any] = []
-    payment_kinds = tuple(
+    kinds = tuple(
         str(mechanic.get("kind") or "").casefold()
+        for mechanic in mechanics
+    )
+    if any(kind not in {"affinity", "convoke", "delve", "improvise"} for kind in kinds):
+        return None
+    tap_mechanics = tuple(
+        mechanic
         for mechanic in mechanics
         if str(mechanic.get("kind") or "").casefold()
         in {"convoke", "improvise"}
     )
-    if len(payment_kinds) > 1:
+    delve_mechanics = tuple(
+        mechanic
+        for mechanic in mechanics
+        if str(mechanic.get("kind") or "").casefold() == "delve"
+    )
+    if len(tap_mechanics) > 1 or len(delve_mechanics) > 1:
         return None
     for mechanic in mechanics:
         kind = str(mechanic.get("kind") or "").casefold()
         if kind == "affinity":
             _apply_affinity(host, seat, option, mechanic)
-            continue
+    if delve_mechanics and not _apply_delve(
+        host,
+        seat,
+        option,
+        response,
+        hint=hint,
+        spend_context=spend_context,
+        followed_by_tap_payment=bool(tap_mechanics),
+        choice_schema=choice_schema,
+    ):
+        return None
+    if tap_mechanics:
+        mechanic = tap_mechanics[0]
+        kind = str(mechanic.get("kind") or "").casefold()
         if kind == "convoke":
             if not _apply_convoke(
                 host,
@@ -767,10 +1081,7 @@ def _apply_payment_mechanics(
                 choice_schema=choice_schema,
             ):
                 return None
-            continue
-        if kind != "improvise":
-            return None
-        if not _apply_improvise(
+        elif not _apply_improvise(
             host,
             seat,
             option,
@@ -1021,7 +1332,9 @@ def _apply_additional_costs(
         selected_nonmana.append({"kind": kind, "cards": values, "index": index})
     option["additional_costs"] = [dict(value) for value in mandatory_costs]
     if selected_nonmana:
-        option["selected_additional_costs"] = selected_nonmana
+        option.setdefault("selected_additional_costs", []).extend(
+            selected_nonmana
+        )
     return True
 
 
@@ -1202,4 +1515,5 @@ __all__ = [
     "CastCostHost",
     "build_cast_cost_options",
     "revalidate_convoke_payment",
+    "revalidate_delve_payment",
 ]

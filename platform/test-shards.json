@@ -109,6 +109,7 @@
       "test_bestow_rules",
       "test_casting_activation_metadata",
       "test_casting_activation_proposal_equivalence",
+      "test_casting_payment_keywords",
       "test_casting_spells_rules",
       "test_color_set_mana_abilities",
       "test_convoke_rules",

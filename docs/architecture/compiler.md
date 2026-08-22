@@ -494,11 +494,29 @@ lowers an immutable relative `ObjectQuerySpec`. Monocolored-only, linked-exile,
 opponent-relative, additional-condition, restricted, and side-effecting
 variants remain source-spanned residuals.
 
-Printed `Affinity for artifacts` lowers as one source-spanned `cast.cost`
-descriptor per printed instance. The selected-face runtime reads only those
-typed descriptors and current effective artifact characteristics; other
-Affinity parameters and equivalent rules text remain residual instead of
-becoming runtime Oracle interpretation.
+Printed `Affinity for` qualities in the closed casting-payment vocabulary lower
+as source-spanned `cast.cost` descriptors containing canonical effective-object
+queries. The runtime evaluates their union once per controlled phased-in
+permanent, so an object matching several historic-permanent branches still
+reduces the generic total only once. Unsupported qualities, granted or removed
+Affinity, and equivalent rules text remain residual instead of becoming runtime
+Oracle interpretation.
+
+Ordinary printed `Improvise` and `Delve` lower through the same selected-face
+casting-payment component family. Improvise advertises current controlled
+untapped artifacts and commits their tap costs through the casting transaction;
+Delve advertises owner-graveyard cards and commits immutable, revalidated
+graveyard-to-exile identities. Both pay only generic mana after the represented
+total cost is determined. Delve composes with Convoke in one payment proposal;
+parallel tap-payment families remain fail closed.
+
+Fixed ordinary or colored-hybrid `Evoke` costs lower to typed alternative-cost
+branches carrying one immutable payment marker. Permanent-spell resolution
+turns that marker into an ordinary normalized entry-trigger occurrence, so its
+sacrifice uses the shared APNAP trigger batch and canonical sacrifice effect.
+Nonmana Evoke remains unsupported except for an exact reviewed typed override;
+variable, Phyrexian, snow, granted, removed, and equivalent-text forms remain
+outside this compiler family.
 
 Printed `Sunburst` lowers as one source-spanned `zone.change` descriptor per
 instance. The descriptor contains the counter kind derived from the printed
