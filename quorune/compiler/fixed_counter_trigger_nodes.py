@@ -19,6 +19,8 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-step-trigger-v1",
         "fixed-counter-controlled-land-entry-trigger-v1",
         "fixed-counter-controller-spell-cast-trigger-v1",
+        "fixed-counter-spell-cast-trigger-v1",
+        "fixed-counter-source-attacks-trigger-v1",
         "fixed-counter-controller-life-gain-trigger-v1",
         "fixed-counter-controller-card-draw-trigger-v1",
         "fixed-counter-controller-second-draw-trigger-v1",
@@ -68,6 +70,18 @@ _CONTROLLER_SPELL_CAST_TRIGGER = re.compile(
     r"spell, (?P<body>.+)$",
     re.IGNORECASE,
 )
+_SPELL_CAST_TRIGGER = re.compile(
+    r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
+    r"(?P<quality>a spell|a creature spell|an artifact spell|"
+    r"an enchantment spell|an instant spell|a sorcery spell|"
+    r"an instant or sorcery spell|a noncreature spell), "
+    r"(?P<body>.+)$",
+    re.IGNORECASE,
+)
+_SOURCE_ATTACK_TRIGGER = re.compile(
+    r"^Whenever this creature attacks, (?P<body>.+)$",
+    re.IGNORECASE,
+)
 _CONTROLLER_LIFE_GAIN_TRIGGER = re.compile(
     r"^Whenever you gain life, (?P<body>.+)$",
     re.IGNORECASE,
@@ -109,6 +123,7 @@ class FixedCounterTriggerEvent(str, Enum):
     STEP_BEGIN = "step.begin"
     CONTROLLED_LAND_ENTER = "land.enter"
     CONTROLLER_SPELL_CAST = "spell.cast"
+    SOURCE_ATTACKS = "creature.attacks"
     CONTROLLER_LIFE_GAIN = "life.gained"
     CONTROLLER_CARD_DRAW = "card.drawn"
     CONTROLLER_SECOND_DRAW = "card.second_draw"
@@ -125,6 +140,96 @@ class FixedCounterZoneController(str, Enum):
     ANY = "any"
     SOURCE = "source_controller"
     OPPONENT = "opponent"
+
+
+class FixedSpellCastController(str, Enum):
+    """Closed caster relations over one normalized spell-cast event."""
+
+    SOURCE = "source_controller"
+    OPPONENT = "opponent"
+    ANY = "any"
+
+
+class FixedSpellCastQuality(str, Enum):
+    """Closed card-type predicates already present in cast-event facts."""
+
+    ANY = "any_spell"
+    NONCREATURE = "noncreature"
+    INSTANT_OR_SORCERY = "instant_or_sorcery"
+    CREATURE = "creature"
+    ARTIFACT = "artifact"
+    ENCHANTMENT = "enchantment"
+    INSTANT = "instant"
+    SORCERY = "sorcery"
+
+
+@dataclass(frozen=True, slots=True)
+class FixedSpellCastSubject:
+    """Immutable public caster and type predicate for one committed cast."""
+
+    controller: FixedSpellCastController
+    quality: FixedSpellCastQuality
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.controller, FixedSpellCastController):
+            raise ValueError("Spell-cast subjects require a closed caster relation")
+        if not isinstance(self.quality, FixedSpellCastQuality):
+            raise ValueError("Spell-cast subjects require a closed type predicate")
+
+    @property
+    def variant(self) -> str:
+        return f"{self.controller.value}:{self.quality.value}"
+
+    @property
+    def event_condition(self) -> Mapping[str, Any] | None:
+        conditions: list[Mapping[str, Any]] = []
+        if self.controller is FixedSpellCastController.SOURCE:
+            conditions.append(
+                {
+                    "field": "controller",
+                    "op": "eq",
+                    "value": "$source.controller",
+                }
+            )
+        elif self.controller is FixedSpellCastController.OPPONENT:
+            conditions.append(
+                {
+                    "field": "controller",
+                    "op": "ne",
+                    "value": "$source.controller",
+                }
+            )
+        if self.quality is FixedSpellCastQuality.NONCREATURE:
+            conditions.append(
+                {
+                    "not": {
+                        "field": "types",
+                        "op": "contains_any",
+                        "value": ["creature"],
+                    }
+                }
+            )
+        elif self.quality is FixedSpellCastQuality.INSTANT_OR_SORCERY:
+            conditions.append(
+                {
+                    "field": "types",
+                    "op": "contains_any",
+                    "value": ["instant", "sorcery"],
+                }
+            )
+        elif self.quality is not FixedSpellCastQuality.ANY:
+            conditions.append(
+                {
+                    "field": "types",
+                    "op": "contains_any",
+                    "value": [self.quality.value],
+                }
+            )
+        if not conditions:
+            return None
+        if len(conditions) == 1:
+            return conditions[0]
+        return {"all": conditions}
 
 
 @dataclass(frozen=True, slots=True)
@@ -266,6 +371,7 @@ class FixedCounterTriggerBinding:
     variant: str
     body: str
     zone_subject: FixedCounterZoneSubject | None = None
+    spell_subject: FixedSpellCastSubject | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -285,11 +391,23 @@ class FixedCounterTriggerBinding:
             raise ValueError(
                 "Fixed counter zone-change events require exactly one typed subject"
             )
+        if (
+            self.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST
+        ) != (self.spell_subject is not None):
+            raise ValueError(
+                "Fixed spell-cast events require exactly one typed subject"
+            )
 
     @property
     def template_id(self) -> str:
         if self.zone_subject is not None and self.zone_subject.subtype is not None:
             return "fixed-counter-subtype-entry-trigger-v1"
+        if (
+            self.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST
+            and self.variant
+            not in {"noncreature", "instant_or_sorcery"}
+        ):
+            return "fixed-counter-spell-cast-trigger-v1"
         return {
             FixedCounterTriggerEvent.STEP_BEGIN:
                 "fixed-counter-step-trigger-v1",
@@ -297,6 +415,8 @@ class FixedCounterTriggerBinding:
                 "fixed-counter-controlled-land-entry-trigger-v1",
             FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST:
                 "fixed-counter-controller-spell-cast-trigger-v1",
+            FixedCounterTriggerEvent.SOURCE_ATTACKS:
+                "fixed-counter-source-attacks-trigger-v1",
             FixedCounterTriggerEvent.CONTROLLER_LIFE_GAIN:
                 "fixed-counter-controller-life-gain-trigger-v1",
             FixedCounterTriggerEvent.CONTROLLER_CARD_DRAW:
@@ -337,6 +457,9 @@ class FixedCounterTriggerBinding:
             FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST: (
                 "trigger-event-normalized-spell-cast",
             ),
+            FixedCounterTriggerEvent.SOURCE_ATTACKS: (
+                "trigger-event-normalized-self-attack",
+            ),
             FixedCounterTriggerEvent.CONTROLLER_LIFE_GAIN: (
                 "trigger-event-normalized-life-gain",
             ),
@@ -374,30 +497,13 @@ class FixedCounterTriggerBinding:
                 "value": "$source.controller",
             }
         if self.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST:
-            type_condition: Mapping[str, Any] = (
-                {
-                    "not": {
-                        "field": "types",
-                        "op": "contains_any",
-                        "value": ["creature"],
-                    }
-                }
-                if self.variant == "noncreature"
-                else {
-                    "field": "types",
-                    "op": "contains_any",
-                    "value": ["instant", "sorcery"],
-                }
-            )
+            assert self.spell_subject is not None
+            return self.spell_subject.event_condition
+        if self.event is FixedCounterTriggerEvent.SOURCE_ATTACKS:
             return {
-                "all": [
-                    {
-                        "field": "controller",
-                        "op": "eq",
-                        "value": "$source.controller",
-                    },
-                    type_condition,
-                ]
+                "field": "card",
+                "op": "eq",
+                "value": "$source.ref",
             }
         if self.event in {
             FixedCounterTriggerEvent.CONTROLLER_LIFE_GAIN,
@@ -565,6 +671,14 @@ def fixed_counter_trigger_binding(
     spell_cast = _CONTROLLER_SPELL_CAST_TRIGGER.fullmatch(material_line)
     if spell_cast is not None:
         quality = spell_cast.group("quality").casefold()
+        spell_subject = FixedSpellCastSubject(
+            controller=FixedSpellCastController.SOURCE,
+            quality=(
+                FixedSpellCastQuality.NONCREATURE
+                if quality == "a noncreature"
+                else FixedSpellCastQuality.INSTANT_OR_SORCERY
+            ),
+        )
         return FixedCounterTriggerBinding(
             event=FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST,
             variant=(
@@ -573,6 +687,41 @@ def fixed_counter_trigger_binding(
                 else "instant_or_sorcery"
             ),
             body=spell_cast.group("body"),
+            spell_subject=spell_subject,
+        )
+    spell_cast = _SPELL_CAST_TRIGGER.fullmatch(material_line)
+    if spell_cast is not None:
+        spell_subject = FixedSpellCastSubject(
+            controller={
+                "you cast": FixedSpellCastController.SOURCE,
+                "an opponent casts": FixedSpellCastController.OPPONENT,
+                "a player casts": FixedSpellCastController.ANY,
+            }[spell_cast.group("relation").casefold()],
+            quality={
+                "a spell": FixedSpellCastQuality.ANY,
+                "a noncreature spell": FixedSpellCastQuality.NONCREATURE,
+                "an instant or sorcery spell": (
+                    FixedSpellCastQuality.INSTANT_OR_SORCERY
+                ),
+                "a creature spell": FixedSpellCastQuality.CREATURE,
+                "an artifact spell": FixedSpellCastQuality.ARTIFACT,
+                "an enchantment spell": FixedSpellCastQuality.ENCHANTMENT,
+                "an instant spell": FixedSpellCastQuality.INSTANT,
+                "a sorcery spell": FixedSpellCastQuality.SORCERY,
+            }[spell_cast.group("quality").casefold()],
+        )
+        return FixedCounterTriggerBinding(
+            event=FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST,
+            variant=spell_subject.variant,
+            body=spell_cast.group("body"),
+            spell_subject=spell_subject,
+        )
+    source_attack = _SOURCE_ATTACK_TRIGGER.fullmatch(material_line)
+    if source_attack is not None:
+        return FixedCounterTriggerBinding(
+            event=FixedCounterTriggerEvent.SOURCE_ATTACKS,
+            variant="source_attacks",
+            body=source_attack.group("body"),
         )
     life_gain = _CONTROLLER_LIFE_GAIN_TRIGGER.fullmatch(material_line)
     if life_gain is not None:
@@ -864,6 +1013,9 @@ __all__ = [
     "FixedCounterTriggerEvent",
     "FixedCounterZoneController",
     "FixedCounterZoneSubject",
+    "FixedSpellCastController",
+    "FixedSpellCastQuality",
+    "FixedSpellCastSubject",
     "fixed_counter_event_trigger_node",
     "fixed_counter_trigger_binding",
     "fixed_typed_event_effect_trigger_node",

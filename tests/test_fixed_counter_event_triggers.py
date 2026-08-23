@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT, keep_all, make_session
+from common import ROOT, keep_all, make_session, pass_current
 from quorune.carddb import CardDatabase
 from quorune.damage import damage_proposal, resolve_damage_batch
 from quorune.damage_modifier_state import (
@@ -29,13 +29,16 @@ from quorune.compiler.fixed_counter_trigger_nodes import (
     FixedCounterTriggerEvent,
     FixedCounterZoneController,
     FixedCounterZoneSubject,
+    FixedSpellCastController,
+    FixedSpellCastQuality,
+    FixedSpellCastSubject,
     fixed_counter_trigger_binding,
 )
 from quorune.compiler.target_effect_corpus_assurance import (
     TargetEffectCorpusCollector,
 )
 from quorune.deck import DeckLoader
-from quorune.model import CardInstance
+from quorune.model import CardInstance, CombatState
 from quorune.oracle_ir import (
     compile_oracle_card,
     generated_programs,
@@ -269,12 +272,151 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             counter_node.mechanics,
         )
 
+    def test_closed_cast_and_source_attack_bindings_compile_exactly(self):
+        cases = (
+            (
+                "Whenever you cast an artifact spell, draw a card.",
+                "Artifact",
+                "spell.cast",
+                "fixed-typed-effect-spell-cast-trigger-v1",
+                {
+                    "all": [
+                        {
+                            "field": "controller",
+                            "op": "eq",
+                            "value": "$source.controller",
+                        },
+                        {
+                            "field": "types",
+                            "op": "contains_any",
+                            "value": ["artifact"],
+                        },
+                    ]
+                },
+                "trigger.event.normalized_spell_cast",
+            ),
+            (
+                "Whenever an opponent casts a spell, you gain 1 life.",
+                "Artifact",
+                "spell.cast",
+                "fixed-typed-effect-spell-cast-trigger-v1",
+                {
+                    "field": "controller",
+                    "op": "ne",
+                    "value": "$source.controller",
+                },
+                "trigger.event.normalized_spell_cast",
+            ),
+            (
+                "Whenever a player casts a spell, you gain 1 life.",
+                "Artifact",
+                "spell.cast",
+                "fixed-typed-effect-spell-cast-trigger-v1",
+                None,
+                "trigger.event.normalized_spell_cast",
+            ),
+            (
+                "Whenever this creature attacks, you gain 1 life.",
+                "Creature — Soldier",
+                "creature.attacks",
+                "fixed-typed-effect-source-attacks-trigger-v1",
+                {
+                    "field": "card",
+                    "op": "eq",
+                    "value": "$source.ref",
+                },
+                "trigger.event.normalized_self_attack",
+            ),
+        )
+        for (
+            text,
+            type_line,
+            event,
+            template_id,
+            condition,
+            event_capability,
+        ) in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(text)
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                self.assertEqual(event, binding.event.value)
+                self.assertEqual(condition, binding.event_condition)
+                self.assertEqual(
+                    template_id.replace(
+                        "fixed-typed-effect-",
+                        "fixed-counter-",
+                    ),
+                    binding.template_id,
+                )
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertEqual(condition, node.event_condition)
+                self.assertIn(event_capability, node.capability_dependencies)
+                self.assertIn(
+                    "trigger.effect.fixed_event",
+                    node.capability_dependencies,
+                )
+
+        counter = self.compile(
+            "Whenever this creature attacks, put a +1/+1 counter on "
+            "this creature.",
+            type_line="Creature — Soldier",
+        )
+        counter_node = next(
+            value
+            for value in counter.faces[0].nodes
+            if value.template_id == "fixed-counter-source-attacks-trigger-v1"
+        )
+        self.assertEqual("exact", counter.status)
+        self.assertIn(
+            "trigger.event.normalized_self_attack",
+            counter_node.capability_dependencies,
+        )
+        self.assertIn(
+            "counter.producer.fixed_event_trigger",
+            counter_node.capability_dependencies,
+        )
+
+        optional = self.compile(
+            "Whenever an opponent casts an artifact spell, you may put a "
+            "charge counter on this artifact."
+        )
+        optional_node = next(
+            value
+            for value in optional.faces[0].nodes
+            if value.template_id
+            == "fixed-counter-spell-cast-trigger-optional-v1"
+        )
+        self.assertEqual("exact", optional.status)
+        self.assertIn(
+            "counter.producer.optional_fixed_event_trigger",
+            optional_node.capability_dependencies,
+        )
+
+        with self.assertRaises(ValueError):
+            FixedSpellCastSubject(
+                controller="source_controller",
+                quality=FixedSpellCastQuality.ANY,
+            )
+        with self.assertRaises(ValueError):
+            FixedSpellCastSubject(
+                controller=FixedSpellCastController.SOURCE,
+                quality="artifact",
+            )
+
     def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
         cases = (
             "At the beginning of your upkeep, you may draw a card.",
             "At the beginning of your upkeep, if you have no cards in hand, "
             "draw a card.",
-            "Whenever an opponent casts a spell, draw a card.",
+            "Whenever an opponent casts or copies a spell, draw a card.",
+            "Whenever this creature attacks alone, draw a card.",
             "When you do, draw a card.",
             "At the beginning of your upkeep, choose one —",
         )
@@ -1199,7 +1341,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
     def test_adjacent_event_and_effect_variants_remain_material(self):
         variants = (
             "Whenever you cast or copy a noncreature spell, put a +1/+1 counter on this creature.",
-            "Whenever an opponent casts a noncreature spell, put a +1/+1 counter on this creature.",
+            "Whenever an opponent casts or copies a noncreature spell, put a +1/+1 counter on this creature.",
+            "Whenever this creature attacks alone, put a +1/+1 counter on this creature.",
             "Whenever a land enters, put a +1/+1 counter on this creature.",
             "Whenever an opponent gains life, put a +1/+1 counter on this creature.",
             "Whenever an opponent draws a card, put a +1/+1 counter on this creature.",
@@ -1315,6 +1458,62 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             )
         )
         self.assertNotEqual("exact", mutated.status)
+
+    def test_new_event_bindings_fail_closed_with_event_capability(self):
+        cases = (
+            (
+                "Whenever this creature attacks, you gain 1 life.",
+                "Creature — Soldier",
+                "trigger.event.normalized_self_attack",
+                "fixed-typed-effect-source-attacks-trigger-v1",
+            ),
+            (
+                "Whenever this creature attacks, put a +1/+1 counter on "
+                "this creature.",
+                "Creature — Soldier",
+                "trigger.event.normalized_self_attack",
+                "fixed-counter-source-attacks-trigger-v1",
+            ),
+            (
+                "Whenever an opponent casts an artifact spell, draw a card.",
+                "Artifact",
+                "trigger.event.normalized_spell_cast",
+                "fixed-typed-effect-spell-cast-trigger-v1",
+            ),
+        )
+        for text, type_line, dependency_id, template_id in cases:
+            with self.subTest(text=text, dependency=dependency_id):
+                registry = json.loads(
+                    REGISTRY_PATH.read_text(encoding="utf-8")
+                )
+                dependency = next(
+                    row
+                    for row in registry["capabilities"]
+                    if row["id"] == dependency_id
+                )
+                dependency["status"] = "blocked"
+                dependency["blockers"] = ["focused event mutation"]
+                record = replace(
+                    self.db.lookup("Scheduled Counter Trigger Fixture"),
+                    name="Compiler Fixture",
+                    oracle_text=text,
+                    type_line=type_line,
+                    keywords=(),
+                    faces=(),
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=CapabilityRegistry(registry),
+                    capability_profile="commander_review",
+                )
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertFalse(node.exact)
+                self.assertTrue(node.residual_ids)
+                self.assertNotEqual("exact", ir.status)
 
     def test_optional_counter_event_trigger_dependencies_and_mutations_fail_closed(
         self,
@@ -1941,6 +2140,192 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         )
         self.resolve_top(engine)
         self.assertEqual(1, source.counters.get("+1/+1"))
+
+    def test_cast_relations_and_type_predicates_share_committed_event(self):
+        session = self.session(121003, players=4)
+        engine = session.engine
+        controller_source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Artifact Cast Draw Trigger Fixture",
+            ref="controller-artifact-cast-source",
+            zone="battlefield",
+        )
+        opponent_source = self.add_card(
+            engine,
+            seat="B",
+            name="Typed Opponent Cast Life Trigger Fixture",
+            ref="opponent-cast-source",
+            zone="battlefield",
+        )
+        any_source = self.add_card(
+            engine,
+            seat="C",
+            name="Typed Any Cast Life Trigger Fixture",
+            ref="any-cast-source",
+            zone="battlefield",
+        )
+        programs = {
+            source.ref: self.register_typed_event_trigger(engine, source)
+            for source in (controller_source, opponent_source, any_source)
+        }
+        before_hand = len(engine.state.players["A"].zones["hand"])
+        before_life = {
+            seat: engine.state.players[seat].life for seat in ("B", "C")
+        }
+
+        spell = self.prepare_noncreature_cast(engine)
+        engine._stabilize()
+
+        self.assertEqual("stack", spell.zone)
+        trigger_items = [
+            item
+            for item in engine.state.stack
+            if item.semantic_key in {program.key for program in programs.values()}
+        ]
+        self.assertEqual(3, len(trigger_items))
+        self.assertEqual(
+            {program.key for program in programs.values()},
+            {item.semantic_key for item in trigger_items},
+        )
+        self.assertTrue(
+            all(
+                item.context["event"] == "spell.cast"
+                and item.context["controller"] == "A"
+                and item.context["types"] == ["artifact"]
+                for item in trigger_items
+            )
+        )
+        for _ in trigger_items:
+            self.resolve_top(engine)
+        self.assertEqual(
+            before_hand + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+        self.assertEqual(before_life["B"] + 1, engine.state.players["B"].life)
+        self.assertEqual(before_life["C"] + 1, engine.state.players["C"].life)
+
+    def test_source_attack_trigger_uses_sealed_transition_and_replays(self):
+        session = self.session(121004, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="typed-self-attack-source",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        before_life = engine.state.players["A"].life
+
+        engine._issue_attackers()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        declared = session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {source.ref: "B"}},
+        )
+        self.assertTrue(declared.ok, declared.summary)
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("creature.attacks", item.context["event"])
+        self.assertEqual(source.ref, item.context["card"])
+        self.assertEqual(
+            item.context["event_id"],
+            item.context["attack_transition"]["transition_id"],
+        )
+        for seat in engine.active_seats:
+            packet = session.packet(f"pilot:{seat}", full=True)
+            packet_text = json.dumps(packet, sort_keys=True)
+            self.assertNotIn(source.object_id, packet_text)
+            self.assertNotIn(source.logical_object_id, packet_text)
+
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertFalse(engine.state.stack)
+        self.assertEqual(before_life + 1, engine.state.players["A"].life)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "typed-self-attack-trigger"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_source_attack_counter_trigger_uses_replacement_owner(self):
+        session = self.session(121006)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Source Attack Counter Trigger Fixture",
+            ref="counter-self-attack-source",
+            zone="battlefield",
+        )
+        program = self.register_trigger(engine, source)
+
+        engine._issue_attackers()
+        declared = session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {source.ref: "B"}},
+        )
+        self.assertTrue(declared.ok, declared.summary)
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("creature.attacks", item.context["event"])
+        self.resolve_top(engine)
+        self.assertEqual(1, source.counters.get("+1/+1"))
+
+    def test_source_attack_event_dispatch_mutant_is_killed(self):
+        session = self.session(121005)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="mutated-self-attack-source",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+
+        engine._issue_attackers()
+        with patch.object(
+            engine,
+            "_dispatch_semantic_event",
+            return_value=[],
+        ):
+            declared = session.act(
+                "pilot:A",
+                {"a": "attack", "atk": {source.ref: "B"}},
+            )
+        self.assertTrue(declared.ok, declared.summary)
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
 
     def test_land_entry_counter_trigger_uses_normalized_event(self):
         session = self.session(120002)

@@ -312,6 +312,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-normalized-spell-cast": (
         "trigger.event.normalized_spell_cast",
     ),
+    "trigger-event-normalized-self-attack": (
+        "trigger.event.normalized_self_attack",
+    ),
     "trigger-event-normalized-card-draw": (
         "trigger.event.normalized_card_draw",
     ),
