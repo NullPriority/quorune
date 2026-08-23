@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "1dd200653f9fe2fa41f815dce40ef8a77f6e164bee014663de2baf876d701c83",
-  "declaration_source_fingerprint": "39dd3260a2096ff1e83a65f6cdb26d01df19db775f09df8c1e287fa0a1cd6b5e",
+  "registry_fingerprint": "44bf64f78665d83cdcbe22f53e50cb5b6aad954f85029accf7d3aacd0b3fb421",
+  "declaration_source_fingerprint": "d7d234e99889749c349f584d324b5447823bc447af49e7791737aaf2c7aeafc5",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -38736,6 +38736,25 @@
     {
       "capability_id": "target.protection.shroud_permanent",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
+      "official_rule_ids": [
+        "115.1",
+        "115.2",
+        "608.2b",
+        "702.18",
+        "702.18a",
+        "702.18b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep a Shroud source out of an opposing targeted-spell offer and reject an injected target without disturbing its independent enchantment-cast draw trigger."
+    },
+    {
+      "capability_id": "target.protection.shroud_permanent",
+      "evidence_class": "interaction",
       "test_id": "tests.test_shroud_targeting.ShroudTargetingIntegrationTests.test_attached_continuous_shroud_updates_advertised_target_legality",
       "official_rule_ids": [
         "115.1",
@@ -43656,6 +43675,33 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the Shroud source's independent enchantment-cast trigger through the canonical private library-to-hand draw after an opposing targeted-spell command was rejected transactionally."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectRuntimeTests.test_any_target_damage_then_draw_revalidates_and_draws_privately",
       "official_rule_ids": [
         "121.1",
@@ -45634,5 +45680,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "3d7eca096270f7cda9fea2f9d8805b8acaf3adfde54167552d199204057b61fb"
+  "fingerprint": "253b31da3f7c068a46cfdd10d0422aeb5e81efe736990790f2f37eb6d5609c5b"
 }

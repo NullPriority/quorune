@@ -17056,6 +17056,14 @@
     {
       "capability_id": "target.protection.shroud_permanent",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
+      "official_rule_ids": ["115.1", "115.2", "608.2b", "702.18", "702.18a", "702.18b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep a Shroud source out of an opposing targeted-spell offer and reject an injected target without disturbing its independent enchantment-cast draw trigger."
+    },
+    {
+      "capability_id": "target.protection.shroud_permanent",
+      "evidence_class": "interaction",
       "test_id": "tests.test_shroud_targeting.ShroudTargetingIntegrationTests.test_attached_continuous_shroud_updates_advertised_target_legality",
       "official_rule_ids": ["115.1", "115.2", "608.2b", "702.18", "702.18a", "702.18b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -19995,6 +20003,14 @@
       "official_rule_ids": ["121.1", "121.2", "121.2a", "121.2b", "121.2c", "121.3", "121.3a", "121.4", "121.5", "121.6", "121.6a", "121.6b", "702.52a", "702.52b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit the controller's library-to-hand draw after Furnace Skullbomb places counters on its validated direct permanent target."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
+      "official_rule_ids": ["121.1", "121.2", "121.2a", "121.2b", "121.2c", "121.3", "121.3a", "121.4", "121.5", "121.6", "121.6a", "121.6b", "702.52a", "702.52b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve the Shroud source's independent enchantment-cast trigger through the canonical private library-to-hand draw after an opposing targeted-spell command was rejected transactionally."
     },
     {
       "capability_id": "zone.draw.library_to_hand",

@@ -116,6 +116,25 @@
       "layout": "normal",
       "released_at": "2026-08-23",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "12100000-0000-4000-8000-000000000007",
+      "name": "Typed Shroud Enchantment Cast Draw Trigger Fixture",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Druid",
+      "oracle_text": "Shroud\nWhenever you cast an enchantment spell, draw a card.",
+      "power": "0",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["Shroud"],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-23",
+      "legalities": {"commander": "legal"}
     }
   ]
 }

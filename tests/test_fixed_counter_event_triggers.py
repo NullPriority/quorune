@@ -2205,6 +2205,82 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(before_life["B"] + 1, engine.state.players["B"].life)
         self.assertEqual(before_life["C"] + 1, engine.state.players["C"].life)
 
+    def test_shroud_and_enchantment_cast_draw_compose(self):
+        session = self.session(121007, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="B",
+            name="Typed Shroud Enchantment Cast Draw Trigger Fixture",
+            ref="shroud-enchantment-cast-source",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+
+        legal_target = self.deck_card(engine, "A", "Emry, Lurker of the Loch")
+        engine.move_card(
+            legal_target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        reb = self.deck_card(engine, "A", "Red Elemental Blast")
+        engine.move_card(reb.object_id, "hand", log=False)
+        engine.state.players["A"].mana_pool["R"] = 1
+        engine.state.priority_player = "A"
+        engine._issue_priority("A")
+        hints = engine._priority_action_hints("A")
+        action = next(
+            row for row in hints["actions"] if row.get("card") == reb.ref
+        )
+        legal_refs = action["target_schema"]["legal_refs"]
+        self.assertNotIn(source.ref, legal_refs)
+        self.assertIn(legal_target.ref, legal_refs)
+        before_rejection = authoritative_state_hash(engine.state)
+        rejected = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "modes": ["destroy"],
+                "targets": [source.ref],
+                "pay": "manual",
+                "payment": {"R": 1},
+            },
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(
+            before_rejection,
+            authoritative_state_hash(engine.state),
+        )
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.active_player = "B"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "B"
+        engine.state.priority_passes = []
+        enchantment = self.deck_card(engine, "B", "Mystic Remora")
+        engine.move_card(enchantment.object_id, "hand", log=False)
+        engine.state.players["B"].mana_pool["U"] += 1
+        engine._cast("B", {"card": enchantment.ref, "pay": "auto"})
+        engine._stabilize()
+
+        trigger = next(
+            item for item in engine.state.stack if item.semantic_key == program.key
+        )
+        self.assertEqual("spell.cast", trigger.context["event"])
+        self.assertEqual(["enchantment"], trigger.context["types"])
+        hand_before_draw = len(engine.state.players["B"].zones["hand"])
+        library_top = engine.state.players["B"].zones["library"][-1]
+        self.resolve_top(engine)
+        self.assertEqual(
+            hand_before_draw + 1,
+            len(engine.state.players["B"].zones["hand"]),
+        )
+        self.assertIn(library_top, engine.state.players["B"].zones["hand"])
+        self.assertEqual("battlefield", source.zone)
+
     def test_source_attack_trigger_uses_sealed_transition_and_replays(self):
         session = self.session(121004, players=4)
         engine = session.engine
