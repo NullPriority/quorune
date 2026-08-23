@@ -710,7 +710,7 @@
     {
       "file": "quorune/casting_payment_keywords.py",
       "layer": "rules",
-      "owning_subsystem": "casting_activation_and_costs",
+      "owning_subsystem": "legacy_rules",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -3540,7 +3540,7 @@
     {
       "file": "quorune/evoke.py",
       "layer": "rules",
-      "owning_subsystem": "casting_activation_and_costs",
+      "owning_subsystem": "legacy_rules",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -7818,5 +7818,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4d408e8352584be6e85f56dcfd3b8c73eeaaa9815ad47f2e23c2c73649809789"
+  "fingerprint": "6cbe14bd24e6e848b0ee6354ca278fd374e591cbcb89a7cb39824c7074398216"
 }
