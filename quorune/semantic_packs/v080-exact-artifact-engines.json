@@ -97,11 +97,20 @@
       "oracle_id": "52241b9c-7a69-4176-9234-8bdab09d8e64",
       "ability_id": "trigger:artifact-cast",
       "active_zone": "battlefield",
-      "event": "artifact.cast",
+      "event": "spell.cast",
       "event_condition": {
-        "field": "player",
-        "op": "eq",
-        "value": "$source.controller"
+        "all": [
+          {
+            "field": "controller",
+            "op": "eq",
+            "value": "$source.controller"
+          },
+          {
+            "field": "types",
+            "op": "contains_any",
+            "value": ["artifact"]
+          }
+        ]
       },
       "effects": [
         {
