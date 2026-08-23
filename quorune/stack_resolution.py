@@ -6,6 +6,7 @@ from typing import Any, Protocol
 
 from .aura import aura_resolution_move_kwargs
 from .errors import StateInvariantError
+from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
 from .semantic_runtime.zone_replacements import PreparedZoneChange
 from .stack_counter import oracle_has_intrinsic_counter_prohibition
@@ -123,7 +124,10 @@ def complete_stack_resolution(
     card = host.state.cards[item.card_object_id]
     if card.zone != "stack":
         return
-    if item.context.get("cost_option") == "evoke":
+    evoked = validate_evoke_payment_marker(
+        item.context.get(EVOKE_PAYMENT_FIELD)
+    )
+    if evoked:
         card.annotations["evoked"] = True
     host.move_card(
         card.object_id,
@@ -135,6 +139,8 @@ def complete_stack_resolution(
         log=False,
         semantic_events=True,
     )
+    if evoked and card.zone != "battlefield":
+        card.annotations.pop("evoked", None)
 
 
 __all__ = [

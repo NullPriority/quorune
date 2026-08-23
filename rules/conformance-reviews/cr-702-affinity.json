@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 702.41 — Affinity",
+  "cases": [
+    {
+      "rule_id": "702.41",
+      "rule_text_sha256": "5a2e54bbcb99c02679cdc20c97f84f5c03e704b2afa796f355976e757bb3985b",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["compiler.casting_payment_keyword_nodes.typed_affinity_keyword_node", "casting_payment_keywords.AffinitySpec"],
+      "executable_test_ids": ["tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_quality_compiles_closed_effective_queries"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["Keyword heading; the supported effective-characteristic query grammar and payment behavior are reviewed in the subrules."]
+    },
+    {
+      "rule_id": "702.41a",
+      "rule_text_sha256": "e7e01dd42b982f17b099fee5ac921113935e5c5227034dd2675b03894e974365",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["casting_payment_keywords.AffinitySpec", "compiled_cast_costs.compiled_affinity_specs", "rules.casting.costs._apply_affinity", "object_predicate.ObjectQuerySpec"],
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_quality_compiles_closed_effective_queries",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_query_descriptor_and_unknown_quality_fail_closed",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_affinity_counts_effective_union_and_excludes_opponents",
+        "tests.test_convoke_rules.AffinityRuntimeTests.test_typed_affinity_cast_replays_exactly"
+      ],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "hidden_information", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "hidden_information", "replay"],
+      "blockers": ["Affinity qualities outside the declared closed query grammar fail closed", "Affinity granted or removed by continuous effects is not lowered"],
+      "notes": ["Supported qualities count the controller's active permanents through effective characteristics and reduce generic mana only."]
+    },
+    {
+      "rule_id": "702.41b",
+      "rule_text_sha256": "7e17e29b01bccb3e4bb87c524bee4baefe7e7dcb30a53809491671410e0cd22c",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["compiler.keyword_nodes.keyword_node_plans", "compiled_cast_costs.compiled_affinity_specs", "rules.casting.costs._apply_affinity"],
+      "executable_test_ids": ["tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_payment_keyword_instance_multiplicity_matches_rules"],
+      "required_scenarios": ["positive"],
+      "covered_scenarios": ["positive"],
+      "blockers": [],
+      "notes": ["Each supported Affinity instance retains a separate typed descriptor and the shared payment owner applies every descriptor."]
+    }
+  ]
+}

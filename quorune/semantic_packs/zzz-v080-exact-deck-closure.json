@@ -1033,6 +1033,11 @@
             "id": "evoke",
             "kind": "alternate",
             "requirements": {},
+            "evoke_payment": {
+              "schema_version": 1,
+              "kind": "evoke",
+              "sacrifice_on_entry": true
+            },
             "exile_from_hand": {
               "colors_any": ["G"],
               "exclude_source": true

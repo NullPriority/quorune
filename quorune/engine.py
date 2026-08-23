@@ -3221,79 +3221,6 @@ class CommanderEngine(
             candidates.append(card.ref)
         return candidates
 
-    def _payment_mechanic_candidates(
-        self,
-        seat: str,
-        mechanic: str,
-    ) -> list[CardInstance]:
-        if mechanic != "improvise":
-            return []
-        candidates: list[CardInstance] = []
-        for object_id in self.state.players[seat].zones["battlefield"]:
-            card = self.state.cards[object_id]
-            if (
-                card.controller != seat
-                or card.phased_out
-                or card.tapped
-            ):
-                continue
-            types, _, _ = self._type_parts(
-                str(
-                    self._effective_card_data(card).get("type_line")
-                    or ""
-                )
-            )
-            if "artifact" in types:
-                candidates.append(card)
-        return candidates
-
-    def _tap_payment_plan(
-        self,
-        seat: str,
-        requirements: Mapping[str, int],
-        mechanic: str,
-        candidates: Sequence[CardInstance],
-        *,
-        spend_context: str | None = None,
-    ) -> tuple[dict[str, int], list[CardInstance]] | None:
-        """Find a payable minimum-card legacy Improvise plan."""
-
-        if mechanic != "improvise":
-            return None
-
-        base = self._mana_vector(requirements)
-        best: tuple[dict[str, int], list[CardInstance]] | None = None
-
-        def search(
-            index: int,
-            selected: list[CardInstance],
-        ) -> None:
-            nonlocal best
-            if best is not None and len(selected) >= len(best[1]):
-                return
-            reduced = self._mana_vector(base)
-            if len(selected) > reduced["GENERIC"]:
-                return
-            reduced["GENERIC"] -= len(selected)
-            excluded = {card.object_id for card in selected}
-            if self._cost_is_affordable(
-                seat,
-                reduced,
-                exclude_sources=excluded,
-                spend_context=spend_context,
-            ):
-                best = (reduced, list(selected))
-                return
-            if index >= len(candidates):
-                return
-            search(index + 1, selected)
-            selected.append(candidates[index])
-            search(index + 1, selected)
-            selected.pop()
-
-        search(0, [])
-        return best
-
     def _cost_payment_mechanics(
         self,
         record: CardRecord,
@@ -3304,15 +3231,6 @@ class CommanderEngine(
             dict(value) if isinstance(value, Mapping) else {"kind": str(value)}
             for value in declared
         ]
-        declared_kinds = {
-            str(value.get("kind") or "").casefold()
-            for value in mechanics
-        }
-        keyword_values = {
-            str(value).casefold() for value in record.keywords
-        }
-        if "improvise" in keyword_values and "improvise" not in declared_kinds:
-            mechanics.append({"kind": "improvise"})
         return mechanics
 
     def _compiled_printed_cost(

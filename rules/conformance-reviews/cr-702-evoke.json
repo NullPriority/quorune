@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 702.74 — Evoke",
+  "cases": [
+    {
+      "rule_id": "702.74",
+      "rule_text_sha256": "54a71433392a3c3efe405d4bcabe6f259aa56f48ca0d277c834d894e4d328b35",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["compiler.casting_payment_keyword_nodes.fixed_mana_evoke_keyword_node", "evoke.FixedManaEvokeSpec"],
+      "executable_test_ids": ["tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_fixed_and_hybrid_evoke_compile_to_typed_cost_options"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["Keyword heading; the alternate cost and shared sacrifice trigger are reviewed together in the subrule."]
+    },
+    {
+      "rule_id": "702.74a",
+      "rule_text_sha256": "69fe99333164f04a5e3f49d2ae597da17d9919a633c204d9fe117d6abd78630e",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["evoke.FixedManaEvokeSpec", "rules.casting.costs._with_evoke_cost", "rules.casting.commit.commit_cast", "stack_resolution.resolve_top", "trigger_discovery._shared_evoke_trigger_item"],
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_evoke_nonmana_descriptor_and_raw_cost_fail_closed",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_cost_marks_and_sacrifices_on_entry",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_uses_shared_trigger_owner_with_reviewed_override",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_trigger_uses_ordinary_apnap_batching",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_offer_keeps_hand_identity_private",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_cast_and_trigger_replay_exactly"
+      ],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "hidden_information", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "hidden_information", "replay"],
+      "blockers": ["Nonmana Evoke costs remain unsupported", "The complete alternate-cost restriction and sacrifice-replacement interaction surface is not closed"],
+      "notes": ["Fixed ordinary and colored-hybrid costs use the common alternate-cost pipeline; an immutable payment marker feeds the ordinary APNAP trigger owner after battlefield entry."]
+    }
+  ]
+}

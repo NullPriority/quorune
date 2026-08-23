@@ -8,6 +8,7 @@
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",
     "tests/fixtures/casting-activation-metadata-cards.json",
+    "tests/fixtures/casting-payment-keywords-cards.json",
     "tests/fixtures/classified-interaction-assurance-cards.json",
     "tests/fixtures/combat-goad-prohibition-cards.json",
     "tests/fixtures/composition-assurance-cards.json",

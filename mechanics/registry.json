@@ -1,5 +1,5 @@
 {
-  "contract_count": 118,
+  "contract_count": 121,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -16,8 +16,8 @@
     {
       "mechanic_id": "affinity",
       "path": "mechanics/contracts/affinity.json",
-      "sha256": "0180ea25576b3c2f0f87c01b7a9b755178ed40db276380b0db556eb0a5a15530",
-      "version": 1
+      "sha256": "afc86c153bc518c2ab65d476138d94f55f49ce9fd5e371800a77ba2a5c458634",
+      "version": 2
     },
     {
       "mechanic_id": "amass",
@@ -200,6 +200,12 @@
       "version": 2
     },
     {
+      "mechanic_id": "delve",
+      "path": "mechanics/contracts/delve.json",
+      "sha256": "b78971672b4633742020c25e394382b1450ec50b76bea4dfde61305835c72f53",
+      "version": 1
+    },
+    {
       "mechanic_id": "destroy",
       "path": "mechanics/contracts/destroy.json",
       "sha256": "d4976aaf1cdfd1d77401c0927dcdc8aff3aa3ee55bae944315cc886b19139102",
@@ -263,6 +269,12 @@
       "mechanic_id": "cr-512-ending-phase",
       "path": "mechanics/contracts/ending-phase.json",
       "sha256": "3bfa8a5be8104ca0e65e57f6f92312edbe94ccc801e8f4324e83b10c775003e3",
+      "version": 1
+    },
+    {
+      "mechanic_id": "evoke",
+      "path": "mechanics/contracts/evoke.json",
+      "sha256": "957bea46d6eb5416c28565517844490709bf1565f40e277c13139a3b0071f263",
       "version": 1
     },
     {
@@ -365,6 +377,12 @@
       "mechanic_id": "horsemanship",
       "path": "mechanics/contracts/horsemanship.json",
       "sha256": "f22d3db80152bc74d08eac6a0d312af71c25c111514a7c2bda93e1a940419c9e",
+      "version": 1
+    },
+    {
+      "mechanic_id": "improvise",
+      "path": "mechanics/contracts/improvise.json",
+      "sha256": "420d9e44abfff21f8abba7f7e92edc23ac06267e06ac3edff1eff7d0126ab6ac",
       "version": 1
     },
     {
@@ -750,31 +768,34 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/affinity.json",
-      "contract_sha256": "0180ea25576b3c2f0f87c01b7a9b755178ed40db276380b0db556eb0a5a15530",
-      "contract_version": 1,
-      "coverage_status": "trusted",
+      "contract_sha256": "afc86c153bc518c2ab65d476138d94f55f49ce9fd5e371800a77ba2a5c458634",
+      "contract_version": 2,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
       "implementation_component": "quorune.rules.casting.costs._apply_affinity",
-      "implementation_version": "affinity-artifact-count-payment-v1",
+      "implementation_version": "typed-affinity-effective-query-v2",
       "kind": "keyword_ability",
-      "known_blockers": [],
+      "known_blockers": [
+        "Affinity qualities outside the closed compiler grammar",
+        "granted, copied, removed, or text-changed Affinity until one shared ability-applicability query exists",
+        "Affinity-equivalent rules text",
+        "unrepresented cost-payment replacements, restrictions, and total-cost ordering interactions"
+      ],
       "mechanic_id": "affinity",
       "official_name": "Affinity",
       "rule_references": [
         "702.41"
       ],
       "test_ids": [
-        "test_affinity_for_artifacts_compiles_face_pinned_typed_program",
-        "test_affinity_descriptor_and_unsupported_grammar_fail_closed",
-        "test_affinity_compiler_mutant_is_killed",
-        "test_typed_affinity_counts_only_active_controlled_artifacts",
+        "test_affinity_quality_compiles_closed_effective_queries",
+        "test_affinity_query_descriptor_and_unknown_quality_fail_closed",
+        "test_affinity_counts_effective_union_and_excludes_opponents",
         "test_raw_affinity_keyword_without_compiled_descriptor_fails_closed",
-        "test_affinity_runtime_mutant_is_killed",
         "test_typed_affinity_cast_replays_exactly"
       ],
-      "trust_level": "trusted"
+      "trust_level": "untrusted"
     },
     {
       "category": "additional_rules",
@@ -1669,19 +1690,34 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/delve.json",
+      "contract_sha256": "b78971672b4633742020c25e394382b1450ec50b76bea4dfde61305835c72f53",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.casting_payment_keywords.DelvePaymentPlan, quorune.compiler.casting_payment_keyword_nodes.ordinary_delve_keyword_node, quorune.rules.casting.costs._apply_delve, and quorune.rules.casting.commit._commit_additional_costs",
+      "implementation_version": "typed-ordinary-delve-payment-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "granted, copied, removed, or text-changed Delve until one shared ability-applicability query exists",
+        "Delve-equivalent rules text",
+        "unrepresented cost-payment replacements and complete total-cost interaction grammar"
+      ],
       "mechanic_id": "delve",
       "official_name": "Delve",
       "rule_references": [
         "702.66"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_delve_compiler_and_descriptor_are_source_pinned",
+        "test_delve_compiles_and_exiles_selected_graveyard_cards",
+        "test_delve_descriptor_raw_keyword_and_stale_plan_fail_closed",
+        "test_convoke_and_delve_compose_in_one_cast_payment",
+        "test_delve_offer_is_owner_scoped_and_private",
+        "test_delve_cast_replays_exactly"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -2107,19 +2143,37 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/evoke.json",
+      "contract_sha256": "957bea46d6eb5416c28565517844490709bf1565f40e277c13139a3b0071f263",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.evoke.FixedManaEvokeSpec, quorune.compiler.casting_payment_keyword_nodes.fixed_mana_evoke_keyword_node, quorune.rules.casting.costs._with_evoke_cost, quorune.stack_resolution.complete_stack_resolution, and quorune.trigger_discovery._shared_evoke_trigger_item",
+      "implementation_version": "typed-fixed-mana-evoke-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "arbitrary nonmana, variable, Phyrexian, snow, and wider hybrid Evoke costs",
+        "granted, copied, removed, or text-changed Evoke until one shared ability-applicability query exists",
+        "Evoke-equivalent rules text",
+        "complete alternative-cost, replacement, and trigger interaction coverage"
+      ],
       "mechanic_id": "evoke",
       "official_name": "Evoke",
       "rule_references": [
         "702.74"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_fixed_and_hybrid_evoke_compile_to_typed_cost_options",
+        "test_evoke_nonmana_descriptor_and_raw_cost_fail_closed",
+        "test_evoke_cost_marks_and_sacrifices_on_entry",
+        "test_evoke_uses_shared_trigger_owner_with_reviewed_override",
+        "test_evoke_trigger_uses_ordinary_apnap_batching",
+        "test_evoke_offer_keeps_hand_identity_private",
+        "test_evoke_cast_and_trigger_replay_exactly",
+        "test_endurance_evoke_exiles_green_card_shuffles_target_and_sacrifices"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -2961,19 +3015,34 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/improvise.json",
+      "contract_sha256": "420d9e44abfff21f8abba7f7e92edc23ac06267e06ac3edff1eff7d0126ab6ac",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.casting_payment_keywords.ImproviseSpec, quorune.compiler.casting_payment_keyword_nodes.ordinary_improvise_keyword_node, quorune.rules.casting.costs._apply_improvise, and quorune.rules.casting.commit._commit_tap_costs",
+      "implementation_version": "typed-ordinary-improvise-payment-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "arbitrary granted, copied, removed, or text-changed Improvise until one shared ability-applicability query exists",
+        "Improvise-equivalent rules text",
+        "unrepresented cost-payment replacements and complete total-cost interaction grammar"
+      ],
       "mechanic_id": "improvise",
       "official_name": "Improvise",
       "rule_references": [
         "702.126"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_improvise_descriptor_and_raw_keyword_fail_closed",
+        "test_improvise_compiles_and_pays_only_generic_with_artifacts",
+        "test_improvise_offer_is_controller_scoped_and_private",
+        "test_granted_and_printed_improvise_share_one_payment_owner",
+        "test_raw_improvise_keyword_without_compiled_descriptor_fails_closed",
+        "test_improvise_cast_replays_exactly"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -11789,5 +11858,5 @@
       "taxonomy_id": "cr-905-conspiracy-draft"
     }
   ],
-  "trusted_mechanic_count": 8
+  "trusted_mechanic_count": 7
 }

@@ -868,6 +868,41 @@ def _trigger_multiplier_copies(
     return copies
 
 
+def _shared_evoke_trigger_item(
+    host: TriggerDiscoveryHost,
+    source: CardInstance,
+    event: str,
+    context: Mapping[str, Any],
+) -> StackItem | None:
+    """Materialize Evoke's universal sacrifice trigger from its cast marker."""
+
+    if (
+        event != "permanent.enter"
+        or str(context.get("card") or "") != source.ref
+        or source.zone != "battlefield"
+        or source.annotations.get("evoked") is not True
+    ):
+        return None
+    source.annotations.pop("evoked", None)
+    ref = host._next_ref("S")
+    return StackItem(
+        stack_id=host._stable_runtime_id("stack", ref),
+        ref=ref,
+        kind="triggered_ability",
+        controller=source.controller,
+        label=f"{source.printed_name} evoke sacrifice",
+        source_object_id=source.object_id,
+        semantic_key="builtin:sacrifice-source",
+        visibility=list(host.seats),
+        context={
+            "event": event,
+            "event_context": copy.deepcopy(dict(context)),
+            "source_logical_object_id": source.logical_object_id,
+            "evoke": True,
+        },
+    )
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -887,6 +922,18 @@ def dispatch_semantic_event(
         list(sources) if sources is not None else host._semantic_event_sources()
     )
     for source in candidates:
+        evoke_item = _shared_evoke_trigger_item(host, source, event, context)
+        if evoke_item is not None:
+            triggered.append(evoke_item)
+            triggered.extend(
+                _trigger_multiplier_copies(
+                    host,
+                    item=evoke_item,
+                    source=source,
+                    event=event,
+                    context=context,
+                )
+            )
         active_zone, characteristics, programs = _event_programs_for_source(
             host,
             source,

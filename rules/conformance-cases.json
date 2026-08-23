@@ -65636,23 +65636,28 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.41",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_quality_compiles_closed_effective_queries"
+      ],
+      "implementation_components": [
+        "compiler.casting_payment_keyword_nodes.typed_affinity_keyword_node",
+        "casting_payment_keywords.AffinitySpec"
+      ],
+      "notes": [
+        "Keyword heading; the supported effective-characteristic query grammar and payment behavior are reviewed in the subrules."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.41",
       "rule_text_sha256": "5a2e54bbcb99c02679cdc20c97f84f5c03e704b2afa796f355976e757bb3985b",
       "schema_version": 1,
@@ -65661,26 +65666,53 @@
         "end_line": 4325,
         "start_line": 4324
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "Affinity qualities outside the declared closed query grammar fail closed",
+        "Affinity granted or removed by continuous effects is not lowered"
       ],
       "case_id": "cr-702.41a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "702.41"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_quality_compiles_closed_effective_queries",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_affinity_query_descriptor_and_unknown_quality_fail_closed",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_affinity_counts_effective_union_and_excludes_opponents",
+        "tests.test_convoke_rules.AffinityRuntimeTests.test_typed_affinity_cast_replays_exactly"
+      ],
+      "implementation_components": [
+        "casting_payment_keywords.AffinitySpec",
+        "compiled_cast_costs.compiled_affinity_specs",
+        "rules.casting.costs._apply_affinity",
+        "object_predicate.ObjectQuerySpec"
+      ],
+      "notes": [
+        "Supported qualities count the controller's active permanents through effective characteristics and reduce generic mana only."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "702.41a",
       "rule_text_sha256": "e7e01dd42b982f17b099fee5ac921113935e5c5227034dd2675b03894e974365",
       "schema_version": 1,
@@ -65689,26 +65721,36 @@
         "end_line": 4327,
         "start_line": 4326
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-702.41b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive"
+      ],
       "dependency_rule_ids": [
         "702.41"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_payment_keyword_instance_multiplicity_matches_rules"
+      ],
+      "implementation_components": [
+        "compiler.keyword_nodes.keyword_node_plans",
+        "compiled_cast_costs.compiled_affinity_specs",
+        "rules.casting.costs._apply_affinity"
+      ],
+      "notes": [
+        "Each supported Affinity instance retains a separate typed descriptor and the shared payment owner applies every descriptor."
+      ],
+      "required_scenarios": [
+        "positive"
+      ],
+      "reviewed": true,
       "rule_id": "702.41b",
       "rule_text_sha256": "7e17e29b01bccb3e4bb87c524bee4baefe7e7dcb30a53809491671410e0cd22c",
       "schema_version": 1,
@@ -65717,7 +65759,7 @@
         "end_line": 4329,
         "start_line": 4328
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",
@@ -68518,23 +68560,28 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.66",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_delve_compiler_and_descriptor_are_source_pinned"
+      ],
+      "implementation_components": [
+        "compiler.casting_payment_keyword_nodes.ordinary_delve_keyword_node",
+        "casting_payment_keywords.DelvePaymentPlan"
+      ],
+      "notes": [
+        "Keyword heading; graveyard selection, payment ordering, and redundancy are reviewed in the subrules."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.66",
       "rule_text_sha256": "b4cd5d1c0ce4992ca5d3f370975382a37837f88bcc0a771bb2ec9c08e4406806",
       "schema_version": 1,
@@ -68543,26 +68590,50 @@
         "end_line": 4513,
         "start_line": 4512
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "Restricted mana and cost-payment replacement interactions are not represented"
       ],
       "case_id": "cr-702.66a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "702.66"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_compiles_and_exiles_selected_graveyard_cards",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_descriptor_raw_keyword_and_stale_plan_fail_closed",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_offer_is_owner_scoped_and_private",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_delve_cast_replays_exactly"
+      ],
+      "implementation_components": [
+        "casting_payment_keywords.DelvePaymentPlan",
+        "rules.casting.costs._apply_delve",
+        "rules.casting.costs.revalidate_delve_payment",
+        "rules.casting.commit.commit_cast"
+      ],
+      "notes": [
+        "The immutable source-pinned plan pays generic mana only, revalidates selected graveyard identities, and commits all exiles before mana payment."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "702.66a",
       "rule_text_sha256": "cacea3e199e90e936aecb315868b8cb73fc3b8efdb0f8d819e4dc08e93e6fd60",
       "schema_version": 1,
@@ -68571,26 +68642,40 @@
         "end_line": 4515,
         "start_line": 4514
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "The complete alternate, additional, increasing, reducing, minimum-cost, restricted-mana, and payment-replacement ordering grammar is not closed"
       ],
       "case_id": "cr-702.66b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "702.66"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_convoke_and_delve_compose_in_one_cast_payment"
+      ],
+      "implementation_components": [
+        "rules.casting.costs._apply_static_reductions",
+        "rules.casting.costs._apply_convoke",
+        "rules.casting.costs._apply_delve"
+      ],
+      "notes": [
+        "Represented total-cost modifiers are applied before Delve, and Convoke plus Delve share one remaining mana vector."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "702.66b",
       "rule_text_sha256": "9c6948513cbf6c28a3c71ceb4ff0ce18f3c73ca5da9dcde387a5673889c35d7a",
       "schema_version": 1,
@@ -68599,26 +68684,35 @@
         "end_line": 4517,
         "start_line": 4516
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-702.66c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive"
+      ],
       "dependency_rule_ids": [
         "702.66"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_payment_keyword_instance_multiplicity_matches_rules"
+      ],
+      "implementation_components": [
+        "compiler.keyword_nodes.keyword_node_plans",
+        "compiled_cast_costs.compiled_delve_specs"
+      ],
+      "notes": [
+        "Repeated ordinary Delve instances canonicalize to one typed payment descriptor."
+      ],
+      "required_scenarios": [
+        "positive"
+      ],
+      "reviewed": true,
       "rule_id": "702.66c",
       "rule_text_sha256": "482d1f064e7143e90c48b7446204d2205688d58de7e5f82566dcb95eb55599b7",
       "schema_version": 1,
@@ -68627,7 +68721,7 @@
         "end_line": 4519,
         "start_line": 4518
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",
@@ -69255,23 +69349,28 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.74",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_fixed_and_hybrid_evoke_compile_to_typed_cost_options"
+      ],
+      "implementation_components": [
+        "compiler.casting_payment_keyword_nodes.fixed_mana_evoke_keyword_node",
+        "evoke.FixedManaEvokeSpec"
+      ],
+      "notes": [
+        "Keyword heading; the alternate cost and shared sacrifice trigger are reviewed together in the subrule."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.74",
       "rule_text_sha256": "54a71433392a3c3efe405d4bcabe6f259aa56f48ca0d277c834d894e4d328b35",
       "schema_version": 1,
@@ -69280,26 +69379,56 @@
         "end_line": 4563,
         "start_line": 4562
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "Nonmana Evoke costs remain unsupported",
+        "The complete alternate-cost restriction and sacrifice-replacement interaction surface is not closed"
       ],
       "case_id": "cr-702.74a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "702.74"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_evoke_nonmana_descriptor_and_raw_cost_fail_closed",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_cost_marks_and_sacrifices_on_entry",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_uses_shared_trigger_owner_with_reviewed_override",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_trigger_uses_ordinary_apnap_batching",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_offer_keeps_hand_identity_private",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_cast_and_trigger_replay_exactly"
+      ],
+      "implementation_components": [
+        "evoke.FixedManaEvokeSpec",
+        "rules.casting.costs._with_evoke_cost",
+        "rules.casting.commit.commit_cast",
+        "stack_resolution.resolve_top",
+        "trigger_discovery._shared_evoke_trigger_item"
+      ],
+      "notes": [
+        "Fixed ordinary and colored-hybrid costs use the common alternate-cost pipeline; an immutable payment marker feeds the ordinary APNAP trigger owner after battlefield entry."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "702.74a",
       "rule_text_sha256": "69fe99333164f04a5e3f49d2ae597da17d9919a633c204d9fe117d6abd78630e",
       "schema_version": 1,
@@ -69308,7 +69437,7 @@
         "end_line": 4565,
         "start_line": 4564
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -75702,23 +75831,28 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.126",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_improvise_descriptor_and_raw_keyword_fail_closed"
+      ],
+      "implementation_components": [
+        "compiler.casting_payment_keyword_nodes.ordinary_improvise_keyword_node",
+        "casting_payment_keywords.ImproviseSpec"
+      ],
+      "notes": [
+        "Keyword heading; artifact tapping, total-cost ordering, and redundancy are reviewed in the subrules."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.126",
       "rule_text_sha256": "6921b404b205af83c83e11797349cc09caf59466341e08d26f3c0090e2aa6492",
       "schema_version": 1,
@@ -75727,26 +75861,53 @@
         "end_line": 4943,
         "start_line": 4942
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "Improvise granted or removed by general continuous effects is not lowered",
+        "Restricted mana and cost-payment replacement interactions are not represented"
       ],
       "case_id": "cr-702.126a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "702.126"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_compiles_and_pays_only_generic_with_artifacts",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_granted_and_printed_improvise_share_one_payment_owner",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_raw_improvise_keyword_without_compiled_descriptor_fails_closed",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_offer_is_controller_scoped_and_private",
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_cast_replays_exactly"
+      ],
+      "implementation_components": [
+        "casting_payment_keywords.ImproviseSpec",
+        "rules.casting.costs._apply_improvise",
+        "rules.casting.commit._commit_tap_costs"
+      ],
+      "notes": [
+        "Printed and represented next-spell grants share one owner, select active controlled untapped artifacts, pay generic mana only, and commit taps atomically."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "702.126a",
       "rule_text_sha256": "f9d2728f8024765bb2b4cd0e8639860f5f67634a0c2f884e539fbcba0370b992",
       "schema_version": 1,
@@ -75755,26 +75916,39 @@
         "end_line": 4945,
         "start_line": 4944
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "The complete alternate, additional, increasing, reducing, minimum-cost, restricted-mana, and payment-replacement ordering grammar is not closed"
       ],
       "case_id": "cr-702.126b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "702.126"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_improvise_compiles_and_pays_only_generic_with_artifacts"
+      ],
+      "implementation_components": [
+        "rules.casting.costs._apply_static_reductions",
+        "rules.casting.costs._apply_improvise"
+      ],
+      "notes": [
+        "Represented total-cost modifiers are applied before Improvise and the artifact choices pay only the remaining generic component."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "702.126b",
       "rule_text_sha256": "108a2e06ee296797d431d37b384b0db6b69cbd378bb3d5d73adf12c9b0ac5f7b",
       "schema_version": 1,
@@ -75783,26 +75957,35 @@
         "end_line": 4947,
         "start_line": 4946
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-702.126c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive"
+      ],
       "dependency_rule_ids": [
         "702.126"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_casting_payment_keywords.CastingPaymentKeywordCompilerTests.test_payment_keyword_instance_multiplicity_matches_rules"
+      ],
+      "implementation_components": [
+        "compiler.keyword_nodes.keyword_node_plans",
+        "compiled_cast_costs.compiled_improvise_specs"
+      ],
+      "notes": [
+        "Repeated ordinary Improvise instances canonicalize to one typed payment descriptor."
+      ],
+      "required_scenarios": [
+        "positive"
+      ],
+      "reviewed": true,
       "rule_id": "702.126c",
       "rule_text_sha256": "04dafd1177fe8026fd3bbb31c14181bab78bad923f759c17e126a5fc530c0aaf",
       "schema_version": 1,
@@ -75811,7 +75994,7 @@
         "end_line": 4949,
         "start_line": 4948
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",

@@ -5,7 +5,20 @@ from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..card_program_faces import program_matches_face
+from ..casting_payment_keywords import (
+    AffinitySpec,
+    CastingPaymentKeywordError,
+    DelveSpec,
+    ImproviseSpec,
+)
 from ..convoke import ConvokeError, ConvokeSpec
+from ..evoke import (
+    EVOKE_CAPABILITY_ID,
+    EVOKE_HANDLER_ID,
+    EVOKE_RUNTIME_EVENT,
+    EvokeError,
+    FixedManaEvokeSpec,
+)
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..rules.capabilities import load_default_capability_registry
@@ -17,6 +30,9 @@ CONVOKE_ACTIVE_ZONE = "stack"
 CONVOKE_COST_EVENT = "cast.cost"
 CONVOKE_HANDLER_ID = "casting.payment.convoke.v1"
 AFFINITY_HANDLER_ID = "casting.payment.affinity-artifacts.v1"
+TYPED_AFFINITY_HANDLER_ID = "casting.payment.affinity.v2"
+DELVE_HANDLER_ID = "casting.payment.delve.v1"
+IMPROVISE_HANDLER_ID = "casting.payment.improvise.v1"
 FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID = (
     "casting.cost.modifier.fixed_query"
 )
@@ -30,16 +46,6 @@ FIXED_SPELL_COST_REDUCTION_HANDLER_ID = (
 class FixedSpellCostReductionSpec:
     predicate: ObjectQuerySpec
     generic_reduction: int
-
-
-@dataclass(frozen=True, slots=True)
-class AffinitySpec:
-    """One closed printed Affinity-for-artifacts cost reduction."""
-
-    card_type: str = "artifact"
-
-    def to_payment_mechanic(self) -> dict[str, Any]:
-        return {"kind": "affinity", "card_type": self.card_type}
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,13 +153,189 @@ class AffinityCostHandler:
             raise SemanticNodeError(
                 "Affinity payment must be the closed artifact-count family"
             )
-        return AffinitySpec()
+        return AffinitySpec.for_quality("artifacts")
 
     def lower(
         self,
         descriptor: Mapping[str, Any],
         context: object,
     ) -> tuple[AffinitySpec, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class TypedAffinityCostHandler:
+    handler_id: str = TYPED_AFFINITY_HANDLER_ID
+    schema_version: int = 2
+    family: str = "casting.payment.affinity"
+    event: str = CONVOKE_COST_EVENT
+    rule_references: tuple[str, ...] = (
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.41",
+        "702.41a",
+        "702.41b",
+    )
+    capability_dependencies: tuple[str, ...] = ("casting.payment.affinity",)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> AffinitySpec:
+        exact_fields(
+            descriptor,
+            {"handler_id", "schema_version", "event", "payment"},
+            field="typed Affinity cost handler",
+        )
+        if descriptor["handler_id"] != self.handler_id:
+            raise SemanticNodeError("Typed Affinity handler ID mismatch")
+        if (
+            type(descriptor["schema_version"]) is not int
+            or descriptor["schema_version"] != self.schema_version
+        ):
+            raise SemanticNodeError("Unsupported typed Affinity handler version")
+        if descriptor["event"] != self.event:
+            raise SemanticNodeError(
+                f"Typed Affinity handler must use {self.event}"
+            )
+        try:
+            return AffinitySpec.from_dict(descriptor["payment"])
+        except (CastingPaymentKeywordError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[AffinitySpec, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class ImproviseCostHandler:
+    handler_id: str = IMPROVISE_HANDLER_ID
+    schema_version: int = 1
+    family: str = "casting.payment.improvise"
+    event: str = CONVOKE_COST_EVENT
+    rule_references: tuple[str, ...] = (
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "702.126",
+        "702.126a",
+        "702.126b",
+    )
+    capability_dependencies: tuple[str, ...] = ("casting.payment.improvise",)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> ImproviseSpec:
+        exact_fields(
+            descriptor,
+            {"handler_id", "schema_version", "event", "payment"},
+            field="Improvise cost handler",
+        )
+        if (
+            descriptor["handler_id"] != self.handler_id
+            or type(descriptor["schema_version"]) is not int
+            or descriptor["schema_version"] != self.schema_version
+            or descriptor["event"] != self.event
+        ):
+            raise SemanticNodeError(
+                "Improvise handler identity, version, or event changed"
+            )
+        try:
+            return ImproviseSpec.from_dict(descriptor["payment"])
+        except (CastingPaymentKeywordError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(
+        self, descriptor: Mapping[str, Any], context: object
+    ) -> tuple[ImproviseSpec, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class DelveCostHandler:
+    handler_id: str = DELVE_HANDLER_ID
+    schema_version: int = 1
+    family: str = "casting.payment.delve"
+    event: str = CONVOKE_COST_EVENT
+    rule_references: tuple[str, ...] = (
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.66",
+        "702.66a",
+        "702.66b",
+    )
+    capability_dependencies: tuple[str, ...] = ("casting.payment.delve",)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> DelveSpec:
+        exact_fields(
+            descriptor,
+            {"handler_id", "schema_version", "event", "payment"},
+            field="Delve cost handler",
+        )
+        if (
+            descriptor["handler_id"] != self.handler_id
+            or type(descriptor["schema_version"]) is not int
+            or descriptor["schema_version"] != self.schema_version
+            or descriptor["event"] != self.event
+        ):
+            raise SemanticNodeError(
+                "Delve handler identity, version, or event changed"
+            )
+        try:
+            return DelveSpec.from_dict(descriptor["payment"])
+        except (CastingPaymentKeywordError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(
+        self, descriptor: Mapping[str, Any], context: object
+    ) -> tuple[DelveSpec, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class EvokeCostHandler:
+    handler_id: str = EVOKE_HANDLER_ID
+    schema_version: int = 1
+    family: str = EVOKE_CAPABILITY_ID
+    event: str = EVOKE_RUNTIME_EVENT
+    rule_references: tuple[str, ...] = (
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.74",
+        "702.74a",
+    )
+    capability_dependencies: tuple[str, ...] = (EVOKE_CAPABILITY_ID,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> FixedManaEvokeSpec:
+        exact_fields(
+            descriptor,
+            {"handler_id", "schema_version", "event", "evoke"},
+            field="fixed-mana Evoke handler",
+        )
+        if (
+            descriptor["handler_id"] != self.handler_id
+            or type(descriptor["schema_version"]) is not int
+            or descriptor["schema_version"] != self.schema_version
+            or descriptor["event"] != self.event
+        ):
+            raise SemanticNodeError(
+                "Evoke handler identity, version, or event changed"
+            )
+        try:
+            return FixedManaEvokeSpec.from_dict(descriptor["evoke"])
+        except (EvokeError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(
+        self, descriptor: Mapping[str, Any], context: object
+    ) -> tuple[FixedManaEvokeSpec, ...]:
         del context
         return (self.validate(descriptor),)
 
@@ -236,7 +418,12 @@ class FixedSpellCostReductionHandler:
 class CastCostComponentRegistry(
     RuntimeComponentRegistry[
         object,
-        ConvokeSpec | AffinitySpec | FixedSpellCostReductionSpec,
+        ConvokeSpec
+        | AffinitySpec
+        | ImproviseSpec
+        | DelveSpec
+        | FixedManaEvokeSpec
+        | FixedSpellCostReductionSpec,
     ]
 ):
     pass
@@ -248,7 +435,11 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
         (
             AffinityCostHandler(),
             ConvokeCostHandler(),
+            DelveCostHandler(),
+            EvokeCostHandler(),
             FixedSpellCostReductionHandler(),
+            ImproviseCostHandler(),
+            TypedAffinityCostHandler(),
         )
     )
     registry.require_registered_capabilities(load_default_capability_registry())
@@ -264,7 +455,16 @@ def convoke_handler_descriptor() -> dict[str, Any]:
     }
 
 
-def affinity_handler_descriptor() -> dict[str, Any]:
+def affinity_handler_descriptor(
+    spec: AffinitySpec | None = None,
+) -> dict[str, Any]:
+    if spec is not None:
+        return {
+            "handler_id": TYPED_AFFINITY_HANDLER_ID,
+            "schema_version": 2,
+            "event": CONVOKE_COST_EVENT,
+            "payment": spec.to_dict(),
+        }
     return {
         "handler_id": AFFINITY_HANDLER_ID,
         "schema_version": 1,
@@ -274,6 +474,33 @@ def affinity_handler_descriptor() -> dict[str, Any]:
             "kind": "affinity",
             "card_type": "artifact",
         },
+    }
+
+
+def improvise_handler_descriptor() -> dict[str, Any]:
+    return {
+        "handler_id": IMPROVISE_HANDLER_ID,
+        "schema_version": 1,
+        "event": CONVOKE_COST_EVENT,
+        "payment": ImproviseSpec().to_dict(),
+    }
+
+
+def delve_handler_descriptor() -> dict[str, Any]:
+    return {
+        "handler_id": DELVE_HANDLER_ID,
+        "schema_version": 1,
+        "event": CONVOKE_COST_EVENT,
+        "payment": DelveSpec().to_dict(),
+    }
+
+
+def evoke_handler_descriptor(spec: FixedManaEvokeSpec) -> dict[str, Any]:
+    return {
+        "handler_id": EVOKE_HANDLER_ID,
+        "schema_version": 1,
+        "event": EVOKE_RUNTIME_EVENT,
+        "evoke": spec.to_dict(),
     }
 
 
@@ -361,13 +588,26 @@ __all__ = [
     "CONVOKE_HANDLER_ID",
     "CastCostComponentRegistry",
     "ConvokeCostHandler",
+    "DELVE_HANDLER_ID",
+    "DelveCostHandler",
+    "DelveSpec",
+    "EvokeCostHandler",
+    "FixedManaEvokeSpec",
     "FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID",
     "FIXED_SPELL_COST_REDUCTION_EVENT",
     "FIXED_SPELL_COST_REDUCTION_HANDLER_ID",
     "FixedSpellCostReductionHandler",
     "FixedSpellCostReductionSpec",
+    "IMPROVISE_HANDLER_ID",
+    "ImproviseCostHandler",
+    "ImproviseSpec",
+    "TYPED_AFFINITY_HANDLER_ID",
+    "TypedAffinityCostHandler",
     "active_fixed_spell_cost_reductions",
     "affinity_handler_descriptor",
     "convoke_handler_descriptor",
+    "delve_handler_descriptor",
     "default_cast_cost_component_registry",
+    "evoke_handler_descriptor",
+    "improvise_handler_descriptor",
 ]

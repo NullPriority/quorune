@@ -11,7 +11,7 @@ maintenance: "generated"
 
 - Effective date: `2026-08-07`
 - Discovered mechanics: 427
-- Trusted mechanics: 8
+- Trusted mechanics: 7
 - Oracle enrichment complete: false
 - Current snapshot complete: false
 

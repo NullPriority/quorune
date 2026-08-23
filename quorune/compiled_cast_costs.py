@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
+from .casting_payment_keywords import DelveSpec, ImproviseSpec
 from .convoke import ConvokeSpec
+from .evoke import FixedManaEvokeSpec
 from .semantic_runtime.cast_costs import (
     AffinitySpec,
     CONVOKE_ACTIVE_ZONE,
@@ -89,8 +91,89 @@ def compiled_affinity_specs(
     return tuple(result)
 
 
+def compiled_improvise_specs(
+    host: CompiledCastCostHost,
+    oracle_id: str,
+    *,
+    spell_program: Any,
+) -> tuple[ImproviseSpec, ...]:
+    """Return the selected face's trusted printed Improvise descriptor."""
+
+    return _compiled_specs(
+        host,
+        oracle_id,
+        spell_program=spell_program,
+        spec_type=ImproviseSpec,
+    )
+
+
+def compiled_delve_specs(
+    host: CompiledCastCostHost,
+    oracle_id: str,
+    *,
+    spell_program: Any,
+) -> tuple[DelveSpec, ...]:
+    """Return the selected face's trusted printed Delve descriptor."""
+
+    return _compiled_specs(
+        host,
+        oracle_id,
+        spell_program=spell_program,
+        spec_type=DelveSpec,
+    )
+
+
+def compiled_evoke_specs(
+    host: CompiledCastCostHost,
+    oracle_id: str,
+    *,
+    spell_program: Any,
+) -> tuple[FixedManaEvokeSpec, ...]:
+    """Return the selected face's trusted fixed-mana Evoke descriptor."""
+
+    return _compiled_specs(
+        host,
+        oracle_id,
+        spell_program=spell_program,
+        spec_type=FixedManaEvokeSpec,
+    )
+
+
+def _compiled_specs(
+    host: CompiledCastCostHost,
+    oracle_id: str,
+    *,
+    spell_program: Any,
+    spec_type: type[Any],
+) -> tuple[Any, ...]:
+    expected_face = _selected_face_id(spell_program)
+    registry = default_cast_cost_component_registry()
+    result: list[Any] = []
+    for program in host.semantics.runtime_handler_programs_for_oracle(
+        oracle_id,
+        active_zone=CONVOKE_ACTIVE_ZONE,
+        event=CONVOKE_COST_EVENT,
+    ):
+        if not host.semantic_program_is_current_trusted(program):
+            continue
+        if str(program.provenance.get("face_id") or "") != expected_face:
+            continue
+        for descriptor in program.handlers:
+            if registry.describe(str(descriptor.get("handler_id") or "")) is None:
+                continue
+            result.extend(
+                value
+                for value in registry.lower(descriptor, None)
+                if isinstance(value, spec_type)
+            )
+    return tuple(result)
+
+
 __all__ = [
     "CompiledCastCostHost",
     "compiled_affinity_specs",
     "compiled_convoke_specs",
+    "compiled_delve_specs",
+    "compiled_evoke_specs",
+    "compiled_improvise_specs",
 ]

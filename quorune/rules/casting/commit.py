@@ -7,6 +7,8 @@ from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from ...cascade import cascade_trigger_items
+from ...casting_payment_keywords import CastingPaymentKeywordError
+from ...compiled_cast_costs import compiled_evoke_specs
 from ...storm import prior_storm_spell_count, storm_trigger_items
 from ...convoke import ConvokeError
 from ...counter_placement import (
@@ -19,6 +21,7 @@ from ...compiled_morph import compiled_fixed_mana_morph_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from ...flashback import FLASHBACK_CAST_OPTION_ID
+from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...kicker import KICKER_MECHANIC_ID
 from ...life_state import LifeStateError, pay_life_cost
 from ...model import StackItem, YieldPolicy
@@ -50,7 +53,7 @@ from ..casting_additional_cost_groups import (
     fixed_life_payment_additional_cost,
 )
 from .model import CastProposalError
-from .costs import revalidate_convoke_payment
+from .costs import revalidate_convoke_payment, revalidate_delve_payment
 
 
 class CastCommitHost(Protocol):
@@ -504,6 +507,53 @@ def _fixed_zone_change_commit_entry(
     )
 
 
+def _ordinary_card_cost_commit_entries(
+    host: CastCommitHost,
+    proposal: CastProposal,
+    selected: Mapping[str, Any],
+) -> list[
+    tuple[Any, str, str, str, dict[str, Any], list[str], str, str, tuple]
+]:
+    """Snapshot ordinary discard, sacrifice, or Delve card movements."""
+
+    kind = str(selected["kind"])
+    zone = (
+        "hand"
+        if kind == "discard"
+        else "graveyard"
+        if kind == "delve"
+        else "battlefield"
+    )
+    destination = "exile" if kind == "delve" else "graveyard"
+    entries = []
+    for ref in selected.get("cards", []):
+        paid = host._resolve_object(
+            proposal.seat,
+            str(ref),
+            zones={zone},
+            controlled_only=zone == "battlefield",
+            owned_only=zone != "battlefield",
+        )
+        entries.append(
+            (
+                paid,
+                paid.zone,
+                paid.controller,
+                paid.logical_object_id,
+                copy.deepcopy(host._effective_card_data(paid)),
+                [
+                    host.state.cards[attachment_id].ref
+                    for attachment_id in paid.attachments
+                    if attachment_id in host.state.cards
+                ],
+                kind,
+                destination,
+                (),
+            )
+        )
+    return entries
+
+
 def _commit_additional_costs(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -584,32 +634,9 @@ def _commit_additional_costs(
                 )
             )
             continue
-        zone = "hand" if kind == "discard" else "battlefield"
-        for ref in selected.get("cards", []):
-            paid = host._resolve_object(
-                proposal.seat,
-                str(ref),
-                zones={zone},
-                controlled_only=zone == "battlefield",
-                owned_only=zone != "battlefield",
-            )
-            changes.append(
-                (
-                    paid,
-                    paid.zone,
-                    paid.controller,
-                    paid.logical_object_id,
-                    copy.deepcopy(host._effective_card_data(paid)),
-                    [
-                        host.state.cards[attachment_id].ref
-                        for attachment_id in paid.attachments
-                        if attachment_id in host.state.cards
-                    ],
-                    kind,
-                    "graveyard",
-                    (),
-                )
-            )
+        changes.extend(
+            _ordinary_card_cost_commit_entries(host, proposal, selected)
+        )
     for (
         paid,
         origin,
@@ -759,6 +786,15 @@ def _create_spell_item(
             "cost_option": proposal.cost_option_id,
             **(
                 {
+                    EVOKE_PAYMENT_FIELD: copy.deepcopy(
+                        selected_option[EVOKE_PAYMENT_FIELD]
+                    )
+                }
+                if selected_option.get(EVOKE_PAYMENT_FIELD) is not None
+                else {}
+            ),
+            **(
+                {
                     "cast_method": MORPH_CAST_METHOD,
                     "morph_spec_fingerprint": morph_spec.fingerprint,
                 }
@@ -904,15 +940,16 @@ def _dispatch_cast_events(
     enqueue_trigger_batch(host, trigger_batch)
 
 
-def commit_cast(
+def _revalidate_cast_contracts(
     host: CastCommitHost,
     proposal: CastProposal,
-    response: Mapping[str, Any],
-) -> None:
-    """Commit one revalidated cast proposal through authoritative owners."""
+    card: Any,
+    record: Any,
+    program: Any,
+    details: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Revalidate compiled casting contracts without mutating state."""
 
-    card, record, program = _revalidate_source(host, proposal)
-    details = dict(thaw_json(proposal.details))
     if details.get("cast_method") == MORPH_CAST_METHOD:
         try:
             proposed_morph = FixedManaMorphSpec.from_dict(
@@ -952,7 +989,26 @@ def commit_cast(
                 "The fixed-mana Flashback contract changed before commit",
                 reason="stale_flashback_contract",
             )
-    requirements = dict(thaw_json(proposal.requirements))
+    evoke_payment = selected_option.get(EVOKE_PAYMENT_FIELD)
+    if evoke_payment is not None:
+        if not validate_evoke_payment_marker(evoke_payment):
+            raise CastProposalError(
+                "The Evoke payment marker is malformed",
+                reason="stale_evoke_contract",
+            )
+        evoke_fingerprint = selected_option.get("evoke_fingerprint")
+        if evoke_fingerprint is not None and evoke_fingerprint not in {
+            spec.fingerprint
+            for spec in compiled_evoke_specs(
+                host,
+                record.oracle_id,
+                spell_program=program,
+            )
+        }:
+            raise CastProposalError(
+                "The fixed-mana Evoke contract changed before commit",
+                reason="stale_evoke_contract",
+            )
     try:
         convoke_plan = revalidate_convoke_payment(
             host,
@@ -965,6 +1021,14 @@ def commit_cast(
             status="unpayable",
             reason="stale_convoke_payment",
         ) from exc
+    try:
+        revalidate_delve_payment(host, proposal.seat, selected_option)
+    except CastingPaymentKeywordError as exc:
+        raise CastProposalError(
+            str(exc),
+            status="unpayable",
+            reason="stale_delve_payment",
+        ) from exc
     if convoke_plan is not None and tuple(convoke_plan.selected_refs) != tuple(
         ref for ref in proposal.tap_cost_refs if ref in convoke_plan.selected_refs
     ):
@@ -973,6 +1037,27 @@ def commit_cast(
             status="unpayable",
             reason="stale_convoke_payment",
         )
+    return selected_option
+
+
+def commit_cast(
+    host: CastCommitHost,
+    proposal: CastProposal,
+    response: Mapping[str, Any],
+) -> None:
+    """Commit one revalidated cast proposal through authoritative owners."""
+
+    card, record, program = _revalidate_source(host, proposal)
+    details = dict(thaw_json(proposal.details))
+    selected_option = _revalidate_cast_contracts(
+        host,
+        proposal,
+        card,
+        record,
+        program,
+        details,
+    )
+    requirements = dict(thaw_json(proposal.requirements))
     tap_cards = [
         host._resolve_object(
             proposal.seat,

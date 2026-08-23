@@ -8,7 +8,6 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..bloodthirst import BLOODTHIRST_MECHANIC, BloodthirstSpec
 from ..cast_timing import PRINTED_FLASH_MECHANIC
 from ..semantic_runtime.cast_costs import (
-    affinity_handler_descriptor,
     convoke_handler_descriptor,
 )
 from ..death_return import (
@@ -53,6 +52,12 @@ from .station_nodes import ordinary_station_keyword_node
 from .unearth_nodes import ordinary_unearth_keyword_node
 from .kicker_nodes import fixed_mana_kicker_keyword_node
 from .cycling_nodes import ordinary_cycling_keyword_node
+from .casting_payment_keyword_nodes import (
+    fixed_mana_evoke_keyword_node,
+    ordinary_delve_keyword_node,
+    ordinary_improvise_keyword_node,
+    typed_affinity_keyword_node,
+)
 from .counter_keyword_activation_nodes import (
     fixed_counter_keyword_activation_node,
 )
@@ -89,6 +94,9 @@ _STORM_MECHANIC = STORM_MECHANIC_ID
 _PROWESS_MECHANIC = "prowess"
 _CONVOKE_MECHANIC = "convoke"
 _AFFINITY_MECHANIC = "affinity"
+_DELVE_MECHANIC = "delve"
+_EVOKE_MECHANIC = "evoke"
+_IMPROVISE_MECHANIC = "improvise"
 _BLOODTHIRST_MECHANIC = BLOODTHIRST_MECHANIC
 _SUNBURST_MECHANIC = SUNBURST_MECHANIC_ID
 _RENOWN_MECHANIC = RENOWN_MECHANIC_ID
@@ -114,11 +122,15 @@ _PARAMETERIZED_SPLIT_MECHANICS = frozenset(
         _ECHO_MECHANIC,
         _TOXIC_MECHANIC,
         _AFFINITY_MECHANIC,
+        _EVOKE_MECHANIC,
         *FIXED_KEYWORD_ENTRY_MECHANICS,
     }
 )
 _INSTANCE_PART_MECHANICS = (
     _AFFINITY_MECHANIC,
+    _DELVE_MECHANIC,
+    _EVOKE_MECHANIC,
+    _IMPROVISE_MECHANIC,
     _BLOODTHIRST_MECHANIC,
     _SUNBURST_MECHANIC,
     _EVOLVE_MECHANIC,
@@ -174,6 +186,9 @@ def keyword_node_plans(
             PRINTED_FLASH_MECHANIC,
             _FABRICATE_MECHANIC,
             _CONVOKE_MECHANIC,
+            _DELVE_MECHANIC,
+            _EVOKE_MECHANIC,
+            _IMPROVISE_MECHANIC,
         )
         if mechanic in mechanics
     ) + tuple(
@@ -335,9 +350,12 @@ def closed_special_keyword_node(
     if renown is not None:
         return renown
     for lower in (
+        fixed_mana_evoke_keyword_node,
         cascade_keyword_node,
         storm_keyword_node,
         ordinary_convoke_keyword_node,
+        ordinary_delve_keyword_node,
+        ordinary_improvise_keyword_node,
         ordinary_affinity_keyword_node,
         ordinary_crew_keyword_node,
         ordinary_station_keyword_node,
@@ -512,64 +530,15 @@ def ordinary_affinity_keyword_node(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleNode | None:
-    if mechanics != (_AFFINITY_MECHANIC,):
-        return None
-    ordinary = (
-        material_line.strip().rstrip(".").casefold()
-        == "affinity for artifacts"
-    )
-    gate = explicit_capability_gate(
-        "casting.payment.affinity_artifacts",
+    return typed_affinity_keyword_node(
+        node_id=node_id,
+        line=line,
+        material_line=material_line,
+        span=span,
+        mechanics=mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
-    )
-    blockers = (
-        gate.blockers
-        if ordinary
-        else ("mechanic:affinity-unsupported-wording",)
-    )
-    residual_ids = (
-        (
-            append_residual(
-                residuals,
-                kind="dependency_contract" if ordinary else "keyword_grammar",
-                text=line,
-                span=span,
-                reason=(
-                    "Affinity depends on a blocked typed casting-cost capability"
-                    if ordinary
-                    else "Affinity wording is outside the artifact-count grammar"
-                ),
-                blockers=blockers,
-            ),
-        )
-        if blockers
-        else ()
-    )
-    return OracleNode(
-        node_id=node_id,
-        kind="keyword_ability",
-        text=line,
-        span=span,
-        active_zone="stack",
-        event="cast.cost",
-        lowerable=ordinary,
-        exact=ordinary and not blockers,
-        template_id="affinity-artifact-count-payment-v1" if ordinary else None,
-        handlers=(affinity_handler_descriptor(),) if ordinary else (),
-        runtime_coverage=("typed_affinity_artifact_payment",) if ordinary else (),
-        mechanics=(_AFFINITY_MECHANIC,),
-        residual_ids=residual_ids,
-        capability_dependencies=gate.capabilities,
-        capability_closure=(
-            gate.closure.reachable if gate.closure is not None else ()
-        ),
-        capability_profile=(
-            gate.closure.profile if gate.closure is not None else None
-        ),
-        capability_fingerprint=(
-            gate.closure.fingerprint if gate.closure is not None else None
-        ),
+        residuals=residuals,
     )
 
 
