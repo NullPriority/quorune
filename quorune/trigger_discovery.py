@@ -890,7 +890,7 @@ def _shared_evoke_trigger_item(
         ref=ref,
         kind="triggered_ability",
         controller=source.controller,
-        label=f"{source.printed_name} Evoke sacrifice",
+        label=f"{source.printed_name} evoke sacrifice",
         source_object_id=source.object_id,
         semantic_key="builtin:sacrifice-source",
         visibility=list(host.seats),
