@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "36fa1043d4462a6a93b6f0f812ff93cda381983014f747b5ed27431683f87fec"
+verified: "61d713d4f08f5e7a971ce9ebbfc99ea906d60ce6815623e48c2930c65c333840"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -35,6 +35,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 181 | 21 | 6 | 6 | 9 | 15 | `blocked` |
 | Urabrask // The Great Work | 181 | 20 | 6 | 7 | 11 | 4 | `blocked` |
 | Ral, Monsoon Mage // Ral, Leyline Prodigy | 180 | 19 | 5 | 6 | 12 | 17 | `blocked` |
+| Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
 | Ugin, Eye of the Storms | 176 | 26 | 6 | 5 | 13 | 3 | `blocked` |
@@ -53,14 +54,13 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Kaldheim // Pyre of the World Tree | 168 | 16 | 5 | 4 | 5 | 22 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 168 | 18 | 5 | 4 | 6 | 18 | `blocked` |
 | Optimus Prime, Hero // Optimus Prime, Autobot Leader | 168 | 21 | 5 | 6 | 4 | 16 | `blocked` |
+| Dr. Madison Li | 167 | 28 | 6 | 4 | 4 | 10 | `blocked` |
+| Invasion of Karsus // Refraction Elemental | 167 | 19 | 5 | 4 | 6 | 16 | `blocked` |
 | Lunarch Veteran // Luminous Phantom | 167 | 22 | 6 | 5 | 6 | 7 | `blocked` |
 | Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
 | Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
 | Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
 | Athreos, Shroud-Veiled | 165 | 18 | 5 | 4 | 3 | 24 | `blocked` |
-| Dr. Madison Li | 165 | 22 | 7 | 4 | 6 | 10 | `blocked` |
 | Starscream, Power Hungry // Starscream, Seeker Leader | 165 | 17 | 4 | 8 | 4 | 19 | `blocked` |
 | Titania, Gaea Incarnate | 165 | 23 | 6 | 4 | 6 | 11 | `blocked` |
-| Heliod, Sun-Crowned | 162 | 23 | 4 | 4 | 4 | 20 | `blocked` |
-| Invasion of Vryn // Overloaded Mage-Ring | 162 | 12 | 5 | 3 | 8 | 24 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
