@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 131,
+  "registry_version": 132,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4131,6 +4131,33 @@
       "implementation_mutation_rationale": "The focused semantic tap-state mutation test kills an aggregate sink that omits eligible creatures or bypasses individual untap behavior.",
       "blockers": ["Complete effective-characteristic dependencies and untap replacement ordering are not yet represented in ambient match closure."],
       "status": "tested"
+    },
+    {
+      "id": "resolution.effect_program.closed_components",
+      "version": 1,
+      "official_rules": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and resolve two to four mandatory printed-order components when every component is already typed and capability-closed and the complete program shares at most one direct target group.",
+        "inputs": ["one complete source-spanned effect body", "two to four top-level sentence, comma-then, or and-separated components", "independently typed fixed effects", "zero or one direct target schema", "the canonical semantic continuation"],
+        "outputs": ["one capability-closed CardProgram node", "the exact flattened component capability set", "printed-order execution", "resolution-time target revalidation", "replacement- and choice-aware suspension and resume", "exact replay across component boundaries"],
+        "exclusions": ["optional, modal, conditional, reflexive, delayed, repeated, random, variable, or linked-result programs", "more than four components or eight flattened effects", "multiple target groups, cross-clause target constraints, or variable target groups", "quoted or parenthetical partition boundaries", "shared-subject ellipsis and any component that does not independently lower", "any component without its own trusted compiler shape and runtime owner"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.closed_effect_programs.ClosedEffectProgramTemplate", "quorune.compiler.closed_effect_programs.closed_effect_program_template", "quorune.rules.closed_effect_program_shapes.closed_effect_program_node_capabilities", "CommanderEngine._continue_resolution"],
+      "positive_tests": ["test_closed_program_compiles_across_contexts_and_component_shapes", "test_measured_corpus_lower_bound_is_capability_closed", "test_private_scry_suspends_draw_and_life_then_replays"],
+      "negative_tests": ["test_parser_shape_and_compiler_fail_closed", "test_stale_target_fizzles_every_three_component_effect"],
+      "interaction_tests": ["test_private_scry_suspends_draw_and_life_then_replays", "test_target_characteristics_commit_before_private_scry"],
+      "multiplayer_tests": ["test_private_scry_suspends_draw_and_life_then_replays"],
+      "privacy_tests": ["test_private_scry_suspends_draw_and_life_then_replays"],
+      "replay_tests": ["test_private_scry_suspends_draw_and_life_then_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The composition shape requires its marker, bounded effect count, coherent target group, and an existing strict component capability for every flattened effect; unknown operations, missing owners, or detached target contracts prevent closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_parser_shape_and_compiler_fail_closed removes the composition production and proves the exact source returns to a material residual with different semantic and CardProgram fingerprints.",
+      "blockers": [],
+      "status": "trusted"
     },
     {
       "id": "resolution.effect_sequence.fixed_clauses",

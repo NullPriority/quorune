@@ -23,6 +23,9 @@ from .compiler.corpus_reporting import (
 from .compiler.continuous_templates import (
     controlled_creature_until_end_of_turn_effect,
 )
+from .compiler.closed_effect_programs import (
+    closed_effect_program_template,
+)
 from .cycling_abilities import CYCLING_MECHANIC_ID
 from .compiler.activated_mana_nodes import (
     activated_oracle_node,
@@ -120,7 +123,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v119"
+ORACLE_COMPILER_VERSION = "oracle-ir-v120"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -450,7 +453,19 @@ def _reviewed_effect_template(
             source_attachment_relation=source_attachment_relation,
         ),
     )
-    return sequence.compiled() if sequence is not None else atomic
+    if sequence is not None:
+        return sequence.compiled()
+    program = closed_effect_program_template(
+        text,
+        compile_component=partial(
+            _reviewed_atomic_effect_template,
+            card_name=card_name,
+            source_is_permanent=source_is_permanent,
+            source_card_types=source_card_types,
+            source_attachment_relation=source_attachment_relation,
+        ),
+    )
+    return program.compiled() if program is not None else atomic
 
 
 def _keyword_node_for_mechanics(

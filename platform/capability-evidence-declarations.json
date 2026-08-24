@@ -15958,6 +15958,94 @@
       "applicability_note": "Preserve the nested counter replacement journal and doubled committed amount through exact replay."
     },
     {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suspend Demon's Due after private Scry, then resume its draw and life-loss components exactly once in printed order."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_target_characteristics_commit_before_private_scry",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Commit Coming In Hot's two target-characteristic effects before its later private Scry component suspends the continuation."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve the composed Scry, draw, and life-loss program in four players while issuing its pending choice only to the controller."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramCompilerTests.test_parser_shape_and_compiler_fail_closed",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the closed program production and prove the exact source returns to a material residual with changed semantic and CardProgram fingerprints."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramCompilerTests.test_parser_shape_and_compiler_fail_closed",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject missing markers, unowned operations, detached target schemas, optional, conditional, repeat, variable, linked, multi-target, over-bounded, quoted, and malformed programs."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_stale_target_fizzles_every_three_component_effect",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Revalidate Shamble Back's only target before execution and fizzle its exile, token, and life components together when that incarnation is stale."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramCompilerTests.test_closed_program_compiles_across_contexts_and_component_shapes",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use one composition owner across spell, triggered, and activated contexts and across sentence, comma-then, and conjunction component boundaries."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramCompilerTests.test_measured_corpus_lower_bound_is_capability_closed",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile the current pinned 53-card lower-bound cohort to exact trusted CardPrograms through the same closed composition owner."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose Demon's Due's Scry candidates only to its controller while opponents receive no private library identities."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay private Scry response, subsequent draws, life loss, and stack completion to the identical authoritative final hash."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
+      "official_rule_ids": ["608.2b", "608.2c", "608.2h", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject an incomplete Scry partition without drawing, losing life, altering the pending decision, or changing the authoritative hash."
+    },
+    {
       "capability_id": "resolution.effect_sequence.fixed_clauses",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_effect_clause_sequences.FixedEffectClauseSequenceRuntimeTests.test_life_follows_shielded_destruction_and_replays",

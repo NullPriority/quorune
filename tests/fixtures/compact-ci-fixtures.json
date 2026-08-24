@@ -10,6 +10,7 @@
     "tests/fixtures/casting-activation-metadata-cards.json",
     "tests/fixtures/casting-payment-keywords-cards.json",
     "tests/fixtures/classified-interaction-assurance-cards.json",
+    "tests/fixtures/closed-effect-program-cards.json",
     "tests/fixtures/combat-goad-prohibition-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/counter-replacement-cards.json",
@@ -38,6 +39,17 @@
     "tests/fixtures/typed-land-entry-cards.json"
   ],
   "dynamic_requirements": [
+    {
+      "source": "tests/test_closed_effect_programs.py",
+      "symbol": "ClosedEffectProgramCompilerTests.test_measured_corpus_lower_bound_is_capability_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/closed-effect-program-cards.json"
+      ],
+      "rationale": "The exact 53-card measured cohort is iterated by name from the dedicated pinned fixture."
+    },
     {
       "source": "tests/test_fixed_query_keyword_grants.py",
       "symbol": "FixedQueryKeywordGrantRuntimeTests.add_sources",

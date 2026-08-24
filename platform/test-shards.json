@@ -260,6 +260,7 @@
       "test_card_program_v2",
       "test_card_unlock_frontier",
       "test_cascade_rules",
+      "test_closed_effect_programs",
       "test_continuous_compiler_hardening",
       "test_evolve_counter_placement",
       "test_exact_keyword_families",

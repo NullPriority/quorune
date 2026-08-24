@@ -118,8 +118,8 @@ def _contains_target_reference(value: Any) -> bool:
     return False
 
 
-def _component_capabilities(
-    effect: Mapping[str, Any],
+def closed_effect_component_capabilities(
+    effects: Sequence[Mapping[str, Any]],
     *,
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
@@ -128,7 +128,11 @@ def _component_capabilities(
     for resolver in _COMPONENT_RESOLVERS:
         component_mechanics = mechanics
         if resolver is fixed_token_creation_node_capabilities:
-            characteristics = effect.get("characteristics")
+            characteristics = (
+                effects[0].get("characteristics")
+                if len(effects) == 1
+                else None
+            )
             keywords = (
                 characteristics.get("keywords", ())
                 if isinstance(characteristics, Mapping)
@@ -146,7 +150,7 @@ def _component_capabilities(
             component_mechanics = {"regenerate"}
         dependencies.update(
             resolver(
-                effects=(effect,),
+                effects=effects,
                 target_schema=target_schema,
                 mechanic_ids=component_mechanics,
             )
@@ -181,8 +185,8 @@ def fixed_effect_clause_sequence_node_capabilities(
 
     dependencies = {FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY}
     for index, effect in enumerate(effects):
-        component = _component_capabilities(
-            effect,
+        component = closed_effect_component_capabilities(
+            (effect,),
             target_schema=(
                 target_schema if index in target_components else None
             ),
@@ -197,5 +201,6 @@ def fixed_effect_clause_sequence_node_capabilities(
 __all__ = [
     "FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY",
     "FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC",
+    "closed_effect_component_capabilities",
     "fixed_effect_clause_sequence_node_capabilities",
 ]
