@@ -12,6 +12,7 @@ from quorune.ability_fragments import (
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
     ProtectionQualityKind,
+    ProtectionSourcePredicateSpec,
     ProtectionSpec,
     ToxicSpec,
     ability_fragment_from_dict,
@@ -39,6 +40,12 @@ from quorune.continuous_effects import (
     CharacteristicState,
     evaluate_continuous_effects,
 )
+from quorune.damage import (
+    commit_prepared_damage_batch,
+    damage_proposal,
+    prepare_damage_batch,
+)
+from quorune.damage_source import DamageError, DamageSourceSnapshot
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card
 from quorune.protection import (
@@ -134,6 +141,13 @@ class AbilityFragmentModelTests(unittest.TestCase):
         self.assertEqual({"GENERIC": 2}, activated.mana_bundle)
         values = (
             ProtectionSpec(ProtectionQualityKind.COLOR, "R"),
+            ProtectionSpec(
+                ProtectionQualityKind.PREDICATE,
+                schema_version=2,
+                source_predicate=ProtectionSourcePredicateSpec(
+                    subtypes_all=("goblin",),
+                ),
+            ),
             activated,
             GrantedTriggeredAbilitySpec(
                 ability_id="granted:untap",
@@ -160,6 +174,14 @@ class AbilityFragmentModelTests(unittest.TestCase):
                     ability_fragment_from_dict(
                         {**serialized, "unknown": True}
                     )
+        with self.assertRaisesRegex(
+            AbilityFragmentError,
+            "subtype requirements conflict",
+        ):
+            ProtectionSourcePredicateSpec(
+                subtypes_all=("goblin",),
+                excluded_subtypes=("goblin",),
+            )
         duplicated = canonical_ability_fragments(
             (values[2], values[0], values[2])
         )
@@ -336,10 +358,13 @@ class AbilityFragmentModelTests(unittest.TestCase):
 
 class TypedProtectionTests(unittest.TestCase):
     def test_untyped_and_unsupported_protection_fail_closed(self):
-        self.assertIsNone(parse_protection_line("Protection from Goblins"))
-        self.assertIsNone(
-            parse_protection_line("Protection from red and from white")
-        )
+        for text in (
+            "Protection from permanents that were cast this turn",
+            "Protection from permanents with corruption counters on them",
+            "Protection from modified creatures",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(parse_protection_line(text))
         self.assertEqual(
             ProtectionVerdict.UNRESOLVED,
             protection_verdict(
@@ -358,6 +383,166 @@ class TypedProtectionTests(unittest.TestCase):
             ),
         )
 
+    def test_compiler_closes_fixed_source_quality_predicates(self):
+        registry = load_default_capability_registry()
+        cases = (
+            "Protection from Goblins",
+            "Protection from non-Spirit creatures",
+            "Protection from each color",
+            "Protection from monocolored",
+            "Protection from multicolored",
+            "Protection from snow",
+            "Protection from legendary creatures",
+            "Protection from mana value 3 or greater",
+        )
+        for index, text in enumerate(cases):
+            with self.subTest(text=text):
+                record = card_record(
+                    f"fixture:protection-predicate:{index}",
+                    type_line="Creature — Test",
+                    oracle_text=text,
+                    keywords=("Protection",),
+                )
+                compiled = compile_oracle_card(
+                    record,
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                node = compiled.faces[0].nodes[0]
+                self.assertTrue(node.exact)
+                self.assertFalse(compiled.faces[0].residuals)
+                self.assertEqual(
+                    ("protection.typed.debt",),
+                    node.capability_dependencies,
+                )
+                self.assertTrue(node.handlers)
+                self.assertTrue(
+                    all(
+                        handler["handler_id"]
+                        == "ability.static.protection.v1"
+                        for handler in node.handlers
+                    )
+                )
+
+        mixed_cases = (
+            (
+                "Flying, protection from black and from red",
+                ("Flying", "Protection"),
+                {"combat.block.flying", "protection.typed.debt"},
+            ),
+            (
+                "Protection from artifacts; reach",
+                ("Protection", "Reach"),
+                {"combat.block.reach", "protection.typed.debt"},
+            ),
+            (
+                "Protection from black; flanking",
+                ("Protection", "Flanking"),
+                {"combat.trigger.flanking", "protection.typed.debt"},
+            ),
+        )
+        for index, (text, keywords, capabilities) in enumerate(mixed_cases):
+            with self.subTest(text=text):
+                mixed = card_record(
+                    f"fixture:mixed-protection-predicates:{index}",
+                    type_line="Creature — Angel",
+                    oracle_text=text,
+                    keywords=keywords,
+                )
+                mixed_node = compile_oracle_card(
+                    mixed,
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                ).faces[0].nodes[0]
+                self.assertTrue(mixed_node.exact)
+                self.assertEqual(
+                    capabilities,
+                    set(mixed_node.capability_dependencies),
+                )
+                self.assertTrue(mixed_node.handlers)
+
+    def test_fixed_source_quality_predicates_match_current_characteristics(self):
+        def verdict(text: str, source: ProtectionSource) -> ProtectionVerdict:
+            specs = parse_protection_line(text)
+            self.assertIsNotNone(specs)
+            return protection_verdict(
+                {
+                    "keywords": ["Protection"],
+                    "ability_fragments": [
+                        wrapped(spec) for spec in specs or ()
+                    ],
+                },
+                source,
+            )
+
+        cases = (
+            (
+                "Protection from Goblins",
+                ProtectionSource(subtypes=frozenset({"goblin"})),
+                ProtectionSource(subtypes=frozenset({"elf"})),
+            ),
+            (
+                "Protection from non-Spirit creatures",
+                ProtectionSource(card_types=frozenset({"creature"})),
+                ProtectionSource(
+                    card_types=frozenset({"creature"}),
+                    subtypes=frozenset({"spirit"}),
+                ),
+            ),
+            (
+                "Protection from each color",
+                ProtectionSource(colors=frozenset({"R"})),
+                ProtectionSource(),
+            ),
+            (
+                "Protection from monocolored",
+                ProtectionSource(colors=frozenset({"R"})),
+                ProtectionSource(colors=frozenset({"R", "G"})),
+            ),
+            (
+                "Protection from multicolored",
+                ProtectionSource(colors=frozenset({"R", "G"})),
+                ProtectionSource(colors=frozenset({"R"})),
+            ),
+            (
+                "Protection from snow",
+                ProtectionSource(supertypes=frozenset({"snow"})),
+                ProtectionSource(supertypes=frozenset({"legendary"})),
+            ),
+            (
+                "Protection from legendary creatures",
+                ProtectionSource(
+                    card_types=frozenset({"creature"}),
+                    supertypes=frozenset({"legendary"}),
+                ),
+                ProtectionSource(
+                    card_types=frozenset({"artifact"}),
+                    supertypes=frozenset({"legendary"}),
+                ),
+            ),
+            (
+                "Protection from mana value 3 or greater",
+                ProtectionSource(mana_value=3),
+                ProtectionSource(mana_value=2),
+            ),
+        )
+        for text, blocked, allowed in cases:
+            with self.subTest(text=text):
+                self.assertEqual(
+                    ProtectionVerdict.BLOCKED,
+                    verdict(text, blocked),
+                )
+                self.assertEqual(
+                    ProtectionVerdict.ALLOWED,
+                    verdict(text, allowed),
+                )
+        self.assertEqual(
+            ProtectionVerdict.UNRESOLVED,
+            verdict(
+                "Protection from mana value 3 or greater",
+                ProtectionSource(),
+            ),
+        )
     def test_matching_and_nonmatching_typed_protection_verdicts(self):
         protected = {
             "keywords": ["Protection"],
@@ -410,9 +595,36 @@ class TypedProtectionTests(unittest.TestCase):
                     ),
                 )
 
+    def test_damage_source_snapshot_preserves_mana_value_compatibly(self):
+        snapshot = DamageSourceSnapshot(
+            ref="source-ref",
+            object_id="source-object",
+            logical_object_id="source-logical",
+            controller="A",
+            owner="A",
+            zone="battlefield",
+            supertypes=("snow",),
+            mana_value=3,
+        )
+        serialized = snapshot.to_dict()
+        self.assertEqual(snapshot, DamageSourceSnapshot.from_dict(serialized))
+        legacy = dict(serialized)
+        legacy.pop("mana_value")
+        self.assertIsNone(DamageSourceSnapshot.from_dict(legacy).mana_value)
+        with self.assertRaisesRegex(DamageError, "mana value"):
+            DamageSourceSnapshot.from_dict(
+                {**serialized, "mana_value": -1}
+            )
+
     def test_layer_six_granted_protection_uses_typed_fragment(self):
         fragment = wrapped(
-            ProtectionSpec(ProtectionQualityKind.COLOR, "R")
+            ProtectionSpec(
+                ProtectionQualityKind.PREDICATE,
+                schema_version=2,
+                source_predicate=ProtectionSourcePredicateSpec(
+                    subtypes_all=("vampire",),
+                ),
+            )
         )
         state = CharacteristicState(
             name="Protected Bear",
@@ -448,11 +660,11 @@ class TypedProtectionTests(unittest.TestCase):
                     "keywords": evaluated["abilities"],
                     "ability_fragments": evaluated["ability_fragments"],
                 },
-                ProtectionSource(colors=frozenset({"R"})),
+                ProtectionSource(subtypes=frozenset({"vampire"})),
             ),
         )
         handler = attached_fixed_characteristics_handler(
-            "Enchanted creature has protection from red."
+            "Enchanted creature has protection from Vampires."
         )
         self.assertIsNotNone(handler)
         self.assertEqual(
@@ -540,26 +752,32 @@ class TypedProtectionEngineTests(unittest.TestCase):
         name: str,
         *,
         colors: tuple[str, ...] = (),
-        protection: str | None = None,
+        protection: str | ProtectionSpec | None = None,
+        type_line: str = "Token Creature — Test",
+        mana_value: float = 0,
     ):
         characteristics = {
-            "type_line": "Token Creature — Test",
+            "type_line": type_line,
+            "mana_value": mana_value,
             "power": "2",
             "toughness": "2",
             "colors": list(colors),
         }
         if protection is not None:
+            protection_spec = (
+                protection
+                if isinstance(protection, ProtectionSpec)
+                else ProtectionSpec(
+                    ProtectionQualityKind.COLOR,
+                    protection,
+                )
+            )
             characteristics.update(
                 {
-                    "oracle_text": f"Protection from {protection}",
+                    "oracle_text": "Protection",
                     "keywords": ["Protection"],
                     "ability_fragments": [
-                        wrapped(
-                            ProtectionSpec(
-                                ProtectionQualityKind.COLOR,
-                                protection,
-                            )
-                        )
+                        wrapped(protection_spec)
                     ],
                 }
             )
@@ -582,13 +800,23 @@ class TypedProtectionEngineTests(unittest.TestCase):
             engine,
             "B",
             "Protected Bear",
-            protection="R",
+            protection=ProtectionSpec(
+                ProtectionQualityKind.PREDICATE,
+                schema_version=2,
+                source_predicate=ProtectionSourcePredicateSpec(
+                    color_count="colored",
+                    supertypes_all=("snow",),
+                    minimum_mana_value=3,
+                ),
+            ),
         )
         red_source = self.creature(
             engine,
             "A",
             "Red Source",
             colors=("R",),
+            type_line="Snow Token Creature — Test",
+            mana_value=3,
         )
         group = TargetGroup.from_mapping(
             {
@@ -617,7 +845,8 @@ class TypedProtectionEngineTests(unittest.TestCase):
             "A",
             name="Red Equipment",
             characteristics={
-                "type_line": "Token Artifact — Equipment",
+                "type_line": "Snow Token Artifact — Equipment",
+                "mana_value": 3,
                 "colors": ["R"],
             },
         )[0]
@@ -642,7 +871,8 @@ class TypedProtectionEngineTests(unittest.TestCase):
             "A",
             name="Red Aura",
             characteristics={
-                "type_line": "Token Enchantment — Aura",
+                "type_line": "Snow Token Enchantment — Aura",
+                "mana_value": 3,
                 "colors": ["R"],
                 "oracle_text": "Enchant creature",
                 "ability_fragments": [
@@ -653,6 +883,24 @@ class TypedProtectionEngineTests(unittest.TestCase):
         )
         self.assertEqual([], aura_refs)
         self.assertEqual(before, set(engine.state.cards))
+
+        proposal = damage_proposal(
+            engine,
+            proposal_id="damage:typed-protection-predicate",
+            actor="A",
+            source_ref=red_source.ref,
+            target=protected.ref,
+            amount=1,
+            combat=False,
+            reason="typed protection predicate witness",
+        )
+        result = commit_prepared_damage_batch(
+            engine,
+            prepare_damage_batch(engine, (proposal,)),
+        )
+        self.assertEqual(0, result.events[0].dealt_amount)
+        self.assertEqual(1, result.events[0].prevented_amount)
+        self.assertEqual(0, protected.marked_damage)
 
     def test_four_player_protection_uses_the_actual_source(self):
         engine = self.session(7021602, players=4).engine

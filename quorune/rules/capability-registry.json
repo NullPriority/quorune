@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 132,
+  "registry_version": 133,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -867,18 +867,18 @@
     },
     {
       "id": "protection.typed.debt",
-      "version": 1,
+      "version": 2,
       "official_rules": ["301.5c", "303.4c", "509.1b", "702.16", "702.16a", "702.16b", "702.16c", "702.16d", "702.16e", "702.16f", "702.16j"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of one compiled protection quality using live or last-known source characteristics.",
-        "inputs": ["trusted typed protection fragment", "protected permanent characteristics", "source colors, card types, and subtypes", "target, attachment, block, or damage event"],
+        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of compiled fixed Protection qualities using current or last-known source characteristics.",
+        "inputs": ["trusted typed protection fragment", "protected permanent characteristics", "source colors, card types, subtypes, supertypes, and mana value", "target, attachment, block, or damage event"],
         "outputs": ["closed allowed, blocked, or unresolved verdict", "protection prevention effect", "target and declaration filtering", "illegal-attachment state action"],
-        "exclusions": ["protection quality conjunctions and comma lists", "qualities other than everything, colors, represented card types, and Aura", "effects that remove protection from damage", "effects that redefine a quality dynamically", "untrusted or text-only granted protection"]
+        "exclusions": ["state- or history-dependent qualities such as cast-this-turn or counter-bearing sources", "qualities outside the closed fixed characteristic grammar", "effects that remove protection from damage", "effects that redefine a quality dynamically", "untrusted or text-only granted protection"]
       },
       "dependencies": ["attachment.aura.simple_object", "damage.prevention.static_fixed", "target.revalidate_resolution"],
-      "implementation_components": ["quorune.ability_fragments.ProtectionSpec", "quorune.semantic_runtime.ability_fragments.ProtectionAbilityFragmentHandler", "quorune.compiler.continuous_templates.attached_fixed_characteristics_handler", "quorune.protection.protection_verdict", "quorune.damage._protection_prevention_effects", "quorune.engine.CommanderEngine._target_row_matches", "quorune.engine.CommanderEngine._can_block", "quorune.engine.CommanderEngine._attachment_is_legal"],
-      "positive_tests": ["test_typed_protection_blocks_target_attachment_and_block_operations", "test_lifelink_counts_only_damage_not_prevented_by_protection"],
+      "implementation_components": ["quorune.ability_fragments.ProtectionSpec", "quorune.ability_fragments.ProtectionSourcePredicateSpec", "quorune.semantic_runtime.ability_fragments.ProtectionAbilityFragmentHandler", "quorune.compiler.continuous_templates.attached_fixed_characteristics_handler", "quorune.protection.protection_verdict", "quorune.damage_source.DamageSourceSnapshot", "quorune.damage._protection_prevention_effects", "quorune.engine.CommanderEngine._target_row_matches", "quorune.engine.CommanderEngine._can_block", "quorune.engine.CommanderEngine._attachment_is_legal"],
+      "positive_tests": ["test_compiler_closes_fixed_source_quality_predicates", "test_fixed_source_quality_predicates_match_current_characteristics", "test_typed_protection_blocks_target_attachment_and_block_operations", "test_lifelink_counts_only_damage_not_prevented_by_protection"],
       "negative_tests": ["test_untyped_and_unsupported_protection_fail_closed"],
       "interaction_tests": ["test_layer_six_granted_protection_uses_typed_fragment"],
       "multiplayer_tests": ["test_four_player_protection_uses_the_actual_source"],
@@ -888,7 +888,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Uncompiled or malformed protection yields an unresolved verdict; target, block, attachment, and damage consumers fail closed, while unsupported compiler grammar remains residual before runtime mutation.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_typed_protection_verdict_mutant_is_killed replaces the matching-quality verdict with allowed and the focused assertion rejects the survivor.",
+      "implementation_mutation_rationale": "test_typed_protection_verdict_mutant_is_killed exercises a fixed subtype, supertype, and mana-value predicate, then replaces the matching-quality verdict with allowed and rejects the survivor.",
       "blockers": [],
       "status": "trusted"
     },

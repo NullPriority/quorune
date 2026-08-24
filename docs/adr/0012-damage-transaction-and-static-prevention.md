@@ -32,7 +32,10 @@ normalized final damage event used by triggers and audit logs.
 `semantic_runtime/damage_replacements.py` owns strict source-pinned descriptor
 validation and lowering for fixed quantity replacement and fixed static
 prevention. It remains pure. Protection contributes an immutable prevention
-effect at preparation. `replacement_decisions.py` owns seat-scoped combat and
+effect at preparation. Its canonical source snapshot includes the represented
+type, subtype, supertype, color, and mana-value facts needed by compiled fixed
+Protection qualities, including last-known information after source departure.
+`replacement_decisions.py` owns seat-scoped combat and
 semantic suspension; Game Record v3 remains unchanged.
 
 Rules keywords such as toxic and lifelink, and transport fields such as reason,

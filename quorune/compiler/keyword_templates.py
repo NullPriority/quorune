@@ -48,7 +48,7 @@ def keyword_mechanics(
         # the whole printed ability for the typed Flashback grammar to accept
         # or reject as one source-spanned node.
         return ("flashback",)
-    parts = [part.strip() for part in material.split(",")]
+    parts = [part.strip() for part in re.split(r"[,;]", material)]
     if not parts:
         return None
     mechanics: list[str] = []

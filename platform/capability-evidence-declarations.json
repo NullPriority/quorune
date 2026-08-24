@@ -15699,7 +15699,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Grant executable protection through a typed layer-6 fragment while retaining rules text only as display provenance."
+      "applicability_note": "Grant an executable fixed subtype Protection predicate through the shared typed layer-6 fragment while retaining rules text only as display provenance."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -15747,7 +15747,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Kill a mutant that converts a matching typed protection quality from blocked to allowed."
+      "applicability_note": "Match a fixed subtype, supertype, and mana-value source predicate, then kill a mutant that converts the typed Protection verdict from blocked to allowed."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -15771,7 +15771,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Return unresolved for text-only, malformed, compound, or unsupported protection qualities instead of treating them as executable."
+      "applicability_note": "Return unresolved for text-only, malformed, state-dependent, history-dependent, or otherwise unsupported Protection qualities instead of treating them as executable."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -15819,7 +15819,55 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Use one typed quality to reject targeting, blocking, equipping, and enchanting by a matching source without mutating rejected Aura-token creation."
+      "applicability_note": "Use one fixed color-cardinality, snow, and mana-value predicate to reject targeting, blocking, equipping, enchanting, and damage by matching sources without mutating rejected Aura-token creation."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_ability_fragments.TypedProtectionTests.test_compiler_closes_fixed_source_quality_predicates",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed type, subtype, negative-subtype, supertype, color-cardinality, and minimum-mana-value Protection qualities, including sibling keyword lists, to exact typed handlers with complete capability closure."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_ability_fragments.TypedProtectionTests.test_fixed_source_quality_predicates_match_current_characteristics",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate every closed fixed source-predicate dimension against current represented characteristics and fail closed when a required mana value is unavailable."
     },
     {
       "capability_id": "protection.typed.debt",

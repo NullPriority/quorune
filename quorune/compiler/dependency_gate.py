@@ -309,7 +309,7 @@ def keyword_dependency_gate(
             return enchant_gate
     protection_parts = tuple(
         part.strip()
-        for part in material_line.rstrip(".").split(",")
+        for part in re.split(r"[,;]", material_line.rstrip("."))
         if part.strip().casefold().startswith("protection from ")
     )
     if (
@@ -332,14 +332,23 @@ def keyword_dependency_gate(
             capability_registry=capability_registry,
             capability_profile=capability_profile,
         )
+        combined_gate = explicit_capabilities_gate(
+            (*protection_gate.capabilities, *other_gate.capabilities),
+            capability_registry=capability_registry,
+            capability_profile=capability_profile,
+        )
         return DependencyGate(
             blockers=tuple(
                 dict.fromkeys(
-                    (*protection_gate.blockers, *other_gate.blockers)
+                    (
+                        *combined_gate.blockers,
+                        *protection_gate.blockers,
+                        *other_gate.blockers,
+                    )
                 )
             ),
-            capabilities=protection_gate.capabilities,
-            closure=protection_gate.closure,
+            capabilities=combined_gate.capabilities,
+            closure=combined_gate.closure,
         )
     return dependency_gate(
         mechanics=mechanics,

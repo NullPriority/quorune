@@ -1,8 +1,8 @@
 ---
 title: "Target legality and protection"
 status: "current"
-authoritative_source: "quorune/targets.py, quorune/target_predicates.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, and CommanderEngine._target_row_matches"
-verified: "2026-08-16"
+authoritative_source: "quorune/targets.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, and CommanderEngine._target_row_matches"
+verified: "2026-08-24"
 audience: "rules, compiler, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -48,6 +48,24 @@ The protection snapshot accepts already-derived current facts:
 - source colors;
 - represented player/controller color protections; and
 - the existing typed Protection verdict.
+
+`ProtectionSpec` owns the closed quality descriptor. Schema v1 retains
+everything, one color, one represented card type, or Aura. Schema v2 adds one
+immutable `ProtectionSourcePredicateSpec` over represented card types, pinned
+subtypes, excluded creature subtypes, supertypes, color cardinality, and a
+minimum mana value. Multiple printed `and from` qualities remain separate
+specifications, so one matching quality is sufficient. The compiler admits
+fixed qualities such as Goblins, non-Spirit creatures, legendary creatures,
+snow, each color, monocolored, multicolored, and mana value 3 or greater; it
+does not grant authority to cast-history, counter-state, modified, chosen, or
+other open predicates.
+
+Targeting, blocking, and live attachment legality evaluate that descriptor
+against current effective source characteristics. Damage preparation evaluates
+the same descriptor against the canonical immutable source snapshot, which now
+pins supertypes and mana value alongside type, subtype, and color. A missing
+required mana value produces `UNRESOLVED`, and every DEBT consumer fails closed.
+No consumer reparses Oracle text or maintains a family-specific quality check.
 
 It never reads or mutates `GameState`, parses Oracle text, chooses a target, or
 discovers characteristics. It returns a closed allowed-or-blocked reason.

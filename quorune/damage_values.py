@@ -122,6 +122,7 @@ class DamageProposal:
             ),
             "source_colors": list(self.source.colors),
             "source_keywords": list(self.source.keywords),
+            "source_mana_value": self.source.mana_value,
             "source_is_commander": self.source.is_commander,
             "source_toxic_value": self.source.toxic_value,
             "target": self.recipient.ref,
