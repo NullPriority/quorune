@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import re
 from typing import Any, Iterable, Mapping, Sequence
 
 from .object_predicate import (
@@ -452,6 +453,12 @@ def target_plan(
             )
         if len(set(selected_modes)) != len(selected_modes):
             raise ValueError("The same mode cannot be selected twice")
+        mode_order = {str(mode): index for index, mode in enumerate(mode_definitions)}
+        if any(mode not in mode_order for mode in selected_modes):
+            unknown = next(mode for mode in selected_modes if mode not in mode_order)
+            raise ValueError(f"Unknown target mode {unknown!r}")
+        if tuple(sorted(selected_modes, key=mode_order.__getitem__)) != selected_modes:
+            raise ValueError("Selected modes must remain in printed order")
         for mode in selected_modes:
             definition = mode_definitions.get(mode)
             if not isinstance(definition, Mapping):
@@ -493,13 +500,75 @@ def target_plan(
 def mode_effects(
     schema: Mapping[str, Any],
     modes: Sequence[str],
+    *,
+    target_groups: Mapping[str, Sequence[Any]] | None = None,
 ) -> list[dict[str, Any]]:
     definitions = schema.get("modes")
     if not isinstance(definitions, Mapping):
         return []
+
+    def rebase(value: Any, offset: int, count: int) -> Any:
+        if isinstance(value, Mapping):
+            return {
+                key: rebase(child, offset, count)
+                for key, child in value.items()
+            }
+        if isinstance(value, list):
+            return [rebase(child, offset, count) for child in value]
+        if isinstance(value, tuple):
+            return tuple(rebase(child, offset, count) for child in value)
+        if value == "$targets":
+            return [f"$target.{offset + index}" for index in range(count)]
+        if not isinstance(value, str):
+            return value
+        match = re.fullmatch(
+            r"\$target(?P<attribute>\.(?:controller|owner|mana_value|colors|type_line))?"
+            r"(?P<separator>[.\[])(?P<index>\d+)(?P<close>\]?)",
+            value,
+        )
+        if match is None:
+            return value
+        local_index = int(match.group("index"))
+        if local_index >= count:
+            return value
+        return (
+            "$target"
+            f"{match.group('attribute') or ''}"
+            f"{match.group('separator')}"
+            f"{offset + local_index}"
+            f"{match.group('close')}"
+        )
+
     effects: list[dict[str, Any]] = []
+    target_offset = 0
     for mode in modes:
         definition = definitions.get(str(mode))
         if isinstance(definition, Mapping):
-            effects.extend(dict(effect) for effect in definition.get("effects", []))
+            groups = definition.get("groups")
+            group_ids = (
+                [str(group.get("id")) for group in groups]
+                if isinstance(groups, (list, tuple))
+                and all(isinstance(group, Mapping) for group in groups)
+                else []
+            )
+            if target_groups is not None:
+                target_count = sum(
+                    len(target_groups.get(group_id, ()))
+                    for group_id in group_ids
+                )
+            else:
+                try:
+                    target_count = sum(
+                        group.max_targets
+                        for group in target_plan(
+                            {"groups": list(groups or [])}
+                        ).groups
+                    )
+                except (TypeError, ValueError):
+                    target_count = 0
+            effects.extend(
+                rebase(dict(effect), target_offset, target_count)
+                for effect in definition.get("effects", [])
+            )
+            target_offset += target_count
     return effects

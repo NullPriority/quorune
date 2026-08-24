@@ -48,6 +48,11 @@ MUTATION_TESTS = {
         "FixedChooseOneModalCompilerTests."
         "test_modal_compiler_mutation_is_killed"
     ),
+    "choice.modal.fixed_nonrepeating": (
+        "tests.test_fixed_nonrepeating_modal_programs."
+        "FixedNonrepeatingModalCompilerTests."
+        "test_modal_dependency_and_compiler_mutations_fail_closed"
+    ),
     "counter.producer.bloodthirst": (
         "tests.test_bloodthirst_rules."
         "BloodthirstRuntimeTests."

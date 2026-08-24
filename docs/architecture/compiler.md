@@ -158,6 +158,19 @@ modal bodies share the descriptor. Random, optional, variable, all-hand,
 revealed or qualified, linked-result, cost, cleanup, and keyword-specific
 discard forms remain source-spanned residuals.
 
+`compiler/modal_templates.py` preserves the strict fixed `Choose one` spell
+owner and separately owns bounded fixed nonrepeating modal blocks across whole
+spells, normalized triggers, and supported activated abilities. The expanded
+owner accepts `Choose one`, `Choose one or both`, `Choose one or more`, and
+`Choose two` only when every bullet already has an exact typed effect owner.
+Mode-qualified target-group IDs, printed-order selection, per-mode target
+feasibility, runtime target rebasing, and exact child-plus-wrapper capability
+closure keep multi-mode execution on the shared target and effect paths.
+Repeatable, random, conditional-count, selection-linked-cost, selection-history,
+cross-mode-target, unsupported-wrapper, and untyped-branch forms remain
+source-spanned residuals. See ADR 0071 for the preserved strict compatibility
+shape and ADR 0082 for the expanded owner.
+
 `compiler/cumulative_upkeep_nodes.py` owns the closed printed
 cumulative-upkeep grammar. It lowers one fixed positive ordinary-mana cost or
 one em-dash-delimited fixed positive life cost to a source-spanned upkeep

@@ -3218,6 +3218,110 @@
       "applicability_note": "Reject a stale issued candidate and a malformed typed predicate while preserving the exact authoritative state hash."
     },
     {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose two selected branches with distinct target groups, reject duplicate, reversed, under-count, and mismatched submissions, and resolve only the selected branches in printed order."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_modal_activation_pays_cost_resolves_selected_mode_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose a modal activation with its mana and source-sacrifice costs, mode-specific targeting, selected life branch, and stack resolution."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_modal_entry_trigger_selects_target_resolves_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Place a real modal enters trigger through normalized APNAP handling, reject its wrong target, and resolve only the selected destruction branch."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Advertise legal mode-specific targets and resolve a two-mode spell in a four-seat game without changing controller or target relations."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalCompilerTests.test_modal_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove shared modal production and prove spell and activation witnesses return to source-spanned residuals."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalCompilerTests.test_modal_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block exact trust when the shared modal capability is unavailable."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalCompilerTests.test_modal_selection_grammar_and_shape_fail_closed",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject repeatable, random, conditional, Entwine, Escalate, extra-line, malformed-bound, renamed-group, empty-branch, and unknown-field modal shapes."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalCompilerTests.test_fixed_modal_programs_compile_across_shared_contexts",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile real fixed modal witnesses across whole spells, normalized enters triggers, and supported sacrifice activations while preserving source spans and exact child closure."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project the modal cast offer only to the priority actor while withholding it from the other three seats."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save and exactly replay ordered multi-mode selection, distinct targets, mana payment, damage, destruction, and spell movement."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_modal_activation_pays_cost_resolves_selected_mode_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save and exactly replay modal activation costs, selected life effect, stack placement, and source movement."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_modal_entry_trigger_selects_target_resolves_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save and exactly replay normalized trigger creation, private modal target selection, APNAP stack placement, and selected destruction."
+    },
+    {
+      "capability_id": "choice.modal.fixed_nonrepeating",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+      "official_rule_ids": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject duplicate, reversed, under-count, and target-mode-mismatched submissions without changing the authoritative state hash."
+    },
+    {
       "capability_id": "choice.modal.fixed_one",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalRuntimeTests.test_compiled_modal_choice_resolves_only_selected_mode_and_replays",

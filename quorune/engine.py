@@ -364,6 +364,21 @@ PUBLIC_ZONES = {"battlefield", "graveyard", "exile", "command", "stack"}
 HIDDEN_ZONES = {"hand", "library"}
 
 
+def _stack_mode_effects(
+    target_schema: Mapping[str, Any],
+    item: StackItem,
+) -> list[dict[str, Any]]:
+    return mode_effects(
+        target_schema,
+        item.modes,
+        target_groups=(
+            item.context.get("target_groups_current")
+            or item.context.get("target_groups")
+            or {}
+        ),
+    )
+
+
 @dataclass(slots=True)
 class ActionResult:
     ok: bool
@@ -3757,7 +3772,7 @@ class CommanderEngine(
                     else [
                         *program.effects,
                         *(
-                            mode_effects(target_schema, item.modes)
+                            _stack_mode_effects(target_schema, item)
                             if target_schema
                             else []
                         ),

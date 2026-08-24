@@ -43,6 +43,7 @@ from .ir_model import (
     OracleResidual,
     SourceSpan,
 )
+from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .regeneration_templates import self_regeneration_effect_template
 from .temporary_declaration_templates import (
     activated_temporary_declaration_restriction_effect_template,
@@ -383,6 +384,7 @@ def _activated_effect_dependency_gate(
         capability_shaped_effect
         or closed_prevention_effect
         or closed_target_sequence
+        or FIXED_NONREPEATING_MODAL_MECHANIC in mechanics
     ) and capability_registry is not None:
         return dependency_gate(
             mechanics=mechanics,
