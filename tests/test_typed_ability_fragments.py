@@ -611,10 +611,14 @@ class TypedProtectionTests(unittest.TestCase):
         legacy = dict(serialized)
         legacy.pop("mana_value")
         self.assertIsNone(DamageSourceSnapshot.from_dict(legacy).mana_value)
-        with self.assertRaisesRegex(DamageError, "mana value"):
-            DamageSourceSnapshot.from_dict(
-                {**serialized, "mana_value": -1}
-            )
+        for malformed in (-1, float("inf"), float("nan")):
+            with self.subTest(mana_value=malformed), self.assertRaisesRegex(
+                DamageError,
+                "mana value",
+            ):
+                DamageSourceSnapshot.from_dict(
+                    {**serialized, "mana_value": malformed}
+                )
 
     def test_layer_six_granted_protection_uses_typed_fragment(self):
         fragment = wrapped(

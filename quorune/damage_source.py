@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import Any, Iterable, Mapping
 
 from .ability_fragments import (
@@ -117,6 +118,7 @@ class DamageSourceSnapshot:
             if (
                 type(self.mana_value) not in {int, float}
                 or self.mana_value < 0
+                or not isfinite(self.mana_value)
             ):
                 raise DamageError(
                     "A known source mana value must be nonnegative"

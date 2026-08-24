@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from math import isfinite
 from typing import Any, Iterable, Mapping, Protocol
 
 from .ability_fragments import (
@@ -47,6 +48,7 @@ class ProtectionSource:
             float(raw_mana_value)
             if type(raw_mana_value) in {int, float}
             and raw_mana_value >= 0
+            and isfinite(raw_mana_value)
             else None
         )
         return cls(
