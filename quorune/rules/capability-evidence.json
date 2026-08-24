@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c908423f042c36ce6c54cb1bd5c3f549926cea0e77e457a6766f56aaba42d47e",
-  "declaration_source_fingerprint": "44470e16ee1c04f77ba5610f03bfd7dc17d97465fb536bfe1803006c88117d98",
+  "registry_fingerprint": "127a8f23fcb69e8e291e3633fc4e98493af3e89861aa3ea07974e25775dd59f1",
+  "declaration_source_fingerprint": "1343ed0519d9fa1d9c51a94dec1f95dd3980fad4a989fe3395f88b4d13f49d8e",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -38615,6 +38615,31 @@
     {
       "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_current_effective_color_count_governs_offer_command_and_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the final current effective color and subtype characteristic snapshot for offer, command validation, and resolution revalidation after copy-derived color and type-layer subtype changes."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_mana_value_target_predicates.FixedManaValueTargetRuntimeTests.test_current_copy_derived_mana_value_governs_offer_command_and_resolution",
       "official_rule_ids": [
         "105.2",
@@ -38739,6 +38764,31 @@
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_shared_parser_mutation_demotes_each_effect_owner",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the shared closed characteristic parser from destruction, exile, and tap-state lowering."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "negative",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateCompilerTests.test_unsupported_and_malformed_direct_target_predicates_fail_closed",
       "official_rule_ids": [
@@ -38761,6 +38811,31 @@
         "commander_review"
       ],
       "applicability_note": "Keep unrepresented qualities residual and reject unknown, noncanonical, or ill-typed target descriptors."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_scoped_dynamic_and_ability_presence_predicates_fail_closed",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject scoped disjunctions, combat and numeric history, unnamed counters, relational identity, and family-specific layer-6 ability-presence checks."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -38886,6 +38961,56 @@
         "commander_review"
       ],
       "applicability_note": "Lower non-Human, nonblack, and colorless creature qualifiers together with one immutable public-state descriptor."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_shared_characteristic_grammar_covers_the_bounded_shapes",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Round-trip the bounded type, subtype, supertype, color-cardinality, keyword, token, and untapped target shapes through one immutable descriptor."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_shared_grammar_compiles_across_effect_owners_and_contexts",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile the same characteristic grammar through spell and activated destruction, exile, tap, and untap owners without card-identity dispatch."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -46175,5 +46300,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "308295aa56df41c207ebc2998ecb53634899ee3e12bd34cf35eca0ed841ec87f"
+  "fingerprint": "0a2ed3edd426611eba41462d6ce882817f601932eecd9e2e1bce2491cf60d5d6"
 }

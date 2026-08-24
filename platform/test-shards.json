@@ -149,6 +149,7 @@
       "test_counter_target_predicates",
       "test_decision_opportunities",
       "test_explore_rules",
+      "test_fixed_direct_target_predicates",
       "test_fixed_mana_value_target_predicates",
       "test_hexproof_targeting",
       "test_interactions_v070",

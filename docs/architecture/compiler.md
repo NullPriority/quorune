@@ -425,16 +425,24 @@ reports and contains hashes and public identities rather than Oracle prose.
 fixed counter-placement grammar. Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the
 represented type conjunctions and canonical disjunctions of up to four
-permanent card types, pinned creature-subtype disjunctions, reviewed Vehicle
-subtype, Flying predicate, controller relation, source exclusion, closed
-negative subtype and color forms, one fixed exact/minimum/maximum mana-value
-qualifier, and one shared typed public-state predicate for tapped state,
-named-counter presence, or current-turn battlefield entry. The mana-value form
+permanent card types; pinned positive and negative creature subtypes; bounded
+positive and negative supertype, keyword, color, color-cardinality, and token
+qualities; controller relation; source exclusion; one fixed
+exact/minimum/maximum mana-value qualifier; and one shared typed public-state
+predicate for tapped state, named-counter presence, or current-turn battlefield
+entry. The final effective-characteristic snapshot owns color cardinality and
+negative subtype evaluation at offer, command, and resolution boundaries, so
+copy and type-changing effects do not require a second grammar-specific query.
+The mana-value form
 uses the existing current public characteristic snapshot and remains separate
 from power, toughness, variable, total, and public-state-combined numeric
 grammar so this harvest does not cross the cycle-sensitive characteristic
 boundary.
-Arbitrary adjectives are never inferred as creature subtypes. Targeted
+Arbitrary adjectives are never inferred as creature subtypes. Scoped
+disjunctions, combat or damage history, power or toughness, generic counter
+presence, and identity or attachment relations remain residual. Ability-
+presence predicates remain residual until the shared layer-6 applicability
+query exists. Targeted
 destruction, exile, tap, and untap delegate their whole-clause subjects to this
 same owner, so spells, triggers, activations, and modal bodies share the exact
 typed target grammar without an effect-specific predicate vocabulary. Mixed

@@ -66,10 +66,7 @@ def targeted_exile_effect_template(
     )
     if match is None:
         return None
-    subject = match.group("subject")
-    target_spec = direct_permanent_target_spec(subject)
-    if target_spec is None and subject.casefold() == "target nonland permanent":
-        target_spec = DirectPermanentTargetSpec(types_none=("land",))
+    target_spec = direct_permanent_target_spec(match.group("subject"))
     return (
         TargetedExileEffectTemplate(target_spec)
         if target_spec is not None

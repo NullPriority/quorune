@@ -486,7 +486,7 @@ class CiPipelineTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn(
-            "cancel-in-progress: ${{ github.event.action != 'edited' }}",
+            "cancel-in-progress: true",
             pr,
         )
         self.assertIn(
