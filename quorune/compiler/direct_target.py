@@ -31,13 +31,21 @@ _DIRECT_TYPE_ANY_VALUES = frozenset(
         "planeswalker",
     }
 )
-_DIRECT_TYPE_ALL_SHAPES = frozenset(
-    {("creature",), ("creature", "enchantment")}
-)
 DIRECT_NONCREATURE_SUBTYPES = frozenset({"forest", "gate", "vehicle"})
 DIRECT_PERMANENT_TYPES = _DIRECT_TYPE_ANY_VALUES | {"permanent"}
-_DIRECT_KEYWORDS = frozenset({"flying"})
+_DIRECT_SUPERTYPES = frozenset({"basic", "legendary", "snow"})
+_DIRECT_KEYWORDS = frozenset(
+    {"defender", "flying", "horsemanship", "islandwalk", "shadow"}
+)
 _DIRECT_COLORS = frozenset({"W", "U", "B", "R", "G"})
+_DIRECT_COLOR_WORDS = {
+    "white": "W",
+    "blue": "U",
+    "black": "B",
+    "red": "R",
+    "green": "G",
+}
+_OUTLAW_SUBTYPES = ("assassin", "mercenary", "pirate", "rogue", "warlock")
 
 
 def _canonical_terms(
@@ -135,6 +143,186 @@ def _strip_mana_value_predicate(
     return match.group("body"), {field: int(match.group("value"))}
 
 
+def _split_direct_or_terms(value: str) -> tuple[str, ...]:
+    return tuple(
+        term.strip()
+        for term in re.split(r",\s*(?:or\s+)?|\s+or\s+", value)
+        if term.strip()
+    )
+
+
+def _simple_direct_type_fields(phrase: str) -> dict[str, Any] | None:
+    if phrase in DIRECT_PERMANENT_TYPES:
+        return {} if phrase == "permanent" else {"types_any": (phrase,)}
+    terms = _split_direct_or_terms(phrase)
+    if len(terms) > 1 and set(terms).issubset(_DIRECT_TYPE_ANY_VALUES):
+        return {"types_any": terms}
+    conjunction = tuple(phrase.split())
+    if (
+        len(conjunction) == 2
+        and set(conjunction).issubset(_DIRECT_TYPE_ANY_VALUES)
+    ):
+        return {"types_all": conjunction}
+    return None
+
+
+def _closed_direct_characteristic_fields(
+    phrase: str,
+) -> dict[str, Any] | None:
+    """Parse the bounded reusable public-characteristic target grammar."""
+
+    if phrase == (
+        "legendary permanent that's an artifact, creature, or enchantment"
+    ):
+        return {
+            "types_any": ("artifact", "creature", "enchantment"),
+            "supertypes_any": ("legendary",),
+        }
+    if phrase == "noncreature artifact or noncreature enchantment":
+        return {
+            "types_any": ("artifact", "enchantment"),
+            "types_none": ("creature",),
+        }
+    if phrase == "multicolored creature or multicolored enchantment":
+        return {
+            "types_any": ("creature", "enchantment"),
+            "color_count_min": 2,
+        }
+    if phrase == "non-outlaw creature":
+        return {
+            "types_any": ("creature",),
+            "subtypes_none": _OUTLAW_SUBTYPES,
+        }
+    if phrase in {"creature token", "token creature"}:
+        return {"types_any": ("creature",), "token": True}
+
+    keyword_fields: dict[str, tuple[str, ...]] = {}
+    keyword_match = re.fullmatch(
+        r"(?P<body>.+) (?P<relation>with|without) "
+        r"(?P<keyword>defender|flying|horsemanship|islandwalk|shadow)",
+        phrase,
+    )
+    if keyword_match is not None:
+        phrase = keyword_match.group("body")
+        keyword_fields[
+            "keywords_all"
+            if keyword_match.group("relation") == "with"
+            else "keywords_none"
+        ] = (keyword_match.group("keyword"),)
+
+    one_or_more = re.fullmatch(
+        r"(?P<body>.+?)(?: that's| that is)? one or more colors",
+        phrase,
+    )
+    if one_or_more is not None:
+        fields = _simple_direct_type_fields(one_or_more.group("body"))
+        return (
+            {**fields, "color_count_min": 1, **keyword_fields}
+            if fields is not None
+            else None
+        )
+
+    quality_match = re.fullmatch(
+        r"(?P<quality>legendary|snow|basic|nonlegendary|nonsnow|nonbasic) "
+        r"(?P<body>.+)",
+        phrase,
+    )
+    if quality_match is not None:
+        fields = _simple_direct_type_fields(quality_match.group("body"))
+        if fields is None:
+            return None
+        quality = quality_match.group("quality")
+        negative = quality.startswith("non")
+        supertype = quality[3:] if negative else quality
+        return {
+            **fields,
+            "supertypes_none" if negative else "supertypes_any": (supertype,),
+            **keyword_fields,
+        }
+
+    cardinality_match = re.fullmatch(
+        r"(?P<quality>monocolored|multicolored) (?P<body>.+)",
+        phrase,
+    )
+    if cardinality_match is not None:
+        fields = _simple_direct_type_fields(cardinality_match.group("body"))
+        if fields is None:
+            return None
+        return {
+            **fields,
+            (
+                "color_count_equal"
+                if cardinality_match.group("quality") == "monocolored"
+                else "color_count_min"
+            ): 1 if cardinality_match.group("quality") == "monocolored" else 2,
+            **keyword_fields,
+        }
+
+    color_match = re.fullmatch(
+        r"(?P<colors>(?:white|blue|black|red|green)"
+        r"(?: or (?:white|blue|black|red|green))*) (?P<body>.+)",
+        phrase,
+    )
+    if color_match is not None:
+        fields = _simple_direct_type_fields(color_match.group("body"))
+        colors = tuple(
+            _DIRECT_COLOR_WORDS[value]
+            for value in color_match.group("colors").split(" or ")
+        )
+        return (
+            {**fields, "colors_any": colors, **keyword_fields}
+            if fields is not None
+            else None
+        )
+
+    negative_color_match = re.fullmatch(
+        r"non(?P<color>white|blue|black|red|green) (?P<body>.+)",
+        phrase,
+    )
+    if negative_color_match is not None:
+        fields = _simple_direct_type_fields(negative_color_match.group("body"))
+        return (
+            {
+                **fields,
+                "colors_none": (
+                    _DIRECT_COLOR_WORDS[negative_color_match.group("color")],
+                ),
+                **keyword_fields,
+            }
+            if fields is not None
+            else None
+        )
+
+    if phrase.startswith("colorless "):
+        fields = _simple_direct_type_fields(phrase[len("colorless ") :])
+        return (
+            {**fields, "colorless": True, **keyword_fields}
+            if fields is not None
+            else None
+        )
+
+    negative_type_match = re.fullmatch(
+        r"non(?P<excluded>artifact|creature|enchantment|land) (?P<body>.+)",
+        phrase,
+    )
+    if negative_type_match is not None:
+        fields = _simple_direct_type_fields(negative_type_match.group("body"))
+        return (
+            {
+                **fields,
+                "types_none": (negative_type_match.group("excluded"),),
+                **keyword_fields,
+            }
+            if fields is not None
+            else None
+        )
+
+    fields = _simple_direct_type_fields(phrase)
+    if fields is not None:
+        return {**fields, **keyword_fields}
+    return None
+
+
 @dataclass(frozen=True, slots=True)
 class DirectPermanentTargetSpec:
     """One closed, immutable direct-permanent target predicate.
@@ -149,15 +337,22 @@ class DirectPermanentTargetSpec:
     types_none: tuple[str, ...] = ()
     subtypes_any: tuple[str, ...] = ()
     subtypes_none: tuple[str, ...] = ()
+    supertypes_any: tuple[str, ...] = ()
+    supertypes_none: tuple[str, ...] = ()
     keywords_all: tuple[str, ...] = ()
+    keywords_none: tuple[str, ...] = ()
+    colors_any: tuple[str, ...] = ()
     colors_none: tuple[str, ...] = ()
     colorless: bool | None = None
+    color_count_min: int | None = None
+    color_count_equal: int | None = None
     mana_value_min: int | None = None
     mana_value_max: int | None = None
     mana_value_equal: int | None = None
     state_predicate: PermanentStatePredicateSpec | None = None
     controller_relation: str = "any"
     source_exclusion: bool = False
+    token: bool | None = None
     commander: bool | None = None
 
     def __post_init__(self) -> None:
@@ -167,7 +362,10 @@ class DirectPermanentTargetSpec:
             "types_none",
             "subtypes_any",
             "subtypes_none",
+            "supertypes_any",
+            "supertypes_none",
             "keywords_all",
+            "keywords_none",
         ):
             object.__setattr__(
                 self,
@@ -176,22 +374,17 @@ class DirectPermanentTargetSpec:
             )
         object.__setattr__(
             self,
+            "colors_any",
+            _canonical_colors(self.colors_any, field="colors_any"),
+        )
+        object.__setattr__(
+            self,
             "colors_none",
             _canonical_colors(self.colors_none, field="colors_none"),
         )
-        if (
-            sum(
-                bool(value)
-                for value in (
-                    self.types_any,
-                    self.types_all,
-                    self.types_none,
-                )
-            )
-            > 1
-        ):
+        if self.types_any and self.types_all:
             raise ValueError(
-                "Direct permanent targets require one type predicate"
+                "Direct permanent targets require one positive type predicate"
             )
         if self.types_any and (
             len(self.types_any) > 4
@@ -200,29 +393,22 @@ class DirectPermanentTargetSpec:
             raise ValueError(
                 "Direct permanent target type disjunction is unsupported"
             )
-        if self.types_all not in _DIRECT_TYPE_ALL_SHAPES and self.types_all:
+        if self.types_all and (
+            len(self.types_all) > 2
+            or not set(self.types_all).issubset(_DIRECT_TYPE_ANY_VALUES)
+        ):
             raise ValueError("Direct permanent target type conjunction is unsupported")
-        if self.types_none and self.types_none != ("land",):
-            raise ValueError(
-                "Direct permanent excluded types require the closed nonland predicate"
-            )
-        if self.types_none and any(
-            (
-                self.subtypes_any,
-                self.subtypes_none,
-                self.keywords_all,
-                self.colors_none,
-                self.colorless is not None,
-                self.state_predicate is not None,
-                self.commander is not None,
-            )
+        if self.types_none and (
+            len(self.types_none) > 2
+            or not set(self.types_none).issubset(_DIRECT_TYPE_ANY_VALUES)
         ):
             raise ValueError(
-                "Direct permanent nonland targets cannot mix predicates"
+                "Direct permanent excluded type predicate is unsupported"
             )
-        if self.types_all == ("creature",) and not self.keywords_all:
+        positive_types = set(self.types_any or self.types_all)
+        if positive_types.intersection(self.types_none):
             raise ValueError(
-                "Direct permanent creature conjunction requires a keyword predicate"
+                "Direct permanent type predicates contradict each other"
             )
         if self.subtypes_any:
             if (
@@ -244,8 +430,8 @@ class DirectPermanentTargetSpec:
                     )
         if self.subtypes_none:
             if (
-                self.types_any != ("creature",)
-                or len(self.subtypes_none) > 4
+                "creature" not in positive_types
+                or len(self.subtypes_none) > 8
             ):
                 raise ValueError(
                     "Direct permanent excluded subtypes require one closed creature predicate"
@@ -255,27 +441,68 @@ class DirectPermanentTargetSpec:
                     raise ValueError(
                         f"Direct permanent excluded subtype {subtype!r} is unsupported"
                     )
-        if self.keywords_all:
+        if self.supertypes_any or self.supertypes_none:
             if (
-                self.types_all != ("creature",)
-                or self.types_any
-                or self.subtypes_any
-                or not set(self.keywords_all).issubset(_DIRECT_KEYWORDS)
+                len(self.supertypes_any) > 1
+                or len(self.supertypes_none) > 1
+                or not set(self.supertypes_any).issubset(_DIRECT_SUPERTYPES)
+                or not set(self.supertypes_none).issubset(_DIRECT_SUPERTYPES)
+                or set(self.supertypes_any).intersection(self.supertypes_none)
             ):
                 raise ValueError(
-                    "Direct permanent keyword targets require a closed creature predicate"
+                    "Direct permanent supertype predicate is unsupported"
                 )
-        if self.colors_none and (
-            self.types_any != ("creature",) or self.colors_none != ("B",)
-        ):
-            raise ValueError(
-                "Direct permanent excluded colors require the closed nonblack creature predicate"
+        if self.keywords_all or self.keywords_none:
+            if (
+                not (
+                    self.types_any == ("creature",)
+                    or (
+                        "creature" in self.types_all
+                        and not self.types_any
+                    )
+                )
+                or len(self.keywords_all) > 1
+                or len(self.keywords_none) > 1
+                or not set(self.keywords_all).issubset(_DIRECT_KEYWORDS)
+                or not set(self.keywords_none).issubset(_DIRECT_KEYWORDS)
+                or set(self.keywords_all).intersection(self.keywords_none)
+            ):
+                raise ValueError(
+                    "Direct permanent keyword predicate requires one closed creature quality"
+                )
+        if len(self.colors_any) > 2 or len(self.colors_none) > 1:
+            raise ValueError("Direct permanent color predicate is unsupported")
+        color_predicate_count = sum(
+            bool(value)
+            for value in (
+                self.colors_any,
+                self.colors_none,
+                self.colorless is not None,
+                self.color_count_min is not None,
+                self.color_count_equal is not None,
             )
-        if self.colorless is not None and (
-            self.colorless is not True or self.types_any != ("creature",)
+        )
+        if color_predicate_count > 1:
+            raise ValueError(
+                "Direct permanent color predicates are mutually exclusive"
+            )
+        if self.colorless is not None and self.colorless is not True:
+            raise ValueError(
+                "Direct permanent colorless predicates require the closed positive form"
+            )
+        for field_name in ("color_count_min", "color_count_equal"):
+            value = getattr(self, field_name)
+            if value is not None and (
+                type(value) is not int or not 1 <= value <= 5
+            ):
+                raise ValueError(
+                    "Direct permanent color-count predicate is unsupported"
+                )
+        if self.token is not None and (
+            self.token is not True or "creature" not in positive_types
         ):
             raise ValueError(
-                "Direct permanent colorless predicates require a creature target"
+                "Direct permanent token predicates require a creature target"
             )
         _validate_mana_value_predicate(self)
         _validate_public_state_predicate(self)
@@ -294,18 +521,42 @@ class DirectPermanentTargetSpec:
     def characteristic_slug(self) -> str:
         """Return the canonical characteristic-only predicate identity."""
 
-        if self.types_any:
+        if self.types_none == ("land",) and not (
+            self.types_any or self.types_all
+        ):
+            predicate = "nonland-permanent"
+        elif self.types_any:
             predicate = "-or-".join(self.types_any)
         elif self.types_all:
             predicate = "-".join(self.types_all)
-        elif self.types_none:
-            predicate = "nonland-permanent"
         elif self.subtypes_any:
             predicate = "-or-".join(self.subtypes_any)
         else:
             predicate = "permanent"
+        if self.types_none and not (
+            self.types_none == ("land",)
+            and not (self.types_any or self.types_all)
+        ):
+            predicate += "-non-" + "-and-".join(self.types_none)
+        if self.supertypes_any:
+            predicate = "-and-".join(self.supertypes_any) + "-" + predicate
+        if self.supertypes_none:
+            predicate = (
+                "non-"
+                + "-and-".join(self.supertypes_none)
+                + "-"
+                + predicate
+            )
+        if self.colors_any:
+            predicate = (
+                "-or-".join(value.casefold() for value in self.colors_any)
+                + "-"
+                + predicate
+            )
         if self.keywords_all:
             predicate += "-with-" + "-and-".join(self.keywords_all)
+        if self.keywords_none:
+            predicate += "-without-" + "-and-".join(self.keywords_none)
         if self.subtypes_none:
             predicate += "-non-" + "-and-".join(self.subtypes_none)
         if self.colors_none:
@@ -314,6 +565,12 @@ class DirectPermanentTargetSpec:
             )
         if self.colorless:
             predicate += "-colorless"
+        if self.color_count_equal is not None:
+            predicate += f"-exactly-{self.color_count_equal}-colors"
+        elif self.color_count_min is not None:
+            predicate += f"-at-least-{self.color_count_min}-colors"
+        if self.token:
+            predicate += "-token"
         if self.commander:
             predicate = f"commander-{predicate}"
         if self.mana_value_equal is not None:
@@ -351,12 +608,19 @@ class DirectPermanentTargetSpec:
         return bool(
             self.types_all
             or self.types_none
+            or self.supertypes_any
+            or self.supertypes_none
             or self.keywords_all
+            or self.keywords_none
             or len(self.types_any) > 1
             or len(self.subtypes_any) > 1
             or self.subtypes_none
+            or self.colors_any
             or self.colors_none
             or self.colorless is not None
+            or self.color_count_min is not None
+            or self.color_count_equal is not None
+            or self.token is not None
             or self.mana_value_min is not None
             or self.mana_value_max is not None
             or self.mana_value_equal is not None
@@ -378,7 +642,11 @@ class DirectPermanentTargetSpec:
             "types_none",
             "subtypes_any",
             "subtypes_none",
+            "supertypes_any",
+            "supertypes_none",
             "keywords_all",
+            "keywords_none",
+            "colors_any",
             "colors_none",
         ):
             values = getattr(self, field_name)
@@ -386,6 +654,10 @@ class DirectPermanentTargetSpec:
                 schema[field_name] = list(values)
         if self.colorless is not None:
             schema["colorless"] = self.colorless
+        if self.color_count_min is not None:
+            schema["color_count_min"] = self.color_count_min
+        if self.color_count_equal is not None:
+            schema["color_count_equal"] = self.color_count_equal
         if self.mana_value_min is not None:
             schema["mana_value_min"] = self.mana_value_min
         if self.mana_value_max is not None:
@@ -398,6 +670,8 @@ class DirectPermanentTargetSpec:
             schema["controller_relation"] = self.controller_relation
         if self.source_exclusion:
             schema["source_exclusion"] = True
+        if self.token is not None:
+            schema["token"] = self.token
         if self.commander is not None:
             schema["commander"] = self.commander
         return schema
@@ -421,15 +695,22 @@ class DirectPermanentTargetSpec:
             "types_none",
             "subtypes_any",
             "subtypes_none",
+            "supertypes_any",
+            "supertypes_none",
             "keywords_all",
+            "keywords_none",
+            "colors_any",
             "colors_none",
             "colorless",
+            "color_count_min",
+            "color_count_equal",
             "mana_value_min",
             "mana_value_max",
             "mana_value",
             "state_predicate",
             "controller_relation",
             "source_exclusion",
+            "token",
             *(('commander',) if allow_commander else ()),
         }
         if set(schema) - allowed:
@@ -459,15 +740,22 @@ class DirectPermanentTargetSpec:
             types_none=tuple(schema.get("types_none", ())),
             subtypes_any=tuple(schema.get("subtypes_any", ())),
             subtypes_none=tuple(schema.get("subtypes_none", ())),
+            supertypes_any=tuple(schema.get("supertypes_any", ())),
+            supertypes_none=tuple(schema.get("supertypes_none", ())),
             keywords_all=tuple(schema.get("keywords_all", ())),
+            keywords_none=tuple(schema.get("keywords_none", ())),
+            colors_any=tuple(schema.get("colors_any", ())),
             colors_none=tuple(schema.get("colors_none", ())),
             colorless=schema.get("colorless"),
+            color_count_min=schema.get("color_count_min"),
+            color_count_equal=schema.get("color_count_equal"),
             mana_value_min=schema.get("mana_value_min"),
             mana_value_max=schema.get("mana_value_max"),
             mana_value_equal=schema.get("mana_value"),
             state_predicate=state_predicate,
             controller_relation=schema.get("controller_relation", "any"),
             source_exclusion=source_exclusion,
+            token=schema.get("token"),
             commander=schema.get("commander"),
         )
         if spec.to_target_schema() != schema:
@@ -542,32 +830,44 @@ def direct_permanent_target_spec(
         "state_predicate": state_predicate,
         **mana_value_fields,
     }
-    if phrase == "nonland permanent" and mana_value_fields:
-        kwargs["types_none"] = ("land",)
-    elif phrase == "tapped creature":
+    if (
+        counter_state is not None
+        and counter_state.group("counter") == "counter"
+    ):
+        return None
+
+    state_match = re.fullmatch(
+        r"(?P<state>tapped|untapped) (?P<body>.+)",
+        phrase,
+    )
+    if state_match is not None:
         if state_predicate is not None:
             return None
-        kwargs["types_any"] = ("creature",)
-        kwargs["state_predicate"] = PermanentStatePredicateSpec(tapped=True)
-    elif phrase == "nonblack creature":
-        kwargs["types_any"] = ("creature",)
-        kwargs["colors_none"] = ("B",)
-    elif phrase == "colorless creature":
-        kwargs["types_any"] = ("creature",)
-        kwargs["colorless"] = True
+        phrase = state_match.group("body")
+        kwargs["state_predicate"] = PermanentStatePredicateSpec(
+            tapped=state_match.group("state") == "tapped"
+        )
+
+    characteristic_fields = _closed_direct_characteristic_fields(phrase)
+    if characteristic_fields is not None:
+        if (
+            characteristic_fields.get("types_any") == ("creature",)
+            and (
+                characteristic_fields.get("keywords_all")
+                or characteristic_fields.get("keywords_none")
+            )
+        ):
+            characteristic_fields = dict(characteristic_fields)
+            characteristic_fields.pop("types_any")
+            characteristic_fields["types_all"] = ("creature",)
+        kwargs.update(characteristic_fields)
     elif phrase.endswith(" creature") and all(
         value.startswith("non-")
-        for value in re.split(
-            r",\s*(?:or\s+)?|\s+or\s+",
-            phrase[: -len(" creature")],
-        )
+        for value in _split_direct_or_terms(phrase[: -len(" creature")])
     ):
         raw_subtypes = tuple(
             value[len("non-") :].strip()
-            for value in re.split(
-                r",\s*(?:or\s+)?|\s+or\s+",
-                phrase[: -len(" creature")],
-            )
+            for value in _split_direct_or_terms(phrase[: -len(" creature")])
             if value.strip()
         )
         subtypes = tuple(
@@ -579,46 +879,13 @@ def direct_permanent_target_spec(
         kwargs["subtypes_none"] = tuple(
             value for value in subtypes if value is not None
         )
-    elif phrase == "enchantment creature":
-        kwargs["types_all"] = ("enchantment", "creature")
-    elif phrase == "creature with flying":
-        kwargs["types_all"] = ("creature",)
-        kwargs["keywords_all"] = ("flying",)
-    elif phrase in DIRECT_PERMANENT_TYPES:
-        if phrase != "permanent":
-            kwargs["types_any"] = (phrase,)
     else:
-        raw_type_terms = tuple(
-            value.strip()
-            for value in re.split(r",\s*(?:or\s+)?|\s+or\s+", phrase)
-            if value.strip()
-        )
-        if len(raw_type_terms) > 1 and set(raw_type_terms).issubset(
-            _DIRECT_TYPE_ANY_VALUES
-        ):
-            kwargs["types_any"] = raw_type_terms
-            try:
-                return DirectPermanentTargetSpec(**kwargs)
-            except ValueError:
-                return None
         explicit_creature = phrase.endswith(" creature")
         if explicit_creature:
             phrase = phrase[: -len(" creature")]
-        raw_terms = tuple(
-            value.strip()
-            for value in re.split(r",\s*(?:or\s+)?|\s+or\s+", phrase)
-            if value.strip()
-        )
+        raw_terms = _split_direct_or_terms(phrase)
         if not raw_terms:
             return None
-        if not explicit_creature and set(raw_terms).issubset(
-            _DIRECT_TYPE_ANY_VALUES
-        ):
-            kwargs["types_any"] = raw_terms
-            try:
-                return DirectPermanentTargetSpec(**kwargs)
-            except ValueError:
-                return None
         subtypes: list[str] = []
         for value in raw_terms:
             subtype = canonical_creature_subtype(value)

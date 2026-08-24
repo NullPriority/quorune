@@ -238,16 +238,12 @@ class CounterTargetPredicateCompilerTests(unittest.TestCase):
     def test_unsupported_and_malformed_direct_target_predicates_fail_closed(self):
         unsupported = (
             "target modified creature",
-            "target token creature",
             "target nontoken creature",
-            "target snow creature",
             "target commander creature",
             "target attacking creature",
             "target blocking creature",
             "target equipped creature",
             "target enchanted creature",
-            "target untapped creature",
-            "target noncreature artifact",
             "target creature with flying and vigilance",
             "target creature with a counter on it",
             "target creature that entered last turn",

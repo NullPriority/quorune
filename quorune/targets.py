@@ -63,6 +63,18 @@ def _optional_bool(value: Any) -> bool | None:
     return value
 
 
+def _optional_exact_int(
+    value: Any,
+    *,
+    field: str,
+) -> int | None:
+    if value is None:
+        return None
+    if type(value) is not int or not 0 <= value <= 5:
+        raise ValueError(f"{field} must be an exact integer from 0 through 5")
+    return value
+
+
 def _characteristic_forms(value: Any) -> tuple[TargetCharacteristicForm, ...]:
     if not isinstance(value, (list, tuple)):
         raise ValueError("Target characteristic_forms_any must be an array")
@@ -96,13 +108,17 @@ _TARGET_GROUP_FIELDS = frozenset(
         "subtypes_none",
         "subtype",
         "supertypes_any",
+        "supertypes_none",
         "supertype",
         "keywords_all",
+        "keywords_none",
         "colors_any",
         "colors",
         "colors_all",
         "colors_none",
         "colorless",
+        "color_count_min",
+        "color_count_equal",
         "mana_value_min",
         "mana_value_max",
         "mana_value",
@@ -166,11 +182,15 @@ class TargetGroup:
     subtypes_any: tuple[str, ...] = ()
     subtypes_none: tuple[str, ...] = ()
     supertypes_any: tuple[str, ...] = ()
+    supertypes_none: tuple[str, ...] = ()
     keywords_all: tuple[str, ...] = ()
+    keywords_none: tuple[str, ...] = ()
     colors_any: tuple[str, ...] = ()
     colors_all: tuple[str, ...] = ()
     colors_none: tuple[str, ...] = ()
     colorless: bool | None = None
+    color_count_min: int | None = None
+    color_count_equal: int | None = None
     mana_value_min: float | None = None
     mana_value_max: float | None = None
     mana_value_equal: float | None = None
@@ -199,6 +219,23 @@ class TargetGroup:
     resolution_condition: dict[str, Any] = field(default_factory=dict)
     state_predicate: PermanentStatePredicateSpec | None = None
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
+
+    def __post_init__(self) -> None:
+        if sum(
+            value is not None
+            for value in (self.color_count_min, self.color_count_equal)
+        ) > 1:
+            raise ValueError(
+                "Target color-count predicates are mutually exclusive"
+            )
+        for field_name in ("color_count_min", "color_count_equal"):
+            value = getattr(self, field_name)
+            if value is not None and (
+                type(value) is not int or not 0 <= value <= 5
+            ):
+                raise ValueError(
+                    f"Target {field_name} must be an exact integer from 0 through 5"
+                )
 
     def matches_type_characteristics(
         self,
@@ -246,6 +283,12 @@ class TargetGroup:
                     value.casefold() for value in self.supertypes_any
                 )
             )
+            or (
+                self.supertypes_none
+                and actual_supertypes.intersection(
+                    value.casefold() for value in self.supertypes_none
+                )
+            )
         )
 
     def matches_keyword_characteristics(
@@ -257,7 +300,8 @@ class TargetGroup:
 
         actual = {str(value).casefold() for value in keywords}
         required = {value.casefold() for value in self.keywords_all}
-        return required.issubset(actual)
+        excluded = {value.casefold() for value in self.keywords_none}
+        return required.issubset(actual) and not actual.intersection(excluded)
 
     @classmethod
     def from_mapping(
@@ -346,7 +390,9 @@ class TargetGroup:
             supertypes_any=_strings(
                 raw.get("supertypes_any", raw.get("supertype"))
             ),
+            supertypes_none=_strings(raw.get("supertypes_none")),
             keywords_all=_strings(raw.get("keywords_all")),
+            keywords_none=_strings(raw.get("keywords_none")),
             colors_any=tuple(
                 color.upper()
                 for color in _strings(raw.get("colors_any", raw.get("colors")))
@@ -358,6 +404,14 @@ class TargetGroup:
                 color.upper() for color in _strings(raw.get("colors_none"))
             ),
             colorless=_optional_bool(raw.get("colorless")),
+            color_count_min=_optional_exact_int(
+                raw.get("color_count_min"),
+                field="Target color_count_min",
+            ),
+            color_count_equal=_optional_exact_int(
+                raw.get("color_count_equal"),
+                field="Target color_count_equal",
+            ),
             mana_value_min=(
                 float(raw["mana_value_min"])
                 if raw.get("mana_value_min") is not None

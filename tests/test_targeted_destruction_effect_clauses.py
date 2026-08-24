@@ -124,7 +124,6 @@ class TargetedDestructionTemplateTests(unittest.TestCase):
         for text in (
             "Destroy up to one target creature.",
             "You may destroy target creature.",
-            "Destroy target nonland permanent.",
             "Destroy target attacking creature.",
             "Destroy target creature or Spacecraft.",
             "Destroy target Spirit or enchantment.",
@@ -212,7 +211,6 @@ class TargetedDestructionCompilerTests(unittest.TestCase):
         for text in (
             "Destroy up to one target creature.",
             "You may destroy target creature.",
-            "Destroy target nonland permanent.",
             "Destroy target attacking creature.",
             "Destroy target creature or Spacecraft.",
             "Destroy target Spirit or enchantment.",

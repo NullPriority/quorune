@@ -307,6 +307,16 @@ class TargetSelectionOwnerMixin:
             return False
         if group.colorless is not None and (not colors) != group.colorless:
             return False
+        if (
+            group.color_count_equal is not None
+            and len(colors) != group.color_count_equal
+        ):
+            return False
+        if (
+            group.color_count_min is not None
+            and len(colors) < group.color_count_min
+        ):
+            return False
         mana_value = characteristics.mana_value
         if (
             group.mana_value_equal is not None

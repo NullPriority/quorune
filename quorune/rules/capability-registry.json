@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 133,
+  "registry_version": 134,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4890,20 +4890,20 @@
     },
     {
       "id": "target.permanent.characteristic_predicate",
-      "version": 3,
+      "version": 4,
       "official_rules": ["105.2", "115.1", "115.2", "115.6", "202.3", "205.3", "205.3g", "205.3m", "608.2b", "613.1d", "613.1f", "702.9"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, colors, keywords, fixed mana-value bound, controller relation, and source exclusion identically at offer, command-validation, and resolution time.",
-        "inputs": ["one public battlefield permanent", "canonical effective card types, subtypes, colors, and mana value", "canonical effective keyword set", "acting controller", "stable source identity", "one immutable typed direct-target descriptor"],
+        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, keywords, token status, fixed mana-value bound, controller relation, and source exclusion identically at offer, command-validation, and resolution time.",
+        "inputs": ["one public battlefield permanent", "canonical effective card types, subtypes, supertypes, colors, and mana value", "canonical effective keyword set", "current token status", "acting controller", "stable source identity", "one immutable typed direct-target descriptor"],
         "outputs": ["deterministic public legal-target set", "submitted-command verdict", "resolution-time CR 608.2b revalidation", "exact replay"],
-        "exclusions": ["hidden-zone targets", "arbitrary Oracle-text predicates", "modified, combat-state, attachment-state, token, name, variable or total mana-value, power, toughness, or owner predicates", "combined mana-value and public-state predicates", "colors outside the represented nonblack and colorless creature forms", "negative types outside the represented nonland permanent form", "negative subtypes outside the represented non-Human creature form", "keywords other than the represented Flying predicate", "noncreature subtypes other than Vehicle", "target-changing effects"]
+        "exclusions": ["hidden-zone targets", "arbitrary Oracle-text predicates", "modified, combat-state, attachment-state, nontoken, name, variable or total mana-value, power, toughness, or owner predicates", "combined mana-value and public-state predicates", "chosen, relative, or variable colors", "scoped disjunctions whose qualifiers do not apply to every alternative", "dynamic or relative type and subtype predicates outside the represented current effective characteristic boundary", "generic unnamed counter presence", "ability-presence predicates pending the shared layer-6 ability applicability query", "noncreature subtypes other than Forest, Gate, and Vehicle", "target-changing effects"]
       },
       "dependencies": ["target.revalidate_resolution"],
       "implementation_components": ["quorune.compiler.direct_target.DirectPermanentTargetSpec", "quorune.compiler.direct_target.direct_permanent_target_spec", "quorune.targets.TargetGroup", "quorune.target_characteristics.TargetCharacteristicSnapshot", "quorune.engine.CommanderEngine._target_row_matches"],
-      "positive_tests": ["test_closed_direct_target_grammar_compiles_typed_predicates", "test_compound_target_sequence_harvests_enchantment_creature", "test_public_state_direct_targets_compile_typed_predicates", "test_fixed_mana_value_targets_compile_across_effect_contexts"],
-      "negative_tests": ["test_unsupported_and_malformed_direct_target_predicates_fail_closed", "test_mana_value_target_model_roundtrips_and_rejects_competing_bounds", "test_adjacent_numeric_target_grammar_remains_material_residual"],
-      "interaction_tests": ["test_current_effective_characteristics_govern_offer_command_and_resolution", "test_public_state_targets_share_offer_command_and_resolution_revalidation", "test_furnace_skullbomb_target_predicate_and_draw_compose", "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target", "test_current_copy_derived_mana_value_governs_offer_command_and_resolution"],
+      "positive_tests": ["test_closed_direct_target_grammar_compiles_typed_predicates", "test_compound_target_sequence_harvests_enchantment_creature", "test_public_state_direct_targets_compile_typed_predicates", "test_fixed_mana_value_targets_compile_across_effect_contexts", "test_shared_characteristic_grammar_covers_the_bounded_shapes", "test_shared_grammar_compiles_across_effect_owners_and_contexts"],
+      "negative_tests": ["test_unsupported_and_malformed_direct_target_predicates_fail_closed", "test_mana_value_target_model_roundtrips_and_rejects_competing_bounds", "test_adjacent_numeric_target_grammar_remains_material_residual", "test_scoped_dynamic_and_ability_presence_predicates_fail_closed"],
+      "interaction_tests": ["test_current_effective_characteristics_govern_offer_command_and_resolution", "test_public_state_targets_share_offer_command_and_resolution_revalidation", "test_furnace_skullbomb_target_predicate_and_draw_compose", "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target", "test_current_copy_derived_mana_value_governs_offer_command_and_resolution", "test_current_effective_color_count_governs_offer_command_and_resolution"],
       "multiplayer_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay"],
       "privacy_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay"],
       "replay_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay"],
@@ -4911,7 +4911,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Compiler capability closure demotes direct fixed-counter target programs when canonical resolution-time target revalidation is unavailable.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove the typed target parser, remove fixed mana-value parsing, or alter current effective-characteristic matching; the exact compiler and offer/command/resolution assertions reject each survivor.",
+      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove the shared typed target parser, remove fixed mana-value parsing, or alter current effective-characteristic and color-cardinality matching; exact cross-owner compilation plus offer, command, and resolution assertions reject each survivor.",
       "blockers": [],
       "status": "trusted"
     },
