@@ -132,6 +132,7 @@ class StormCompilerTests(unittest.TestCase):
                 "Reaping the Graves",
                 "Scattershot",
                 "Stormscale Scion",
+                "Tendrils of Agony",
                 "Temporal Fissure",
                 "Volcanic Awakening",
                 "Weather the Storm",

@@ -257,6 +257,10 @@ class FixedCounterControllerEffectSequenceCompilerTests(unittest.TestCase):
         def assert_exact() -> None:
             ir = self.compile(record)
             self.assertEqual("exact", ir.status, ir.material_residuals)
+            self.assertEqual(
+                "fixed-counter-controller-effect-sequence-v1",
+                ir.faces[0].nodes[0].template_id,
+            )
 
         assert_exact()
         with patch(

@@ -184,6 +184,72 @@ class ClosedEffectProgramCompilerTests(unittest.TestCase):
                 "spell_ability",
                 ("exile_public_graveyard_card", "create_token", "life"),
             ),
+            (
+                effect_program_record(
+                    "Target player loses 2 life and you gain 2 life."
+                ),
+                "spell_ability",
+                ("lose_life", "life"),
+            ),
+            (
+                effect_program_record(
+                    "Target opponent loses 2 life and you gain 3 life."
+                ),
+                "spell_ability",
+                ("lose_life", "life"),
+            ),
+            (
+                effect_program_record(
+                    "Closed Effect Program deals 2 damage to each creature "
+                    "and you gain 2 life."
+                ),
+                "spell_ability",
+                ("damage_fixed_set", "life"),
+            ),
+            (
+                effect_program_record(
+                    "Remove all counters from target permanent, then draw a "
+                    "card."
+                ),
+                "spell_ability",
+                ("remove_all_counters", "draw"),
+            ),
+            (
+                effect_program_record(
+                    "Amass Orcs 1, then amass Zombies 1."
+                ),
+                "spell_ability",
+                ("amass", "amass"),
+            ),
+            (
+                effect_program_record(
+                    "Closed Effect Program deals 3 damage to target creature "
+                    "and you gain 3 life."
+                ),
+                "spell_ability",
+                ("damage", "life"),
+            ),
+            (
+                effect_program_record(
+                    "Draw a card. Scry 1. You gain 1 life."
+                ),
+                "spell_ability",
+                ("draw", "scry", "life"),
+            ),
+            (
+                effect_program_record(
+                    "Destroy target creature. Draw a card. Scry 1."
+                ),
+                "spell_ability",
+                ("destroy", "draw", "scry"),
+            ),
+            (
+                effect_program_record(
+                    "Destroy target creature, then you gain 3 life."
+                ),
+                "spell_ability",
+                ("destroy", "life"),
+            ),
         )
         for record, kind, operations in fixtures:
             with self.subTest(text=record.oracle_text):
