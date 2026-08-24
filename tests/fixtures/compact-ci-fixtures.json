@@ -36,6 +36,7 @@
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/storm-cards.json",
     "tests/fixtures/temporary-declaration-restriction-cards.json",
+    "tests/fixtures/typecycling-cards.json",
     "tests/fixtures/typed-land-entry-cards.json"
   ],
   "dynamic_requirements": [

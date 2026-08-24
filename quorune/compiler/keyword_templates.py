@@ -20,6 +20,11 @@ _KNOWN_BARE_KEYWORDS = frozenset(
     "flanking|hexproof|indestructible|infect|lifelink|menace|reach|shadow|shroud|"
     "trample|vigilance|wither".split("|")
 )
+_TYPECYCLING = re.compile(
+    r"^(?:basic land|plains|island|swamp|mountain|forest|artifact land|"
+    r"wizard|sliver)cycling\s+(?:\{[^{}]+\})+$",
+    re.IGNORECASE,
+)
 
 
 def keyword_mechanics(
@@ -30,6 +35,8 @@ def keyword_mechanics(
 
     known = {keyword.casefold() for keyword in card_keywords}
     material = text.rstrip(".").strip()
+    if "typecycling" in known and _TYPECYCLING.fullmatch(material):
+        return ("cycling",)
     if "enchant" in known and re.fullmatch(
         r"enchant\s+.+",
         material,

@@ -15,6 +15,17 @@ _SELECTOR_FIELDS = frozenset(
 _PERMANENT_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
 )
+FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID = "library.search.fixed_type_to_hand"
+_FIXED_TYPECYCLING_SELECTORS = (
+    {"types": ["land"], "supertypes": ["basic"]},
+    *(
+        {"types": ["land"], "subtypes_any": [subtype]}
+        for subtype in ("plains", "island", "swamp", "mountain", "forest")
+    ),
+    {"types": ["artifact", "land"]},
+    {"subtypes_any": ["wizard"]},
+    {"subtypes_any": ["sliver"]},
+)
 
 
 def _query(selector: object) -> ObjectQuerySpec | None:
@@ -106,8 +117,53 @@ def fixed_library_search_node_capabilities(
     return (FIXED_LIBRARY_SEARCH_CAPABILITY_ID,)
 
 
+def fixed_type_to_hand_search_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, object]],
+    target_schema: Mapping[str, object] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    """Recognize only the closed fixed Typecycling search instruction."""
+
+    mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (
+        "cycling" not in mechanics
+        or target_schema is not None
+        or len(effects) != 1
+    ):
+        return ()
+    effect = effects[0]
+    if set(effect) != {
+        "op",
+        "zone",
+        "selector",
+        "count",
+        "destination",
+        "reveal",
+        "shuffle_after",
+    }:
+        return ()
+    count = effect.get("count")
+    selector = effect.get("selector")
+    if (
+        effect.get("op") != "search"
+        or effect.get("zone") != "library"
+        or effect.get("destination") != "hand"
+        or effect.get("reveal") is not True
+        or effect.get("shuffle_after") is not True
+        or not isinstance(count, Mapping)
+        or dict(count) != {"minimum": 1, "maximum": 1}
+        or not isinstance(selector, Mapping)
+        or dict(selector) not in _FIXED_TYPECYCLING_SELECTORS
+    ):
+        return ()
+    return (FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID,)
+
+
 __all__ = [
     "FIXED_LIBRARY_SEARCH_CAPABILITY_ID",
     "FIXED_LIBRARY_SEARCH_MECHANIC_ID",
+    "FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID",
     "fixed_library_search_node_capabilities",
+    "fixed_type_to_hand_search_node_capabilities",
 ]

@@ -63726,13 +63726,14 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
-        "tests.test_ordinary_cycling.OrdinaryCyclingCompilerTests.test_fixed_ordinary_cycling_compiles_typed_hand_activation"
+        "tests.test_ordinary_cycling.OrdinaryCyclingCompilerTests.test_fixed_ordinary_cycling_compiles_typed_hand_activation",
+        "tests.test_typecycling.TypecyclingCompilerTests.test_fixed_typecycling_categories_compile_source_spanned_searches"
       ],
       "implementation_components": [
         "mechanics/contracts/cycling.json"
       ],
       "notes": [
-        "Keyword heading; the bounded fixed ordinary-mana family is owned by activation.cycling.hand."
+        "Keyword heading; the bounded fixed ordinary-mana families are owned by activation.cycling.hand and activation.typecycling.hand."
       ],
       "required_scenarios": [],
       "reviewed": true,
@@ -63750,7 +63751,7 @@
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
         "variable, hybrid, Phyrexian, snow, and nonmana Cycling costs are outside the closed ordinary cost grammar",
-        "typecycling, Cycling modifiers and prohibitions, and Cycling-related triggered abilities remain separate families"
+        "Cycling modifiers and prohibitions and Cycling-related triggered abilities remain separate families"
       ],
       "case_id": "cr-702.29a",
       "case_version": 1,
@@ -63846,23 +63847,52 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "only Basic land, one basic land subtype, artifact land, Wizard, and Sliver selectors with fixed ordinary mana costs are closed",
+        "dual-type, arbitrary open type, variable, hybrid, and nonmana Typecycling forms remain residual",
+        "Affinitycycling and other ability-presence selectors await one shared ability applicability query"
       ],
       "case_id": "cr-702.29c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "702.29"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_typecycling.TypecyclingCompilerTests.test_fixed_typecycling_categories_compile_source_spanned_searches",
+        "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_variants_and_dependencies_fail_closed",
+        "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_continuation_tampering_is_atomic"
+      ],
+      "implementation_components": [
+        "quorune.cycling_abilities.TypecyclingAbilitySpec",
+        "quorune.compiler.cycling_nodes.typecycling_keyword_node",
+        "quorune.selection.searching.HiddenSearchOwnerMixin",
+        "quorune.object_query.object_matches_query"
+      ],
+      "notes": [
+        "The bounded descriptor pays its source discard before stack placement, then performs one actor-private restrictive search, public reveal, replacement-aware move to hand, and exact shuffle.",
+        "The aggregate rule remains blocked because Typecycling permits broader type combinations than the closed selector set."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "702.29c",
       "rule_text_sha256": "2c412a2fa1ff4d2dda2d4dddea3372d04388815268ae71c2caf61705a85ef504",
       "schema_version": 1,
@@ -63871,26 +63901,53 @@
         "end_line": 4227,
         "start_line": 4226
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "Cycling and Typecycling cost modifiers and prohibitions remain unsupported",
+        "Cycling-related triggered abilities remain separate typed trigger families",
+        "granted, copied, removed, and text-changed Typecycling outside source-pinned descriptors remains excluded"
       ],
       "case_id": "cr-702.29d",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "702.29"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_variants_and_dependencies_fail_closed",
+        "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_descriptor_only_activates_from_hand",
+        "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_discard_replacement_resumes_before_private_search"
+      ],
+      "implementation_components": [
+        "quorune.cycling_abilities.TypecyclingAbilitySpec",
+        "quorune.compiler.cycling_nodes.typecycling_keyword_node",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities"
+      ],
+      "notes": [
+        "Closed Typecycling abilities use the same source-discard activation owner as ordinary Cycling and therefore count as Cycling only inside the represented source-pinned activation boundary.",
+        "Broader effects that refer to Cycling abilities or costs do not infer this relation from Oracle prose and keep the aggregate rule blocked."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "702.29d",
       "rule_text_sha256": "a0cf6db8bc6c153f88678ee512266f713a4077a23e8021004965fd0c2283b6c9",
       "schema_version": 1,
@@ -63899,7 +63956,7 @@
         "end_line": 4229,
         "start_line": 4228
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",

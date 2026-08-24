@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "f84183045225b33ba2003a484bdd6972a269dc8f2518f94b3e41dddad1dda790"
+verified: "c8b5fe1daaef0cf5fca5764daf8d2ff0d6d8bfea02381f9740b24e4e07c20f77"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,23 +17,23 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 1,941
+- Pieces: 1,944
 - Cards indexed: 31,623
 - Material abilities classified: 59,359
 - Unclassified material spans: 0
-- Mapped pinned rules: 918 / 3,309
-- Applicable piece pairs: 49,466
-- Covered piece pairs: 742
+- Mapped pinned rules: 920 / 3,309
+- Applicable piece pairs: 49,741
+- Covered piece pairs: 761
 
 ## Ontology classes
 
 | Class | Pieces |
 |---|---:|
-| `actions_permissions` — Actions, permissions, and prohibitions | 65 |
+| `actions_permissions` — Actions, permissions, and prohibitions | 66 |
 | `card_forms` — Card types and specialized forms | 5 |
 | `choices_continuations` — Modes, targets, choices, and continuations | 13 |
 | `combat` — Combat | 24 |
-| `compiler_cardprogram` — Compiler and CardProgram pieces | 897 |
+| `compiler_cardprogram` — Compiler and CardProgram pieces | 898 |
 | `continuous_effects` — Static abilities and continuous effects | 39 |
 | `costs_mana` — Costs and mana | 8 |
 | `events_mutations` — Typed events and mutations | 109 |
@@ -42,7 +42,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `object_identity` — Object identity and lifetime | 30 |
 | `one_shot_effects` — One-shot semantic effects | 163 |
 | `players_format` — Players, relationships, and format state | 2 |
-| `proposals` — Casting and activation proposals | 20 |
+| `proposals` — Casting and activation proposals | 21 |
 | `quantities` — Quantity and value expressions | 1 |
 | `references` — References | 1 |
 | `replacement_prevention` — Replacement and prevention | 21 |
@@ -52,7 +52,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | System | Status | Pieces | Blocking pieces |
 |---|---|---:|---:|
-| `action_legality_casting_activation_costs_mana` | `inventoried` | 93 | 6 |
+| `action_legality_casting_activation_costs_mana` | `inventoried` | 95 | 6 |
 | `combat` | `compositional` | 24 | 0 |
 | `derived_characteristics_static_layers` | `inventoried` | 39 | 7 |
 | `generic_triggers_stack_placement` | `inventoried` | 2 | 2 |
@@ -67,8 +67,8 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 8,298 | 3,791 | 3,791 | `absent` | `untested` |
-| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,567 | 240 | 240 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 8,234 | 3,755 | 3,755 | `absent` | `untested` |
+| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,548 | 230 | 230 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 2,021 | 147 | 147 | `absent` | `untested` |
 | `residual.activated_effect.create-token` | `one_shot_effects` | 319 | 22 | 22 | `absent` | `untested` |
 | `residual.replacement.damage-prevention` | `replacement_prevention` | 167 | 21 | 21 | `absent` | `untested` |

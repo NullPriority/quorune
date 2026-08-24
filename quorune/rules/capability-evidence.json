@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "127a8f23fcb69e8e291e3633fc4e98493af3e89861aa3ea07974e25775dd59f1",
-  "declaration_source_fingerprint": "1343ed0519d9fa1d9c51a94dec1f95dd3980fad4a989fe3395f88b4d13f49d8e",
+  "registry_fingerprint": "579f78f152a3ac2bff79d97928b5352d454946a696fe7d737909b5383fee850c",
+  "declaration_source_fingerprint": "ebf4593944d0e17a207290dd47b3577b2b0f2a14e448c630f8535e29c460e891",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -1956,6 +1956,270 @@
         "commander_review"
       ],
       "applicability_note": "Replay a current-haste mana activation from an exact initial checkpoint and command."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_discard_replacement_resumes_before_private_search",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suspend the source discard before mana or stack mutation, resume the same activation through the chosen destination replacement, then perform the actor-private search."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_destination_replacement_resumes_atomically",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Search for a real Wizard commander, suspend before the requested hand move, privately apply its owner-selected command-zone replacement, then resume the exact Typecycling resolution."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve Typecycling in four-player state while routing the hidden candidate set only to the activating seat."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the only typed Typecycling producer before any closed label can retain exact trust."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_variants_and_dependencies_fail_closed",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep dual-type, arbitrary-type, ability-presence, variable, hybrid, and nonmana forms residual and block trust when either typed dependency is unavailable."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_unpayable_typecycling_is_not_offered_and_is_atomic",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude an unpayable activation from legal offers and reject a forged command without discarding the source or mutating mana."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_fixed_typecycling_categories_compile_source_spanned_searches",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower every closed fixed Typecycling label to one source-spanned hand activation with exact mana, source-discard, selector, reveal, hand destination, and shuffle facts."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_descriptor_only_activates_from_hand",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the source-pinned descriptor across zones while offering the printed activation only from its owner's hand."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Hide every library candidate from other pilots, then reveal only the chosen matching result as required by Typecycling."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_discard_replacement_resumes_before_private_search",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reload the pending discard replacement, resume the source-pinned activation, finish the private search, and replay to the same authoritative hash."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_destination_replacement_resumes_atomically",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the private search selection and resumed Commander destination replacement to the same authoritative hash."
     },
     {
       "capability_id": "activation.unearth.fixed_mana",
@@ -30945,6 +31209,236 @@
       "applicability_note": "Reject actor, revision, source, visibility, and legal-candidate continuation tampering before any search result, shuffle, or stack mutation commits."
     },
     {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_discard_replacement_resumes_before_private_search",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Begin the fixed search only after a replacement-aware discard cost has resumed and committed the exact Typecycling stack object."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_destination_replacement_resumes_atomically",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suspend the selected hidden-library card's hand move before mutation, apply its owner's Commander replacement privately, and resume the same search transaction."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep one four-player hidden-library search actor-scoped while retaining a public reveal of only the result."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the typed compiler producer so the exact search shape cannot survive as an unowned generic effect."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_variants_and_dependencies_fail_closed",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject extra fields, other destinations, nonrevealed or unshuffled forms, open selectors, ability queries, and malformed counts at the capability-shape boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_continuation_tampering_is_atomic",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject actor, revision, source-identity, and legal-candidate continuation tampering without moving a card or shuffling the library."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_fixed_typecycling_categories_compile_source_spanned_searches",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Emit exactly one restrictive one-card type search to hand with reveal and post-search shuffle for each closed selector."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose no candidate identity to nonsearching pilots and reveal only the chosen card after validation."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_destination_replacement_resumes_atomically",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the selected Wizard identity, owner-scoped replacement choice, resumed search, and deterministic shuffle to the same authoritative hash."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the identity-pinned selection, replacement-aware hand move, public reveal, and deterministic shuffle to the same authoritative hash."
+    },
+    {
       "capability_id": "library.surveil.fixed_controller",
       "evidence_class": "interaction",
       "test_id": "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_destination_replacement_resumes_before_public_commit",
@@ -46300,5 +46794,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "0a2ed3edd426611eba41462d6ce882817f601932eecd9e2e1bce2491cf60d5d6"
+  "fingerprint": "32457724bebe7bca7584a02ac58cb2ca95ca8e43eaab698d43a2f859a70a9a72"
 }

@@ -9,6 +9,7 @@ from ..model import CardInstance, StackItem
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..replacement_effects import ReplacementChoiceRequired
 from ..zone_transitions import ZoneTransitionOwner
 from .model import (
     SelectionContract,
@@ -20,6 +21,9 @@ from .model import (
 
 SEARCH_OPERATION_ID = "selection.search.semantic.v1"
 FETCH_OPERATION_ID = "selection.search.fetch.v1"
+_SEARCH_COMPLETION_FIELD = "_search_completion"
+_SEARCH_COMPLETION_FIELDS = {"actor", "choice_id", "selected_refs"}
+_REPLACEMENT_SELECTIONS_FIELD = "_replacement_selections"
 
 
 @dataclass(frozen=True, slots=True)
@@ -479,6 +483,50 @@ class HiddenSearchOwnerMixin:
             )
         )
 
+    def _semantic_search_choice_schema(
+        self,
+        *,
+        effect: Mapping[str, Any],
+        options: Sequence[Mapping[str, str]],
+        minimum: int,
+        maximum: int,
+        rules_may_fail: bool,
+    ) -> dict[str, Any]:
+        entry_choice = any(
+            (
+                (record := self.card_record(
+                    next(
+                        card.object_id
+                        for card in self.state.cards.values()
+                        if card.ref == option["id"]
+                    )
+                ))
+                is not None
+                and self._land_entry_life_amount(record) > 0
+            )
+            for option in options
+        )
+        choice_schema: dict[str, Any] = {
+            "field": "search_cards",
+            "shape": "ref_array",
+            "element_type": "string",
+            "minimum": minimum,
+            "maximum": maximum,
+            "legal_refs": [option["id"] for option in options],
+            "rules_may_fail_to_find": rules_may_fail,
+            "example": {
+                "search_cards": (
+                    [options[0]["id"]]
+                    if options and maximum > 0
+                    else []
+                ),
+            },
+        }
+        if entry_choice and str(effect.get("destination")) == "battlefield":
+            choice_schema["entry_pay_life"] = "boolean"
+            choice_schema["example"]["entry_pay_life"] = False
+        return choice_schema
+
     def _begin_semantic_search(
         self,
         *,
@@ -489,6 +537,16 @@ class HiddenSearchOwnerMixin:
         note: str,
         instruction_pointer: int,
     ) -> None:
+        if _SEARCH_COMPLETION_FIELD in effect:
+            self._resume_semantic_search(
+                item=item,
+                effect=effect,
+                remaining=remaining,
+                destination=destination,
+                note=note,
+                instruction_pointer=instruction_pointer,
+            )
+            return
         seat = str(effect.get("searching_player") or item.controller)
         self._require_seat(seat, in_game=True)
         options = self._semantic_search_options(seat, effect)
@@ -509,39 +567,13 @@ class HiddenSearchOwnerMixin:
             and self._search_is_restrictive(selector)
         )
         minimum_choice = 0 if rules_may_fail else min(minimum, len(options))
-        entry_choice = any(
-            (
-                (record := self.card_record(
-                    next(
-                        card.object_id
-                        for card in self.state.cards.values()
-                        if card.ref == option["id"]
-                    )
-                ))
-                is not None
-                and self._land_entry_life_amount(record) > 0
-            )
-            for option in options
+        choice_schema = self._semantic_search_choice_schema(
+            effect=effect,
+            options=options,
+            minimum=minimum_choice,
+            maximum=maximum,
+            rules_may_fail=rules_may_fail,
         )
-        choice_schema: dict[str, Any] = {
-            "field": "search_cards",
-            "shape": "ref_array",
-            "element_type": "string",
-            "minimum": minimum_choice,
-            "maximum": maximum,
-            "legal_refs": [option["id"] for option in options],
-            "rules_may_fail_to_find": rules_may_fail,
-            "example": {
-                "search_cards": (
-                    [options[0]["id"]]
-                    if options and maximum > 0
-                    else []
-                ),
-            },
-        }
-        if entry_choice and str(effect.get("destination")) == "battlefield":
-            choice_schema["entry_pay_life"] = "boolean"
-            choice_schema["example"]["entry_pay_life"] = False
         frame = self._semantic_frame(
             item,
             instruction_pointer=instruction_pointer,
@@ -829,6 +861,9 @@ class HiddenSearchOwnerMixin:
         search_zones: Sequence[str],
         destination: str,
         position: str | int,
+        replacement_selections: Sequence[
+            str | None | Mapping[str, Any]
+        ] = (),
     ) -> list[CardInstance]:
         seat = context.seat
         response = context.response
@@ -894,13 +929,14 @@ class HiddenSearchOwnerMixin:
                 reason=f"{item.label} search",
                 log=False,
                 semantic_events=destination == "battlefield",
+                replacement_selections=replacement_selections,
             )
             moved.append(moved_card)
         return moved
 
     def _record_semantic_search_result(
         self,
-        decision: Any,
+        choice_id: str,
         context: SemanticSearchCompletionContext,
         *,
         destination_spec: str,
@@ -954,7 +990,7 @@ class HiddenSearchOwnerMixin:
         item.context.setdefault("semantic_continuations", []).append(
             {
                 **context.frame,
-                "pending_choice_id": decision.decision_id,
+                "pending_choice_id": choice_id,
                 "choice_result": [card.ref for card in moved],
                 "resumed": True,
             }
@@ -972,21 +1008,220 @@ class HiddenSearchOwnerMixin:
             ),
         )
 
+    def _semantic_search_resume_context(
+        self,
+        *,
+        item: StackItem,
+        effect: Mapping[str, Any],
+        remaining: Sequence[Mapping[str, Any]],
+        destination: str | None,
+        note: str,
+        instruction_pointer: int,
+    ) -> tuple[
+        SemanticSearchCompletionContext,
+        list[str],
+        list[str],
+        str,
+        str,
+        str | int,
+    ]:
+        raw_completion = effect.get(_SEARCH_COMPLETION_FIELD)
+        if (
+            not isinstance(raw_completion, Mapping)
+            or set(raw_completion) != _SEARCH_COMPLETION_FIELDS
+        ):
+            raise GameRuleError("Malformed semantic search completion")
+        actor = raw_completion.get("actor")
+        choice_id = raw_completion.get("choice_id")
+        raw_selected = raw_completion.get("selected_refs")
+        if (
+            not isinstance(actor, str)
+            or not actor
+            or not isinstance(choice_id, str)
+            or not choice_id
+            or not isinstance(raw_selected, Sequence)
+            or isinstance(raw_selected, (str, bytes))
+            or any(
+                not isinstance(value, str) or not value
+                for value in raw_selected
+            )
+        ):
+            raise GameRuleError("Malformed semantic search completion identity")
+        selected = list(raw_selected)
+        if len(selected) != len(set(selected)) or len(selected) > 1:
+            raise GameRuleError(
+                "Replacement-resumed semantic search must select at most one card"
+            )
+        base_effect = {
+            key: copy.deepcopy(value)
+            for key, value in effect.items()
+            if key
+            not in {
+                _SEARCH_COMPLETION_FIELD,
+                _REPLACEMENT_SELECTIONS_FIELD,
+            }
+        }
+        seat = str(base_effect.get("searching_player") or item.controller)
+        if actor != seat:
+            raise GameRuleError("Semantic search completion actor changed")
+        options = {
+            option["id"]
+            for option in self._semantic_search_options(seat, base_effect)
+        }
+        if any(value not in options for value in selected):
+            raise GameRuleError("Semantic search completion candidate changed")
+        destination_spec, resolved_destination, position = (
+            self._semantic_search_destination(base_effect)
+        )
+        if resolved_destination != "hand":
+            raise GameRuleError(
+                "Replacement-resumed semantic search must request the hand"
+            )
+        raw_zone = base_effect.get("zone") or "library"
+        search_zones = (
+            [str(value) for value in raw_zone]
+            if isinstance(raw_zone, Sequence)
+            and not isinstance(raw_zone, (str, bytes))
+            else [str(raw_zone)]
+        )
+        frame = self._semantic_frame(
+            item,
+            instruction_pointer=instruction_pointer,
+            locals={
+                "searching_player": seat,
+                "source_object": self._stack_source_ref(item),
+            },
+        )
+        frame["pending_choice_id"] = choice_id
+        return (
+            SemanticSearchCompletionContext(
+                seat=seat,
+                response={"search_cards": selected},
+                continuation={
+                    "remaining": [dict(value) for value in remaining],
+                    "destination": destination,
+                    "note": note,
+                },
+                stack_ref=item.ref,
+                item=item,
+                frame=frame,
+                effect=base_effect,
+                options=frozenset(options),
+            ),
+            selected,
+            search_zones,
+            choice_id,
+            destination_spec,
+            resolved_destination,
+            position,
+        )
+
+    def _resume_semantic_search(
+        self,
+        *,
+        item: StackItem,
+        effect: Mapping[str, Any],
+        remaining: Sequence[Mapping[str, Any]],
+        destination: str | None,
+        note: str,
+        instruction_pointer: int,
+    ) -> None:
+        (
+            context,
+            values,
+            search_zones,
+            choice_id,
+            destination_spec,
+            resolved_destination,
+            position,
+        ) = self._semantic_search_resume_context(
+            item=item,
+            effect=effect,
+            remaining=remaining,
+            destination=destination,
+            note=note,
+            instruction_pointer=instruction_pointer,
+        )
+        raw_selections = effect.get(_REPLACEMENT_SELECTIONS_FIELD, ())
+        if (
+            not isinstance(raw_selections, Sequence)
+            or isinstance(raw_selections, (str, bytes))
+        ):
+            raise GameRuleError("Semantic search replacements are malformed")
+        try:
+            moved = self._move_semantic_search_results(
+                context,
+                values=values,
+                search_zones=search_zones,
+                destination=resolved_destination,
+                position=position,
+                replacement_selections=raw_selections,
+            )
+        except ReplacementChoiceRequired as required:
+            from ..replacement_decisions import issue_replacement_order_choice
+
+            issue_replacement_order_choice(
+                self,
+                item=item,
+                effect=effect,
+                remaining=remaining,
+                destination=destination,
+                note=note,
+                instruction_pointer=instruction_pointer,
+                required=required,
+            )
+            return
+        self._record_semantic_search_result(
+            choice_id,
+            context,
+            destination_spec=destination_spec,
+            destination=resolved_destination,
+            moved=moved,
+        )
+
     def _complete_semantic_search(self, decision: Any) -> None:
         context = self._semantic_search_completion_context(decision)
         values, search_zones = self._semantic_search_selected_values(context)
         destination_spec, destination, position = (
             self._semantic_search_destination(context.effect)
         )
-        moved = self._move_semantic_search_results(
-            context,
-            values=values,
-            search_zones=search_zones,
-            destination=destination,
-            position=position,
-        )
+        try:
+            moved = self._move_semantic_search_results(
+                context,
+                values=values,
+                search_zones=search_zones,
+                destination=destination,
+                position=position,
+            )
+        except ReplacementChoiceRequired as required:
+            if destination != "hand" or len(values) > 1:
+                raise
+            from ..replacement_decisions import issue_replacement_order_choice
+
+            resume_effect = copy.deepcopy(context.effect)
+            resume_effect[_SEARCH_COMPLETION_FIELD] = {
+                "actor": context.seat,
+                "choice_id": decision.decision_id,
+                "selected_refs": values,
+            }
+            issue_replacement_order_choice(
+                self,
+                item=context.item,
+                effect=resume_effect,
+                remaining=[
+                    dict(value)
+                    for value in context.continuation.get("remaining", [])
+                ],
+                destination=context.continuation.get("destination"),
+                note=str(context.continuation.get("note") or ""),
+                instruction_pointer=int(
+                    context.frame.get("instruction_pointer", 0)
+                ),
+                required=required,
+            )
+            return
         self._record_semantic_search_result(
-            decision,
+            decision.decision_id,
             context,
             destination_spec=destination_spec,
             destination=destination,

@@ -49,6 +49,7 @@ from .node_capability_shapes import (
 )
 from .library_search_capability_shapes import (
     fixed_library_search_node_capabilities,
+    fixed_type_to_hand_search_node_capabilities,
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
 from .public_zone_move_capability_shapes import (
@@ -87,6 +88,7 @@ _COMPONENT_RESOLVERS = (
     fixed_surveil_node_capabilities,
     fixed_mill_node_capabilities,
     fixed_library_search_node_capabilities,
+    fixed_type_to_hand_search_node_capabilities,
     single_explore_node_capabilities,
     single_proliferate_node_capabilities,
     self_regeneration_node_capabilities,

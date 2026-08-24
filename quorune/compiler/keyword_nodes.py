@@ -51,7 +51,10 @@ from .crew_nodes import ordinary_crew_keyword_node
 from .station_nodes import ordinary_station_keyword_node
 from .unearth_nodes import ordinary_unearth_keyword_node
 from .kicker_nodes import fixed_mana_kicker_keyword_node
-from .cycling_nodes import ordinary_cycling_keyword_node
+from .cycling_nodes import (
+    ordinary_cycling_keyword_node,
+    typecycling_keyword_node,
+)
 from .casting_payment_keyword_nodes import (
     fixed_mana_evoke_keyword_node,
     ordinary_delve_keyword_node,
@@ -359,6 +362,7 @@ def closed_special_keyword_node(
         ordinary_affinity_keyword_node,
         ordinary_crew_keyword_node,
         ordinary_station_keyword_node,
+        typecycling_keyword_node,
         ordinary_cycling_keyword_node,
         fixed_mana_cumulative_upkeep_node,
         fixed_life_cumulative_upkeep_node,
