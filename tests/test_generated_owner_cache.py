@@ -163,6 +163,15 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         architecture = next(
             spec for spec in specs if spec.id == "architecture-audit"
         )
+        compiler_corpus = next(
+            spec for spec in specs if spec.id == "compiler-corpus-coverage"
+        )
+        self.assertIn(
+            "quorune/semantic_packs/**/*.json",
+            groups.patterns("rules-source"),
+        )
+        self.assertIn("rules-source", architecture.input_groups)
+        self.assertIn("rules-source", compiler_corpus.input_groups)
         self.assertIn("tests-source", architecture.input_groups)
         self.assertIn("web/tests/**/*.ts", architecture.input_paths)
 
