@@ -29,6 +29,7 @@ from .declaration_fragments import (
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
 )
+from .creature_subtypes import canonical_creature_subtype
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
 from .replacement.immutable import thaw_value
 from .util import stable_json
@@ -43,6 +44,7 @@ class ProtectionQualityKind(str, Enum):
     COLOR = "color"
     CARD_TYPE = "card_type"
     SUBTYPE = "subtype"
+    PREDICATE = "predicate"
 
 
 class CombatKeywordTriggerKind(str, Enum):
@@ -101,6 +103,168 @@ _CARD_TYPE_QUALITIES = {
     **{f"{value}s": value for value in _CARD_TYPES},
 }
 _SUBTYPE_QUALITIES = {"aura": "aura", "auras": "aura"}
+_PROTECTION_NONCREATURE_SUBTYPES = frozenset({"arcane", "aura"})
+_PROTECTION_SUPERTYPES = frozenset(
+    {"basic", "legendary", "ongoing", "snow", "world"}
+)
+_PROTECTION_COLOR_COUNTS = frozenset(
+    {"colored", "monocolored", "multicolored"}
+)
+
+
+def _normalized_protection_terms(
+    values: Iterable[str],
+    *,
+    field_name: str,
+    allowed: frozenset[str],
+) -> tuple[str, ...]:
+    if not isinstance(values, (list, tuple)):
+        raise AbilityFragmentError(
+            f"Protection source predicate {field_name} must be an array"
+        )
+    normalized = tuple(sorted(str(value).casefold() for value in values))
+    if (
+        any(type(value) is not str or not value for value in values)
+        or len(set(normalized)) != len(normalized)
+        or any(value not in allowed for value in normalized)
+    ):
+        raise AbilityFragmentError(
+            f"Protection source predicate {field_name} is unsupported"
+        )
+    return normalized
+
+
+@dataclass(frozen=True, slots=True)
+class ProtectionSourcePredicateSpec:
+    """One closed characteristic predicate for a Protection source."""
+
+    types_all: tuple[str, ...] = ()
+    subtypes_all: tuple[str, ...] = ()
+    excluded_subtypes: tuple[str, ...] = ()
+    supertypes_all: tuple[str, ...] = ()
+    color_count: str | None = None
+    minimum_mana_value: int | None = None
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "types_all",
+            _normalized_protection_terms(
+                self.types_all,
+                field_name="types_all",
+                allowed=_CARD_TYPES,
+            ),
+        )
+        allowed_subtypes = frozenset(
+            {
+                *_PROTECTION_NONCREATURE_SUBTYPES,
+                *(
+                    value
+                    for value in (
+                        canonical_creature_subtype(candidate)
+                        for candidate in (
+                            *self.subtypes_all,
+                            *self.excluded_subtypes,
+                        )
+                    )
+                    if value is not None
+                ),
+            }
+        )
+        object.__setattr__(
+            self,
+            "subtypes_all",
+            _normalized_protection_terms(
+                self.subtypes_all,
+                field_name="subtypes_all",
+                allowed=allowed_subtypes,
+            ),
+        )
+        object.__setattr__(
+            self,
+            "excluded_subtypes",
+            _normalized_protection_terms(
+                self.excluded_subtypes,
+                field_name="excluded_subtypes",
+                allowed=allowed_subtypes,
+            ),
+        )
+        if not set(self.subtypes_all).isdisjoint(self.excluded_subtypes):
+            raise AbilityFragmentError(
+                "Protection source predicate subtype requirements conflict"
+            )
+        object.__setattr__(
+            self,
+            "supertypes_all",
+            _normalized_protection_terms(
+                self.supertypes_all,
+                field_name="supertypes_all",
+                allowed=_PROTECTION_SUPERTYPES,
+            ),
+        )
+        if (
+            self.color_count is not None
+            and self.color_count not in _PROTECTION_COLOR_COUNTS
+        ):
+            raise AbilityFragmentError(
+                "Protection source predicate color count is unsupported"
+            )
+        if self.minimum_mana_value is not None and (
+            type(self.minimum_mana_value) is not int
+            or self.minimum_mana_value < 0
+        ):
+            raise AbilityFragmentError(
+                "Protection source predicate mana value must be nonnegative"
+            )
+        if not any(
+            (
+                self.types_all,
+                self.subtypes_all,
+                self.excluded_subtypes,
+                self.supertypes_all,
+                self.color_count is not None,
+                self.minimum_mana_value is not None,
+            )
+        ):
+            raise AbilityFragmentError(
+                "Protection source predicate must constrain characteristics"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "types_all": list(self.types_all),
+            "subtypes_all": list(self.subtypes_all),
+            "excluded_subtypes": list(self.excluded_subtypes),
+            "supertypes_all": list(self.supertypes_all),
+            "color_count": self.color_count,
+            "minimum_mana_value": self.minimum_mana_value,
+        }
+
+    @classmethod
+    def from_dict(
+        cls,
+        value: Mapping[str, Any],
+    ) -> "ProtectionSourcePredicateSpec":
+        fields = {
+            "types_all",
+            "subtypes_all",
+            "excluded_subtypes",
+            "supertypes_all",
+            "color_count",
+            "minimum_mana_value",
+        }
+        if not isinstance(value, Mapping) or set(value) != fields:
+            raise AbilityFragmentError(
+                "Protection source predicate fields are incomplete or unknown"
+            )
+        return cls(
+            types_all=value["types_all"],
+            subtypes_all=value["subtypes_all"],
+            excluded_subtypes=value["excluded_subtypes"],
+            supertypes_all=value["supertypes_all"],
+            color_count=value["color_count"],
+            minimum_mana_value=value["minimum_mana_value"],
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -114,14 +278,35 @@ class ProtectionSpec:
     quality_kind: ProtectionQualityKind
     quality: str | None = None
     schema_version: int = 1
+    source_predicate: ProtectionSourcePredicateSpec | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {
+            1,
+            2,
+        }:
             raise AbilityFragmentError(
                 "Unsupported protection fragment schema version"
             )
         if not isinstance(self.quality_kind, ProtectionQualityKind):
             raise AbilityFragmentError("Unsupported protection quality kind")
+        if self.quality_kind is ProtectionQualityKind.PREDICATE:
+            if (
+                self.schema_version != 2
+                or self.quality is not None
+                or not isinstance(
+                    self.source_predicate,
+                    ProtectionSourcePredicateSpec,
+                )
+            ):
+                raise AbilityFragmentError(
+                    "Protection predicates require schema version 2 and a typed source predicate"
+                )
+            return
+        if self.schema_version != 1 or self.source_predicate is not None:
+            raise AbilityFragmentError(
+                "Legacy Protection qualities require schema version 1"
+            )
         if self.quality_kind is ProtectionQualityKind.EVERYTHING:
             if self.quality is not None:
                 raise AbilityFragmentError(
@@ -153,19 +338,20 @@ class ProtectionSpec:
         object.__setattr__(self, "quality", normalized)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "quality_kind": self.quality_kind.value,
             "quality": self.quality,
         }
+        if self.schema_version == 2:
+            assert self.source_predicate is not None
+            value["source_predicate"] = self.source_predicate.to_dict()
+        return value
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ProtectionSpec":
-        if not isinstance(value, Mapping) or set(value) != {
-            "schema_version",
-            "quality_kind",
-            "quality",
-        }:
+        base_fields = {"schema_version", "quality_kind", "quality"}
+        if not isinstance(value, Mapping) or not base_fields.issubset(value):
             raise AbilityFragmentError(
                 "Protection fragments require schema_version, quality_kind, "
                 "and quality"
@@ -190,10 +376,24 @@ class ProtectionSpec:
             raise AbilityFragmentError(
                 "Unsupported protection quality kind"
             ) from exc
+        schema_version = value["schema_version"]
+        expected_fields = set(base_fields)
+        if schema_version == 2:
+            expected_fields.add("source_predicate")
+        if set(value) != expected_fields:
+            raise AbilityFragmentError(
+                "Protection fragment fields are incomplete or unknown"
+            )
+        predicate = (
+            ProtectionSourcePredicateSpec.from_dict(value["source_predicate"])
+            if schema_version == 2
+            else None
+        )
         return cls(
-            schema_version=value["schema_version"],
+            schema_version=schema_version,
             quality_kind=quality_kind,
             quality=value["quality"],
+            source_predicate=predicate,
         )
 
     @property
@@ -804,6 +1004,110 @@ def canonical_ability_fragments(
     return tuple(fragment for _, fragment in sorted(keyed, key=lambda row: row[0]))
 
 
+def _singular_protection_subtype(value: str) -> str | None:
+    normalized = " ".join(value.casefold().split())
+    if normalized in _PROTECTION_NONCREATURE_SUBTYPES:
+        return normalized
+    candidate = canonical_creature_subtype(normalized)
+    if candidate is not None:
+        return candidate
+    irregular = {
+        "elves": "elf",
+        "werewolves": "werewolf",
+    }
+    candidate = irregular.get(normalized)
+    if candidate is None and normalized.endswith("s"):
+        candidate = normalized[:-1]
+    return (
+        canonical_creature_subtype(candidate)
+        if candidate is not None
+        else None
+    )
+
+
+def _predicate_protection_spec(quality: str) -> ProtectionSpec | None:
+    predicate: ProtectionSourcePredicateSpec | None = None
+    if quality == "each color":
+        predicate = ProtectionSourcePredicateSpec(color_count="colored")
+    elif quality in {"monocolored", "multicolored"}:
+        predicate = ProtectionSourcePredicateSpec(color_count=quality)
+    elif quality == "snow":
+        predicate = ProtectionSourcePredicateSpec(supertypes_all=("snow",))
+    elif match := re.fullmatch(
+        r"mana value (?P<minimum>\d+) or greater",
+        quality,
+    ):
+        predicate = ProtectionSourcePredicateSpec(
+            minimum_mana_value=int(match.group("minimum"))
+        )
+    elif match := re.fullmatch(
+        r"non-(?P<subtype>[A-Za-z][A-Za-z '-]*) creatures",
+        quality,
+        re.IGNORECASE,
+    ):
+        subtype = _singular_protection_subtype(match.group("subtype"))
+        if subtype is None:
+            return None
+        predicate = ProtectionSourcePredicateSpec(
+            types_all=("creature",),
+            excluded_subtypes=(subtype,),
+        )
+    elif match := re.fullmatch(
+        r"(?P<supertype>legendary) creatures",
+        quality,
+        re.IGNORECASE,
+    ):
+        predicate = ProtectionSourcePredicateSpec(
+            types_all=("creature",),
+            supertypes_all=(match.group("supertype"),),
+        )
+    else:
+        creature_match = re.fullmatch(
+            r"(?P<subtype>[A-Za-z][A-Za-z '-]*) creatures",
+            quality,
+            re.IGNORECASE,
+        )
+        subtype_text = (
+            creature_match.group("subtype")
+            if creature_match is not None
+            else quality
+        )
+        subtype = _singular_protection_subtype(subtype_text)
+        if subtype is not None:
+            predicate = ProtectionSourcePredicateSpec(
+                types_all=(("creature",) if creature_match else ()),
+                subtypes_all=(subtype,),
+            )
+    if predicate is None:
+        return None
+    return ProtectionSpec(
+        ProtectionQualityKind.PREDICATE,
+        schema_version=2,
+        source_predicate=predicate,
+    )
+
+
+def _protection_quality_spec(quality: str) -> ProtectionSpec | None:
+    if quality == "everything":
+        return ProtectionSpec(ProtectionQualityKind.EVERYTHING)
+    if quality in _COLOR_NAMES:
+        return ProtectionSpec(
+            ProtectionQualityKind.COLOR,
+            _COLOR_NAMES[quality],
+        )
+    if quality in _CARD_TYPE_QUALITIES:
+        return ProtectionSpec(
+            ProtectionQualityKind.CARD_TYPE,
+            _CARD_TYPE_QUALITIES[quality],
+        )
+    if quality in _SUBTYPE_QUALITIES:
+        return ProtectionSpec(
+            ProtectionQualityKind.SUBTYPE,
+            _SUBTYPE_QUALITIES[quality],
+        )
+    return _predicate_protection_spec(quality)
+
+
 def parse_protection_line(line: str) -> tuple[ProtectionSpec, ...] | None:
     """Compile one closed printed protection keyword line.
 
@@ -819,34 +1123,17 @@ def parse_protection_line(line: str) -> tuple[ProtectionSpec, ...] | None:
     if match is None:
         return None
     quality = match.group("quality").casefold().strip()
-    if " and " in quality or "," in quality:
+    qualities = tuple(
+        value.strip()
+        for value in re.split(r"\s+and from\s+", quality)
+        if value.strip()
+    )
+    if not qualities or any(" and " in value for value in qualities):
         return None
-    if quality == "everything":
-        return (
-            ProtectionSpec(ProtectionQualityKind.EVERYTHING),
-        )
-    if quality in _COLOR_NAMES:
-        return (
-            ProtectionSpec(
-                ProtectionQualityKind.COLOR,
-                _COLOR_NAMES[quality],
-            ),
-        )
-    if quality in _CARD_TYPE_QUALITIES:
-        return (
-            ProtectionSpec(
-                ProtectionQualityKind.CARD_TYPE,
-                _CARD_TYPE_QUALITIES[quality],
-            ),
-        )
-    if quality in _SUBTYPE_QUALITIES:
-        return (
-            ProtectionSpec(
-                ProtectionQualityKind.SUBTYPE,
-                _SUBTYPE_QUALITIES[quality],
-            ),
-        )
-    return None
+    specs = tuple(_protection_quality_spec(value) for value in qualities)
+    if any(spec is None for spec in specs):
+        return None
+    return tuple(spec for spec in specs if spec is not None)
 
 
 def enchant_specs(
@@ -1004,6 +1291,7 @@ __all__ = [
     "GrantedActivatedAbilitySpec",
     "GrantedTriggeredAbilitySpec",
     "ProtectionQualityKind",
+    "ProtectionSourcePredicateSpec",
     "ProtectionSpec",
     "SpellCastKeywordTriggerKind",
     "SpellCastKeywordTriggerSpec",

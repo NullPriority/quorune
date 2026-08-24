@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 from typing import Any, Iterable, Mapping
 
 from .ability_fragments import (
@@ -90,6 +91,7 @@ class DamageSourceSnapshot:
     supertypes: tuple[str, ...] = ()
     colors: tuple[str, ...] = ()
     keywords: tuple[str, ...] = ()
+    mana_value: float | None = None
     is_commander: bool = False
     toxic_value: int | None = 0
 
@@ -112,6 +114,16 @@ class DamageSourceSnapshot:
             raise DamageError(
                 "A known total toxic value must be a nonnegative integer"
             )
+        if self.mana_value is not None:
+            if (
+                type(self.mana_value) not in {int, float}
+                or self.mana_value < 0
+                or not isfinite(self.mana_value)
+            ):
+                raise DamageError(
+                    "A known source mana value must be nonnegative"
+                )
+            object.__setattr__(self, "mana_value", float(self.mana_value))
         if self.commander_designation_id is not None and not self.is_commander:
             raise DamageError(
                 "Only a commander source may carry a designation identity"
@@ -149,6 +161,7 @@ class DamageSourceSnapshot:
             "supertypes": list(self.supertypes),
             "colors": list(self.colors),
             "keywords": list(self.keywords),
+            "mana_value": self.mana_value,
             "is_commander": self.is_commander,
             "toxic_value": self.toxic_value,
         }
@@ -171,10 +184,15 @@ class DamageSourceSnapshot:
             "supertypes",
             "colors",
             "keywords",
+            "mana_value",
             "is_commander",
             "toxic_value",
         }
-        if set(value) != expected:
+        legacy_expected = expected - {"mana_value"}
+        if frozenset(value) not in {
+            frozenset(expected),
+            frozenset(legacy_expected),
+        }:
             raise DamageError("Damage source snapshot fields are malformed")
 
         def strings(field: str) -> tuple[str, ...]:
@@ -216,6 +234,7 @@ class DamageSourceSnapshot:
             supertypes=strings("supertypes"),
             colors=strings("colors"),
             keywords=strings("keywords"),
+            mana_value=value.get("mana_value"),
             is_commander=value["is_commander"],
             toxic_value=value["toxic_value"],
         )

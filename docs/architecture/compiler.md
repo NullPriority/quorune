@@ -342,6 +342,17 @@ remain residual until level applicability has a typed owner. The grammar
 performs no dynamic characteristic counts and does not claim ability-removal
 composition.
 
+Printed and fixed layer-6 Protection productions share `ProtectionSpec` and
+the existing `protection.typed.debt` capability. The closed v2 source predicate
+normalizes fixed type, pinned subtype, negative creature-subtype, supertype,
+color-cardinality, and minimum-mana-value qualities, including separate
+`and from` qualities and ordinary comma/semicolon keyword siblings. The one
+runtime verdict reads current effective characteristics for targeting,
+blocking, and attachments and last-known `DamageSourceSnapshot` facts for
+damage. Cast-history, counter-state, modified, chosen, and otherwise open
+qualities remain source-spanned residuals. This grammar adds no separate
+layer-6 ability-presence query and no dynamic characteristic count.
+
 `compiler/devoid_characteristics.py` owns the ordinary printed Devoid
 production. One
 exact keyword instance lowers to an all-zone

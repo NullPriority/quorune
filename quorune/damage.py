@@ -478,6 +478,7 @@ def source_snapshot(
             sorted(str(value).upper() for value in data.get("colors", ()))
         ),
         keywords=keywords,
+        mana_value=data.get("mana_value"),
         is_commander=bool(source.is_commander),
         toxic_value=toxic_value,
     )
@@ -695,6 +696,8 @@ def _protection_prevention_effects(
                         colors=frozenset(source.colors),
                         card_types=frozenset(source.types),
                         subtypes=frozenset(source.subtypes),
+                        supertypes=frozenset(source.supertypes),
+                        mana_value=source.mana_value,
                     ),
                 )
                 if verdict is ProtectionVerdict.UNRESOLVED:

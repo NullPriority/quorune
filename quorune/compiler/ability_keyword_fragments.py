@@ -311,7 +311,8 @@ def lower_ability_keyword_fragments(
 
 def _keyword_parts(material_line: str) -> tuple[str, ...]:
     return tuple(
-        part.strip() for part in material_line.rstrip(".").split(",")
+        part.strip()
+        for part in re.split(r"[,;]", material_line.rstrip("."))
     )
 
 

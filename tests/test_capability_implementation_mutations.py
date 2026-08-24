@@ -39,6 +39,7 @@ from quorune.ability_fragments import (
     CombatKeywordTriggerKind,
     CombatKeywordTriggerSpec,
     ProtectionQualityKind,
+    ProtectionSourcePredicateSpec,
     ProtectionSpec,
     ToxicSpec,
     ability_fragment_to_dict,
@@ -257,13 +258,22 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
             "ability_fragments": [
                 ability_fragment_to_dict(
                     ProtectionSpec(
-                        ProtectionQualityKind.COLOR,
-                        "R",
+                        ProtectionQualityKind.PREDICATE,
+                        schema_version=2,
+                        source_predicate=ProtectionSourcePredicateSpec(
+                            subtypes_all=("goblin",),
+                            supertypes_all=("snow",),
+                            minimum_mana_value=3,
+                        ),
                     )
                 )
             ],
         }
-        source = ProtectionSource(colors=frozenset({"R"}))
+        source = ProtectionSource(
+            subtypes=frozenset({"goblin"}),
+            supertypes=frozenset({"snow"}),
+            mana_value=3,
+        )
 
         def assert_matching_source_is_blocked() -> None:
             self.assertEqual(

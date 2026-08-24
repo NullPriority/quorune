@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from math import isfinite
 from typing import Any, Iterable, Mapping, Protocol
 
 from .ability_fragments import (
     AbilityFragmentError,
     ProtectionQualityKind,
+    ProtectionSourcePredicateSpec,
     ProtectionSpec,
     ability_fragment_from_dict,
     protection_specs,
@@ -25,12 +27,14 @@ class ProtectionSource:
     colors: frozenset[str] = frozenset()
     card_types: frozenset[str] = frozenset()
     subtypes: frozenset[str] = frozenset()
+    supertypes: frozenset[str] = frozenset()
+    mana_value: float | None = None
 
     @classmethod
     def from_characteristics(
         cls, value: Mapping[str, Any]
     ) -> "ProtectionSource":
-        parsed_types, parsed_subtypes, _ = type_parts(
+        parsed_types, parsed_subtypes, parsed_supertypes = type_parts(
             str(value.get("type_line") or "")
         )
         type_values = value.get(
@@ -38,6 +42,15 @@ class ProtectionSource:
             value.get("types", parsed_types),
         )
         subtype_values = value.get("subtypes", parsed_subtypes)
+        supertype_values = value.get("supertypes", parsed_supertypes)
+        raw_mana_value = value.get("mana_value", value.get("cmc"))
+        mana_value = (
+            float(raw_mana_value)
+            if type(raw_mana_value) in {int, float}
+            and raw_mana_value >= 0
+            and isfinite(raw_mana_value)
+            else None
+        )
         return cls(
             colors=frozenset(
                 str(item).upper() for item in value.get("colors", ())
@@ -48,6 +61,10 @@ class ProtectionSource:
             subtypes=frozenset(
                 str(item).casefold() for item in subtype_values
             ),
+            supertypes=frozenset(
+                str(item).casefold() for item in supertype_values
+            ),
+            mana_value=mana_value,
         )
 
 
@@ -116,6 +133,33 @@ def _has_untyped_protection_keyword(
     )
 
 
+def _protection_predicate_verdict(
+    predicate: ProtectionSourcePredicateSpec,
+    source: ProtectionSource,
+) -> ProtectionVerdict:
+    if not set(predicate.types_all).issubset(source.card_types):
+        return ProtectionVerdict.ALLOWED
+    if not set(predicate.subtypes_all).issubset(source.subtypes):
+        return ProtectionVerdict.ALLOWED
+    if not source.subtypes.isdisjoint(predicate.excluded_subtypes):
+        return ProtectionVerdict.ALLOWED
+    if not set(predicate.supertypes_all).issubset(source.supertypes):
+        return ProtectionVerdict.ALLOWED
+    color_count = len(source.colors)
+    if (
+        (predicate.color_count == "colored" and color_count == 0)
+        or (predicate.color_count == "monocolored" and color_count != 1)
+        or (predicate.color_count == "multicolored" and color_count < 2)
+    ):
+        return ProtectionVerdict.ALLOWED
+    if predicate.minimum_mana_value is not None:
+        if source.mana_value is None:
+            return ProtectionVerdict.UNRESOLVED
+        if source.mana_value < predicate.minimum_mana_value:
+            return ProtectionVerdict.ALLOWED
+    return ProtectionVerdict.BLOCKED
+
+
 def protection_verdict(
     protected_characteristics: Mapping[str, Any],
     source: ProtectionSource | None,
@@ -143,7 +187,18 @@ def protection_verdict(
         return ProtectionVerdict.BLOCKED
     if source is None:
         return ProtectionVerdict.UNRESOLVED
+    unresolved = False
     for spec in specs:
+        if spec.quality_kind is ProtectionQualityKind.PREDICATE:
+            assert spec.source_predicate is not None
+            verdict = _protection_predicate_verdict(
+                spec.source_predicate,
+                source,
+            )
+            if verdict is ProtectionVerdict.BLOCKED:
+                return verdict
+            unresolved = unresolved or verdict is ProtectionVerdict.UNRESOLVED
+            continue
         if (
             spec.quality_kind is ProtectionQualityKind.COLOR
             and spec.quality in source.colors
@@ -159,7 +214,11 @@ def protection_verdict(
             and spec.quality in source.subtypes
         ):
             return ProtectionVerdict.BLOCKED
-    return ProtectionVerdict.ALLOWED
+    return (
+        ProtectionVerdict.UNRESOLVED
+        if unresolved
+        else ProtectionVerdict.ALLOWED
+    )
 
 
 def protection_verdict_for_ref(

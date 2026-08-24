@@ -1700,7 +1700,7 @@ class OracleIRTests(unittest.TestCase):
         self.assertEqual(0, len(ir.material_residuals))
         self.assertTrue(compound.exact)
         self.assertEqual(
-            ("protection.typed.debt",),
+            ("combat.block.flying", "protection.typed.debt"),
             compound.capability_dependencies,
         )
         self.assertEqual(

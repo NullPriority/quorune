@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c9c07cf02bff8f06a24e6ef6d8ff68a854d093ca4cb42079061a80ee440bf7ca",
-  "declaration_source_fingerprint": "43a2d0abd5a13746bcc0f40a5bc753f911f142be050244c47ade70a85c11ba58",
+  "registry_fingerprint": "c908423f042c36ce6c54cb1bd5c3f549926cea0e77e457a6766f56aaba42d47e",
+  "declaration_source_fingerprint": "44470e16ee1c04f77ba5610f03bfd7dc17d97465fb536bfe1803006c88117d98",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -35233,7 +35233,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Grant executable protection through a typed layer-6 fragment while retaining rules text only as display provenance."
+      "applicability_note": "Grant an executable fixed subtype Protection predicate through the shared typed layer-6 fragment while retaining rules text only as display provenance."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -35281,7 +35281,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Kill a mutant that converts a matching typed protection quality from blocked to allowed."
+      "applicability_note": "Match a fixed subtype, supertype, and mana-value source predicate, then kill a mutant that converts the typed Protection verdict from blocked to allowed."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -35305,7 +35305,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Return unresolved for text-only, malformed, compound, or unsupported protection qualities instead of treating them as executable."
+      "applicability_note": "Return unresolved for text-only, malformed, state-dependent, history-dependent, or otherwise unsupported Protection qualities instead of treating them as executable."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -35353,7 +35353,55 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Use one typed quality to reject targeting, blocking, equipping, and enchanting by a matching source without mutating rejected Aura-token creation."
+      "applicability_note": "Use one fixed color-cardinality, snow, and mana-value predicate to reject targeting, blocking, equipping, enchanting, and damage by matching sources without mutating rejected Aura-token creation."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_ability_fragments.TypedProtectionTests.test_compiler_closes_fixed_source_quality_predicates",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed type, subtype, negative-subtype, supertype, color-cardinality, and minimum-mana-value Protection qualities, including sibling keyword lists, to exact typed handlers with complete capability closure."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_ability_fragments.TypedProtectionTests.test_fixed_source_quality_predicates_match_current_characteristics",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate every closed fixed source-predicate dimension against current represented characteristics and fail closed when a required mana value is unavailable."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -46127,5 +46175,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "1d70e35d2c8b655fa6c327350322c6723e6c9144f3e5e415a1d260d1feaa6742"
+  "fingerprint": "308295aa56df41c207ebc2998ecb53634899ee3e12bd34cf35eca0ed841ec87f"
 }
