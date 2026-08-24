@@ -146,14 +146,19 @@ discovery consumes that catalog, rule-derived basic-land-type abilities, typed
 layer-6 grants, and typed token characteristics; it does not reinterpret Oracle
 prose. Copy effects preserve the catalog, ability-removal effects remove it,
 and a text-changing effect clears descriptors compiled from the replaced text.
-The catalog unifies discovery for ordinary Crew, Cycling, fixed counter-
-keyword activations, and represented mana abilities without replacing those
-families' specialized execution owners or capability closure. Current games
-cannot use the isolated Game Record v3 compatibility parser. Discard-self and
-exile-self activation costs use the same destination-replacement continuation
-as casting costs: a competing choice rolls the complete priority action back,
-keeps the continuation private to the affected activator, and resumes the
-exact source-pinned action before stack placement.
+The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
+fixed counter-keyword activations, and represented mana abilities without
+replacing those families' specialized execution owners or capability closure.
+Fixed Typecycling is limited to Basic land, one basic land subtype, artifact
+land, Wizard, and Sliver queries with ordinary fixed mana costs. It shares the
+source-discard activation owner with Cycling and the actor-private restrictive
+search owner with other semantic searches; dual-type, variable, nonmana,
+granted, and ability-presence queries such as Affinitycycling remain
+fail-closed. Current games cannot use the isolated Game Record v3 compatibility
+parser. Discard-self and exile-self activation costs use the same destination-
+replacement continuation as casting costs: a competing choice rolls the
+complete priority action back, keeps the continuation private to the affected
+activator, and resumes the exact source-pinned action before stack placement.
 
 Ordinary printed `Crew N` is compiled once into a source-spanned activated-
 ability descriptor. `crew.py` owns the immutable current-characteristic

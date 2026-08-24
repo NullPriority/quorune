@@ -76,6 +76,7 @@ from .library_search_capability_shapes import (
     FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
     FIXED_LIBRARY_SEARCH_MECHANIC_ID,
     fixed_library_search_node_capabilities,
+    fixed_type_to_hand_search_node_capabilities,
 )
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
@@ -983,6 +984,7 @@ def _targeted_effect_capabilities(
         fixed_mill_node_capabilities,
         fixed_monarch_node_capabilities,
         fixed_library_search_node_capabilities,
+        fixed_type_to_hand_search_node_capabilities,
         fixed_life_node_capabilities,
         fixed_controller_effect_sequence_node_capabilities,
         fixed_counter_controller_effect_sequence_node_capabilities,

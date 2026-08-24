@@ -272,6 +272,33 @@
       "status": "trusted"
     },
     {
+      "id": "activation.typecycling.hand",
+      "version": 1,
+      "official_rules": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Activate one source-pinned printed Typecycling ability from its owner's hand by paying a fixed ordinary mana cost and replacement-aware source discard, then resolve one private restrictive library search to the hand, reveal the chosen card, and shuffle exactly once.",
+        "inputs": ["current owner-controlled card in hand", "source-pinned typed Typecycling descriptor", "fixed ordinary mana cost", "one closed Basic land, basic land subtype, artifact land, Wizard, or Sliver query", "current priority and source logical identity"],
+        "outputs": ["one payable hand-zone activation offer", "mana payment and replacement-aware source discard committed before stack placement", "one ordinary activated-ability stack object", "one actor-private fail-to-find library choice", "one revealed matching card requested to hand through the canonical zone owner", "one represented replacement-aware final destination", "one deterministic shuffle"],
+        "exclusions": ["Typecycling costs containing X, hybrid, Phyrexian, snow, or nonmana costs", "dual-type and arbitrary open typecycling queries", "Affinitycycling and other ability-presence queries until one shared ability applicability boundary exists", "granted Typecycling or Cycling", "Cycling triggers, modifiers, and prohibitions", "abilities activated from zones other than hand"]
+      },
+      "dependencies": ["activation.source_zone_change.fixed", "library.search.fixed_type_to_hand"],
+      "implementation_components": ["quorune.cycling_abilities.TypecyclingAbilitySpec", "quorune.compiler.cycling_nodes.typecycling_keyword_node", "quorune.semantic_runtime.cycling_abilities.TypecyclingAbilityHandler", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.query.activated_abilities", "quorune.rules.activation.commit.commit_activation", "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action", "quorune.selection.searching.HiddenSearchOwnerMixin"],
+      "positive_tests": ["test_fixed_typecycling_categories_compile_source_spanned_searches", "test_typecycling_descriptor_only_activates_from_hand", "test_typecycling_search_is_private_revealed_and_replays_exactly"],
+      "negative_tests": ["test_typecycling_variants_and_dependencies_fail_closed", "test_unpayable_typecycling_is_not_offered_and_is_atomic"],
+      "interaction_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
+      "multiplayer_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search"],
+      "privacy_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search"],
+      "replay_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The focused compiler dependency test blocks either the source-zone payment owner or the private typed search-to-hand owner and proves the Typecycling node remains inexact rather than falling back to reminder text or a generic activation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_typecycling_compiler_mutant_is_killed removes the typed Typecycling production, while the exact source-spanned compiler assertion rejects the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "activation.counter_keyword.fixed",
       "version": 1,
       "official_rules": ["602.1", "602.2", "602.5", "702.77a", "702.87a", "702.97a", "702.107a"],
@@ -997,6 +1024,33 @@
       "dependency_fail_closed_rationale": "Blocking destination replacement, tapped entry, normalized zone events, or APNAP trigger placement prevents the fixed search node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused mutations remove the closed compiler template, block each declared dependency, bypass the shared effective-characteristic matcher, or remove simultaneous tapped entry; compiler closure and authoritative runtime assertions reject every survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "library.search.fixed_type_to_hand",
+      "version": 1,
+      "official_rules": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Resolve one restrictive self-library type search to the hand through an actor-private fail-to-find choice, the shared effective-characteristic query boundary, the canonical replacement-aware zone owner, one public reveal, and one exact shuffle.",
+        "inputs": ["one capability-shaped fixed self-library search", "one closed type, subtype, or supertype query", "current hidden library identities and effective characteristics", "current destination replacements", "stable private semantic-search continuation"],
+        "outputs": ["one actor-private legal candidate set", "rules-permitted failure to find", "one identity-pinned selected card", "one replacement-aware requested move to hand", "one represented actual destination including an owner-selected Commander return", "public reveal of only the chosen result", "one deterministic shuffle", "exact replay"],
+        "exclusions": ["name, ability-presence, numeric-characteristic, dynamic, chosen, and cross-field alternative queries", "searches of another player or zones other than the searching player's library", "multiple selected cards", "destinations other than the searching player's hand", "search-limiting or search-replacement effects under CR 701.23f", "search and shuffle triggered effects", "untrusted face-down, copy, text-changing, and characteristic dependencies outside their own capability closure"]
+      },
+      "dependencies": ["variant.commander.zone_return", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.cycling_abilities.TypecyclingAbilitySpec.search_effect", "quorune.rules.library_search_capability_shapes.fixed_type_to_hand_search_node_capabilities", "quorune.selection.searching.HiddenSearchOwnerMixin", "quorune.object_query.object_matches_query", "quorune.characteristic_evaluation.evaluate_card_characteristics", "CommanderEngine.move_card", "CommanderEngine.shuffle_library"],
+      "positive_tests": ["test_fixed_typecycling_categories_compile_source_spanned_searches", "test_typecycling_search_is_private_revealed_and_replays_exactly"],
+      "negative_tests": ["test_typecycling_variants_and_dependencies_fail_closed"],
+      "interaction_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
+      "multiplayer_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly"],
+      "privacy_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly"],
+      "replay_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking destination replacement or the Commander hand/library replacement prevents the Typecycling node from receiving trusted closure, and malformed or stale private search continuations fail before a card moves or the library shuffles.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_typecycling_compiler_mutant_is_killed removes the only typed producer of this search shape, and exact compiler plus authoritative runtime assertions reject the survivor.",
       "blockers": [],
       "status": "trusted"
     },

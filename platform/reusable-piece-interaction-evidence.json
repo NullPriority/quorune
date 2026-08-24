@@ -649,6 +649,24 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
+      "test_id": "test_typecycling_discard_replacement_resumes_before_private_search",
+      "piece_ids": ["capability.activation.source_zone_change.fixed", "capability.activation.typecycling.hand", "capability.zone.change.destination_replacement", "mechanic.cr-701-keyword-actions", "mechanic.cycling"],
+      "capability_ids": ["activation.source_zone_change.fixed", "activation.typecycling.hand", "zone.change.destination_replacement"],
+      "interaction_order": 5,
+      "assertion": "One source-pinned Typecycling activation suspends and resumes its replacement-aware discard cost before the same stack object opens its actor-private fixed type search."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_typecycling_search_destination_replacement_resumes_atomically",
+      "piece_ids": ["capability.activation.typecycling.hand", "capability.library.search.fixed_type_to_hand", "capability.variant.commander.zone_return", "capability.zone.change.destination_replacement", "mechanic.cr-701-keyword-actions", "mechanic.cycling"],
+      "capability_ids": ["activation.typecycling.hand", "library.search.fixed_type_to_hand", "variant.commander.zone_return", "zone.change.destination_replacement"],
+      "interaction_order": 6,
+      "assertion": "Wizardcycling selects a real Wizard commander from the hidden library, suspends the search completion before mutation, privately applies the owner-chosen Commander hand replacement, then resumes the exact search transaction and replay with the card in the command zone."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
       "test_id": "test_compiled_tap_activation_is_multiplayer_public_and_replays",
       "piece_ids": ["capability.permanent.tap.effect", "capability.target.revalidate_resolution", "mechanic.tap-and-untap"],
       "capability_ids": ["permanent.tap.effect", "target.revalidate_resolution"],

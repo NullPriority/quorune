@@ -140,6 +140,7 @@
       "test_stack_rules",
       "test_static_abilities",
       "test_static_action_permissions",
+      "test_typecycling",
       "test_typed_activated_ability_catalog",
       "test_unearth_rules"
     ],
