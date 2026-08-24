@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_version": 131,
-  "effective_date": "2026-08-24",
+  "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
     "traditional",

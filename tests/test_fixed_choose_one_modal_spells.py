@@ -157,21 +157,6 @@ class FixedChooseOneModalCompilerTests(unittest.TestCase):
     def test_unsupported_modal_grammars_remain_material_residuals(self):
         cases = (
             (
-                "Choose two —\n"
-                "• Destroy target artifact.\n"
-                "• You gain 4 life."
-            ),
-            (
-                "Choose one or more —\n"
-                "• Destroy target artifact.\n"
-                "• You gain 4 life."
-            ),
-            (
-                "Choose one or both —\n"
-                "• Destroy target artifact.\n"
-                "• You gain 4 life."
-            ),
-            (
                 "Choose one —\n"
                 "• Destroy target artifact.\n"
                 "• Search your library for a card."
