@@ -86,6 +86,162 @@ def _characteristic_forms(value: Any) -> tuple[TargetCharacteristicForm, ...]:
     return forms
 
 
+def _target_count_bounds(raw: Mapping[str, Any]) -> tuple[int, int]:
+    count = raw.get("count")
+    minimum = raw.get("min", raw.get("minimum", count))
+    maximum = raw.get("max", raw.get("maximum", count))
+    if raw.get("up_to") is not None:
+        minimum = 0
+        maximum = raw["up_to"]
+    if minimum is not None and type(minimum) is not int:
+        raise ValueError("Target minimum must be an exact integer")
+    if maximum is not None and type(maximum) is not int:
+        raise ValueError("Target maximum must be an exact integer")
+    minimum = 1 if minimum is None else minimum
+    maximum = minimum if maximum is None else maximum
+    if minimum < 0 or maximum < minimum:
+        raise ValueError("Target count bounds are invalid")
+    return minimum, maximum
+
+
+def _target_zones(raw: Mapping[str, Any]) -> tuple[str, ...]:
+    zones = _strings(raw.get("zones", raw.get("zone", ("battlefield",))))
+    unknown_zones = sorted(set(zones) - PUBLIC_TARGET_ZONES)
+    if unknown_zones:
+        raise ValueError(
+            "Target schemas may not enumerate hidden/nonpublic zones: "
+            + ", ".join(unknown_zones)
+        )
+    return zones
+
+
+def _target_relations(raw: Mapping[str, Any]) -> tuple[str, str, str]:
+    controller = str(
+        raw.get("controller", raw.get("controller_relation", "any"))
+    )
+    owner = str(raw.get("owner", raw.get("owner_relation", "any")))
+    player = str(raw.get("player_relation", "any"))
+    for name, relation in (
+        ("controller", controller),
+        ("owner", owner),
+        ("player", player),
+    ):
+        if relation not in {"any", "you", "opponent"}:
+            raise ValueError(f"Unknown {name} relation {relation!r}")
+    return controller, owner, player
+
+
+def _target_resolution_condition(
+    raw: Mapping[str, Any],
+    *,
+    predicate: str,
+) -> dict[str, Any]:
+    raw_condition = raw.get("resolution_condition") or {}
+    if not isinstance(raw_condition, Mapping):
+        raise ValueError("Target resolution_condition must be an object")
+    resolution_condition = dict(raw_condition)
+    if predicate != "power_less_than_source":
+        return resolution_condition
+    try:
+        return RelativePowerTargetCondition.from_dict(
+            resolution_condition
+        ).to_dict()
+    except RelativePowerTargetError as exc:
+        raise ValueError(str(exc)) from exc
+
+
+def _target_state_predicate(
+    raw: Mapping[str, Any],
+) -> PermanentStatePredicateSpec | None:
+    value = raw.get("state_predicate")
+    if value is None:
+        return None
+    try:
+        return PermanentStatePredicateSpec.from_dict(value)
+    except ObjectQueryError as exc:
+        raise ValueError(str(exc)) from exc
+
+
+def _target_characteristic_fields(
+    raw: Mapping[str, Any],
+) -> dict[str, Any]:
+    return {
+        "categories": _strings(raw.get("categories", raw.get("category"))),
+        "types_any": _strings(
+            raw.get("types_any", raw.get("card_types", raw.get("type")))
+        ),
+        "types_all": _strings(raw.get("types_all")),
+        "types_none": _strings(raw.get("types_none")),
+        "subtypes_any": _strings(
+            raw.get("subtypes_any", raw.get("subtype"))
+        ),
+        "subtypes_none": _strings(raw.get("subtypes_none")),
+        "supertypes_any": _strings(
+            raw.get("supertypes_any", raw.get("supertype"))
+        ),
+        "supertypes_none": _strings(raw.get("supertypes_none")),
+        "keywords_all": _strings(raw.get("keywords_all")),
+        "keywords_none": _strings(raw.get("keywords_none")),
+        "colors_any": tuple(
+            color.upper()
+            for color in _strings(raw.get("colors_any", raw.get("colors")))
+        ),
+        "colors_all": tuple(
+            color.upper() for color in _strings(raw.get("colors_all"))
+        ),
+        "colors_none": tuple(
+            color.upper() for color in _strings(raw.get("colors_none"))
+        ),
+        "colorless": _optional_bool(raw.get("colorless")),
+        "color_count_min": _optional_exact_int(
+            raw.get("color_count_min"),
+            field="Target color_count_min",
+        ),
+        "color_count_equal": _optional_exact_int(
+            raw.get("color_count_equal"),
+            field="Target color_count_equal",
+        ),
+    }
+
+
+def _target_mana_value_fields(raw: Mapping[str, Any]) -> dict[str, float | None]:
+    return {
+        "mana_value_min": (
+            float(raw["mana_value_min"])
+            if raw.get("mana_value_min") is not None
+            else None
+        ),
+        "mana_value_max": (
+            float(raw["mana_value_max"])
+            if raw.get("mana_value_max") is not None
+            else None
+        ),
+        "mana_value_equal": (
+            float(raw["mana_value"])
+            if raw.get("mana_value") is not None
+            else None
+        ),
+    }
+
+
+def _target_boolean_fields(raw: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        field_name: _optional_bool(raw.get(field_name))
+        for field_name in (
+            "attacking",
+            "blocking",
+            "tapped",
+            "commander",
+            "token",
+            "land",
+            "creature",
+            "artifact",
+            "enchantment",
+            "permanent",
+        )
+    }
+
+
 _TARGET_GROUP_FIELDS = frozenset(
     {
         "selector",
@@ -322,141 +478,42 @@ class TargetGroup:
             if legacy is None:
                 raise ValueError(f"Unknown legacy target selector {selector!r}")
             raw = {**legacy, **raw}
-        count = raw.get("count")
-        minimum = raw.get("min", raw.get("minimum", count))
-        maximum = raw.get("max", raw.get("maximum", count))
-        if raw.get("up_to") is not None:
-            minimum = 0
-            maximum = raw["up_to"]
-        if minimum is not None and type(minimum) is not int:
-            raise ValueError("Target minimum must be an exact integer")
-        if maximum is not None and type(maximum) is not int:
-            raise ValueError("Target maximum must be an exact integer")
-        minimum = 1 if minimum is None else minimum
-        maximum = minimum if maximum is None else maximum
-        if minimum < 0 or maximum < minimum:
-            raise ValueError("Target count bounds are invalid")
-        zones = _strings(raw.get("zones", raw.get("zone", ("battlefield",))))
-        unknown_zones = sorted(set(zones) - PUBLIC_TARGET_ZONES)
-        if unknown_zones:
-            raise ValueError(
-                "Target schemas may not enumerate hidden/nonpublic zones: "
-                + ", ".join(unknown_zones)
-            )
-        relation = str(raw.get("controller", raw.get("controller_relation", "any")))
-        owner = str(raw.get("owner", raw.get("owner_relation", "any")))
-        player_relation = str(raw.get("player_relation", "any"))
-        if relation not in {"any", "you", "opponent"}:
-            raise ValueError(f"Unknown controller relation {relation!r}")
-        if owner not in {"any", "you", "opponent"}:
-            raise ValueError(f"Unknown owner relation {owner!r}")
-        if player_relation not in {"any", "you", "opponent"}:
-            raise ValueError(f"Unknown player relation {player_relation!r}")
+        minimum, maximum = _target_count_bounds(raw)
+        zones = _target_zones(raw)
+        relation, owner, player_relation = _target_relations(raw)
         predicate = str(raw.get("predicate") or "")
-        raw_condition = raw.get("resolution_condition") or {}
-        if not isinstance(raw_condition, Mapping):
-            raise ValueError("Target resolution_condition must be an object")
-        resolution_condition = dict(raw_condition)
-        if predicate == "power_less_than_source":
-            try:
-                resolution_condition = RelativePowerTargetCondition.from_dict(
-                    resolution_condition
-                ).to_dict()
-            except RelativePowerTargetError as exc:
-                raise ValueError(str(exc)) from exc
-        raw_state_predicate = raw.get("state_predicate")
-        try:
-            state_predicate = (
-                PermanentStatePredicateSpec.from_dict(raw_state_predicate)
-                if raw_state_predicate is not None
-                else None
-            )
-        except ObjectQueryError as exc:
-            raise ValueError(str(exc)) from exc
-        characteristic_forms = _characteristic_forms(
-            raw.get("characteristic_forms_any", [])
-        )
-        return cls(
-            group_id=str(raw.get("id") or raw.get("group") or default_id),
-            zones=zones,
-            categories=_strings(raw.get("categories", raw.get("category"))),
-            types_any=_strings(
-                raw.get("types_any", raw.get("card_types", raw.get("type")))
-            ),
-            types_all=_strings(raw.get("types_all")),
-            types_none=_strings(raw.get("types_none")),
-            subtypes_any=_strings(raw.get("subtypes_any", raw.get("subtype"))),
-            subtypes_none=_strings(raw.get("subtypes_none")),
-            supertypes_any=_strings(
-                raw.get("supertypes_any", raw.get("supertype"))
-            ),
-            supertypes_none=_strings(raw.get("supertypes_none")),
-            keywords_all=_strings(raw.get("keywords_all")),
-            keywords_none=_strings(raw.get("keywords_none")),
-            colors_any=tuple(
-                color.upper()
-                for color in _strings(raw.get("colors_any", raw.get("colors")))
-            ),
-            colors_all=tuple(
-                color.upper() for color in _strings(raw.get("colors_all"))
-            ),
-            colors_none=tuple(
-                color.upper() for color in _strings(raw.get("colors_none"))
-            ),
-            colorless=_optional_bool(raw.get("colorless")),
-            color_count_min=_optional_exact_int(
-                raw.get("color_count_min"),
-                field="Target color_count_min",
-            ),
-            color_count_equal=_optional_exact_int(
-                raw.get("color_count_equal"),
-                field="Target color_count_equal",
-            ),
-            mana_value_min=(
-                float(raw["mana_value_min"])
-                if raw.get("mana_value_min") is not None
-                else None
-            ),
-            mana_value_max=(
-                float(raw["mana_value_max"])
-                if raw.get("mana_value_max") is not None
-                else None
-            ),
-            mana_value_equal=(
-                float(raw["mana_value"])
-                if raw.get("mana_value") is not None
-                else None
-            ),
-            controller_relation=relation,
-            controller_seat=(
+        fields = {
+            "group_id": str(raw.get("id") or raw.get("group") or default_id),
+            "zones": zones,
+            **_target_characteristic_fields(raw),
+            **_target_mana_value_fields(raw),
+            "controller_relation": relation,
+            "controller_seat": (
                 str(raw["controller_seat"])
                 if raw.get("controller_seat") is not None
                 else None
             ),
-            owner_relation=owner,
-            player_relation=player_relation,
-            attacking=_optional_bool(raw.get("attacking")),
-            blocking=_optional_bool(raw.get("blocking")),
-            tapped=_optional_bool(raw.get("tapped")),
-            commander=_optional_bool(raw.get("commander")),
-            token=_optional_bool(raw.get("token")),
-            land=_optional_bool(raw.get("land")),
-            creature=_optional_bool(raw.get("creature")),
-            artifact=_optional_bool(raw.get("artifact")),
-            enchantment=_optional_bool(raw.get("enchantment")),
-            permanent=_optional_bool(raw.get("permanent")),
-            source_exclusion=bool(raw.get("source_exclusion", False)),
-            another=bool(raw.get("another", False)),
-            min_targets=minimum,
-            max_targets=maximum,
-            distinct=bool(raw.get("distinct", True)),
-            allow_reuse=bool(raw.get("allow_reuse", False)),
-            different_from_groups=_strings(raw.get("different_from_groups")),
-            predicate=predicate,
-            resolution_condition=resolution_condition,
-            state_predicate=state_predicate,
-            characteristic_forms_any=characteristic_forms,
-        )
+            "owner_relation": owner,
+            "player_relation": player_relation,
+            **_target_boolean_fields(raw),
+            "source_exclusion": bool(raw.get("source_exclusion", False)),
+            "another": bool(raw.get("another", False)),
+            "min_targets": minimum,
+            "max_targets": maximum,
+            "distinct": bool(raw.get("distinct", True)),
+            "allow_reuse": bool(raw.get("allow_reuse", False)),
+            "different_from_groups": _strings(raw.get("different_from_groups")),
+            "predicate": predicate,
+            "resolution_condition": _target_resolution_condition(
+                raw,
+                predicate=predicate,
+            ),
+            "state_predicate": _target_state_predicate(raw),
+            "characteristic_forms_any": _characteristic_forms(
+                raw.get("characteristic_forms_any", [])
+            ),
+        }
+        return cls(**fields)
 
     def public_dict(self, legal_refs: Sequence[str]) -> dict[str, Any]:
         return {

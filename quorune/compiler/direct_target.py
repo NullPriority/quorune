@@ -323,6 +323,197 @@ def _closed_direct_characteristic_fields(
     return None
 
 
+_DIRECT_TERM_FIELDS = (
+    "types_any",
+    "types_all",
+    "types_none",
+    "subtypes_any",
+    "subtypes_none",
+    "supertypes_any",
+    "supertypes_none",
+    "keywords_all",
+    "keywords_none",
+)
+
+
+def _canonicalize_direct_target_spec(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    for field_name in _DIRECT_TERM_FIELDS:
+        object.__setattr__(
+            spec,
+            field_name,
+            _canonical_terms(getattr(spec, field_name), field=field_name),
+        )
+    for field_name in ("colors_any", "colors_none"):
+        object.__setattr__(
+            spec,
+            field_name,
+            _canonical_colors(getattr(spec, field_name), field=field_name),
+        )
+
+
+def _positive_direct_types(
+    spec: "DirectPermanentTargetSpec",
+) -> set[str]:
+    return set(spec.types_any or spec.types_all)
+
+
+def _validate_direct_type_predicates(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    if spec.types_any and spec.types_all:
+        raise ValueError(
+            "Direct permanent targets require one positive type predicate"
+        )
+    if spec.types_any and (
+        len(spec.types_any) > 4
+        or not set(spec.types_any).issubset(_DIRECT_TYPE_ANY_VALUES)
+    ):
+        raise ValueError(
+            "Direct permanent target type disjunction is unsupported"
+        )
+    if spec.types_all and (
+        len(spec.types_all) > 2
+        or not set(spec.types_all).issubset(_DIRECT_TYPE_ANY_VALUES)
+    ):
+        raise ValueError("Direct permanent target type conjunction is unsupported")
+    if spec.types_none and (
+        len(spec.types_none) > 2
+        or not set(spec.types_none).issubset(_DIRECT_TYPE_ANY_VALUES)
+    ):
+        raise ValueError(
+            "Direct permanent excluded type predicate is unsupported"
+        )
+    if _positive_direct_types(spec).intersection(spec.types_none):
+        raise ValueError("Direct permanent type predicates contradict each other")
+
+
+def _validate_direct_subtype_predicates(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    if spec.subtypes_any:
+        if (
+            spec.types_any
+            or spec.types_all
+            or spec.types_none
+            or len(spec.subtypes_any) > 8
+        ):
+            raise ValueError(
+                "Direct permanent subtype targets require one closed disjunction"
+            )
+        for subtype in spec.subtypes_any:
+            if (
+                canonical_creature_subtype(subtype) != subtype
+                and subtype not in DIRECT_NONCREATURE_SUBTYPES
+            ):
+                raise ValueError(
+                    f"Direct permanent target subtype {subtype!r} is unsupported"
+                )
+    if spec.subtypes_none:
+        if (
+            "creature" not in _positive_direct_types(spec)
+            or len(spec.subtypes_none) > 8
+        ):
+            raise ValueError(
+                "Direct permanent excluded subtypes require one closed creature predicate"
+            )
+        for subtype in spec.subtypes_none:
+            if canonical_creature_subtype(subtype) != subtype:
+                raise ValueError(
+                    f"Direct permanent excluded subtype {subtype!r} is unsupported"
+                )
+
+
+def _validate_direct_supertype_predicates(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    if not (spec.supertypes_any or spec.supertypes_none):
+        return
+    if (
+        len(spec.supertypes_any) > 1
+        or len(spec.supertypes_none) > 1
+        or not set(spec.supertypes_any).issubset(_DIRECT_SUPERTYPES)
+        or not set(spec.supertypes_none).issubset(_DIRECT_SUPERTYPES)
+        or set(spec.supertypes_any).intersection(spec.supertypes_none)
+    ):
+        raise ValueError("Direct permanent supertype predicate is unsupported")
+
+
+def _validate_direct_keyword_predicates(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    if not (spec.keywords_all or spec.keywords_none):
+        return
+    has_creature_type = spec.types_any == ("creature",) or (
+        "creature" in spec.types_all and not spec.types_any
+    )
+    if (
+        not has_creature_type
+        or len(spec.keywords_all) > 1
+        or len(spec.keywords_none) > 1
+        or not set(spec.keywords_all).issubset(_DIRECT_KEYWORDS)
+        or not set(spec.keywords_none).issubset(_DIRECT_KEYWORDS)
+        or set(spec.keywords_all).intersection(spec.keywords_none)
+    ):
+        raise ValueError(
+            "Direct permanent keyword predicate requires one closed creature quality"
+        )
+
+
+def _validate_direct_color_predicates(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    if len(spec.colors_any) > 2 or len(spec.colors_none) > 1:
+        raise ValueError("Direct permanent color predicate is unsupported")
+    color_predicate_count = sum(
+        bool(value)
+        for value in (
+            spec.colors_any,
+            spec.colors_none,
+            spec.colorless is not None,
+            spec.color_count_min is not None,
+            spec.color_count_equal is not None,
+        )
+    )
+    if color_predicate_count > 1:
+        raise ValueError("Direct permanent color predicates are mutually exclusive")
+    if spec.colorless is not None and spec.colorless is not True:
+        raise ValueError(
+            "Direct permanent colorless predicates require the closed positive form"
+        )
+    for field_name in ("color_count_min", "color_count_equal"):
+        value = getattr(spec, field_name)
+        if value is not None and (
+            type(value) is not int or not 1 <= value <= 5
+        ):
+            raise ValueError(
+                "Direct permanent color-count predicate is unsupported"
+            )
+
+
+def _validate_direct_target_flags(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    if spec.token is not None and (
+        spec.token is not True
+        or "creature" not in _positive_direct_types(spec)
+    ):
+        raise ValueError(
+            "Direct permanent token predicates require a creature target"
+        )
+    if spec.controller_relation not in {"any", "you", "opponent"}:
+        raise ValueError("Direct permanent target controller relation is unsupported")
+    if type(spec.source_exclusion) is not bool:
+        raise ValueError("Direct permanent target source exclusion must be boolean")
+    if spec.commander is not None and (
+        spec.commander is not True or spec.types_any != ("creature",)
+    ):
+        raise ValueError(
+            "Direct permanent commander targets require a creature predicate"
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class DirectPermanentTargetSpec:
     """One closed, immutable direct-permanent target predicate.
@@ -356,166 +547,15 @@ class DirectPermanentTargetSpec:
     commander: bool | None = None
 
     def __post_init__(self) -> None:
-        for field_name in (
-            "types_any",
-            "types_all",
-            "types_none",
-            "subtypes_any",
-            "subtypes_none",
-            "supertypes_any",
-            "supertypes_none",
-            "keywords_all",
-            "keywords_none",
-        ):
-            object.__setattr__(
-                self,
-                field_name,
-                _canonical_terms(getattr(self, field_name), field=field_name),
-            )
-        object.__setattr__(
-            self,
-            "colors_any",
-            _canonical_colors(self.colors_any, field="colors_any"),
-        )
-        object.__setattr__(
-            self,
-            "colors_none",
-            _canonical_colors(self.colors_none, field="colors_none"),
-        )
-        if self.types_any and self.types_all:
-            raise ValueError(
-                "Direct permanent targets require one positive type predicate"
-            )
-        if self.types_any and (
-            len(self.types_any) > 4
-            or not set(self.types_any).issubset(_DIRECT_TYPE_ANY_VALUES)
-        ):
-            raise ValueError(
-                "Direct permanent target type disjunction is unsupported"
-            )
-        if self.types_all and (
-            len(self.types_all) > 2
-            or not set(self.types_all).issubset(_DIRECT_TYPE_ANY_VALUES)
-        ):
-            raise ValueError("Direct permanent target type conjunction is unsupported")
-        if self.types_none and (
-            len(self.types_none) > 2
-            or not set(self.types_none).issubset(_DIRECT_TYPE_ANY_VALUES)
-        ):
-            raise ValueError(
-                "Direct permanent excluded type predicate is unsupported"
-            )
-        positive_types = set(self.types_any or self.types_all)
-        if positive_types.intersection(self.types_none):
-            raise ValueError(
-                "Direct permanent type predicates contradict each other"
-            )
-        if self.subtypes_any:
-            if (
-                self.types_any
-                or self.types_all
-                or self.types_none
-                or len(self.subtypes_any) > 8
-            ):
-                raise ValueError(
-                    "Direct permanent subtype targets require one closed disjunction"
-                )
-            for subtype in self.subtypes_any:
-                if (
-                    canonical_creature_subtype(subtype) != subtype
-                    and subtype not in DIRECT_NONCREATURE_SUBTYPES
-                ):
-                    raise ValueError(
-                        f"Direct permanent target subtype {subtype!r} is unsupported"
-                    )
-        if self.subtypes_none:
-            if (
-                "creature" not in positive_types
-                or len(self.subtypes_none) > 8
-            ):
-                raise ValueError(
-                    "Direct permanent excluded subtypes require one closed creature predicate"
-                )
-            for subtype in self.subtypes_none:
-                if canonical_creature_subtype(subtype) != subtype:
-                    raise ValueError(
-                        f"Direct permanent excluded subtype {subtype!r} is unsupported"
-                    )
-        if self.supertypes_any or self.supertypes_none:
-            if (
-                len(self.supertypes_any) > 1
-                or len(self.supertypes_none) > 1
-                or not set(self.supertypes_any).issubset(_DIRECT_SUPERTYPES)
-                or not set(self.supertypes_none).issubset(_DIRECT_SUPERTYPES)
-                or set(self.supertypes_any).intersection(self.supertypes_none)
-            ):
-                raise ValueError(
-                    "Direct permanent supertype predicate is unsupported"
-                )
-        if self.keywords_all or self.keywords_none:
-            if (
-                not (
-                    self.types_any == ("creature",)
-                    or (
-                        "creature" in self.types_all
-                        and not self.types_any
-                    )
-                )
-                or len(self.keywords_all) > 1
-                or len(self.keywords_none) > 1
-                or not set(self.keywords_all).issubset(_DIRECT_KEYWORDS)
-                or not set(self.keywords_none).issubset(_DIRECT_KEYWORDS)
-                or set(self.keywords_all).intersection(self.keywords_none)
-            ):
-                raise ValueError(
-                    "Direct permanent keyword predicate requires one closed creature quality"
-                )
-        if len(self.colors_any) > 2 or len(self.colors_none) > 1:
-            raise ValueError("Direct permanent color predicate is unsupported")
-        color_predicate_count = sum(
-            bool(value)
-            for value in (
-                self.colors_any,
-                self.colors_none,
-                self.colorless is not None,
-                self.color_count_min is not None,
-                self.color_count_equal is not None,
-            )
-        )
-        if color_predicate_count > 1:
-            raise ValueError(
-                "Direct permanent color predicates are mutually exclusive"
-            )
-        if self.colorless is not None and self.colorless is not True:
-            raise ValueError(
-                "Direct permanent colorless predicates require the closed positive form"
-            )
-        for field_name in ("color_count_min", "color_count_equal"):
-            value = getattr(self, field_name)
-            if value is not None and (
-                type(value) is not int or not 1 <= value <= 5
-            ):
-                raise ValueError(
-                    "Direct permanent color-count predicate is unsupported"
-                )
-        if self.token is not None and (
-            self.token is not True or "creature" not in positive_types
-        ):
-            raise ValueError(
-                "Direct permanent token predicates require a creature target"
-            )
+        _canonicalize_direct_target_spec(self)
+        _validate_direct_type_predicates(self)
+        _validate_direct_subtype_predicates(self)
+        _validate_direct_supertype_predicates(self)
+        _validate_direct_keyword_predicates(self)
+        _validate_direct_color_predicates(self)
         _validate_mana_value_predicate(self)
         _validate_public_state_predicate(self)
-        if self.controller_relation not in {"any", "you", "opponent"}:
-            raise ValueError("Direct permanent target controller relation is unsupported")
-        if type(self.source_exclusion) is not bool:
-            raise ValueError("Direct permanent target source exclusion must be boolean")
-        if self.commander is not None and (
-            self.commander is not True or self.types_any != ("creature",)
-        ):
-            raise ValueError(
-                "Direct permanent commander targets require a creature predicate"
-            )
+        _validate_direct_target_flags(self)
 
     @property
     def characteristic_slug(self) -> str:
