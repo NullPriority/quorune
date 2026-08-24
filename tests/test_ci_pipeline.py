@@ -499,7 +499,7 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("python scripts/validate_pr_body.py", pr)
         self.assertIn("certification_receipt.py can-reuse-pr", pr)
         self.assertIn("--event-action \"${{ github.event.action }}\"", pr)
-        self.assertIn("--wait-seconds \"1800\"", pr)
+        self.assertIn("--wait-seconds \"21600\"", pr)
         self.assertGreaterEqual(
             pr.count("needs.plan.outputs.reuse_certification"),
             12,

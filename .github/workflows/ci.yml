@@ -54,7 +54,7 @@ jobs:
           --exact-head-sha "${{ github.event.pull_request.head.sha }}"
           --workflow-run-id "${GITHUB_RUN_ID}"
           --event-action "${{ github.event.action }}"
-          --wait-seconds "1800"
+          --wait-seconds "21600"
           --github-output "${GITHUB_OUTPUT}"
       - id: impact
         name: Classify exact changed-file impact
