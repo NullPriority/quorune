@@ -362,6 +362,7 @@ def _activated_effect_dependency_gate(
                 "fixed-controller-effect-sequence",
                 "fixed-counter-controller-effect-sequence",
                 "fixed-effect-clause-sequence",
+                "closed-effect-program",
             }.intersection(mechanics)
         )
         or (

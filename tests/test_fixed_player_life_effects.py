@@ -197,12 +197,17 @@ class FixedPlayerLifeCompilerTests(unittest.TestCase):
 
     def test_dynamic_and_simultaneous_unowned_life_shapes_remain_residual(self):
         for text in (
-            "Target player loses X life.",
             "Target player loses 2 life and you gain 2 life.",
+            "Target opponent loses 2 life and you gain 3 life.",
+        ):
+            with self.subTest(leaf_text=text):
+                self.assertIsNone(fixed_life_effect_template(text))
+
+        for text in (
+            "Target player loses X life.",
             "Each player loses 1 life.",
             "Target player's life total becomes 10.",
             "Exchange your life total with this creature's power.",
-            "Target opponent loses 2 life and you gain 3 life.",
         ):
             with self.subTest(text=text):
                 self.assertIsNone(fixed_life_effect_template(text))

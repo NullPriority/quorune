@@ -169,6 +169,8 @@ class AmassCompilerTests(unittest.TestCase):
                 self.assertTrue(program.capability_closure["trusted"])
 
     def test_unsupported_amass_variants_remain_material_residuals(self):
+        composed = "Amass Orcs 1, then amass Zombies 1."
+        self.assertIsNone(fixed_amass_effect_template(composed))
         for suffix, text in enumerate(
             (
                 "Amass Orcs X.",
@@ -178,7 +180,6 @@ class AmassCompilerTests(unittest.TestCase):
                 "Amass Modified creatures 2.",
                 "Amass Orcs 1 twice.",
                 "If you control an Army, amass Orcs 2.",
-                "Amass Orcs 1, then amass Zombies 1.",
             ),
             start=10,
         ):

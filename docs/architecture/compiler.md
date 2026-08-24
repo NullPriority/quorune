@@ -124,6 +124,18 @@ and activated contexts. Optional, modal, conditional, linked-result, pronoun,
 variable, repeated, independently targeted, quoted-boundary,
 parenthetical-boundary, and larger sequences remain source-spanned residuals.
 
+`compiler/closed_effect_programs.py` owns the broader bounded composition
+boundary for two to four mandatory components. It partitions only top-level
+sentence, comma-then, and conjunction boundaries, requires every component to
+lower through an existing reviewed typed owner, flattens their effects in
+printed order, and permits at most one shared direct target group. The
+corresponding capability shape revalidates every flattened component through
+the existing effect capability resolvers before admitting the program. The
+older exact two-sentence owner retains precedence for historical semantic
+identity. Conditional, optional, random, repeated, variable, linked-result,
+shared-subject, multi-target-group, quoted-boundary, parenthetical-boundary,
+and more-than-four-component programs remain source-spanned residuals.
+
 `compiler/monarch_templates.py` owns the mandatory controller-becomes-monarch
 instruction. Its strict node shape declares only the existing canonical
 designation capability; combat-damage transfer, end-step draw, and

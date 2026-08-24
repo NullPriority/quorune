@@ -94,6 +94,10 @@ from .fixed_effect_clause_shapes import (
     FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
     fixed_effect_clause_sequence_node_capabilities,
 )
+from .closed_effect_program_shapes import (
+    CLOSED_EFFECT_PROGRAM_MECHANIC,
+    closed_effect_program_node_capabilities,
+)
 from .modal_capability_shapes import (
     fixed_choose_one_modal_branches,
     fixed_nonrepeating_modal_branches,
@@ -350,6 +354,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC: (
         "resolution.effect_sequence.fixed_clauses",
     ),
+    CLOSED_EFFECT_PROGRAM_MECHANIC: (
+        "resolution.effect_program.closed_components",
+    ),
     FIXED_NEXT_TURN_DRAW_MECHANIC: (
         FIXED_NEXT_TURN_DRAW_CAPABILITY,
     ),
@@ -370,6 +377,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
+        CLOSED_EFFECT_PROGRAM_MECHANIC,
         FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_MECHANIC,
         FIXED_NEXT_TURN_DRAW_MECHANIC,
@@ -979,6 +987,7 @@ def _targeted_effect_capabilities(
         fixed_controller_effect_sequence_node_capabilities,
         fixed_counter_controller_effect_sequence_node_capabilities,
         fixed_effect_clause_sequence_node_capabilities,
+        closed_effect_program_node_capabilities,
         fixed_scry_node_capabilities,
         fixed_surveil_node_capabilities,
         fixed_self_return_node_capabilities,

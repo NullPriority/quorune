@@ -12,6 +12,9 @@ from unittest.mock import patch
 from common import DB_PATH, keep_all, load_assets, make_session
 from quorune.card_programs.adapters import compile_card_program
 from quorune.carddb import CardDatabase, CardRecord
+from quorune.compiler.closed_effect_programs import (
+    CLOSED_EFFECT_PROGRAM_TEMPLATE_ID,
+)
 from quorune.compiler.fixed_effect_clause_sequences import (
     FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
     fixed_effect_clause_sequence_template,
@@ -376,12 +379,23 @@ class FixedEffectClauseSequenceCompilerTests(unittest.TestCase):
                     ),
                 )
 
+        composed = (
+            "Destroy target creature. Draw a card. Scry 1.",
+            "Destroy target creature, then you gain 3 life.",
+        )
+        for text in composed:
+            with self.subTest(leaf_text=text):
+                self.assertIsNone(
+                    fixed_effect_clause_sequence_template(
+                        text,
+                        compile_clause=compile_clause,
+                    )
+                )
+
         for text in (
             "Destroy target creature. You may gain 3 life.",
             "Destroy target creature. If it died this way, draw a card.",
-            "Destroy target creature. Draw a card. Scry 1.",
             "Destroy target creature. Exile target creature.",
-            "Destroy target creature, then you gain 3 life.",
         ):
             with self.subTest(text=text):
                 self.assertIsNone(
@@ -421,8 +435,15 @@ class FixedEffectClauseSequenceCompilerTests(unittest.TestCase):
             )
 
         self.assertEqual("exact", current_ir.status)
-        self.assertNotEqual("exact", mutated_ir.status)
-        self.assertTrue(mutated_ir.material_residuals)
+        self.assertEqual("exact", mutated_ir.status, mutated_ir.material_residuals)
+        self.assertEqual(
+            "fixed-effect-clause-sequence-v1",
+            current_ir.faces[0].nodes[0].template_id,
+        )
+        self.assertEqual(
+            CLOSED_EFFECT_PROGRAM_TEMPLATE_ID,
+            mutated_ir.faces[0].nodes[0].template_id,
+        )
         self.assertEqual(ORACLE_COMPILER_VERSION, current.compiler_version)
         self.assertEqual(ORACLE_COMPILER_VERSION, mutated.compiler_version)
         self.assertNotEqual(current.semantic_hash, mutated.semantic_hash)

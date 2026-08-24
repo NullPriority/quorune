@@ -324,6 +324,10 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
                 exact()
 
     def test_unsupported_all_counter_removal_variants_remain_residual(self):
+        composed = (
+            "Remove all counters from target permanent, then draw a card."
+        )
+        self.assertIsNone(all_counter_removal_effect_template(composed))
         texts = (
             "Remove all charge counters from target artifact.",
             "Remove all counters from target player.",
@@ -331,7 +335,6 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
             "Remove all counters from each creature.",
             "Remove all counters from up to one target permanent.",
             "You may remove all counters from target permanent.",
-            "Remove all counters from target permanent, then draw a card.",
         )
         for text in texts:
             with self.subTest(text=text):

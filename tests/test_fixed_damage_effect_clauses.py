@@ -426,11 +426,16 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                 self.assertTrue(ir.material_residuals)
 
     def test_unsupported_damage_variants_remain_material_residuals(self):
+        composed = (
+            "Fixture deals 3 damage to target creature and you gain 3 life."
+        )
+        self.assertIsNone(
+            fixed_damage_effect_template(composed, card_name="Fixture")
+        )
         for text in (
             "Fixture deals 0 damage to target creature.",
             "Fixture deals X damage to target creature.",
             "Fixture deals 3 damage divided as you choose among two targets.",
-            "Fixture deals 3 damage to target creature and you gain 3 life.",
             "If you control a Mountain, Fixture deals 3 damage to any target.",
         ):
             with self.subTest(text=text):

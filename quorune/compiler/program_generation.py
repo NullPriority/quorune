@@ -84,6 +84,9 @@ from ..rules.fixed_controller_effect_shapes import (
 from ..rules.fixed_effect_clause_shapes import (
     fixed_effect_clause_sequence_node_capabilities,
 )
+from ..rules.closed_effect_program_shapes import (
+    closed_effect_program_node_capabilities,
+)
 from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
 from ..semantics import SemanticProgram, SemanticRegistry
 from ..util import stable_json
@@ -617,6 +620,28 @@ def _is_closed_fixed_effect_clause_sequence_program(
         return False
     required = set(
         fixed_effect_clause_sequence_node_capabilities(
+            effects=program.effects,
+            target_schema=program.target_schema,
+            mechanic_ids=program.coverage,
+        )
+    )
+    return bool(required) and required.issubset(
+        program.capability_dependencies
+    )
+
+
+def _is_closed_composed_effect_program(
+    program: SemanticProgram,
+) -> bool:
+    """Recognize a bounded program of independently closed components."""
+
+    if (
+        program.provenance.get("template_id") != "closed-effect-program-v1"
+        and "closed-effect-program" not in program.coverage
+    ):
+        return False
+    required = set(
+        closed_effect_program_node_capabilities(
             effects=program.effects,
             target_schema=program.target_schema,
             mechanic_ids=program.coverage,
@@ -1265,6 +1290,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_surveil_program,
         _is_closed_fixed_token_creation_program,
         _is_closed_fixed_effect_clause_sequence_program,
+        _is_closed_composed_effect_program,
         _is_closed_fixed_controller_effect_sequence_program,
         _is_closed_fixed_counter_controller_effect_sequence_program,
         _is_closed_single_explore_program,

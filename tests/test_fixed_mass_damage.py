@@ -310,12 +310,17 @@ class FixedMassDamageCompilerTests(unittest.TestCase):
         )
 
     def test_unsupported_mass_damage_wording_remains_residual(self):
+        self.assertIsNone(
+            fixed_damage_effect_template(
+                "Fixture deals 2 damage to each creature and you gain 2 life.",
+                card_name="Fixture",
+            )
+        )
         variants = (
             "each creature without flying",
             "each non-Pirate creature",
             "each Dragon creature",
             "each attacking creature",
-            "each creature and you gain 2 life",
             "each creature equal to the number of Mountains you control",
             "each of up to two target creatures",
         )

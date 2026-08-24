@@ -267,11 +267,12 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                 )
 
     def test_unsupported_sequence_wording_remains_a_precise_residual(self):
+        composed = "Draw a card. Scry 1. You gain 1 life."
+        self.assertIsNone(fixed_controller_effect_sequence_template(composed))
         for text in (
             "Draw cards equal to the number of creatures you control. Scry 1.",
             "Scry 1, then you may draw a card.",
             "Draw a card. Each player loses 1 life.",
-            "Draw a card. Scry 1. You gain 1 life.",
             "Draw a card unless an opponent pays {1}.",
         ):
             with self.subTest(text=text):
@@ -294,6 +295,10 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                 capability_profile="commander_review",
             )
             self.assertEqual("exact", ir.status, ir.material_residuals)
+            self.assertEqual(
+                "fixed-controller-draw-effect-sequence-v1",
+                ir.faces[0].nodes[0].template_id,
+            )
 
         assert_exact()
         with patch(
