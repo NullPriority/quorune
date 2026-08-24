@@ -452,6 +452,7 @@ class FixedCounterPlacementSetCompilerTests(unittest.TestCase):
             "Put a +1/+1 counter on each attacking creature.",
             "Put a +1/+1 counter on each face-down creature you control.",
             "Put a +1/+1 counter on each colorless creature you control.",
+            "Put two time counters on each permanent with a time counter on it.",
             "Put a +1/+1 counter on each of them.",
             "Put a +1/+1 counter on each Cat and Dog you control.",
             "Put a +1/+1 counter on each creature you control and a loyalty counter on each planeswalker you control.",

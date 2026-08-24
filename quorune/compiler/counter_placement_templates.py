@@ -1344,12 +1344,15 @@ def fixed_counter_placement_set_effect_template(
     if parsed is None:
         return None
     spec, target_relation = parsed
-    return FixedCounterPlacementSetTemplate(
-        count=count,
-        counter_name=match.group("counter"),
-        spec=spec,
-        target_relation=target_relation,
-    )
+    try:
+        return FixedCounterPlacementSetTemplate(
+            count=count,
+            counter_name=match.group("counter"),
+            spec=spec,
+            target_relation=target_relation,
+        )
+    except ValueError:
+        return None
 
 
 _PLAYER_COUNTER_WORDING = re.compile(
