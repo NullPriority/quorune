@@ -586,6 +586,11 @@ DESTROY_DAMAGE_PREVENTION_PAIR = _pair(
     "residual.replacement.damage-prevention",
 )
 
+DESTROY_REGENERATION_PAIR = _pair(
+    "capability.permanent.destroy.effect",
+    "residual.replacement.regeneration",
+)
+
 PREVENTION_AND_REPLACEMENT_PAIRS = (
     _pair(
         "capability.damage.prevention.persistent_amount",
@@ -709,6 +714,7 @@ EFFECT_AND_REPLACEMENT_PAIRS = (
     _pair("capability.counter.producer.cumulative_upkeep_fixed_life", "residual.replacement.replacement-applicability"),
     _pair("capability.counter.producer.cumulative_upkeep_fixed_life", "residual.replacement.self-replacement-and-prevention-ordering"),
     DESTROY_DAMAGE_PREVENTION_PAIR,
+    DESTROY_REGENERATION_PAIR,
 )
 
 FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS = tuple(
@@ -859,6 +865,7 @@ _bind(
     *EFFECT_AND_REPLACEMENT_PAIRS[31:34],
 )
 _bind("gideon-jura", DESTROY_DAMAGE_PREVENTION_PAIR)
+_bind("jaya-task-mage", DESTROY_REGENERATION_PAIR)
 _bind(
     "jaya-task-mage",
     *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
@@ -1077,6 +1084,7 @@ __all__ = [
     "COST_AND_REPLACEMENT_PAIRS",
     "DECLARATION_AND_REPLACEMENT_PAIRS",
     "DESTROY_DAMAGE_PREVENTION_PAIR",
+    "DESTROY_REGENERATION_PAIR",
     "EFFECT_AND_REPLACEMENT_PAIRS",
     "FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS",
     "FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS",
