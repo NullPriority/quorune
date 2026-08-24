@@ -11040,7 +11040,7 @@
       "covered_high_risk_pairs": 206,
       "covered_piece_pairs": 741,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "4f7322cf16288a161006d2f439cb2939a75ea5e2461b527754c2b2a86ffe6256",
+      "source_fingerprint": "1dbacf2f39584efddae7e7e81741d2e2f8eceb15b2ea515d6d095f8a835af394",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -27114,7 +27114,7 @@
         "not_run": 3,
         "passed": 138
       },
-      "effective_date": "2026-08-24",
+      "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
           "interaction": 440,
@@ -27129,10 +27129,10 @@
         },
         "declaration_count": 2277,
         "declaration_source_fingerprint": "17e0cd451d412d99a602c1c6f1a262ab7ba72faf644a8966972bc5e5c217ed73",
-        "fingerprint": "abc6aa38a2eb7c0ef8d9e8b94e18884f9e63425414c7c329b6e0f953600affb3",
-        "registry_fingerprint": "9087ef0ec499771644134b433d1e47c25c63ad8b4c9698e61e29c3739bb30923"
+        "fingerprint": "8aa749b39ff8ddd5f25d451579b7ea870fb3d09aba6133c51beea1c130c1dd55",
+        "registry_fingerprint": "a47a76e638edcf89c6ded3199df84e54389280fc0f51c493520d7516090bde78"
       },
-      "fingerprint": "9087ef0ec499771644134b433d1e47c25c63ad8b4c9698e61e29c3739bb30923",
+      "fingerprint": "a47a76e638edcf89c6ded3199df84e54389280fc0f51c493520d7516090bde78",
       "implementation_mutation_status_counts": {
         "killed": 212,
         "not_run": 4
@@ -27432,7 +27432,7 @@
         "contract_fingerprint": "416a79ebc71f9edf21580bbe301d218a02922965142f908500937be92b32b88e",
         "exact_cards_with_template": 384,
         "exact_nodes": 566,
-        "fingerprint": "6526a6ac0ac5d28c85857ec90592797c49f575e91a41f7248dbe59ccbef98c44",
+        "fingerprint": "5d27bc0c7bc878cbc75344b32e57a82f8a6ea51c6c3bea3283d77d6ecae55f01",
         "grammar_source_fingerprint": "1c38aed6255865cf9b825eab14680eb90ae488771687bc5936db47647e7ed724",
         "identity_fingerprint": "6024baf6d630669078c441b7a96d21bdccb2e9b109ff2ce4caba6a52bece3d7a",
         "present": true,
@@ -27444,7 +27444,7 @@
         "contract_fingerprint": "416a79ebc71f9edf21580bbe301d218a02922965142f908500937be92b32b88e",
         "exact_cards_with_template": 398,
         "exact_nodes": 588,
-        "fingerprint": "c9bc57b484ea2339a6dccda86d7a50f1cef3c0fe123fed91c346ced0a2fc6922",
+        "fingerprint": "744b32cccf3d1f546c4d8f3512714cd122776c517306b946c5136ae71e8ceade",
         "grammar_source_fingerprint": "1c38aed6255865cf9b825eab14680eb90ae488771687bc5936db47647e7ed724",
         "identity_fingerprint": "7774597e15f95b0a0a7f36203fdee46abb533ac294342c2d25b9fdb4eb30f727",
         "present": true,
@@ -27463,7 +27463,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "8687b69dfdcc471cd4cf8c6464535e9addd9fd5887c7244dd2187d4a7e6522b9",
+      "fingerprint": "c1c1ea8a87d65b1a6d6dc59b5325aed671ff57e2fec585993608f1186cdbe98a",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
