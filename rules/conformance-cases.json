@@ -48646,14 +48646,16 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
-        "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalCompilerTests.test_actual_fixed_choose_one_corpus_is_capability_closed"
+        "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalCompilerTests.test_actual_fixed_choose_one_corpus_is_capability_closed",
+        "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalCompilerTests.test_fixed_modal_programs_compile_across_shared_contexts"
       ],
       "implementation_components": [
         "quorune.compiler.modal_templates.FixedChooseOneModalSpellTemplate",
+        "quorune.compiler.modal_templates.FixedNonrepeatingModalTemplate",
         "quorune.rules.capabilities.CapabilityRegistry"
       ],
       "notes": [
-        "choice.modal.fixed_one owns only complete ordinary two- or three-mode Choose one instant and sorcery faces whose every branch already has an independent typed effect owner."
+        "choice.modal.fixed_one preserves the strict ordinary Choose one spell contract; choice.modal.fixed_nonrepeating separately owns bounded distinct-mode selections across whole spells, normalized triggers, and supported activations when every branch already has an independent typed effect owner."
       ],
       "required_scenarios": [],
       "reviewed": true,
@@ -48670,8 +48672,8 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "choose two, choose one or more, choose one or both, repeatable modes, and conditional mode-count instructions are not lowered",
-        "modal activated and triggered abilities, Spree, Escalate, Entwine, nested modes, and copied-mode alterations remain outside this bounded compiler owner"
+        "repeatable, random, conditional-count, and selection-history modal instructions are not lowered",
+        "Spree, Escalate, Entwine, nested modes, copied-mode alterations, unsupported event bindings or activation costs, and cross-mode target constraints remain outside this bounded compiler owner"
       ],
       "case_id": "cr-700.2a",
       "case_version": 1,
@@ -48690,18 +48692,27 @@
       "executable_test_ids": [
         "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalCompilerTests.test_unsupported_modal_grammars_remain_material_residuals",
         "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalRuntimeTests.test_compiled_modal_choice_resolves_only_selected_mode_and_replays",
-        "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalRuntimeTests.test_modal_target_revalidation_fizzles_without_running_other_mode"
+        "tests.test_fixed_choose_one_modal_spells.FixedChooseOneModalRuntimeTests.test_modal_target_revalidation_fizzles_without_running_other_mode",
+        "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalCompilerTests.test_modal_selection_grammar_and_shape_fail_closed",
+        "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_choose_two_spell_commits_ordered_modes_targets_and_replays",
+        "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_modal_activation_pays_cost_resolves_selected_mode_and_replays",
+        "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_modal_entry_trigger_selects_target_resolves_and_replays"
       ],
       "implementation_components": [
         "quorune.compiler.modal_templates.fixed_choose_one_modal_spell_template",
+        "quorune.compiler.modal_templates.fixed_nonrepeating_modal_template",
+        "quorune.compiler.modal_context_nodes.fixed_nonrepeating_modal_context_blocks",
+        "quorune.compiler.modal_program_closure.is_closed_fixed_modal_program",
         "quorune.targets.available_modes",
         "quorune.targets.target_plan",
         "quorune.targets.mode_effects",
+        "quorune.selection.targeting.TargetSelectionOwnerMixin._public_target_schema",
         "CommanderEngine._cast",
+        "CommanderEngine._activate",
         "CommanderEngine._continue_resolution"
       ],
       "notes": [
-        "The bounded fixed Choose one path advertises only feasible modes, validates the selected mode and its targets atomically, records the choice on the stack item, revalidates only the chosen target plan, and resolves only the selected branch; every unsupported modal family stays material residual."
+        "The fixed nonrepeating path advertises only feasible modes, enforces bounded distinct selections in printed order, validates mode-qualified targets atomically, records the choices on the stack item, revalidates only the selected target plan, rebases branch-local target references, and resolves only the selected branches; every unsupported modal family stays material residual."
       ],
       "required_scenarios": [
         "positive",

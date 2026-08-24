@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 130,
+  "registry_version": 131,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5776,6 +5776,33 @@
       "dependency_fail_closed_rationale": "The modal shape reconstructs every branch with its own exact mechanics, effects, and target schema; any malformed branch, missing child capability owner, or uncovered child mechanic rejects the entire modal node.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_modal_compiler_mutation_is_killed removes modal production and proves the real card returns to material residuals instead of retaining exact trust.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "choice.modal.fixed_nonrepeating",
+      "version": 1,
+      "official_rules": ["601.2b", "601.2c", "602.2b", "603.3d", "700.2", "700.2a", "700.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile one bounded ordered selection of distinct modes across complete spells, normalized triggered abilities, and supported activated abilities, then resolve only the selected branches through their existing typed owners.",
+        "inputs": ["one complete source-spanned modal block", "an exact Choose one, Choose one or both, Choose one or more, or Choose two header", "two through five ordered bullet modes", "a bounded selection of distinct stable mode IDs in printed order", "independently capability-closed effects and targets for every mode", "an exact whole-spell, normalized-trigger, or supported activated-ability wrapper"],
+        "outputs": ["one authoritative modal semantic program", "mode-specific public target projection with globally unique group IDs", "announcement-time mode and target commitment", "printed-order resolution of only selected modes", "exact child and wrapper capability closure"],
+        "exclusions": ["repeatable or random modes", "conditional or state-derived selection counts", "Entwine, Escalate, Spree, and other selection-linked additional costs", "hasn't-been-chosen state tracking", "cross-mode target-difference constraints", "unsupported trigger events or activation costs", "nonbullet, nested, linked, optional, or otherwise unsupported mode grammar", "any branch lacking an existing trusted compiler and runtime owner"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.modal_templates.FixedNonrepeatingModalTemplate", "quorune.compiler.modal_templates.fixed_nonrepeating_modal_template", "quorune.compiler.modal_context_nodes.fixed_nonrepeating_modal_context_blocks", "quorune.compiler.modal_program_closure.is_closed_fixed_modal_program", "quorune.rules.modal_capability_shapes.fixed_nonrepeating_modal_branches", "quorune.rules.capabilities.capability_dependencies_for_node", "quorune.targets.available_modes", "quorune.targets.target_plan", "quorune.targets.mode_effects", "quorune.selection.targeting.TargetSelectionOwnerMixin._public_target_schema", "CommanderEngine._cast", "CommanderEngine._activate", "CommanderEngine._continue_resolution"],
+      "positive_tests": ["test_fixed_modal_programs_compile_across_shared_contexts"],
+      "negative_tests": ["test_modal_selection_grammar_and_shape_fail_closed", "test_modal_dependency_and_compiler_mutations_fail_closed"],
+      "interaction_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays", "test_modal_activation_pays_cost_resolves_selected_mode_and_replays", "test_modal_entry_trigger_selects_target_resolves_and_replays"],
+      "multiplayer_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays"],
+      "privacy_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays"],
+      "replay_tests": ["test_choose_two_spell_commits_ordered_modes_targets_and_replays", "test_modal_activation_pays_cost_resolves_selected_mode_and_replays", "test_modal_entry_trigger_selects_target_resolves_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The modal shape reconstructs every branch and its exact target group, validates fixed selection bounds and wrapper mechanics, and requires the complete child and wrapper capability union; malformed bounds, duplicate or renamed groups, missing child ownership, or a blocked modal capability rejects exact trust.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_modal_dependency_and_compiler_mutations_fail_closed removes shared modal production and proves whole-spell and activated witnesses return to material residuals.",
       "blockers": [],
       "status": "trusted"
     },

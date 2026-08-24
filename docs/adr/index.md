@@ -96,3 +96,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0079 — typed fixed public-zone moves](0079-typed-fixed-public-zone-moves.md)
 - [ADR 0080 — bundle-aware work selection](0080-bundle-aware-work-selection.md)
 - [ADR 0081 — bounded-cohort work selection](0081-bounded-cohort-work-selection.md)
+- [ADR 0082 — typed fixed nonrepeating modal programs](0082-typed-fixed-nonrepeating-modal-programs.md)

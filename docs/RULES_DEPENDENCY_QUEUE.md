@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "b91107e6d3e8cd616d0abe29743b00478b888ee86c3239386450f73f8f3c1577"
+verified: "b3546d2031502d6e2c4cb7989d452366bacc25ece16fe60cb0636f75063b6623"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `77f3ff5ed246fe0f86f3dc24cdf5ddc15c662995095f5eae7482cedcc1c49986`
+Source fingerprint: `87444ab7a271c858b47626818873dda699b2f398faa2325973411e61882f8233`
 
 ## Current top-level state
 
@@ -35,7 +35,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `architecture
 | 2 | complete | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 3 | complete | `architecture:dedicated-owner-extraction` | `architecture_owner_extraction` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 4 | complete | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 5 | blocked | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 3799 | 8440 | 62.278689 | 0 | 0 |
+| 5 | blocked | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 3795 | 8340 | 62.213115 | 0 | 0 |
 | 6 | blocked | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 7 | blocked | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 8 | blocked | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -57,10 +57,10 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `architecture
 | 24 | blocked | `interaction-implementation:residual.target_or_choice.multiple-damage-recipients` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 25 | blocked | `interaction-implementation:residual.target_or_choice.random-outcome` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 26 | blocked | `rules:counter-producer-replacement-closure` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
-| 27 | blocked | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 39 | 167 | 2.294118 | 0 | 0 |
-| 28 | blocked | `bundle:fixed-exile-contexts` | `compiler_harvest` | 2 | 4 | 15 | 106 | 1.0 | 0 | 0 |
+| 27 | blocked | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 39 | 165 | 2.294118 | 0 | 0 |
+| 28 | blocked | `bundle:fixed-exile-contexts` | `compiler_harvest` | 2 | 4 | 15 | 96 | 1.0 | 0 | 0 |
 | 29 | blocked | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 17 | 106 | 0.809524 | 0 | 0 |
-| 30 | blocked | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 261 | 0.0 | 0 | 0 |
+| 30 | blocked | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 260 | 0.0 | 0 | 0 |
 | 31 | blocked | `architecture:engine-mutation-and-specificity-debt` | `architecture_debt` | 1 | 0 | 0 | 0 | unknown | 0 | 54 |
 
 Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.

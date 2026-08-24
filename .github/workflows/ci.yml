@@ -10,7 +10,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: pr-${{ github.event.pull_request.number || github.ref }}
+  group: >-
+    pr-${{ github.event.pull_request.number || github.ref }}-
+    ${{ github.event.action == 'edited' && 'metadata' || 'source' }}
   cancel-in-progress: ${{ github.event.action != 'edited' }}
 
 jobs:
@@ -52,7 +54,7 @@ jobs:
           --exact-head-sha "${{ github.event.pull_request.head.sha }}"
           --workflow-run-id "${GITHUB_RUN_ID}"
           --event-action "${{ github.event.action }}"
-          --wait-seconds "1800"
+          --wait-seconds "21600"
           --github-output "${GITHUB_OUTPUT}"
       - id: impact
         name: Classify exact changed-file impact

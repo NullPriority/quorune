@@ -7,6 +7,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
+from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 
 
@@ -938,7 +939,10 @@ def fixed_typed_event_effect_trigger_node(
     )
     if (
         template is None
-        or not effects
+        or (
+            not effects
+            and FIXED_NONREPEATING_MODAL_MECHANIC not in body_mechanics
+        )
         or _COUNTER_PLACEMENT_OPERATIONS.intersection(
             _nested_operations(effects)
         )

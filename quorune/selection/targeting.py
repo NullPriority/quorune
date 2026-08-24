@@ -504,7 +504,7 @@ class TargetSelectionOwnerMixin:
             mode_schemas: dict[str, Any] = {}
             for mode in modes:
                 try:
-                    plan = target_plan(schema, [mode], require_modes=True)
+                    plan = target_plan(schema, [mode], require_modes=False)
                 except ValueError:
                     continue
                 candidates = self._target_candidate_map(
@@ -521,7 +521,10 @@ class TargetSelectionOwnerMixin:
                         for group in plan.groups
                     ]
                 }
-            if not legal_modes:
+            minimum_modes = int(
+                schema.get("min_modes", schema.get("mode_count", 1))
+            )
+            if len(legal_modes) < minimum_modes:
                 self._increment_optimization(
                     controller, "illegal_target_actions_prevented"
                 )

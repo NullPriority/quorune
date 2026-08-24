@@ -94,10 +94,15 @@ from .fixed_effect_clause_shapes import (
     FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
     fixed_effect_clause_sequence_node_capabilities,
 )
-from .modal_capability_shapes import fixed_choose_one_modal_branches
+from .modal_capability_shapes import (
+    fixed_choose_one_modal_branches,
+    fixed_nonrepeating_modal_branches,
+)
 from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_CAPABILITY,
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,
+    FIXED_NONREPEATING_MODAL_CAPABILITY,
+    FIXED_NONREPEATING_MODAL_MECHANIC,
 )
 from ..compiler.affected_player_sacrifice_templates import (
     FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
@@ -366,6 +371,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
         FIXED_CHOOSE_ONE_MODAL_MECHANIC,
+        FIXED_NONREPEATING_MODAL_MECHANIC,
         FIXED_NEXT_TURN_DRAW_MECHANIC,
         "adapt",
         "monstrosity",
@@ -1009,14 +1015,36 @@ def _fixed_modal_capability_dependencies(
     target_schema: Mapping[str, Any] | None,
     mechanics: Iterable[str],
 ) -> tuple[str, ...]:
-    branches = fixed_choose_one_modal_branches(
-        effects=effects,
-        target_schema=target_schema,
-        mechanic_ids=mechanics,
+    mechanic_values = tuple(str(value).casefold() for value in mechanics)
+    nonrepeating = FIXED_NONREPEATING_MODAL_MECHANIC in mechanic_values
+    branches = (
+        fixed_nonrepeating_modal_branches(
+            effects=effects,
+            target_schema=target_schema,
+            mechanic_ids=mechanic_values,
+        )
+        if nonrepeating
+        else fixed_choose_one_modal_branches(
+            effects=effects,
+            target_schema=target_schema,
+            mechanic_ids=mechanic_values,
+        )
     )
     if branches is None:
         return ()
-    dependencies = {FIXED_CHOOSE_ONE_MODAL_CAPABILITY}
+    modal_mechanic = (
+        FIXED_NONREPEATING_MODAL_MECHANIC
+        if nonrepeating
+        else FIXED_CHOOSE_ONE_MODAL_MECHANIC
+    )
+    dependencies = {
+        (
+            FIXED_NONREPEATING_MODAL_CAPABILITY
+            if nonrepeating
+            else FIXED_CHOOSE_ONE_MODAL_CAPABILITY
+        )
+    }
+    represented_mechanics = {modal_mechanic}
     for branch in branches:
         branch_dependencies = capability_dependencies_for_node(
             effects=branch.effects,
@@ -1029,6 +1057,16 @@ def _fixed_modal_capability_dependencies(
         ):
             return ()
         dependencies.update(branch_dependencies)
+        represented_mechanics.update(branch.mechanics)
+    outer_mechanics = set(mechanic_values) - represented_mechanics
+    for mechanic in outer_mechanics:
+        if mechanic == "cr-603-handling-triggered-abilities":
+            dependencies.add("trigger.placement.apnap")
+            continue
+        required = MECHANIC_CAPABILITY_DEPENDENCIES.get(mechanic)
+        if not required:
+            return ()
+        dependencies.update(required)
     return tuple(sorted(dependencies))
 
 
@@ -1086,7 +1124,12 @@ def capability_dependencies_for_node(
     mechanics = set(mechanic_values)
     operations = {str(effect.get("op") or "") for effect in effects}
 
-    if FIXED_CHOOSE_ONE_MODAL_MECHANIC in mechanics:
+    if mechanics.intersection(
+        {
+            FIXED_CHOOSE_ONE_MODAL_MECHANIC,
+            FIXED_NONREPEATING_MODAL_MECHANIC,
+        }
+    ):
         return _fixed_modal_capability_dependencies(
             effects=effects,
             target_schema=target_schema,
@@ -1248,6 +1291,18 @@ def _has_aura_attachment_capability(supplied: set[str]) -> bool:
     )
 
 
+def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
+    mapping = {
+        FIXED_CHOOSE_ONE_MODAL_CAPABILITY: FIXED_CHOOSE_ONE_MODAL_MECHANIC,
+        FIXED_NONREPEATING_MODAL_CAPABILITY: FIXED_NONREPEATING_MODAL_MECHANIC,
+    }
+    return {
+        mechanic
+        for capability, mechanic in mapping.items()
+        if capability in supplied
+    }
+
+
 def capability_covered_mechanics(
     dependencies: Iterable[str],
 ) -> tuple[str, ...]:
@@ -1307,8 +1362,7 @@ def capability_covered_mechanics(
         covered.update(
             {"cr-111-tokens", "fixed-token-definition-batch"}
         )
-    if FIXED_CHOOSE_ONE_MODAL_CAPABILITY in supplied:
-        covered.add(FIXED_CHOOSE_ONE_MODAL_MECHANIC)
+    covered.update(_fixed_modal_covered_mechanics(supplied))
     covered.update(_affected_player_choice_covered_mechanics(supplied))
     if _has_aura_attachment_capability(supplied):
         covered.add("enchant")

@@ -275,6 +275,7 @@
       "test_fixed_keyword_entry_counters",
       "test_fixed_library_searches",
       "test_fixed_multikind_counter_batches",
+      "test_fixed_nonrepeating_modal_programs",
       "test_fixed_source_effect_sequences",
       "test_fixed_target_effect_sequences",
       "test_fixed_token_creation_effects",

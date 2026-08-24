@@ -2160,6 +2160,36 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/modal_context_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/modal_program_closure.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/modal_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7818,5 +7848,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "6cbe14bd24e6e848b0ee6354ca278fd374e591cbcb89a7cb39824c7074398216"
+  "fingerprint": "f77f817fa8f366612f3eeaa51d913f47088cf03995973271dd450ec35c15947d"
 }

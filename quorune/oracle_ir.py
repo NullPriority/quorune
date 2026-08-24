@@ -59,7 +59,13 @@ from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
 from .compiler.mill_templates import fixed_mill_effect_template
-from .compiler.modal_templates import fixed_choose_one_modal_spell_template
+from .compiler.modal_context_nodes import (
+    fixed_nonrepeating_modal_context_blocks,
+)
+from .compiler.modal_templates import (
+    fixed_choose_one_modal_spell_template,
+    fixed_nonrepeating_modal_template,
+)
 from .compiler.monarch_templates import fixed_monarch_effect_template
 from .compiler.keyword_nodes import (
     bloodthirst_keyword_node,
@@ -114,7 +120,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v118"
+ORACLE_COMPILER_VERSION = "oracle-ir-v119"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1007,6 +1013,20 @@ def _typed_whole_spell_face(
         ),
     )
     if modal_template is None:
+        expanded_modal = fixed_nonrepeating_modal_template(
+            material_rows,
+            compile_effect=lambda body: effect_template(
+                body,
+                card_name=face_name or record.name,
+            ),
+        )
+        modal_template = (
+            expanded_modal
+            if expanded_modal is not None
+            and not expanded_modal.context_prefix
+            else None
+        )
+    if modal_template is None:
         return None
     template, effects, target_schema, mechanics = modal_template.compiled()
     dependency_gate = _dependency_gate(
@@ -1090,19 +1110,11 @@ def _compile_face(
 ) -> OracleFaceIR:
     nodes: list[OracleNode] = []
     residuals: list[OracleResidual] = []
-    (
-        card_types,
-        permanent,
-        spell,
-        support_source_is_permanent,
-        source_attachment_relation,
-    ) = _face_type_context(type_line)
-    contextual_effect_template = partial(
-        _reviewed_effect_template, source_is_permanent=support_source_is_permanent,
-        source_card_types=tuple(sorted(card_types)), source_attachment_relation=source_attachment_relation,
-    )
-    contextual_trigger_node = partial(
-        _trigger_node, effect_template=contextual_effect_template)
+    (card_types, permanent, spell, support_source_is_permanent,
+     source_attachment_relation) = _face_type_context(type_line)
+    contextual_effect_template = partial(_reviewed_effect_template, source_is_permanent=support_source_is_permanent,
+        source_card_types=tuple(sorted(card_types)), source_attachment_relation=source_attachment_relation)
+    contextual_trigger_node = partial(_trigger_node, effect_template=contextual_effect_template)
     material_rows = tuple(_material_source_lines(type_line, oracle_text))
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
     if spell:
@@ -1114,7 +1126,15 @@ def _compile_face(
         )
         if typed_face is not None:
             return typed_face
+    modal_blocks = fixed_nonrepeating_modal_context_blocks(
+        material_rows=material_rows, face_id=face_id, oracle_text=oracle_text, card_name=face_name or record.name, type_line=type_line, keywords=keywords,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
+        effect_template=contextual_effect_template,
+        activated_or_event_node=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node,
+    )
     for index, row in enumerate(material_rows, 1):
+        if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
+            continue
         line, material_line, span = row
         node_id = f"{face_id}:n{index}"
         keyword_nodes = _keyword_nodes(
