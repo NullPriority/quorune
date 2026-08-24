@@ -489,6 +489,10 @@ class CiPipelineTests(unittest.TestCase):
             "cancel-in-progress: ${{ github.event.action != 'edited' }}",
             pr,
         )
+        self.assertIn(
+            "${{ github.event.action == 'edited' && 'metadata' || 'source' }}",
+            pr,
+        )
         self.assertIn("PR / Certification", pr)
         self.assertIn("opened, synchronize, reopened, edited", pr)
         self.assertNotIn("ready_for_review", pr)

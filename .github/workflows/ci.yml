@@ -10,7 +10,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: pr-${{ github.event.pull_request.number || github.ref }}
+  group: >-
+    pr-${{ github.event.pull_request.number || github.ref }}-
+    ${{ github.event.action == 'edited' && 'metadata' || 'source' }}
   cancel-in-progress: ${{ github.event.action != 'edited' }}
 
 jobs:
