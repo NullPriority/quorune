@@ -202,6 +202,60 @@ def _enchant_dependency_gate(
     return None
 
 
+def _protection_dependency_gate(
+    material_line: str,
+    mechanics: tuple[str, ...],
+    *,
+    trusted_mechanics: frozenset[str],
+    capability_registry: CapabilityRegistry | None,
+    capability_profile: str,
+) -> DependencyGate | None:
+    protection_parts = tuple(
+        part.strip()
+        for part in re.split(r"[,;]", material_line.rstrip("."))
+        if part.strip().casefold().startswith("protection from ")
+    )
+    if (
+        "protection" not in mechanics
+        or len(protection_parts) != mechanics.count("protection")
+        or not all(parse_protection_line(part) for part in protection_parts)
+    ):
+        return None
+    protection_gate = explicit_capability_gate(
+        "protection.typed.debt",
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    other_gate = dependency_gate(
+        mechanics=(
+            mechanic for mechanic in mechanics if mechanic != "protection"
+        ),
+        effects=(),
+        target_schema=None,
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    combined_gate = explicit_capabilities_gate(
+        (*protection_gate.capabilities, *other_gate.capabilities),
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    return DependencyGate(
+        blockers=tuple(
+            dict.fromkeys(
+                (
+                    *combined_gate.blockers,
+                    *protection_gate.blockers,
+                    *other_gate.blockers,
+                )
+            )
+        ),
+        capabilities=combined_gate.capabilities,
+        closure=combined_gate.closure,
+    )
+
+
 def keyword_dependency_gate(
     *,
     material_line: str,
@@ -307,49 +361,15 @@ def keyword_dependency_gate(
         )
         if enchant_gate is not None:
             return enchant_gate
-    protection_parts = tuple(
-        part.strip()
-        for part in re.split(r"[,;]", material_line.rstrip("."))
-        if part.strip().casefold().startswith("protection from ")
+    protection_gate = _protection_dependency_gate(
+        material_line,
+        mechanics,
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
     )
-    if (
-        "protection" in mechanics
-        and len(protection_parts) == mechanics.count("protection")
-        and all(parse_protection_line(part) for part in protection_parts)
-    ):
-        protection_gate = explicit_capability_gate(
-            "protection.typed.debt",
-            capability_registry=capability_registry,
-            capability_profile=capability_profile,
-        )
-        other_gate = dependency_gate(
-            mechanics=(
-                mechanic for mechanic in mechanics if mechanic != "protection"
-            ),
-            effects=(),
-            target_schema=None,
-            trusted_mechanics=trusted_mechanics,
-            capability_registry=capability_registry,
-            capability_profile=capability_profile,
-        )
-        combined_gate = explicit_capabilities_gate(
-            (*protection_gate.capabilities, *other_gate.capabilities),
-            capability_registry=capability_registry,
-            capability_profile=capability_profile,
-        )
-        return DependencyGate(
-            blockers=tuple(
-                dict.fromkeys(
-                    (
-                        *combined_gate.blockers,
-                        *protection_gate.blockers,
-                        *other_gate.blockers,
-                    )
-                )
-            ),
-            capabilities=combined_gate.capabilities,
-            closure=combined_gate.closure,
-        )
+    if protection_gate is not None:
+        return protection_gate
     return dependency_gate(
         mechanics=mechanics,
         effects=(),

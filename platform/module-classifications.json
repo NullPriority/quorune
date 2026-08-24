@@ -2829,12 +2829,10 @@
     },
     {
       "file": "quorune/creature_subtypes.py",
-      "layer": "rules",
+      "layer": "domain",
       "owning_subsystem": "card_characteristics",
       "allowed_dependency_layers": [
-        "domain",
-        "rules",
-        "semantics"
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -7877,5 +7875,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "5eaa2aee34871739f4dbb94a2ba81b73f0f78697974eddbef934ae6cf56888aa"
+  "fingerprint": "b6a37b515ef85c725769b26988624886e0cf6760aa0769d6b368ac70b631dc2a"
 }
