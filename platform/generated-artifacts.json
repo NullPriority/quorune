@@ -42,6 +42,7 @@
     ],
     "rules-source": [
       "mechanics/**/*.json",
+      "quorune/semantic_packs/**/*.json",
       "rules/**/*.json",
       "rules/**/*.md"
     ],

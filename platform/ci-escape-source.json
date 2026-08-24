@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-21T09:13:04Z",
+  "observed_at": "2026-08-24T04:48:09Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -501,6 +501,18 @@
       "regressions": ["test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"],
       "impact_edge_status": "not_applicable",
       "resolution": "The closed runtime-family inventory now includes the Flashback component. The existing compiler/CardProgram impact path already selected the failing shard; focused preparation for future runtime-registry additions must run the global inventory method in addition to the new component's own tests."
+    },
+    {
+      "id": "ci-20260824-36",
+      "run_id": 32619053986,
+      "head_sha": "c8ab8882e4c6b97a20a30c04d4f275a01a18b2a0",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The cloud generator reused an architecture-audit artifact after a reviewed semantic-pack event changed because semantic-pack JSON was absent from the rules-source input closure.",
+      "failed_surfaces": ["generated-artifacts:architecture"],
+      "regressions": ["test_generated_owner_cache.GeneratedOwnerCacheTests.test_repository_manifest_declares_safe_input_closures"],
+      "impact_edge_status": "added",
+      "resolution": "Semantic-pack JSON now belongs to the shared rules-source group consumed by compiler-corpus and architecture owners, so their cache keys change before a stale reviewed-program artifact can be restored. The manifest regression locks both consumers to that shared input edge."
     }
   ],
   "recent_pull_requests": [

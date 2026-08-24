@@ -99,6 +99,25 @@
       "legalities": {"commander": "legal"}
     },
     {
+      "oracle_id": "12000000-0000-4000-8000-000000000019",
+      "name": "Source Attack Counter Trigger Fixture",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Warrior",
+      "oracle_text": "Haste\nWhenever this creature attacks, put a +1/+1 counter on this creature.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": ["Haste"],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-23",
+      "legalities": {"commander": "legal"}
+    },
+    {
       "oracle_id": "12000000-0000-4000-8000-000000000005",
       "name": "Instant Sorcery Cast Counter Trigger Fixture",
       "mana_cost": "{2}",

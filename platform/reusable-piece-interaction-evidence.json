@@ -1476,6 +1476,15 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_shroud_and_enchantment_cast_draw_compose",
+      "piece_ids": ["capability.target.protection.shroud_permanent", "capability.zone.draw.library_to_hand"],
+      "capability_ids": ["target.protection.shroud_permanent", "zone.draw.library_to_hand"],
+      "interaction_order": 2,
+      "assertion": "One authoritative four-player witness excludes and transactionally rejects the Shroud source as an opposing targeted-spell recipient, then preserves that source while its independent enchantment-cast trigger commits a canonical private draw."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_shroud_gained_after_selection_is_illegal_at_resolution",
       "piece_ids": ["capability.target.protection.shroud_permanent", "capability.target.revalidate_resolution", "mechanic.shroud"],

@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-08-22"
+verified: "2026-08-23"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -420,10 +420,15 @@ source-spanned residuals.
 `compiler/fixed_counter_trigger_nodes.py` owns one shared closed normalized-
 event binding for represented beginnings of steps; a land entering under the
 source controller's control; a noncreature or instant-or-sorcery spell cast by
-the source controller; controller life gains, card draws, and exact second
-draws; and public artifact, creature, enchantment, or permanent entries plus
-creature deaths. A mandatory body may compose with that binding only when the
-body already lowers through one reviewed typed effect owner with a trusted
+the source controller; one closed public card-type spell cast by the source
+controller, an opponent, or any player; the source creature attacking;
+controller life gains, card draws, and exact second draws; and public artifact,
+creature, enchantment, or permanent entries plus creature deaths. Cast
+predicates consume only the immutable controller and parsed card types already
+sealed by the normalized cast event. The self-attack predicate consumes the
+exact attacker reference derived from the canonical completed attack
+transition. A mandatory body may compose with those bindings only when the body
+already lowers through one reviewed typed effect owner with a trusted
 capability closure. Counter-producing bodies retain their counter-specific
 capability and optional-choice wrapper rather than entering a second trigger
 path.
@@ -434,11 +439,12 @@ normalized owner's current entry facts or predeparture last-known facts and
 does not perform a characteristic query of its own. The binding emits only an
 immutable event predicate and ordinary triggered node; APNAP placement, target
 selection and revalidation, replacement suspension, and effect mutation stay
-with their existing owners. Cast-or-copy, opponent or arbitrary casts, broader
-land-entry relations, characteristic-qualified zone changes, one-or-more
-aggregation, combined events, intervening-if, reflexive, optional, variable,
-linked, and unrepresented bodies remain material. Spell-cast type predicates
-explicitly exclude type-changing stack interactions until their
+with their existing owners. Cast-or-copy, cast qualities beyond the closed
+public card-type vocabulary, broader land-entry relations, attack-recipient or
+aggregate attack forms, characteristic-qualified zone changes, one-or-more
+aggregation, combined events, intervening-if, reflexive, optional noncounter,
+variable, linked, and unrepresented bodies remain material. Spell-cast type
+predicates explicitly exclude type-changing stack interactions until their
 characteristic boundary is trusted.
 
 `compiler/counter_keyword_activation_nodes.py` composes that counter owner
