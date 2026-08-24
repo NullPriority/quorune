@@ -1683,6 +1683,15 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_modal_graveyard_return_replacement_resumes_then_damages_and_replays",
+      "piece_ids": ["capability.target.public.player_or_damageable_permanent", "capability.zone.change.destination_replacement"],
+      "capability_ids": ["target.public.player_or_damageable_permanent", "zone.change.destination_replacement"],
+      "interaction_order": 2,
+      "assertion": "Kolaghan's Command announces an ordered graveyard-card and public damage target pair, suspends its first selected mode for the command-zone destination replacement without exposing the private continuation, then resumes the same resolution to revalidate and damage the second target with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_strictest_current_grant_combines_with_opposing_pair_removal",
       "piece_ids": ["capability.counter.removal.rule_generated", "capability.state_based.counter_maximum.fixed_self", "mechanic.cr-704-state-based-actions"],

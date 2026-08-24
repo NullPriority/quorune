@@ -379,6 +379,113 @@ class FixedNonrepeatingModalRuntimeTests(unittest.TestCase):
         self.assertEqual("graveyard", source.zone)
         self.assert_replays(session, "fixed-choose-two-spell")
 
+    def test_modal_graveyard_return_replacement_resumes_then_damages_and_replays(
+        self,
+    ):
+        session = self.session_with_replacement(
+            original="Abrade",
+            replacement="Kolaghan's Command",
+            seed=119004,
+        )
+        engine = session.engine
+        source = self.card(engine, owner="A", name="Kolaghan's Command")
+        commander = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A" and card.is_commander
+        )
+        creature = self.card(engine, owner="B", name="Seedborn Muse")
+        engine.move_card(source.object_id, "hand", controller="A", log=False)
+        engine.move_card(
+            commander.object_id,
+            "graveyard",
+            controller="A",
+            log=False,
+        )
+        engine.move_card(
+            creature.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        self.assertTrue(engine._stabilize())
+        self.assertEqual(
+            "state.commander_zone",
+            engine.state.pending_decision.kind,
+        )
+        remained = session.act(
+            "pilot:A",
+            {"a": "choose", "choice": "remain"},
+        )
+        self.assertTrue(remained.ok, remained.summary)
+        self.assertEqual("graveyard", commander.zone)
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.permissions.invalidate_current()
+        self.prepare_priority(session, mana={"C": 1, "B": 1, "R": 1})
+
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"][
+            "legal"
+        ]["actions"]
+        self.assertIn(f"cast:{source.ref}", [row["id"] for row in actions])
+        action = next(
+            row for row in actions if row["id"] == f"cast:{source.ref}"
+        )
+        self.assertIn("mode_1", action["target_schema"]["legal_modes"])
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "modes": ["mode_1", "mode_4"],
+                "targets": [commander.ref, creature.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "B": 1, "R": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+
+        replacement_seen = False
+        while engine.state.stack:
+            decision = engine.state.pending_decision
+            if decision is not None and decision.kind == "replacement.order":
+                replacement_seen = True
+                self.assertEqual(["pilot:A"], session.pending_principals())
+                for seat in "BCD":
+                    self.assertIsNone(
+                        session.packet(f"pilot:{seat}", full=True)["decision"]
+                    )
+                projected = session.packet("pilot:A", full=True)["decision"]
+                selected = next(
+                    option
+                    for option in projected["ctx"]["options"]
+                    if not option.get("decline")
+                )
+                accepted = session.act(
+                    "pilot:A",
+                    {
+                        "action_id": "choose",
+                        "replacement": selected["id"],
+                    },
+                )
+                self.assertTrue(accepted.ok, accepted.summary)
+                continue
+            pass_current(session)
+
+        self.assertTrue(replacement_seen)
+        self.assertEqual("command", commander.zone)
+        self.assertNotIn(
+            commander.object_id,
+            engine.state.players["A"].zones["hand"],
+        )
+        self.assertEqual(2, creature.marked_damage)
+        self.assertEqual("graveyard", source.zone)
+        self.assert_replays(session, "fixed-modal-return-replacement")
+
     def test_modal_activation_pays_cost_resolves_selected_mode_and_replays(self):
         session = self.session_with_replacement(
             original="Arcum Dagsson",
