@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "968b35e8a65d92dec094a8c41dd1064387629b39bebc00512c258c3e2f696fb9"
+verified: "523268432089c6a4e57f796d079c9c6081f9fe7402f3d79ca8bbfd04a5e888f1"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `95d0cffeea9f16ef307b4f7e2e37fbaa795d6ab77c9090a9ab474812c91375a5`
+Source fingerprint: `c56ccb969ba309dbc79bd5d4b2b2908a78fd700efec3ed76b03cf6c20adb957d`
 
 ## Current top-level state
 
