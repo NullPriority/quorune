@@ -11018,7 +11018,7 @@
       "covered_high_risk_pairs": 205,
       "covered_piece_pairs": 740,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "cfabe158d50e1c92e06803f453ea0d3cf92e9bb07032e81afe3eb6cc1c2c485f",
+      "source_fingerprint": "6161f9588e3be1d128a45cbf854e75ad6effa965bd73c126848cb0c83bb28bdb",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -27393,7 +27393,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "035aeb344d86d027bb435f38662646e3bbb63e60b793fa55bd3ddc2a024539ed",
+      "fingerprint": "1b2178e087c6ffe406f37e396977560031a8cd701f58a53a6c1deb0072b59cea",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -28118,7 +28118,7 @@
       "choose_mana": 2,
       "choose_objects": 5,
       "choose_option": 5,
-      "contains_any": 6,
+      "contains_any": 7,
       "control_next_turn": 1,
       "copy_all_tokens": 1,
       "copy_stack_item": 5,

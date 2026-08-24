@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "a15a722d75f61cca3ba624e52f666046c48271a07a2b2563fb66ad095bebcc2b"
+verified: "3ae496734e8b0f14a38058ffbdc66870a25312da36dc4dc8acc4ae7c6543df72"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 35
-- Deterministic escapes: 30
+- Escapes: 36
+- Deterministic escapes: 31
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -61,6 +61,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260821-33` | [32466017485](https://github.com/NullPriority/quorune/actions/runs/32466017485) | `source_correctness` | `not_applicable` | A trusted specialized linked graveyard-Aura descriptor now takes precedence over the ordinary printed target restriction when both exist, preserving the cast target and post-reanimation legal domain. Krovikan Plague now proves complete CardProgram admission remains fail-closed because of its activated residuals, while the obsolete typed-Enchant residual pair declaration is removed and positive Aura/delayed-draw composition owns that promoted edge. The existing compiler and trigger impact paths already selected the failing shard. |
 | `ci-20260821-34` | [32487783755](https://github.com/NullPriority/quorune/actions/runs/32487783755) | `source_correctness` | `not_applicable` | The calibration regression now derives observed count, subthreshold count, absolute prediction error, and trailing subthreshold count from the authoritative harvest history and configured card floor. Generated validation was already selected on the exact head, so no new impact edge is required. |
 | `ci-20260821-35` | [32487783755](https://github.com/NullPriority/quorune/actions/runs/32487783755) | `missing_affected_test` | `not_applicable` | The closed runtime-family inventory now includes the Flashback component. The existing compiler/CardProgram impact path already selected the failing shard; focused preparation for future runtime-registry additions must run the global inventory method in addition to the new component's own tests. |
+| `ci-20260824-36` | [32619053986](https://github.com/NullPriority/quorune/actions/runs/32619053986) | `generated_artifact_drift` | `added` | Semantic-pack JSON now belongs to the shared rules-source group consumed by compiler-corpus and architecture owners, so their cache keys change before a stale reviewed-program artifact can be restored. The manifest regression locks both consumers to that shared input edge. |
 
 ## Measurement limitations
 
