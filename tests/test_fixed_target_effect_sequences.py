@@ -304,6 +304,7 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     {
+                        "activation.source_zone_change.fixed",
                         "continuous.resolution.fixed_keyword_zone_object",
                         "counter.producer.fixed_effect",
                         SEQUENCE_CAPABILITY,
