@@ -74,7 +74,7 @@ from ..rules.token_creation_capability_shapes import (
 )
 from ..rules.mill_capability_shapes import fixed_mill_node_capabilities
 from ..rules.impulse_access_capability_shapes import (
-    fixed_impulse_access_node_capabilities,
+    is_closed_fixed_impulse_access_program,
 )
 from ..rules.library_search_capability_shapes import (
     fixed_library_search_node_capabilities,
@@ -525,23 +525,6 @@ def _is_closed_fixed_mill_program(program: SemanticProgram) -> bool:
 
     required = set(
         fixed_mill_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=program.coverage,
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
-    )
-
-
-def _is_closed_fixed_impulse_access_program(
-    program: SemanticProgram,
-) -> bool:
-    """Recognize only fixed own-library temporary play-access effects."""
-
-    required = set(
-        fixed_impulse_access_node_capabilities(
             effects=program.effects,
             target_schema=program.target_schema,
             mechanic_ids=program.coverage,
@@ -1323,7 +1306,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_next_turn_draw_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,
-        _is_closed_fixed_impulse_access_program,
+        is_closed_fixed_impulse_access_program,
         _is_closed_fixed_library_search_program,
         _is_closed_fixed_type_to_hand_search_program,
         _is_closed_fixed_life_program,

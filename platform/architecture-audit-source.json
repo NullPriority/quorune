@@ -74,6 +74,7 @@
       ,"quorune/selection/searching.py"
       ,"quorune/selection/storm.py"
       ,"quorune/selection/targeting.py"
+      ,"quorune/impulse_access.py"
     ],
     "state_parameter_modules": [
       "quorune/record.py",
@@ -243,6 +244,7 @@
         "quorune/destruction.py",
         "quorune/permanent_exile.py",
         "quorune/milling.py",
+        "quorune/impulse_access.py",
         "quorune/return_to_hand.py",
         "quorune/stack_counter.py",
         "quorune/tap_state.py",

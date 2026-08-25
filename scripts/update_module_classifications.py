@@ -351,7 +351,11 @@ def _owner(relative: str, layer: str) -> str:
         return "graveyard_actions"
     if relative == "quorune/self_zone_move.py":
         return "zones_and_object_identity"
-    if relative == "quorune/milling.py":
+    if relative in {
+        "quorune/impulse_access.py",
+        "quorune/impulse_access_model.py",
+        "quorune/milling.py",
+    }:
         return "zones_and_object_identity"
     if relative in {
         "quorune/entry_state_conditions.py",

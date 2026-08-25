@@ -1,11 +1,19 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
+from typing import Protocol
 
 from ..compiler.impulse_access_templates import (
     IMPULSE_ACCESS_CAPABILITY_ID,
     IMPULSE_ACCESS_MECHANIC_ID,
 )
+
+
+class FixedImpulseAccessProgram(Protocol):
+    effects: tuple[Mapping[str, object], ...]
+    target_schema: Mapping[str, object] | None
+    coverage: tuple[str, ...]
+    capability_dependencies: tuple[str, ...]
 
 
 def fixed_impulse_access_node_capabilities(
@@ -37,4 +45,25 @@ def fixed_impulse_access_node_capabilities(
     return (IMPULSE_ACCESS_CAPABILITY_ID,)
 
 
-__all__ = ["fixed_impulse_access_node_capabilities"]
+def is_closed_fixed_impulse_access_program(
+    program: FixedImpulseAccessProgram,
+) -> bool:
+    """Recognize only fixed own-library temporary play-access programs."""
+
+    required = set(
+        fixed_impulse_access_node_capabilities(
+            effects=program.effects,
+            target_schema=program.target_schema,
+            mechanic_ids=program.coverage,
+        )
+    )
+    return bool(required) and required.issubset(
+        program.capability_dependencies
+    )
+
+
+__all__ = [
+    "fixed_impulse_access_node_capabilities",
+    "FixedImpulseAccessProgram",
+    "is_closed_fixed_impulse_access_program",
+]
