@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from .additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
+from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
 
 
 def activation_zone_change_cost_reference(

@@ -6,7 +6,7 @@ from typing import Any, Mapping, Protocol
 
 from .errors import GameRuleError
 from .mana_undo import clear_mana_undo_stack
-from .activation_zone_change_costs import (
+from .rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
 )
 from .rules.morph_actions import commit_turn_face_up

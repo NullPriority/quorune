@@ -17,6 +17,7 @@ from .action_proposals import (
     freeze_json,
 )
 from .activation.proposal import build_activation_offer
+from .activation_costs import activation_choice_candidates
 from .casting.proposal import build_cast_offer
 from ..morph import MORPH_CAST_METHOD
 from .morph_actions import build_turn_face_up_offer
@@ -43,11 +44,6 @@ class ActionCatalogHost(Protocol):
     def _crew_threshold(self, ability: Any) -> int | None: ...
 
     def _crew_candidates(self, seat: str, source: Any) -> list[Any]: ...
-
-    def _ability_choice_candidates(
-        self, seat: str, source: Any, choice: Any
-    ) -> tuple[str, ...]: ...
-
 
 def _cast_candidates(host: ActionCatalogHost, seat: str) -> list[Any]:
     player = host.state.players[seat]
@@ -205,9 +201,7 @@ def _ability_hint(
             {
                 **choice.compact(),
                 "legal_refs": list(
-                    host._ability_choice_candidates(
-                        seat, card, choice
-                    )
+                    activation_choice_candidates(host, seat, card, choice)
                 ),
             }
             for choice in ability.choices

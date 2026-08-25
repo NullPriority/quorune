@@ -31,9 +31,6 @@ from .compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
 )
-from .rules.casting_additional_costs import (
-    fixed_zone_change_cost_candidates,
-)
 from .carddb_characteristics import (
     separate_custom_display_text,
 )
@@ -44,6 +41,7 @@ from .card_programs.validation import (
 from .card_programs.runtime import (
     collect_card_program_continuous_effects,
 )
+from .rules.activation_costs import activation_choice_candidates
 from .characteristic_evaluation import (
     evaluate_card_characteristics,
     type_parts,
@@ -2925,8 +2923,8 @@ class CommanderEngine(
             for _ in range(choice.count):
                 value = str(values[cursor])
                 cursor += 1
-                if value not in self._ability_choice_candidates(
-                    seat, source, choice
+                if value not in activation_choice_candidates(
+                    self, seat, source, choice
                 ):
                     raise GameRuleError(
                         f"{value} is not eligible to pay this activation cost"
@@ -2994,41 +2992,6 @@ class CommanderEngine(
                     replacement_selections=tuple(selections),
                 )
         return used
-
-    def _ability_choice_candidates(
-        self,
-        seat: str,
-        source: CardInstance,
-        choice: Any,
-    ) -> tuple[str, ...]:
-        typed_cost = choice.fixed_zone_change_cost()
-        if typed_cost is not None:
-            return fixed_zone_change_cost_candidates(
-                self,
-                actor=seat,
-                cost=typed_cost,
-                exclude_object_id=(
-                    source.object_id if choice.another else None
-                ),
-            )
-        candidates: list[str] = []
-        for object_id in self.state.players[seat].zones.get(choice.zone, []):
-            card = self.state.cards[object_id]
-            if choice.zone == "battlefield":
-                if card.controller != seat or card.phased_out:
-                    continue
-            elif card.owner != seat:
-                continue
-            if choice.another and card.object_id == source.object_id:
-                continue
-            if choice.card_type:
-                type_line = str(
-                    self._effective_card_data(card).get("type_line") or ""
-                ).casefold()
-                if choice.card_type not in type_line:
-                    continue
-            candidates.append(card.ref)
-        return tuple(candidates)
 
     def _mana_output_for_ability(
         self,
@@ -3113,7 +3076,7 @@ class CommanderEngine(
         slots: list[list[str]] = []
         for choice in ability.choices:
             candidates = list(
-                self._ability_choice_candidates(seat, source, choice)
+                activation_choice_candidates(self, seat, source, choice)
             )
             for _ in range(choice.count):
                 slots.append(candidates)

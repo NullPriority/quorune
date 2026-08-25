@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
-from ..activation_zone_change_costs import (
+from ..rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
 )
 from ..trigger_batches import PendingTriggerItem, TriggerBatchError

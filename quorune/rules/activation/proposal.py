@@ -9,6 +9,7 @@ from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
 from ...station import station_candidates, station_cost_choice
 from ..action_proposals import ActionOffer, ActivationProposal, freeze_json
+from ..activation_costs import activation_choice_candidates
 from .model import (
     ActivationProposalError,
     ActivationProposalRequest,
@@ -82,10 +83,6 @@ class ActivationProposalHost(Protocol):
     def _crew_threshold(self, ability: ActivatedAbility) -> int | None: ...
 
     def _crew_candidates(self, seat: str, source: Any) -> list[Any]: ...
-
-    def _ability_choice_candidates(
-        self, seat: str, source: Any, choice: Any
-    ) -> tuple[str, ...]: ...
 
     def _mana_modes_for_ability(
         self, seat: str, source: Any, ability: ActivatedAbility
@@ -387,9 +384,7 @@ def build_activation_offer(
             {
                 **choice.compact(),
                 "legal_refs": list(
-                    host._ability_choice_candidates(
-                        seat, source, choice
-                    )
+                    activation_choice_candidates(host, seat, source, choice)
                 ),
             }
             for choice in selected.choices

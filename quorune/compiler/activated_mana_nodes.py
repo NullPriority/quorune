@@ -676,21 +676,20 @@ def activated_oracle_node(
     )
     if not abilities:
         return None
-    ability = fixed_activated_zone_change_cost(abilities[0])
     ability, fixed_mana = fixed_activated_mana_node(
-        ability, node_id, line, span, capability_registry,
-        capability_profile, residuals,
-    )
-    if fixed_mana is not None:
-        return fixed_mana
-    color_set_mana = color_set_activated_mana_node(
-        ability,
+        fixed_activated_zone_change_cost(abilities[0]),
         node_id,
         line,
         span,
         capability_registry,
         capability_profile,
         residuals,
+    )
+    if fixed_mana is not None:
+        return fixed_mana
+    color_set_mana = color_set_activated_mana_node(
+        ability, node_id, line, span, capability_registry,
+        capability_profile, residuals,
     )
     if color_set_mana is not None:
         return color_set_mana
