@@ -508,6 +508,7 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         ability = self.ability(session, source)
         action_id = f"activate:{source.ref}:{ability.ability_id}"
         hand_before = len(engine.state.players["A"].zones["hand"])
+        source_logical_object_id = source.logical_object_id
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()
         session.decisions.clear()
@@ -517,6 +518,11 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("graveyard", source.zone)
         self.assertEqual(1, len(engine.state.stack))
+        self.assertEqual(
+            source_logical_object_id,
+            engine.state.stack[-1].context["source_logical_object_id"],
+        )
+        self.assertNotEqual(source_logical_object_id, source.logical_object_id)
         self.pass_until(session, lambda: not engine.state.stack)
         self.assertEqual(
             hand_before + 2,
@@ -624,6 +630,7 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
             {source.ref, fodder.ref},
             set(action["cost_summary"]["choose_cost"][0]["legal_refs"]),
         )
+        source_logical_object_id = source.logical_object_id
         before = authoritative_state_hash(engine.state)
 
         rejected = session.act(
@@ -635,12 +642,20 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         self.assertEqual(before, authoritative_state_hash(engine.state))
         accepted = session.act(
             "pilot:A",
-            {"action_id": action_id, "cost_cards": [fodder.ref]},
+            {"action_id": action_id, "cost_cards": [source.ref]},
         )
         self.assertTrue(accepted.ok, accepted.summary)
         self.assertEqual(
             "graveyard",
-            engine.state.cards[fodder.object_id].zone,
+            engine.state.cards[source.object_id].zone,
+        )
+        self.assertEqual(
+            source_logical_object_id,
+            engine.state.stack[-1].context["source_logical_object_id"],
+        )
+        self.assertNotEqual(
+            source_logical_object_id,
+            engine.state.cards[source.object_id].logical_object_id,
         )
         self.assertTrue(engine.state.stack)
 

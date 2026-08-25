@@ -392,6 +392,7 @@ def _activation_stack_item(
     host: ActivationCommitHost,
     proposal: ActivationProposal,
     source: Any,
+    source_logical_object_id: str,
     ability: ActivatedAbility,
     response: Mapping[str, Any],
     paid_objects: Sequence[str],
@@ -420,11 +421,7 @@ def _activation_stack_item(
         notes=str(response.get("note") or ""),
         visibility=list(host.seats),
         context={
-            "source_logical_object_id": (
-                attachment_snapshot.source.logical_object_id
-                if attachment_snapshot is not None
-                else source.logical_object_id
-            ),
+            "source_logical_object_id": source_logical_object_id,
             **(
                 {
                     "source_attachment_snapshot": (
@@ -474,6 +471,7 @@ def commit_activation(
     """Commit one revalidated activation proposal through typed state owners."""
 
     source, ability = _revalidate_activation(host, proposal)
+    source_logical_object_id = source.logical_object_id
     program = host.semantics.get(proposal.semantic_key)
     attachment_relation = (
         required_attachment_relation(program.effects)
@@ -533,6 +531,7 @@ def commit_activation(
         host,
         proposal,
         source,
+        source_logical_object_id,
         ability,
         response,
         paid_objects,
