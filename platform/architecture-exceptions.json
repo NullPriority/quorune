@@ -959,6 +959,32 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0042",
+      "adr": "docs/adr/0083-typed-fixed-impulse-access.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "670e78fad45f9dcd87a33f5fbb9affb1b60749697998e84713ed7b25d4db126a",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed fixed_impulse_access operation serialized after typed fixed own-library impulse access.",
+      "rationale": "The measured family adds one closed source-spanned semantic operation and a typed zone-and-permission owner while shrinking CommanderEngine by 31 logical lines. Direct and unowned GameState writes, oversized symbols, Oracle-ID literals, runtime Oracle prose, and prohibited identity dispatch remain flat. Existing target revalidation, zone transition, destination replacement, ordinary cast and land-play, cleanup, projection, rollback, and replay owners retain authority.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact residual identities and counts in the rebound schema-4 baseline plus fixed_impulse_access, zone.impulse_access.fixed, ImpulseAccessIntent, the typed fixed library-top exile and temporary ordinary-play permission owner, and current-turn or next-turn cleanup described by ADR 0083; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, arbitrary callbacks, family-specific ability-presence checks, dynamic characteristic counts, other-player libraries, free-cast or restricted permissions, linked results, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the impulse-access owner only while exact fixed grammar, immutable top-card planning, simultaneous replacement-aware movement, actual-result incarnation binding, ordinary play legality, cleanup expiry, target revalidation, rollback, privacy, mutation, and replay evidence remain enforced.",
+      "target_milestone": "capability-closed broad compiler harvest through typed universal zone and permission owners",
+      "replay_implications": "The source-spanned effect records only fixed count and duration; Game Record v3 preserves the top-card snapshot, replacement selections, actual exile results, incarnation-bound permissions, ordinary cast or land play, cleanup expiry, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "Library order and authoritative object identities remain private. Exiled cards use ordinary public projection, only the resolving controller receives play authority, and temporary permissions expose no prior library ordering or opposing private state.",
+      "security_implications": "Only a capability-closed source-spanned CardProgram can emit the strict operation; malformed counts or durations, actor/controller mismatch, changed library tops, stale incarnations, tampered replacement selections, all-illegal targets, and untrusted sibling grammar fail before unauthorized mutation or play.",
+      "tests": [
+        "tests.test_fixed_impulse_access.FixedImpulseAccessCompilerTests.test_fixed_impulse_access_compiles_across_spell_trigger_and_activation",
+        "tests.test_fixed_impulse_access.FixedImpulseAccessCompilerTests.test_impulse_access_dependency_and_compiler_mutations_fail_closed",
+        "tests.test_fixed_impulse_access.FixedImpulseAccessRuntimeTests.test_compiled_impulse_access_uses_ordinary_land_and_cast_owners",
+        "tests.test_fixed_impulse_access.FixedImpulseAccessRuntimeTests.test_permissions_expire_at_current_or_next_extra_turn_cleanup",
+        "tests.test_fixed_impulse_access.FixedImpulseAccessRuntimeTests.test_all_illegal_target_prevents_impulse_access",
+        "tests.test_fixed_impulse_access.FixedImpulseAccessRuntimeTests.test_four_player_impulse_access_is_public_privacy_safe_and_replays",
+        "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_impulse_access_residual_choice_pairs_fail_closed_at_runtime_boundary",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

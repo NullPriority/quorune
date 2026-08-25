@@ -1028,6 +1028,33 @@
       "status": "trusted"
     },
     {
+      "id": "zone.impulse_access.fixed",
+      "version": 1,
+      "official_rules": ["305.2", "400.7", "406.1", "601.2", "701.13a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and resolve one mandatory positive fixed-count exile from the controller's library top, then grant only the cards that actually reached exile unrestricted ordinary play access through the end of the current turn or that player's next turn.",
+        "inputs": ["one source-spanned fixed impulse-access effect", "active controller and positive count from one to ten", "exact current library-top identities", "current destination replacements and normalized zone-trigger sources", "current turn sequence and controller turns-begun count"],
+        "outputs": ["one immutable current-top plan", "one simultaneous replacement-aware library-to-exile batch", "zone- and player-pinned temporary permissions on actual exile results", "ordinary spell-cast and land-play offers with normal timing, costs, and quota", "cleanup expiration across normal and extra turns", "privacy-safe public journal and exact replay"],
+        "exclusions": ["dynamic counts or counts derived from prior actions", "opponent, target-player, shared-library, or non-top access", "cast-only, type-, color-, mana-value-, or timing-restricted permission", "free casts, one-of-many choices, face-down piles, or as-long-as-exiled duration", "additional effects, conditions, intervening clauses, modal carriers, and activation restrictions", "copied, granted, text-changed, and non-source-spanned programs"]
+      },
+      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.compiler.impulse_access_templates.fixed_impulse_access_effect_template", "quorune.rules.impulse_access_capability_shapes.fixed_impulse_access_node_capabilities", "quorune.semantic_runtime.impulse_access_handlers.FixedImpulseAccessHandler", "quorune.semantic_runtime.intents.ImpulseAccessIntent", "quorune.impulse_access.ImpulseAccessPlan", "quorune.impulse_access.commit_fixed_impulse_access", "quorune.impulse_access.temporary_play_permission_is_current", "quorune.impulse_access.expire_temporary_play_permissions", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
+      "positive_tests": ["test_fixed_impulse_access_compiles_across_spell_trigger_and_activation", "test_owner_commits_top_first_and_as_many_as_possible", "test_compiled_impulse_access_uses_ordinary_land_and_cast_owners"],
+      "negative_tests": ["test_open_and_restricted_impulse_access_remain_residual", "test_impulse_stale_plan_and_malformed_intent_fail_before_mutation"],
+      "interaction_tests": ["test_compiled_impulse_access_uses_ordinary_land_and_cast_owners", "test_permissions_expire_at_current_or_next_extra_turn_cleanup"],
+      "multiplayer_tests": ["test_four_player_impulse_access_is_public_privacy_safe_and_replays"],
+      "privacy_tests": ["test_four_player_impulse_access_is_public_privacy_safe_and_replays"],
+      "replay_tests": ["test_four_player_impulse_access_is_public_privacy_safe_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking destination replacement, normalized zone events, or APNAP trigger placement prevents fixed impulse-access nodes from receiving trusted closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused mutations remove the exact compiler template or alter the prepared library top; compiler exactness and stale-plan authoritative-state assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "zone.mill.fixed",
       "version": 1,
       "official_rules": ["400.7", "701.17", "701.17a", "701.17b", "701.17c"],

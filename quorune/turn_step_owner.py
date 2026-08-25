@@ -9,6 +9,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .errors import GameRuleError, StateInvariantError
 from .continuous_effect_state import expire_end_of_turn_continuous_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
+from .impulse_access import expire_temporary_play_permissions
 from .model import (
     CombatState,
     GameState,
@@ -407,6 +408,10 @@ class TurnStepOwner:
         }
         if in_cleanup_step:
             self.state.annotations.append(frame)
+        expire_temporary_play_permissions(
+            self.state,
+            active_player=active,
+        )
         for card in self.state.cards.values():
             card.marked_damage = 0
             card.deathtouch_damage = False

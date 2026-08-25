@@ -227,6 +227,10 @@ from .fixed_damage_set_handlers import (
     FIXED_DAMAGE_SET_HANDLERS,
     FixedDamageSetHandler,
 )
+from .impulse_access_handlers import (
+    FixedImpulseAccessHandler,
+    IMPULSE_ACCESS_HANDLERS,
+)
 from .return_to_hand_handlers import (
     RETURN_TO_HAND_HANDLERS,
     ReturnGraveyardCardToOwnerHandHandler,
@@ -252,6 +256,7 @@ from .intents import (
     DealFixedDamageSetIntent,
     DrawCardsIntent,
     MillCardsIntent,
+    ImpulseAccessIntent,
     DomainEffectIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
@@ -360,6 +365,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             *PERMANENT_EXILE_HANDLERS,
             *PUBLIC_ZONE_MOVE_HANDLERS,
             *FIXED_DAMAGE_SET_HANDLERS,
+            *IMPULSE_ACCESS_HANDLERS,
             *RETURN_TO_HAND_HANDLERS,
             *STACK_COUNTER_HANDLERS,
             *COUNTER_PLACEMENT_HANDLERS,
@@ -423,6 +429,7 @@ __all__ = [
     "GenericAdditionalTokenReplacementHandler",
     "DrawCardsIntent",
     "MillCardsIntent",
+    "ImpulseAccessIntent",
     "DomainEffectHandler",
     "DomainEffectIntent",
     "DestroyPermanentHandler",
@@ -434,6 +441,7 @@ __all__ = [
     "ExilePermanentHandler",
     "ExilePermanentIntent",
     "FixedDamageSetHandler",
+    "FixedImpulseAccessHandler",
     "ReturnPermanentToOwnerHandHandler",
     "ReturnGraveyardCardToOwnerHandHandler",
     "ReturnGraveyardCardToOwnerHandIntent",

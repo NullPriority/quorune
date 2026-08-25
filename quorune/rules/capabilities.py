@@ -68,6 +68,9 @@ from .token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
+from .impulse_access_capability_shapes import (
+    fixed_impulse_access_node_capabilities,
+)
 from .monarch_capability_shapes import (
     MONARCH_DESIGNATION_CAPABILITY,
     fixed_monarch_node_capabilities,
@@ -123,6 +126,10 @@ from ..compiler.delayed_draw_templates import (
 )
 from ..compiler.monarch_templates import MONARCH_MECHANIC
 from ..compiler.self_return_templates import FIXED_SELF_RETURN_MECHANIC
+from ..compiler.impulse_access_templates import (
+    IMPULSE_ACCESS_CAPABILITY_ID,
+    IMPULSE_ACCESS_MECHANIC_ID,
+)
 
 from ..util import stable_json
 
@@ -382,6 +389,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_MECHANIC,
         FIXED_NEXT_TURN_DRAW_MECHANIC,
+        IMPULSE_ACCESS_MECHANIC_ID,
         "adapt",
         "monstrosity",
         "bolster",
@@ -982,6 +990,7 @@ def _targeted_effect_capabilities(
         fixed_affected_player_discard_node_capabilities,
         fixed_affected_player_sacrifice_node_capabilities,
         fixed_mill_node_capabilities,
+        fixed_impulse_access_node_capabilities,
         fixed_monarch_node_capabilities,
         fixed_library_search_node_capabilities,
         fixed_type_to_hand_search_node_capabilities,
@@ -1280,6 +1289,7 @@ def _affected_player_choice_covered_mechanics(
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
         "zone.mill.fixed": "mill",
+        IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         FIXED_LIBRARY_SEARCH_CAPABILITY_ID: FIXED_LIBRARY_SEARCH_MECHANIC_ID,
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,

@@ -73,6 +73,9 @@ from ..rules.token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from ..rules.mill_capability_shapes import fixed_mill_node_capabilities
+from ..rules.impulse_access_capability_shapes import (
+    is_closed_fixed_impulse_access_program,
+)
 from ..rules.library_search_capability_shapes import (
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,
@@ -1303,6 +1306,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_next_turn_draw_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,
+        is_closed_fixed_impulse_access_program,
         _is_closed_fixed_library_search_program,
         _is_closed_fixed_type_to_hand_search_program,
         _is_closed_fixed_life_program,

@@ -47,6 +47,7 @@ from .intents import (
     MovePublicZoneSetIntent,
     MoveLibraryCardsToBottomIntent,
     MillCardsIntent,
+    ImpulseAccessIntent,
     ScryLibraryIntent,
     SurveilLibraryIntent,
     PayManaCostIntent,
@@ -503,8 +504,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent)
 
 
 def _execute_player_intent(
@@ -516,6 +517,23 @@ def _execute_player_intent(
             intent.player,
             reason=intent.reason,
         )
+    if isinstance(intent, ImpulseAccessIntent):
+        from ..impulse_access import (
+            ImpulseAccessRequest,
+            resolve_fixed_impulse_access,
+        )
+
+        result = resolve_fixed_impulse_access(
+            sink,
+            ImpulseAccessRequest(
+                actor=intent.actor,
+                player=intent.player,
+                count=intent.count,
+                duration=intent.duration,
+                reason=intent.reason,
+            ),
+        )
+        return intent.player, result.exiled_refs
     from ..milling import MillRequest, mill_cards
 
     result = mill_cards(
