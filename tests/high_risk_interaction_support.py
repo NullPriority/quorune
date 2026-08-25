@@ -44,6 +44,16 @@ _WITNESSES = {
         "{2}{W}",
         ("Enchant",),
     ),
+    "etchings-of-the-chosen": _Witness(
+        "Etchings of the Chosen",
+        "Enchantment",
+        "As this enchantment enters, choose a creature type.\n"
+        "Creatures you control of the chosen type get +1/+1.\n"
+        "{1}, Sacrifice a creature of the chosen type: Target creature you "
+        "control gains indestructible until end of turn. (Damage and effects "
+        'that say "destroy" don\'t destroy it.)',
+        "{1}{W}{B}",
+    ),
     "aether-tunnel": _Witness(
         "Aether Tunnel",
         "Enchantment — Aura",
@@ -901,8 +911,8 @@ _bind(
     COST_AND_REPLACEMENT_PAIRS[1],
     COST_AND_REPLACEMENT_PAIRS[5],
 )
-_bind("floating-shield", *COST_AND_REPLACEMENT_PAIRS[2:4])
-_bind("floating-shield", *COST_AND_REPLACEMENT_PAIRS[6:8])
+_bind("etchings-of-the-chosen", *COST_AND_REPLACEMENT_PAIRS[2:4])
+_bind("etchings-of-the-chosen", *COST_AND_REPLACEMENT_PAIRS[6:8])
 _bind("prismatic-circle", CONTINUOUS_AND_REPLACEMENT_PAIRS[0])
 _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
