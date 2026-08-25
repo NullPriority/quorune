@@ -51,6 +51,9 @@ from quorune.util import stable_json
 
 POLICY = ROOT / "platform" / "architecture-policy.json"
 BASELINE = ROOT / "platform" / "architecture-guard-baseline.json"
+SOURCE_CHECK_DEFERRED_GUARDS = frozenset(
+    {"module_classification_fingerprint"}
+)
 
 
 def _baseline_allowance_fingerprint(baseline: Mapping[str, Any]) -> str:
@@ -1020,10 +1023,28 @@ def evaluate_architecture() -> dict[str, Any]:
     }
 
 
+def source_policy_result(result: Mapping[str, Any]) -> dict[str, Any]:
+    """Keep source-policy failures while deferring generated fingerprints."""
+
+    failures = list(result["failures"])
+    deferred = [
+        row
+        for row in failures
+        if row["guard"] in SOURCE_CHECK_DEFERRED_GUARDS
+    ]
+    current = [row for row in failures if row not in deferred]
+    value = dict(result)
+    value["failures"] = current
+    value["deferred_generated_failures"] = deferred
+    value["status"] = "pass" if not current else "fail"
+    return value
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--check", action="store_true")
+    mode.add_argument("--source-check", action="store_true")
     mode.add_argument("--initialize-baseline", action="store_true")
     mode.add_argument("--refresh-baseline", action="store_true")
     parser.add_argument("--baseline-commit")
@@ -1074,6 +1095,8 @@ def main() -> int:
     if args.adr or args.exception_id:
         parser.error("--adr/--exception-id require --refresh-baseline")
     result = evaluate_architecture()
+    if args.source_check:
+        result = source_policy_result(result)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "pass" else 1
 

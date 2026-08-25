@@ -17,6 +17,7 @@ from scripts.validate_architecture import (
     _size_debt_failures,
     exception_binding_failures,
     module_classification_failures,
+    source_policy_result,
     state_write_identity,
 )
 
@@ -40,6 +41,30 @@ class ArchitectureGovernanceTests(unittest.TestCase):
         self.assertTrue(failures)
         self.assertEqual(
             "architecture_exception_binding", failures[0]["guard"]
+        )
+
+    def test_source_policy_defers_only_generated_fingerprint_freshness(self):
+        result = source_policy_result(
+            {
+                "status": "fail",
+                "failures": [
+                    {"guard": "module_classification_fingerprint"},
+                    {"guard": "oversized_function_non_growth"},
+                ],
+            }
+        )
+
+        self.assertEqual("fail", result["status"])
+        self.assertEqual(
+            ["oversized_function_non_growth"],
+            [row["guard"] for row in result["failures"]],
+        )
+        self.assertEqual(
+            ["module_classification_fingerprint"],
+            [
+                row["guard"]
+                for row in result["deferred_generated_failures"]
+            ],
         )
 
     def test_new_production_module_is_default_denied(self):

@@ -63,6 +63,7 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertEqual("pre-corpus", plan["phase"])
         self.assertIn("generated-owner-plan", names)
         self.assertIn("compiler-identity", names)
+        self.assertIn("architecture-policy", names)
         self.assertIn("capability-evidence-declarations", names)
         self.assertNotIn("generated-finalization", names)
         self.assertNotIn("compact-ci-dependencies", names)

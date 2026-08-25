@@ -109,6 +109,14 @@ def build_plan(
                     ),
                 ),
                 QuickStep(
+                    "architecture-policy",
+                    (
+                        python,
+                        "scripts/validate_architecture.py",
+                        "--source-check",
+                    ),
+                ),
+                QuickStep(
                     "capability-evidence-declarations",
                     (
                         python,
