@@ -480,7 +480,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 7096,
+    "logical_lines": 7065,
     "methods": [
       {
         "kind": "method",
@@ -1194,11 +1194,6 @@
       },
       {
         "kind": "method",
-        "name": "_payment_mechanic_candidates",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
         "name": "_perform_mulligan_redraws",
         "visibility": "private"
       },
@@ -1459,11 +1454,6 @@
       },
       {
         "kind": "method",
-        "name": "_tap_payment_plan",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
         "name": "_temporary_play_permission",
         "visibility": "private"
       },
@@ -1653,12 +1643,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7612
+    "physical_lines": 7577
   },
   "exception_binding": {
-    "adr": "docs/adr/0079-typed-fixed-public-zone-moves.md",
-    "allowance_fingerprint": "537c013123026d88e05bd4d9be224286aff73059cf4588e202befe2e3aa6be4e",
-    "exception_id": "ARCH-EXC-0041"
+    "adr": "docs/adr/0083-typed-fixed-impulse-access.md",
+    "allowance_fingerprint": "670e78fad45f9dcd87a33f5fbb9affb1b60749697998e84713ed7b25d4db126a",
+    "exception_id": "ARCH-EXC-0042"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1827,7 +1817,7 @@
     },
     {
       "file": "quorune/rules/capabilities.py",
-      "logical_lines": 157,
+      "logical_lines": 155,
       "symbol": "capability_covered_mechanics"
     },
     {
@@ -1854,7 +1844,7 @@
   "oversized_modules": [
     {
       "file": "quorune/engine.py",
-      "logical_lines": 7096
+      "logical_lines": 7065
     },
     {
       "file": "quorune/record.py",
@@ -1952,6 +1942,7 @@
     "extra_turn",
     "fabricate",
     "fixed_bolster",
+    "fixed_impulse_access",
     "fixed_self_counter_keyword_action",
     "fomori_vault",
     "goad",
