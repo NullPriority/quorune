@@ -27,19 +27,27 @@ from quorune.combat_damage_snapshot import (
     CombatDamageRecipient,
     CombatDamageSnapshot,
 )
+from quorune.defender import defender_prohibits_attack
 from quorune.compiler.continuous_templates import (
+    fixed_query_characteristic_grant_handler,
     fixed_query_keyword_grant_handler,
+)
+from quorune.continuous_effects import (
+    CharacteristicState,
+    evaluate_continuous_effects,
 )
 from quorune.haste import (
     is_summoning_sick,
     summoning_sickness_prohibits_attack,
     summoning_sickness_prohibits_tap_or_untap_cost,
 )
+from quorune.menace import current_menace_restriction
 from quorune.model import CardInstance
 from quorune.oracle_ir import register_generated_programs
 from quorune.record import checkpoint_envelope, replay_record
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime import (
+    ContinuousEffectSourceContext,
     default_continuous_effect_component_registry,
     SemanticNodeError,
 )
@@ -48,6 +56,12 @@ from quorune.tap_state import tap_declared_attackers
 
 HANDLER_ID = "continuous.ability.fixed-query-keyword-grant.v1"
 TEMPLATE_ID = "continuous-fixed-query-keyword-grant-v2"
+CHARACTERISTIC_HANDLER_ID = (
+    "continuous.characteristics.fixed-query-grant.v1"
+)
+CHARACTERISTIC_TEMPLATE_ID = (
+    "continuous-fixed-query-characteristic-grant-v1"
+)
 BASE_CAPABILITY = "continuous.ability.fixed_query_keyword_grant"
 SOURCE_NAMES = (
     "Aggressive Mammoth",
@@ -286,17 +300,102 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                     {BASE_CAPABILITY, *consumer_capabilities},
                 )
 
+    def test_expanded_query_grammar_and_combined_characteristics_compile_exact(
+        self,
+    ):
+        expanded = self.compile(
+            _permanent(
+                (
+                    "Creatures you control have deathtouch, defender, "
+                    "hexproof, indestructible, infect, lifelink, menace, "
+                    "reach, shadow, shroud, and wither."
+                ),
+                suffix=119_000_900,
+                name="Expanded Keyword Grant",
+            )
+        )
+        ability = self.keyword_ability(expanded)
+        self.assertEqual((), expanded.residuals)
+        self.assertGreaterEqual(
+            set(ability.capability_dependencies),
+            {
+                BASE_CAPABILITY,
+                "combat.attack.defender",
+                "combat.block.menace",
+                "combat.block.reach",
+                "combat.block.shadow",
+                "combat.damage.assignment.deathtouch",
+                "damage.result.deathtouch",
+                "damage.result.infect",
+                "damage.result.lifelink",
+                "damage.result.wither",
+                "permanent.indestructible.ordinary",
+                "target.protection.hexproof_permanent",
+                "target.protection.shroud_permanent",
+            },
+        )
+
+        text = (
+            "Other Goblin creatures you control get +1/+1 and have haste."
+        )
+        combined = self.compile(
+            _permanent(
+                text,
+                suffix=119_000_901,
+                name="Combined Characteristic Grant",
+            )
+        )
+        combined_ability = next(
+            value
+            for value in combined.abilities
+            if any(
+                descriptor.get("handler_id") == CHARACTERISTIC_HANDLER_ID
+                for descriptor in value.handlers
+            )
+        )
+        descriptor = next(
+            value
+            for value in combined_ability.handlers
+            if value.get("handler_id") == CHARACTERISTIC_HANDLER_ID
+        )
+        self.assertEqual((), combined.residuals)
+        self.assertEqual(
+            CHARACTERISTIC_TEMPLATE_ID,
+            combined_ability.provenance["template_id"],
+        )
+        self.assertEqual(
+            {"add_abilities": ["Haste"], "power": 1, "toughness": 1},
+            descriptor["modifier"],
+        )
+        self.assertEqual(
+            ["goblin"],
+            descriptor["condition"]["predicate"]["subtypes_all"],
+        )
+        self.assertTrue(descriptor["condition"]["exclude_source"])
+        self.assertGreaterEqual(
+            set(combined_ability.capability_dependencies),
+            {
+                BASE_CAPABILITY,
+                "continuous.power_toughness.fixed_anthem",
+                "activation.tap_untap_cost.haste",
+                "combat.attack.haste",
+            },
+        )
+        registry = default_continuous_effect_component_registry()
+        registry.validate(descriptor)
+        self.assertIsNotNone(fixed_query_characteristic_grant_handler(text))
+
     def test_open_or_unsupported_queries_remain_material_residuals(self):
         unsupported = (
             "Creatures your opponents control have haste.",
             "Attacking creatures you control have flying.",
             "Multicolored creatures you control have vigilance.",
             "Each creature with a +1/+1 counter on it has trample.",
-            "Creatures you control have menace.",
-            "Creatures you control have reach.",
+            "Creatures you control have ward {2}.",
+            "Creatures you control have protection from red.",
             "Artifact permanents you control have flying.",
-            "Other permanents you control have hexproof.",
-            "All creatures have hexproof.",
+            "Creatures you control get +1/+1 and have ward {2}.",
+            "Creatures you control get +1/+1 and have protection from red.",
             "Creatures you control have haste until end of turn.",
         )
         for index, text in enumerate(unsupported):
@@ -357,7 +456,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
             (("condition", "predicate", "controller"), "A"),
             (("modifier", "add_abilities"), []),
             (("modifier", "add_abilities"), ["Haste", "Haste"]),
-            (("modifier", "add_abilities"), ["Menace"]),
+            (("modifier", "add_abilities"), ["Ward {2}"]),
         ):
             candidate = copy.deepcopy(global_haste)
             target = candidate
@@ -365,9 +464,6 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 target = target[key]
             target[path[-1]] = value
             malformed.append(candidate)
-        fabricated_global_hexproof = copy.deepcopy(global_haste)
-        fabricated_global_hexproof["modifier"]["add_abilities"] = ["Hexproof"]
-        malformed.append(fabricated_global_hexproof)
 
         session = make_session(*load_assets(), players=2, seed=119_002_001)
         try:
@@ -671,6 +767,96 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
                 )
             ),
         )
+
+    def test_expanded_query_grants_feed_current_keyword_consumers(self):
+        registry = default_continuous_effect_component_registry()
+        expanded = fixed_query_keyword_grant_handler(
+            (
+                "Creatures you control have deathtouch, defender, hexproof, "
+                "indestructible, infect, lifelink, menace, reach, shadow, "
+                "shroud, and wither."
+            )
+        )
+        combined = fixed_query_characteristic_grant_handler(
+            (
+                "Other Goblin creatures you control get +1/+1 and have "
+                "haste."
+            )
+        )
+        self.assertIsNotNone(expanded)
+        self.assertIsNotNone(combined)
+        effects = (
+            *registry.lower(
+                expanded[1],
+                ContinuousEffectSourceContext(
+                    source_object_id="expanded-source",
+                    source_ref="EXPANDED-SOURCE",
+                    source_controller="A",
+                    source_timestamp=1,
+                    component_id="expanded:0",
+                ),
+            ),
+            *registry.lower(
+                combined[1],
+                ContinuousEffectSourceContext(
+                    source_object_id="combined-source",
+                    source_ref="COMBINED-SOURCE",
+                    source_controller="A",
+                    source_timestamp=2,
+                    component_id="combined:0",
+                ),
+            ),
+        )
+        evaluated = evaluate_continuous_effects(
+            CharacteristicState(
+                name="Expanded Keyword Creature",
+                controller="A",
+                card_types={"Creature"},
+                subtypes={"Goblin"},
+                power=5,
+                toughness=5,
+            ),
+            effects,
+            context={
+                "object_id": "target",
+                "logical_object_id": "target@0",
+                "ref": "TARGET",
+                "zone": "battlefield",
+                "owner": "A",
+                "controller": "A",
+            },
+        )
+        effective = {
+            "type_line": "Creature — Goblin",
+            "keywords": evaluated.characteristics["abilities"],
+        }
+        self.assertEqual(6, evaluated.characteristics["power"])
+        self.assertEqual(6, evaluated.characteristics["toughness"])
+        self.assertGreaterEqual(
+            {value.casefold() for value in effective["keywords"]},
+            {
+                "deathtouch",
+                "defender",
+                "haste",
+                "hexproof",
+                "indestructible",
+                "infect",
+                "lifelink",
+                "menace",
+                "reach",
+                "shadow",
+                "shroud",
+                "wither",
+            },
+        )
+        self.assertTrue(defender_prohibits_attack(effective))
+        menace = current_menace_restriction(
+            effective,
+            "TARGET",
+            is_attacking=True,
+        )
+        self.assertIsNotNone(menace)
+        self.assertEqual(2, menace.minimum_blockers)
 
     def test_live_queries_track_global_control_subtype_phase_and_zone_changes(self):
         session = self.session(119_100_002)

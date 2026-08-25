@@ -41,15 +41,28 @@ _FIXED_QUERY_ABILITY_GRANT_HANDLER_ID = (
 _FIXED_QUERY_KEYWORD_GRANT_HANDLER_ID = (
     "continuous.ability.fixed-query-keyword-grant.v1"
 )
+_FIXED_QUERY_CHARACTERISTIC_GRANT_HANDLER_ID = (
+    "continuous.characteristics.fixed-query-grant.v1"
+)
 _SUPPORTED_QUERY_KEYWORDS = frozenset(
     {
+        "Deathtouch",
+        "Defender",
         "Double Strike",
         "First Strike",
         "Flying",
         "Haste",
         "Hexproof",
+        "Indestructible",
+        "Infect",
+        "Lifelink",
+        "Menace",
+        "Reach",
+        "Shadow",
+        "Shroud",
         "Trample",
         "Vigilance",
+        "Wither",
     }
 )
 
@@ -89,6 +102,16 @@ class FixedQueryKeywordGrantNode:
     predicate: ObjectQuerySpec
     exclude_source: bool
     abilities: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class FixedQueryCharacteristicGrantNode:
+    target_controller: str
+    predicate: ObjectQuerySpec
+    exclude_source: bool
+    abilities: tuple[str, ...]
+    power: int
+    toughness: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -766,16 +789,6 @@ class FixedQueryKeywordGrantHandler:
             raise SemanticNodeError(
                 "fixed query keyword grants require unique supported keywords"
             )
-        if "Hexproof" in abilities and (
-            abilities != ("Hexproof",)
-            or condition["target_controller"] != "source_controller"
-            or condition["exclude_source"]
-            or predicate.types_all != ("artifact",)
-            or predicate.subtypes_all
-        ):
-            raise SemanticNodeError(
-                "fixed query Hexproof grants remain limited to controlled artifacts"
-            )
         return FixedQueryKeywordGrantNode(
             target_controller=condition["target_controller"],
             predicate=predicate,
@@ -816,6 +829,139 @@ class FixedQueryKeywordGrantHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class FixedQueryCharacteristicGrantHandler:
+    """Grant fixed keywords and P/T to one shared live object query."""
+
+    handler_id: str = _FIXED_QUERY_CHARACTERISTIC_GRANT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "continuous.fixed_query_characteristic_grant"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = (
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.power_toughness.fixed_anthem",
+    )
+
+    def validate(
+        self, descriptor: Mapping[str, Any]
+    ) -> FixedQueryCharacteristicGrantNode:
+        exact_fields(
+            descriptor,
+            {
+                "handler_id",
+                "schema_version",
+                "event",
+                "condition",
+                "modifier",
+            },
+            field="runtime handler",
+        )
+        if descriptor["handler_id"] != self.handler_id:
+            raise SemanticNodeError("Runtime handler ID does not match registry")
+        if descriptor["schema_version"] != self.schema_version:
+            raise SemanticNodeError(
+                f"Unsupported {self.handler_id} schema version"
+            )
+        if descriptor["event"] != self.event:
+            raise SemanticNodeError(f"{self.handler_id} must handle {self.event}")
+        modifier = descriptor["modifier"]
+        if not isinstance(modifier, Mapping):
+            raise SemanticNodeError("runtime handler modifier must be an object")
+        exact_fields(
+            modifier,
+            {"add_abilities", "power", "toughness"},
+            field="runtime handler modifier",
+        )
+        keyword_node = FixedQueryKeywordGrantHandler().validate(
+            {
+                "handler_id": _FIXED_QUERY_KEYWORD_GRANT_HANDLER_ID,
+                "schema_version": 1,
+                "event": self.event,
+                "condition": descriptor["condition"],
+                "modifier": {
+                    "add_abilities": modifier["add_abilities"],
+                },
+            }
+        )
+        anthem_node = FixedQueryPowerToughnessAnthemHandler().validate(
+            {
+                "handler_id": _FIXED_QUERY_ANTHEM_HANDLER_ID,
+                "schema_version": 2,
+                "event": self.event,
+                "condition": descriptor["condition"],
+                "modifier": {
+                    "power": modifier["power"],
+                    "toughness": modifier["toughness"],
+                },
+            }
+        )
+        return FixedQueryCharacteristicGrantNode(
+            target_controller=keyword_node.target_controller,
+            predicate=keyword_node.predicate,
+            exclude_source=keyword_node.exclude_source,
+            abilities=keyword_node.abilities,
+            power=anthem_node.power,
+            toughness=anthem_node.toughness,
+        )
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: ContinuousEffectSourceContext,
+    ) -> tuple[ContinuousEffect, ...]:
+        node = self.validate(descriptor)
+        predicate = replace(
+            node.predicate,
+            zones=("battlefield",),
+            controller=context.source_controller,
+            exclude_ref=(context.source_ref if node.exclude_source else None),
+        )
+        common = {
+            "source_id": context.source_object_id,
+            "timestamp": context.source_timestamp,
+            "origin": ContinuousEffectOrigin.STATIC_ABILITY,
+            "applies": predicate,
+        }
+        return (
+            ContinuousEffect(
+                effect_id=(
+                    f"{context.source_object_id}:{context.component_id}:6"
+                ),
+                layer=Layer.ABILITY,
+                sublayer="6",
+                operations=tuple(
+                    ContinuousOperation("add_ability", ability)
+                    for ability in node.abilities
+                ),
+                **common,
+            ),
+            ContinuousEffect(
+                effect_id=(
+                    f"{context.source_object_id}:{context.component_id}:7c"
+                ),
+                layer=Layer.POWER_TOUGHNESS,
+                sublayer="7c",
+                operations=(
+                    ContinuousOperation(
+                        "modify_power_toughness",
+                        [node.power, node.toughness],
+                    ),
+                ),
+                **common,
+            ),
+        )
+
+
 class ContinuousEffectComponentRegistry(
     RuntimeComponentRegistry[
         ContinuousEffectSourceContext,
@@ -837,6 +983,7 @@ def default_continuous_effect_component_registry(
             AddBasicLandTypeHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
+            FixedQueryCharacteristicGrantHandler(),
             AttachedFixedCharacteristicsHandler(),
         )
     )

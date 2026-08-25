@@ -17,6 +17,7 @@ from ..characteristic_fragments import (
 )
 from .creature_subtypes import canonical_creature_subtype
 from ..rules.source_references import SourceReferenceSpec
+from ..trigger_participation import WardSpec
 
 
 _BASIC_LAND_TYPE_ADDITION = re.compile(
@@ -135,17 +136,39 @@ _GLOBAL_PLURAL_KEYWORD_GRANT = re.compile(
     r"^All (?P<plural>[A-Z][A-Za-z'-]*) have (?P<abilities>.+?)\.?$"
 )
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
+_FIXED_QUERY_CHARACTERISTIC_GRANT = re.compile(
+    r"^(?P<subject>.+ you control) get "
+    r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and have "
+    r"(?P<abilities>.+?)\.?$",
+    re.IGNORECASE,
+)
 _FIXED_QUERY_COMBAT_KEYWORDS = frozenset(
     {
+        "Deathtouch",
+        "Defender",
         "Double Strike",
         "First Strike",
         "Flying",
         "Haste",
+        "Hexproof",
+        "Indestructible",
+        "Infect",
+        "Lifelink",
+        "Menace",
+        "Reach",
+        "Shadow",
+        "Shroud",
         "Trample",
         "Vigilance",
+        "Wither",
     }
 )
 _FIXED_QUERY_KEYWORD_CAPABILITIES = {
+    "Deathtouch": (
+        "combat.damage.assignment.deathtouch",
+        "damage.result.deathtouch",
+    ),
+    "Defender": ("combat.attack.defender",),
     "Double Strike": ("combat.damage.participation.strike_steps",),
     "First Strike": ("combat.damage.participation.strike_steps",),
     "Flying": ("combat.block.flying",),
@@ -154,8 +177,16 @@ _FIXED_QUERY_KEYWORD_CAPABILITIES = {
         "combat.attack.haste",
     ),
     "Hexproof": ("target.protection.hexproof_permanent",),
+    "Indestructible": ("permanent.indestructible.ordinary",),
+    "Infect": ("damage.result.infect",),
+    "Lifelink": ("damage.result.lifelink",),
+    "Menace": ("combat.block.menace",),
+    "Reach": ("combat.block.reach",),
+    "Shadow": ("combat.block.shadow",),
+    "Shroud": ("target.protection.shroud_permanent",),
     "Trample": ("combat.damage.assignment.trample",),
     "Vigilance": ("combat.attack.vigilance",),
+    "Wither": ("damage.result.wither",),
 }
 _COLOR_SYMBOLS = {
     "black": "B",
@@ -274,8 +305,8 @@ def fixed_query_keyword_grant_handler(
     card type, color, supertype, token status, or pinned creature subtype can
     be evaluated through ``ObjectQuerySpec``.  Conditional, opponent-relative,
     attacking/blocking, modified, counter-qualified, multicolored, and chosen
-    sets remain residual.  The preexisting artifact-Hexproof production is
-    preserved without broadening Hexproof to new subjects.
+    sets remain residual.  Every accepted keyword declares its exact trusted
+    combat, damage, destruction, or targeting consumer capability.
     """
 
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
@@ -388,14 +419,7 @@ def fixed_query_keyword_grant_handler(
     if not abilities or len(set(abilities)) != len(abilities):
         return None
     predicate = ObjectQuerySpec(**fields)
-    legacy_hexproof = (
-        abilities == ("Hexproof",)
-        and relation == "source_controller"
-        and not exclude_source
-        and predicate.types_all == ("artifact",)
-        and not predicate.subtypes_all
-    )
-    if not legacy_hexproof and any(
+    if any(
         ability not in _FIXED_QUERY_COMBAT_KEYWORDS for ability in abilities
     ):
         return None
@@ -421,6 +445,54 @@ def fixed_query_keyword_grant_handler(
             "modifier": {"add_abilities": list(abilities)},
         },
         tuple(sorted(capabilities)),
+    )
+
+
+def fixed_query_characteristic_grant_handler(
+    oracle_line: str,
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    """Lower one fixed query that grants P/T and represented keywords.
+
+    Both halves must independently satisfy the existing live-set grammars and
+    resolve to the same canonical query.  Compound wording therefore cannot
+    widen either the layer-6 or layer-7c boundary.
+    """
+
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    match = _FIXED_QUERY_CHARACTERISTIC_GRANT.fullmatch(text)
+    if match is None:
+        return None
+    subject = match.group("subject")
+    anthem = fixed_power_toughness_anthem_handler(
+        f"{subject} get {match.group('power')}/{match.group('toughness')}."
+    )
+    keywords = fixed_query_keyword_grant_handler(
+        f"{subject} have {match.group('abilities')}."
+    )
+    if anthem is None or keywords is None:
+        return None
+    anthem_condition = anthem[1]["condition"]
+    keyword_condition = keywords[1]["condition"]
+    if anthem_condition != keyword_condition:
+        return None
+    return (
+        "continuous-fixed-query-characteristic-grant-v1",
+        {
+            "handler_id": (
+                "continuous.characteristics.fixed-query-grant.v1"
+            ),
+            "schema_version": 1,
+            "event": "characteristics.evaluate",
+            "condition": dict(keyword_condition),
+            "modifier": {
+                "add_abilities": list(
+                    keywords[1]["modifier"]["add_abilities"]
+                ),
+                "power": int(anthem[1]["modifier"]["power"]),
+                "toughness": int(anthem[1]["modifier"]["toughness"]),
+            },
+        },
+        tuple(sorted({anthem[2], *keywords[2]})),
     )
 
 
@@ -547,16 +619,67 @@ def _toxic_ability_fragments(
     )
 
 
+def _attached_granted_abilities(
+    value: str,
+) -> tuple[tuple[str, ...], tuple[Mapping[str, Any], ...]] | None:
+    abilities = _attached_abilities(value)
+    if abilities is not None:
+        return abilities, _toxic_ability_fragments(abilities)
+    protection = parse_protection_line(value)
+    if protection is not None:
+        return (
+            ("Protection",),
+            tuple(
+                ability_fragment_to_dict(fragment)
+                for fragment in protection
+            ),
+        )
+    ward = re.fullmatch(
+        r"ward \{(?P<generic>[1-9]\d*)\}",
+        value.strip(),
+        re.IGNORECASE,
+    )
+    if ward is None:
+        return None
+    return (
+        (f"Ward {{{int(ward.group('generic'))}}}",),
+        (
+            ability_fragment_to_dict(
+                WardSpec(generic_cost=int(ward.group("generic")))
+            ),
+        ),
+    )
+
+
+def _attached_ability_capabilities(
+    abilities: tuple[str, ...],
+) -> set[str]:
+    capabilities: set[str] = set()
+    for ability in abilities:
+        if ability == "Protection":
+            capabilities.add("protection.typed.debt")
+        elif ability.startswith("Toxic "):
+            capabilities.add("damage.result.toxic")
+        elif ability.startswith("Ward {"):
+            capabilities.add("trigger.keyword.ward.fixed_generic")
+        else:
+            capabilities.update(
+                _FIXED_QUERY_KEYWORD_CAPABILITIES.get(ability, ())
+            )
+    return capabilities
+
+
 def attached_fixed_characteristics_handler(
     oracle_line: str,
-) -> tuple[str, Mapping[str, Any], str] | None:
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower one closed attached-object fixed-characteristic sentence.
 
     Dynamic values, conditions, combat restrictions, quoted rules text, and
     mechanics outside the reviewed keyword vocabulary remain residual.
     """
 
-    match = _ATTACHED_FIXED_CHARACTERISTICS.fullmatch(oracle_line.strip())
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    match = _ATTACHED_FIXED_CHARACTERISTICS.fullmatch(text)
     if match is None:
         return None
     subject_types_all = (
@@ -579,30 +702,24 @@ def attached_fixed_characteristics_handler(
         power = int(pt_match.group("power"))
         toughness = int(pt_match.group("toughness"))
         if pt_match.group("abilities"):
-            parsed = _attached_abilities(pt_match.group("abilities"))
-            if parsed is None:
+            granted = _attached_granted_abilities(
+                pt_match.group("abilities")
+            )
+            if granted is None:
                 return None
-            add_abilities = parsed
-            add_ability_fragments = _toxic_ability_fragments(parsed)
+            add_abilities, add_ability_fragments = granted
     elif ability_match is not None:
         parsed = _attached_abilities(ability_match.group("abilities"))
-        if parsed is None:
-            protection = (
-                parse_protection_line(ability_match.group("abilities"))
-                if ability_match.group("verb").casefold() == "has"
-                else None
+        if ability_match.group("verb").casefold() == "has":
+            granted = _attached_granted_abilities(
+                ability_match.group("abilities")
             )
-            if protection is None:
+            if granted is None:
                 return None
-            add_abilities = ("Protection",)
-            add_ability_fragments = tuple(
-                ability_fragment_to_dict(fragment)
-                for fragment in protection
-            )
-        elif ability_match.group("verb").casefold() == "has":
-            add_abilities = parsed
-            add_ability_fragments = _toxic_ability_fragments(parsed)
+            add_abilities, add_ability_fragments = granted
         else:
+            if parsed is None:
+                return None
             if _toxic_ability_fragments(parsed):
                 # Removing a typed granted/printed ability requires a closed
                 # fragment-removal descriptor, which this handler does not yet
@@ -656,7 +773,16 @@ def attached_fixed_characteristics_handler(
                 "toughness": toughness,
             },
         },
-        "continuous.attached.fixed_characteristics",
+        tuple(
+            sorted(
+                {
+                    "continuous.attached.fixed_characteristics",
+                    *_attached_ability_capabilities(
+                        (*add_abilities, *remove_abilities)
+                    ),
+                }
+            )
+        ),
     )
 
 
