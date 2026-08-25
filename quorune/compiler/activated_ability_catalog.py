@@ -42,6 +42,7 @@ from ..semantic_runtime.mana_abilities import (
     fixed_mana_specs_from_descriptors,
 )
 from ..semantics import SemanticProgram
+from .activated_zone_change_costs import fixed_activated_zone_change_cost
 
 
 def _face_material(
@@ -86,6 +87,7 @@ def _specialize_compiled_ability(
     *,
     source_name: str,
 ) -> ActivatedAbility:
+    ability = fixed_activated_zone_change_cost(ability)
     candidates = tuple(
         spec.to_activated_ability()
         for spec in (

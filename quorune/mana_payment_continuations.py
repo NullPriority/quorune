@@ -6,6 +6,9 @@ from typing import Any, Mapping, Protocol
 
 from .errors import GameRuleError
 from .mana_undo import clear_mana_undo_stack
+from .rules.activation_zone_change_costs import (
+    activation_zone_change_cost_reference,
+)
 from .rules.morph_actions import commit_turn_face_up
 from .replacement.ordering import (
     ReplacementChoiceRequired,
@@ -58,35 +61,15 @@ def issue_mana_payment_replacement_choice(
         event = required.batch.events[0]
         origin = event.payload.get("origin")
         destination = event.payload.get("destination")
-        cost_summary = response.get("cost_summary")
-        source_cost_flags = (
-            {
-                field
-                for field in ("discard_self", "exile_self", "sac_self")
-                if isinstance(cost_summary, Mapping) and field in cost_summary
-            }
-        )
-        supported_source_cost = bool(
-            isinstance(cost_summary, Mapping)
-            and (
-                (
-                    source_cost_flags == {"discard_self"}
-                    and type(cost_summary["discard_self"]) is int
-                    and cost_summary["discard_self"] == 1
-                    and origin == "hand"
-                    and destination == "graveyard"
-                )
-                or (
-                    source_cost_flags == {"exile_self"}
-                    and type(cost_summary["exile_self"]) is int
-                    and cost_summary["exile_self"] == 1
-                    and destination == "exile"
-                )
-            )
-        )
-        if not supported_source_cost:
+        object_ref = event.payload.get("object_ref")
+        if activation_zone_change_cost_reference(
+            response,
+            origin=origin,
+            destination=destination,
+            object_ref=object_ref,
+        ) is None:
             raise ReplacementEffectError(
-                "Activation source-zone cost replacement is unsupported"
+                "Activation zone-change cost replacement is unsupported"
             )
         resume_kind = "priority_action_cost"
     else:

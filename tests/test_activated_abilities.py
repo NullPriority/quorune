@@ -489,7 +489,7 @@ class ActivatedAbilityAndCostTests(unittest.TestCase):
             any(
                 item["s"] == reclaimer.ref
                 and item["a"] == "ab2"
-                and item["choose_cost"][0]["t"] == "land"
+                and item["choose_cost"][0]["q"]["types_any"] == ["land"]
                 for item in hints["abilities"]
             )
         )

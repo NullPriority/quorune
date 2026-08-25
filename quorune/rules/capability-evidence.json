@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9a610782dc0508cf3ed953c075ec11d36a8a58f871360e3ea75eb419fdae5a15",
-  "declaration_source_fingerprint": "cb843ff41836bf5bd1087f7c56a49cec863dd48bfeafde4ec95f61c5bfcb4554",
+  "registry_fingerprint": "8fbe267473620d21b0d6bf963216a743096a435123b1d1947caf057a1a8e5b28",
+  "declaration_source_fingerprint": "6687fb25e6ed19a47c37a6f9ee099fff4a47a69c25b2a5aaee02e6a6c925f7df",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -1617,6 +1617,292 @@
       "applicability_note": "Replay the source-pinned chosen-name designation to the exact authoritative state used by typed activation availability."
     },
     {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose a typed selected sacrifice cost with competing destination replacements and resume the exact rolled-back activation before stack placement."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the four-player priority frame while the activator orders replacements for the selected cost object."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_selected_zone_cost_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the shared selected-cost specialization and require the source-spanned exact compiler witness to kill the survivor."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_activation_zone_change_costs_exclude_mana_abilities",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep selected zone-change costs on mana abilities unresolved and outside this stack-activation capability until their immediate-resolution payment path has an independently certified typed owner."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_source_zone_cost_rejects_inconsistent_descriptor",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a zone-change cost descriptor whose declared source zone does not match its operation-owned origin."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_zone_change_cost_grammar_rejects_unbounded_variants",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Leave variable, repeated, each-player, and compound payment predicates unresolved rather than widening the fixed one-object grammar."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_offer_and_command_share_candidates",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject an opponent-controlled or otherwise ineligible cost object atomically through the same typed query advertised by the offer."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_fixed_selected_zone_change_costs_compile_source_spanned",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile exact source-spanned discard, sacrifice, graveyard-exile, battlefield-exile, and return costs into the shared closed object query, including migration of a matching legacy one-object descriptor."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_fixed_selected_graveyard_exile_cost_resolves",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Advertise only the matching owned creature card, exile it before stack placement, and resolve the compiled activation result."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the selected-object replacement continuation only to the activator while keeping it absent from all other pilots."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the replacement-resolved selected cost and resumed activation to the exact authoritative state hash."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Roll back cost movement, mana, and stack placement before presenting a competing replacement choice for the selected object."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_source_sacrifice_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose a sacrifice-self activation cost with competing destination replacements and resume the exact rolled-back priority action."
+    },
+    {
       "capability_id": "activation.source_zone_change.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_ordinary_cycling.OrdinaryCyclingRuntimeTests.test_cycling_discard_replacement_suspends_before_mutation_and_replays",
@@ -1628,7 +1914,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1636,6 +1923,28 @@
         "commander_review"
       ],
       "applicability_note": "Compose a discard-self activation cost with two canonical destination replacements and resume the exact rolled-back priority action."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_source_sacrifice_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the four-player priority frame while the activator privately orders competing sacrifice-source replacements."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -1649,7 +1958,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1670,7 +1980,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1678,6 +1989,50 @@
         "commander_review"
       ],
       "applicability_note": "Kill the former behavior that rejected a zone-change replacement suspension merely because the priority action was an activation."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_activation_zone_change_costs_exclude_mana_abilities",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep sacrifice-self costs on mana abilities outside this stack-activation capability and its replacement-resume contract."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_source_zone_cost_rejects_inconsistent_descriptor",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject sacrifice-self payment when the source is no longer on the operation-owned battlefield origin."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -1691,7 +2046,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1712,7 +2068,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1720,6 +2077,50 @@
         "commander_review"
       ],
       "applicability_note": "Reject an activation with an illegal target before mana or the hidden source card can mutate."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_fixed_source_sacrifice_cost_compiles_source_spanned",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile a printed sacrifice-this-enchantment activation cost into the shared source-zone capability closure."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_fixed_source_sacrifice_cost_compiles_and_resolves",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sacrifice the activation source before stack placement and resolve its compiled private draw result."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -1733,7 +2134,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1741,6 +2143,28 @@
         "commander_review"
       ],
       "applicability_note": "Commit both discard-self Reinforce and exile-self Scavenge costs before their ordinary stack results."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_source_sacrifice_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the sacrifice-source replacement continuation absent from every nonchoosing seat projection."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -1754,7 +2178,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1762,6 +2187,28 @@
         "commander_review"
       ],
       "applicability_note": "Keep the hidden source identity and replacement continuation absent from every nonchoosing seat projection."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_source_sacrifice_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the replacement-resolved sacrifice source and resumed activation to the exact authoritative state hash."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -1775,7 +2222,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -1783,6 +2231,28 @@
         "commander_review"
       ],
       "applicability_note": "Reload and finish the pending source-zone cost once, then replay the exact resumed activation state."
+    },
+    {
+      "capability_id": "activation.source_zone_change.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_source_sacrifice_replacement_is_private_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Roll back mana, source movement, and stack placement before issuing the sacrifice-source replacement decision."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -1796,7 +2266,8 @@
         "614.1",
         "616.1",
         "701.9a",
-        "701.13a"
+        "701.13a",
+        "701.21a"
       ],
       "supported_profiles": [
         "traditional",
@@ -47421,5 +47892,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "f57f30f148755ed0690bdc626f740071af1ae66925e3c36062ae221d243b05a3"
+  "fingerprint": "76455d7177b4aa8e3e55a3964a26fe5a7da444aab7cc3642e0f59e7099e892d7"
 }

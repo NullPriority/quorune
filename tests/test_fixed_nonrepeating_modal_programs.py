@@ -14,8 +14,11 @@ from quorune.compiler.modal_templates import (
     FIXED_NONREPEATING_MODAL_CAPABILITY,
     FIXED_NONREPEATING_MODAL_MECHANIC,
 )
+from quorune.compiler.modal_program_closure import (
+    is_closed_fixed_modal_program,
+)
 from quorune.deck import DeckLoader
-from quorune.oracle_ir import compile_oracle_card
+from quorune.oracle_ir import compile_oracle_card, generated_programs
 from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
@@ -209,6 +212,35 @@ class FixedNonrepeatingModalCompilerTests(unittest.TestCase):
         ):
             self.assertNotEqual("exact", self.compile("Farewell").status)
             self.assertNotEqual("exact", self.compile("Cankerbloom").status)
+
+    def test_modal_activation_closure_validates_typed_source_cost(self):
+        programs = generated_programs(
+            self.db,
+            self.db.lookup("Balm of Restoration"),
+            trust_level="trusted",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        program = next(value for value in programs if value.event == "activate")
+        self.assertIn(
+            "activation.source_zone_change.fixed",
+            program.capability_dependencies,
+        )
+        self.assertTrue(is_closed_fixed_modal_program(program))
+
+        missing_capability = copy.deepcopy(program)
+        missing_capability.capability_dependencies = [
+            value
+            for value in program.capability_dependencies
+            if value != "activation.source_zone_change.fixed"
+        ]
+        self.assertFalse(is_closed_fixed_modal_program(missing_capability))
+
+        mismatched_descriptor = copy.deepcopy(program)
+        mismatched_descriptor.handlers[-1]["ability"][
+            "sacrifice_source"
+        ] = False
+        self.assertFalse(is_closed_fixed_modal_program(mismatched_descriptor))
 
 
 class FixedNonrepeatingModalRuntimeTests(unittest.TestCase):

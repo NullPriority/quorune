@@ -1275,6 +1275,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/activated_zone_change_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/activation_restriction_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4840,6 +4855,34 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/activation_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/activation_zone_change_costs.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/affected_player_discard_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -7875,5 +7918,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b6a37b515ef85c725769b26988624886e0cf6760aa0769d6b368ac70b631dc2a"
+  "fingerprint": "8602687901ade760af43925edc8fd7762341adcefc14a95d57c45a1307b41a67"
 }

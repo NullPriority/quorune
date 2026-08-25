@@ -90,6 +90,7 @@ class CostChoice:
     zone: str = "battlefield"
     card_type: str | None = None
     another: bool = False
+    predicate: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.kind, str) or not self.kind.strip():
@@ -104,6 +105,46 @@ class CostChoice:
             raise ValueError("cost choice card_type must be null or nonempty")
         if type(self.another) is not bool:
             raise ValueError("cost choice another flag must be boolean")
+        if self.predicate is not None:
+            if not isinstance(self.predicate, Mapping):
+                raise ValueError("cost choice predicate must be an object")
+            object.__setattr__(self, "predicate", FrozenMap(self.predicate))
+            if self.count != 1 or self.card_type is not None or self.another:
+                raise ValueError(
+                    "typed zone-change cost choices require one exact query"
+                )
+            cost = self.fixed_zone_change_cost()
+            if cost is None or self.zone != cost.origin_zone:
+                raise ValueError(
+                    "typed zone-change cost choice origin is inconsistent"
+                )
+
+    def fixed_zone_change_cost(self) -> Any | None:
+        """Return the shared closed zone-change cost represented by this choice."""
+
+        if self.predicate is None:
+            return None
+        from .additional_cost_vocabulary import (
+            FIXED_ZONE_CHANGE_COST_CONTRACTS,
+            ZONE_CHANGE_COST_KIND,
+        )
+        from .rules.casting_additional_costs import (
+            FixedZoneChangeAdditionalCost,
+        )
+
+        contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(self.kind)
+        if contract is None:
+            raise ValueError("cost choice zone-change operation is unsupported")
+        return FixedZoneChangeAdditionalCost.from_descriptor(
+            {
+                "schema_version": 1,
+                "kind": ZONE_CHANGE_COST_KIND,
+                "operation": self.kind,
+                "count": 1,
+                "choice_field": contract[2],
+                "predicate": thaw_value(self.predicate),
+            }
+        )
 
     def compact(self) -> dict[str, Any]:
         result: dict[str, Any] = {"k": self.kind, "n": self.count, "z": self.zone}
@@ -111,28 +152,45 @@ class CostChoice:
             result["t"] = self.card_type
         if self.another:
             result["other"] = 1
+        if self.predicate is not None:
+            result["q"] = thaw_value(self.predicate)
         return result
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "kind": self.kind,
             "count": self.count,
             "zone": self.zone,
             "card_type": self.card_type,
             "another": self.another,
         }
+        if self.predicate is not None:
+            result["predicate"] = thaw_value(self.predicate)
+        return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "CostChoice":
         expected = {"kind", "count", "zone", "card_type", "another"}
-        if not isinstance(value, Mapping) or set(value) != expected:
+        if not isinstance(value, Mapping) or set(value) not in {
+            frozenset(expected),
+            frozenset((*expected, "predicate")),
+        }:
             raise ValueError("cost choices use a closed schema")
+        if "predicate" in value and value["predicate"] is None:
+            raise ValueError(
+                "typed cost choice predicates must be nonnull objects"
+            )
         return cls(
             kind=value["kind"],
             count=value["count"],
             zone=value["zone"],
             card_type=value["card_type"],
             another=value["another"],
+            predicate=(
+                FrozenMap(value["predicate"])
+                if "predicate" in value
+                else None
+            ),
         )
 
 
@@ -836,11 +894,18 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         "discard": {"discard this card"},
         "sacrifice": {
             "sacrifice this permanent", "sacrifice this artifact",
-            "sacrifice this creature", "sacrifice this land",
-            "sacrifice this token", "sacrifice this card",
+            "sacrifice this battle", "sacrifice this creature",
+            "sacrifice this enchantment", "sacrifice this equipment",
+            "sacrifice this aura", "sacrifice this land",
+            "sacrifice this planeswalker", "sacrifice this token",
+            "sacrifice this card",
         },
         "exile": {
             "exile this card from your graveyard", "exile this card",
+            "exile this permanent", "exile this artifact",
+            "exile this battle", "exile this creature",
+            "exile this enchantment", "exile this land",
+            "exile this planeswalker", "exile this token",
         },
     }
     for clause in _split_cost_clauses(actual_cost):

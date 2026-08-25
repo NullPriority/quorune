@@ -891,7 +891,10 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
             )
             self.assertTrue(draw.exact)
             self.assertEqual(
-                ("zone.draw.library_to_hand",),
+                (
+                    "activation.source_zone_change.fixed",
+                    "zone.draw.library_to_hand",
+                ),
                 draw.capability_dependencies,
             )
 

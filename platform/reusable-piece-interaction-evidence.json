@@ -1152,12 +1152,21 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_selected_soldier_cost_resolves_combat_prevention_and_replays",
+      "piece_ids": ["capability.activation.selected_zone_change.fixed", "capability.damage.prevention.persistent_amount", "capability.token.creation.fixed_definition"],
+      "capability_ids": ["activation.selected_zone_change.fixed", "damage.prevention.persistent_amount", "token.creation.fixed_definition"],
+      "interaction_order": 3,
+      "assertion": "Knight-Captain of Eos pays the compiler-owned Soldier sacrifice, resolves its typed all-combat prevention shield, prevents real combat damage, replays exactly, and preserves the independently trusted Soldier token trigger."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "test_damage_prevention_residual_is_not_admitted_beside_trusted_token_trigger",
+      "test_id": "test_fixed_token_with_damage_prevention_residual_fails_closed_at_runtime_boundary",
       "piece_ids": ["capability.token.creation.fixed_definition", "residual.replacement.damage-prevention"],
       "capability_ids": ["token.creation.fixed_definition"],
       "interaction_order": 2,
-      "assertion": "Knight-Captain of Eos keeps its fixed Soldier trigger trusted while its unresolved prevention activation remains provisional, unadvertised, rejected atomically, and unable to suppress the token result."
+      "assertion": "Gideon, Ally of Zendikar exposes fixed token grammar beside unresolved self-prevention prose, but the unresolved CardProgram remains incompatible with runtime admission."
     },
     {
       "evidence_class": "interaction",

@@ -28,6 +28,7 @@ from quorune.semantics import SemanticRegistry
 
 
 DRAW_CAPABILITY = "zone.draw.library_to_hand"
+SOURCE_COST_CAPABILITY = "activation.source_zone_change.fixed"
 DRAW_ACTION_CAPABILITY = "zone.draw.specifically_drawn_card_actions"
 
 
@@ -205,7 +206,10 @@ class ActivatedDrawCompilerTests(unittest.TestCase):
         draw = ir.faces[0].nodes[1]
         self.assertEqual("activated_ability", draw.kind)
         self.assertEqual("draw-controller-v1", draw.template_id)
-        self.assertEqual((DRAW_CAPABILITY,), draw.capability_dependencies)
+        self.assertEqual(
+            (SOURCE_COST_CAPABILITY, DRAW_CAPABILITY),
+            draw.capability_dependencies,
+        )
         self.assertEqual(
             "{1}, {T}, Sacrifice this artifact: Draw a card.",
             record.oracle_text[draw.span.start : draw.span.end],

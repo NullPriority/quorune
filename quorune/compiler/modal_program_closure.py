@@ -6,7 +6,14 @@ from typing import Mapping
 
 from ..rules.capabilities import capability_dependencies_for_node
 from ..rules.modal_capability_shapes import FIXED_MODAL_WRAPPER_MECHANICS
+from ..semantic_runtime.activated_abilities import (
+    activated_abilities_from_descriptors,
+)
 from ..semantics import SemanticProgram
+from .activated_costs import (
+    activated_ability_cost,
+    activated_ability_cost_capabilities,
+)
 from .modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,
     FIXED_NONREPEATING_MODAL_MECHANIC,
@@ -66,6 +73,14 @@ def is_closed_fixed_modal_program(program: SemanticProgram) -> bool:
             cost_schema=program.cost_schema,
         )
     )
+    if program.event == "activate":
+        abilities = activated_abilities_from_descriptors(program.handlers)
+        if len(abilities) != 1:
+            return False
+        ability = abilities[0]
+        if dict(program.cost_schema or {}) != activated_ability_cost(ability):
+            return False
+        required.update(activated_ability_cost_capabilities(ability))
     return bool(required) and required == set(
         program.capability_dependencies
     )

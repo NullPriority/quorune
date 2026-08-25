@@ -2,7 +2,30 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..abilities import ActivatedAbility
+from ..abilities import ActivatedAbility, ActivationLimit
+
+
+def activated_ability_cost_capabilities(
+    ability: ActivatedAbility,
+) -> tuple[str, ...]:
+    """Return the reviewed capability owners for one typed activation cost."""
+
+    additional: list[str] = []
+    if ability.loyalty_delta is not None and ability.loyalty_delta > 0:
+        additional.append("activation.loyalty.positive_counter_cost")
+    if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
+        additional.append("activation.exhaust.once_per_object")
+    if not ability.mana_ability and (
+        ability.discard_source
+        or ability.sacrifice_source
+        or ability.exile_source
+    ):
+        additional.append("activation.source_zone_change.fixed")
+    if not ability.mana_ability and any(
+        choice.predicate is not None for choice in ability.choices
+    ):
+        additional.append("activation.selected_zone_change.fixed")
+    return tuple(additional)
 
 
 def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
@@ -30,4 +53,7 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
     return result
 
 
-__all__ = ["activated_ability_cost"]
+__all__ = [
+    "activated_ability_cost",
+    "activated_ability_cost_capabilities",
+]

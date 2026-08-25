@@ -41,6 +41,7 @@ from .card_programs.validation import (
 from .card_programs.runtime import (
     collect_card_program_continuous_effects,
 )
+from .rules.activation_costs import activation_choice_candidates
 from .characteristic_evaluation import (
     evaluate_card_characteristics,
     type_parts,
@@ -2922,10 +2923,26 @@ class CommanderEngine(
             for _ in range(choice.count):
                 value = str(values[cursor])
                 cursor += 1
+                if value not in activation_choice_candidates(
+                    self, seat, source, choice
+                ):
+                    raise GameRuleError(
+                        f"{value} is not eligible to pay this activation cost"
+                    )
                 if choice.zone == "battlefield":
-                    card = self._resolve_object(seat, value, zones={"battlefield"}, controlled_only=True)
+                    card = self._resolve_object(
+                        seat,
+                        value,
+                        zones={"battlefield"},
+                        controlled_only=True,
+                    )
                 else:
-                    card = self._resolve_object(seat, value, zones={choice.zone}, owned_only=True)
+                    card = self._resolve_object(
+                        seat,
+                        value,
+                        zones={choice.zone},
+                        owned_only=True,
+                    )
                 if card.object_id in used:
                     raise GameRuleError("The same object cannot pay the same activation cost twice")
                 if choice.another and card.object_id == source.object_id:
@@ -2935,15 +2952,44 @@ class CommanderEngine(
                     if choice.card_type not in type_line:
                         raise GameRuleError(f"{card.ref} is not a {choice.card_type}")
                 used.append(card.object_id)
-                destination = {
-                    "return": "hand",
-                    "exile": "exile",
-                }.get(choice.kind, "graveyard")
+                typed_cost = choice.fixed_zone_change_cost()
+                destination = (
+                    typed_cost.destination_zone
+                    if typed_cost is not None
+                    else {
+                        "return": "hand",
+                        "exile": "exile",
+                    }.get(choice.kind, "graveyard")
+                )
+                raw_journal = response.get(
+                    "_mana_replacement_selections"
+                ) or {}
+                if not isinstance(raw_journal, Mapping):
+                    raise GameRuleError(
+                        "Activation replacement journal is malformed"
+                    )
+                zone_entries = tuple(
+                    (event_id, selections)
+                    for event_id, selections in raw_journal.items()
+                    if type(event_id) is str
+                    and event_id.startswith("zone.change:")
+                    and event_id.endswith(f":{card.ref}")
+                )
+                if len(zone_entries) > 1:
+                    raise GameRuleError(
+                        "Activation replacement journal is ambiguous"
+                    )
+                selections = zone_entries[0][1] if zone_entries else ()
+                if not isinstance(selections, (list, tuple)):
+                    raise GameRuleError(
+                        "Activation replacement selections are malformed"
+                    )
                 self.move_card(
                     card.object_id,
                     destination,
                     reason="activated ability cost",
                     semantic_events=True,
+                    replacement_selections=tuple(selections),
                 )
         return used
 
@@ -3028,25 +3074,10 @@ class CommanderEngine(
         ability: ActivatedAbility,
     ) -> bool:
         slots: list[list[str]] = []
-        player = self.state.players[seat]
         for choice in ability.choices:
-            candidates: list[str] = []
-            for object_id in player.zones.get(choice.zone, []):
-                card = self.state.cards[object_id]
-                if choice.zone == "battlefield":
-                    if card.controller != seat or card.phased_out:
-                        continue
-                elif card.owner != seat:
-                    continue
-                if choice.another and card.object_id == source.object_id:
-                    continue
-                if choice.card_type:
-                    type_line = str(
-                        self._effective_card_data(card).get("type_line") or ""
-                    ).casefold()
-                    if choice.card_type not in type_line:
-                        continue
-                candidates.append(card.object_id)
+            candidates = list(
+                activation_choice_candidates(self, seat, source, choice)
+            )
             for _ in range(choice.count):
                 slots.append(candidates)
 

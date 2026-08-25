@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-08-23"
+verified: "2026-08-25"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -216,6 +216,21 @@ in its origin zone until cost commit. Optional, three-or-more-branch,
 variable, random, repeatable, composite, reveal, tap, linked-result, and named
 mechanic costs remain source-spanned residuals. Direct mandatory positive
 fixed-life costs use the same life-payment leaf and canonical life owner.
+
+`compiler/activated_zone_change_costs.py` reuses the spell-cost leaf grammar
+for one mandatory selected-object activation cost. It accepts only one fixed
+discard, sacrifice, battlefield or graveyard exile, or return payment whose
+actor-bound `ObjectQuerySpec` and operation-owned origin and destination are
+already closed by the casting-cost owner. Offers and commits obtain candidates
+through that same effective-characteristic query. Matching legacy one-object
+discard, sacrifice, and return descriptors are promoted to this typed owner;
+multi-object, `another`, and mana-ability descriptors remain outside it.
+Replacement suspension pins
+the selected object and the complete priority-action frame before any mana,
+zone, or stack mutation. Source sacrifice joins the existing discard-self and
+exile-self transaction through the same continuation identity. Variable,
+multiple, optional, random, repeated, linked, dynamic, mana-ability, and
+cost-ordering forms remain source-spanned residuals.
 
 `compiler/keyword_nodes.py` owns one closed ordinary fixed-mana Morph
 production. It lowers the turn-up cost to a typed all-zone runtime component;

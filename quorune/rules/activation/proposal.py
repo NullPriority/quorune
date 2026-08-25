@@ -9,6 +9,7 @@ from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
 from ...station import station_candidates, station_cost_choice
 from ..action_proposals import ActionOffer, ActivationProposal, freeze_json
+from ..activation_costs import activation_choice_candidates
 from .model import (
     ActivationProposalError,
     ActivationProposalRequest,
@@ -378,6 +379,16 @@ def build_activation_offer(
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")
     hint = selected.compact(source_ref=source.ref, zone=source.zone)
+    if selected.choices:
+        hint["choose_cost"] = [
+            {
+                **choice.compact(),
+                "legal_refs": list(
+                    activation_choice_candidates(host, seat, source, choice)
+                ),
+            }
+            for choice in selected.choices
+        ]
     threshold = host._crew_threshold(selected)
     if threshold is not None:
         hint["choose_cost"] = [

@@ -30,7 +30,11 @@ from ..self_zone_move import (
     compile_self_zone_move,
     self_zone_move_handler_descriptor,
 )
-from .activated_costs import activated_ability_cost
+from .activated_costs import (
+    activated_ability_cost,
+    activated_ability_cost_capabilities,
+)
+from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .dependency_gate import (
     DependencyGate,
     dependency_gate,
@@ -412,11 +416,7 @@ def _activated_cost_dependency_gate(
 ) -> DependencyGate:
     """Add closed typed cost ownership without weakening effect blockers."""
 
-    additional: list[str] = []
-    if ability.loyalty_delta is not None and ability.loyalty_delta > 0:
-        additional.append("activation.loyalty.positive_counter_cost")
-    if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
-        additional.append("activation.exhaust.once_per_object")
+    additional = activated_ability_cost_capabilities(ability)
     if not additional:
         return gate
     cost_gate = explicit_capabilities_gate(
@@ -666,19 +666,19 @@ def activated_oracle_node(
     if not abilities:
         return None
     ability, fixed_mana = fixed_activated_mana_node(
-        abilities[0], node_id, line, span, capability_registry,
-        capability_profile, residuals,
-    )
-    if fixed_mana is not None:
-        return fixed_mana
-    color_set_mana = color_set_activated_mana_node(
-        ability,
+        fixed_activated_zone_change_cost(abilities[0]),
         node_id,
         line,
         span,
         capability_registry,
         capability_profile,
         residuals,
+    )
+    if fixed_mana is not None:
+        return fixed_mana
+    color_set_mana = color_set_activated_mana_node(
+        ability, node_id, line, span, capability_registry,
+        capability_profile, residuals,
     )
     if color_set_mana is not None:
         return color_set_mana

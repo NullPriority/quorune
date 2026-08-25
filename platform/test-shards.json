@@ -115,6 +115,7 @@
       "test_convoke_rules",
       "test_exact_land_families",
       "test_exact_mana_families",
+      "test_fixed_activated_zone_change_costs",
       "test_fixed_alternative_additional_costs",
       "test_fixed_counter_additional_costs",
       "test_fixed_counter_keyword_activations",

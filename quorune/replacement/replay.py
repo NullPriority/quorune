@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
+from ..rules.activation_zone_change_costs import (
+    activation_zone_change_cost_reference,
+)
 from ..trigger_batches import PendingTriggerItem, TriggerBatchError
 from .immutable import FrozenMap, thaw_value
 from .model import (
@@ -652,40 +655,17 @@ def _activation_zone_cost_event_is_valid(
     payload = event.payload
     origin = payload.get("origin")
     destination = payload.get("destination")
-    source_ref = response.get("source")
-    cost_summary = response.get("cost_summary")
-    source_cost_flags = {
-        field
-        for field in ("discard_self", "exile_self", "sac_self")
-        if isinstance(cost_summary, Mapping) and field in cost_summary
-    }
-    source_cost_valid = bool(
-        isinstance(cost_summary, Mapping)
-        and (
-            (
-                source_cost_flags == {"discard_self"}
-                and type(cost_summary["discard_self"]) is int
-                and cost_summary["discard_self"] == 1
-                and origin == "hand"
-                and destination == "graveyard"
-            )
-            or (
-                source_cost_flags == {"exile_self"}
-                and type(cost_summary["exile_self"]) is int
-                and cost_summary["exile_self"] == 1
-                and destination == "exile"
-            )
-        )
+    cost_ref = activation_zone_change_cost_reference(
+        response,
+        origin=origin,
+        destination=destination,
+        object_ref=payload.get("object_ref"),
     )
     return bool(
-        type(source_ref) is str
-        and source_ref
-        and response.get("from") == origin
-        and payload.get("object_ref") == source_ref
-        and source_cost_valid
+        cost_ref
         and _zone_cost_affected_object_matches(event, seat=seat, origin=origin)
         and event.event_id.startswith("zone.change:")
-        and event.event_id.endswith(f":{source_ref}")
+        and event.event_id.endswith(f":{cost_ref}")
     )
 
 

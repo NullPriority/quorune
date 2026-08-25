@@ -255,7 +255,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
             "Mace of the Valiant": ("triggered_ability", True),
             "Momentum": ("triggered_ability", True),
             "Private Research": ("triggered_ability", True),
-            "Tourach's Gate": ("activated_ability", False),
+            "Tourach's Gate": ("activated_ability", True),
             "Traveling Plague": ("triggered_ability", True),
             "War Balloon": ("activated_ability", True),
         }

@@ -11,6 +11,7 @@ from unittest.mock import patch
 from common import keep_all, load_assets, make_session
 from quorune.carddb import CardRecord
 from quorune.compiled_activated_abilities import compiled_activated_abilities
+from quorune.damage import damage_proposal, resolve_damage_batch
 from quorune.compiler.token_templates import (
     FIXED_TOKEN_DEFINITION_BATCH_MECHANIC,
     fixed_token_creation_effect_template,
@@ -1016,7 +1017,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(2, replay["commands"])
 
-    def test_damage_prevention_residual_is_not_admitted_beside_trusted_token_trigger(
+    def test_selected_soldier_cost_resolves_combat_prevention_and_replays(
         self,
     ):
         session = self.session(
@@ -1035,7 +1036,25 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
                 "power": "1",
                 "toughness": "1",
             },
-            reason="fail-closed admission fixture",
+            reason="typed prevention interaction fixture",
+        )
+        soldier = next(
+            card
+            for card in engine.state.cards.values()
+            if card.is_token
+            and card.controller == "A"
+            and card.printed_name == "Soldier"
+        )
+        combat_source = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B" and card.printed_name == "Seedborn Muse"
+        )
+        engine.move_card(
+            combat_source.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
         )
         soldiers_before = sum(
             card.is_token and card.printed_name == "Soldier"
@@ -1056,8 +1075,27 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             for program in programs
             if program.event == "activate"
         )
-        self.assertEqual("provisional", prevention_carrier.trust_level)
-        self.assertFalse(prevention_carrier.effects)
+        self.assertEqual("trusted", prevention_carrier.trust_level)
+        self.assertEqual(
+            [
+                {
+                    "op": "create_damage_prevention_shield",
+                    "source": "$source",
+                    "subject": "*",
+                    "mode": "all",
+                    "duration": "until_end_of_turn",
+                    "damage_kind": "combat",
+                }
+            ],
+            prevention_carrier.effects,
+        )
+        self.assertEqual(
+            {
+                "activation.selected_zone_change.fixed",
+                "damage.prevention.persistent_amount",
+            },
+            set(prevention_carrier.capability_dependencies),
+        )
 
         prevention = next(
             ability
@@ -1065,20 +1103,64 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             if "Prevent all combat damage" in ability.effect_text
         )
         self.assertEqual(
-            ("unresolved", "unresolved_cost_semantics"),
+            ("payable", None),
             engine._ability_availability("A", source, prevention),
         )
         action_id = f"activate:{source.ref}:{prevention.ability_id}"
         packet = session.packet("pilot:A", full=True)
-        offered = {
-            action["id"]
+        action = next(
+            action
             for action in packet["decision"]["ctx"]["legal"]["actions"]
-        }
-        self.assertNotIn(action_id, offered)
-        before = authoritative_state_hash(engine.state)
-        rejected = session.act("pilot:A", {"action_id": action_id})
-        self.assertFalse(rejected.ok)
-        self.assertEqual(before, authoritative_state_hash(engine.state))
+            if action["id"] == action_id
+        )
+        self.assertEqual(
+            [soldier.ref],
+            action["cost_summary"]["choose_cost"][0]["legal_refs"],
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        activated = session.act(
+            "pilot:A",
+            {"action_id": action_id, "cost_cards": [soldier.ref]},
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertEqual("outside", soldier.zone)
+        self.assertTrue(engine.state.stack)
+        self._pass_until(session, lambda: not engine.state.stack)
+        self.assertEqual(1, len(engine.state.damage_prevention_shields))
+        shield = engine.state.damage_prevention_shields[0]
+        self.assertEqual("combat", shield.damage_kind.value)
+        self.assertEqual("all", shield.mode.value)
+
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "knight-captain-prevention"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+        life_before = engine.state.players["A"].life
+        damage = resolve_damage_batch(
+            engine,
+            (
+                damage_proposal(
+                    engine,
+                    proposal_id="knight-captain-combat-witness",
+                    actor="B",
+                    source_ref=combat_source.ref,
+                    target="A",
+                    amount=3,
+                    combat=True,
+                    reason="Knight-Captain prevention witness",
+                ),
+            ),
+        )
+        self.assertEqual(0, damage.dealt_amount)
+        self.assertEqual(3, damage.events[0].prevented_amount)
+        self.assertEqual(life_before, engine.state.players["A"].life)
 
         self._resolve_registered_program(engine, token_program, 470120)
         self.assertEqual(
