@@ -31,6 +31,7 @@ from ..self_zone_move import (
     self_zone_move_handler_descriptor,
 )
 from .activated_costs import activated_ability_cost
+from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .dependency_gate import (
     DependencyGate,
     dependency_gate,
@@ -417,6 +418,14 @@ def _activated_cost_dependency_gate(
         additional.append("activation.loyalty.positive_counter_cost")
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         additional.append("activation.exhaust.once_per_object")
+    if (
+        ability.discard_source
+        or ability.sacrifice_source
+        or ability.exile_source
+    ):
+        additional.append("activation.source_zone_change.fixed")
+    if any(choice.predicate is not None for choice in ability.choices):
+        additional.append("activation.selected_zone_change.fixed")
     if not additional:
         return gate
     cost_gate = explicit_capabilities_gate(
@@ -665,8 +674,9 @@ def activated_oracle_node(
     )
     if not abilities:
         return None
+    ability = fixed_activated_zone_change_cost(abilities[0])
     ability, fixed_mana = fixed_activated_mana_node(
-        abilities[0], node_id, line, span, capability_registry,
+        ability, node_id, line, span, capability_registry,
         capability_profile, residuals,
     )
     if fixed_mana is not None:

@@ -83,6 +83,10 @@ class ActivationProposalHost(Protocol):
 
     def _crew_candidates(self, seat: str, source: Any) -> list[Any]: ...
 
+    def _ability_choice_candidates(
+        self, seat: str, source: Any, choice: Any
+    ) -> tuple[str, ...]: ...
+
     def _mana_modes_for_ability(
         self, seat: str, source: Any, ability: ActivatedAbility
     ) -> list[Any]: ...
@@ -378,6 +382,18 @@ def build_activation_offer(
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")
     hint = selected.compact(source_ref=source.ref, zone=source.zone)
+    if selected.choices:
+        hint["choose_cost"] = [
+            {
+                **choice.compact(),
+                "legal_refs": list(
+                    host._ability_choice_candidates(
+                        seat, source, choice
+                    )
+                ),
+            }
+            for choice in selected.choices
+        ]
     threshold = host._crew_threshold(selected)
     if threshold is not None:
         hint["choose_cost"] = [

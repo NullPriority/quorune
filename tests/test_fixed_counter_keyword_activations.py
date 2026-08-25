@@ -131,9 +131,9 @@ class FixedCounterKeywordModelTests(unittest.TestCase):
         )
         host = SimpleNamespace()
         unsupported = (
-            {"sac_self": 1},
             {"discard_self": True},
             {"discard_self": 1, "exile_self": 1},
+            {"sac_self": 2},
         )
         for cost_summary in unsupported:
             with self.subTest(cost_summary=cost_summary):
