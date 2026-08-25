@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "05bb1dfbde3d9481ff65c8a197c7c7b981a7066b47d4022509f92af0b3524242"
+verified: "cc61781708486980b60d05ae0590a49a92a856f0e8dd2ff193a09a4d28272586"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -39,6 +39,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
+| Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
 | Ugin, Eye of the Storms | 176 | 26 | 6 | 5 | 13 | 3 | `blocked` |
 | Invasion of Fiora // Marchesa, Resolute Monarch | 175 | 17 | 5 | 7 | 6 | 17 | `blocked` |
 | Nicol Bolas, the Ravager // Nicol Bolas, the Arisen | 175 | 30 | 5 | 7 | 5 | 11 | `blocked` |
@@ -50,10 +51,10 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Tolvada // The Broken Sky | 171 | 18 | 6 | 4 | 6 | 17 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 171 | 14 | 5 | 5 | 11 | 18 | `blocked` |
 | Invasion of Kaladesh // Aetherwing, Golden-Scale Flagship | 170 | 18 | 5 | 5 | 6 | 17 | `blocked` |
+| Invasion of Vryn // Overloaded Mage-Ring | 170 | 13 | 6 | 3 | 8 | 24 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 170 | 17 | 6 | 5 | 10 | 8 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 169 | 19 | 6 | 6 | 11 | 10 | `blocked` |
 | Gwen Stacy // Ghost-Spider | 168 | 22 | 5 | 5 | 8 | 13 | `blocked` |
-| Invasion of Kaldheim // Pyre of the World Tree | 168 | 16 | 5 | 4 | 5 | 22 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 168 | 18 | 5 | 4 | 6 | 18 | `blocked` |
 | Optimus Prime, Hero // Optimus Prime, Autobot Leader | 168 | 21 | 5 | 6 | 4 | 16 | `blocked` |
 | Dr. Madison Li | 167 | 28 | 6 | 4 | 4 | 10 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
 | Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
 | Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
-| Athreos, Shroud-Veiled | 165 | 18 | 5 | 4 | 3 | 24 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
