@@ -38,6 +38,10 @@ from ...station import (
     station_cost_choice,
 )
 from ...tap_state import set_permanent_tapped
+from ..activation_costs import (
+    FixedTapActivationCostError,
+    pay_fixed_tap_cost,
+)
 from ...trigger_processing import collect_ward_occurrences
 from ..action_proposals import ActivationProposal, thaw_json
 from .model import ActivationProposalError
@@ -306,6 +310,30 @@ def _pay_object_and_mana_costs(
                 str(exc), reason="station_cost_unpayable"
             ) from exc
         special_cost_context = (STATION_CONTEXT_KEY, station_context)
+    elif any(
+        choice.fixed_tap_cost() is not None for choice in ability.choices
+    ):
+        if (
+            len(ability.choices) != 1
+            or ability.choices[0].fixed_tap_cost() is None
+        ):
+            raise ActivationProposalError(
+                "Fixed tap activation costs cannot be combined",
+                reason="tap_cost_unpayable",
+            )
+        try:
+            paid_objects = pay_fixed_tap_cost(
+                host,
+                seat=proposal.seat,
+                source=source,
+                choice=ability.choices[0],
+                response=response,
+            )
+        except FixedTapActivationCostError as exc:
+            raise ActivationProposalError(
+                str(exc), reason="tap_cost_unpayable"
+            ) from exc
+        special_cost_context = None
     else:
         paid_objects = host._pay_ability_choice_costs(
             proposal.seat, source, ability, response

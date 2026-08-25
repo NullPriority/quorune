@@ -22,9 +22,14 @@ def activated_ability_cost_capabilities(
     ):
         additional.append("activation.source_zone_change.fixed")
     if not ability.mana_ability and any(
-        choice.predicate is not None for choice in ability.choices
+        choice.fixed_zone_change_cost() is not None
+        for choice in ability.choices
     ):
         additional.append("activation.selected_zone_change.fixed")
+    if not ability.mana_ability and any(
+        choice.fixed_tap_cost() is not None for choice in ability.choices
+    ):
+        additional.append("activation.selected_tap.fixed")
     return tuple(additional)
 
 

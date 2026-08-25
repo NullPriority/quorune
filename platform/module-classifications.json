@@ -1275,6 +1275,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/activated_tap_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/activated_zone_change_costs.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7918,5 +7933,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "8602687901ade760af43925edc8fd7762341adcefc14a95d57c45a1307b41a67"
+  "fingerprint": "55d8c7ef1f8f3bc90e9db1acde43ded081e78bcb5d3810585248f8ad7b413de5"
 }
