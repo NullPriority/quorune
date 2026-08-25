@@ -21,6 +21,7 @@ from ..rules.capabilities import (
     capability_dependencies_for_node,
 )
 from .modal_program_closure import is_closed_fixed_modal_program
+from .prevention_templates import is_closed_fixed_prevention_program
 from ..rules.counter_capability_shapes import (
     fixed_counter_placement_group_node_capabilities,
 )
@@ -624,25 +625,6 @@ def _is_closed_fixed_token_creation_program(
     )
     return bool(required) and required.issubset(
         program.capability_dependencies
-    )
-
-
-def _is_closed_fixed_prevention_program(program: SemanticProgram) -> bool:
-    """Recognize one compiler-owned fixed damage-prevention instruction."""
-
-    if "cr-615-prevention-effects" not in program.coverage:
-        return False
-    required = set(
-        capability_dependencies_for_node(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=program.coverage,
-            cost_schema=program.cost_schema,
-        )
-    )
-    return (
-        "damage.prevention.persistent_amount" in required
-        and required.issubset(program.capability_dependencies)
     )
 
 
@@ -1327,7 +1309,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_scry_program,
         _is_closed_fixed_surveil_program,
         _is_closed_fixed_token_creation_program,
-        _is_closed_fixed_prevention_program,
+        is_closed_fixed_prevention_program,
         _is_closed_fixed_effect_clause_sequence_program,
         _is_closed_composed_effect_program,
         _is_closed_fixed_controller_effect_sequence_program,

@@ -9,6 +9,8 @@ from ..object_query import (
     validate_chosen_damage_source_predicate,
 )
 from ..rules.source_references import SourceReferenceSpec
+from ..rules.capabilities import capability_dependencies_for_node
+from ..semantics import SemanticProgram
 
 
 PreventionTemplate = tuple[
@@ -877,7 +879,29 @@ def prevention_trigger_effect_template(
     )
 
 
+def is_closed_fixed_prevention_program(
+    program: SemanticProgram,
+) -> bool:
+    """Recognize one compiler-owned fixed damage-prevention instruction."""
+
+    if "cr-615-prevention-effects" not in program.coverage:
+        return False
+    required = set(
+        capability_dependencies_for_node(
+            effects=program.effects,
+            target_schema=program.target_schema,
+            mechanic_ids=program.coverage,
+            cost_schema=program.cost_schema,
+        )
+    )
+    return (
+        "damage.prevention.persistent_amount" in required
+        and required.issubset(program.capability_dependencies)
+    )
+
+
 __all__ = [
     "fixed_prevention_effect_template",
+    "is_closed_fixed_prevention_program",
     "prevention_trigger_effect_template",
 ]
