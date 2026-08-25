@@ -110,6 +110,18 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 "continuous.ability.fixed_query_keyword_grant",
             ),
             (
+                "Menace Anthem",
+                "Creatures you control have menace.",
+                KEYWORD_GRANT_HANDLER,
+                "continuous.ability.fixed_query_keyword_grant",
+            ),
+            (
+                "Hexproof Anthem",
+                "Other permanents you control have hexproof.",
+                KEYWORD_GRANT_HANDLER,
+                "continuous.ability.fixed_query_keyword_grant",
+            ),
+            (
                 "Construct",
                 "This creature gets +1/+1 for each artifact you control.",
                 DYNAMIC_HANDLER,
@@ -158,8 +170,6 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
             "Creatures your opponents control have haste.",
             "Attacking creatures you control have flying.",
             "Multicolored creatures you control have vigilance.",
-            "Creatures you control have menace.",
-            "Other permanents you control have hexproof.",
             "This creature has haste as long as you have 10 or less life.",
             "This creature gets +1/+1 for each enchantment you control.",
             "This creature gets +2/+2 if there are three land cards in your graveyard.",
@@ -199,7 +209,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
             {**keyword, "schema_version": True},
             {
                 **keyword,
-                "modifier": {"add_abilities": ["Menace"]},
+                "modifier": {"add_abilities": ["Ward"]},
             },
             {
                 **keyword,

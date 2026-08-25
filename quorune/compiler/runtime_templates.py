@@ -20,6 +20,7 @@ from .continuous_templates import (
     basic_land_type_addition_handler,
     conditional_self_keyword_handler,
     dynamic_self_power_toughness_handler,
+    fixed_query_characteristic_grant_handler,
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
@@ -275,6 +276,21 @@ def _continuous_static_runtime_template(
             dependency_reason=(
                 "generic basic-land-type addition depends on an untrusted "
                 "rules capability"
+            ),
+        )
+    characteristic_grant = (
+        None
+        if source_is_class
+        else fixed_query_characteristic_grant_handler(text)
+    )
+    if characteristic_grant is not None:
+        return StaticRuntimeTemplate(
+            compiled=characteristic_grant,
+            kind="static_ability",
+            event="characteristics.evaluate",
+            dependency_reason=(
+                "generic controlled characteristic grants require their "
+                "closed continuous-effect capabilities"
             ),
         )
     keyword_grant = (

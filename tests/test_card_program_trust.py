@@ -233,6 +233,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.payment.improvise",
                 "combat.block.self-counter-prohibition",
                 "continuous.fixed_query_ability_grant",
+                "continuous.fixed_query_characteristic_grant",
                 "continuous.fixed_query_keyword_grant",
                 "continuous.attached.fixed_characteristics",
                 "continuous.fixed_query_power_toughness_anthem",

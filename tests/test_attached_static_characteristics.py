@@ -301,6 +301,35 @@ class AttachedContinuousModelTests(unittest.TestCase):
         })
         self.assertNotIn("Flying", result.characteristics["abilities"])
 
+    def test_attached_fixed_ward_uses_current_fragment(self):
+        effects = AttachedFixedCharacteristicsHandler().lower(
+            descriptor(
+                "Enchanted creature gets +3/+3 and has ward {2}."
+            ),
+            self.context(),
+        )
+        result = evaluate_continuous_effects(
+            self.base(),
+            effects,
+            context={
+                "object_id": "target",
+                "logical_object_id": "target@0",
+                "zone": "battlefield",
+                "owner": "B",
+            },
+        )
+        self.assertEqual(4, result.characteristics["power"])
+        self.assertEqual(["Ward {2}"], result.characteristics["abilities"])
+        self.assertEqual(
+            [
+                {
+                    "kind": "ward",
+                    "value": {"schema_version": 1, "generic_cost": 2},
+                }
+            ],
+            result.characteristics["ability_fragments"],
+        )
+
     def test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable(self):
         effect = AttachedFixedCharacteristicsHandler().lower(
             descriptor("Enchanted creature gets -1/-0."),
@@ -422,6 +451,50 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
                 }
             ],
             modifier["add_ability_fragments"],
+        )
+
+    def test_compiler_lowers_coupled_protection_and_fixed_ward_grants(self):
+        protection = attached_fixed_characteristics_handler(
+            (
+                "Equipped creature gets +2/+2 and has protection from red "
+                "and from blue."
+            )
+        )
+        self.assertIsNotNone(protection)
+        self.assertEqual(
+            ["Protection"], protection[1]["modifier"]["add_abilities"]
+        )
+        self.assertEqual(
+            2,
+            len(protection[1]["modifier"]["add_ability_fragments"]),
+        )
+        self.assertIn("protection.typed.debt", protection[2])
+
+        ward = attached_fixed_characteristics_handler(
+            (
+                "Enchanted creature gets +3/+3 and has ward {2}. "
+                "(Whenever it becomes the target of a spell or ability an "
+                "opponent controls, counter it unless that player pays {2}.)"
+            )
+        )
+        self.assertIsNotNone(ward)
+        self.assertEqual(
+            ["Ward {2}"], ward[1]["modifier"]["add_abilities"]
+        )
+        self.assertEqual(
+            [
+                {
+                    "kind": "ward",
+                    "value": {"schema_version": 1, "generic_cost": 2},
+                }
+            ],
+            ward[1]["modifier"]["add_ability_fragments"],
+        )
+        self.assertIn("trigger.keyword.ward.fixed_generic", ward[2])
+        self.assertIsNone(
+            attached_fixed_characteristics_handler(
+                "Enchanted creature gets +3/+3 and has ward—Pay 3 life."
+            )
         )
 
     def test_compiler_lowers_granted_toxic_to_a_typed_fragment(self):
