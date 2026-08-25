@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import replace
 import json
 from pathlib import Path
@@ -10,12 +11,17 @@ from unittest.mock import patch
 
 from common import keep_all, load_assets, make_session
 from quorune.carddb import CardRecord
+from quorune.compiler.affected_player_discard_templates import (
+    fixed_controller_discard_effect_template,
+)
 from quorune.compiler.fixed_controller_effect_sequences import (
     fixed_controller_effect_sequence_template,
 )
 from quorune.compiler.life_templates import fixed_life_effect_template
-from quorune.model import StackItem
+from quorune.compiler.program_generation import register_generated_programs
+from quorune.model import CardInstance, StackItem
 from quorune.oracle_ir import compile_oracle_card
+from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
@@ -24,6 +30,9 @@ from quorune.record import (
 from quorune.rules.capabilities import (
     capability_dependencies_for_node,
     load_default_capability_registry,
+)
+from quorune.rules.affected_player_discard_capability_shapes import (
+    fixed_affected_player_discard_node_capabilities,
 )
 from quorune.rules.fixed_controller_effect_shapes import (
     fixed_controller_effect_sequence_node_capabilities,
@@ -194,6 +203,28 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                 "triggered_ability",
                 ("draw", "scry"),
             ),
+            (
+                self.fixture("Draw two cards, then discard two cards."),
+                "spell_ability",
+                ("draw", "choose_cards_apnap"),
+            ),
+            (
+                self.fixture(
+                    "{T}: Draw three cards, then discard four cards.",
+                    type_line="Artifact",
+                ),
+                "activated_ability",
+                ("draw", "choose_cards_apnap"),
+            ),
+            (
+                self.fixture(
+                    "When Fixed Controller Sequence enters, discard a card, "
+                    "then draw a card.",
+                    type_line="Creature — Wizard",
+                ),
+                "triggered_ability",
+                ("choose_cards_apnap", "draw"),
+            ),
         )
         for record, kind, operations in fixtures:
             with self.subTest(kind=kind):
@@ -218,6 +249,110 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                 self.assertIn(
                     "zone.draw.library_to_hand",
                     node.capability_dependencies,
+                )
+                if "choose_cards_apnap" in operations:
+                    self.assertIn(
+                        "choice.affected_player.fixed_discard",
+                        node.capability_dependencies,
+                    )
+                    self.assertIn(
+                        "zone.change.destination_replacement",
+                        node.capability_dependencies,
+                    )
+
+    def test_controller_discard_leaf_and_sequence_shape_are_closed(self):
+        template = fixed_controller_discard_effect_template(
+            "You discard four cards."
+        )
+        self.assertIsNotNone(template)
+        assert template is not None
+        self.assertEqual(4, template.count)
+        discard = template.effects[0]
+        draw = {
+            "op": "draw",
+            "player": "$controller",
+            "count": 3,
+            "private": True,
+        }
+        self.assertEqual(["$controller"], discard["players"])
+        self.assertEqual(
+            (),
+            fixed_affected_player_discard_node_capabilities(
+                effects=(discard,),
+                target_schema=None,
+                mechanic_ids=(
+                    "fixed-affected-player-discard",
+                    "cr-402-hand",
+                ),
+            ),
+        )
+        self.assertEqual(
+            (
+                "choice.affected_player.fixed_discard",
+                SEQUENCE_CAPABILITY,
+                "zone.change.destination_replacement",
+                "zone.draw.library_to_hand",
+            ),
+            fixed_controller_effect_sequence_node_capabilities(
+                effects=(draw, discard),
+                target_schema=None,
+                mechanic_ids=(
+                    "fixed-controller-effect-sequence",
+                    "fixed-affected-player-discard",
+                    "cr-121-drawing-a-card",
+                    "cr-402-hand",
+                ),
+            ),
+        )
+
+        mutations = []
+        for field, value in (
+            ("players", "all"),
+            ("players", "opponents"),
+            ("players", ["$target.0"]),
+            ("count", 5),
+            ("hidden", False),
+            ("then", "sacrifice"),
+        ):
+            mutant = deepcopy(discard)
+            mutant[field] = value
+            if field == "players" and value == ["$target.0"]:
+                mutant["target"] = "$target.0"
+            mutations.append(mutant)
+        for mutant in mutations:
+            with self.subTest(mutant=mutant):
+                self.assertEqual(
+                    (),
+                    fixed_controller_effect_sequence_node_capabilities(
+                        effects=(draw, mutant),
+                        target_schema=None,
+                        mechanic_ids=(
+                            "fixed-controller-effect-sequence",
+                            "fixed-affected-player-discard",
+                            "cr-121-drawing-a-card",
+                            "cr-402-hand",
+                        ),
+                    ),
+                )
+        for text in (
+            "Draw a card, then target player discards a card.",
+            "Draw a card, then each player discards a card.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(
+                    fixed_controller_effect_sequence_template(text)
+                )
+                ir = compile_oracle_card(
+                    self.fixture(text),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertTrue(
+                    all(
+                        SEQUENCE_CAPABILITY not in node.capability_dependencies
+                        for face in ir.faces
+                        for node in face.nodes
+                    )
                 )
 
     def test_sequence_shape_rejects_open_and_malformed_variants(self):
@@ -274,6 +409,11 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
             "Scry 1, then you may draw a card.",
             "Draw a card. Each player loses 1 life.",
             "Draw a card unless an opponent pays {1}.",
+            "Draw two cards, then discard a card at random.",
+            "Draw two cards, then discard your hand.",
+            "Draw two cards, then discard two cards if you control a Wizard.",
+            "Draw a card, then discard five cards.",
+            "Discard a card, then draw a card, then lose 1 life.",
         ):
             with self.subTest(text=text):
                 self.assertIsNone(fixed_controller_effect_sequence_template(text))
@@ -286,19 +426,23 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                 self.assertTrue(ir.material_residuals)
 
     def test_sequence_compiler_and_shape_mutants_are_killed(self):
-        record = self.fixture("Scry 2, then draw a card.")
+        records = (
+            self.fixture("Scry 2, then draw a card."),
+            self.fixture("Draw two cards, then discard a card."),
+        )
 
         def assert_exact() -> None:
-            ir = compile_oracle_card(
-                record,
-                capability_registry=self.capabilities,
-                capability_profile="commander_review",
-            )
-            self.assertEqual("exact", ir.status, ir.material_residuals)
-            self.assertEqual(
-                "fixed-controller-draw-effect-sequence-v1",
-                ir.faces[0].nodes[0].template_id,
-            )
+            for record in records:
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertEqual(
+                    "fixed-controller-draw-effect-sequence-v1",
+                    ir.faces[0].nodes[0].template_id,
+                )
 
         assert_exact()
         with patch(
@@ -307,6 +451,17 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_exact()
+        with patch(
+            "quorune.compiler.fixed_controller_effect_sequences."
+            "fixed_controller_discard_effect_template",
+            return_value=None,
+        ):
+            ir = compile_oracle_card(
+                records[1],
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            )
+            self.assertNotEqual("exact", ir.status)
 
 
 class FixedControllerEffectSequenceRuntimeTests(unittest.TestCase):
@@ -318,14 +473,20 @@ class FixedControllerEffectSequenceRuntimeTests(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.db.close()
 
-    def session(self, seed: int, *, players: int = 2):
+    def session(
+        self,
+        seed: int,
+        *,
+        players: int = 2,
+        auto_pass_empty: bool = True,
+    ):
         session = make_session(
             self.db,
             self.mishra,
             self.zimone,
             players=players,
             seed=seed,
-            auto_pass_empty=True,
+            auto_pass_empty=auto_pass_empty,
         )
         keep_all(session)
         session.engine.permissions.invalidate_current()
@@ -375,6 +536,51 @@ class FixedControllerEffectSequenceRuntimeTests(unittest.TestCase):
             note="fixed controller sequence regression",
         )
         return card, starting_zone
+
+    @staticmethod
+    def choose(session, seat: str, refs: list[str]):
+        return session.act(
+            f"pilot:{seat}",
+            {"action_id": "choose", "cards": refs},
+        )
+
+    def assert_replays(self, session, label: str) -> None:
+        expected_hash = authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / label
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def install_opponent_voidwalker(self, engine) -> CardInstance:
+        record = self.db.lookup("Dauthi Voidwalker")
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="provisional",
+            capability_registry=load_default_capability_registry(),
+            capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True,
+            promote_exact_capability_declarations=True,
+            promote_exact_effect_programs=True,
+        )
+        card = CardInstance(
+            object_id="fixture:sequence-voidwalker",
+            ref="sequence-voidwalker",
+            oracle_id=record.oracle_id,
+            printed_name=record.name,
+            owner="B",
+            controller="B",
+            zone="battlefield",
+            zone_timestamp=engine.state.event_sequence + 1,
+            known_to=list(engine.seats),
+            revealed_to=list(engine.seats),
+        )
+        engine.state.cards[card.object_id] = card
+        engine.state.players["B"].zones["battlefield"].append(card.object_id)
+        return card
 
     def test_draw_then_life_commits_in_printed_order(self):
         session = self.session(123001)
@@ -510,6 +716,122 @@ class FixedControllerEffectSequenceRuntimeTests(unittest.TestCase):
         self.assertEqual(before, authoritative_state_hash(session.state))
         self.assertEqual(library_before, tuple(engine.state.players["A"].zones["library"]))
         self.assertEqual(life_before, engine.state.players["A"].life)
+
+    def test_draw_then_controller_discard_is_private_and_replays_exactly(self):
+        session = self.session(123004, players=4, auto_pass_empty=False)
+        engine = session.engine
+        self.install_opponent_voidwalker(engine)
+        library = engine.state.players["A"].zones["library"]
+        drawn_refs = tuple(
+            engine.state.cards[object_id].ref
+            for object_id in reversed(library[-2:])
+        )
+        event_start = len(engine.state.events)
+        template = fixed_controller_effect_sequence_template(
+            "Draw two cards, then discard a card."
+        )
+        self.assertIsNotNone(template)
+        assert template is not None
+        self.begin_sequence(session, template.effects)
+
+        self.assertEqual("choice.apnap", engine.state.pending_decision.kind)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        decision = StateProjector(self.db, engine.state)._decision("pilot:A")
+        self.assertIsNotNone(decision)
+        assert decision is not None
+        serialized = json.dumps(decision, sort_keys=True)
+        for ref in drawn_refs:
+            self.assertIn(ref, serialized)
+        for seat in "BCD":
+            self.assertIsNone(
+                StateProjector(self.db, engine.state)._decision(f"pilot:{seat}")
+            )
+            packet = json.dumps(
+                session.packet(f"pilot:{seat}", full=True),
+                sort_keys=True,
+            )
+            self.assertTrue(all(ref not in packet for ref in drawn_refs))
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        accepted = self.choose(session, "A", [drawn_refs[0]])
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(
+            "exile",
+            engine._resolve_object("A", drawn_refs[0]).zone,
+        )
+        self.assertEqual(
+            1,
+            engine._resolve_object("A", drawn_refs[0]).counters["void"],
+        )
+        self.assertEqual("hand", engine._resolve_object("A", drawn_refs[1]).zone)
+        relevant = [
+            event.code
+            for event in engine.state.events[event_start:]
+            if event.code in {"card.draw.private", "choice.discard"}
+        ]
+        self.assertEqual(
+            ["card.draw.private", "card.draw.private", "choice.discard"],
+            relevant,
+        )
+        self.assert_replays(session, "draw-then-controller-discard")
+
+    def test_controller_discard_then_draw_commits_in_printed_order(self):
+        session = self.session(123005, players=4, auto_pass_empty=False)
+        engine = session.engine
+        event_start = len(engine.state.events)
+        template = fixed_controller_effect_sequence_template(
+            "Discard a card, then draw a card."
+        )
+        self.assertIsNotNone(template)
+        assert template is not None
+        self.begin_sequence(session, template.effects)
+        discarded = engine.state.cards[
+            engine.state.players["A"].zones["hand"][0]
+        ]
+
+        self.assertFalse(
+            any(
+                event.code == "card.draw.private"
+                for event in engine.state.events[event_start:]
+            )
+        )
+        accepted = self.choose(session, "A", [discarded.ref])
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", discarded.zone)
+        relevant = [
+            event.code
+            for event in engine.state.events[event_start:]
+            if event.code in {"choice.discard", "card.draw.private"}
+        ]
+        self.assertEqual(["choice.discard", "card.draw.private"], relevant)
+
+    def test_stale_controller_discard_choice_rolls_back_without_resuming(self):
+        session = self.session(123006, players=4, auto_pass_empty=False)
+        engine = session.engine
+        template = fixed_controller_effect_sequence_template(
+            "Discard a card, then draw a card."
+        )
+        self.assertIsNotNone(template)
+        assert template is not None
+        self.begin_sequence(session, template.effects)
+        stale = engine.state.cards[
+            engine.state.players["A"].zones["hand"][0]
+        ]
+        engine.move_card(
+            stale.object_id,
+            "graveyard",
+            reason="focused stale controller discard choice",
+        )
+        before = authoritative_state_hash(engine.state)
+        event_count = len(engine.state.events)
+
+        rejected = self.choose(session, "A", [stale.ref])
+
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.assertEqual(event_count, len(engine.state.events))
 
 
 if __name__ == "__main__":

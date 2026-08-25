@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "3601e3ecefafc7495d4c248b233b719dd117048a68bdbe9f2f693e24b93e809b"
+verified: "a566d7d4598552e1147612d610b1495fc911a7bbce83d8361c0d916151720c70"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -25,13 +25,14 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Sheoldred // The True Scriptures | 192 | 22 | 7 | 7 | 11 | 4 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 190 | 23 | 4 | 7 | 10 | 19 | `blocked` |
 | Dion, Bahamut's Dominant // Bahamut, Warden of Light | 189 | 23 | 6 | 7 | 8 | 10 | `blocked` |
+| Conqueror's Galleon // Conqueror's Foothold | 187 | 28 | 5 | 7 | 3 | 14 | `blocked` |
 | Elesh Norn // The Argent Etchings | 187 | 21 | 7 | 7 | 12 | 2 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
-| Conqueror's Galleon // Conqueror's Foothold | 186 | 24 | 6 | 7 | 6 | 14 | `blocked` |
 | Jin-Gitaxias // The Great Synthesis | 185 | 20 | 6 | 7 | 11 | 6 | `blocked` |
 | Cleric Class | 183 | 22 | 6 | 6 | 7 | 12 | `blocked` |
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
 | Ojer Axonil, Deepest Might // Temple of Power | 183 | 23 | 7 | 6 | 9 | 6 | `blocked` |
+| Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 181 | 21 | 6 | 6 | 9 | 15 | `blocked` |
 | Urabrask // The Great Work | 181 | 20 | 6 | 7 | 11 | 4 | `blocked` |
 | Ral, Monsoon Mage // Ral, Leyline Prodigy | 180 | 19 | 5 | 6 | 12 | 17 | `blocked` |
@@ -45,6 +46,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Devoted Grafkeeper // Departed Soulkeeper | 174 | 23 | 6 | 6 | 6 | 7 | `blocked` |
 | Invasion of Moag // Bloomwielder Dryads | 173 | 20 | 6 | 4 | 5 | 16 | `blocked` |
 | Miles Morales // Ultimate Spider-Man | 172 | 24 | 6 | 5 | 6 | 11 | `blocked` |
+| Overwhelmed Archivist // Archive Haunt | 172 | 29 | 5 | 5 | 4 | 7 | `blocked` |
 | Invasion of Tolvada // The Broken Sky | 171 | 18 | 6 | 4 | 6 | 17 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 171 | 14 | 5 | 5 | 11 | 18 | `blocked` |
 | Invasion of Kaladesh // Aetherwing, Golden-Scale Flagship | 170 | 18 | 5 | 5 | 6 | 17 | `blocked` |
@@ -61,6 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
 | Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
 | Athreos, Shroud-Veiled | 165 | 18 | 5 | 4 | 3 | 24 | `blocked` |
-| Starscream, Power Hungry // Starscream, Seeker Leader | 165 | 17 | 4 | 8 | 4 | 19 | `blocked` |
-| Titania, Gaea Incarnate | 165 | 23 | 6 | 4 | 6 | 11 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

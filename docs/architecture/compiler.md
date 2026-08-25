@@ -50,6 +50,17 @@ resolution validates the same physical and logical battlefield incarnation
 before counter replacement and again when a suspended continuation resumes.
 This production contains no card names or mechanic-specific runtime behavior.
 
+`compiler/fixed_controller_effect_sequences.py` owns one closed two-instruction
+controller grammar across spell, triggered, and activated contexts. It requires
+exactly one positive fixed ordinary draw plus one represented fixed controller
+life change, Scry, or private discard of one through four cards, in either
+printed order. The controller-discard leaf exists only inside this complete
+sequence and reuses the affected-player private selection and simultaneous
+replacement-aware move owner. Targets, affected-player groups, random or
+optional discards, dynamic quantities, conditional or linked results, and
+larger sequences remain source-spanned residuals or route through a different
+complete composition owner.
+
 `compiler/fixed_counter_controller_effect_sequences.py` owns a third closed
 two-clause grammar. It accepts exactly one fixed counter placement on the
 current source zone object or one direct permanent target plus exactly one
@@ -168,7 +179,9 @@ remain actor-private until one simultaneous replacement-aware move publishes
 the actual destinations. Spell, triggered, activated, and fixed Choose one
 modal bodies share the descriptor. Random, optional, variable, all-hand,
 revealed or qualified, linked-result, cost, cleanup, and keyword-specific
-discard forms remain source-spanned residuals.
+discard forms remain source-spanned residuals. A separate controller relation
+permits one through four cards only as a leaf of the closed fixed draw sequence
+described above; standalone controller discards remain outside this owner.
 
 `compiler/modal_templates.py` preserves the strict fixed `Choose one` spell
 owner and separately owns bounded fixed nonrepeating modal blocks across whole

@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "3ae496734e8b0f14a38058ffbdc66870a25312da36dc4dc8acc4ae7c6543df72"
+verified: "9de4ec59b4369f062969eca5996ac43dbd9b6492d5421b2f8e9ff2491ef45cb6"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 36
-- Deterministic escapes: 31
+- Escapes: 37
+- Deterministic escapes: 32
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -62,6 +62,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260821-34` | [32487783755](https://github.com/NullPriority/quorune/actions/runs/32487783755) | `source_correctness` | `not_applicable` | The calibration regression now derives observed count, subthreshold count, absolute prediction error, and trailing subthreshold count from the authoritative harvest history and configured card floor. Generated validation was already selected on the exact head, so no new impact edge is required. |
 | `ci-20260821-35` | [32487783755](https://github.com/NullPriority/quorune/actions/runs/32487783755) | `missing_affected_test` | `not_applicable` | The closed runtime-family inventory now includes the Flashback component. The existing compiler/CardProgram impact path already selected the failing shard; focused preparation for future runtime-registry additions must run the global inventory method in addition to the new component's own tests. |
 | `ci-20260824-36` | [32619053986](https://github.com/NullPriority/quorune/actions/runs/32619053986) | `generated_artifact_drift` | `added` | Semantic-pack JSON now belongs to the shared rules-source group consumed by compiler-corpus and architecture owners, so their cache keys change before a stale reviewed-program artifact can be restored. The manifest regression locks both consumers to that shared input edge. |
+| `ci-20260824-37` | [32798435371](https://github.com/NullPriority/quorune/actions/runs/32798435371) | `missing_affected_test` | `not_applicable` | The stale compound negative is split into an exact shared-owner assertion plus the remaining unsupported dynamic and noncanonical shapes. The existing compiler impact path already selected the failing cloud shard, so no new broad local or CI edge is required. |
 
 ## Measurement limitations
 

@@ -9,6 +9,9 @@ from .node_capability_shapes import (
     fixed_draw_node_capabilities,
     fixed_scry_node_capabilities,
 )
+from .affected_player_discard_capability_shapes import (
+    fixed_affected_player_discard_node_capabilities,
+)
 
 
 _FIXED_CONTROLLER_SEQUENCE_MECHANIC = "fixed-controller-effect-sequence"
@@ -134,6 +137,18 @@ def fixed_controller_effect_sequence_node_capabilities(
                 mechanic_ids=("cr-121-drawing-a-card",),
             )
             draw_count += 1
+        elif operation == "choose_cards_apnap":
+            if effect.get("players") != ["$controller"]:
+                return ()
+            required = fixed_affected_player_discard_node_capabilities(
+                effects=(effect,),
+                target_schema=None,
+                mechanic_ids=(
+                    "fixed-affected-player-discard",
+                    "cr-402-hand",
+                ),
+                allow_controller=True,
+            )
         elif operation in {_LIFE_OPERATION, "lose_life"}:
             required = fixed_life_node_capabilities(
                 effects=(effect,),

@@ -320,6 +320,14 @@ _WITNESSES = {
         "Raid — If you attacked this turn, create a Treasure token.",
         "{2}{B}",
     ),
+    "snow-day": _Witness(
+        "Snow Day",
+        "Instant",
+        "Tap up to two target creatures. Those creatures don't untap during "
+        "their controller's next untap step.\n"
+        "Draw two cards, then discard a card.",
+        "{4}{U}{U}",
+    ),
     "descend-upon-the-sinful": _Witness(
         "Descend upon the Sinful",
         "Sorcery",
@@ -738,6 +746,7 @@ ZONE_AND_CHOICE_PAIRS = (
     _pair("capability.zone.entry.tapped_state", "residual.target_or_choice.multiple-targets"),
     _pair("capability.zone.entry.tapped_state", "residual.target_or_choice.random-outcome"),
     _pair("capability.zone.change.destination_replacement", "residual.target_or_choice.conditional-effect"),
+    _pair("capability.zone.change.destination_replacement", "residual.target_or_choice.multiple-targets"),
     _pair("capability.zone.move.fixed_public_set", "residual.target_or_choice.conditional-effect"),
     _pair("capability.zone.move.fixed_public_set", "residual.target_or_choice.target-predicate"),
 )
@@ -879,6 +888,7 @@ _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])
 _bind("wintermoon-mesa", ZONE_AND_CHOICE_PAIRS[7])
 _bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[8])
 _bind("heartless-pillage", ZONE_AND_CHOICE_PAIRS[9])
+_bind("snow-day", ZONE_AND_CHOICE_PAIRS[10])
 _bind("descend-upon-the-sinful", PUBLIC_SET_AND_CHOICE_PAIRS[0])
 _bind("gideon-champion-of-justice", PUBLIC_SET_AND_CHOICE_PAIRS[1])
 _bind(

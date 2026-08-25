@@ -702,6 +702,15 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_characteristic_target_exile_uses_destination_replacement",
+      "piece_ids": ["capability.target.permanent.characteristic_predicate", "capability.zone.change.destination_replacement"],
+      "capability_ids": ["target.permanent.characteristic_predicate", "zone.change.destination_replacement"],
+      "interaction_order": 2,
+      "assertion": "A characteristic-qualified public permanent target is selected and revalidated before the typed exile request enters the canonical destination-replacement tree and reports the committed graveyard result."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_compiled_return_is_multiplayer_private_and_replays",
       "piece_ids": ["capability.permanent.return.owner_hand", "capability.target.revalidate_resolution", "mechanic.cr-400-general"],
@@ -2851,6 +2860,20 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
+        "test_id": "test_destination_replacement_multiple_targets_pair_fails_closed",
+        "piece_ids": [
+            "capability.zone.change.destination_replacement",
+            "residual.target_or_choice.multiple-targets"
+        ],
+        "capability_ids": [
+            "zone.change.destination_replacement"
+        ],
+        "interaction_order": 2,
+        "assertion": "Snow Day's typed draw-discard leaf remains unable to admit the unresolved multiple-target tap body; the focused CardProgram witness proves strict and compatible runtime authority stay withheld for the whole card."
+    },
+    {
+        "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
         "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
         "piece_ids": [
             "capability.zone.change.destination_replacement",
@@ -4295,6 +4318,25 @@
       ],
       "interaction_order": 2,
       "assertion": "Jaya Ballard, Task Mage compiles the player-life branch of its fixed simultaneous-set damage ability while the separate linked regeneration prohibition remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "piece_ids": [
+        "capability.choice.affected_player.fixed_discard",
+        "capability.resolution.effect_sequence.fixed_controller",
+        "capability.zone.change.destination_replacement",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "choice.affected_player.fixed_discard",
+        "resolution.effect_sequence.fixed_controller",
+        "zone.change.destination_replacement",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 4,
+      "assertion": "The ordered sequence completes two private ordinary draws, exposes the resulting hand objects only in the controller's private discard choice, replaces exactly the chosen discard with an opponent's public exile-and-void-counter result, and replays the suspended continuation to the identical authoritative state."
     }
   ]
 }

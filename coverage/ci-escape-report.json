@@ -615,6 +615,22 @@
       "resolution": "Semantic-pack JSON now belongs to the shared rules-source group consumed by compiler-corpus and architecture owners, so their cache keys change before a stale reviewed-program artifact can be restored. The manifest regression locks both consumers to that shared input edge.",
       "run_id": 32619053986,
       "summary": "The cloud generator reused an architecture-audit artifact after a reviewed semantic-pack event changed because semantic-pack JSON was absent from the rules-source input closure."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "casting-costs-mana"
+      ],
+      "head_sha": "6befc37c57918c701aaeac7adefa1502e9f27ca0",
+      "id": "ci-20260824-37",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_activated_draw_abilities.ActivatedDrawCompilerTests.test_dynamic_and_compound_draw_wording_remains_residual"
+      ],
+      "resolution": "The stale compound negative is split into an exact shared-owner assertion plus the remaining unsupported dynamic and noncanonical shapes. The existing compiler impact path already selected the failing cloud shard, so no new broad local or CI edge is required.",
+      "run_id": 32798435371,
+      "summary": "The fixed controller draw-discard sequence became exact through the shared sequence owner, but an activated-draw negative test still classified that wording as residual."
     }
   ],
   "known_flaky_tests": [],
@@ -622,7 +638,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-08-24T04:48:09Z",
+  "observed_at": "2026-08-25T02:10:12Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 1488.0,
@@ -667,7 +683,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "3ae496734e8b0f14a38058ffbdc66870a25312da36dc4dc8acc4ae7c6543df72",
+  "source_fingerprint": "9de4ec59b4369f062969eca5996ac43dbd9b6492d5421b2f8e9ff2491ef45cb6",
   "summary": {
     "average_critical_path_seconds": 840.5,
     "average_pushes_per_merged_pr": null,
@@ -677,12 +693,12 @@
       "flaky_test": 6,
       "generated_artifact_drift": 3,
       "infrastructure": 1,
-      "missing_affected_test": 9,
+      "missing_affected_test": 10,
       "source_correctness": 15
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 31,
-    "escape_count": 36,
+    "deterministic_escape_count": 32,
+    "escape_count": 37,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [

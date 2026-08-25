@@ -29,10 +29,24 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
     def test_all_declared_residual_pairs_fail_closed_at_runtime_boundary(
         self,
     ) -> None:
-        self.assertEqual(115, len(ALL_HIGH_RISK_BOUNDARY_PAIRS))
+        self.assertEqual(116, len(ALL_HIGH_RISK_BOUNDARY_PAIRS))
         assert_high_risk_boundary_pairs(
             self,
             ALL_HIGH_RISK_BOUNDARY_PAIRS,
+            database=self.db,
+        )
+
+    def test_destination_replacement_multiple_targets_pair_fails_closed(
+        self,
+    ) -> None:
+        assert_high_risk_boundary_pairs(
+            self,
+            (
+                (
+                    "capability.zone.change.destination_replacement",
+                    "residual.target_or_choice.multiple-targets",
+                ),
+            ),
             database=self.db,
         )
 
