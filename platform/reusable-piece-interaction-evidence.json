@@ -1162,6 +1162,15 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_token_with_damage_prevention_residual_fails_closed_at_runtime_boundary",
+      "piece_ids": ["capability.token.creation.fixed_definition", "residual.replacement.damage-prevention"],
+      "capability_ids": ["token.creation.fixed_definition"],
+      "interaction_order": 2,
+      "assertion": "Gideon, Ally of Zendikar exposes fixed token grammar beside unresolved self-prevention prose, but the unresolved CardProgram remains incompatible with runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_replacement_residuals_are_not_admitted_beside_trusted_token_trigger",
       "piece_ids": ["capability.token.creation.fixed_definition", "residual.replacement.replacement-applicability"],
       "capability_ids": ["token.creation.fixed_definition"],

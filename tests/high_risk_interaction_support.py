@@ -486,6 +486,17 @@ _WITNESSES = {
         "{4}{W}{W}",
         loyalty="4",
     ),
+    "gideon-ally-of-zendikar": _Witness(
+        "Gideon, Ally of Zendikar",
+        "Legendary Planeswalker — Gideon",
+        "+1: Until end of turn, Gideon becomes a 5/5 Human Soldier Ally "
+        "creature with indestructible that's still a planeswalker. Prevent "
+        "all damage that would be dealt to him this turn.\n"
+        "0: Create a 2/2 white Knight Ally creature token.\n"
+        "−4: You get an emblem with \"Creatures you control get +1/+1.\"",
+        "{2}{W}{W}",
+        loyalty="4",
+    ),
     "gideon-jura": _Witness(
         "Gideon Jura",
         "Legendary Planeswalker — Gideon",
@@ -622,6 +633,11 @@ PREVENTION_AND_REPLACEMENT_PAIRS = (
         "capability.damage.prevention.persistent_amount",
         "residual.replacement.self-replacement-and-prevention-ordering",
     ),
+)
+
+TOKEN_AND_DAMAGE_PREVENTION_PAIR = _pair(
+    "capability.token.creation.fixed_definition",
+    "residual.replacement.damage-prevention",
 )
 
 FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS = (
@@ -832,6 +848,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *TRIGGER_AND_REPLACEMENT_PAIRS,
             *DECLARATION_AND_REPLACEMENT_PAIRS,
             *PREVENTION_AND_REPLACEMENT_PAIRS,
+            TOKEN_AND_DAMAGE_PREVENTION_PAIR,
             *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
         }
@@ -929,6 +946,7 @@ _bind("kindred-discovery", *TRIGGER_AND_REPLACEMENT_PAIRS[6:8])
 _bind("teferis-moat", *DECLARATION_AND_REPLACEMENT_PAIRS)
 _bind("hallowed-healer", PREVENTION_AND_REPLACEMENT_PAIRS[0])
 _bind("winds-of-qal-sisma", *PREVENTION_AND_REPLACEMENT_PAIRS[1:])
+_bind("gideon-ally-of-zendikar", TOKEN_AND_DAMAGE_PREVENTION_PAIR)
 _bind("rasputin", FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS[0])
 _bind("chromatic-armor", *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS[1:])
 _bind(
@@ -1111,6 +1129,7 @@ __all__ = [
     "PREVENTION_AND_REPLACEMENT_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",
+    "TOKEN_AND_DAMAGE_PREVENTION_PAIR",
     "TRIGGER_AND_REPLACEMENT_PAIRS",
     "TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS",
     "ZONE_AND_CHOICE_PAIRS",
