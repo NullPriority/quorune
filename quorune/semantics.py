@@ -94,6 +94,7 @@ VALID_EFFECT_OPERATIONS = {
     "fabricate",
     "fixed_self_counter_keyword_action",
     "fixed_bolster",
+    "fixed_impulse_access",
     "energy",
     "exile",
     "exile_permanent",
