@@ -360,6 +360,109 @@ class FixedDirectTargetRuntimeTests(unittest.TestCase):
             engine._target_candidates("B", outlaw_group, source_ref=None),
         )
 
+    def test_characteristic_target_exile_uses_destination_replacement(self):
+        session = make_session(
+            self.db,
+            self.mishra,
+            self.zimone,
+            players=2,
+            seed=613_105_002,
+        )
+        keep_all(session)
+        engine = session.engine
+        target = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A" and card.printed_name == "Ichor Wellspring"
+        )
+        source = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B" and card.printed_name == "Zimone and Dina"
+        )
+        engine.move_card(target.object_id, "battlefield", controller="A")
+        target.annotations["copy_overrides"] = {"colors": ["U", "B"]}
+        engine.move_card(source.object_id, "battlefield", controller="B")
+
+        template = targeted_exile_effect_template(
+            "Exile target multicolored permanent."
+        )
+        self.assertIsNotNone(template)
+        assert template is not None
+        schema = dict(template.target_schema)
+        selected, grouped = engine._validate_semantic_targets(
+            "B",
+            None,
+            [target.ref],
+            source_ref=None,
+            target_schema=schema,
+        )
+        engine.semantics.put(
+            SemanticProgram(
+                key="fixture:characteristic-target-exile-replacement",
+                label="Replace characteristic-target exile destination",
+                oracle_id=source.oracle_id,
+                ability_id="static:front:characteristic-target-exile",
+                active_zone="battlefield",
+                event="zone.change",
+                trust_level="provisional",
+                handlers=[
+                    {
+                        "handler_id": "replacement.zone.destination.v1",
+                        "schema_version": 1,
+                        "event": "zone.change",
+                        "condition": {
+                            "destination": "exile",
+                            "object_kind": "card",
+                            "owner_relation": "opponent",
+                        },
+                        "destination": "graveyard",
+                        "counters": {"exile-replacement": 1},
+                    }
+                ],
+            )
+        )
+        item = StackItem(
+            stack_id="characteristic-target-exile-replacement",
+            ref="S-characteristic-target-exile-replacement",
+            kind="triggered_ability",
+            controller="B",
+            label="Characteristic-target exile replacement",
+            targets=selected,
+            visibility=list(engine.seats),
+            context={
+                "target_groups": grouped,
+                "target_snapshots": {
+                    target.ref: engine._target_snapshot(target.ref)
+                },
+                "targets_revalidated": False,
+                "targets_chosen_at_creation": True,
+            },
+        )
+        engine.state.stack.append(item)
+
+        with patch.object(
+            type(engine),
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            engine._begin_resolve_item(
+                item,
+                template.effects,
+                None,
+                note="Characteristic-target destination replacement witness",
+            )
+
+        self.assertEqual("graveyard", target.zone)
+        self.assertEqual(1, target.counters["exile-replacement"])
+        event = next(
+            event
+            for event in reversed(engine.state.events)
+            if event.code == "permanent.exile"
+        )
+        self.assertEqual("graveyard", event.details["destination"])
+        self.assertEqual("exile", event.details["requested_destination"])
+
 
 if __name__ == "__main__":
     unittest.main()
