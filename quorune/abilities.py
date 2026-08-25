@@ -109,15 +109,17 @@ class CostChoice:
             if not isinstance(self.predicate, Mapping):
                 raise ValueError("cost choice predicate must be an object")
             object.__setattr__(self, "predicate", FrozenMap(self.predicate))
-            if self.count != 1 or self.card_type is not None or self.another:
-                raise ValueError(
-                    "typed zone-change cost choices require one exact query"
-                )
-            cost = self.fixed_zone_change_cost()
-            if cost is None or self.zone != cost.origin_zone:
-                raise ValueError(
-                    "typed zone-change cost choice origin is inconsistent"
-                )
+            tap_cost = self.fixed_tap_cost()
+            if tap_cost is None:
+                if self.count != 1 or self.card_type is not None or self.another:
+                    raise ValueError(
+                        "typed zone-change cost choices require one exact query"
+                    )
+                cost = self.fixed_zone_change_cost()
+                if cost is None or self.zone != cost.origin_zone:
+                    raise ValueError(
+                        "typed zone-change cost choice origin is inconsistent"
+                    )
 
     def fixed_zone_change_cost(self) -> Any | None:
         """Return the shared closed zone-change cost represented by this choice."""
@@ -134,7 +136,7 @@ class CostChoice:
 
         contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(self.kind)
         if contract is None:
-            raise ValueError("cost choice zone-change operation is unsupported")
+            return None
         return FixedZoneChangeAdditionalCost.from_descriptor(
             {
                 "schema_version": 1,
@@ -142,6 +144,29 @@ class CostChoice:
                 "operation": self.kind,
                 "count": 1,
                 "choice_field": contract[2],
+                "predicate": thaw_value(self.predicate),
+            }
+        )
+
+    def fixed_tap_cost(self) -> Any | None:
+        """Return the shared closed selected-permanent tap cost, if present."""
+
+        if self.predicate is None:
+            return None
+        from .rules.activation_costs import (
+            FIXED_TAP_ACTIVATION_COST_KIND,
+            FixedTapActivationCost,
+        )
+
+        if self.kind != FIXED_TAP_ACTIVATION_COST_KIND:
+            return None
+        return FixedTapActivationCost.from_descriptor(
+            {
+                "schema_version": 1,
+                "kind": self.kind,
+                "count": self.count,
+                "zone": self.zone,
+                "another": self.another,
                 "predicate": thaw_value(self.predicate),
             }
         )

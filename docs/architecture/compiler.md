@@ -232,6 +232,18 @@ exile-self transaction through the same continuation identity. Variable,
 multiple, optional, random, repeated, linked, dynamic, mana-ability, and
 cost-ordering forms remain source-spanned residuals.
 
+`compiler/activated_tap_costs.py` owns one separate fixed selected-permanent
+tap-cost grammar. It accepts a positive fixed count of untapped permanents the
+activator controls when one current effective permanent card type or pinned
+subtype completely describes the selection, with an optional source exclusion.
+Offers and commits consume the same actor-bound `ObjectQuerySpec`; the payment
+owner validates the entire distinct selection before the canonical tap-state
+owner mutates any permanent. Ordinary-word tap costs do not inherit the source
+tap-symbol summoning-sickness restriction. Source `{T}` and `{Q}` costs, mana
+abilities, type or subtype unions, qualified predicates, and Crew, Station,
+Convoke, and Improvise semantics retain their existing independent owners or
+remain source-spanned residuals.
+
 `compiler/keyword_nodes.py` owns one closed ordinary fixed-mana Morph
 production. It lowers the turn-up cost to a typed all-zone runtime component;
 the casting proposal owner separately supplies the face-down `{3}` creature-

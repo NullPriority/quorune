@@ -35,6 +35,7 @@ from .activated_costs import (
     activated_ability_cost_capabilities,
 )
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
+from .activated_tap_costs import fixed_activated_tap_cost
 from .dependency_gate import (
     DependencyGate,
     dependency_gate,
@@ -666,7 +667,9 @@ def activated_oracle_node(
     if not abilities:
         return None
     ability, fixed_mana = fixed_activated_mana_node(
-        fixed_activated_zone_change_cost(abilities[0]),
+        fixed_activated_tap_cost(
+            fixed_activated_zone_change_cost(abilities[0])
+        ),
         node_id,
         line,
         span,

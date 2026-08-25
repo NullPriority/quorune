@@ -1290,6 +1290,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/activated_tap_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/activation_restriction_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
