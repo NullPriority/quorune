@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "6915ffc2cce784864160f4b1df5c46d0991570a9f370fe4466bb9bc4908b0dc2"
+verified: "a8417c591b5cc011a170cd495c493b776a73730578bf49baf325a6ead5fe273f"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -54,7 +54,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Vryn // Overloaded Mage-Ring | 170 | 13 | 6 | 3 | 8 | 24 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 170 | 17 | 6 | 5 | 10 | 8 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 169 | 19 | 6 | 6 | 11 | 10 | `blocked` |
-| Gwen Stacy // Ghost-Spider | 168 | 22 | 5 | 5 | 8 | 13 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 168 | 18 | 5 | 4 | 6 | 18 | `blocked` |
 | Optimus Prime, Hero // Optimus Prime, Autobot Leader | 168 | 21 | 5 | 6 | 4 | 16 | `blocked` |
 | Dr. Madison Li | 167 | 28 | 6 | 4 | 4 | 10 | `blocked` |
@@ -63,4 +62,5 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
 | Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
 | Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
+| Athreos, Shroud-Veiled | 165 | 18 | 5 | 4 | 3 | 24 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
