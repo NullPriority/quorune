@@ -549,6 +549,65 @@ class FixedImpulseAccessRuntimeTests(unittest.TestCase):
         expire_temporary_play_permissions(engine.state, active_player="A")
         self.assertNotIn("temporary_play_permission", next_turn.annotations)
 
+    def test_all_illegal_target_prevents_impulse_access(self) -> None:
+        session = self.session(7202506)
+        engine = session.engine
+        self.clear_library(engine, "A")
+        top = self.add_card(
+            engine,
+            seat="A",
+            name="Island",
+            ref="target-gated-impulse-top",
+            zone="library",
+        )
+        spell = self.add_card(
+            engine,
+            seat="A",
+            name="Blazing Crescendo",
+            ref="target-gated-impulse",
+            zone="hand",
+        )
+        target = self.add_card(
+            engine,
+            seat="B",
+            name="Bloom Tender",
+            ref="departing-impulse-target",
+            zone="battlefield",
+        )
+        self.register(engine, "Blazing Crescendo")
+        engine.state.players["A"].mana_pool.update({"C": 1, "R": 1})
+        self.issue_main_priority(engine)
+        action = next(
+            row
+            for row in self.legal_actions(session)
+            if row["id"] == f"cast:{spell.ref}"
+        )
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "R": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("stack", spell.zone)
+
+        engine.move_card(
+            target.object_id,
+            "graveyard",
+            reason="response",
+            log=False,
+        )
+        self.resolve_top(engine)
+
+        self.assertFalse(engine.state.stack)
+        self.assertEqual("graveyard", spell.zone)
+        self.assertEqual("library", top.zone)
+        self.assertNotIn("temporary_play_permission", top.annotations)
+
     def test_four_player_impulse_access_is_public_privacy_safe_and_replays(
         self,
     ) -> None:

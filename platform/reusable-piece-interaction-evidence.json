@@ -4346,6 +4346,49 @@
       ],
       "interaction_order": 4,
       "assertion": "The ordered sequence completes two private ordinary draws, exposes the resulting hand objects only in the controller's private discard choice, replaces exactly the chosen discard with an opponent's public exile-and-void-counter result, and replays the suspended continuation to the identical authoritative state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_all_illegal_target_prevents_impulse_access",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.impulse_access.fixed"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.impulse_access.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Blazing Crescendo revalidates its only target before either represented instruction resolves, so a departed target prevents both the characteristic change and the later library-to-exile impulse-access transaction."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_impulse_access_residual_choice_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": [
+        "capability.zone.impulse_access.fixed",
+        "residual.target_or_choice.multiple-damage-recipients"
+      ],
+      "capability_ids": [
+        "zone.impulse_access.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Chandra, Pyromaster compiles its independent fixed impulse-access loyalty ability while its separate multiple-recipient damage grammar remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_impulse_access_residual_choice_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": [
+        "capability.zone.impulse_access.fixed",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.impulse_access.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Chandra, Pyromaster compiles its independent fixed impulse-access loyalty ability while its separate controller-relative target predicate remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
     }
   ]
 }

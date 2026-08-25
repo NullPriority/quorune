@@ -603,6 +603,20 @@ _WITNESSES = {
         "{1}{G}",
         ("Ferocious",),
     ),
+    "chandra-pyromaster": _Witness(
+        "Chandra, Pyromaster",
+        "Legendary Planeswalker — Chandra",
+        "+1: Chandra deals 1 damage to target player or planeswalker and 1 "
+        "damage to up to one target creature that player or that "
+        "planeswalker's controller controls. That creature can't block this "
+        "turn.\n"
+        "0: Exile the top card of your library. You may play it this turn.\n"
+        "−7: Exile the top ten cards of your library. Choose an instant or "
+        "sorcery card exiled this way and copy it three times. You may cast "
+        "the copies without paying their mana costs.",
+        "{2}{R}{R}",
+        loyalty="4",
+    ),
 }
 
 
@@ -683,6 +697,17 @@ TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS = (
     _pair(
         "capability.permanent.untap.effect",
         "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+)
+
+IMPULSE_ACCESS_AND_CHOICE_PAIRS = (
+    _pair(
+        "capability.zone.impulse_access.fixed",
+        "residual.target_or_choice.multiple-damage-recipients",
+    ),
+    _pair(
+        "capability.zone.impulse_access.fixed",
+        "residual.target_or_choice.target-predicate",
     ),
 )
 
@@ -851,6 +876,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             TOKEN_AND_DAMAGE_PREVENTION_PAIR,
             *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
+            *IMPULSE_ACCESS_AND_CHOICE_PAIRS,
         }
     )
 )
@@ -957,6 +983,7 @@ _bind(
 _bind("tangle-kelp", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[1])
 _bind("pemmins-aura", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[2])
 _bind("sleep-cursed-faerie", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
+_bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS)
 
 if set(_PAIR_WITNESS) != set(ALL_HIGH_RISK_BOUNDARY_PAIRS):
     raise AssertionError("high-risk witness map is incomplete")
@@ -1126,6 +1153,7 @@ __all__ = [
     "EFFECT_AND_REPLACEMENT_PAIRS",
     "FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS",
     "FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS",
+    "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",
