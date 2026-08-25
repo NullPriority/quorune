@@ -682,6 +682,78 @@
       "applicability_note": "Replay the source-pinned chosen-name designation to the exact authoritative state used by typed activation availability."
     },
     {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose current effective subtype, control, phasing, tapped state, ordinary activation, draw resolution, and exact replay without a family-specific characteristic path."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep a four-player activation offer scoped to the activator's controlled battlefield while preserving the ordinary priority frame."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_selected_tap_cost_compiler_mutant_is_killed",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the shared fixed tap-cost compiler production and require the exact source-spanned witness to kill the survivor."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_tap_cost_grammar_rejects_qualified_and_open_variants",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Leave variable, union, color, supertype, token, target, and additional-predicate tap costs material rather than approximating their selections."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject duplicate, tapped, stale, or otherwise ineligible submitted permanents through the same typed query used by the offer."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_fixed_type_and_subtype_tap_costs_compile_source_spanned",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed type and pinned-subtype selections, positive fixed counts, and source exclusion into one source-spanned actor-bound query."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Advertise and tap one current untapped controlled Wizard, including the summoning-sick source for an ordinary-word tap cost, before stack placement."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the selected tap payment, stack object, and private draw result to the exact authoritative state hash."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
+      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preflight the complete fixed-count selection and leave every earlier permanent untapped when a later candidate is stale."
+    },
+    {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_replacement_is_private_and_replays",
@@ -776,78 +848,6 @@
       "official_rule_ids": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Roll back cost movement, mana, and stack placement before presenting a competing replacement choice for the selected object."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "positive",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_fixed_type_and_subtype_tap_costs_compile_source_spanned",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Compile fixed type and pinned-subtype selections, positive fixed counts, and source exclusion into one source-spanned actor-bound query."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "positive",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Advertise and tap one current untapped controlled Wizard, including the summoning-sick source for an ordinary-word tap cost, before stack placement."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "negative",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_tap_cost_grammar_rejects_qualified_and_open_variants",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Leave variable, union, color, supertype, token, target, and additional-predicate tap costs material rather than approximating their selections."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "negative",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Reject duplicate, tapped, stale, or otherwise ineligible submitted permanents through the same typed query used by the offer."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Compose current effective subtype, control, phasing, tapped state, ordinary activation, draw resolution, and exact replay without a family-specific characteristic path."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Keep a four-player activation offer scoped to the activator's controlled battlefield while preserving the ordinary priority frame."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "replay",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Replay the selected tap payment, stack object, and private draw result to the exact authoritative state hash."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "rollback",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Preflight the complete fixed-count selection and leave every earlier permanent untapped when a later candidate is stale."
-    },
-    {
-      "capability_id": "activation.selected_tap.fixed",
-      "evidence_class": "mutation",
-      "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_selected_tap_cost_compiler_mutant_is_killed",
-      "official_rule_ids": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Remove the shared fixed tap-cost compiler production and require the exact source-spanned witness to kill the survivor."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",

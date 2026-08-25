@@ -108,6 +108,14 @@ def build_plan(
                         base_ref,
                     ),
                 ),
+                QuickStep(
+                    "capability-evidence-declarations",
+                    (
+                        python,
+                        "scripts/update_capability_evidence.py",
+                        "--validate-declarations",
+                    ),
+                ),
             )
         )
     if phase == "normal" and "compact-ci-dependencies" in impact.checks:

@@ -556,6 +556,11 @@ def main() -> int:
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
     mode.add_argument(
+        "--validate-declarations",
+        action="store_true",
+        help="Validate declaration sources without requiring generated output.",
+    )
+    mode.add_argument(
         "--bootstrap-declarations",
         action="store_true",
         help="One-time migration from legacy registry test citations.",
@@ -573,6 +578,8 @@ def main() -> int:
         declaration_source=source,
         discovered_test_ids=set(discovered.values()),
     )
+    if args.validate_declarations:
+        return 0
     expected = _json_text(index)
     if args.write:
         OUTPUT_PATH.write_text(expected, encoding="utf-8")
