@@ -418,13 +418,15 @@ def _activated_cost_dependency_gate(
         additional.append("activation.loyalty.positive_counter_cost")
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         additional.append("activation.exhaust.once_per_object")
-    if (
+    if not ability.mana_ability and (
         ability.discard_source
         or ability.sacrifice_source
         or ability.exile_source
     ):
         additional.append("activation.source_zone_change.fixed")
-    if any(choice.predicate is not None for choice in ability.choices):
+    if not ability.mana_ability and any(
+        choice.predicate is not None for choice in ability.choices
+    ):
         additional.append("activation.selected_zone_change.fixed")
     if not additional:
         return gate

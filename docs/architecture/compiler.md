@@ -222,7 +222,10 @@ for one mandatory selected-object activation cost. It accepts only one fixed
 discard, sacrifice, battlefield or graveyard exile, or return payment whose
 actor-bound `ObjectQuerySpec` and operation-owned origin and destination are
 already closed by the casting-cost owner. Offers and commits obtain candidates
-through that same effective-characteristic query; replacement suspension pins
+through that same effective-characteristic query. Matching legacy one-object
+discard, sacrifice, and return descriptors are promoted to this typed owner;
+multi-object, `another`, and mana-ability descriptors remain outside it.
+Replacement suspension pins
 the selected object and the complete priority-action frame before any mana,
 zone, or stack mutation. Source sacrifice joins the existing discard-self and
 exile-self transaction through the same continuation identity. Variable,

@@ -157,6 +157,27 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
                 "types_all",
                 ["artifact"],
             ),
+            (
+                fixture_card(
+                    "Hand Discard Fixture",
+                    "Discard a red or green card: Draw a card.",
+                ),
+                "discard_one",
+                "hand",
+                "colors_any",
+                ["G", "R"],
+            ),
+            (
+                fixture_card(
+                    "Battlefield Return Fixture",
+                    "Return a land you control to its owner's hand: "
+                    "Draw a card.",
+                ),
+                "return_one_to_owner_hand",
+                "battlefield",
+                "types_all",
+                ["land"],
+            ),
         )
         for record, operation, zone, predicate_field, predicate_value in examples:
             with self.subTest(record=record.name):
@@ -253,6 +274,30 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
         legacy = CostChoice(kind="sacrifice", card_type="creature")
         with self.assertRaisesRegex(ValueError, "nonnull objects"):
             CostChoice.from_dict({**legacy.to_dict(), "predicate": None})
+
+    def test_activation_zone_change_costs_exclude_mana_abilities(self):
+        ability = parse_activated_abilities(
+            card_name="Mana Cost Fixture",
+            oracle_text="Sacrifice a Goblin: Add {R}.",
+        )[0]
+
+        self.assertTrue(ability.mana_ability)
+        self.assertTrue(ability.uncompiled_costs)
+        self.assertIs(
+            ability,
+            activated_mana_nodes.fixed_activated_zone_change_cost(ability),
+        )
+        source_ir = self.compile(
+            fixture_card(
+                "Source Mana Cost Fixture",
+                "Sacrifice this artifact: Add {C}.",
+            )
+        )
+        source_node = source_ir.faces[0].nodes[0]
+        self.assertNotIn(
+            SOURCE_COST_CAPABILITY,
+            source_node.capability_dependencies,
+        )
 
     def test_source_zone_cost_rejects_inconsistent_descriptor(self):
         ability = parse_activated_abilities(
