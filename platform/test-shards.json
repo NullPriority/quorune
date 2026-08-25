@@ -277,6 +277,7 @@
       "test_fixed_counter_controller_effect_sequences",
       "test_fixed_damage_effect_clauses",
       "test_fixed_effect_clause_sequences",
+      "test_fixed_impulse_access",
       "test_fixed_keyword_entry_counters",
       "test_fixed_library_searches",
       "test_fixed_multikind_counter_batches",

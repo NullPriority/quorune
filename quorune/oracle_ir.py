@@ -62,6 +62,9 @@ from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
 from .compiler.mill_templates import fixed_mill_effect_template
+from .compiler.impulse_access_templates import (
+    fixed_impulse_access_effect_template,
+)
 from .compiler.modal_context_nodes import (
     fixed_nonrepeating_modal_context_blocks,
 )
@@ -123,7 +126,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v127"
+ORACLE_COMPILER_VERSION = "oracle-ir-v128"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -291,6 +294,9 @@ def _effect_template(
     mill_template = fixed_mill_effect_template(normalized)
     if mill_template is not None:
         return mill_template.compiled()
+    impulse_access = fixed_impulse_access_effect_template(normalized)
+    if impulse_access is not None:
+        return impulse_access.compiled()
     library_search = fixed_library_search_effect_template(normalized)
     if library_search is not None:
         return library_search.compiled()

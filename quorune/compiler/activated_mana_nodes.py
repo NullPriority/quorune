@@ -336,6 +336,7 @@ def _activated_effect_dependency_gate(
             "return_graveyard_card_to_owner_hand",
             "fixed_self_counter_keyword_action",
             "fixed_bolster",
+            "fixed_impulse_access",
             "life",
             "lose_life",
             "lose_life_each_opponent",

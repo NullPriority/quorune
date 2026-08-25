@@ -175,6 +175,7 @@ from .selection.storm import STORM_SEMANTIC_KEY, StormTargetChoiceOwnerMixin
 from .selection.exile_cast import OneShotExileCastChoiceOwnerMixin
 from .selection.public_choice import PublicChoiceOwnerMixin
 from . import turn_counter_coordination
+from .impulse_access import temporary_play_permission_is_current
 from . import untap_step_coordination
 from .saga_progression import saga_final_chapter_snapshot
 from . import haste
@@ -2644,11 +2645,11 @@ class CommanderEngine(
         permission = card.annotations.get("temporary_play_permission")
         if not isinstance(permission, Mapping):
             return None
-        if (
-            str(permission.get("player") or "") != seat
-            or int(permission.get("turn_sequence", -1))
-            != self.state.turn_sequence
-            or str(permission.get("zone") or "") != card.zone
+        if not temporary_play_permission_is_current(
+            self.state,
+            seat,
+            card,
+            permission,
         ):
             return None
         return permission

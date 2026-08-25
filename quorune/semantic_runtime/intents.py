@@ -11,6 +11,7 @@ from ..drawing.model import (
     RevealDrawnCard,
 )
 from ..fixed_damage_set_model import FixedDamageSetSpec
+from ..impulse_access_model import ImpulseAccessDuration
 from ..entry_counter_model import EffectEntryCounter
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, freeze_value
@@ -91,6 +92,32 @@ class MillCardsIntent:
             )
         if type(self.count) is not int or self.count <= 0:
             raise ValueError("Mill intents require a positive fixed count")
+
+
+@dataclass(frozen=True, slots=True)
+class ImpulseAccessIntent:
+    actor: str
+    player: str
+    count: int
+    duration: ImpulseAccessDuration
+    reason: str
+
+    def __post_init__(self) -> None:
+        if any(
+            type(value) is not str or not value
+            for value in (self.actor, self.player, self.reason)
+        ):
+            raise ValueError(
+                "Impulse-access intents require an actor, player, and reason"
+            )
+        if type(self.count) is not int or not 1 <= self.count <= 10:
+            raise ValueError(
+                "Impulse-access intents require a count from one to ten"
+            )
+        if not isinstance(self.duration, ImpulseAccessDuration):
+            raise ValueError(
+                "Impulse-access intents require a typed duration"
+            )
 
 
 @dataclass(frozen=True, slots=True)
