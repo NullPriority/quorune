@@ -2,7 +2,7 @@
 title: "Browser product"
 status: "current"
 authoritative_source: "web client, projected protocol, server application, and headless browser tests"
-verified: "2026-08-07"
+verified: "2026-08-25"
 audience: "local players, spectators, and product contributors"
 maintenance: "hand-maintained"
 concern: "browser-product"
@@ -54,6 +54,10 @@ timing, priority, cost, target, semantic, fidelity, or capability validation.
 Versioned generic forms render server-issued modes, targets, ordering,
 assignments, private selections, and confirmations. Unknown forms remain
 unavailable rather than being guessed.
+
+Mode checkboxes maintain the server-issued printed order regardless of click
+order. Adding or removing a mode preserves targets for every still-selected
+mode and drops only groups that are no longer legal.
 
 The ordered Scry form labels every looked-at card from the seat-private
 projection. It separates top and bottom groups, states which end of each list

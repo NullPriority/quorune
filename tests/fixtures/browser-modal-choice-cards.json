@@ -1,0 +1,27 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": ["U"],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Modal Choice Witness",
+      "oracle_id": "983af02c-5be0-4d65-8e63-dce84e7f4b6d",
+      "oracle_text": "{0}: Choose two —\n• Target player gains 2 life.\n• Target player draws a card.\n• Modal Choice Witness deals 2 damage to target player.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2026-08-25",
+      "toughness": "4",
+      "type_line": "Legendary Artifact Creature — Construct"
+    }
+  ],
+  "fixture_kind": "browser_modal_choice_cards",
+  "rulings": [],
+  "schema_version": 1,
+  "source": "Synthetic exact browser witness for the generic modal choice contract"
+}

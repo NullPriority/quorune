@@ -7,6 +7,7 @@ import {
   orderedPartitionNames,
   record,
   targetGroups,
+  updateModalTargetSelection,
   type ChoiceField,
   type ChoiceValues,
 } from "./choices";
@@ -293,12 +294,14 @@ function TargetControl({
   const targets = record(values[name]);
   const legalModes = list(schema.legal_modes).map(String);
   function toggleMode(mode: string, checked: boolean) {
-    const maximum = Number(schema.max_modes ?? schema.mode_count ?? 1);
-    let next = checked ? [...modes, mode] : modes.filter((item) => item !== mode);
-    if (next.length > maximum) {
-      next = maximum === 1 ? [mode] : [...next.slice(-(maximum - 1)), mode];
-    }
-    onChange({ ...values, modes: next, [name]: {} });
+    const next = updateModalTargetSelection(
+      schema,
+      modes,
+      targets,
+      mode,
+      checked,
+    );
+    onChange({ ...values, modes: next.modes, [name]: next.targets });
   }
   function toggleTarget(group: ChoiceField, ref: string, checked: boolean) {
     const id = text(group.id || "target");

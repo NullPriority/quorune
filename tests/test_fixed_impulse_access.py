@@ -14,7 +14,6 @@ from quorune.errors import GameRuleError
 from quorune.impulse_access import (
     ImpulseAccessRequest,
     commit_fixed_impulse_access,
-    expire_temporary_play_permissions,
     prepare_fixed_impulse_access,
     resolve_fixed_impulse_access,
     temporary_play_permission_is_current,
@@ -22,7 +21,7 @@ from quorune.impulse_access import (
 from quorune.impulse_access_model import ImpulseAccessDuration
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, generated_programs
-from quorune.projection import StateProjector
+from quorune.projection import ProjectionCursor, StateProjector
 from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
@@ -33,6 +32,8 @@ from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
 from quorune.semantic_runtime import ImpulseAccessIntent
+from quorune.session import CommanderSession
+from quorune.zone_transitions import ZoneTransitionOwner
 from scripts.build_test_database import build_fixture_database
 
 
@@ -469,13 +470,77 @@ class FixedImpulseAccessRuntimeTests(unittest.TestCase):
         self.assertEqual("stack", spell.zone)
         self.assertNotIn("temporary_play_permission", spell.annotations)
 
+    def test_only_actual_exile_arrivals_receive_permission_and_incarnation_resets(
+        self,
+    ) -> None:
+        session = self.session(7202507)
+        engine = session.engine
+        self.clear_library(engine, "A")
+        reaches_exile = self.add_card(
+            engine,
+            seat="A",
+            name="Island",
+            ref="actual-exile-arrival",
+            zone="library",
+        )
+        redirected = self.add_card(
+            engine,
+            seat="A",
+            name="Panharmonicon",
+            ref="redirected-exile-arrival",
+            zone="library",
+        )
+        original_move = ZoneTransitionOwner.move_cards_simultaneously
+
+        def redirect_first(owner, moves, **kwargs):
+            requested = list(moves)
+            return original_move(
+                owner,
+                [
+                    (requested[0][0], "hand"),
+                    (requested[1][0], requested[1][1]),
+                ],
+                **kwargs,
+            )
+
+        with patch.object(
+            ZoneTransitionOwner,
+            "move_cards_simultaneously",
+            autospec=True,
+            side_effect=redirect_first,
+        ):
+            result = resolve_fixed_impulse_access(
+                engine,
+                ImpulseAccessRequest(
+                    "A",
+                    "A",
+                    2,
+                    ImpulseAccessDuration.END_OF_TURN,
+                    "actual exile arrival test",
+                ),
+            )
+
+        self.assertEqual("hand", redirected.zone)
+        self.assertNotIn("temporary_play_permission", redirected.annotations)
+        self.assertEqual((reaches_exile.ref,), result.exiled_refs)
+        self.assertIn("temporary_play_permission", reaches_exile.annotations)
+
+        granted_incarnation = reaches_exile.logical_object_id
+        physical_id = reaches_exile.object_id
+        engine.move_card(reaches_exile.object_id, "hand", log=False)
+        self.assertNotEqual(granted_incarnation, reaches_exile.logical_object_id)
+        self.assertNotIn("temporary_play_permission", reaches_exile.annotations)
+        engine.move_card(reaches_exile.object_id, "exile", log=False)
+        self.assertEqual(physical_id, reaches_exile.object_id)
+        self.assertNotEqual(granted_incarnation, reaches_exile.logical_object_id)
+        self.assertNotIn("temporary_play_permission", reaches_exile.annotations)
+
     def test_permissions_expire_at_current_or_next_extra_turn_cleanup(
         self,
     ) -> None:
         session = self.session(7202504)
         engine = session.engine
         engine.state.active_player = "A"
-        engine.state.players["A"].turns_begun = 4
         self.clear_library(engine, "A")
         current = self.add_card(
             engine,
@@ -508,7 +573,9 @@ class FixedImpulseAccessRuntimeTests(unittest.TestCase):
         engine._finish_cleanup()
         self.assertNotIn("temporary_play_permission", current.annotations)
 
-        engine.state.active_player = "A"
+        session = self.session(7202508)
+        engine = session.engine
+        self.clear_library(engine, "A")
         next_turn = self.add_card(
             engine,
             seat="A",
@@ -526,17 +593,22 @@ class FixedImpulseAccessRuntimeTests(unittest.TestCase):
                 "next-turn duration test",
             ),
         )
-        expire_temporary_play_permissions(engine.state, active_player="A")
-        self.assertIn("temporary_play_permission", next_turn.annotations)
-
-        engine.state.turn_sequence += 1
-        engine.state.active_player = "B"
-        expire_temporary_play_permissions(engine.state, active_player="B")
-        self.assertIn("temporary_play_permission", next_turn.annotations)
-
-        engine.state.turn_sequence += 1
-        engine.state.active_player = "A"
-        engine.state.players["A"].turns_begun += 1
+        for expected in "BCD":
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            engine.state.phase = "ending"
+            engine.state.step = "cleanup"
+            engine._finish_cleanup()
+            self.assertEqual(expected, engine.state.active_player)
+            self.assertIn("temporary_play_permission", next_turn.annotations)
+        engine.schedule_extra_turn("A", source="impulse duration test")
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.phase = "ending"
+        engine.state.step = "cleanup"
+        engine._finish_cleanup()
+        self.assertEqual("A", engine.state.active_player)
+        self.assertTrue(engine.state.current_turn.extra)
         permission = next_turn.annotations["temporary_play_permission"]
         self.assertTrue(
             temporary_play_permission_is_current(
@@ -546,8 +618,149 @@ class FixedImpulseAccessRuntimeTests(unittest.TestCase):
                 permission,
             )
         )
-        expire_temporary_play_permissions(engine.state, active_player="A")
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.phase = "ending"
+        engine.state.step = "cleanup"
+        engine._finish_cleanup()
         self.assertNotIn("temporary_play_permission", next_turn.annotations)
+
+    def test_public_exile_projection_is_stable_across_hidden_top_orders(self) -> None:
+        sessions = [self.session(7202509), self.session(7202509)]
+        top_orders = [
+            ("projection-a", "projection-b", "projection-c"),
+            ("projection-c", "projection-b", "projection-a"),
+        ]
+        cursors: list[dict[str, ProjectionCursor]] = []
+        physical_ids: set[str] = set()
+        for session, top_order in zip(sessions, top_orders, strict=True):
+            engine = session.engine
+            self.clear_library(engine, "A")
+            cards = {
+                "projection-a": "Island",
+                "projection-b": "Sol Ring",
+                "projection-c": "Panharmonicon",
+            }
+            for ref in reversed(top_order):
+                card = self.add_card(
+                    engine,
+                    seat="A",
+                    name=cards[ref],
+                    ref=ref,
+                    zone="library",
+                )
+                physical_ids.add(card.object_id)
+            seat_cursors: dict[str, ProjectionCursor] = {}
+            for seat in "BCD":
+                cursor = ProjectionCursor()
+                StateProjector(self.db, engine.state).packet(
+                    f"pilot:{seat}",
+                    cursor,
+                    force_full=True,
+                )
+                seat_cursors[seat] = cursor
+            cursors.append(seat_cursors)
+            result = resolve_fixed_impulse_access(
+                engine,
+                ImpulseAccessRequest(
+                    "A",
+                    "A",
+                    3,
+                    ImpulseAccessDuration.END_OF_TURN,
+                    "projection order privacy test",
+                ),
+            )
+            self.assertEqual(top_order, result.exiled_refs)
+
+        for seat in "BCD":
+            projectors = [
+                StateProjector(self.db, session.engine.state)
+                for session in sessions
+            ]
+            full = [
+                projector.packet(
+                    f"pilot:{seat}",
+                    ProjectionCursor(),
+                    force_full=True,
+                )
+                for projector in projectors
+            ]
+            delta = [
+                projector.packet(f"pilot:{seat}", cursors[index][seat])
+                for index, projector in enumerate(projectors)
+            ]
+            comparable_states = []
+            for packet in full:
+                state = dict(packet["state"])
+                state.pop("game", None)
+                comparable_states.append(state)
+            self.assertEqual(comparable_states[0], comparable_states[1])
+            self.assertEqual(full[0].get("events"), full[1].get("events"))
+            self.assertEqual(delta[0]["patch"], delta[1]["patch"])
+            self.assertEqual(delta[0].get("events"), delta[1].get("events"))
+            exile = full[0]["state"]["players"]["A"]["ex"]
+            self.assertEqual(
+                {"projection-a", "projection-b", "projection-c"},
+                {card["id"] for card in exile},
+            )
+            serialized = json.dumps({"full": full[0], "delta": delta[0]})
+            self.assertTrue(
+                all(
+                    "library" not in player
+                    for player in full[0]["state"]["players"].values()
+                )
+            )
+            for object_id in physical_ids:
+                self.assertNotIn(object_id, serialized)
+            impulse_events = [
+                event
+                for event in full[0].get("events", [])
+                if event["c"] == "library.impulse_access"
+            ]
+            self.assertEqual(1, len(impulse_events))
+            self.assertNotIn("d", impulse_events[0])
+
+        analyst_exile = StateProjector(
+            self.db,
+            sessions[0].engine.state,
+        )._snapshot("analyst")["players"]["A"]["ex"]
+        self.assertEqual(top_orders[0], tuple(card["id"] for card in analyst_exile))
+        public_history = StateProjector(
+            self.db,
+            sessions[0].engine.state,
+        ).event_page("pilot:B")
+        impulse_history = next(
+            event
+            for event in public_history["events"]
+            if event["code"] == "library.impulse_access"
+        )
+        self.assertEqual(
+            {"id", "code", "actor", "summary", "importance"},
+            set(impulse_history),
+        )
+
+        graveyard_first = self.add_card(
+            sessions[0].engine,
+            seat="A",
+            name="Island",
+            ref="graveyard-z",
+            zone="graveyard",
+        )
+        graveyard_second = self.add_card(
+            sessions[0].engine,
+            seat="A",
+            name="Sol Ring",
+            ref="graveyard-a",
+            zone="graveyard",
+        )
+        projected_graveyard = StateProjector(
+            self.db,
+            sessions[0].engine.state,
+        )._snapshot("pilot:B")["players"]["A"]["gy"]
+        self.assertEqual(
+            [graveyard_first.ref, graveyard_second.ref],
+            [card["id"] for card in projected_graveyard[-2:]],
+        )
 
     def test_all_illegal_target_prevents_impulse_access(self) -> None:
         session = self.session(7202506)
@@ -651,6 +864,30 @@ class FixedImpulseAccessRuntimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "fixed-impulse-record"
             session.save(record_dir)
+            loaded = CommanderSession.load(self.db, record_dir)
+            original_packet = session.packet(
+                "pilot:B",
+                full=True,
+                cursor_key="impulse-reconnect-original",
+            )
+            loaded_packet = loaded.packet(
+                "pilot:B",
+                full=True,
+                cursor_key="impulse-reconnect-loaded",
+            )
+            self.assertEqual(original_packet["state"], loaded_packet["state"])
+            loaded_permissions = {
+                card.ref: card.annotations.get("temporary_play_permission")
+                for card in loaded.state.cards.values()
+                if card.ref in {first.ref, second.ref}
+            }
+            self.assertEqual(
+                {
+                    first.ref: first.annotations["temporary_play_permission"],
+                    second.ref: second.annotations["temporary_play_permission"],
+                },
+                loaded_permissions,
+            )
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])

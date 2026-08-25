@@ -544,32 +544,49 @@ def available_modes(schema: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(str(name) for name in modes)
 
 
+def canonical_modes(
+    schema: Mapping[str, Any],
+    modes: Sequence[str] = (),
+    *,
+    require_modes: bool = True,
+) -> tuple[str, ...]:
+    """Validate one modal selection and return it in printed order."""
+
+    selected_modes = tuple(str(mode) for mode in modes)
+    mode_definitions = schema.get("modes")
+    if not isinstance(mode_definitions, Mapping):
+        return selected_modes
+    minimum_modes = int(schema.get("min_modes", schema.get("mode_count", 1)))
+    maximum_modes = int(schema.get("max_modes", schema.get("mode_count", 1)))
+    if require_modes and not (
+        minimum_modes <= len(selected_modes) <= maximum_modes
+    ):
+        raise ValueError(
+            f"Action requires between {minimum_modes} and {maximum_modes} mode(s)"
+        )
+    if len(set(selected_modes)) != len(selected_modes):
+        raise ValueError("The same mode cannot be selected twice")
+    mode_order = {str(mode): index for index, mode in enumerate(mode_definitions)}
+    if any(mode not in mode_order for mode in selected_modes):
+        unknown = next(mode for mode in selected_modes if mode not in mode_order)
+        raise ValueError(f"Unknown target mode {unknown!r}")
+    return tuple(sorted(selected_modes, key=mode_order.__getitem__))
+
+
 def target_plan(
     schema: Mapping[str, Any],
     modes: Sequence[str] = (),
     *,
     require_modes: bool = True,
 ) -> TargetPlan:
-    selected_modes = tuple(str(mode) for mode in modes)
+    selected_modes = canonical_modes(
+        schema,
+        modes,
+        require_modes=require_modes,
+    )
     mode_definitions = schema.get("modes")
     raw_groups: list[Mapping[str, Any]] = []
     if isinstance(mode_definitions, Mapping):
-        minimum_modes = int(schema.get("min_modes", schema.get("mode_count", 1)))
-        maximum_modes = int(schema.get("max_modes", schema.get("mode_count", 1)))
-        if require_modes and not (
-            minimum_modes <= len(selected_modes) <= maximum_modes
-        ):
-            raise ValueError(
-                f"Action requires between {minimum_modes} and {maximum_modes} mode(s)"
-            )
-        if len(set(selected_modes)) != len(selected_modes):
-            raise ValueError("The same mode cannot be selected twice")
-        mode_order = {str(mode): index for index, mode in enumerate(mode_definitions)}
-        if any(mode not in mode_order for mode in selected_modes):
-            unknown = next(mode for mode in selected_modes if mode not in mode_order)
-            raise ValueError(f"Unknown target mode {unknown!r}")
-        if tuple(sorted(selected_modes, key=mode_order.__getitem__)) != selected_modes:
-            raise ValueError("Selected modes must remain in printed order")
         for mode in selected_modes:
             definition = mode_definitions.get(mode)
             if not isinstance(definition, Mapping):
@@ -617,6 +634,7 @@ def mode_effects(
     definitions = schema.get("modes")
     if not isinstance(definitions, Mapping):
         return []
+    selected_modes = canonical_modes(schema, modes)
 
     def rebase(value: Any, offset: int, count: int) -> Any:
         if isinstance(value, Mapping):
@@ -652,7 +670,7 @@ def mode_effects(
 
     effects: list[dict[str, Any]] = []
     target_offset = 0
-    for mode in modes:
+    for mode in selected_modes:
         definition = definitions.get(str(mode))
         if isinstance(definition, Mapping):
             groups = definition.get("groups")

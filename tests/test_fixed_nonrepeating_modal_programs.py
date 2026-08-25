@@ -28,6 +28,7 @@ from quorune.rules.capabilities import (
     CapabilityRegistry,
     capability_dependencies_for_node,
 )
+from quorune.targets import mode_effects, target_plan
 from scripts.build_test_database import build_fixture_database
 
 
@@ -74,6 +75,45 @@ class FixedNonrepeatingModalCompilerTests(unittest.TestCase):
             capability_registry=registry or self.capabilities,
             capability_profile="commander_review",
         )
+
+    def test_target_plan_canonicalizes_closed_mode_sets_before_effects(self):
+        schema = {
+            "min_modes": 2,
+            "max_modes": 2,
+            "modes": {
+                "mode_1": {
+                    "groups": [{"id": "target_1", "min": 1, "max": 1}],
+                    "effects": [{"op": "life", "player": "$target.0", "delta": 2}],
+                },
+                "mode_2": {"groups": [], "effects": [{"op": "draw", "count": 1}]},
+                "mode_3": {
+                    "groups": [{"id": "target_3", "min": 1, "max": 1}],
+                    "effects": [{"op": "damage", "target": "$target.0", "amount": 2}],
+                },
+            },
+        }
+
+        plan = target_plan(schema, ["mode_3", "mode_1"])
+        self.assertEqual(("mode_1", "mode_3"), plan.modes)
+        self.assertEqual(
+            ("target_1", "target_3"),
+            tuple(group.group_id for group in plan.groups),
+        )
+        self.assertEqual(
+            [
+                {"op": "life", "player": "$target.0", "delta": 2},
+                {"op": "damage", "target": "$target.1", "amount": 2},
+            ],
+            mode_effects(schema, ["mode_3", "mode_1"]),
+        )
+        for invalid in (
+            ["mode_1"],
+            ["mode_1", "mode_2", "mode_3"],
+            ["mode_1", "mode_1"],
+            ["mode_1", "unknown"],
+        ):
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                target_plan(schema, invalid)
 
     def test_fixed_modal_programs_compile_across_shared_contexts(self):
         expected = {
@@ -374,8 +414,9 @@ class FixedNonrepeatingModalRuntimeTests(unittest.TestCase):
         for modes, targets in (
             (["mode_3"], [artifact.ref]),
             (["mode_3", "mode_3"], [artifact.ref, artifact.ref]),
-            (["mode_4", "mode_3"], [creature.ref, artifact.ref]),
             (["mode_3", "mode_4"], [creature.ref, artifact.ref]),
+            (["mode_2", "mode_3", "mode_4"], [artifact.ref, creature.ref]),
+            (["mode_3", "unknown"], [artifact.ref, creature.ref]),
         ):
             rejected = session.act(
                 "pilot:A",
@@ -397,7 +438,7 @@ class FixedNonrepeatingModalRuntimeTests(unittest.TestCase):
             "pilot:A",
             {
                 "action_id": action["id"],
-                "modes": ["mode_3", "mode_4"],
+                "modes": ["mode_4", "mode_3"],
                 "targets": [artifact.ref, creature.ref],
                 "pay": "manual",
                 "payment": {"C": 1, "B": 1, "R": 1},

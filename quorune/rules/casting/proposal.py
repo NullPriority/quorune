@@ -11,6 +11,7 @@ from ...compiled_cast_timing import compiled_cast_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_morph_spec
 from ...convoke import ConvokeError
 from ...morph import MORPH_CAST_METHOD
+from ...targets import available_modes, canonical_modes
 from ..action_proposals import (
     ActionOffer,
     CastCostOption,
@@ -423,6 +424,7 @@ def _cast_targets_and_tap_costs(
     dict[str, Any],
     list[str],
     Mapping[str, Any] | None,
+    list[str],
 ]:
     selected_dict = selected.to_dict()
     try:
@@ -448,6 +450,22 @@ def _cast_targets_and_tap_costs(
         source_ref=card.ref,
         target_schema=target_schema,
     )
+    effective_target_schema = (
+        target_schema
+        if target_schema is not None
+        else getattr(program, "target_schema", None)
+    )
+    selected_modes = (
+        list(
+            canonical_modes(
+                effective_target_schema,
+                request.modes,
+                require_modes=bool(available_modes(effective_target_schema)),
+            )
+        )
+        if effective_target_schema is not None
+        else []
+    )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     tap_refs: list[str] = []
     for tap_ref in selected_dict.get("selected_tap_cost_cards", []):
@@ -471,6 +489,7 @@ def _cast_targets_and_tap_costs(
         snapshots,
         tap_refs,
         target_schema,
+        selected_modes,
     )
 
 
@@ -546,6 +565,7 @@ def build_cast_proposal(
         snapshots,
         tap_refs,
         target_schema,
+        selected_modes,
     ) = _cast_targets_and_tap_costs(
         host,
         request,
@@ -574,7 +594,7 @@ def build_cast_proposal(
         details=freeze_json(
             {
                 "selected_cost_option": selected_dict,
-                "selected_modes": list(request.modes),
+                "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
                 "aura_spell": aura_target_schema is not None,
                 "aura_enchant_spec": (

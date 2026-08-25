@@ -160,6 +160,44 @@ function selectedTargetGroups(field: ChoiceField, values: ChoiceValues): ChoiceF
   return list(schema.groups).map((group) => record(group));
 }
 
+export function updateModalTargetSelection(
+  schema: ChoiceField,
+  modes: string[],
+  targets: ChoiceField,
+  mode: string,
+  checked: boolean,
+): { modes: string[]; targets: ChoiceField } {
+  const legalModes = list(schema.legal_modes).map(String);
+  const maximum = Number(schema.max_modes ?? schema.mode_count ?? 1);
+  let next = checked
+    ? [...modes.filter((candidate) => candidate !== mode), mode]
+    : modes.filter((candidate) => candidate !== mode);
+  if (next.length > maximum) {
+    next = maximum === 1 ? [mode] : [...next.slice(-(maximum - 1)), mode];
+  }
+  const printedOrder = new Map(legalModes.map((candidate, index) => [candidate, index]));
+  next.sort((left, right) =>
+    (printedOrder.get(left) ?? legalModes.length)
+    - (printedOrder.get(right) ?? legalModes.length));
+
+  const modeSchemas = record(schema.mode_schemas);
+  const groups = next.flatMap((selectedMode) =>
+    list(record(modeSchemas[selectedMode]).groups).map((group) => record(group)));
+  const retained: ChoiceField = {};
+  for (const group of groups) {
+    const groupId = stringValue(group.id || "target");
+    const legalRefs = group.legal_refs === undefined
+      ? null
+      : new Set(list(group.legal_refs).map(String));
+    const selected = list(targets[groupId])
+      .map(String)
+      .filter((ref) => legalRefs === null || legalRefs.has(ref))
+      .slice(0, Number(group.max ?? 1));
+    if (selected.length) retained[groupId] = selected;
+  }
+  return { modes: next, targets: retained };
+}
+
 export function copyTargetGroups(copy: ChoiceField): ChoiceField[] {
   const schema = record(copy.target_schema);
   const modeSchemas = record(schema.mode_schemas);

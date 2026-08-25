@@ -15,7 +15,13 @@ from ..target_characteristics import TargetCharacteristicSnapshot
 from ..target_predicates import TargetPredicateError, target_predicate_matches
 from ..target_protection import TargetProtectionVerdict
 from ..target_protection_engine_adapter import target_protection_verdict_for_row
-from ..targets import TargetGroup, TargetPlan, available_modes, target_plan
+from ..targets import (
+    TargetGroup,
+    TargetPlan,
+    available_modes,
+    canonical_modes,
+    target_plan,
+)
 from ..util import unique_preserving_order
 from .model import (
     SelectionContract,
@@ -865,16 +871,25 @@ class TargetSelectionOwnerMixin:
             response.get("targets")
         )
         modes = [str(value) for value in response.get("modes") or []]
+        target_schema = self._stack_target_schema(item, program)
         validated, grouped = self._validate_semantic_targets(
             seat,
             program,
             targets,
             modes=modes,
             source_ref=item.ref,
-            target_schema=self._stack_target_schema(item, program),
+            target_schema=target_schema,
         )
         item.targets = validated
-        item.modes = modes
+        if target_schema is None:
+            raise GameRuleError("Semantic target schema is no longer available")
+        item.modes = list(
+            canonical_modes(
+                target_schema,
+                modes,
+                require_modes=bool(available_modes(target_schema)),
+            )
+        )
         item.context["target_groups"] = grouped
         item.context["target_snapshots"] = {
             ref: self._target_snapshot(ref) for ref in validated
