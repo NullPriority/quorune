@@ -638,6 +638,50 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("cloud-generated-${{ needs.plan.outputs.source_sha }}", cloud)
         self.assertIn("git diff --exit-code --", cloud)
 
+        def job(name: str, following: str | None) -> str:
+            tail = cloud.split(f"\n  {name}:\n", 1)[1]
+            if following is None:
+                return tail
+            return tail.split(f"\n  {following}:\n", 1)[0]
+
+        jobs_in_order = [
+            "plan",
+            "database",
+            "foundations",
+            "corpus",
+            "fanout",
+            "architecture",
+            "reusable",
+            "compact",
+            "scheduler",
+            "bundle",
+        ]
+        sections = {
+            name: job(
+                name,
+                jobs_in_order[index + 1]
+                if index + 1 < len(jobs_in_order)
+                else None,
+            )
+            for index, name in enumerate(jobs_in_order)
+        }
+        for name in (
+            "database",
+            "foundations",
+            "corpus",
+            "fanout",
+            "architecture",
+            "reusable",
+            "compact",
+        ):
+            self.assertIn("fetch-depth: 1", sections[name])
+            self.assertNotIn("fetch-depth: 0", sections[name])
+        for name in ("plan", "scheduler"):
+            self.assertIn("fetch-depth: 0", sections[name])
+            self.assertIn("filter: blob:none", sections[name])
+        self.assertIn("fetch-depth: 0", sections["bundle"])
+        self.assertNotIn("filter: blob:none", sections["bundle"])
+
 
 if __name__ == "__main__":
     unittest.main()
