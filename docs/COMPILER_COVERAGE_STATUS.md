@@ -2,7 +2,7 @@
 title: "Compiler coverage status"
 status: "generated"
 authoritative_source: "coverage/architecture-audit.json"
-verified: "373188d5b695e6feff2458a19113899541f35cf591777d9c94f1f31d1454f13f"
+verified: "caadccf965e308a53f0e00325b3aaa59fc401863883294e9f4e518c7ecbee05b"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 generated_source: "coverage/architecture-audit.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_architecture_audi
 
 # Compiler coverage status
 
-Source fingerprint: `373188d5b695e6feff2458a19113899541f35cf591777d9c94f1f31d1454f13f`
+Source fingerprint: `caadccf965e308a53f0e00325b3aaa59fc401863883294e9f4e518c7ecbee05b`
 
 ## Current top-level state
 
