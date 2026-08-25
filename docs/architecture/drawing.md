@@ -48,8 +48,14 @@ when it is printed as an ordinary activated ability. The source-spanned node
 must have a fully compiled activation cost and a strict capability-shaped draw
 payload. The closed activated family also includes the exact “draw and reveal;
 discard it unless it is a land” sentence used by Fa'adiyah Seer and Sindbad.
-Dynamic counts, other compound effects or drawn-card actions, and ambiguous
-sibling instructions remain material residuals. Setup hands and mulligan redraws are
+The independent fixed-controller sequence owner also composes one positive
+fixed ordinary draw with one fixed controller life change, Scry, or private
+discard of one through four cards in either printed order across spell,
+triggered, and activated contexts. Each instruction still enters its canonical
+runtime owner; the sequence contributes only typed ordering and continuation.
+Dynamic counts, compound effects outside a complete reviewed sequence, other
+drawn-card actions, and ambiguous sibling instructions remain material
+residuals. Setup hands and mulligan redraws are
 intentionally enclosing game procedures, not CR 121 draw events. The ordinary
 intent executor rejects a
 `DrawCardsIntent` that has not been routed through the coordinator, preventing

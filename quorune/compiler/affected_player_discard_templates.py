@@ -10,6 +10,7 @@ from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
 from ..util import stable_json
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
 FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC = "fixed-affected-player-discard"
@@ -27,6 +28,7 @@ _CLOSED_PREDICATE = stable_json(_HAND_PREDICATE.to_dict())
 
 
 class AffectedPlayerDiscardSubject(str, Enum):
+    CONTROLLER = "controller"
     TARGET_PLAYER = "target_player"
     TARGET_OPPONENT = "target_opponent"
     EACH_PLAYER = "each_player"
@@ -73,7 +75,12 @@ class FixedAffectedPlayerDiscardTemplate:
     def __post_init__(self) -> None:
         if not isinstance(self.subject, AffectedPlayerDiscardSubject):
             raise ValueError("Affected-player discard subject is malformed")
-        if self.count not in {1, 2, 3}:
+        supported_counts = (
+            {1, 2, 3, 4}
+            if self.subject == AffectedPlayerDiscardSubject.CONTROLLER
+            else {1, 2, 3}
+        )
+        if self.count not in supported_counts:
             raise ValueError("Affected-player discard count is unsupported")
 
     @property
@@ -86,6 +93,7 @@ class FixedAffectedPlayerDiscardTemplate:
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
         players: str | list[str] = {
+            AffectedPlayerDiscardSubject.CONTROLLER: ["$controller"],
             AffectedPlayerDiscardSubject.EACH_PLAYER: "all",
             AffectedPlayerDiscardSubject.EACH_OPPONENT: "opponents",
         }.get(self.subject, ["$target.0"])
@@ -157,6 +165,28 @@ def fixed_affected_player_discard_effect_template(
     )
 
 
+def fixed_controller_discard_effect_template(
+    text: str,
+) -> FixedAffectedPlayerDiscardTemplate | None:
+    """Lower one fixed controller discard only for closed effect sequences."""
+
+    normalized = " ".join(text.strip().split())
+    match = re.fullmatch(
+        rf"(?:you )?discard (?P<count>{FIXED_COUNT_PATTERN}) cards?\.?",
+        normalized,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    count = fixed_number(match.group("count"))
+    if count not in {1, 2, 3, 4}:
+        return None
+    return FixedAffectedPlayerDiscardTemplate(
+        subject=AffectedPlayerDiscardSubject.CONTROLLER,
+        count=count,
+    )
+
+
 __all__ = [
     "AffectedPlayerDiscardSubject",
     "FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY",
@@ -164,4 +194,5 @@ __all__ = [
     "FixedAffectedPlayerDiscardTemplate",
     "fixed_affected_player_discard_effect_template",
     "fixed_affected_player_discard_predicate_is_closed",
+    "fixed_controller_discard_effect_template",
 ]

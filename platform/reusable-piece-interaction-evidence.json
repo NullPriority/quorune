@@ -4295,6 +4295,25 @@
       ],
       "interaction_order": 2,
       "assertion": "Jaya Ballard, Task Mage compiles the player-life branch of its fixed simultaneous-set damage ability while the separate linked regeneration prohibition remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "piece_ids": [
+        "capability.choice.affected_player.fixed_discard",
+        "capability.resolution.effect_sequence.fixed_controller",
+        "capability.zone.change.destination_replacement",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "choice.affected_player.fixed_discard",
+        "resolution.effect_sequence.fixed_controller",
+        "zone.change.destination_replacement",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 4,
+      "assertion": "The ordered sequence completes two private ordinary draws, exposes the resulting hand objects only in the controller's private discard choice, replaces exactly the chosen discard with an opponent's public exile-and-void-counter result, and replays the suspended continuation to the identical authoritative state."
     }
   ]
 }

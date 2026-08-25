@@ -16,6 +16,7 @@ def fixed_affected_player_discard_node_capabilities(
     effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
+    allow_controller: bool = False,
 ) -> tuple[str, ...]:
     """Recognize one fixed affected-player private discard choice."""
 
@@ -27,6 +28,9 @@ def fixed_affected_player_discard_node_capabilities(
         return ()
     effect = effects[0]
     targeted = effect.get("players") == ["$target.0"]
+    controller = effect.get("players") == ["$controller"]
+    if controller and not allow_controller:
+        return ()
     expected_fields = {
         "op",
         "actor",
@@ -44,7 +48,9 @@ def fixed_affected_player_discard_node_capabilities(
         or effect.get("op") != "choose_cards_apnap"
         or effect.get("actor") != "$controller"
         or effect.get("zone") != "hand"
-        or effect.get("count") not in {1, 2, 3}
+        or effect.get("count") not in (
+            {1, 2, 3, 4} if controller else {1, 2, 3}
+        )
         or effect.get("then") != "discard"
         or effect.get("hidden") is not True
         or type(effect.get("prompt")) is not str
@@ -81,10 +87,11 @@ def fixed_affected_player_discard_node_capabilities(
         ):
             return ()
         dependencies.add("target.revalidate_resolution")
-    elif target_schema is not None or effect.get("players") not in {
-        "all",
-        "opponents",
-    }:
+    elif target_schema is not None:
+        return ()
+    elif controller and effect.get("players") != ["$controller"]:
+        return ()
+    elif not controller and effect.get("players") not in {"all", "opponents"}:
         return ()
     return tuple(sorted(dependencies))
 

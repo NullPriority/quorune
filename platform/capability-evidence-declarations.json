@@ -3171,6 +3171,22 @@
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_controller_discard_then_draw_commits_in_printed_order",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Commit the private controller discard before the following ordinary draw begins, preserving printed instruction order."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Commit the preceding private draws, include those new hand objects in the controller's discard choice, and move exactly the selected object before completing the sequence."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardRuntimeTests.test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
       "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
@@ -3179,11 +3195,27 @@
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Issue the controller-only discard choice to one seat in a four-player game while the other three seats receive no decision."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_affected_player_discard_compiler_mutant_is_killed",
       "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Remove the shared production and prove direct, activated, triggered, and modal witnesses return to precise material residuals."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_sequence_compiler_and_shape_mutants_are_killed",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the controller-discard leaf and prove the otherwise closed draw-discard sequence returns to a material residual."
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
@@ -3203,6 +3235,22 @@
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_controller_discard_leaf_and_sequence_shape_are_closed",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject target, each-player, opponent-group, over-count, public, and wrong-disposition mutations at the controller-sequence shape boundary."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_stale_controller_discard_choice_rolls_back_without_resuming",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject a controller hand candidate that left the hand after choice issuance without drawing the pending next card."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_fixed_affected_player_discards_compile_across_contexts_and_modes",
       "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
@@ -3219,11 +3267,35 @@
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_controller_discard_leaf_and_sequence_shape_are_closed",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower one controller discard of four cards to the same actor-private hand predicate and simultaneous discard owner used by affected-player instructions."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve the emitted controller-only descriptor through one private choice and canonical simultaneous discard commit."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardRuntimeTests.test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
       "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project only the current chooser's hand refs, withhold physical IDs and every other seat's selected identity, and reveal results only after commitment."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose the controller's current hand refs only to that controller and withhold the newly drawn identities from all three opponents."
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
@@ -3235,11 +3307,27 @@
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the controller's private discard response and simultaneous move to the identical authoritative final hash."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardRuntimeTests.test_stale_and_malformed_private_discard_reject_before_mutation",
       "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject a stale issued private candidate and a changed hidden flag while preserving the exact authoritative state hash."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_stale_controller_discard_choice_rolls_back_without_resuming",
+      "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the exact post-staleness state hash, event count, pending choice, and following draw when the issued candidate no longer matches."
     },
     {
       "capability_id": "choice.affected_player.fixed_sacrifice",
@@ -16368,8 +16456,24 @@
     {
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_controller_discard_then_draw_commits_in_printed_order",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suspend before the first private discard, commit it, and only then resume the remaining ordinary draw."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Complete both private draw events before issuing the controller discard choice, then commit only the selected current-hand object."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_invalid_remaining_effect_rolls_back_the_choice_command",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject an invalid second instruction from a resumed private choice without committing the preceding library arrangement."
     },
@@ -16377,15 +16481,23 @@
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_scry_then_draw_resumes_privately_and_replays_exactly",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suspend the ordered sequence for a private Scry choice, preserve the remaining draw, and resume it exactly once."
     },
     {
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve the ordered sequence in a four-player game while issuing its only decision to the stack controller."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_scry_then_draw_resumes_privately_and_replays_exactly",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Resolve the sequence in a four-player game with one seat-scoped private choice and no opponent decision."
     },
@@ -16393,15 +16505,23 @@
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_sequence_compiler_and_shape_mutants_are_killed",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Remove the closed sequence compiler production and alter its strict payload shapes; exact compilation and capability closure reject every survivor."
     },
     {
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_controller_discard_leaf_and_sequence_shape_are_closed",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject target and group discard relations, over-counts, public choices, and wrong dispositions from the controller-only sequence shape."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_sequence_shape_rejects_open_and_malformed_variants",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject boolean and nonpositive counts, nonprivate draws, wrong actors, targets, wrong arity, duplicate draws, and no-draw sequences."
     },
@@ -16409,39 +16529,87 @@
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_unsupported_sequence_wording_remains_a_precise_residual",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Leave dynamic, optional, targeted, three-instruction, and conditional wording as material compiler residuals."
     },
     {
       "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_stale_controller_discard_choice_rolls_back_without_resuming",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject a stale first discard choice before the sequence can resume its pending draw."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_controller_discard_leaf_and_sequence_shape_are_closed",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Close one fixed controller draw plus one private controller discard through the exact union of their existing capability owners."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_spell_trigger_and_activated_contexts_share_sequence_lowering",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reuse one source-spanned ordered-sequence compiler in spell, trigger, and activated ability contexts."
     },
     {
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_controller_discard_then_draw_commits_in_printed_order",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve the reverse discard-one then draw-one ordering through the same typed sequence owner."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve a draw-two then discard-one program through the ordinary draw and private discard owners without runtime prose."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_life_commits_in_printed_order",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit two ordinary draws before the following fixed life loss through their existing canonical owners."
     },
     {
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Withhold both newly drawn refs and the controller's private discard options from all three opponents."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_scry_then_draw_resumes_privately_and_replays_exactly",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose neither the looked-at Scry set nor the subsequently drawn card identity to the other three seats."
     },
     {
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_draw_then_controller_discard_is_private_and_replays_exactly",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the suspended private discard continuation and its preceding draws to the identical authoritative final hash."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_scry_then_draw_resumes_privately_and_replays_exactly",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the private Scry response and resumed draw to the identical authoritative final hash."
     },
@@ -16449,9 +16617,17 @@
       "capability_id": "resolution.effect_sequence.fixed_controller",
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_invalid_remaining_effect_rolls_back_the_choice_command",
-      "official_rule_ids": ["119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "608.2c", "608.2h", "701.22", "701.22a", "701.22b"],
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Roll back the entire choice command when the pinned remaining instruction is invalid, preserving the library, life, decision, and state hash."
+    },
+    {
+      "capability_id": "resolution.effect_sequence.fixed_controller",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceRuntimeTests.test_stale_controller_discard_choice_rolls_back_without_resuming",
+      "official_rule_ids": ["101.4", "119.1", "119.2", "119.3", "119.4", "121.1", "121.2", "401.4", "402", "402.1", "608.2c", "608.2h", "701.9", "701.9a", "701.9c", "701.22", "701.22a", "701.22b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the pending continuation, following draw, events, and authoritative hash when the controller's issued hand candidate becomes stale."
     },
     {
       "capability_id": "resolution.effect_sequence.fixed_counter_controller",
@@ -21619,6 +21795,5 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
-
-  ]
+]
 }
