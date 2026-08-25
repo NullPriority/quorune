@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-24T04:48:09Z",
+  "observed_at": "2026-08-25T02:10:12Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -513,6 +513,18 @@
       "regressions": ["test_generated_owner_cache.GeneratedOwnerCacheTests.test_repository_manifest_declares_safe_input_closures"],
       "impact_edge_status": "added",
       "resolution": "Semantic-pack JSON now belongs to the shared rules-source group consumed by compiler-corpus and architecture owners, so their cache keys change before a stale reviewed-program artifact can be restored. The manifest regression locks both consumers to that shared input edge."
+    },
+    {
+      "id": "ci-20260824-37",
+      "run_id": 32798435371,
+      "head_sha": "6befc37c57918c701aaeac7adefa1502e9f27ca0",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The fixed controller draw-discard sequence became exact through the shared sequence owner, but an activated-draw negative test still classified that wording as residual.",
+      "failed_surfaces": ["casting-costs-mana"],
+      "regressions": ["test_activated_draw_abilities.ActivatedDrawCompilerTests.test_dynamic_and_compound_draw_wording_remains_residual"],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The stale compound negative is split into an exact shared-owner assertion plus the remaining unsupported dynamic and noncanonical shapes. The existing compiler impact path already selected the failing cloud shard, so no new broad local or CI edge is required."
     }
   ],
   "recent_pull_requests": [

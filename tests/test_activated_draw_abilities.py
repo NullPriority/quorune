@@ -253,10 +253,32 @@ class ActivatedDrawCompilerTests(unittest.TestCase):
             expected_text[node.span.start : node.span.end],
         )
 
-    def test_dynamic_and_compound_draw_wording_remains_residual(self):
+    def test_fixed_draw_discard_sequence_uses_shared_sequence_owner(self):
+        ir = self.compile("{T}: Draw a card, then discard a card.")
+
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(
+            "fixed-controller-draw-effect-sequence-v1",
+            node.template_id,
+        )
+        self.assertEqual(
+            ("draw", "choose_cards_apnap"),
+            tuple(effect["op"] for effect in node.effects),
+        )
+        self.assertIn(
+            "resolution.effect_sequence.fixed_controller",
+            node.capability_dependencies,
+        )
+        self.assertIn(
+            "choice.affected_player.fixed_discard",
+            node.capability_dependencies,
+        )
+        self.assertIn(DRAW_CAPABILITY, node.capability_dependencies)
+
+    def test_dynamic_and_noncanonical_draw_wording_remains_residual(self):
         for text in (
             "{T}: Draw X cards.",
-            "{T}: Draw a card, then discard a card.",
             "{T}: Draw a card for each creature you control.",
             "{T}: Draw a card and reveal it.",
         ):
