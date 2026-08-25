@@ -1152,7 +1152,7 @@
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "runtime_composition",
+      "assurance_kind": "pair_derived",
       "test_id": "test_selected_soldier_cost_resolves_combat_prevention_and_replays",
       "piece_ids": ["capability.activation.selected_zone_change.fixed", "capability.damage.prevention.persistent_amount", "capability.token.creation.fixed_definition"],
       "capability_ids": ["activation.selected_zone_change.fixed", "damage.prevention.persistent_amount", "token.creation.fixed_definition"],
