@@ -2,7 +2,7 @@
 title: "Commander card-unlock frontier"
 status: "generated"
 authoritative_source: "coverage/card-unlock-frontier.json.gz"
-verified: "29696dcf6b6ffa68a5747fe6412826021f767e906721bfbc2aa2eddfa142d123"
+verified: "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,10 +14,10 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 ## Snapshot
 
 - Cards considered: 31,623
-- Oracle states: `{"exact":6749,"partial":11910,"unresolved":12964}`
-- CardProgram states: `{"residual":24874,"trusted":6749}`
+- Oracle states: `{"exact":6839,"partial":11890,"unresolved":12894}`
+- CardProgram states: `{"residual":24784,"trusted":6839}`
 - Hard construction failures: 0
-- Frontier fingerprint: `29696dcf6b6ffa68a5747fe6412826021f767e906721bfbc2aa2eddfa142d123`
+- Frontier fingerprint: `a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c`
 
 ## Highest-leverage single families
 
@@ -30,24 +30,24 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 | `effect_clause:create-token` | 564 | 549 | 17 | 84 | missing_lowering | high |
 | `activated_effect:unparsed-this-creature-can` | 39 | 39 | 17 | 25 | missing_lowering | high |
 | `effect_clause:typed-spell-additional-cost-clause` | 106 | 106 | 17 | 17 | missing_lowering | high |
-| `effect_clause:life-change` | 511 | 508 | 16 | 44 | missing_lowering | high |
+| `effect_clause:life-change` | 508 | 505 | 16 | 44 | missing_lowering | high |
 | `activated_effect:put-onto-battlefield` | 221 | 219 | 14 | 32 | missing_lowering | high |
-| `effect_clause:exile` | 578 | 565 | 12 | 74 | missing_lowering | high |
+| `effect_clause:exile` | 572 | 559 | 12 | 74 | missing_lowering | high |
 | `activated_effect:unparsed-regenerate-enchanted-creature` | 15 | 15 | 12 | 14 | missing_lowering | high |
 | `activated_effect:unparsed-investigate` | 13 | 13 | 12 | 13 | missing_lowering | high |
 | `effect_clause:sacrifice` | 110 | 110 | 11 | 34 | missing_lowering | high |
 | `keyword_dependency:rebound` | 34 | 34 | 11 | 34 | missing_contract | medium |
-| `effect_clause:return` | 611 | 591 | 11 | 23 | missing_lowering | high |
+| `effect_clause:return` | 609 | 589 | 11 | 23 | missing_lowering | high |
 | `effect_clause:unparsed-splice-onto-arcane` | 22 | 22 | 11 | 22 | missing_lowering | high |
 | `effect_clause:unparsed-buyback-3` | 17 | 17 | 10 | 17 | missing_lowering | high |
 | `keyword_dependency:retrace` | 17 | 17 | 10 | 17 | missing_contract | medium |
 | `effect_clause:unparsed-target-creature-can` | 17 | 17 | 10 | 13 | missing_lowering | high |
 | `keyword_dependency:start-your-engines` | 40 | 40 | 9 | 40 | missing_contract | medium |
 | `keyword_dependency:equip` | 25 | 25 | 9 | 25 | missing_contract | medium |
+| `activated_effect:life-change` | 204 | 193 | 9 | 17 | missing_lowering | high |
 | `activated_effect:unparsed-regenerate-target-creature` | 19 | 19 | 9 | 10 | missing_lowering | high |
 | `keyword_dependency:living-weapon` | 19 | 19 | 8 | 19 | missing_contract | medium |
 | `keyword_dependency:extort` | 18 | 17 | 8 | 18 | missing_contract | medium |
-| `activated_effect:life-change` | 204 | 193 | 8 | 17 | missing_lowering | high |
 
 ## Highest-leverage bounded bundles
 
