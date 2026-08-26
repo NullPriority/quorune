@@ -407,6 +407,103 @@ class CertificationReceiptTests(unittest.TestCase):
         self.assertEqual(prior, actual)
         sleep.assert_called_once_with(15.0)
 
+    def test_metadata_edit_ignores_stale_zero_job_rerun(self):
+        prior = receipt()
+        queued_runs = {
+            "workflow_runs": [
+                {
+                    "id": prior.workflow_run_id,
+                    "event": "pull_request",
+                    "head_sha": prior.exact_head_sha,
+                    "name": "PR",
+                    "path": ".github/workflows/ci.yml",
+                    "status": "queued",
+                    "updated_at": "1970-01-01T00:00:00Z",
+                }
+            ]
+        }
+
+        def github_json(url, _token):
+            if url.endswith("/jobs?per_page=1"):
+                return {"total_count": 0, "jobs": []}
+            return queued_runs
+
+        with (
+            patch(
+                "scripts.certification_receipt."
+                "find_previous_pr_certification",
+                side_effect=CertificationReceiptError("receipt is pending"),
+            ),
+            patch(
+                "scripts.certification_receipt._github_json",
+                side_effect=github_json,
+            ),
+            patch("scripts.certification_receipt.time.time", return_value=601.0),
+            patch("scripts.certification_receipt.time.sleep") as sleep,
+        ):
+            with self.assertRaisesRegex(
+                CertificationReceiptError, "receipt is pending"
+            ):
+                wait_for_previous_pr_certification(
+                    repository=prior.repository,
+                    pull_request=prior.pull_request,
+                    exact_head_sha=prior.exact_head_sha,
+                    current_workflow_run_id=23456,
+                    token="test-token",
+                    wait_seconds=30,
+                )
+
+        sleep.assert_not_called()
+
+    def test_metadata_edit_waits_for_recent_zero_job_rerun(self):
+        prior = receipt()
+        queued_runs = {
+            "workflow_runs": [
+                {
+                    "id": prior.workflow_run_id,
+                    "event": "pull_request",
+                    "head_sha": prior.exact_head_sha,
+                    "name": "PR",
+                    "path": ".github/workflows/ci.yml",
+                    "status": "queued",
+                    "updated_at": "1970-01-01T00:05:01Z",
+                }
+            ]
+        }
+
+        def github_json(url, _token):
+            if url.endswith("/jobs?per_page=1"):
+                return {"total_count": 0, "jobs": []}
+            return queued_runs
+
+        with (
+            patch(
+                "scripts.certification_receipt."
+                "find_previous_pr_certification",
+                side_effect=(
+                    CertificationReceiptError("receipt is pending"),
+                    prior,
+                ),
+            ),
+            patch(
+                "scripts.certification_receipt._github_json",
+                side_effect=github_json,
+            ),
+            patch("scripts.certification_receipt.time.time", return_value=600.0),
+            patch("scripts.certification_receipt.time.sleep") as sleep,
+        ):
+            actual = wait_for_previous_pr_certification(
+                repository=prior.repository,
+                pull_request=prior.pull_request,
+                exact_head_sha=prior.exact_head_sha,
+                current_workflow_run_id=23456,
+                token="test-token",
+                wait_seconds=30,
+            )
+
+        self.assertEqual(prior, actual)
+        sleep.assert_called_once_with(15.0)
+
     def test_workflow_preserves_required_gates_and_publishes_receipt(self):
         workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(
             encoding="utf-8"

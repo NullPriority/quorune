@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
+from datetime import datetime
 import io
 import json
 import os
@@ -36,6 +37,7 @@ CERTIFICATION_MODES = frozenset({"executed", "reused"})
 ACTIVE_WORKFLOW_RUN_STATUSES = frozenset(
     {"pending", "queued", "requested", "waiting", "in_progress"}
 )
+QUEUED_RUN_MATERIALIZATION_GRACE_SECONDS = 300
 REQUIRED_CHECK_SUITE = frozenset(
     {
         "browser",
@@ -345,6 +347,63 @@ def successful_pr_runs(value: Any, *, exact_head_sha: str) -> tuple[Mapping[str,
     return tuple(sorted(candidates, key=lambda row: int(row["id"]), reverse=True))
 
 
+def _github_timestamp_seconds(value: Any, *, field: str) -> float:
+    if type(value) is not str:
+        raise CertificationReceiptError(f"{field} must be a GitHub timestamp")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise CertificationReceiptError(
+            f"{field} must be a GitHub timestamp"
+        ) from exc
+    if parsed.tzinfo is None:
+        raise CertificationReceiptError(f"{field} must include a timezone")
+    return parsed.timestamp()
+
+
+def _workflow_run_has_materialized_jobs(value: Any) -> bool:
+    if (
+        not isinstance(value, Mapping)
+        or type(value.get("total_count")) is not int
+        or value["total_count"] < 0
+        or not isinstance(value.get("jobs"), list)
+    ):
+        raise CertificationReceiptError("GitHub workflow-job response is malformed")
+    return value["total_count"] > 0
+
+
+def _previous_run_can_still_certify(
+    run: Mapping[str, Any],
+    *,
+    current_workflow_run_id: int,
+    api: str,
+    token: str,
+) -> bool:
+    run_id = int(run["id"])
+    status = run.get("status")
+    if (
+        run_id == current_workflow_run_id
+        or status not in ACTIVE_WORKFLOW_RUN_STATUSES
+    ):
+        return False
+    if status != "queued":
+        return True
+    jobs = _github_json(
+        f"{api}/actions/runs/{run_id}/jobs?per_page=1",
+        token,
+    )
+    if _workflow_run_has_materialized_jobs(jobs):
+        return True
+    updated_at = _github_timestamp_seconds(
+        run.get("updated_at"),
+        field="workflow run updated_at",
+    )
+    return (
+        time.time() - updated_at
+        <= QUEUED_RUN_MATERIALIZATION_GRACE_SECONDS
+    )
+
+
 def select_receipt_artifact(value: Any, *, workflow_run_id: int) -> Mapping[str, Any]:
     if not isinstance(value, Mapping) or not isinstance(value.get("artifacts"), list):
         raise CertificationReceiptError("GitHub artifact response is malformed")
@@ -539,8 +598,12 @@ def wait_for_previous_pr_certification(
             exact_head_sha=exact_head_sha,
         )
         if not any(
-            int(run["id"]) != current_workflow_run_id
-            and run.get("status") in ACTIVE_WORKFLOW_RUN_STATUSES
+            _previous_run_can_still_certify(
+                run,
+                current_workflow_run_id=current_workflow_run_id,
+                api=api,
+                token=token,
+            )
             for run in runs
         ):
             raise last_error
