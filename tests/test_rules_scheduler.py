@@ -807,9 +807,9 @@ class RulesSchedulerTests(unittest.TestCase):
         derived = build_harvest_outcome_history(
             ROOT,
             provenance,
-            self.catalog["work_selection"][
+            self.catalog["work_selection"].get(
                 "semantic_transition_declaration"
-            ],
+            ),
         )
         self.assertEqual(
             self.work_inputs["harvest_outcome_history"], derived
