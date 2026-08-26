@@ -516,15 +516,7 @@
       ],
       "approved_prerequisite_exceptions": []
     },
-    "semantic_transition_declaration": {
-      "transition_id": "fixed-combat-state-direct-targets-v1",
-      "bundle_id": "bundle:fixed-combat-state-direct-targets",
-      "candidate_ids": ["compiler:fixed-combat-state-direct-targets"],
-      "family_ids": ["target_or_choice:target-predicate"],
-      "capability_ids": ["state_query.permanent.public_state_predicate"],
-      "expected_complete_card_gain": 72,
-      "non_harvest_reason": null
-    },
+    "semantic_transition_declaration": null,
     "harvest_provenance": [
       {
         "bundle_id": "bundle:typed-combat-prevention",
@@ -749,6 +741,13 @@
         "expected_complete_card_gain": null,
         "base_commit": "5bcc7ea5ab15a95eb7dad2ed82837a23e3402ead",
         "head_commit": "77a6cbae5bd91a75220c25051f9bb9fa61d0f36a"
+      },
+      {
+        "bundle_id": "bundle:fixed-combat-state-direct-targets",
+        "candidate_ids": ["compiler:fixed-combat-state-direct-targets"],
+        "expected_complete_card_gain": 72,
+        "base_commit": "f147c03b2923e45bde2e3845b2bb9680729c8be1",
+        "head_commit": "45b5c907e96614c23ae89f7be5e56caa7e97d515"
       }
     ],
     "reviewed_rerank_history": [
