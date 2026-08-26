@@ -284,7 +284,7 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
         "forced_labels",
     }:
         raise ValueError("Change-impact policy has unknown or missing fields")
-    if value["schema_version"] != 4:
+    if value["schema_version"] != 5:
         raise ValueError("Unsupported change-impact policy schema")
     _string_tuple(value["default_checks"], field="default_checks")
     browser_focuses = value["browser_focuses"]
@@ -309,6 +309,7 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
         "id",
         "patterns",
         "collect_test_module",
+        "test_modules",
         "test_suites",
         "checks",
         "browser_focuses",
@@ -327,6 +328,17 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
         if not rule.get("patterns"):
             raise ValueError(f"path_rules[{index}].patterns cannot be empty")
         _string_tuple(rule.get("test_suites"), field=f"path_rules[{index}].test_suites")
+        test_modules = _string_tuple(
+            rule.get("test_modules"),
+            field=f"path_rules[{index}].test_modules",
+        )
+        if any(
+            re.fullmatch(r"test_[A-Za-z0-9_]+", item) is None
+            for item in test_modules
+        ):
+            raise ValueError(
+                f"path_rules[{index}].test_modules must name test modules"
+            )
         _string_tuple(rule.get("checks"), field=f"path_rules[{index}].checks")
         selected_focuses = _string_tuple(
             rule.get("browser_focuses"),
@@ -371,6 +383,17 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
             rule.get("test_suites"),
             field=f"symbol_rules[{index}].test_suites",
         )
+        test_modules = _string_tuple(
+            rule.get("test_modules"),
+            field=f"symbol_rules[{index}].test_modules",
+        )
+        if any(
+            re.fullmatch(r"test_[A-Za-z0-9_]+", item) is None
+            for item in test_modules
+        ):
+            raise ValueError(
+                f"symbol_rules[{index}].test_modules must name test modules"
+            )
         _string_tuple(
             rule.get("checks"), field=f"symbol_rules[{index}].checks"
         )
@@ -465,6 +488,12 @@ def classify_changes(
             if selected_suites:
                 path_has_suite = True
                 suites.update(selected_suites)
+            modules.update(
+                _string_tuple(
+                    rule.get("test_modules"),
+                    field=f"{rule_id}.test_modules",
+                )
+            )
             checks.update(_string_tuple(rule.get("checks"), field=f"{rule_id}.checks"))
             browser_focuses.update(
                 _string_tuple(
@@ -504,6 +533,12 @@ def classify_changes(
             suites.update(
                 _string_tuple(
                     rule.get("test_suites"), field=f"{rule_id}.test_suites"
+                )
+            )
+            modules.update(
+                _string_tuple(
+                    rule.get("test_modules"),
+                    field=f"{rule_id}.test_modules",
                 )
             )
             checks.update(

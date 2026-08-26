@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
 import json
 from pathlib import Path
 import unittest
@@ -28,7 +29,9 @@ from quorune.work_selection_bundles import (
     candidate_frontier_measurements,
     WorkSelectionBundleError,
 )
+from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
+    _semantic_outcome_state,
     build_harvest_outcome_history,
     HarvestOutcomeHistoryError,
 )
@@ -78,6 +81,7 @@ def _bounded_candidate_bundle_fixture():
             "bundle_id": "bundle:bounded-fixture",
             "member_family_ids": member_ids,
             "estimated_implementation_hours": 1,
+            "estimated_probe_hours": 1,
             "estimated_generation_hours": 1,
             "measurement_status": "bounded_executable",
         }
@@ -439,6 +443,19 @@ class RulesSchedulerTests(unittest.TestCase):
             for candidate in work["candidates"]
             if candidate["candidate_id"] == work["selected_candidate_id"]
         )
+        self.assertEqual(
+            [
+                "ci_correctness",
+                "replay_privacy_defect",
+                "prohibited_runtime_semantics",
+                "architecture_owner_or_mutation_defect",
+                "interaction_assurance",
+                "rules_foundation",
+                "compiler_harvest",
+                "card_family",
+            ],
+            work["priority_classes"],
+        )
         runtime_total = int(
             inputs["architecture_audit"]["architecture"]
             ["runtime_oracle_text_access"]
@@ -448,7 +465,7 @@ class RulesSchedulerTests(unittest.TestCase):
             self.assertFalse(
                 any(
                     candidate["candidate_class"]
-                    == "runtime_oracle_removal"
+                    == "prohibited_runtime_semantics"
                     for candidate in work["candidates"]
                 )
             )
@@ -490,7 +507,9 @@ class RulesSchedulerTests(unittest.TestCase):
                     {"compiler_harvest", "card_family"},
                 )
             return
-        self.assertEqual("runtime_oracle_removal", selected["candidate_class"])
+        self.assertEqual(
+            "prohibited_runtime_semantics", selected["candidate_class"]
+        )
         self.assertNotEqual(
             "cross_subsystem_runtime_semantics",
             selected["universal_subsystem"],
@@ -515,7 +534,8 @@ class RulesSchedulerTests(unittest.TestCase):
             runtime_candidates = [
                 candidate
                 for candidate in work["candidates"]
-                if candidate["candidate_class"] == "runtime_oracle_removal"
+                if candidate["candidate_class"]
+                == "prohibited_runtime_semantics"
             ]
             if len(runtime_candidates) == 1:
                 self.assertEqual(
@@ -643,7 +663,7 @@ class RulesSchedulerTests(unittest.TestCase):
         policy = deepcopy(self.catalog["work_selection"])
         policy["coverage_family"][
             "maximum_consecutive_prerequisite_exceptions"
-        ] = 2
+        ] = 3
         policy["coverage_family"]["approved_prerequisite_exceptions"] = [
             {
                 "candidate_id": "frontier:effect_clause:large-ability-fixture",
@@ -673,7 +693,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         policy["coverage_family"][
             "maximum_consecutive_prerequisite_exceptions"
-        ] = 1
+        ] = 2
         work = build_work_selection(
             selected_batch=self.queue["selected_batch"],
             policy=policy,
@@ -691,7 +711,7 @@ class RulesSchedulerTests(unittest.TestCase):
             narrow["runtime_readiness"]["status"],
         )
         self.assertEqual(
-            1,
+            2,
             work["selection_policy"]["consecutive_subthreshold_harvests"],
         )
 
@@ -717,6 +737,7 @@ class RulesSchedulerTests(unittest.TestCase):
                 - row["actual_complete_card_gain"]
             )
             for row in history
+            if row["expected_complete_card_gain"] is not None
         )
         expected_consecutive = 0
         for row in reversed(history):
@@ -749,19 +770,44 @@ class RulesSchedulerTests(unittest.TestCase):
                 for row in provenance
             )
         )
-        derived = build_harvest_outcome_history(ROOT, provenance)
+        derived = build_harvest_outcome_history(
+            ROOT,
+            provenance,
+            self.catalog["work_selection"][
+                "semantic_transition_declaration"
+            ],
+        )
         self.assertEqual(
             self.work_inputs["harvest_outcome_history"], derived
         )
         latest = derived["entries"][-1]
-        self.assertEqual("bundle:fixed-public-zone-moves", latest["bundle_id"])
-        self.assertEqual(37, latest["actual_complete_card_gain"])
-        self.assertEqual(66, latest["actual_exact_ability_gain"])
-        self.assertEqual(82, latest["actual_material_residual_reduction"])
-        self.assertNotEqual(
-            latest["base_receipt"]["frontier_blob_oid"],
-            latest["head_receipt"]["frontier_blob_oid"],
+        self.assertEqual("bundle:fixed-impulse-access", latest["bundle_id"])
+        self.assertEqual(22, latest["actual_complete_card_gain"])
+        self.assertEqual(41, latest["oracle_exact_ability_node_delta"])
+        self.assertEqual(24, latest["card_program_ability_record_delta"])
+        self.assertEqual(
+            1,
+            latest["architecture_delta"][
+                "commander_engine_logical_lines"
+            ],
         )
+        self.assertNotEqual(
+            latest["base_receipt"]["blobs"][
+                "coverage/card-unlock-frontier.json.gz"
+            ]["git_blob_oid"],
+            latest["head_receipt"]["blobs"][
+                "coverage/card-unlock-frontier.json.gz"
+            ]["git_blob_oid"],
+        )
+
+        penultimate = derived["entries"][-2]
+        self.assertEqual(
+            "bundle:fixed-activated-tap-costs",
+            penultimate["bundle_id"],
+        )
+        self.assertEqual(47, penultimate["actual_complete_card_gain"])
+        self.assertEqual(67, penultimate["oracle_exact_ability_node_delta"])
+        self.assertEqual(0, penultimate["card_program_ability_record_delta"])
 
         malformed = deepcopy(provenance)
         malformed[-1]["actual_complete_card_gain"] = 37
@@ -769,6 +815,172 @@ class RulesSchedulerTests(unittest.TestCase):
             HarvestOutcomeHistoryError, "invalid shape"
         ):
             build_harvest_outcome_history(ROOT, malformed)
+
+    def test_pending_semantic_outcome_blocks_the_next_harvest(self):
+        inputs = deepcopy(self.work_inputs)
+        history = inputs["harvest_outcome_history"]
+        latest = history["entries"][-1]["head_receipt"]
+        history["semantic_outcome_status"] = "pending"
+        history["pending_transition"] = {
+            "transition_id": "fixture-semantic-transition",
+            "bundle_id": "bundle:fixture-semantic-transition",
+            "candidate_ids": ["compiler:fixture-semantic-transition"],
+            "family_ids": ["effect_clause:fixture-semantic-transition"],
+            "capability_ids": ["effect.fixture_semantic_transition"],
+            "expected_complete_card_gain": 50,
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+            "compiler_version": latest["compiler_version"],
+            "card_program_schema_version": latest[
+                "card_program_schema_version"
+            ],
+            "semantic_receipt_sha256": {
+                path: latest["blobs"][path]["raw_sha256"]
+                for path in (
+                    "coverage/card-program-coverage-commander.json",
+                    "coverage/oracle-coverage-commander.json",
+                    "coverage/card-unlock-frontier.json.gz",
+                )
+            },
+            "support_counts": {
+                "oracle_exact_cards": latest["oracle_status_counts"][
+                    "exact"
+                ],
+                "trusted_card_programs": latest["trusted_programs"],
+                "capability_closed_card_programs": latest[
+                    "capability_closed_programs"
+                ],
+                "oracle_material_residuals": latest[
+                    "oracle_material_residuals"
+                ],
+                "card_program_material_residuals": latest[
+                    "card_program_material_residuals"
+                ],
+                "card_program_ability_records": latest[
+                    "card_program_ability_records"
+                ],
+                "hard_construction_failures": latest[
+                    "hard_construction_failures"
+                ],
+            },
+            "grants_gameplay_trust": False,
+            "resolution": (
+                "Commit the corpus receipt and materialize its immutable "
+                "outcome before selecting another semantic harvest."
+            ),
+        }
+        payload = dict(history)
+        payload.pop("fingerprint")
+        history["fingerprint"] = hashlib.sha256(
+            stable_json(payload).encode("utf-8")
+        ).hexdigest()
+
+        work = build_work_selection(
+            selected_batch=self.queue["selected_batch"],
+            policy=self.catalog["work_selection"],
+            inputs=inputs,
+        )
+        selected = selected_work_candidate(work)
+
+        self.assertIsNotNone(selected)
+        self.assertEqual("ci:materialize-harvest-outcome", selected["candidate_id"])
+        self.assertEqual("ci_correctness", selected["candidate_class"])
+        self.assertEqual(
+            "fixture-semantic-transition",
+            work["selection_policy"]["pending_harvest_transition_id"],
+        )
+
+    def test_semantic_support_change_requires_a_precise_outcome_declaration(self):
+        latest = self.work_inputs["harvest_outcome_history"]["entries"][-1][
+            "head_receipt"
+        ]
+        current = {
+            "compiler_version": "oracle-ir-v129",
+            "card_program_schema_version": 2,
+            "semantic_receipt_sha256": {
+                path: identity["raw_sha256"]
+                for path, identity in latest["blobs"].items()
+                if path
+                in {
+                    "coverage/card-program-coverage-commander.json",
+                    "coverage/oracle-coverage-commander.json",
+                    "coverage/card-unlock-frontier.json.gz",
+                }
+            },
+            "support_counts": {
+                "oracle_exact_cards": 1,
+                "trusted_card_programs": 1,
+                "capability_closed_card_programs": 1,
+                "oracle_material_residuals": 1,
+                "card_program_material_residuals": 1,
+                "card_program_ability_records": 1,
+                "hard_construction_failures": 0,
+            },
+        }
+        current["semantic_receipt_sha256"][
+            "coverage/oracle-coverage-commander.json"
+        ] = "f" * 64
+
+        with self.assertRaisesRegex(
+            HarvestOutcomeHistoryError,
+            "requires one transition declaration",
+        ):
+            _semantic_outcome_state(latest, current, None)
+
+        status, pending = _semantic_outcome_state(
+            latest,
+            current,
+            {
+                "transition_id": "fixture-non-harvest",
+                "bundle_id": None,
+                "candidate_ids": [],
+                "family_ids": [],
+                "capability_ids": [],
+                "expected_complete_card_gain": None,
+                "non_harvest_reason": (
+                    "Compiler identity changed without any support-count gain."
+                ),
+            },
+        )
+        self.assertEqual("pending", status)
+        self.assertEqual("non_harvest", pending["outcome_kind"])
+        self.assertFalse(pending["grants_gameplay_trust"])
+
+    def test_upper_bound_selects_measurement_without_gameplay_trust(self):
+        work = self.queue["work_selection"]
+        selected = selected_work_candidate(work)
+
+        self.assertIsNotNone(selected)
+        self.assertEqual(0, work["implementation_eligible_candidate_count"])
+        self.assertEqual("cohort_measurement", selected["work_state"])
+        self.assertFalse(selected["implementation_eligible"])
+        self.assertEqual(
+            {None},
+            {
+                selected["expected_complete_card_gain"],
+                selected["expected_exact_ability_gain"],
+                selected["expected_material_residual_reduction"],
+            },
+        )
+        self.assertFalse(
+            selected["measurement_task"]["grants_gameplay_trust"]
+        )
+        source_filter = selected["measurement_task"]["source_corpus_filter"]
+        self.assertEqual(["unresolved"], source_filter["ability_statuses"])
+        self.assertNotIn("lowerable_untrusted_only", source_filter)
+        source_bundle_id = "bundle:" + selected["candidate_id"].split(
+            ":", 1
+        )[-1]
+        upper_bound = next(
+            row
+            for row in work["candidates"]
+            if row["candidate_id"] == source_bundle_id
+        )
+        self.assertFalse(upper_bound["eligible"])
+        self.assertFalse(upper_bound["implementation_eligible"])
+        self.assertEqual(
+            "upper_bound_only", upper_bound["bundle"]["measurement_status"]
+        )
 
     def test_completed_bundle_retires_and_upper_bound_requires_bounded_cohort(self):
         work = self.queue["work_selection"]
@@ -912,7 +1124,13 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
         self.assertTrue(candidates)
-        self.assertIsNone(work["selected_candidate_id"])
+        selected = selected_work_candidate(work)
+        self.assertIsNotNone(selected)
+        self.assertEqual("cohort_measurement", selected["work_state"])
+        self.assertFalse(selected["implementation_eligible"])
+        self.assertFalse(
+            selected["measurement_task"]["grants_gameplay_trust"]
+        )
         structural = next(
             candidate
             for candidate in work["candidates"]
@@ -995,13 +1213,16 @@ class RulesSchedulerTests(unittest.TestCase):
         work = queue["work_selection"]
         work["selected_candidate_id"] = None
         work["eligible_candidate_count"] = 0
+        work["implementation_eligible_candidate_count"] = 0
         for candidate in work["candidates"]:
             candidate["eligible"] = False
+            candidate["implementation_eligible"] = False
             if candidate["selection_state"] == "selected":
                 candidate["selection_state"] = "blocked"
         markdown = _compact_markdown(queue)
         self.assertIn("Selected cross-program work: `none`", markdown)
         self.assertIn("Selected work class: `none`", markdown)
+        self.assertIn("Selected work state: `none`", markdown)
         self.assertIn("No serious candidate currently meets", markdown)
 
     def test_work_selection_selected_candidate_contract_handles_none(self):
@@ -1009,9 +1230,11 @@ class RulesSchedulerTests(unittest.TestCase):
         work["selected_candidate_id"] = None
         for candidate in work["candidates"]:
             candidate["eligible"] = False
+            candidate["implementation_eligible"] = False
             if candidate["selection_state"] == "selected":
                 candidate["selection_state"] = "blocked"
         work["eligible_candidate_count"] = 0
+        work["implementation_eligible_candidate_count"] = 0
         self.assertIsNone(selected_work_candidate(work))
 
         eligible = deepcopy(work)
@@ -1031,12 +1254,30 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             selected_work_candidate(missing)
 
+        outranked = deepcopy(self.queue["work_selection"])
+        implementation = next(
+            candidate
+            for candidate in outranked["candidates"]
+            if candidate["selection_state"] != "selected"
+        )
+        implementation["eligible"] = True
+        implementation["implementation_eligible"] = True
+        implementation["selection_state"] = "deferred"
+        outranked["eligible_candidate_count"] += 1
+        outranked["implementation_eligible_candidate_count"] += 1
+        with self.assertRaisesRegex(
+            WorkSelectionError,
+            "cannot outrank implementation-eligible work",
+        ):
+            selected_work_candidate(outranked)
+
     def test_runtime_text_candidates_are_split_by_declared_subsystem(self):
         work = self.queue["work_selection"]
         candidates = [
             candidate
             for candidate in work["candidates"]
-            if candidate["candidate_class"] == "runtime_oracle_removal"
+            if candidate["candidate_class"]
+            == "prohibited_runtime_semantics"
         ]
         self.assertNotIn(
             "architecture:runtime-oracle-text-subsystem-attribution",
@@ -1090,6 +1331,9 @@ class RulesSchedulerTests(unittest.TestCase):
             "estimated_effort",
             "reranking_reason",
             "eligible",
+            "implementation_eligible",
+            "work_state",
+            "measurement_task",
             "priority_within_class",
             "bundle",
             "rank",

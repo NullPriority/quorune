@@ -44,6 +44,22 @@ def _compact_markdown(value: Mapping[str, Any]) -> str:
         if selected_work is not None
         else "none"
     )
+    selected_work_state = (
+        str(selected_work["work_state"])
+        if selected_work is not None
+        else "none"
+    )
+    selected_gameplay_trust = (
+        str(
+            bool(
+                (selected_work.get("measurement_task") or {}).get(
+                    "grants_gameplay_trust"
+                )
+            )
+        ).lower()
+        if selected_work_state == "cohort_measurement"
+        else "not_applicable"
+    )
     selected_reason = (
         str(selected_work["reranking_reason"])
         if selected_work is not None
@@ -83,6 +99,8 @@ def _compact_markdown(value: Mapping[str, Any]) -> str:
         f"- Selected batch: `{selected['batch_id']}`",
         f"- Selected cross-program work: `{selected_work_id}`",
         f"- Selected work class: `{selected_work_class}`",
+        f"- Selected work state: `{selected_work_state}`",
+        f"- Measurement grants gameplay trust: `{selected_gameplay_trust}`",
         "",
         "## Cross-program work selection",
         "",
@@ -90,18 +108,23 @@ def _compact_markdown(value: Mapping[str, Any]) -> str:
         "reranked with deterministic CI, replay/privacy, architecture, runtime-text, "
         "interaction-assurance, compiler, and card-frontier evidence. A larger card "
         "gain cannot outrank a higher-priority correctness class.",
+        "When no implementation candidate is eligible, one bounded cohort measurement "
+        "may be selected. Its upper bounds remain non-executable and grant no gameplay "
+        "trust until the declared upgrade evidence is generated.",
         "",
         "Priority classes: "
         + " → ".join(f"`{item}`" for item in work["priority_classes"]),
         "",
-        "| Rank | State | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |",
-        "|---:|---|---|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |",
+        "|---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|",
         *(
             "| "
             + " | ".join(
                 [
                     str(candidate["rank"]),
                     str(candidate["selection_state"]),
+                    str(candidate["work_state"]),
+                    str(candidate["implementation_eligible"]).lower(),
                     f"`{candidate['candidate_id']}`",
                     f"`{candidate['candidate_class']}`",
                     str(len(candidate["bundle"]["member_family_ids"])),
@@ -186,7 +209,9 @@ def main() -> int:
     )
     work_policy = catalog.get("work_selection") or {}
     harvest_history = build_harvest_outcome_history(
-        ROOT, work_policy.get("harvest_provenance")
+        ROOT,
+        work_policy.get("harvest_provenance"),
+        work_policy.get("semantic_transition_declaration"),
     )
     value = build_rules_dependency_queue_from_root(
         ROOT, harvest_outcome_history=harvest_history
