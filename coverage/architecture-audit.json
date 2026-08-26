@@ -11504,7 +11504,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 181211,
+      "logical_lines": 181338,
       "methods": {
         "dunder": 507,
         "private": 823,
@@ -11551,8 +11551,8 @@
           "file": "quorune/work_selection.py",
           "functions_and_methods": 29,
           "language": "python",
-          "logical_lines": 1497,
-          "physical_lines": 1561
+          "logical_lines": 1498,
+          "physical_lines": 1562
         },
         {
           "file": "quorune/compiler/program_generation.py",
@@ -12304,6 +12304,13 @@
           "physical_lines": 553
         },
         {
+          "file": "quorune/work_selection_bundles.py",
+          "functions_and_methods": 10,
+          "language": "python",
+          "logical_lines": 490,
+          "physical_lines": 517
+        },
+        {
           "file": "quorune/counter_removal.py",
           "functions_and_methods": 22,
           "language": "python",
@@ -12568,13 +12575,6 @@
           "language": "python",
           "logical_lines": 365,
           "physical_lines": 404
-        },
-        {
-          "file": "quorune/work_selection_bundles.py",
-          "functions_and_methods": 9,
-          "language": "python",
-          "logical_lines": 364,
-          "physical_lines": 389
         },
         {
           "file": "quorune/aura/runtime.py",
@@ -15869,7 +15869,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 198800,
+      "physical_lines": 198929,
       "python_file_count": 558,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -15887,7 +15887,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 2603,
+      "top_level_functions": 2604,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -27837,7 +27837,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "b0822a7ee72e68949415c5deb7c6561f83275432fb46965ab3985e3d5878e96c",
+      "fingerprint": "e6df2c3fad9da4e37a69efb3efe0e9f5b9452450cc4dae580e7a4ed0b2b0db58",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -28695,8 +28695,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 3451,
-      "discovered_total": 6760,
+      "conventional_ast_cases": 3452,
+      "discovered_total": 6761,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 186,

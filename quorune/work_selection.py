@@ -23,7 +23,7 @@ from .work_selection_evidence import (
 from .work_selection_measurement import cohort_measurement_spec
 
 
-WORK_SELECTION_SCHEMA_VERSION = 4
+WORK_SELECTION_SCHEMA_VERSION = 5
 _CANDIDATE_CLASSES = {
     "ci_correctness",
     "replay_privacy_defect",
@@ -232,7 +232,7 @@ def _validated_reviewed_history(
 def _validated_policy(
     policy: Mapping[str, Any], harvest_history: Mapping[str, Any]
 ) -> dict[str, Any]:
-    if int(policy.get("policy_version") or 0) != 6:
+    if int(policy.get("policy_version") or 0) != 7:
         raise WorkSelectionError("Unsupported work-selection policy")
     priority_classes, starting_uncovered = _validated_priority_policy(policy)
     coverage = _mapping(policy.get("coverage_family"), "coverage_family")
@@ -249,7 +249,7 @@ def _validated_policy(
         minimum_gain=int(validated_coverage["minimum_complete_card_gain"]),
     )
     return {
-        "policy_version": 6,
+        "policy_version": 7,
         "priority_classes": priority_classes,
         "starting_uncovered_high_risk_pairs": starting_uncovered,
         **validated_coverage,
@@ -1037,13 +1037,14 @@ def _synthesized_frontier_candidates(
             effort=effort,
             policy=policy,
         )
-        effective_measurement_status, demotion_reason = (
-            bundle_measurement_decision(
-                str(bundle_policy["measurement_status"]),
-                bool(measurement["bounded_executable_verified"]),
-            )
+        effective_measurement_status, demotion_reason = bundle_measurement_decision(
+            str(bundle_policy["measurement_status"]),
+            bool(measurement["bounded_executable_verified"]),
+            bool(measurement["measurement_outcome_current"]),
         )
-        if demotion_reason is not None:
+        if effective_measurement_status == "measured_nonviable":
+            readiness, eligible, reason = "measured_below_harvest_floor", False, str(demotion_reason)
+        elif demotion_reason is not None:
             readiness = "requires_bounded_cohort"
             eligible = False
             reason = demotion_reason
