@@ -11,13 +11,14 @@ from ...compiled_cast_timing import compiled_cast_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_morph_spec
 from ...convoke import ConvokeError
 from ...morph import MORPH_CAST_METHOD
-from ...targets import available_modes, canonical_modes
+from ...targets import available_modes
 from ..action_proposals import (
     ActionOffer,
     CastCostOption,
     CastProposal,
     freeze_json,
 )
+from ..modal_selection import canonical_modes
 from .costs import CastCostHost, revalidate_convoke_payment
 from .model import CastProposalError, CastProposalRequest, CastProposalResult
 

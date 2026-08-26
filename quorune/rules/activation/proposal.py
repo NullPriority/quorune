@@ -8,9 +8,10 @@ from ...abilities import ActivatedAbility, choose_ability, reduced_requirements
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
 from ...station import station_candidates, station_cost_choice
-from ...targets import available_modes, canonical_modes
+from ...targets import available_modes
 from ..action_proposals import ActionOffer, ActivationProposal, freeze_json
 from ..activation_costs import activation_choice_candidates
+from ..modal_selection import canonical_modes
 from .model import (
     ActivationProposalError,
     ActivationProposalRequest,

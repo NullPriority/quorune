@@ -28,6 +28,7 @@ from quorune.rules.capabilities import (
     CapabilityRegistry,
     capability_dependencies_for_node,
 )
+from quorune.rules.modal_selection import canonical_modes
 from quorune.targets import mode_effects, target_plan
 from scripts.build_test_database import build_fixture_database
 
@@ -76,7 +77,7 @@ class FixedNonrepeatingModalCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
         )
 
-    def test_target_plan_canonicalizes_closed_mode_sets_before_effects(self):
+    def test_runtime_canonicalizes_closed_mode_sets_before_effects(self):
         schema = {
             "min_modes": 2,
             "max_modes": 2,
@@ -93,7 +94,8 @@ class FixedNonrepeatingModalCompilerTests(unittest.TestCase):
             },
         }
 
-        plan = target_plan(schema, ["mode_3", "mode_1"])
+        selected_modes = canonical_modes(schema, ["mode_3", "mode_1"])
+        plan = target_plan(schema, selected_modes)
         self.assertEqual(("mode_1", "mode_3"), plan.modes)
         self.assertEqual(
             ("target_1", "target_3"),
@@ -104,7 +106,7 @@ class FixedNonrepeatingModalCompilerTests(unittest.TestCase):
                 {"op": "life", "player": "$target.0", "delta": 2},
                 {"op": "damage", "target": "$target.1", "amount": 2},
             ],
-            mode_effects(schema, ["mode_3", "mode_1"]),
+            mode_effects(schema, selected_modes),
         )
         for invalid in (
             ["mode_1"],
@@ -113,7 +115,7 @@ class FixedNonrepeatingModalCompilerTests(unittest.TestCase):
             ["mode_1", "unknown"],
         ):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
-                target_plan(schema, invalid)
+                canonical_modes(schema, invalid)
 
     def test_fixed_modal_programs_compile_across_shared_contexts(self):
         expected = {

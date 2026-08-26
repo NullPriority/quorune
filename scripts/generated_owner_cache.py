@@ -403,6 +403,7 @@ def _python_import_closure(
     available: set[str],
     read_text: Callable[[str], str],
     import_cache: dict[str, tuple[str, ...]] | None = None,
+    traverse_package_initializers: bool = True,
 ) -> set[str]:
     cached_imports = import_cache if import_cache is not None else {}
     closure = set(initial)
@@ -413,6 +414,11 @@ def _python_import_closure(
         if relative in parsed:
             continue
         parsed.add(relative)
+        if (
+            not traverse_package_initializers
+            and PurePosixPath(relative).name == "__init__.py"
+        ):
+            continue
         candidates = cached_imports.get(relative)
         if candidates is None:
             try:
@@ -1085,47 +1091,48 @@ def compiler_identity_status(
     spec = next(
         candidate for candidate in specs if candidate.id == "compiler-corpus-coverage"
     )
-    groups = load_input_groups(root / MANIFEST_GIT_PATH)
-    current_paths = set(
-        resolved_worktree_inputs(
-            spec,
-            specs=specs,
-            input_groups=groups,
-            root=root,
-        )
+    current_available = set(_worktree_paths(root))
+    current_implementation = _python_import_closure(
+        _match_patterns(
+            tuple(current_available),
+            spec.implementation_inputs,
+        ),
+        available=current_available,
+        read_text=lambda relative: (root / relative).read_text(encoding="utf-8"),
+        traverse_package_initializers=False,
     )
-    direct_paths = _match_patterns(
-        tuple(current_paths),
-        _owner_patterns(spec, groups),
-    )
-    current_implementation = (
-        current_paths - direct_paths - _IDENTITY_IMPLEMENTATION_PATHS
-    )
+    current_implementation -= _IDENTITY_IMPLEMENTATION_PATHS
     base_entries = _ref_entries(root, base_ref)
     try:
-        base_specs, base_groups = _manifest_at_ref(root, base_ref)
+        base_specs, _base_groups = _manifest_at_ref(root, base_ref)
         base_spec = next(
             candidate
             for candidate in base_specs
             if candidate.id == "compiler-corpus-coverage"
         )
-        base_paths = set(
-            _resolved_ref_inputs(
-                base_spec,
-                specs=base_specs,
-                input_groups=base_groups,
-                root=root,
-                ref=base_ref,
-                entries=base_entries,
-            )
+        base_content_cache: dict[str, str] = {}
+
+        def read_base_text(relative: str) -> str:
+            content = base_content_cache.get(relative)
+            if content is None:
+                content = _run_git(
+                    root,
+                    "show",
+                    f"{base_ref}:{relative}",
+                ).decode("utf-8", errors="strict")
+                base_content_cache[relative] = content
+            return content
+
+        base_implementation = _python_import_closure(
+            _match_patterns(
+                tuple(base_entries),
+                base_spec.implementation_inputs,
+            ),
+            available=set(base_entries),
+            read_text=read_base_text,
+            traverse_package_initializers=False,
         )
-        base_direct = _match_patterns(
-            tuple(base_paths),
-            _owner_patterns(base_spec, base_groups),
-        )
-        base_implementation = (
-            base_paths - base_direct - _IDENTITY_IMPLEMENTATION_PATHS
-        )
+        base_implementation -= _IDENTITY_IMPLEMENTATION_PATHS
     except (GeneratedOwnerCacheError, StopIteration):
         # The schema-v2 migration has no base declarations. The current static
         # implementation closure is still sufficient to compare old blobs.

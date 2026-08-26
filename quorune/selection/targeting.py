@@ -10,6 +10,7 @@ from ..object_predicate import (
     permanent_state_predicate_matches,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.modal_selection import canonical_modes
 from ..semantics import SemanticProgram
 from ..target_characteristics import TargetCharacteristicSnapshot
 from ..target_predicates import TargetPredicateError, target_predicate_matches
@@ -19,7 +20,6 @@ from ..targets import (
     TargetGroup,
     TargetPlan,
     available_modes,
-    canonical_modes,
     target_plan,
 )
 from ..util import unique_preserving_order
@@ -120,9 +120,14 @@ class TargetSelectionOwnerMixin:
         """
 
         try:
-            plan = target_plan(
+            selected_modes = canonical_modes(
                 schema,
                 modes,
+                require_modes=bool(available_modes(schema)),
+            )
+            plan = target_plan(
+                schema,
+                selected_modes,
                 require_modes=bool(available_modes(schema)),
             )
         except ValueError:
@@ -696,9 +701,14 @@ class TargetSelectionOwnerMixin:
                 )
             return [], {}
         try:
-            plan = target_plan(
+            selected_modes = canonical_modes(
                 schema,
                 modes,
+                require_modes=bool(available_modes(schema)),
+            )
+            plan = target_plan(
+                schema,
+                selected_modes,
                 require_modes=bool(available_modes(schema)),
             )
             candidates = self._target_candidate_map(

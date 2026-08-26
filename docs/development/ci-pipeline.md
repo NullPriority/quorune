@@ -127,6 +127,13 @@ impact plan invoke the same interface. Adding a file below `coverage/` or
 or a file with a registered generator marker requires adding that output to its
 owner in the same change.
 
+Owner reuse conservatively follows the complete Python import closure. The
+compiler-identity sentinel uses the compiler generator's implementation closure
+but treats package initializers as leaf boundaries: the initializer itself is
+semantic input, while modules re-exported only through that initializer do not
+require a compiler or schema bump. A module imported directly by the compiler
+closure remains semantic input and fails closed when its identity is unchanged.
+
 Run write mode after the coherent source/test/documentation worktree is complete
 and before the final commit; inspect and stage its outputs with the source
 change:
