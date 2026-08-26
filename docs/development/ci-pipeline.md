@@ -134,6 +134,13 @@ semantic input, while modules re-exported only through that initializer do not
 require a compiler or schema bump. A module imported directly by the compiler
 closure remains semantic input and fails closed when its identity is unchanged.
 
+The change-impact policy may also link a production owner directly to named
+neighboring test modules. Compiler promotion families use these links so a
+change to a static-characteristic, activated-cost, prevention, or central
+program-registration owner makes its positive and residual expectations
+visible in the focused plan. The links supplement the authoritative cloud
+shard; they do not turn a full shard into a required local run.
+
 Run write mode after the coherent source/test/documentation worktree is complete
 and before the final commit; inspect and stage its outputs with the source
 change:
@@ -267,11 +274,16 @@ The rules-scheduler owner also generates
 the Commander CardProgram corpus and card-unlock frontier. Static policy stores
 only provenance and candidate-bundle owner hypotheses; actual harvest counts
 are derived downstream. Family-level bundle closure is reported as
-`upper_bound_only` and cannot become foreground until a generated bounded
-cohort establishes one executable grammar and lower bound. Bundle selection
-reports shared owner, source-context, grammar, card, ability, residual,
-blocker-closure, and cycle-hour fields before ranking within the existing
-correctness-first class order.
+`upper_bound_only` and cannot become implementation foreground until a
+generated bounded cohort establishes one executable grammar and lower bound.
+If no implementation-eligible cohort exists, the same selector may choose one
+`cohort_measurement` task. That task pins the corpus filter, owner hypothesis,
+grammar boundary, exclusions, cards/residuals to inspect, probe effort, and
+upgrade evidence; it grants no gameplay trust or card support.
+Implementation-eligible work always outranks a measurement in the same
+correctness class. Bundle selection reports shared owner, source-context,
+grammar, card, ability, residual, blocker-closure, and cycle-hour fields before
+ranking within the machine-readable correctness-first class order.
 A `bounded_executable` declaration is rechecked against every current member
 occurrence, lowerable ability, card row, and material residual. Census drift
 returns it to `requires_bounded_cohort` rather than preserving a stale
@@ -499,7 +511,22 @@ as pushes.
 any expensive matrix job. It reads the pull-request event payload without a
 GitHub API call and fails deterministically when the tracked template is still
 untouched, a required section or evidence result is blank, an N/A has no
-reason, or a safety assertion remains unchecked. Editing the description
+reason, a safety assertion remains unchecked, or the generated base/head block
+does not match the event's immutable base and exact head. Generate the copyable
+block after the final source commit with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\pr_evidence.py `
+  --base <base-sha> --head <head-sha> --format markdown
+```
+
+The command reads represented family and capability IDs from the head's
+semantic-transition declaration and reconciles Oracle ability promotions,
+aggregate CardProgram record changes, structural carriers, material residuals,
+interactions, actual PR-source architecture deltas, the separately reviewed
+architecture baseline, and production/test/generated line changes. Missing
+source metadata remains an explicit reasoned N/A rather than an inferred
+identity. Editing the description
 restarts the gate, so a contributor can correct metadata without changing the
 certified source tree. For an `edited` event, Plan validates the new body and
 then looks for a live successful certification receipt for the same pull

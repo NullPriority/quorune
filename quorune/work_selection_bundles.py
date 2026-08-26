@@ -38,6 +38,7 @@ def single_candidate_bundle(candidate_id: str) -> dict[str, Any]:
         "shared_dependencies": [],
         "shared_grammar": None,
         "estimated_implementation_hours": None,
+        "estimated_probe_hours": None,
         "estimated_generation_hours": None,
         "estimated_cycle_hours": None,
         "predicted_complete_cards_per_cycle_hour": None,
@@ -93,6 +94,7 @@ def validate_bundle_policy(
         "shared_dependencies",
         "shared_grammar",
         "estimated_implementation_hours",
+        "estimated_probe_hours",
         "estimated_generation_hours",
         "expected_downstream_closure",
         "explicit_exclusions",
@@ -147,6 +149,7 @@ def validate_bundle_policy(
             )
         for field in (
             "estimated_implementation_hours",
+            "estimated_probe_hours",
             "estimated_generation_hours",
         ):
             if _nonnegative_int(row.get(field), field) < 1:
@@ -238,6 +241,7 @@ def atomic_frontier_bundle(
         "shared_dependencies": [],
         "shared_grammar": detail,
         "estimated_implementation_hours": implementation_hours,
+        "estimated_probe_hours": None,
         "estimated_generation_hours": 1,
         "estimated_cycle_hours": cycle_hours,
         "predicted_complete_cards_per_cycle_hour": cards_per_hour,

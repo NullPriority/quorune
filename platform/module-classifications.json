@@ -7791,6 +7791,48 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/work_selection_common.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_governance",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/work_selection_evidence.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_governance",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/work_selection_measurement.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_governance",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/zone_object_keyword_grants.py",
       "layer": "rules",
       "owning_subsystem": "continuous_effects",
@@ -8019,5 +8061,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "e2323278398b4114c317db141890c9ff7f9845672e32dd5b0e909901515b3848"
+  "fingerprint": "632e9f7e7481e603f998d5ae8b22b43247c8dbf06efc99af90cdd406a74641d0"
 }
