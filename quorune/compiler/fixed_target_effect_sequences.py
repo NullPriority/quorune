@@ -12,12 +12,21 @@ from .counter_placement_templates import (
     existing_target_counter_placement_effect_template,
     fixed_counter_placement_effect_template,
 )
-from .direct_target import DirectPermanentTargetSpec
+from .direct_target import (
+    DirectPermanentTargetSpec,
+    direct_permanent_target_spec,
+)
 
 
 _TARGET_CREATURE = re.compile(
     r"(?P<subject>target creature"
     r"(?P<relation> you control| an opponent controls| you don't control)?|it) "
+    r"(?P<body>.+?) until end of turn\.?",
+    re.IGNORECASE,
+)
+_TARGET_COMBAT_CREATURE = re.compile(
+    r"(?P<subject>target (?:attacking or blocking|attacking|blocking) creature"
+    r"(?: you control| an opponent controls| you don't control)?) "
     r"(?P<body>.+?) until end of turn\.?",
     re.IGNORECASE,
 )
@@ -74,6 +83,7 @@ class FixedTargetCharacteristicsTemplate:
     toughness: int | None
     keywords: tuple[str, ...]
     controller_relation: str | None
+    target_spec: DirectPermanentTargetSpec | None = None
 
     def __post_init__(self) -> None:
         if (self.power is None) is not (self.toughness is None):
@@ -84,6 +94,14 @@ class FixedTargetCharacteristicsTemplate:
             raise ValueError("Characteristic change cannot be empty")
         if self.controller_relation not in {None, "any", "you", "opponent"}:
             raise ValueError("Target controller relation is unsupported")
+        if self.target_spec is not None and (
+            not isinstance(self.target_spec, DirectPermanentTargetSpec)
+            or self.target_spec.combat_state is None
+            or self.controller_relation is None
+        ):
+            raise ValueError(
+                "Fixed characteristics direct target requires combat-state grammar"
+            )
         if len(set(self.keywords)) != len(self.keywords) or any(
             value.casefold() not in FIXED_TARGET_CHARACTERISTIC_KEYWORDS
             for value in self.keywords
@@ -116,6 +134,8 @@ class FixedTargetCharacteristicsTemplate:
     def target_schema(self) -> Mapping[str, Any] | None:
         if self.controller_relation is None:
             return None
+        if self.target_spec is not None:
+            return self.target_spec.to_target_schema()
         schema: dict[str, Any] = {
             "zones": ["battlefield"],
             "categories": ["permanent"],
@@ -165,13 +185,24 @@ def fixed_target_characteristics_effect_template(
 ) -> FixedTargetCharacteristicsTemplate | None:
     """Parse one fixed target or target-pronoun characteristic instruction."""
 
-    match = _TARGET_CREATURE.fullmatch(text.strip())
+    match = _TARGET_COMBAT_CREATURE.fullmatch(text.strip())
+    target_spec = None
+    if match is not None:
+        target_spec = direct_permanent_target_spec(match.group("subject"))
+        if target_spec is None:
+            return None
+    else:
+        match = _TARGET_CREATURE.fullmatch(text.strip())
     if match is None:
         return None
     subject = match.group("subject").casefold()
     if (subject == "it") is not existing_target:
         return None
-    relation = (match.group("relation") or "").casefold()
+    relation = (
+        ""
+        if target_spec is not None
+        else (match.group("relation") or "").casefold()
+    )
     controller_relation = (
         None
         if existing_target
@@ -181,6 +212,8 @@ def fixed_target_characteristics_effect_template(
         if relation
         else "any"
     )
+    if target_spec is not None:
+        controller_relation = target_spec.controller_relation
     body = match.group("body")
     gets = _GETS.fullmatch(body)
     gains = _GAINS.fullmatch(body)
@@ -197,6 +230,7 @@ def fixed_target_characteristics_effect_template(
             toughness=int(gets.group("toughness")),
             keywords=keywords,
             controller_relation=controller_relation,
+            target_spec=target_spec,
         )
     if gains is None:
         return None
@@ -208,6 +242,7 @@ def fixed_target_characteristics_effect_template(
         toughness=None,
         keywords=keywords,
         controller_relation=controller_relation,
+        target_spec=target_spec,
     )
 
 

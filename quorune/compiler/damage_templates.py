@@ -14,6 +14,10 @@ from ..fixed_damage_set_model import (
 )
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec
+from .direct_target import (
+    DirectPermanentTargetSpec,
+    direct_permanent_target_spec,
+)
 
 
 _ABILITY_WORD = re.compile(
@@ -92,6 +96,7 @@ class FixedDamageEffectTemplate:
     amount: int
     recipient: FixedDamageRecipient
     source_kind: str | None = None
+    target_spec: DirectPermanentTargetSpec | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.amount, int) or isinstance(self.amount, bool):
@@ -105,9 +110,19 @@ class FixedDamageEffectTemplate:
             "named",
         ):
             raise ValueError("Fixed damage source kind is unsupported")
+        if self.target_spec is not None and (
+            not isinstance(self.target_spec, DirectPermanentTargetSpec)
+            or self.target_spec.combat_state is None
+            or self.recipient is not FixedDamageRecipient.CREATURE
+        ):
+            raise ValueError(
+                "Fixed damage direct target requires one combat-state creature"
+            )
 
     @property
     def template_id(self) -> str:
+        if self.target_spec is not None:
+            return f"damage-{self.target_spec.slug}-v1"
         if self.recipient is FixedDamageRecipient.ANY_TARGET:
             if self.source_kind not in {None, "named", "spell"}:
                 return f"damage-any-target-self-{self.source_kind}-v1"
@@ -135,6 +150,8 @@ class FixedDamageEffectTemplate:
 
     @property
     def target_schema(self) -> Mapping[str, Any] | None:
+        if self.target_spec is not None:
+            return self.target_spec.to_target_schema()
         if self.recipient is FixedDamageRecipient.EACH_OPPONENT:
             return None
         if self.recipient is FixedDamageRecipient.ANY_TARGET:
@@ -450,6 +467,14 @@ def _fixed_damage_instruction_template(
             spec=spec,
             source_kind=source_kind,
             target_opponent=target_opponent,
+        )
+    target_spec = direct_permanent_target_spec(recipient_text)
+    if target_spec is not None and target_spec.combat_state is not None:
+        return FixedDamageEffectTemplate(
+            amount=amount,
+            recipient=FixedDamageRecipient.CREATURE,
+            source_kind=source_kind,
+            target_spec=target_spec,
         )
     recipient = next(
         (

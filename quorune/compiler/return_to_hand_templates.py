@@ -10,7 +10,9 @@ from ..rules.graveyard_card_targets import (
     OwnGraveyardCardTargetSpec,
 )
 from .direct_target import (
+    DirectPermanentTargetSpec,
     compiled_direct_target,
+    direct_permanent_target_spec,
     direct_target_effect,
     permanent_target_schema,
 )
@@ -38,13 +40,24 @@ class TargetedReturnToHandEffectTemplate:
     """Closed lowering for one mandatory direct battlefield return."""
 
     target: ReturnToHandTarget
+    target_spec: DirectPermanentTargetSpec | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.target, ReturnToHandTarget):
             raise ValueError("Return-to-hand target domain is unsupported")
+        if self.target_spec is not None and (
+            not isinstance(self.target_spec, DirectPermanentTargetSpec)
+            or self.target_spec.combat_state is None
+            or self.target is not ReturnToHandTarget.CREATURE
+        ):
+            raise ValueError(
+                "Return-to-hand direct target requires one combat-state creature"
+            )
 
     @property
     def template_id(self) -> str:
+        if self.target_spec is not None:
+            return f"return-target-{self.target_spec.slug}-v2"
         return "return-target-" + self.target.value.replace(" ", "-") + "-v2"
 
     @property
@@ -53,6 +66,8 @@ class TargetedReturnToHandEffectTemplate:
 
     @property
     def target_schema(self) -> Mapping[str, Any]:
+        if self.target_spec is not None:
+            return self.target_spec.to_target_schema()
         return permanent_target_schema(
             types_none=(
                 ("land",)
@@ -147,7 +162,20 @@ def targeted_return_to_hand_effect_template(
         re.IGNORECASE,
     )
     if match is None:
-        return None
+        direct = re.fullmatch(
+            r"return (?P<subject>target .+) to its owner['’]s hand\.?",
+            text.strip(),
+            re.IGNORECASE,
+        )
+        if direct is None:
+            return None
+        target_spec = direct_permanent_target_spec(direct.group("subject"))
+        if target_spec is None or target_spec.combat_state is None:
+            return None
+        return TargetedReturnToHandEffectTemplate(
+            ReturnToHandTarget.CREATURE,
+            target_spec=target_spec,
+        )
     return TargetedReturnToHandEffectTemplate(
         ReturnToHandTarget(match.group("target").casefold())
     )

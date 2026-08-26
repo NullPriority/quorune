@@ -22,6 +22,7 @@ from ..attachment_references import (
 from ..compiler.counter_placement_templates import (
     fixed_counter_set_spec_is_closed,
 )
+from ..compiler.direct_target import DirectPermanentTargetSpec
 from ..compiler.fixed_target_effect_sequences import (
     FIXED_TARGET_CHARACTERISTIC_KEYWORDS,
 )
@@ -386,18 +387,27 @@ def fixed_damage_node_capabilities(
         ),
         None,
     )
-    if domain is None:
+    direct_target = None
+    if domain is None and direct_permanent_target_schema_is_closed(schema):
+        direct_target = DirectPermanentTargetSpec.from_target_schema(schema)
+        if direct_target.combat_state is None:
+            direct_target = None
+    if domain is None and direct_target is None:
         return ()
     dependencies = {"damage.amount.positive"}
     if domain in _PLAYER_DAMAGE_DOMAINS:
         dependencies.add("damage.result.player_life")
-    if domain in _PERMANENT_DAMAGE_DOMAINS:
+    if domain in _PERMANENT_DAMAGE_DOMAINS or direct_target is not None:
         dependencies.add("damage.result.multitype_permanent")
-    dependencies.add(
-        "target.public.player_or_damageable_permanent"
-        if domain == "any_target"
-        else "target.revalidate_resolution"
-    )
+    if direct_target is not None:
+        dependencies.update(direct_target_predicate_capabilities(schema))
+        dependencies.add("target.revalidate_resolution")
+    else:
+        dependencies.add(
+            "target.public.player_or_damageable_permanent"
+            if domain == "any_target"
+            else "target.revalidate_resolution"
+        )
     return tuple(sorted(dependencies))
 
 
@@ -735,10 +745,21 @@ def targeted_return_to_hand_node_capabilities(
     """Return capabilities only for the closed direct battlefield grammar."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    direct_target = (
+        DirectPermanentTargetSpec.from_target_schema(target_schema)
+        if direct_permanent_target_schema_is_closed(target_schema)
+        else None
+    )
     if (
         not {"return-to-owner-hand", "cr-115-targets"}.issubset(mechanics)
         or len(effects) != 1
-        or dict(target_schema or {}) not in _TARGETED_RETURN_TO_HAND_SCHEMAS
+        or (
+            dict(target_schema or {}) not in _TARGETED_RETURN_TO_HAND_SCHEMAS
+            and not (
+                direct_target is not None
+                and direct_target.combat_state is not None
+            )
+        )
     ):
         return ()
     effect = effects[0]
@@ -750,6 +771,11 @@ def targeted_return_to_hand_node_capabilities(
         return ()
     return (
         "permanent.return.owner_hand",
+        *(
+            direct_target_predicate_capabilities(target_schema)  # type: ignore[arg-type]
+            if direct_target is not None
+            else ()
+        ),
         "target.revalidate_resolution",
     )
 
@@ -1150,13 +1176,10 @@ def fixed_target_characteristics_node_capabilities(
     }.issubset(mechanics) or not 1 <= len(effects) <= 3:
         return ()
     schema = dict(target_schema or {})
-    relation = schema.pop("controller_relation", "any")
-    if relation not in {"any", "you", "opponent"} or schema != {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["creature"],
-        "count": 1,
-    }:
+    if not direct_permanent_target_schema_is_closed(schema):
+        return ()
+    target_spec = DirectPermanentTargetSpec.from_target_schema(schema)
+    if target_spec.types_any != ("creature",):
         return ()
     granted_keywords: set[str] = set()
     for effect in effects:
@@ -1185,6 +1208,7 @@ def fixed_target_characteristics_node_capabilities(
         return ()
     return (
         "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        *direct_target_predicate_capabilities(schema),
         "target.revalidate_resolution",
     )
 

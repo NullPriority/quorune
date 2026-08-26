@@ -353,6 +353,18 @@ class TargetSelectionOwnerMixin:
             bool(card and card.blocking is not None) != group.blocking
         ):
             return False
+        if group.combat_state is not None:
+            attacking = bool(card and card.attacking is not None)
+            blocking = bool(card and card.blocking is not None)
+            if not (
+                (group.combat_state == "attacking" and attacking)
+                or (group.combat_state == "blocking" and blocking)
+                or (
+                    group.combat_state == "attacking_or_blocking"
+                    and (attacking or blocking)
+                )
+            ):
+                return False
         if group.tapped is not None and (
             bool(card and card.tapped) != group.tapped
         ):

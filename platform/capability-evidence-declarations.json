@@ -17553,7 +17553,7 @@
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_public_state_targets_share_offer_command_and_resolution_revalidation",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use the same current-turn entry predicate for target offers, submitted-command validation, and CR 608.2b resolution revalidation."
     },
@@ -17561,15 +17561,23 @@
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_public_state_counter_set_resolves_current_membership_once",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Snapshot the authoritative current public-state membership of a fixed counter affected set immediately before its APNAP-canonical batch."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use the same current combat relationship for public offers and submitted-command validation, including the attacking-or-blocking disjunction."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_permanent_exile_rules.PermanentExileRuleTests.test_compiled_tapped_exile_filters_and_revalidates_target",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use one shared tapped-state predicate for exile target offers, submitted-command validation, and resolution revalidation."
     },
@@ -17577,15 +17585,23 @@
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply the named-counter membership predicate only to the chosen player's permanents in a four-player resolution."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Derive combat-state targets from public current relationships in a four-player game without a seat-specific target grammar."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "mutation",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_public_state_predicate_runtime_mutation_is_killed",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a runtime mutation that admits a previous-turn permanent by bypassing the shared public-state evaluator."
     },
@@ -17593,7 +17609,7 @@
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "negative",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateCompilerTests.test_unsupported_and_malformed_direct_target_predicates_fail_closed",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject generic counter-presence, unrepresented turn history, contradictory state descriptors, and unsupported negative subtypes."
     },
@@ -17601,7 +17617,7 @@
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateCompilerTests.test_public_state_direct_targets_compile_typed_predicates",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower tapped, named-counter, and current-turn-entry direct target wording to one immutable state descriptor."
     },
@@ -17609,23 +17625,39 @@
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetCompilerTests.test_public_state_counter_sets_are_typed_and_deterministic",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower named-counter and current-turn-entry affected sets with closed color and subtype qualifiers to deterministic typed queries."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_shared_characteristic_grammar_covers_the_bounded_shapes",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower attacking, blocking, and attacking-or-blocking direct targets to one canonical immutable combat-state descriptor."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "privacy",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_four_player_target_predicate_privacy_rollback_and_replay",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project only public named-counter-qualified legal refs to the acting seat without exposing another seat's decision or hidden identities."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Advertise only public combatant references and never inspect or project hidden-zone identities while computing legal targets."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "replay",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_four_player_target_predicate_privacy_rollback_and_replay",
-      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "608.2b", "608.2h"],
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the accepted named-counter-qualified target and resulting fixed counter placement to the same authoritative hash."
     },

@@ -7,6 +7,7 @@ import unittest
 
 from common import ROOT
 from quorune.carddb import CardDatabase
+from quorune.compiler.direct_target import DirectPermanentTargetSpec
 from quorune.compiler.return_to_hand_templates import (
     ReturnToHandTarget,
     TargetedReturnToHandEffectTemplate,
@@ -94,6 +95,24 @@ class TargetedReturnToHandTemplateTests(unittest.TestCase):
         ):
             with self.subTest(text=text):
                 self.assertIsNone(targeted_return_to_hand_effect_template(text))
+
+    def test_combat_state_return_reuses_shared_direct_target_schema(self):
+        template = targeted_return_to_hand_effect_template(
+            "Return target blocking creature to its owner's hand."
+        )
+
+        self.assertIsNotNone(template)
+        assert template is not None
+        self.assertEqual(
+            DirectPermanentTargetSpec(
+                types_any=("creature",), combat_state="blocking"
+            ),
+            template.target_spec,
+        )
+        self.assertEqual(
+            "return-target-creature-blocking-v2", template.template_id
+        )
+        self.assertEqual("blocking", template.target_schema["combat_state"])
 
     def test_nonland_target_uses_the_shared_exact_type_predicate(self):
         group = TargetGroup.from_mapping(

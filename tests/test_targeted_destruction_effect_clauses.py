@@ -114,6 +114,13 @@ class TargetedDestructionTemplateTests(unittest.TestCase):
                     "controller_relation": "opponent",
                 },
             ),
+            (
+                "Destroy target attacking creature.",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "attacking",
+                },
+            ),
         )
         for text, expected in cases:
             with self.subTest(text=text):
@@ -124,7 +131,6 @@ class TargetedDestructionTemplateTests(unittest.TestCase):
         for text in (
             "Destroy up to one target creature.",
             "You may destroy target creature.",
-            "Destroy target attacking creature.",
             "Destroy target creature or Spacecraft.",
             "Destroy target Spirit or enchantment.",
             "Destroy target creature. It can't be regenerated.",
@@ -211,7 +217,6 @@ class TargetedDestructionCompilerTests(unittest.TestCase):
         for text in (
             "Destroy up to one target creature.",
             "You may destroy target creature.",
-            "Destroy target attacking creature.",
             "Destroy target creature or Spacecraft.",
             "Destroy target Spirit or enchantment.",
             "Destroy target creature. It can't be regenerated.",

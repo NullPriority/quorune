@@ -470,7 +470,9 @@ positive and negative supertype, keyword, color, color-cardinality, and token
 qualities; controller relation; source exclusion; one fixed
 exact/minimum/maximum mana-value qualifier; and one shared typed public-state
 predicate for tapped state, named-counter presence, or current-turn battlefield
-entry. The final effective-characteristic snapshot owns color cardinality and
+entry. That public-state descriptor also represents one current attacking,
+blocking, or attacking-or-blocking creature predicate from the authoritative
+combat relationships. The final effective-characteristic snapshot owns color cardinality and
 negative subtype evaluation at offer, command, and resolution boundaries, so
 copy and type-changing effects do not require a second grammar-specific query.
 The mana-value form
@@ -479,11 +481,12 @@ from power, toughness, variable, total, and public-state-combined numeric
 grammar so this harvest does not cross the cycle-sensitive characteristic
 boundary.
 Arbitrary adjectives are never inferred as creature subtypes. Scoped
-disjunctions, combat or damage history, power or toughness, generic counter
+disjunctions, combat or damage history beyond current participation, power or toughness, generic counter
 presence, and identity or attachment relations remain residual. Ability-
 presence predicates remain residual until the shared layer-6 applicability
 query exists. Targeted
-destruction, exile, tap, and untap delegate their whole-clause subjects to this
+destruction, exile, damage, return, fixed target-characteristic changes, tap,
+and untap delegate their whole-clause subjects to this
 same owner, so spells, triggers, activations, and modal bodies share the exact
 typed target grammar without an effect-specific predicate vocabulary. Mixed
 type/subtype disjunctions and unrepresented qualifiers remain residual. The

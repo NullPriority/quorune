@@ -101,6 +101,13 @@ class TargetedExileTemplateTests(unittest.TestCase):
                 "Exile target nonland permanent.",
                 {"types_none": ["land"]},
             ),
+            (
+                "Exile target attacking creature.",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "attacking",
+                },
+            ),
         )
         for text, expected in cases:
             with self.subTest(text=text):
@@ -111,7 +118,6 @@ class TargetedExileTemplateTests(unittest.TestCase):
         for text in (
             "Exile up to one target creature.",
             "You may exile target creature.",
-            "Exile target attacking creature.",
             "Exile target creature or Spacecraft.",
             "Exile target creature card from a graveyard.",
             "Exile all creatures.",
@@ -206,7 +212,6 @@ class TargetedExileCompilerTests(unittest.TestCase):
         for text in (
             "Exile up to one target creature.",
             "You may exile target creature.",
-            "Exile target attacking creature.",
             "Exile target creature or Spacecraft.",
             "Exile target creature, then return it to the battlefield.",
         ):
