@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import hashlib
 import re
 from typing import Any, Mapping, Sequence
+
+from quorune.util import stable_json
 
 
 _BUNDLE_CONTEXTS = {"activated", "modal", "setup", "spell", "triggered"}
@@ -14,7 +17,7 @@ _BUNDLE_OWNER = re.compile(r"^(?:capability|component):[A-Za-z0-9_.:-]+$")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _MEASUREMENT_OUTCOME_FIELDS = {
     "measurement_id",
-    "frontier_fingerprint",
+    "cohort_fingerprint",
     "oracle_source_sha256",
     "measurement_method",
     "affected_commander_cards",
@@ -28,6 +31,7 @@ _MEASUREMENT_OUTCOME_FIELDS = {
     "grants_gameplay_trust",
 }
 _MEASUREMENT_METHOD = "frontier-sole-blocker-closure-v1"
+_MEASUREMENT_FINGERPRINT_SCHEMA = 1
 _EFFORT_HOURS = {
     "small": 5,
     "medium": 10,
@@ -115,7 +119,7 @@ def _validate_measurement_outcome(
     expected_measurement_id = "measurement:" + bundle_id.split(":", 1)[-1]
     invalid_identity = (
         outcome.get("measurement_id") != expected_measurement_id
-        or not _SHA256.fullmatch(str(outcome.get("frontier_fingerprint") or ""))
+        or not _SHA256.fullmatch(str(outcome.get("cohort_fingerprint") or ""))
         or not _SHA256.fullmatch(str(outcome.get("oracle_source_sha256") or ""))
         or outcome.get("measurement_method") != _MEASUREMENT_METHOD
         or outcome.get("decision") != "retired_below_harvest_floor"
@@ -384,6 +388,115 @@ def _bundle_frontier_gains(
     return result
 
 
+def _ability_references_bundle(
+    ability: Mapping[str, Any], member_family_ids: set[str]
+) -> bool:
+    if (
+        set(
+            ability.get("blockers", {}).get(
+                "canonical_family_ids", []
+            )
+        )
+        & member_family_ids
+    ):
+        return True
+    return any(
+        set(residual.get("family_ids", [])) & member_family_ids
+        for residual in ability.get("residuals", [])
+    )
+
+
+def _measurement_card_projection(
+    card: Mapping[str, Any], member_family_ids: set[str]
+) -> dict[str, Any] | None:
+    relevant_abilities = [
+        ability
+        for ability in card.get("abilities", [])
+        if _ability_references_bundle(ability, member_family_ids)
+    ]
+    if (
+        not relevant_abilities
+        and not set(card.get("minimum_known_blocker_set", []))
+        & member_family_ids
+    ):
+        return None
+    return {
+        "oracle_id": card.get("oracle_id"),
+        "card_name": card.get("card_name"),
+        "hard_construction_failure": card.get("hard_construction_failure"),
+        "minimum_known_blocker_set": card.get(
+            "minimum_known_blocker_set", []
+        ),
+        "abilities": relevant_abilities,
+    }
+
+
+def bundle_measurement_fingerprint(
+    frontier: Mapping[str, Any], bundle_policy: Mapping[str, Any]
+) -> str:
+    """Bind a bounded probe to its relevant frontier cohort and grammar."""
+    member_ids = sorted(
+        str(value) for value in bundle_policy["member_family_ids"]
+    )
+    member_id_set = set(member_ids)
+    family_rows = {
+        str(row.get("family_id") or ""): row
+        for row in frontier.get("family_candidates", [])
+    }
+    cards = frontier.get("cards")
+    if not isinstance(cards, list):
+        raise WorkSelectionBundleError(
+            "Card frontier lacks complete bundle card rows"
+        )
+    relevant_cards = sorted(
+        (
+            projected
+            for card in cards
+            if (
+                projected := _measurement_card_projection(
+                    card, member_id_set
+                )
+            )
+            is not None
+        ),
+        key=lambda card: (
+            str(card.get("oracle_id") or ""),
+            stable_json(card),
+        ),
+    )
+    payload = {
+        "schema_version": _MEASUREMENT_FINGERPRINT_SCHEMA,
+        "measurement_method": _MEASUREMENT_METHOD,
+        "frontier_contract": {
+            field: frontier.get(field)
+            for field in (
+                "schema_version",
+                "algorithm_version",
+                "boundary",
+                "profile",
+                "commander_legal_only",
+                "complete_snapshot_claimed",
+            )
+        },
+        "cohort_boundary": {
+            field: bundle_policy.get(field)
+            for field in (
+                "bundle_id",
+                "member_family_ids",
+                "canonical_owner_ids",
+                "source_contexts",
+                "normalized_literal_parameters",
+                "shared_dependencies",
+                "shared_grammar",
+                "explicit_exclusions",
+            )
+        },
+        "family_rows": [family_rows.get(member_id) for member_id in member_ids],
+        "cards": relevant_cards,
+    }
+    return hashlib.sha256(stable_json(payload).encode("utf-8")).hexdigest()
+
+
 def candidate_frontier_measurements(
     frontier: Mapping[str, Any],
     bundle_policies: Sequence[Mapping[str, Any]],
@@ -419,10 +532,12 @@ def candidate_frontier_measurements(
             if isinstance(snapshot, Mapping)
             else ""
         )
+        cohort_fingerprint = bundle_measurement_fingerprint(
+            frontier, bundle_policy
+        )
         measurement_outcome_current = bool(
             isinstance(outcome, Mapping)
-            and outcome.get("frontier_fingerprint")
-            == frontier.get("fingerprint")
+            and outcome.get("cohort_fingerprint") == cohort_fingerprint
             and outcome.get("oracle_source_sha256") == oracle_source
         )
         gains = (
@@ -493,6 +608,7 @@ def candidate_frontier_measurements(
                     bounded_executable_verified
                 ),
                 "measurement_outcome_current": measurement_outcome_current,
+                "measurement_cohort_fingerprint": cohort_fingerprint,
                 "measurement_outcome": (
                     dict(outcome) if measurement_outcome_current else None
                 ),
@@ -509,6 +625,7 @@ def candidate_frontier_measurements(
 
 __all__ = [
     "atomic_frontier_bundle",
+    "bundle_measurement_fingerprint",
     "bundle_measurement_decision",
     "candidate_frontier_measurements",
     "single_candidate_bundle",

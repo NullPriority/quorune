@@ -335,7 +335,7 @@
     }
   ],
   "work_selection": {
-    "policy_version": 7,
+    "policy_version": 8,
     "priority_classes": [
       "ci_correctness",
       "replay_privacy_defect",
@@ -449,7 +449,7 @@
           "measurement_status": "measured_nonviable",
           "measurement_outcome": {
             "measurement_id": "measurement:fixed-exile-contexts",
-            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
+            "cohort_fingerprint": "15e7000b61793c4e8e3da6adc3163b9ac1f4098998d159c8d1e0976473f5b705",
             "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
             "measurement_method": "frontier-sole-blocker-closure-v1",
             "affected_commander_cards": 18,
@@ -500,7 +500,7 @@
           "measurement_status": "measured_nonviable",
           "measurement_outcome": {
             "measurement_id": "measurement:fixed-face-down-methods",
-            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
+            "cohort_fingerprint": "4be6a743276c586213720c91d7092a922aeddd939c5bf261077d906de35fa3eb",
             "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
             "measurement_method": "frontier-sole-blocker-closure-v1",
             "affected_commander_cards": 74,
@@ -589,7 +589,7 @@
           "measurement_status": "measured_nonviable",
           "measurement_outcome": {
             "measurement_id": "measurement:fixed-token-creation-contexts",
-            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
+            "cohort_fingerprint": "95e3cbdcef550de452e00b16419a8ad174dc928efe26e8835708f3114eb4c2a8",
             "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
             "measurement_method": "frontier-sole-blocker-closure-v1",
             "affected_commander_cards": 16,
@@ -599,7 +599,7 @@
             "exact_ability_gain": 17,
             "material_residual_reduction": 17,
             "decision": "retired_below_harvest_floor",
-            "reason": "The current-frontier existing-owner fixed-definition token cohort closes no Commander cards and only 17 abilities or residuals across 16 cards; every member retains modal, Spree, Entwine, or other enclosing grammar. The wider sole-family upper bound is dominated by custom quoted abilities, copies, named or legendary tokens, unsupported characteristic keywords or predefined tokens, dynamic quantities, delayed or non-controller instructions, and attached or Role tokens, so this cohort is below every normal harvest floor.",
+            "reason": "The current-frontier existing-owner fixed-definition token cohort closes no Commander cards and only 17 abilities or residuals across 16 cards; every member retains modal, Spree, Entwine, or other enclosing grammar. All 39 sole-family cards fall outside the bounded source grammar through custom quoted abilities, copies, named or legendary tokens, unsupported characteristic keywords or predefined tokens, dynamic quantities, delayed or non-controller instructions, or attached or Role tokens, so this cohort is below every normal harvest floor.",
             "grants_gameplay_trust": false
           }
         }

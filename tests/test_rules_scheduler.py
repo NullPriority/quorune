@@ -27,6 +27,7 @@ from quorune.work_selection import (
     selected_work_candidate,
 )
 from quorune.work_selection_bundles import (
+    bundle_measurement_fingerprint,
     bundle_measurement_decision,
     candidate_frontier_measurements,
     WorkSelectionBundleError,
@@ -1055,6 +1056,12 @@ class RulesSchedulerTests(unittest.TestCase):
                 "retired_below_harvest_floor", outcome["decision"]
             )
             self.assertFalse(outcome["grants_gameplay_trust"])
+            self.assertEqual(
+                bundle_measurement_fingerprint(
+                    self.work_inputs["card_unlock_frontier"], policy
+                ),
+                outcome["cohort_fingerprint"],
+            )
         measured_outcomes = {
             row["measurement_outcome"]["measurement_id"]: row["measurement_outcome"]
             for row in self.catalog["work_selection"]["coverage_family"][
@@ -1081,7 +1088,7 @@ class RulesSchedulerTests(unittest.TestCase):
             for row in policy["coverage_family"]["candidate_bundles"]
             if row["bundle_id"] == "bundle:fixed-token-creation-contexts"
         )
-        token["measurement_outcome"]["frontier_fingerprint"] = "0" * 64
+        token["measurement_outcome"]["cohort_fingerprint"] = "0" * 64
         work = build_work_selection(
             selected_batch=self.queue["selected_batch"],
             policy=policy,
@@ -1102,6 +1109,57 @@ class RulesSchedulerTests(unittest.TestCase):
         source_filter = selected["measurement_task"]["source_corpus_filter"]
         self.assertEqual(["unresolved"], source_filter["ability_statuses"])
         self.assertNotIn("lowerable_untrusted_only", source_filter)
+
+    def test_measurement_freshness_ignores_unrelated_frontier_churn(self):
+        inputs = _without_pending_harvest_transition(self.work_inputs)
+        frontier = inputs["card_unlock_frontier"]
+        frontier["fingerprint"] = "f" * 64
+        measured_family_ids = {
+            family_id
+            for bundle in self.catalog["work_selection"]["coverage_family"][
+                "candidate_bundles"
+            ]
+            if bundle["measurement_outcome"] is not None
+            for family_id in bundle["member_family_ids"]
+        }
+        unrelated = next(
+            row
+            for row in frontier["family_candidates"]
+            if row["family_id"] not in measured_family_ids
+        )
+        unrelated["affected_cards"] += 1
+
+        work = build_work_selection(
+            selected_batch=self.queue["selected_batch"],
+            policy=self.catalog["work_selection"],
+            inputs=inputs,
+        )
+
+        self.assertIsNone(selected_work_candidate(work))
+        self.assertEqual(0, work["eligible_candidate_count"])
+
+    def test_relevant_frontier_change_reopens_bounded_probe(self):
+        inputs = _without_pending_harvest_transition(self.work_inputs)
+        token_family = next(
+            row
+            for row in inputs["card_unlock_frontier"]["family_candidates"]
+            if row["family_id"] == "effect_clause:create-token"
+        )
+        token_family["affected_cards"] += 1
+
+        work = build_work_selection(
+            selected_batch=self.queue["selected_batch"],
+            policy=self.catalog["work_selection"],
+            inputs=inputs,
+        )
+        selected = selected_work_candidate(work)
+
+        self.assertIsNotNone(selected)
+        self.assertEqual(
+            "measurement:fixed-token-creation-contexts",
+            selected["candidate_id"],
+        )
+        self.assertFalse(selected["implementation_eligible"])
 
     def test_completed_bundle_retires_and_upper_bound_requires_bounded_cohort(self):
         work = self.queue["work_selection"]

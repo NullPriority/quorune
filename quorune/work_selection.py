@@ -232,7 +232,7 @@ def _validated_reviewed_history(
 def _validated_policy(
     policy: Mapping[str, Any], harvest_history: Mapping[str, Any]
 ) -> dict[str, Any]:
-    if int(policy.get("policy_version") or 0) != 7:
+    if int(policy.get("policy_version") or 0) != 8:
         raise WorkSelectionError("Unsupported work-selection policy")
     priority_classes, starting_uncovered = _validated_priority_policy(policy)
     coverage = _mapping(policy.get("coverage_family"), "coverage_family")
@@ -249,7 +249,7 @@ def _validated_policy(
         minimum_gain=int(validated_coverage["minimum_complete_card_gain"]),
     )
     return {
-        "policy_version": 7,
+        "policy_version": 8,
         "priority_classes": priority_classes,
         "starting_uncovered_high_risk_pairs": starting_uncovered,
         **validated_coverage,
