@@ -335,7 +335,7 @@
     }
   ],
   "work_selection": {
-    "policy_version": 6,
+    "policy_version": 7,
     "priority_classes": [
       "ci_correctness",
       "replay_privacy_defect",
@@ -406,7 +406,8 @@
             "partner with and its enters-the-battlefield search",
             "provisional, stale, duplicated, and noncanonical declarations"
           ],
-          "measurement_status": "bounded_executable"
+          "measurement_status": "bounded_executable",
+          "measurement_outcome": null
         },
         {
           "bundle_id": "bundle:fixed-exile-contexts",
@@ -445,7 +446,22 @@
             "linked returns and delayed results",
             "variable, optional, random, and cost exile"
           ],
-          "measurement_status": "upper_bound_only"
+          "measurement_status": "measured_nonviable",
+          "measurement_outcome": {
+            "measurement_id": "measurement:fixed-exile-contexts",
+            "frontier_fingerprint": "29696dcf6b6ffa68a5747fe6412826021f767e906721bfbc2aa2eddfa142d123",
+            "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
+            "measurement_method": "frontier-sole-blocker-closure-v1",
+            "affected_commander_cards": 18,
+            "complete_card_gain": 0,
+            "one_additional_blocker_cards": 0,
+            "two_additional_blocker_cards": 8,
+            "exact_ability_gain": 19,
+            "material_residual_reduction": 19,
+            "decision": "retired_below_harvest_floor",
+            "reason": "The exact existing-owner battlefield and public-zone exile grammar closes no Commander cards and only 19 abilities or residuals. Hidden-zone, temporary, linked, variable, optional, random, cost, stack, and unrelated public-object grammars remain excluded, so this cohort is below every normal harvest floor.",
+            "grants_gameplay_trust": false
+          }
         },
         {
           "bundle_id": "bundle:fixed-token-creation-contexts",
@@ -480,7 +496,22 @@
             "custom quoted abilities and unsupported predefined tokens",
             "dynamic quantities, copies, and named legendary tokens"
           ],
-          "measurement_status": "upper_bound_only"
+          "measurement_status": "measured_nonviable",
+          "measurement_outcome": {
+            "measurement_id": "measurement:fixed-token-creation-contexts",
+            "frontier_fingerprint": "29696dcf6b6ffa68a5747fe6412826021f767e906721bfbc2aa2eddfa142d123",
+            "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
+            "measurement_method": "frontier-sole-blocker-closure-v1",
+            "affected_commander_cards": 24,
+            "complete_card_gain": 0,
+            "one_additional_blocker_cards": 1,
+            "two_additional_blocker_cards": 9,
+            "exact_ability_gain": 27,
+            "material_residual_reduction": 27,
+            "decision": "retired_below_harvest_floor",
+            "reason": "The exact existing-owner fixed-definition token grammar closes no Commander cards and only 27 abilities or residuals. Dynamic, copied, named, custom-ability, attached, attacking, Role, conditional, linked-result, and unrelated enclosing grammars remain excluded, so this cohort is below every normal harvest floor.",
+            "grants_gameplay_trust": false
+          }
         }
       ],
       "approved_prerequisite_exceptions": []

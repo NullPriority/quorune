@@ -946,41 +946,92 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual("non_harvest", pending["outcome_kind"])
         self.assertFalse(pending["grants_gameplay_trust"])
 
-    def test_upper_bound_selects_measurement_without_gameplay_trust(self):
+    def test_fingerprinted_nonviable_measurements_retire_without_trust(self):
         work = self.queue["work_selection"]
         selected = selected_work_candidate(work)
 
-        self.assertIsNotNone(selected)
+        self.assertIsNone(selected)
+        self.assertEqual(0, work["eligible_candidate_count"])
         self.assertEqual(0, work["implementation_eligible_candidate_count"])
+        self.assertFalse(
+            any(
+                row["work_state"] == "cohort_measurement"
+                for row in work["candidates"]
+            )
+        )
+        expected = {
+            "bundle:fixed-token-creation-contexts": (0, 27, 27),
+            "bundle:fixed-exile-contexts": (0, 19, 19),
+        }
+        for candidate_id, gains in expected.items():
+            candidate = next(
+                row
+                for row in work["candidates"]
+                if row["candidate_id"] == candidate_id
+            )
+            self.assertFalse(candidate["eligible"])
+            self.assertFalse(candidate["implementation_eligible"])
+            self.assertEqual(
+                "measured_nonviable",
+                candidate["bundle"]["measurement_status"],
+            )
+            self.assertEqual(
+                gains,
+                (
+                    candidate["expected_complete_card_gain"],
+                    candidate["expected_exact_ability_gain"],
+                    candidate["expected_material_residual_reduction"],
+                ),
+            )
+        measured_outcomes = {
+            row["measurement_outcome"]["measurement_id"]: row["measurement_outcome"]
+            for row in self.catalog["work_selection"]["coverage_family"][
+                "candidate_bundles"
+            ]
+            if row["measurement_outcome"] is not None
+        }
+        self.assertEqual(
+            {
+                "measurement:fixed-token-creation-contexts",
+                "measurement:fixed-exile-contexts",
+            },
+            set(measured_outcomes),
+        )
+        self.assertTrue(
+            all(
+                outcome["grants_gameplay_trust"] is False
+                for outcome in measured_outcomes.values()
+            )
+        )
+
+    def test_stale_measurement_outcome_reopens_bounded_probe_without_trust(self):
+        policy = deepcopy(self.catalog["work_selection"])
+        token = next(
+            row
+            for row in policy["coverage_family"]["candidate_bundles"]
+            if row["bundle_id"] == "bundle:fixed-token-creation-contexts"
+        )
+        token["measurement_outcome"]["frontier_fingerprint"] = "0" * 64
+        work = build_work_selection(
+            selected_batch=self.queue["selected_batch"],
+            policy=policy,
+            inputs=self.work_inputs,
+        )
+        selected = selected_work_candidate(work)
+
+        self.assertIsNotNone(selected)
+        self.assertEqual(
+            "measurement:fixed-token-creation-contexts",
+            selected["candidate_id"],
+        )
         self.assertEqual("cohort_measurement", selected["work_state"])
         self.assertFalse(selected["implementation_eligible"])
-        self.assertEqual(
-            {None},
-            {
-                selected["expected_complete_card_gain"],
-                selected["expected_exact_ability_gain"],
-                selected["expected_material_residual_reduction"],
-            },
-        )
         self.assertFalse(
             selected["measurement_task"]["grants_gameplay_trust"]
         )
         source_filter = selected["measurement_task"]["source_corpus_filter"]
         self.assertEqual(["unresolved"], source_filter["ability_statuses"])
         self.assertNotIn("lowerable_untrusted_only", source_filter)
-        source_bundle_id = "bundle:" + selected["candidate_id"].split(
-            ":", 1
-        )[-1]
-        upper_bound = next(
-            row
-            for row in work["candidates"]
-            if row["candidate_id"] == source_bundle_id
-        )
-        self.assertFalse(upper_bound["eligible"])
-        self.assertFalse(upper_bound["implementation_eligible"])
-        self.assertEqual(
-            "upper_bound_only", upper_bound["bundle"]["measurement_status"]
-        )
 
     def test_completed_bundle_retires_and_upper_bound_requires_bounded_cohort(self):
         work = self.queue["work_selection"]
@@ -1125,12 +1176,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertTrue(candidates)
         selected = selected_work_candidate(work)
-        self.assertIsNotNone(selected)
-        self.assertEqual("cohort_measurement", selected["work_state"])
-        self.assertFalse(selected["implementation_eligible"])
-        self.assertFalse(
-            selected["measurement_task"]["grants_gameplay_trust"]
-        )
+        self.assertIsNone(selected)
         structural = next(
             candidate
             for candidate in work["candidates"]
@@ -1255,16 +1301,16 @@ class RulesSchedulerTests(unittest.TestCase):
             selected_work_candidate(missing)
 
         outranked = deepcopy(self.queue["work_selection"])
-        implementation = next(
-            candidate
-            for candidate in outranked["candidates"]
-            if candidate["selection_state"] != "selected"
-        )
+        selected, implementation = outranked["candidates"][:2]
+        outranked["selected_candidate_id"] = selected["candidate_id"]
+        selected["eligible"] = True
+        selected["implementation_eligible"] = False
+        selected["selection_state"] = "selected"
         implementation["eligible"] = True
         implementation["implementation_eligible"] = True
         implementation["selection_state"] = "deferred"
-        outranked["eligible_candidate_count"] += 1
-        outranked["implementation_eligible_candidate_count"] += 1
+        outranked["eligible_candidate_count"] = 2
+        outranked["implementation_eligible_candidate_count"] = 1
         with self.assertRaisesRegex(
             WorkSelectionError,
             "cannot outrank implementation-eligible work",
@@ -1376,7 +1422,7 @@ class RulesSchedulerTests(unittest.TestCase):
         duplicate_context_bundle = next(
             row
             for row in policy["coverage_family"]["candidate_bundles"]
-            if row["measurement_status"] == "upper_bound_only"
+            if row["measurement_status"] == "measured_nonviable"
         )
         duplicate_context_bundle["source_contexts"].append(
             duplicate_context_bundle["source_contexts"][0]
@@ -1391,14 +1437,46 @@ class RulesSchedulerTests(unittest.TestCase):
             )
 
         policy = deepcopy(self.catalog["work_selection"])
-        upper_bound = next(
+        measured = next(
             row
             for row in policy["coverage_family"]["candidate_bundles"]
-            if row["measurement_status"] == "upper_bound_only"
+            if row["measurement_status"] == "measured_nonviable"
         )
-        upper_bound["source_contexts"] = ["spell"]
+        measured["source_contexts"] = ["spell"]
         with self.assertRaisesRegex(
             WorkSelectionError, "closed identities"
+        ):
+            build_work_selection(
+                selected_batch=self.queue["selected_batch"],
+                policy=policy,
+                inputs=self.work_inputs,
+            )
+
+        policy = deepcopy(self.catalog["work_selection"])
+        measured = next(
+            row
+            for row in policy["coverage_family"]["candidate_bundles"]
+            if row["measurement_status"] == "measured_nonviable"
+        )
+        measured["measurement_outcome"]["grants_gameplay_trust"] = True
+        with self.assertRaisesRegex(
+            WorkSelectionError, "exact, no-trust"
+        ):
+            build_work_selection(
+                selected_batch=self.queue["selected_batch"],
+                policy=policy,
+                inputs=self.work_inputs,
+            )
+
+        policy = deepcopy(self.catalog["work_selection"])
+        measured = next(
+            row
+            for row in policy["coverage_family"]["candidate_bundles"]
+            if row["measurement_status"] == "measured_nonviable"
+        )
+        measured["measurement_outcome"]["exact_ability_gain"] = 100
+        with self.assertRaisesRegex(
+            WorkSelectionError, "below every harvest floor"
         ):
             build_work_selection(
                 selected_batch=self.queue["selected_batch"],

@@ -7,9 +7,27 @@ from typing import Any, Mapping, Sequence
 _BUNDLE_CONTEXTS = {"activated", "modal", "setup", "spell", "triggered"}
 _BUNDLE_MEASUREMENT_STATUSES = {
     "bounded_executable",
+    "measured_nonviable",
     "upper_bound_only",
 }
 _BUNDLE_OWNER = re.compile(r"^(?:capability|component):[A-Za-z0-9_.:-]+$")
+_SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_MEASUREMENT_OUTCOME_FIELDS = {
+    "measurement_id",
+    "frontier_fingerprint",
+    "oracle_source_sha256",
+    "measurement_method",
+    "affected_commander_cards",
+    "complete_card_gain",
+    "one_additional_blocker_cards",
+    "two_additional_blocker_cards",
+    "exact_ability_gain",
+    "material_residual_reduction",
+    "decision",
+    "reason",
+    "grants_gameplay_trust",
+}
+_MEASUREMENT_METHOD = "frontier-sole-blocker-closure-v1"
 _EFFORT_HOURS = {
     "small": 5,
     "medium": 10,
@@ -64,6 +82,61 @@ def _nonnegative_int(value: Any, label: str) -> int:
     return value
 
 
+def _validate_measurement_outcome(
+    row: Mapping[str, Any],
+    *,
+    bundle_id: str,
+    measurement_status: str,
+    coverage: Mapping[str, Any],
+) -> None:
+    raw = row.get("measurement_outcome")
+    if measurement_status != "measured_nonviable":
+        if raw is not None:
+            raise WorkSelectionBundleError(
+                "Only measured nonviable bundles may carry an outcome"
+            )
+        return
+    outcome = _mapping(raw, f"{bundle_id}.measurement_outcome")
+    if set(outcome) != _MEASUREMENT_OUTCOME_FIELDS:
+        raise WorkSelectionBundleError(
+            "Measured bundle outcomes have an invalid shape"
+        )
+    metrics = {
+        field: _nonnegative_int(outcome.get(field), field)
+        for field in (
+            "affected_commander_cards",
+            "complete_card_gain",
+            "one_additional_blocker_cards",
+            "two_additional_blocker_cards",
+            "exact_ability_gain",
+            "material_residual_reduction",
+        )
+    }
+    expected_measurement_id = "measurement:" + bundle_id.split(":", 1)[-1]
+    invalid_identity = (
+        outcome.get("measurement_id") != expected_measurement_id
+        or not _SHA256.fullmatch(str(outcome.get("frontier_fingerprint") or ""))
+        or not _SHA256.fullmatch(str(outcome.get("oracle_source_sha256") or ""))
+        or outcome.get("measurement_method") != _MEASUREMENT_METHOD
+        or outcome.get("decision") != "retired_below_harvest_floor"
+        or not str(outcome.get("reason") or "")
+        or outcome.get("grants_gameplay_trust") is not False
+    )
+    reaches_harvest_floor = (
+        metrics["complete_card_gain"]
+        >= int(coverage["minimum_complete_card_gain"])
+        or metrics["exact_ability_gain"]
+        >= int(coverage["minimum_exact_ability_gain"])
+        or metrics["material_residual_reduction"]
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    if invalid_identity or reaches_harvest_floor:
+        raise WorkSelectionBundleError(
+            "Measured nonviable outcomes must be exact, no-trust, and below "
+            "every harvest floor"
+        )
+
+
 def validate_bundle_policy(
     coverage: Mapping[str, Any],
 ) -> tuple[list[Mapping[str, Any]], dict[str, int]]:
@@ -99,6 +172,7 @@ def validate_bundle_policy(
         "expected_downstream_closure",
         "explicit_exclusions",
         "measurement_status",
+        "measurement_outcome",
     }
     bundles = list(coverage.get("candidate_bundles", []))
     seen: set[str] = set()
@@ -147,6 +221,12 @@ def validate_bundle_policy(
                 "Candidate bundles require closed identities, owners, contexts, "
                 "grammar, parameters, dependencies, and exclusions"
             )
+        _validate_measurement_outcome(
+            row,
+            bundle_id=bundle_id,
+            measurement_status=measurement_status,
+            coverage=coverage,
+        )
         for field in (
             "estimated_implementation_hours",
             "estimated_probe_hours",
@@ -189,7 +269,20 @@ def coverage_scores(
 def bundle_measurement_decision(
     declared_status: str,
     bounded_verified: bool,
+    measurement_outcome_current: bool = False,
 ) -> tuple[str, str | None]:
+    if declared_status == "measured_nonviable" and measurement_outcome_current:
+        return (
+            "measured_nonviable",
+            "The fingerprinted bounded cohort is below every implementation "
+            "harvest floor and remains retired without granting gameplay trust.",
+        )
+    if declared_status == "measured_nonviable":
+        return (
+            "upper_bound_only",
+            "The recorded bounded cohort no longer matches the current frontier "
+            "and Oracle snapshot; remeasure it before implementation eligibility.",
+        )
     if declared_status == "bounded_executable" and bounded_verified:
         return "bounded_executable", None
     if declared_status == "bounded_executable":
@@ -318,7 +411,38 @@ def candidate_frontier_measurements(
                 + ", ".join(missing)
             )
         members = [family_rows[value] for value in member_ids]
-        gains = _bundle_frontier_gains(cards, set(member_ids))
+        frontier_gains = _bundle_frontier_gains(cards, set(member_ids))
+        outcome = bundle_policy.get("measurement_outcome")
+        snapshot = frontier.get("card_data_snapshot")
+        oracle_source = (
+            str(snapshot.get("oracle_source_sha256") or "")
+            if isinstance(snapshot, Mapping)
+            else ""
+        )
+        measurement_outcome_current = bool(
+            isinstance(outcome, Mapping)
+            and outcome.get("frontier_fingerprint")
+            == frontier.get("fingerprint")
+            and outcome.get("oracle_source_sha256") == oracle_source
+        )
+        gains = (
+            {
+                "affected_cards": int(outcome["affected_commander_cards"]),
+                "exact_cards": int(outcome["complete_card_gain"]),
+                "exact_abilities": int(outcome["exact_ability_gain"]),
+                "material_residuals": int(
+                    outcome["material_residual_reduction"]
+                ),
+                "one_additional_blocker_cards": int(
+                    outcome["one_additional_blocker_cards"]
+                ),
+                "two_additional_blocker_cards": int(
+                    outcome["two_additional_blocker_cards"]
+                ),
+            }
+            if measurement_outcome_current
+            else frontier_gains
+        )
         lowerable_occurrences = sum(
             int(row.get("lowerable_untrusted_abilities") or 0)
             for row in members
@@ -367,6 +491,10 @@ def candidate_frontier_measurements(
                 "value_per_hour": value_per_hour,
                 "bounded_executable_verified": (
                     bounded_executable_verified
+                ),
+                "measurement_outcome_current": measurement_outcome_current,
+                "measurement_outcome": (
+                    dict(outcome) if measurement_outcome_current else None
                 ),
                 "interaction_risks": sorted(
                     {
