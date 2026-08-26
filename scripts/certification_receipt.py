@@ -372,6 +372,18 @@ def _workflow_run_has_materialized_jobs(value: Any) -> bool:
     return value["total_count"] > 0
 
 
+def _workflow_run_has_failed_job(value: Any) -> bool:
+    if (
+        not isinstance(value, Mapping)
+        or type(value.get("total_count")) is not int
+        or value["total_count"] < 0
+        or not isinstance(value.get("jobs"), list)
+        or any(not isinstance(job, Mapping) for job in value["jobs"])
+    ):
+        raise CertificationReceiptError("GitHub workflow-job response is malformed")
+    return any(job.get("conclusion") == "failure" for job in value["jobs"])
+
+
 def _previous_run_can_still_certify(
     run: Mapping[str, Any],
     *,
@@ -386,6 +398,13 @@ def _previous_run_can_still_certify(
         or status not in ACTIVE_WORKFLOW_RUN_STATUSES
     ):
         return False
+    if status == "in_progress":
+        jobs = _github_json(
+            f"{api}/actions/runs/{run_id}/jobs?filter=latest&per_page=100",
+            token,
+        )
+        if _workflow_run_has_failed_job(jobs):
+            return False
     if status != "queued":
         return True
     jobs = _github_json(
