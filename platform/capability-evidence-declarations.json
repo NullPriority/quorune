@@ -19011,7 +19011,7 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_relations_and_type_predicates_share_committed_event",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose controller, opponent, and any-player cast relations with public artifact and any-spell predicates over one committed cast occurrence."
     },
@@ -19019,7 +19019,7 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Bind a scheduled occurrence to an ordinary controller-scoped target choice and resolve the independently typed characteristic effect."
     },
@@ -19027,15 +19027,31 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose the source-self attack occurrence with an independently typed life result without introducing a combat-specific resolver."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose source-self combat, source-opponent damage, and recipient-self damage predicates over canonical committed damage results and independently typed effect bodies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_zone_lifecycle_uses_last_known_controller_and_replays",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose a source-self battlefield-to-graveyard occurrence with an ordinary draw body using the source's last-known controller."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_triggers_share_four_player_apnap_batch",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Collect mandatory typed-effect triggers controlled by two players into one four-player APNAP batch without a parallel placement path."
     },
@@ -19043,23 +19059,47 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Place and resolve the active player's self-attack trigger through the ordinary four-player stack and priority sequence."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Match controller and opponent damage relations in a four-player table without introducing a combat-specific placement path."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill removal of the single generic composition call before any represented event-bound effect can retain exact trust."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_event_capabilities_fail_closed",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Withhold exact composed authority when either the normalized zone-change or normalized damage event owner is blocked."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_event_near_misses_remain_material",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep optional, intervening-if, attachment-relative, aggregate, unrestricted-damage, creature-recipient, and unmeasured zone variants material."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Withhold exact trust when the shared event-effect composition capability is blocked or its compiler entry point disappears."
     },
@@ -19067,7 +19107,7 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_typed_event_effect_trigger_variants_remain_material",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep optional, intervening-if, cast-or-copy, attacks-alone, reflexive, and modal-header variants source-spanned and outside generic trigger authority."
     },
@@ -19075,7 +19115,7 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_new_event_bindings_fail_closed_with_event_capability",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Withhold the composed trigger when either normalized cast or self-attack event capability is blocked."
     },
@@ -19083,15 +19123,23 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_closed_cast_and_source_attack_bindings_compile_exactly",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile closed caster/type and source-self attack bindings with independently typed draw and life bodies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_zone_and_damage_bindings_compile_exactly",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile bounded Vehicle lifecycle, source graveyard, source-to-player damage, and source-recipient damage bindings with independently reviewed typed bodies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_typed_event_effect_triggers_compile_closed_bodies",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile represented step, cast, life, draw, entry, and death bindings with independently closed draw, token, Surveil, life, damage, Scry, and characteristic effect bodies."
     },
@@ -19099,7 +19147,7 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project the pending target decision only to the trigger controller and omit authoritative source object identity from the public choice."
     },
@@ -19107,15 +19155,23 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project the public self-attack trigger without exposing source physical or logical identity from its sealed context."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project public damage-trigger facts to every seat without source physical or logical object identities."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay target selection, four-player priority, and typed characteristic resolution to the identical authoritative state hash."
     },
@@ -19123,9 +19179,25 @@
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
-      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay declaration, APNAP placement, priority, and the typed life result to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the placed source-combat-damage trigger and typed draw continuation to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_zone_lifecycle_uses_last_known_controller_and_replays",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the last-known-controller source-graveyard trigger and ordinary draw result to the identical authoritative hash."
     },
     {
       "capability_id": "trigger.event.normalized_card_draw",
@@ -19182,6 +19254,78 @@
       "official_rule_ids": ["121.1", "121.2", "121.4", "603.2", "603.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Share the player-result trigger envelope and replay-stable counter continuation used by normalized draw consumers."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use one committed damage occurrence to distinguish source-self combat, source-opponent, and recipient-self predicates."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Evaluate source-controller and opponent player relations from immutable public damage facts in a four-player table."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_event_dispatch_mutant_is_killed",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suppress the canonical semantic dispatch after committed damage and prove no alternate runtime path creates the represented trigger."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_event_capabilities_fail_closed",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Withhold exact source-damage CardProgram authority when the normalized damage occurrence capability is blocked."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_event_near_misses_remain_material",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject creature-recipient, unrestricted, attachment-relative, aggregate, and optional damage trigger grammar."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_zone_and_damage_bindings_compile_exactly",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile closed combat-player, combat-opponent, opponent-damage, and source-recipient predicates over damage.dealt occurrences."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Emit represented damage triggers only for positive committed post-replacement and post-prevention results."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose public damage and trigger facts while stripping source physical and logical identities from every principal packet."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the source-combat-damage trigger continuation to the identical authoritative state hash."
     },
     {
       "capability_id": "trigger.event.normalized_life_gain",
@@ -22147,5 +22291,5 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
-]
+  ]
 }

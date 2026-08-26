@@ -432,6 +432,231 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
                 self.assertTrue(ir.faces[0].residuals)
 
+    def test_fixed_source_zone_and_damage_bindings_compile_exactly(self):
+        cases = (
+            (
+                "When this Vehicle enters, draw a card.",
+                "Artifact — Vehicle",
+                "permanent.enter.self",
+                "fixed-typed-effect-source-vehicle-entry-trigger-v1",
+                None,
+                "trigger.event.normalized_zone_change",
+            ),
+            (
+                "When this Vehicle dies, create a Clue token.",
+                "Artifact — Vehicle",
+                "creature.dies.self",
+                "fixed-typed-effect-source-vehicle-death-trigger-v1",
+                None,
+                "trigger.event.normalized_zone_change",
+            ),
+            (
+                "When this artifact is put into a graveyard from the "
+                "battlefield, draw a card.",
+                "Artifact",
+                "permanent.graveyard.self",
+                "fixed-typed-effect-source-graveyard-trigger-v1",
+                None,
+                "trigger.event.normalized_zone_change",
+            ),
+            (
+                "Whenever this creature deals combat damage to a player, "
+                "draw a card.",
+                "Creature — Rogue",
+                "damage.dealt.self",
+                "fixed-typed-effect-source-combat-damage-player-trigger-v1",
+                {
+                    "all": [
+                        {
+                            "field": "target_kind",
+                            "op": "eq",
+                            "value": "player",
+                        },
+                        {
+                            "field": "combat",
+                            "op": "truthy",
+                            "value": True,
+                        },
+                    ]
+                },
+                "trigger.event.normalized_damage",
+            ),
+            (
+                "Whenever this creature deals combat damage to an opponent, "
+                "draw a card.",
+                "Creature — Rogue",
+                "damage.dealt.self",
+                "fixed-typed-effect-source-combat-damage-opponent-trigger-v1",
+                {
+                    "all": [
+                        {
+                            "field": "target_kind",
+                            "op": "eq",
+                            "value": "player",
+                        },
+                        {
+                            "field": "combat",
+                            "op": "truthy",
+                            "value": True,
+                        },
+                        {
+                            "field": "target",
+                            "op": "ne",
+                            "value": "$source.controller",
+                        },
+                    ]
+                },
+                "trigger.event.normalized_damage",
+            ),
+            (
+                "Whenever this creature deals damage to an opponent, draw "
+                "a card.",
+                "Creature — Rogue",
+                "damage.dealt.self",
+                "fixed-typed-effect-source-damage-opponent-trigger-v1",
+                {
+                    "all": [
+                        {
+                            "field": "target_kind",
+                            "op": "eq",
+                            "value": "player",
+                        },
+                        {
+                            "field": "target",
+                            "op": "ne",
+                            "value": "$source.controller",
+                        },
+                    ]
+                },
+                "trigger.event.normalized_damage",
+            ),
+            (
+                "Whenever this creature is dealt damage, you gain 1 life.",
+                "Creature — Beast",
+                "damage.dealt",
+                "fixed-typed-effect-source-dealt-damage-trigger-v1",
+                {
+                    "field": "target",
+                    "op": "eq",
+                    "value": "$source.ref",
+                },
+                "trigger.event.normalized_damage",
+            ),
+        )
+        for (
+            text,
+            type_line,
+            event,
+            template_id,
+            condition,
+            event_capability,
+        ) in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(text)
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                self.assertEqual(event, binding.event.value)
+                self.assertEqual(condition, binding.event_condition)
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertEqual(event, node.event)
+                self.assertEqual(condition, node.event_condition)
+                self.assertIn(
+                    FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC,
+                    node.mechanics,
+                )
+                self.assertIn(
+                    event_capability,
+                    node.capability_dependencies,
+                )
+                self.assertIn(
+                    "trigger.effect.fixed_event",
+                    node.capability_dependencies,
+                )
+
+    def test_fixed_source_event_near_misses_remain_material(self):
+        cases = (
+            "When this Vehicle enters, if you control an artifact, draw a "
+            "card.",
+            "When this Vehicle leaves the battlefield, draw a card.",
+            "When this creature is put into a graveyard from the battlefield, "
+            "draw a card.",
+            "Whenever this creature deals damage to a creature, draw a card.",
+            "Whenever this creature deals damage, draw a card.",
+            "Whenever equipped creature deals combat damage to a player, draw "
+            "a card.",
+            "Whenever this creature deals combat damage to a player, you may "
+            "draw a card.",
+            "Whenever one or more creatures deal combat damage to a player, "
+            "draw a card.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature — Fixture")
+                self.assertNotEqual("exact", ir.status)
+                self.assertFalse(
+                    any(
+                        node.template_id in FIXED_TYPED_EVENT_TEMPLATE_IDS
+                        for node in ir.faces[0].nodes
+                    )
+                )
+                self.assertTrue(ir.material_residuals)
+
+    def test_fixed_source_event_capabilities_fail_closed(self):
+        cases = (
+            (
+                "When this Vehicle enters, draw a card.",
+                "Artifact — Vehicle",
+                "trigger.event.normalized_zone_change",
+                "fixed-typed-effect-source-vehicle-entry-trigger-v1",
+            ),
+            (
+                "Whenever this creature deals combat damage to a player, "
+                "draw a card.",
+                "Creature — Rogue",
+                "trigger.event.normalized_damage",
+                "fixed-typed-effect-source-combat-damage-player-trigger-v1",
+            ),
+        )
+        for text, type_line, capability_id, template_id in cases:
+            with self.subTest(capability=capability_id):
+                registry = json.loads(
+                    REGISTRY_PATH.read_text(encoding="utf-8")
+                )
+                dependency = next(
+                    row
+                    for row in registry["capabilities"]
+                    if row["id"] == capability_id
+                )
+                dependency["status"] = "blocked"
+                dependency["blockers"] = ["focused source-event mutation"]
+                record = replace(
+                    self.db.lookup("Scheduled Counter Trigger Fixture"),
+                    name="Compiler Fixture",
+                    oracle_text=text,
+                    type_line=type_line,
+                    keywords=(),
+                    faces=(),
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=CapabilityRegistry(registry),
+                    capability_profile="commander_review",
+                )
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertFalse(node.exact)
+                self.assertTrue(node.residual_ids)
+                self.assertNotEqual("exact", ir.status)
+
     def test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed(
         self,
     ):
@@ -3246,6 +3471,296 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(
             ["A", "C"],
             [item.controller for item in engine.state.stack[-2:]],
+        )
+
+    def test_source_zone_lifecycle_uses_last_known_controller_and_replays(
+        self,
+    ):
+        session = self.session(121008, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="C",
+            controller="B",
+            name="Typed Artifact Graveyard Draw Trigger Fixture",
+            ref="typed-source-graveyard",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        previous_identity = source.logical_object_id
+        hand_before = len(engine.state.players["B"].zones["hand"])
+
+        engine.move_card(
+            source.object_id,
+            "graveyard",
+            reason="typed source graveyard occurrence",
+            semantic_events=True,
+        )
+        engine._stabilize()
+
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("B", item.controller)
+        self.assertEqual("permanent.graveyard", item.context["event"])
+        self.assertEqual(source.ref, item.context["card"])
+        self.assertEqual(previous_identity, item.context["card_object_identity"])
+        self.assertEqual("battlefield", item.context["source_zone"])
+        self.assertEqual("C", source.controller)
+
+        engine.state.priority_player = engine.state.active_player
+        engine._issue_priority(engine.state.active_player)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertFalse(engine.state.stack)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["B"].zones["hand"]),
+        )
+
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "typed-source-graveyard-trigger"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_source_damage_bindings_use_committed_damage_events(self):
+        session = self.session(121009, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Combat Damage Draw Trigger Fixture",
+            ref="typed-combat-damage-source",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        hand_before = len(engine.state.players["A"].zones["hand"])
+
+        for target, combat, suffix in (("B", False, "noncombat"),):
+            resolve_damage_batch(
+                engine,
+                (
+                    damage_proposal(
+                        engine,
+                        proposal_id=f"typed-source-damage:{suffix}",
+                        actor="A",
+                        source_ref=source.ref,
+                        target=target,
+                        amount=1,
+                        combat=combat,
+                        reason="typed source damage negative witness",
+                    ),
+                ),
+            )
+            engine._stabilize()
+            self.assertFalse(
+                any(
+                    item.semantic_key == program.key
+                    for item in engine.state.stack
+                )
+            )
+
+        resolve_damage_batch(
+            engine,
+            (
+                damage_proposal(
+                    engine,
+                    proposal_id="typed-source-damage:combat-player",
+                    actor="A",
+                    source_ref=source.ref,
+                    target="B",
+                    amount=1,
+                    combat=True,
+                    reason="typed source combat damage witness",
+                ),
+            ),
+        )
+        engine._stabilize()
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("damage.dealt", item.context["event"])
+        self.assertEqual(source.ref, item.context["card"])
+        self.assertEqual("B", item.context["target"])
+        self.assertEqual("player", item.context["target_kind"])
+        self.assertTrue(item.context["combat"])
+        for seat in engine.active_seats:
+            packet_text = json.dumps(
+                session.packet(f"pilot:{seat}", full=True),
+                sort_keys=True,
+            )
+            self.assertNotIn(source.object_id, packet_text)
+            self.assertNotIn(source.logical_object_id, packet_text)
+
+        engine.state.priority_player = engine.state.active_player
+        engine._issue_priority(engine.state.active_player)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "typed-source-damage-trigger"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+        opponent_session = self.session(121010, players=4)
+        opponent_engine = opponent_session.engine
+        opponent_source = self.add_card(
+            opponent_engine,
+            seat="C",
+            name="Typed Opponent Damage Draw Trigger Fixture",
+            ref="typed-opponent-damage-source",
+            zone="battlefield",
+        )
+        opponent_program = self.register_typed_event_trigger(
+            opponent_engine,
+            opponent_source,
+        )
+        resolve_damage_batch(
+            opponent_engine,
+            (
+                damage_proposal(
+                    opponent_engine,
+                    proposal_id="typed-opponent-damage:controller",
+                    actor="C",
+                    source_ref=opponent_source.ref,
+                    target="C",
+                    amount=1,
+                    combat=False,
+                    reason="typed opponent relation negative witness",
+                ),
+            ),
+        )
+        opponent_engine._stabilize()
+        self.assertFalse(opponent_engine.state.stack)
+        resolve_damage_batch(
+            opponent_engine,
+            (
+                damage_proposal(
+                    opponent_engine,
+                    proposal_id="typed-opponent-damage:opponent",
+                    actor="C",
+                    source_ref=opponent_source.ref,
+                    target="D",
+                    amount=1,
+                    combat=False,
+                    reason="typed opponent relation witness",
+                ),
+            ),
+        )
+        opponent_engine._stabilize()
+        self.assertEqual(
+            opponent_program.key,
+            opponent_engine.state.stack[-1].semantic_key,
+        )
+
+        recipient_session = self.session(121011, players=4)
+        recipient_engine = recipient_session.engine
+        recipient = self.add_card(
+            recipient_engine,
+            seat="B",
+            name="Typed Dealt Damage Life Trigger Fixture",
+            ref="typed-damage-recipient",
+            zone="battlefield",
+        )
+        recipient_program = self.register_typed_event_trigger(
+            recipient_engine,
+            recipient,
+        )
+        damage_source = self.add_card(
+            recipient_engine,
+            seat="A",
+            name="Typed Combat Damage Draw Trigger Fixture",
+            ref="typed-recipient-damage-source",
+            zone="battlefield",
+        )
+        life_before = recipient_engine.state.players["B"].life
+        resolve_damage_batch(
+            recipient_engine,
+            (
+                damage_proposal(
+                    recipient_engine,
+                    proposal_id="typed-recipient-damage:permanent",
+                    actor="A",
+                    source_ref=damage_source.ref,
+                    target=recipient.ref,
+                    amount=1,
+                    combat=False,
+                    reason="typed dealt-damage recipient witness",
+                ),
+            ),
+        )
+        recipient_engine._stabilize()
+        self.assertEqual(
+            recipient_program.key,
+            recipient_engine.state.stack[-1].semantic_key,
+        )
+        self.resolve_top(recipient_engine)
+        self.assertEqual(
+            life_before + 1,
+            recipient_engine.state.players["B"].life,
+        )
+
+    def test_source_damage_event_dispatch_mutant_is_killed(self):
+        session = self.session(121012)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Combat Damage Draw Trigger Fixture",
+            ref="typed-damage-dispatch-mutant",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+
+        with patch.object(
+            engine,
+            "_dispatch_semantic_event",
+            return_value=[],
+        ):
+            resolve_damage_batch(
+                engine,
+                (
+                    damage_proposal(
+                        engine,
+                        proposal_id="typed-source-damage:dispatch-mutant",
+                        actor="A",
+                        source_ref=source.ref,
+                        target="B",
+                        amount=1,
+                        combat=True,
+                        reason="typed source damage dispatch mutation",
+                    ),
+                ),
+            )
+        engine._stabilize()
+        self.assertFalse(
+            any(
+                item.semantic_key == program.key
+                for item in engine.state.stack
+            )
         )
 
 

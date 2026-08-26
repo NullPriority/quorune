@@ -332,6 +332,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-normalized-self-attack": (
         "trigger.event.normalized_self_attack",
     ),
+    "trigger-event-normalized-damage": (
+        "trigger.event.normalized_damage",
+    ),
     "trigger-event-normalized-card-draw": (
         "trigger.event.normalized_card_draw",
     ),

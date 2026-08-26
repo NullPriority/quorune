@@ -31,6 +31,13 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-enchantment-entry-trigger-v1",
         "fixed-counter-subtype-entry-trigger-v1",
         "fixed-counter-creature-death-trigger-v1",
+        "fixed-counter-source-vehicle-entry-trigger-v1",
+        "fixed-counter-source-vehicle-death-trigger-v1",
+        "fixed-counter-source-graveyard-trigger-v1",
+        "fixed-counter-source-combat-damage-player-trigger-v1",
+        "fixed-counter-source-combat-damage-opponent-trigger-v1",
+        "fixed-counter-source-damage-opponent-trigger-v1",
+        "fixed-counter-source-dealt-damage-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(
@@ -113,6 +120,21 @@ _SUBTYPE_ENTRY_TRIGGER = re.compile(
     r"(?: (?P<relation>you control|an opponent controls|you don't control))? "
     r"enters, (?P<body>.+)$",
 )
+_SOURCE_VEHICLE_ZONE_TRIGGER = re.compile(
+    r"^When this Vehicle (?P<transition>enters|dies), (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_SOURCE_GRAVEYARD_TRIGGER = re.compile(
+    r"^When this (?P<kind>artifact|Aura|enchantment|land) is put into a "
+    r"graveyard from the battlefield, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_SOURCE_DAMAGE_TRIGGER = re.compile(
+    r"^Whenever this creature (?P<event>deals combat damage to a player|"
+    r"deals combat damage to an opponent|deals damage to an opponent|"
+    r"is dealt damage), (?P<body>.+)$",
+    re.IGNORECASE,
+)
 _ZONE_SUBJECT_TYPES = frozenset(
     {"artifact", "creature", "enchantment", "land", "permanent"}
 )
@@ -133,6 +155,11 @@ class FixedCounterTriggerEvent(str, Enum):
     CREATURE_ENTER = "creature.enter"
     ENCHANTMENT_ENTER = "enchantment.enter"
     CREATURE_DIES = "creature.dies"
+    SOURCE_VEHICLE_ENTER = "permanent.enter.self"
+    SOURCE_VEHICLE_DIES = "creature.dies.self"
+    SOURCE_GRAVEYARD = "permanent.graveyard.self"
+    SOURCE_DEALS_DAMAGE = "damage.dealt.self"
+    SOURCE_DEALT_DAMAGE = "damage.dealt"
 
 
 class FixedCounterZoneController(str, Enum):
@@ -401,6 +428,30 @@ class FixedCounterTriggerBinding:
 
     @property
     def template_id(self) -> str:
+        source_template = {
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER:
+                "fixed-counter-source-vehicle-entry-trigger-v1",
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES:
+                "fixed-counter-source-vehicle-death-trigger-v1",
+            FixedCounterTriggerEvent.SOURCE_GRAVEYARD:
+                "fixed-counter-source-graveyard-trigger-v1",
+            FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE:
+                "fixed-counter-source-dealt-damage-trigger-v1",
+        }.get(self.event)
+        if source_template is not None:
+            return source_template
+        if self.event is FixedCounterTriggerEvent.SOURCE_DEALS_DAMAGE:
+            return {
+                "source_combat_damage_player": (
+                    "fixed-counter-source-combat-damage-player-trigger-v1"
+                ),
+                "source_combat_damage_opponent": (
+                    "fixed-counter-source-combat-damage-opponent-trigger-v1"
+                ),
+                "source_damage_opponent": (
+                    "fixed-counter-source-damage-opponent-trigger-v1"
+                ),
+            }[self.variant]
         if self.zone_subject is not None and self.zone_subject.subtype is not None:
             return "fixed-counter-subtype-entry-trigger-v1"
         if (
@@ -485,6 +536,21 @@ class FixedCounterTriggerBinding:
             FixedCounterTriggerEvent.CREATURE_DIES: (
                 "trigger-event-normalized-zone-change",
             ),
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER: (
+                "trigger-event-normalized-zone-change",
+            ),
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES: (
+                "trigger-event-normalized-zone-change",
+            ),
+            FixedCounterTriggerEvent.SOURCE_GRAVEYARD: (
+                "trigger-event-normalized-zone-change",
+            ),
+            FixedCounterTriggerEvent.SOURCE_DEALS_DAMAGE: (
+                "trigger-event-normalized-damage",
+            ),
+            FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE: (
+                "trigger-event-normalized-damage",
+            ),
         }[self.event]
 
     @property
@@ -503,6 +569,43 @@ class FixedCounterTriggerBinding:
         if self.event is FixedCounterTriggerEvent.SOURCE_ATTACKS:
             return {
                 "field": "card",
+                "op": "eq",
+                "value": "$source.ref",
+            }
+        if self.event in {
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER,
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES,
+            FixedCounterTriggerEvent.SOURCE_GRAVEYARD,
+        }:
+            return None
+        if self.event is FixedCounterTriggerEvent.SOURCE_DEALS_DAMAGE:
+            conditions: list[Mapping[str, Any]] = [
+                {
+                    "field": "target_kind",
+                    "op": "eq",
+                    "value": "player",
+                }
+            ]
+            if "combat_damage" in self.variant:
+                conditions.append(
+                    {
+                        "field": "combat",
+                        "op": "truthy",
+                        "value": True,
+                    }
+                )
+            if self.variant.endswith("opponent"):
+                conditions.append(
+                    {
+                        "field": "target",
+                        "op": "ne",
+                        "value": "$source.controller",
+                    }
+                )
+            return {"all": conditions}
+        if self.event is FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE:
+            return {
+                "field": "target",
                 "op": "eq",
                 "value": "$source.ref",
             }
@@ -650,11 +753,60 @@ def _zone_change_trigger_binding(
     )
 
 
+def _source_event_trigger_binding(
+    material_line: str,
+) -> FixedCounterTriggerBinding | None:
+    vehicle = _SOURCE_VEHICLE_ZONE_TRIGGER.fullmatch(material_line)
+    if vehicle is not None:
+        transition = vehicle.group("transition").casefold()
+        return FixedCounterTriggerBinding(
+            event=(
+                FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES
+                if transition == "dies"
+                else FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER
+            ),
+            variant=f"source_vehicle_{transition}",
+            body=vehicle.group("body"),
+        )
+    graveyard = _SOURCE_GRAVEYARD_TRIGGER.fullmatch(material_line)
+    if graveyard is not None:
+        return FixedCounterTriggerBinding(
+            event=FixedCounterTriggerEvent.SOURCE_GRAVEYARD,
+            variant=f"source_{graveyard.group('kind').casefold()}_graveyard",
+            body=graveyard.group("body"),
+        )
+    damage = _SOURCE_DAMAGE_TRIGGER.fullmatch(material_line)
+    if damage is not None:
+        event = damage.group("event").casefold()
+        return FixedCounterTriggerBinding(
+            event=(
+                FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE
+                if event == "is dealt damage"
+                else FixedCounterTriggerEvent.SOURCE_DEALS_DAMAGE
+            ),
+            variant={
+                "deals combat damage to a player": (
+                    "source_combat_damage_player"
+                ),
+                "deals combat damage to an opponent": (
+                    "source_combat_damage_opponent"
+                ),
+                "deals damage to an opponent": "source_damage_opponent",
+                "is dealt damage": "source_dealt_damage",
+            }[event],
+            body=damage.group("body"),
+        )
+    return None
+
+
 def fixed_counter_trigger_binding(
     material_line: str,
     *,
     card_name: str | None = None,
 ) -> FixedCounterTriggerBinding | None:
+    source_event = _source_event_trigger_binding(material_line)
+    if source_event is not None:
+        return source_event
     scheduled = _SCHEDULED_TRIGGER.fullmatch(material_line)
     if scheduled is not None:
         return FixedCounterTriggerBinding(
