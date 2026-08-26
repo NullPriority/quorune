@@ -511,7 +511,9 @@ class SupportCounterPlacementRuntimeTests(unittest.TestCase):
             for seat in ("B", "C", "D")
             for object_id in engine.state.players[seat].zones["hand"]
         }
-        self.assertTrue(all(ref not in serialized for ref in hidden_refs))
+        self.assertTrue(
+            all(json.dumps(ref) not in serialized for ref in hidden_refs)
+        )
         selected = projected["ctx"]["options"][0]["id"]
         result = session.act(
             "pilot:A",
