@@ -1,0 +1,200 @@
+from __future__ import annotations
+
+from typing import Any, Mapping, Sequence
+
+from quorune.compiler.exile_templates import targeted_exile_effect_template
+from quorune.compiler.public_zone_move_templates import (
+    public_zone_move_effect_template,
+)
+from quorune.compiler.token_templates import fixed_token_creation_effect_template
+from quorune.work_selection_evidence import (
+    COHORT_MEASUREMENT_ALGORITHM_VERSION,
+    COHORT_MEASUREMENT_SCHEMA_VERSION,
+    WorkSelectionCohortMeasurementError,
+)
+from quorune.work_selection_common import stable_hash
+
+
+_PROBE_TOKEN = "fixed-token-creation-existing-owner-v1"
+_PROBE_EXILE = "fixed-exile-existing-owner-v1"
+_PROBE_IDS = {_PROBE_EXILE, _PROBE_TOKEN}
+
+
+def _source_line(card_record: Any, ability: Mapping[str, Any]) -> str:
+    faces = {
+        "front": str(card_record.oracle_text),
+        **{
+            str(face.get("name") or ""): str(face.get("oracle_text") or "")
+            for face in card_record.faces
+            if str(face.get("name") or "")
+        },
+    }
+    face_id = str(ability.get("face_id") or "front")
+    text = faces.get(face_id, faces["front"])
+    lines = text.splitlines()
+    line_index = int(ability.get("source_line") or 0) - 1
+    return lines[line_index] if 0 <= line_index < len(lines) else text
+
+
+def _token_instruction_candidates(line: str) -> tuple[str, ...]:
+    normalized = " ".join(line.strip().split())
+    bodies: list[str] = []
+    if normalized.casefold().startswith("create "):
+        bodies.append(normalized)
+    elif normalized.startswith("• "):
+        body = normalized[2:].strip()
+        if body.casefold().startswith("create "):
+            bodies.append(body)
+    elif normalized.startswith("+ ") and " — " in normalized:
+        body = normalized.split(" — ", 1)[1].strip()
+        if body.casefold().startswith("create "):
+            bodies.append(body)
+    elif ": " in normalized and not normalized.startswith("{TK}"):
+        body = normalized.split(": ", 1)[1].strip()
+        if body.casefold().startswith("create "):
+            bodies.append(body)
+    elif normalized.casefold().startswith(("when ", "whenever ", "at ")):
+        marker = normalized.casefold().find(", create ")
+        if marker >= 0:
+            bodies.append(normalized[marker + 2 :].strip())
+    return tuple(dict.fromkeys(bodies))
+
+
+def _exile_instruction_candidates(line: str) -> tuple[str, ...]:
+    normalized = " ".join(line.strip().split())
+    bodies = [normalized]
+    if normalized.startswith("• "):
+        bodies.append(normalized[2:].strip())
+    if ": " in normalized and not normalized.startswith("{TK}"):
+        bodies.append(normalized.split(": ", 1)[1].strip())
+    if normalized.casefold().startswith(("when ", "whenever ", "at ")):
+        marker = normalized.casefold().find(", exile ")
+        if marker >= 0:
+            bodies.append(normalized[marker + 2 :].strip())
+    if " — " in normalized:
+        bodies.append(normalized.split(" — ", 1)[1].strip())
+    return tuple(dict.fromkeys(bodies))
+
+
+def _matches_probe(probe_id: str, source: str) -> bool:
+    if probe_id == _PROBE_TOKEN:
+        return any(
+            fixed_token_creation_effect_template(body) is not None
+            for body in _token_instruction_candidates(source)
+        )
+    if probe_id == _PROBE_EXILE:
+        return any(
+            targeted_exile_effect_template(body) is not None
+            or public_zone_move_effect_template(body) is not None
+            for body in _exile_instruction_candidates(source)
+        )
+    raise WorkSelectionCohortMeasurementError(
+        f"Unknown cohort measurement probe: {probe_id}"
+    )
+
+
+def _measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle: Mapping[str, Any],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    bundle_id = str(bundle["bundle_id"])
+    probe_id = str(bundle["measurement_probe_id"])
+    if probe_id not in _PROBE_IDS:
+        raise WorkSelectionCohortMeasurementError(
+            f"Unknown cohort measurement probe: {probe_id}"
+        )
+    member_ids = {str(value) for value in bundle["member_family_ids"]}
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        for ability in card.get("abilities", []):
+            family_ids = {
+                str(value)
+                for value in ability.get("blockers", {}).get(
+                    "canonical_family_ids", []
+                )
+            }
+            if not family_ids.intersection(member_ids) or not family_ids <= member_ids:
+                continue
+            if not _matches_probe(probe_id, _source_line(record, ability)):
+                continue
+            matched_abilities += 1
+            matched_cards[oracle_id] = len(
+                set(card.get("minimum_known_blocker_set", [])) - member_ids
+            )
+    complete_cards = sum(count == 0 for count in matched_cards.values())
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable" if reaches_floor else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def build_work_selection_cohort_measurements(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_policies: Sequence[Mapping[str, Any]],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprints: Mapping[str, str],
+) -> dict[str, Any]:
+    measurements = [
+        _measurement(
+            frontier=frontier,
+            bundle=bundle,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprints[str(bundle["bundle_id"])],
+        )
+        for bundle in bundle_policies
+        if bundle.get("measurement_probe_id") is not None
+    ]
+    snapshot = frontier.get("card_data_snapshot")
+    oracle_source = (
+        str(snapshot.get("oracle_source_sha256") or "")
+        if isinstance(snapshot, Mapping)
+        else ""
+    )
+    payload = {
+        "schema_version": COHORT_MEASUREMENT_SCHEMA_VERSION,
+        "algorithm_version": COHORT_MEASUREMENT_ALGORITHM_VERSION,
+        "frontier_fingerprint": str(frontier.get("fingerprint") or ""),
+        "oracle_source_sha256": oracle_source,
+        "measurements": measurements,
+    }
+    payload["fingerprint"] = stable_hash(payload)
+    return payload
+
+
+__all__ = ["build_work_selection_cohort_measurements"]

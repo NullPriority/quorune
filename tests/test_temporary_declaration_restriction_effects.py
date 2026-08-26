@@ -13,6 +13,7 @@ from quorune.carddb import CardDatabase
 from quorune.compiler.temporary_declaration_templates import (
     ActivatedTemporaryDeclarationRestrictionTemplate,
     activated_temporary_declaration_restriction_effect_template,
+    temporary_declaration_restriction_effect_template,
 )
 from quorune.continuous_effect_model import ContinuousOperation, Layer
 from quorune.continuous_effect_state import (
@@ -80,6 +81,46 @@ class ActivatedTemporaryDeclarationRestrictionTemplateTests(unittest.TestCase):
                     template.target_schema,
                 )
 
+    def test_source_and_creature_subtype_subjects_compile_closed_shapes(self):
+        source = activated_temporary_declaration_restriction_effect_template(
+            "This creature can't be blocked this turn.",
+            card_name="Fixture",
+        )
+        self.assertIsNotNone(source)
+        self.assertEqual("$source", source.card_reference)
+        self.assertIsNone(source.target_schema)
+        self.assertEqual(
+            "temporary-source-unblockable-eot-v1",
+            source.template_id,
+        )
+
+        named_source = (
+            activated_temporary_declaration_restriction_effect_template(
+                "Fixture can't attack this turn.",
+                card_name="Fixture",
+            )
+        )
+        self.assertIsNotNone(named_source)
+        self.assertEqual("$source", named_source.card_reference)
+        self.assertEqual("cant_attack", named_source.restriction)
+
+        subtype = temporary_declaration_restriction_effect_template(
+            "Target Merfolk can't be blocked this turn.",
+            card_name="Fixture",
+            allow_source=False,
+        )
+        self.assertIsNotNone(subtype)
+        self.assertEqual("merfolk", subtype.creature_subtype)
+        self.assertEqual(
+            {
+                "zones": ["battlefield"],
+                "categories": ["permanent"],
+                "count": 1,
+                "subtypes_any": ["merfolk"],
+            },
+            subtype.target_schema,
+        )
+
     def test_open_temporary_declaration_restriction_grammar_stays_residual(self):
         for text in (
             "Target creature can't block this creature this turn.",
@@ -89,6 +130,8 @@ class ActivatedTemporaryDeclarationRestrictionTemplateTests(unittest.TestCase):
             "Another target creature can't block this turn.",
             "Target creature can't block next turn.",
             "Target creature can block this turn.",
+            "Target Nonsense can't be blocked this turn.",
+            "Another creature can't be blocked this turn.",
         ):
             with self.subTest(text=text):
                 self.assertIsNone(
@@ -156,14 +199,62 @@ class ActivatedTemporaryDeclarationRestrictionCompilerTests(unittest.TestCase):
                     set(node.capability_dependencies),
                 )
 
-    def test_nonactivated_and_open_forms_do_not_enter_the_closed_family(self):
-        for oracle_text, type_line in (
-            ("Target creature can't block this turn.", "Instant"),
+    def test_spell_triggered_source_and_subtype_contexts_share_owner(self):
+        cases = (
             (
-                "Whenever this creature attacks, target creature can't block "
-                "this turn.",
-                "Creature — Human",
+                "Target creature can't block this turn.",
+                "Instant",
+                "activated-target-cant-block-eot-v1",
+                True,
             ),
+            (
+                "When this creature enters, target creature can't block this "
+                "turn.",
+                "Creature — Human",
+                "activated-target-cant-block-eot-v1",
+                True,
+            ),
+            (
+                "{2}{U}: This creature can't be blocked this turn.",
+                "Creature — Serpent",
+                "temporary-source-unblockable-eot-v1",
+                False,
+            ),
+            (
+                "{U}, {T}: Target Merfolk can't be blocked this turn.",
+                "Creature — Merfolk Wizard",
+                "temporary-target-merfolk-unblockable-eot-v1",
+                True,
+            ),
+        )
+        for oracle_text, type_line, template_id, targeted in cases:
+            with self.subTest(oracle_text=oracle_text):
+                ir = self.compile(oracle_text, type_line=type_line)
+                matching = [
+                    node
+                    for node in ir.faces[0].nodes
+                    if node.template_id == template_id
+                ]
+                self.assertEqual("exact", ir.status)
+                self.assertEqual(1, len(matching))
+                expected = {
+                    "combat.declaration.typed_components",
+                    (
+                        "continuous.resolution."
+                        "declaration_rules_until_end_of_turn"
+                    ),
+                }
+                if targeted:
+                    expected.add("target.revalidate_resolution")
+                self.assertTrue(
+                    expected.issubset(
+                        set(matching[0].capability_dependencies)
+                    ),
+                    matching[0].capability_dependencies,
+                )
+
+    def test_open_forms_do_not_enter_the_closed_family(self):
+        for oracle_text, type_line in (
             (
                 "{R}: Target creature can't block this creature this turn.",
                 "Creature — Human",
@@ -180,7 +271,9 @@ class ActivatedTemporaryDeclarationRestrictionCompilerTests(unittest.TestCase):
                 self.assertTrue(
                     all(
                         node.template_id is None
-                        or not node.template_id.startswith("activated-target-")
+                        or not node.template_id.startswith(
+                            ("activated-target-", "temporary-")
+                        )
                         for node in ir.faces[0].nodes
                     )
                 )
@@ -492,6 +585,58 @@ class TemporaryDeclarationRestrictionRuntimeTests(unittest.TestCase):
         self.assertEqual((True, None), engine._can_block(free_attacker, cant_block))
         self.assertEqual((True, None), engine._can_block(free_attacker, both))
         self.assertEqual((True, None), engine._can_block(unblockable, free_blocker))
+
+    def test_compiled_source_activation_locks_rule_to_source_incarnation(self):
+        session = self.session_with_card("Agent of Horizons", seed=50811508)
+        engine = session.engine
+        source = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A" and card.printed_name == "Agent of Horizons"
+        )
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            tapped=False,
+            log=False,
+        )
+        blocker = self.creature(engine, "B", "Ordinary Blocker")
+        engine.state.players["A"].mana_pool.update({"C": 2, "U": 1})
+        engine.state.players["A"].turns_begun = 1
+        source.acquired_control_turn_count = 0
+        engine._grant_priority("A")
+        engine.pump()
+        packet = session.packet("pilot:A", full=True)
+        action = next(
+            row
+            for row in packet["decision"]["ctx"]["legal"]["actions"]
+            if row["id"].startswith(f"activate:{source.ref}:")
+        )
+
+        result = session.act("pilot:A", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.pass_stack(session)
+
+        self.assertEqual(
+            (
+                False,
+                "declaration_restriction:intrinsic-unblockable-v1",
+            ),
+            engine._can_block(source, blocker),
+        )
+        effect = next(
+            value
+            for value in engine.state.continuous_effects
+            if isinstance(value, ResolutionDeclarationRuleEffect)
+        )
+        self.assertEqual(
+            (source.object_id, source.logical_object_id),
+            (
+                effect.locked_objects[0].object_id,
+                effect.locked_objects[0].logical_object_id,
+            ),
+        )
 
     def test_source_departure_preserves_rule_but_target_reentry_does_not(self):
         session = self.session_with_card(

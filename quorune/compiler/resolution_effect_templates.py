@@ -50,6 +50,9 @@ from .return_to_hand_templates import (
 from .self_counter_keyword_actions import (
     fixed_self_counter_keyword_action_template,
 )
+from .temporary_declaration_templates import (
+    temporary_declaration_restriction_effect_template,
+)
 
 
 CompiledEffectTemplate = tuple[
@@ -67,7 +70,7 @@ def typed_resolution_effect_template(
     source_is_permanent: bool | None = None,
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
-    """Lower the closed direct-damage and permanent-transition families."""
+    """Lower closed typed resolution-effect families."""
 
     fixed_counter_controller_sequence = (
         fixed_counter_controller_effect_sequence_template(
@@ -158,6 +161,15 @@ def typed_resolution_effect_template(
     )
     if fixed_target_characteristics is not None:
         return fixed_target_characteristics.compiled()
+    temporary_declaration_restriction = (
+        temporary_declaration_restriction_effect_template(
+            text,
+            card_name=card_name,
+            allow_source=source_is_permanent is True,
+        )
+    )
+    if temporary_declaration_restriction is not None:
+        return temporary_declaration_restriction.compiled()
     fixed_source_sequence = fixed_source_effect_sequence_template(
         text,
         card_name=card_name,

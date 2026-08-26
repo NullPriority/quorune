@@ -5,9 +5,9 @@ from typing import Any, Mapping, Sequence
 from .work_selection_bundles import (
     atomic_frontier_bundle,
     bundle_measurement_decision,
-    candidate_frontier_measurements,
     single_candidate_bundle,
     validate_bundle_policy,
+    validated_candidate_frontier_measurements,
     WorkSelectionBundleError,
 )
 from .work_selection_common import (
@@ -19,6 +19,7 @@ from .work_selection_common import (
 from .work_selection_evidence import (
     load_work_selection_inputs,
     validate_harvest_history,
+    work_selection_source_fingerprints,
 )
 from .work_selection_measurement import cohort_measurement_spec
 
@@ -232,7 +233,7 @@ def _validated_reviewed_history(
 def _validated_policy(
     policy: Mapping[str, Any], harvest_history: Mapping[str, Any]
 ) -> dict[str, Any]:
-    if int(policy.get("policy_version") or 0) != 8:
+    if int(policy.get("policy_version") or 0) != 9:
         raise WorkSelectionError("Unsupported work-selection policy")
     priority_classes, starting_uncovered = _validated_priority_policy(policy)
     coverage = _mapping(policy.get("coverage_family"), "coverage_family")
@@ -249,7 +250,7 @@ def _validated_policy(
         minimum_gain=int(validated_coverage["minimum_complete_card_gain"]),
     )
     return {
-        "policy_version": 8,
+        "policy_version": 9,
         "priority_classes": priority_classes,
         "starting_uncovered_high_risk_pairs": starting_uncovered,
         **validated_coverage,
@@ -998,14 +999,18 @@ def _frontier_candidate(
 
 
 def _synthesized_frontier_candidates(
-    frontier: Mapping[str, Any], policy: Mapping[str, Any]
+    frontier: Mapping[str, Any],
+    policy: Mapping[str, Any],
+    cohort_measurement_artifact: Mapping[str, Any],
 ) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     try:
-        measurements = candidate_frontier_measurements(
+        measurements = validated_candidate_frontier_measurements(
             frontier,
             policy["candidate_bundles"],
             policy["value_weights"],
+            cohort_measurement_artifact,
+            policy,
         )
     except WorkSelectionBundleError as exc:
         raise WorkSelectionError(str(exc)) from exc
@@ -1040,7 +1045,7 @@ def _synthesized_frontier_candidates(
         effective_measurement_status, demotion_reason = bundle_measurement_decision(
             str(bundle_policy["measurement_status"]),
             bool(measurement["bounded_executable_verified"]),
-            bool(measurement["measurement_outcome_current"]),
+            measurement["measurement_outcome"],
         )
         if effective_measurement_status == "measured_nonviable":
             readiness, eligible, reason = "measured_below_harvest_floor", False, str(demotion_reason)
@@ -1220,8 +1225,9 @@ def _harvest_outcome_candidate(validated: Mapping[str, Any]) -> dict[str, Any]:
         ),
         estimated_effort="small" if is_pending else "complete",
         reranking_reason=(
-            "Materialize the declared semantic transition from its immutable Git "
-            "receipts before selecting another implementation cohort."
+            "Complete the declared semantic transition's content receipts so "
+            "the current feature fixed point can materialize its outcome before "
+            "another implementation cohort is selected."
             if is_pending
             else "Every current semantic support transition has a downstream outcome."
         ),
@@ -1245,6 +1251,7 @@ def _work_selection_candidates(
     required_inputs = {
         "architecture_audit",
         "card_unlock_frontier",
+        "cohort_measurements",
         "harvest_outcome_history",
         "compact_ci_dependencies",
         "platform_readiness",
@@ -1281,6 +1288,10 @@ def _work_selection_candidates(
         *_synthesized_frontier_candidates(
             frontier,
             validated,
+            _mapping(
+                inputs["cohort_measurements"],
+                "work-selection cohort measurements",
+            ),
         ),
     ]
     measurement = _cohort_measurement_candidate(candidates, frontier)
@@ -1445,26 +1456,6 @@ def selected_work_candidate(
     return matches[0]
 
 
-def _source_fingerprints(inputs: Mapping[str, Any]) -> dict[str, str]:
-    return {
-        "architecture_audit": _hash(inputs["architecture_audit"]),
-        "card_unlock_frontier": str(
-            inputs["card_unlock_frontier"].get("fingerprint") or ""
-        ),
-        "harvest_outcome_history": str(
-            inputs["harvest_outcome_history"].get("fingerprint") or ""
-        ),
-        "compact_ci_dependencies": _hash(inputs["compact_ci_dependencies"]),
-        "platform_readiness": _hash(inputs["platform_readiness"]),
-        "reusable_piece_delta": str(
-            inputs["reusable_piece_delta"].get("fingerprint") or ""
-        ),
-        "reusable_piece_interactions": str(
-            inputs["reusable_piece_interactions"].get("fingerprint") or ""
-        ),
-    }
-
-
 def _selection_policy_payload(validated: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "starting_uncovered_high_risk_pairs": validated[
@@ -1535,7 +1526,7 @@ def build_work_selection(
         "schema_version": WORK_SELECTION_SCHEMA_VERSION,
         "policy_version": validated["policy_version"],
         "priority_classes": validated["priority_classes"],
-        "source_fingerprints": _source_fingerprints(inputs),
+        "source_fingerprints": work_selection_source_fingerprints(inputs),
         "selection_policy": _selection_policy_payload(validated),
         "harvest_outcome_history": validated["harvest_outcome_history"],
         "reviewed_rerank_history": validated["reviewed_rerank_history"],

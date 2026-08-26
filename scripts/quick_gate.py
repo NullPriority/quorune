@@ -42,6 +42,7 @@ _GENERATED_CHECK_ALIASES = frozenset(
         "platform-status",
         "reusable-pieces",
         "rules-scheduler",
+        "work-selection-cohort-measurements",
     }
 )
 
@@ -207,6 +208,11 @@ def build_plan(
             "--check",
         ),
         "test-shards": (python, "scripts/test_shards.py", "validate"),
+        "work-selection-cohort-measurements": (
+            python,
+            "scripts/update_work_selection_cohort_measurements.py",
+            "--check",
+        ),
     }
     finalizer_selected = "generated-finalization" in impact.checks
     for check in impact.checks:

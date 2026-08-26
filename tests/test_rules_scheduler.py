@@ -34,8 +34,12 @@ from quorune.work_selection_bundles import (
 )
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
+    _content_entry,
+    _public_receipt,
+    _receipt,
     _require_landed_harvest_head,
     _semantic_outcome_state,
+    _validate_content_entry,
     build_harvest_outcome_history,
     HarvestOutcomeHistoryError,
 )
@@ -47,6 +51,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def _json(relative: str):
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+def _refingerprint(value: dict) -> None:
+    unsigned = dict(value)
+    unsigned.pop("fingerprint", None)
+    value["fingerprint"] = hashlib.sha256(
+        stable_json(unsigned).encode("utf-8")
+    ).hexdigest()
 
 
 def _bounded_candidate_bundle_fixture():
@@ -88,6 +100,7 @@ def _bounded_candidate_bundle_fixture():
             "estimated_probe_hours": 1,
             "estimated_generation_hours": 1,
             "measurement_status": "bounded_executable",
+            "measurement_probe_id": None,
         }
     ]
     weights = {
@@ -891,6 +904,39 @@ class RulesSchedulerTests(unittest.TestCase):
             ):
                 _require_landed_harvest_head(repository, feature)
 
+    def test_content_receipts_survive_squash_commit_identity_changes(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        latest = provenance[-1]
+        base = _receipt(ROOT, latest["base_commit"])
+        head = _receipt(ROOT, latest["head_commit"])
+        declaration = {
+            "transition_id": "fixture-content-transition",
+            "compiler_version": head["compiler_version"],
+            "bundle_id": "bundle:fixture-content-transition",
+            "candidate_ids": ["compiler:fixture-content-transition"],
+            "family_ids": ["effect_clause:fixture-content-transition"],
+            "capability_ids": ["effect.fixture_content_transition"],
+            "expected_complete_card_gain": 1,
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+        }
+
+        entry = _content_entry(declaration, base=base, head=head)
+        squash_equivalent_base = _public_receipt(base)
+        squash_equivalent_base["commit"] = "f" * 40
+        validated = _validate_content_entry(
+            entry,
+            previous_head=squash_equivalent_base,
+        )
+
+        self.assertEqual(entry, validated)
+        self.assertNotIn("commit", entry["base_receipt"])
+        self.assertNotIn("commit", entry["head_receipt"])
+        self.assertEqual(declaration["family_ids"], entry["family_ids"])
+        self.assertEqual(
+            declaration["capability_ids"], entry["capability_ids"]
+        )
+
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
         inputs = deepcopy(self.work_inputs)
         history = inputs["harvest_outcome_history"]
@@ -1007,6 +1053,7 @@ class RulesSchedulerTests(unittest.TestCase):
             current,
             {
                 "transition_id": "fixture-non-harvest",
+                "compiler_version": "oracle-ir-v129",
                 "bundle_id": None,
                 "candidate_ids": [],
                 "family_ids": [],
@@ -1021,7 +1068,7 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual("non_harvest", pending["outcome_kind"])
         self.assertFalse(pending["grants_gameplay_trust"])
 
-    def test_fingerprinted_nonviable_measurements_retire_without_trust(self):
+    def test_generated_nonviable_measurements_retire_without_trust(self):
         expected = {
             "bundle:fixed-token-creation-contexts": (
                 "measured_nonviable",
@@ -1040,10 +1087,25 @@ class RulesSchedulerTests(unittest.TestCase):
                 if row["bundle_id"] == candidate_id
             )
             self.assertEqual(
-                measurement_status,
+                "generated_probe",
                 policy["measurement_status"],
             )
-            outcome = policy["measurement_outcome"]
+            self.assertEqual(
+                {"measurement_probe_id"},
+                {
+                    field
+                    for field in policy
+                    if field.startswith("measurement_")
+                    and field != "measurement_status"
+                },
+            )
+            outcome = next(
+                row
+                for row in self.work_inputs["cohort_measurements"][
+                    "measurements"
+                ]
+                if row["bundle_id"] == candidate_id
+            )
             self.assertEqual(
                 gains,
                 (
@@ -1063,11 +1125,8 @@ class RulesSchedulerTests(unittest.TestCase):
                 outcome["cohort_fingerprint"],
             )
         measured_outcomes = {
-            row["measurement_outcome"]["measurement_id"]: row["measurement_outcome"]
-            for row in self.catalog["work_selection"]["coverage_family"][
-                "candidate_bundles"
-            ]
-            if row["measurement_outcome"] is not None
+            row["measurement_id"]: row
+            for row in self.work_inputs["cohort_measurements"]["measurements"]
         }
         expected_measurements = {
             "measurement:fixed-token-creation-contexts",
@@ -1081,34 +1140,22 @@ class RulesSchedulerTests(unittest.TestCase):
             )
         )
 
-    def test_stale_measurement_outcome_reopens_bounded_probe_without_trust(self):
-        policy = deepcopy(self.catalog["work_selection"])
+    def test_stale_generated_measurement_fails_before_selection(self):
+        inputs = _without_pending_harvest_transition(self.work_inputs)
         token = next(
             row
-            for row in policy["coverage_family"]["candidate_bundles"]
+            for row in inputs["cohort_measurements"]["measurements"]
             if row["bundle_id"] == "bundle:fixed-token-creation-contexts"
         )
-        token["measurement_outcome"]["cohort_fingerprint"] = "0" * 64
-        work = build_work_selection(
-            selected_batch=self.queue["selected_batch"],
-            policy=policy,
-            inputs=_without_pending_harvest_transition(self.work_inputs),
-        )
-        selected = selected_work_candidate(work)
+        token["cohort_fingerprint"] = "0" * 64
+        _refingerprint(inputs["cohort_measurements"])
 
-        self.assertIsNotNone(selected)
-        self.assertEqual(
-            "measurement:fixed-token-creation-contexts",
-            selected["candidate_id"],
-        )
-        self.assertEqual("cohort_measurement", selected["work_state"])
-        self.assertFalse(selected["implementation_eligible"])
-        self.assertFalse(
-            selected["measurement_task"]["grants_gameplay_trust"]
-        )
-        source_filter = selected["measurement_task"]["source_corpus_filter"]
-        self.assertEqual(["unresolved"], source_filter["ability_statuses"])
-        self.assertNotIn("lowerable_untrusted_only", source_filter)
+        with self.assertRaisesRegex(WorkSelectionError, "identity or metric"):
+            build_work_selection(
+                selected_batch=self.queue["selected_batch"],
+                policy=self.catalog["work_selection"],
+                inputs=inputs,
+            )
 
     def test_measurement_freshness_ignores_unrelated_frontier_churn(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)
@@ -1119,7 +1166,7 @@ class RulesSchedulerTests(unittest.TestCase):
             for bundle in self.catalog["work_selection"]["coverage_family"][
                 "candidate_bundles"
             ]
-            if bundle["measurement_outcome"] is not None
+            if bundle["measurement_probe_id"] is not None
             for family_id in bundle["member_family_ids"]
         }
         unrelated = next(
@@ -1128,6 +1175,8 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["family_id"] not in measured_family_ids
         )
         unrelated["affected_cards"] += 1
+        inputs["cohort_measurements"]["frontier_fingerprint"] = "f" * 64
+        _refingerprint(inputs["cohort_measurements"])
 
         work = build_work_selection(
             selected_batch=self.queue["selected_batch"],
@@ -1138,28 +1187,24 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertIsNone(selected_work_candidate(work))
         self.assertEqual(0, work["eligible_candidate_count"])
 
-    def test_relevant_frontier_change_reopens_bounded_probe(self):
+    def test_relevant_frontier_change_requires_generated_remeasurement(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)
+        inputs["card_unlock_frontier"]["fingerprint"] = "e" * 64
         token_family = next(
             row
             for row in inputs["card_unlock_frontier"]["family_candidates"]
             if row["family_id"] == "effect_clause:create-token"
         )
         token_family["affected_cards"] += 1
+        inputs["cohort_measurements"]["frontier_fingerprint"] = "e" * 64
+        _refingerprint(inputs["cohort_measurements"])
 
-        work = build_work_selection(
-            selected_batch=self.queue["selected_batch"],
-            policy=self.catalog["work_selection"],
-            inputs=inputs,
-        )
-        selected = selected_work_candidate(work)
-
-        self.assertIsNotNone(selected)
-        self.assertEqual(
-            "measurement:fixed-token-creation-contexts",
-            selected["candidate_id"],
-        )
-        self.assertFalse(selected["implementation_eligible"])
+        with self.assertRaisesRegex(WorkSelectionError, "identity or metric"):
+            build_work_selection(
+                selected_batch=self.queue["selected_batch"],
+                policy=self.catalog["work_selection"],
+                inputs=inputs,
+            )
 
     def test_completed_bundle_retires_and_upper_bound_requires_bounded_cohort(self):
         work = self.queue["work_selection"]
@@ -1170,7 +1215,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         frontier, policies, weights = _bounded_candidate_bundle_fixture()
         measurement = candidate_frontier_measurements(
-            frontier, policies, weights
+            frontier, policies, weights, {}
         )[0]
         status, reason = bundle_measurement_decision(
             "upper_bound_only",
@@ -1184,7 +1229,7 @@ class RulesSchedulerTests(unittest.TestCase):
     def test_bounded_bundle_fails_closed_when_lowerable_census_drifts(self):
         frontier, policies, weights = _bounded_candidate_bundle_fixture()
         measurement = candidate_frontier_measurements(
-            frontier, policies, weights
+            frontier, policies, weights, {}
         )[0]
         self.assertTrue(measurement["bounded_executable_verified"])
 
@@ -1192,7 +1237,7 @@ class RulesSchedulerTests(unittest.TestCase):
             "lowerable_untrusted_abilities"
         ] = 0
         measurement = candidate_frontier_measurements(
-            frontier, policies, weights
+            frontier, policies, weights, {}
         )[0]
         status, reason = bundle_measurement_decision(
             policies[0]["measurement_status"],
@@ -1209,7 +1254,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertEqual(
             [],
-            candidate_frontier_measurements(frontier, policies, weights),
+            candidate_frontier_measurements(frontier, policies, weights, {}),
         )
 
     def test_partially_missing_candidate_bundle_remains_invalid(self):
@@ -1220,7 +1265,7 @@ class RulesSchedulerTests(unittest.TestCase):
             WorkSelectionBundleError,
             "references missing families: keyword_dependency:fixture-b",
         ):
-            candidate_frontier_measurements(frontier, policies, weights)
+            candidate_frontier_measurements(frontier, policies, weights, {})
 
     def test_material_residual_threshold_is_disjunctive(self):
         inputs = deepcopy(self.work_inputs)
@@ -1555,7 +1600,7 @@ class RulesSchedulerTests(unittest.TestCase):
         duplicate_context_bundle = next(
             row
             for row in policy["coverage_family"]["candidate_bundles"]
-            if row["measurement_status"] == "measured_nonviable"
+            if row["measurement_status"] == "generated_probe"
         )
         duplicate_context_bundle["source_contexts"].append(
             duplicate_context_bundle["source_contexts"][0]
@@ -1573,7 +1618,7 @@ class RulesSchedulerTests(unittest.TestCase):
         measured = next(
             row
             for row in policy["coverage_family"]["candidate_bundles"]
-            if row["measurement_status"] == "measured_nonviable"
+            if row["measurement_status"] == "generated_probe"
         )
         measured["source_contexts"] = ["spell"]
         with self.assertRaisesRegex(
@@ -1585,36 +1630,38 @@ class RulesSchedulerTests(unittest.TestCase):
                 inputs=self.work_inputs,
             )
 
-        policy = deepcopy(self.catalog["work_selection"])
+        inputs = deepcopy(self.work_inputs)
         measured = next(
             row
-            for row in policy["coverage_family"]["candidate_bundles"]
-            if row["measurement_status"] == "measured_nonviable"
+            for row in inputs["cohort_measurements"]["measurements"]
+            if row["bundle_id"] == "bundle:fixed-token-creation-contexts"
         )
-        measured["measurement_outcome"]["grants_gameplay_trust"] = True
+        measured["grants_gameplay_trust"] = True
+        _refingerprint(inputs["cohort_measurements"])
         with self.assertRaisesRegex(
-            WorkSelectionError, "exact, no-trust"
+            WorkSelectionError, "identity or metric"
         ):
             build_work_selection(
                 selected_batch=self.queue["selected_batch"],
-                policy=policy,
-                inputs=self.work_inputs,
+                policy=self.catalog["work_selection"],
+                inputs=inputs,
             )
 
-        policy = deepcopy(self.catalog["work_selection"])
+        inputs = deepcopy(self.work_inputs)
         measured = next(
             row
-            for row in policy["coverage_family"]["candidate_bundles"]
-            if row["measurement_status"] == "measured_nonviable"
+            for row in inputs["cohort_measurements"]["measurements"]
+            if row["bundle_id"] == "bundle:fixed-token-creation-contexts"
         )
-        measured["measurement_outcome"]["exact_ability_gain"] = 100
+        measured["exact_ability_gain"] = 100
+        _refingerprint(inputs["cohort_measurements"])
         with self.assertRaisesRegex(
-            WorkSelectionError, "below every harvest floor"
+            WorkSelectionError, "contradicts the harvest floors"
         ):
             build_work_selection(
                 selected_batch=self.queue["selected_batch"],
-                policy=policy,
-                inputs=self.work_inputs,
+                policy=self.catalog["work_selection"],
+                inputs=inputs,
             )
 
         inputs = deepcopy(self.work_inputs)

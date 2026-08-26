@@ -471,6 +471,19 @@ jobs:
         with:
           name: cloud-database-${{ github.run_id }}
           path: .
+      - name: Generate current work-selection cohort measurements
+        run: >-
+          python scripts/cloud_generated_artifacts.py run-owner
+          --owner work-selection-cohort-measurements
+          --db data/cloud-pinned.sqlite3
+          --stage-dir local/cloud-stage/work-selection-cohort-measurements
+          --affected-owners-json '${{ needs.plan.outputs.affected_owners }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cloud-owner-cohort-measurements-${{ github.run_id }}
+          path: local/cloud-stage/work-selection-cohort-measurements
+          if-no-files-found: error
+          retention-days: 7
       - id: owner-key
         name: Resolve reusable owner input fingerprint
         run: >-
@@ -612,45 +625,12 @@ jobs:
           pattern: cloud-owner-*-${{ github.run_id }}
           path: .
           merge-multiple: true
-      - id: owner-key
-        name: Resolve scheduler owner input fingerprint
-        run: >-
-          python scripts/cloud_generated_artifacts.py owner-key
-          --owner rules-scheduler
-      - id: owner-cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.owner-key.outputs.cache_path }}
-          key: generated-owner-v1-rules-scheduler-${{ steps.owner-key.outputs.owner_fingerprint }}
-      - id: remote-cache
-        if: steps.owner-cache.outputs.cache-hit != 'true'
-        name: Find cross-commit scheduler artifact
-        env:
-          GH_TOKEN: ${{ github.token }}
-          ARTIFACT_NAME: generated-owner-cache-v1-rules-scheduler-${{ steps.owner-key.outputs.owner_fingerprint }}
-        run: |
-          run_id=$(python scripts/find_reusable_workflow_artifact.py --name "$ARTIFACT_NAME")
-          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
-      - if: steps.remote-cache.outputs.run_id != ''
-        uses: actions/download-artifact@v4
-        with:
-          name: generated-owner-cache-v1-rules-scheduler-${{ steps.owner-key.outputs.owner_fingerprint }}
-          path: ${{ steps.owner-key.outputs.cache_path }}
-          github-token: ${{ github.token }}
-          run-id: ${{ steps.remote-cache.outputs.run_id }}
       - name: Generate cross-program rules queue
         run: >-
           python scripts/cloud_generated_artifacts.py run-owner
           --owner rules-scheduler
           --stage-dir local/cloud-stage/rules-scheduler
           --affected-owners-json '${{ needs.plan.outputs.affected_owners }}'
-      - if: steps.owner-cache.outputs.cache-hit != 'true' && steps.remote-cache.outputs.run_id == ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: generated-owner-cache-v1-rules-scheduler-${{ steps.owner-key.outputs.owner_fingerprint }}
-          path: ${{ steps.owner-key.outputs.cache_path }}
-          if-no-files-found: error
-          retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
           name: cloud-owner-scheduler-${{ github.run_id }}

@@ -308,6 +308,7 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
                 "reusable-pieces",
                 "rules-derived",
                 "rules-scheduler",
+                "work-selection-cohort-measurements",
             }.issubset({spec.id for spec in specs})
         )
         self.assertLess(
@@ -329,6 +330,14 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
         self.assertLess(
             ordered.index("compiler-corpus-coverage"),
             ordered.index("card-unlock-frontier"),
+        )
+        self.assertLess(
+            ordered.index("card-unlock-frontier"),
+            ordered.index("work-selection-cohort-measurements"),
+        )
+        self.assertLess(
+            ordered.index("work-selection-cohort-measurements"),
+            ordered.index("rules-scheduler"),
         )
         self.assertLess(
             ordered.index("compiler-corpus-coverage"),

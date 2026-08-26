@@ -346,6 +346,39 @@
       "reuse_policy": "safe"
     },
     {
+      "id": "work-selection-cohort-measurements",
+      "depends_on": [
+        "card-unlock-frontier"
+      ],
+      "outputs": [
+        "coverage/work-selection-cohort-measurements.json"
+      ],
+      "check": [
+        "scripts/update_work_selection_cohort_measurements.py",
+        "--check"
+      ],
+      "write": null,
+      "write_with_database": [
+        "scripts/update_work_selection_cohort_measurements.py",
+        "--write",
+        "--db",
+        "{db}"
+      ],
+      "write_policy": "database",
+      "input_groups": [
+        "platform-source",
+        "python-product"
+      ],
+      "input_paths": [],
+      "implementation_inputs": [
+        "scripts/update_work_selection_cohort_measurements.py",
+        "scripts/work_selection_cohort_measurements.py"
+      ],
+      "database_identity": "pinned-card-database",
+      "execution_class": "reusable",
+      "reuse_policy": "safe"
+    },
+    {
       "id": "ci-escape-report",
       "depends_on": [],
       "outputs": [
@@ -379,7 +412,8 @@
       "depends_on": [
         "compact-ci-card-dependencies",
         "reusable-pieces",
-        "rules-derived"
+        "rules-derived",
+        "work-selection-cohort-measurements"
       ],
       "outputs": [
         "coverage/harvest-outcome-history.json",
@@ -400,13 +434,15 @@
         "platform-source",
         "rules-source"
       ],
-      "input_paths": [],
+      "input_paths": [
+        "coverage/harvest-outcome-history.json"
+      ],
       "implementation_inputs": [
         "scripts/update_rules_scheduler.py"
       ],
       "database_identity": "none",
       "execution_class": "scheduler",
-      "reuse_policy": "safe"
+      "reuse_policy": "noncacheable"
     },
     {
       "id": "module-classifications",
