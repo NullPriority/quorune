@@ -16,6 +16,7 @@ from scripts.generated_artifacts import (
 )
 from scripts.generated_owner_cache import (
     GeneratedOwnerCacheError,
+    _python_import_closure,
     affected_owner_plan,
     compiler_identity_status,
     owner_input_identity,
@@ -252,6 +253,44 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         self.assertTrue(plan["database_required"])
         self.assertIn("compiler-corpus-coverage", plan["owners"])
         self.assertTrue(sentinel["ok"], json.dumps(sentinel, sort_keys=True))
+
+    def test_compiler_semantic_closure_does_not_follow_package_exports(self):
+        sources = {
+            "scripts/generate.py": (
+                "from quorune.compiler.worker import compile_card\n"
+            ),
+            "quorune/compiler/worker.py": "from quorune import public_api\n",
+            "quorune/__init__.py": "from quorune.runtime import execute\n",
+            "quorune/runtime.py": "def execute(): pass\n",
+        }
+        available = set(sources)
+
+        owner_closure = _python_import_closure(
+            {"scripts/generate.py"},
+            available=available,
+            read_text=sources.__getitem__,
+        )
+        semantic_closure = _python_import_closure(
+            {"scripts/generate.py"},
+            available=available,
+            read_text=sources.__getitem__,
+            traverse_package_initializers=False,
+        )
+
+        self.assertIn("quorune/runtime.py", owner_closure)
+        self.assertIn("quorune/__init__.py", semantic_closure)
+        self.assertNotIn("quorune/runtime.py", semantic_closure)
+
+        sources["quorune/compiler/worker.py"] = (
+            "from quorune.runtime import execute\n"
+        )
+        direct_semantic_closure = _python_import_closure(
+            {"scripts/generate.py"},
+            available=available,
+            read_text=sources.__getitem__,
+            traverse_package_initializers=False,
+        )
+        self.assertIn("quorune/runtime.py", direct_semantic_closure)
 
     def test_remote_reuse_requires_completed_same_repository_workflow(self):
         responses = {

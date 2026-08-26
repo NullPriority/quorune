@@ -6,6 +6,7 @@
     "tests/fixtures/amass-rules-cards.json",
     "tests/fixtures/bestow-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
+    "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",
     "tests/fixtures/casting-activation-metadata-cards.json",
     "tests/fixtures/casting-payment-keywords-cards.json",

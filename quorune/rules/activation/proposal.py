@@ -8,8 +8,10 @@ from ...abilities import ActivatedAbility, choose_ability, reduced_requirements
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
 from ...station import station_candidates, station_cost_choice
+from ...targets import available_modes
 from ..action_proposals import ActionOffer, ActivationProposal, freeze_json
 from ..activation_costs import activation_choice_candidates
+from ..modal_selection import canonical_modes
 from .model import (
     ActivationProposalError,
     ActivationProposalRequest,
@@ -268,6 +270,22 @@ def build_activation_proposal(
         source_ref=source.ref,
         target_schema=target_schema,
     )
+    effective_target_schema = (
+        target_schema
+        if target_schema is not None
+        else getattr(program, "target_schema", None)
+    )
+    selected_modes = (
+        list(
+            canonical_modes(
+                effective_target_schema,
+                request.modes,
+                require_modes=bool(available_modes(effective_target_schema)),
+            )
+        )
+        if effective_target_schema is not None
+        else []
+    )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     context = host._fetch_context(request.actor, ability, response)
     requirements = reduced_requirements(
@@ -288,7 +306,7 @@ def build_activation_proposal(
         target_snapshots=freeze_json(snapshots),
         details=freeze_json(
             {
-                "selected_modes": list(request.modes),
+                "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
                 "builtin_context": context,
             }

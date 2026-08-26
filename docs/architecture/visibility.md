@@ -2,7 +2,7 @@
 title: "Visibility and projection"
 status: "current"
 authoritative_source: "StateProjector, protocol schemas, public-log filtering, and privacy tests"
-verified: "2026-08-06"
+verified: "2026-08-25"
 audience: "client, server, pilot, and security contributors"
 maintenance: "hand-maintained"
 ---
@@ -44,6 +44,9 @@ promote a spectator, select another seat, or request an analyst view.
 - A face-down public-zone object's controller can see its identity. Ownership
   alone grants no visibility; other seats need explicit known or revealed
   state.
+- Public exile is projected as a stable unordered set for live principals.
+  Its presentation order is independent of the order cards left a hidden
+  library; graveyard order remains authoritative because rules can use it.
 - Public fields such as battlefield objects, commander damage, terminal result,
   and lifecycle status are consistent across permitted principals.
 

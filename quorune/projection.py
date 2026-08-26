@@ -394,8 +394,17 @@ class StateProjector:
             obj["protect"] = card.battle_protector
         return obj
 
-    def _zone(self, object_ids: Iterable[str], principal: str) -> list[dict[str, Any]]:
-        return [self._obj(self.state.cards[oid], principal) for oid in object_ids]
+    def _zone(
+        self,
+        object_ids: Iterable[str],
+        principal: str,
+        *,
+        public_unordered: bool = False,
+    ) -> list[dict[str, Any]]:
+        identities = list(object_ids)
+        if public_unordered and principal not in {"analyst", "admin"}:
+            identities.sort(key=lambda object_id: self.state.cards[object_id].ref)
+        return [self._obj(self.state.cards[oid], principal) for oid in identities]
 
     def _decision(self, principal: str) -> dict[str, Any] | None:
         decision = self.state.pending_decision
@@ -506,7 +515,11 @@ class StateProjector:
                 "lands": p.land_plays_remaining,
                 "bf": self._zone(p.zones["battlefield"], principal),
                 "gy": self._zone(p.zones["graveyard"], principal),
-                "ex": self._zone(p.zones["exile"], principal),
+                "ex": self._zone(
+                    p.zones["exile"],
+                    principal,
+                    public_unordered=True,
+                ),
                 "cmd": self._zone(p.zones["command"], principal),
             }
             generic_counters = _generic_player_counter_rows(p)

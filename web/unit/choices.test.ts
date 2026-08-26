@@ -6,6 +6,7 @@ import {
   choicesWithDefaults,
   executableChoices,
   initialChoices,
+  updateModalTargetSelection,
   validateChoices,
 } from "../src/choices.ts";
 import type { ChoiceForm } from "../src/generated/protocol.ts";
@@ -155,6 +156,46 @@ test("modal target forms validate modes and group cardinality", () => {
     targets: { permanent: ["B01"] },
     modes: ["destroy"],
   });
+});
+
+test("modal clicks use printed order and retain unaffected target groups", () => {
+  const schema = {
+    legal_modes: ["mode_1", "mode_2", "mode_3"],
+    min_modes: 2,
+    max_modes: 2,
+    mode_schemas: {
+      mode_1: {
+        groups: [{ id: "target_1", max: 1, legal_refs: ["A", "B"] }],
+      },
+      mode_2: { groups: [] },
+      mode_3: {
+        groups: [{ id: "target_3", max: 1, legal_refs: ["C", "D"] }],
+      },
+    },
+  };
+  const third = updateModalTargetSelection(schema, [], {}, "mode_3", true);
+  const first = updateModalTargetSelection(
+    schema,
+    third.modes,
+    { target_3: ["D"] },
+    "mode_1",
+    true,
+  );
+
+  assert.deepEqual(first, {
+    modes: ["mode_1", "mode_3"],
+    targets: { target_3: ["D"] },
+  });
+  assert.deepEqual(
+    updateModalTargetSelection(
+      schema,
+      first.modes,
+      { target_1: ["A"], target_3: ["D"] },
+      "mode_1",
+      false,
+    ),
+    { modes: ["mode_3"], targets: { target_3: ["D"] } },
+  );
 });
 
 test("fully ordered server choices initialize in projected order", () => {

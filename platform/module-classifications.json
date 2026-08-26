@@ -5375,6 +5375,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/modal_selection.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/monarch_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -8005,5 +8019,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "26b5f325201f5784c8e41f3a84b9af5970029be5dbc68e3c3aff05b9fe4d904d"
+  "fingerprint": "e2323278398b4114c317db141890c9ff7f9845672e32dd5b0e909901515b3848"
 }

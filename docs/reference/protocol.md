@@ -2,7 +2,7 @@
 title: "Application protocol"
 status: "current"
 authoritative_source: "GameService, server OpenAPI, protocol implementation, and versioned schemas"
-verified: "2026-08-06"
+verified: "2026-08-25"
 audience: "client, server, and protocol contributors"
 maintenance: "hand-maintained"
 concern: "network-protocol"
@@ -90,6 +90,12 @@ form. The same adapter that projects a form defines the accepted choice-field
 names. Forms cover scalar, object, ordering, mode, target, grouped, assignment,
 payment, private search, and delegated rules choices. Unknown fields and
 unknown form versions fail closed.
+
+Modal submissions are closed nonrepeating sets. The server validates their
+minimum, maximum, and membership, then canonicalizes every legal set into the
+printed order before target planning, stack construction, and execution. The
+browser mirrors that order from the server-issued schema and retains target
+groups that remain legal when the selected set changes.
 
 The client may choose presentation and automation policy. For example, an
 automatic pass still submits the ordinary server-issued `pass` action, and
