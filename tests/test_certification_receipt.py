@@ -468,6 +468,47 @@ class CertificationReceiptTests(unittest.TestCase):
 
         sleep.assert_not_called()
 
+    def test_metadata_edit_does_not_wait_for_newer_unchanged_head_run(self):
+        prior = receipt()
+        newer_runs = {
+            "workflow_runs": [
+                {
+                    "id": 34567,
+                    "event": "pull_request",
+                    "head_sha": prior.exact_head_sha,
+                    "name": "PR",
+                    "path": ".github/workflows/ci.yml",
+                    "status": "in_progress",
+                }
+            ]
+        }
+
+        with (
+            patch(
+                "scripts.certification_receipt."
+                "find_previous_pr_certification",
+                side_effect=CertificationReceiptError("receipt is pending"),
+            ),
+            patch(
+                "scripts.certification_receipt._github_json",
+                return_value=newer_runs,
+            ),
+            patch("scripts.certification_receipt.time.sleep") as sleep,
+        ):
+            with self.assertRaisesRegex(
+                CertificationReceiptError, "receipt is pending"
+            ):
+                wait_for_previous_pr_certification(
+                    repository=prior.repository,
+                    pull_request=prior.pull_request,
+                    exact_head_sha=prior.exact_head_sha,
+                    current_workflow_run_id=23456,
+                    token="test-token",
+                    wait_seconds=30,
+                )
+
+        sleep.assert_not_called()
+
     def test_metadata_edit_ignores_stale_zero_job_rerun(self):
         prior = receipt()
         queued_runs = {

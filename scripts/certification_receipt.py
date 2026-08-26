@@ -394,7 +394,7 @@ def _previous_run_can_still_certify(
     run_id = int(run["id"])
     status = run.get("status")
     if (
-        run_id == current_workflow_run_id
+        run_id >= current_workflow_run_id
         or status not in ACTIVE_WORKFLOW_RUN_STATUSES
     ):
         return False
@@ -545,7 +545,7 @@ def find_previous_pr_certification(
     last_error: CertificationReceiptError | None = None
     for run in runs:
         run_id = int(run["id"])
-        if run_id == current_workflow_run_id:
+        if run_id >= current_workflow_run_id:
             continue
         try:
             artifact = select_receipt_artifact(
