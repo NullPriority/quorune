@@ -242,6 +242,19 @@ def _target_boolean_fields(raw: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _target_combat_state(raw: Mapping[str, Any]) -> str | None:
+    value = raw.get("combat_state")
+    if value is None:
+        return None
+    if type(value) is not str or value not in {
+        "attacking",
+        "blocking",
+        "attacking_or_blocking",
+    }:
+        raise ValueError("Target combat_state is unsupported")
+    return value
+
+
 _TARGET_GROUP_FIELDS = frozenset(
     {
         "selector",
@@ -286,6 +299,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "player_relation",
         "attacking",
         "blocking",
+        "combat_state",
         "tapped",
         "commander",
         "token",
@@ -356,6 +370,7 @@ class TargetGroup:
     player_relation: str = "any"
     attacking: bool | None = None
     blocking: bool | None = None
+    combat_state: str | None = None
     tapped: bool | None = None
     commander: bool | None = None
     token: bool | None = None
@@ -377,6 +392,15 @@ class TargetGroup:
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
 
     def __post_init__(self) -> None:
+        if self.combat_state is not None and (
+            self.combat_state
+            not in {"attacking", "blocking", "attacking_or_blocking"}
+            or self.attacking is not None
+            or self.blocking is not None
+        ):
+            raise ValueError(
+                "Target combat_state cannot mix with legacy combat flags"
+            )
         if sum(
             value is not None
             for value in (self.color_count_min, self.color_count_equal)
@@ -496,6 +520,7 @@ class TargetGroup:
             "owner_relation": owner,
             "player_relation": player_relation,
             **_target_boolean_fields(raw),
+            "combat_state": _target_combat_state(raw),
             "source_exclusion": bool(raw.get("source_exclusion", False)),
             "another": bool(raw.get("another", False)),
             "min_targets": minimum,

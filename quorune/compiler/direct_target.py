@@ -46,6 +46,9 @@ _DIRECT_COLOR_WORDS = {
     "green": "G",
 }
 _OUTLAW_SUBTYPES = ("assassin", "mercenary", "pirate", "rogue", "warlock")
+_DIRECT_COMBAT_STATES = frozenset(
+    {"attacking", "blocking", "attacking_or_blocking"}
+)
 
 
 def _canonical_terms(
@@ -512,6 +515,22 @@ def _validate_direct_target_flags(
         raise ValueError(
             "Direct permanent commander targets require a creature predicate"
         )
+    if spec.combat_state is not None and (
+        type(spec.combat_state) is not str
+        or spec.combat_state not in _DIRECT_COMBAT_STATES
+        or not (
+            spec.types_any == ("creature",)
+            or spec.types_all in {
+                ("creature",),
+                ("artifact", "creature"),
+            }
+        )
+        or spec.state_predicate is not None
+    ):
+        raise ValueError(
+            "Direct permanent combat-state predicates require one creature "
+            "target without another public-state predicate"
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -545,6 +564,7 @@ class DirectPermanentTargetSpec:
     source_exclusion: bool = False
     token: bool | None = None
     commander: bool | None = None
+    combat_state: str | None = None
 
     def __post_init__(self) -> None:
         _canonicalize_direct_target_spec(self)
@@ -639,6 +659,8 @@ class DirectPermanentTargetSpec:
                 predicate += "-with-" + direct_target_slug(
                     state.counter_name
                 ) + "-counter"
+        if self.combat_state is not None:
+            predicate += "-" + self.combat_state.replace("_", "-")
         return predicate
 
     @property
@@ -668,7 +690,7 @@ class DirectPermanentTargetSpec:
 
     @property
     def uses_public_state(self) -> bool:
-        return self.state_predicate is not None
+        return self.state_predicate is not None or self.combat_state is not None
 
     def to_target_schema(self) -> dict[str, Any]:
         schema: dict[str, Any] = {
@@ -714,6 +736,8 @@ class DirectPermanentTargetSpec:
             schema["token"] = self.token
         if self.commander is not None:
             schema["commander"] = self.commander
+        if self.combat_state is not None:
+            schema["combat_state"] = self.combat_state
         return schema
 
     @classmethod
@@ -751,6 +775,7 @@ class DirectPermanentTargetSpec:
             "controller_relation",
             "source_exclusion",
             "token",
+            "combat_state",
             *(('commander',) if allow_commander else ()),
         }
         if set(schema) - allowed:
@@ -797,6 +822,7 @@ class DirectPermanentTargetSpec:
             source_exclusion=source_exclusion,
             token=schema.get("token"),
             commander=schema.get("commander"),
+            combat_state=schema.get("combat_state"),
         )
         if spec.to_target_schema() != schema:
             raise ValueError("Direct permanent target schema is not canonical")
@@ -875,6 +901,18 @@ def direct_permanent_target_spec(
         and counter_state.group("counter") == "counter"
     ):
         return None
+
+    for prefix, combat_state in (
+        ("attacking or blocking ", "attacking_or_blocking"),
+        ("attacking ", "attacking"),
+        ("blocking ", "blocking"),
+    ):
+        if phrase.startswith(prefix):
+            if state_predicate is not None:
+                return None
+            phrase = phrase[len(prefix) :]
+            kwargs["combat_state"] = combat_state
+            break
 
     state_match = re.fullmatch(
         r"(?P<state>tapped|untapped) (?P<body>.+)",

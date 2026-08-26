@@ -77,6 +77,28 @@ def _target_group_public_state_matches(
         raise GameRuleError(str(exc)) from exc
 
 
+def _target_group_combat_state_matches(
+    group: TargetGroup,
+    *,
+    card: CardInstance | None,
+) -> bool:
+    """Evaluate legacy flags and the closed current combat-state predicate."""
+
+    attacking = bool(card and card.attacking is not None)
+    blocking = bool(card and card.blocking is not None)
+    if group.attacking is not None and attacking != group.attacking:
+        return False
+    if group.blocking is not None and blocking != group.blocking:
+        return False
+    if group.combat_state == "attacking":
+        return attacking
+    if group.combat_state == "blocking":
+        return blocking
+    if group.combat_state == "attacking_or_blocking":
+        return attacking or blocking
+    return True
+
+
 class TargetSelectionOwnerMixin:
     """Own target advertisement, submission validation, and revalidation."""
 
@@ -345,13 +367,7 @@ class TargetSelectionOwnerMixin:
         ):
             return False
         card = row.get("card")
-        if group.attacking is not None and (
-            bool(card and card.attacking is not None) != group.attacking
-        ):
-            return False
-        if group.blocking is not None and (
-            bool(card and card.blocking is not None) != group.blocking
-        ):
+        if not _target_group_combat_state_matches(group, card=card):
             return False
         if group.tapped is not None and (
             bool(card and card.tapped) != group.tapped

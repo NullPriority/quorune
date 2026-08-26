@@ -240,8 +240,6 @@ class CounterTargetPredicateCompilerTests(unittest.TestCase):
             "target modified creature",
             "target nontoken creature",
             "target commander creature",
-            "target attacking creature",
-            "target blocking creature",
             "target equipped creature",
             "target enchanted creature",
             "target creature with flying and vigilance",

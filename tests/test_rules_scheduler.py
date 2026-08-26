@@ -653,6 +653,13 @@ class RulesSchedulerTests(unittest.TestCase):
 
     def test_prerequisite_exception_requires_measured_fanout_and_open_budget(self):
         inputs = _with_large_ability_compiler_harvest(self.work_inputs)
+        history = inputs["harvest_outcome_history"]
+        history["entries"][-1]["actual_complete_card_gain"] = 0
+        fingerprinted = dict(history)
+        fingerprinted.pop("fingerprint")
+        history["fingerprint"] = hashlib.sha256(
+            stable_json(fingerprinted).encode("utf-8")
+        ).hexdigest()
         prerequisite = next(
             row
             for row in inputs["card_unlock_frontier"]["family_candidates"]
@@ -661,9 +668,17 @@ class RulesSchedulerTests(unittest.TestCase):
         prerequisite["expected_exact_ability_gain"] = 80
         prerequisite["expected_material_residual_gain"] = 80
         policy = deepcopy(self.catalog["work_selection"])
+        minimum_gain = policy["coverage_family"][
+            "minimum_complete_card_gain"
+        ]
+        open_budget = 1
+        for outcome in reversed(history["entries"]):
+            if outcome["actual_complete_card_gain"] >= minimum_gain:
+                break
+            open_budget += 1
         policy["coverage_family"][
             "maximum_consecutive_prerequisite_exceptions"
-        ] = 3
+        ] = open_budget
         policy["coverage_family"]["approved_prerequisite_exceptions"] = [
             {
                 "candidate_id": "frontier:effect_clause:large-ability-fixture",
@@ -691,9 +706,12 @@ class RulesSchedulerTests(unittest.TestCase):
             narrow["runtime_readiness"]["status"],
         )
 
+        consecutive_subthreshold = work["selection_policy"][
+            "consecutive_subthreshold_harvests"
+        ]
         policy["coverage_family"][
             "maximum_consecutive_prerequisite_exceptions"
-        ] = 2
+        ] = consecutive_subthreshold
         work = build_work_selection(
             selected_batch=self.queue["selected_batch"],
             policy=policy,
@@ -711,7 +729,7 @@ class RulesSchedulerTests(unittest.TestCase):
             narrow["runtime_readiness"]["status"],
         )
         self.assertEqual(
-            2,
+            consecutive_subthreshold,
             work["selection_policy"]["consecutive_subthreshold_harvests"],
         )
 
@@ -781,12 +799,15 @@ class RulesSchedulerTests(unittest.TestCase):
             self.work_inputs["harvest_outcome_history"], derived
         )
         latest = derived["entries"][-1]
-        self.assertEqual("bundle:fixed-impulse-access", latest["bundle_id"])
-        self.assertEqual(22, latest["actual_complete_card_gain"])
-        self.assertEqual(41, latest["oracle_exact_ability_node_delta"])
-        self.assertEqual(24, latest["card_program_ability_record_delta"])
         self.assertEqual(
-            1,
+            "bundle:fixed-combat-state-direct-targets",
+            latest["bundle_id"],
+        )
+        self.assertEqual(90, latest["actual_complete_card_gain"])
+        self.assertEqual(104, latest["oracle_exact_ability_node_delta"])
+        self.assertEqual(48, latest["card_program_ability_record_delta"])
+        self.assertEqual(
+            0,
             latest["architecture_delta"][
                 "commander_engine_logical_lines"
             ],
@@ -802,12 +823,12 @@ class RulesSchedulerTests(unittest.TestCase):
 
         penultimate = derived["entries"][-2]
         self.assertEqual(
-            "bundle:fixed-activated-tap-costs",
+            "bundle:fixed-impulse-access",
             penultimate["bundle_id"],
         )
-        self.assertEqual(47, penultimate["actual_complete_card_gain"])
-        self.assertEqual(67, penultimate["oracle_exact_ability_node_delta"])
-        self.assertEqual(0, penultimate["card_program_ability_record_delta"])
+        self.assertEqual(22, penultimate["actual_complete_card_gain"])
+        self.assertEqual(41, penultimate["oracle_exact_ability_node_delta"])
+        self.assertEqual(24, penultimate["card_program_ability_record_delta"])
 
         malformed = deepcopy(provenance)
         malformed[-1]["actual_complete_card_gain"] = 37
@@ -950,18 +971,21 @@ class RulesSchedulerTests(unittest.TestCase):
         work = self.queue["work_selection"]
         selected = selected_work_candidate(work)
 
-        self.assertIsNone(selected)
-        self.assertEqual(0, work["eligible_candidate_count"])
-        self.assertEqual(0, work["implementation_eligible_candidate_count"])
-        self.assertFalse(
-            any(
-                row["work_state"] == "cohort_measurement"
-                for row in work["candidates"]
-            )
+        self.assertIsNotNone(selected)
+        self.assertEqual(
+            "measurement:fixed-token-creation-contexts",
+            selected["candidate_id"],
         )
+        self.assertEqual("cohort_measurement", selected["work_state"])
+        self.assertFalse(selected["implementation_eligible"])
+        self.assertFalse(
+            selected["measurement_task"]["grants_gameplay_trust"]
+        )
+        self.assertEqual(1, work["eligible_candidate_count"])
+        self.assertEqual(0, work["implementation_eligible_candidate_count"])
         expected = {
-            "bundle:fixed-token-creation-contexts": (0, 27, 27),
-            "bundle:fixed-exile-contexts": (0, 19, 19),
+            "bundle:fixed-token-creation-contexts": (39, 150, 164),
+            "bundle:fixed-exile-contexts": (17, 94, 96),
         }
         for candidate_id, gains in expected.items():
             candidate = next(
@@ -972,7 +996,7 @@ class RulesSchedulerTests(unittest.TestCase):
             self.assertFalse(candidate["eligible"])
             self.assertFalse(candidate["implementation_eligible"])
             self.assertEqual(
-                "measured_nonviable",
+                "upper_bound_only",
                 candidate["bundle"]["measurement_status"],
             )
             self.assertEqual(
@@ -1176,7 +1200,15 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertTrue(candidates)
         selected = selected_work_candidate(work)
-        self.assertIsNone(selected)
+        self.assertIsNotNone(selected)
+        self.assertEqual(
+            "measurement:fixed-token-creation-contexts",
+            selected["candidate_id"],
+        )
+        self.assertFalse(selected["implementation_eligible"])
+        self.assertFalse(
+            selected["measurement_task"]["grants_gameplay_trust"]
+        )
         structural = next(
             candidate
             for candidate in work["candidates"]

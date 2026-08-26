@@ -125,6 +125,36 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
                     },
                 },
             ),
+            (
+                "target attacking creature",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "attacking",
+                },
+            ),
+            (
+                "target blocking creature you control",
+                {
+                    "types_any": ["creature"],
+                    "controller_relation": "you",
+                    "combat_state": "blocking",
+                },
+            ),
+            (
+                "target attacking or blocking creature",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "attacking_or_blocking",
+                },
+            ),
+            (
+                "target attacking creature with flying",
+                {
+                    "types_all": ["creature"],
+                    "keywords_all": ["flying"],
+                    "combat_state": "attacking",
+                },
+            ),
         )
         header = {
             "zones": ["battlefield"],
@@ -178,6 +208,36 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
                 "activated_ability",
                 "untap-target-legendary-creature-you-v3",
             ),
+            (
+                "Destroy target attacking creature.",
+                "Instant",
+                "spell_ability",
+                "destroy-target-creature-attacking-v2",
+            ),
+            (
+                "{T}: This creature deals 1 damage to target attacking or blocking creature.",
+                "Creature — Archer",
+                "activated_ability",
+                "damage-creature-attacking-or-blocking-v1",
+            ),
+            (
+                "Exile target blocking creature.",
+                "Instant",
+                "spell_ability",
+                "exile-target-creature-blocking-v2",
+            ),
+            (
+                "Return target attacking creature to its owner's hand.",
+                "Instant",
+                "spell_ability",
+                "return-target-creature-attacking-v2",
+            ),
+            (
+                "Target blocking creature gets +2/+2 until end of turn.",
+                "Instant",
+                "spell_ability",
+                "fixed-target-characteristics-until-end-of-turn-v1",
+            ),
         )
         for suffix, (text, type_line, kind, template_id) in enumerate(cases, 1):
             with self.subTest(text=text):
@@ -188,7 +248,11 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
                 self.assertEqual(kind, node.kind)
                 self.assertEqual(template_id, node.template_id)
                 self.assertIn(
-                    "target.permanent.characteristic_predicate",
+                    (
+                        "state_query.permanent.public_state_predicate"
+                        if "attacking" in text or "blocking" in text
+                        else "target.permanent.characteristic_predicate"
+                    ),
                     node.capability_dependencies,
                 )
 
@@ -197,7 +261,6 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
             "target artifact, enchantment, or creature with flying",
             "target artifact creature or black creature",
             "target creature with power 3 or greater",
-            "target attacking creature",
             "target creature that was dealt damage this turn",
             "target creature with a counter on it",
             "target creature that has an activated ability with {T} in its cost",
@@ -216,6 +279,9 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
             {**schema, "color_count_equal": 6},
             {**schema, "keywords_none": ["vigilance"]},
             {**schema, "supertypes_none": ["world"]},
+            {**schema, "combat_state": "combatant"},
+            {**schema, "combat_state": True},
+            {**schema, "combat_state": ["attacking"]},
         )
         for value in malformed:
             with self.subTest(value=value):
@@ -359,6 +425,67 @@ class FixedDirectTargetRuntimeTests(unittest.TestCase):
             target.ref,
             engine._target_candidates("B", outlaw_group, source_ref=None),
         )
+
+    def test_combat_state_target_offers_and_submission_share_one_or_legality(self):
+        session = make_session(
+            self.db,
+            self.mishra,
+            self.zimone,
+            players=4,
+            seed=613_105_003,
+        )
+        keep_all(session)
+        engine = session.engine
+        creatures = [
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A"
+            and "Creature" in self.db.lookup(card.printed_name).type_line
+        ][:3]
+        self.assertEqual(3, len(creatures))
+        attacker, blocker, bystander = creatures
+        for card in creatures:
+            engine.move_card(card.object_id, "battlefield", controller="A")
+        attacker.attacking = "B"
+        blocker.blocking = attacker.object_id
+
+        expected = {
+            "attacking": {attacker.ref},
+            "blocking": {blocker.ref},
+            "attacking_or_blocking": {attacker.ref, blocker.ref},
+        }
+        for combat_state, legal in expected.items():
+            with self.subTest(combat_state=combat_state):
+                spec = DirectPermanentTargetSpec(
+                    types_any=("creature",),
+                    combat_state=combat_state,
+                )
+                schema = spec.to_target_schema()
+                public = engine._public_target_schema(
+                    "B", schema, source_ref=None
+                )
+                self.assertIsNotNone(public)
+                assert public is not None
+                offered = set(public["legal_refs"])
+                self.assertTrue(legal.issubset(offered))
+                self.assertNotIn(bystander.ref, offered)
+                for ref in legal:
+                    selected, _grouped = engine._validate_semantic_targets(
+                        "B",
+                        None,
+                        [ref],
+                        source_ref=None,
+                        target_schema=schema,
+                    )
+                    self.assertEqual([ref], selected)
+                with self.assertRaises(GameRuleError):
+                    engine._validate_semantic_targets(
+                        "B",
+                        None,
+                        [bystander.ref],
+                        source_ref=None,
+                        target_schema=schema,
+                    )
 
     def test_characteristic_target_exile_uses_destination_replacement(self):
         session = make_session(

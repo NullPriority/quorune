@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "20fd57aa440755ce03edec9a06da882b3b06e454ed3e79b8f8ec4e82d093494b",
-  "declaration_source_fingerprint": "1a829a8edbc7b1dcad9c5852e43c6869fbc924b18f450afc8ed5d8b908ccbbac",
+  "registry_fingerprint": "d5c55e2f358cbafaf0d835c7c8c8297058f1023b299aa941a7a2696b470ad8b0",
+  "declaration_source_fingerprint": "03c1236b379ccfc967c094e64243526a9f8eaac0a66684dc794d738eacbb3690",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -40083,6 +40083,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40105,6 +40108,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40118,6 +40124,31 @@
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the same current combat relationship for public offers and submitted-command validation, including the attacking-or-blocking disjunction."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_permanent_exile_rules.PermanentExileRuleTests.test_compiled_tapped_exile_filters_and_revalidates_target",
       "official_rule_ids": [
         "110.5",
@@ -40127,6 +40158,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40149,6 +40183,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40158,6 +40195,31 @@
         "commander_review"
       ],
       "applicability_note": "Apply the named-counter membership predicate only to the chosen player's permanents in a four-player resolution."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Derive combat-state targets from public current relationships in a four-player game without a seat-specific target grammar."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -40171,6 +40233,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40193,6 +40258,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40215,6 +40283,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40237,6 +40308,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40246,6 +40320,31 @@
         "commander_review"
       ],
       "applicability_note": "Lower named-counter and current-turn-entry affected sets with closed color and subtype qualifiers to deterministic typed queries."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_shared_characteristic_grammar_covers_the_bounded_shapes",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower attacking, blocking, and attacking-or-blocking direct targets to one canonical immutable combat-state descriptor."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -40259,6 +40358,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -40268,6 +40370,31 @@
         "commander_review"
       ],
       "applicability_note": "Project only public named-counter-qualified legal refs to the acting seat without exposing another seat's decision or hidden identities."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetRuntimeTests.test_combat_state_target_offers_and_submission_share_one_or_legality",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Advertise only public combatant references and never inspect or project hidden-zone identities while computing legal targets."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -40281,6 +40408,9 @@
         "122.1",
         "122.1a",
         "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
         "608.2b",
         "608.2h"
       ],
@@ -48234,5 +48364,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "ae1c1c20053ca71df0e86e0326bba9c33486c2482aeac1fcab74e86b4ccd054d"
+  "fingerprint": "f1b9bad22bbb1c953ba90ca0dff72f90ac9935c34923ccf09fad5b1887e5c637"
 }

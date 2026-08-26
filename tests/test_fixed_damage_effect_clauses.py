@@ -15,6 +15,7 @@ from quorune.compiler.damage_templates import (
     activated_source_damage_effect_template,
     fixed_damage_effect_template,
 )
+from quorune.compiler.direct_target import DirectPermanentTargetSpec
 from quorune.compiler import damage_templates
 from quorune.compiler.program_generation import _is_closed_effect_program
 from quorune.oracle_ir import (
@@ -97,6 +98,29 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
                 self.assertIsNone(
                     fixed_damage_effect_template(text, card_name="Fixture")
                 )
+
+    def test_combat_state_recipient_uses_shared_direct_target_schema(self):
+        template = fixed_damage_effect_template(
+            "Fixture deals 4 damage to target attacking or blocking creature.",
+            card_name="Fixture",
+        )
+
+        self.assertIsNotNone(template)
+        assert isinstance(template, FixedDamageEffectTemplate)
+        self.assertEqual(
+            DirectPermanentTargetSpec(
+                types_any=("creature",),
+                combat_state="attacking_or_blocking",
+            ),
+            template.target_spec,
+        )
+        self.assertEqual(
+            "damage-creature-attacking-or-blocking-v1",
+            template.template_id,
+        )
+        self.assertEqual(
+            "attacking_or_blocking", template.target_schema["combat_state"]
+        )
 
     def test_activated_source_pronoun_has_one_closed_contextual_parser(self):
         template = activated_source_damage_effect_template(

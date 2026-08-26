@@ -741,6 +741,13 @@
         "expected_complete_card_gain": null,
         "base_commit": "5bcc7ea5ab15a95eb7dad2ed82837a23e3402ead",
         "head_commit": "77a6cbae5bd91a75220c25051f9bb9fa61d0f36a"
+      },
+      {
+        "bundle_id": "bundle:fixed-combat-state-direct-targets",
+        "candidate_ids": ["compiler:fixed-combat-state-direct-targets"],
+        "expected_complete_card_gain": 72,
+        "base_commit": "f147c03b2923e45bde2e3845b2bb9680729c8be1",
+        "head_commit": "45b5c907e96614c23ae89f7be5e56caa7e97d515"
       }
     ],
     "reviewed_rerank_history": [
@@ -898,6 +905,11 @@
         "candidate_id": "compiler:fixed-static-characteristic-grants",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "At main 2f3bf9105bf0c417f176fca6a032ad9cb23ca99e the generated cross-program selector reported no eligible foreground candidate while its 6,662-card continuous-layer aggregate still mixed unrelated type, color, ability, power/toughness, permission, and dynamic-count grammars. A bounded pinned-frontier probe first measured only 22 complete cards, 61 exact abilities, and 61 removable residuals for additional fixed-query keywords, then 37 complete cards and 92 abilities or residuals after closing identical-query power/toughness plus keyword wording; both slices were below every harvest floor. Adding only the existing attached-object typed Protection and fixed-generic Ward grant shapes produces one fixed-static-characteristics bundle measuring 112 exact abilities and 112 removed material residuals across 112 cards, with a 40-card complete-card lower bound. It reuses the canonical ObjectQuerySpec, layer-6 and layer-7c operations, attachment identity, typed Protection, fixed Ward, and exact consumer-capability owners. Remove-all, opponent-relative removal, can't-have-or-gain prohibitions, conditional or dynamic predicates, quoted abilities, dynamic characteristic counts, and any family-specific source-applicability check remain excluded pending the shared cycle-safe applicability boundary."
+      },
+      {
+        "candidate_id": "compiler:fixed-combat-state-direct-targets",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "At main f147c03b2923e45bde2e3845b2bb9680729c8be1 the generated cross-program selector reported no eligible foreground candidate, while its continuous-layer and typed additional-cost leaders remained heterogeneous. A first bounded fixed group power/toughness probe was retired because its safe cohort fell below every harvest floor. The selected pinned-frontier cohort instead shares one direct attacking, blocking, or attacking-or-blocking creature predicate across spell and activated destruction, exile, damage, return, and fixed characteristic effects. An implementation-backed verification against frontier 29696dcf6b6ffa68a5747fe6412826021f767e906721bfbc2aa2eddfa142d123 measures 88 affected Commander cards, at least 82 newly exact ability nodes, and 72 exact capability-closed cards after withholding 16 cards with unrelated alternate-cost, aftermath, trap, event, declaration, replacement, or sibling-ability blockers. Estimated implementation is 3.0 hours plus 0.2 hours of cloud generation, or at least 22 complete cards per cycle hour. One typed direct-target descriptor and the authoritative combat relationship state govern both offered and submitted choices; power, toughness, mana-value, counter-count, relative, dynamic-characteristic, tapped, entered-this-turn, token, commander, attachment, multiple, divided, optional, variable, linked, and group combat predicates remain fail-closed."
       }
     ]
   },
