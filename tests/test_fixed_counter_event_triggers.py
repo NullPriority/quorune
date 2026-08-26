@@ -2221,6 +2221,12 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "permanent.turned_face_up",
                 "fixed-typed-effect-public-face-up-trigger-v1",
             ),
+            (
+                "When this creature is turned face up, you may draw a card.",
+                "Creature — Human Wizard",
+                "permanent.turned_face_up",
+                "fixed-typed-effect-public-face-up-trigger-v1",
+            ),
         )
         for text, type_line, event, template_id in cases:
             with self.subTest(text=text):
@@ -2240,6 +2246,15 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                     "trigger.event.normalized_public_action",
                     node.capability_dependencies,
                 )
+                if text.startswith("When this"):
+                    self.assertEqual(
+                        {
+                            "field": "card",
+                            "op": "eq",
+                            "value": "$source.ref",
+                        },
+                        node.event_condition,
+                    )
 
     def test_public_zone_damage_and_cast_predicates_compile_exactly(self):
         cases = (
@@ -2391,6 +2406,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "When you cycle this card and when this creature dies, you may draw "
             "a card.",
             "When you do, you may draw a card.",
+            "When another creature is turned face up, you may draw a card.",
+            "When this creature turns face up, you may draw a card.",
         )
         for text in cases:
             with self.subTest(text=text):

@@ -33,9 +33,11 @@ from ..semantic_runtime.sunburst import SUNBURST_MECHANIC_ID, SunburstSpec
 from ..renown import RENOWN_MECHANIC_ID, RenownSpec
 from ..modular import MODULAR_MECHANIC_ID, ModularSpec
 from ..morph import (
-    compile_fixed_mana_morph,
-    MORPH_CAPABILITY_ID,
-    morph_handler_descriptor,
+    compile_fixed_mana_face_down_method,
+    FACE_DOWN_CAST_METHODS,
+    FACE_DOWN_METHOD_CAPABILITY_IDS,
+    FACE_DOWN_METHOD_RUNTIME_EVENTS,
+    face_down_method_handler_descriptor,
 )
 from .cumulative_upkeep_nodes import (
     fixed_life_cumulative_upkeep_node,
@@ -106,7 +108,7 @@ _RENOWN_MECHANIC = RENOWN_MECHANIC_ID
 _MODULAR_MECHANIC = MODULAR_MECHANIC_ID
 _ECHO_MECHANIC = ECHO_MECHANIC_ID
 _DEVOID_MECHANIC = DEVOID_MECHANIC_ID
-_MORPH_MECHANIC = "morph"
+_FACE_DOWN_METHOD_MECHANICS = frozenset(FACE_DOWN_CAST_METHODS)
 _TOXIC_MECHANIC = "toxic"
 _GROUPED_SPLIT_MECHANICS = (
     _AFFINITY_MECHANIC,
@@ -385,14 +387,15 @@ def fixed_mana_morph_keyword_node(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleNode | None:
-    """Lower one ordinary fixed-mana Morph ability or retain its blocker."""
+    """Lower one ordinary fixed-mana face-down method or retain its blocker."""
 
-    if mechanics != (_MORPH_MECHANIC,):
+    if len(mechanics) != 1 or mechanics[0] not in _FACE_DOWN_METHOD_MECHANICS:
         return None
-    spec = compile_fixed_mana_morph(material_line)
-    ordinary = spec is not None
+    method = mechanics[0]
+    spec = compile_fixed_mana_face_down_method(material_line)
+    ordinary = spec is not None and spec.method == method
     gate = explicit_capability_gate(
-        MORPH_CAPABILITY_ID,
+        FACE_DOWN_METHOD_CAPABILITY_IDS[method],
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -405,9 +408,12 @@ def fixed_mana_morph_keyword_node(
                 text=line,
                 span=span,
                 reason=(
-                    "Morph depends on a blocked typed fixed-mana contract"
+                    f"{method.title()} depends on a blocked typed fixed-mana contract"
                     if ordinary
-                    else "Morph cost is outside the fixed ordinary-mana grammar"
+                    else (
+                        f"{method.title()} cost is outside the fixed "
+                        "ordinary-mana grammar"
+                    )
                 ),
                 blockers=blockers,
             ),
@@ -421,19 +427,30 @@ def fixed_mana_morph_keyword_node(
         text=line,
         span=span,
         active_zone="all",
-        event="morph.action",
+        event=FACE_DOWN_METHOD_RUNTIME_EVENTS[method],
         lowerable=ordinary,
         exact=ordinary and not residual_ids,
         template_id=(
-            "morph-fixed-mana-face-down-special-action-v1"
+            f"{method}-fixed-mana-face-down-special-action-v1"
             if ordinary
             else None
         ),
-        handlers=(morph_handler_descriptor(spec),) if spec is not None else (),
+        handlers=(
+            (face_down_method_handler_descriptor(spec),)
+            if ordinary and spec is not None
+            else ()
+        ),
         runtime_coverage=(
             "face_down_cast",
             "face_down_characteristics",
             "turn_face_up_special_action",
+            *(
+                ("face_down_ward",)
+                if method == "disguise"
+                else ("turn_face_up_counter_placement",)
+                if method == "megamorph"
+                else ()
+            ),
         )
         if ordinary
         else (),

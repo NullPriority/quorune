@@ -19,7 +19,7 @@ from .action_proposals import (
 from .activation.proposal import build_activation_offer
 from .activation_costs import activation_choice_candidates
 from .casting.proposal import build_cast_offer
-from ..morph import MORPH_CAST_METHOD
+from ..morph import FACE_DOWN_CAST_METHODS
 from .morph_actions import build_turn_face_up_offer
 
 
@@ -72,7 +72,7 @@ def _cast_offers(
     offers: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
     for card in _cast_candidates(host, seat):
-        for cast_method in (None, MORPH_CAST_METHOD):
+        for cast_method in (None, *FACE_DOWN_CAST_METHODS):
             result = build_cast_offer(
                 host,
                 seat,
@@ -89,14 +89,15 @@ def _cast_offers(
                 "land_not_spell",
                 "timing",
                 "custom_token",
+                "face_down_method_contract_unavailable",
                 "morph_contract_unavailable",
             }:
                 continue
             diagnostics.append(
                 {
                     "id": (
-                        f"cast-morph:{card.ref}"
-                        if cast_method == MORPH_CAST_METHOD
+                        f"cast-{cast_method}:{card.ref}"
+                        if cast_method in FACE_DOWN_CAST_METHODS
                         else f"cast:{card.ref}"
                     ),
                     "kind": "cast",

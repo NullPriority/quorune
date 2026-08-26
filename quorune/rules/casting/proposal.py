@@ -8,9 +8,9 @@ from typing import Any, Protocol
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
 from ...cast_timing import cast_timing_is_legal, type_line_has_card_type
 from ...compiled_cast_timing import compiled_cast_timing_permissions
-from ...compiled_morph import compiled_fixed_mana_morph_spec
+from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
-from ...morph import MORPH_CAST_METHOD
+from ...morph import FACE_DOWN_CAST_METHODS, MORPH_CAST_METHOD
 from ...targets import available_modes
 from ..action_proposals import (
     ActionOffer,
@@ -267,6 +267,30 @@ def _spell_semantic_key(
     return f"{record.oracle_id}:spell:{face_key}"
 
 
+def _required_face_down_method_spec(
+    host: CastProposalHost,
+    card: Any,
+    cast_method: str | None,
+) -> Any | None:
+    if cast_method is None:
+        return None
+    method_spec = compiled_fixed_mana_face_down_method_spec(
+        host,
+        card,
+        method=cast_method,
+    )
+    if method_spec is None:
+        raise CastProposalError(
+            "This card has no current trusted fixed-mana face-down contract",
+            reason=(
+                "morph_contract_unavailable"
+                if cast_method == MORPH_CAST_METHOD
+                else "face_down_method_contract_unavailable"
+            ),
+        )
+    return method_spec
+
+
 def _cast_program_and_cost(
     host: CastProposalHost,
     request: CastProposalRequest,
@@ -275,24 +299,19 @@ def _cast_program_and_cost(
     face: Mapping[str, Any] | None,
 ) -> tuple[str, str, int, str, Any, CastCostOption]:
     response = request.response()
-    morph_spec = (
-        compiled_fixed_mana_morph_spec(host, card)
-        if request.cast_method == MORPH_CAST_METHOD
-        else None
+    method_spec = _required_face_down_method_spec(
+        host,
+        card,
+        request.cast_method,
     )
-    if request.cast_method == MORPH_CAST_METHOD and morph_spec is None:
-        raise CastProposalError(
-            "This card has no current trusted fixed-mana Morph contract",
-            reason="morph_contract_unavailable",
-        )
     type_line = (
         "Creature"
-        if morph_spec is not None
+        if method_spec is not None
         else str(face.get("type_line") or "") if face else record.type_line
     )
     mana_cost = (
         "{3}"
-        if morph_spec is not None
+        if method_spec is not None
         else str(face.get("mana_cost") or "") if face else record.mana_cost
     )
     face_name = str(face.get("name") or "") if face else None
@@ -311,7 +330,7 @@ def _cast_program_and_cost(
         request.actor,
         type_line,
         ()
-        if morph_spec is not None
+        if method_spec is not None
         else compiled_cast_timing_permissions(
             host,
             card,
@@ -326,30 +345,34 @@ def _cast_program_and_cost(
         if card.zone == "command" and card.is_commander
         else 0
     )
-    if morph_spec is None:
+    if method_spec is None:
         _validate_declared_cost(host, request, card, commander_tax)
     elif response.get("declared_cost") is not None:
         raise CastProposalError(
-            "Morph uses only its server-authored alternative cost",
-            reason="morph_declared_cost",
+            "Face-down casting uses only its server-authored alternative cost",
+            reason=(
+                "morph_declared_cost"
+                if request.cast_method == MORPH_CAST_METHOD
+                else "face_down_method_declared_cost"
+            ),
         )
     semantic_key = (
-        "builtin:morph-face-down"
-        if morph_spec is not None
+        f"builtin:{request.cast_method}-face-down"
+        if method_spec is not None
         else _spell_semantic_key(record, face)
     )
-    program = None if morph_spec is not None else host.semantics.get(semantic_key)
+    program = None if method_spec is not None else host.semantics.get(semantic_key)
     alternative_base = (
         {
-            "id": "morph",
+            "id": str(request.cast_method),
             "kind": "alternate",
-            "label": "Cast face down using Morph",
+            "label": f"Cast face down using {str(request.cast_method).title()}",
             "requirements": {
                 "GENERIC": 3,
                 **{color: 0 for color in "WUBRGC"},
             },
         }
-        if morph_spec is not None
+        if method_spec is not None
         else None
     )
     if request.cost_option_id is None:
@@ -363,8 +386,8 @@ def _cast_program_and_cost(
                 hint=True,
                 force_without_mana_cost=request.force_without_mana_cost,
                 alternative_base=alternative_base,
-                cast_type_line=type_line if morph_spec is not None else None,
-                suppress_source_costs=morph_spec is not None,
+                cast_type_line=type_line if method_spec is not None else None,
+                suppress_source_costs=method_spec is not None,
             )
         )
         if sum(
@@ -385,8 +408,8 @@ def _cast_program_and_cost(
             hint=False,
             force_without_mana_cost=request.force_without_mana_cost,
             alternative_base=alternative_base,
-            cast_type_line=type_line if morph_spec is not None else None,
-            suppress_source_costs=morph_spec is not None,
+            cast_type_line=type_line if method_spec is not None else None,
+            suppress_source_costs=method_spec is not None,
         )
     )
     selected = _selected_cost_option(
@@ -532,7 +555,7 @@ def build_cast_proposal(
         raise CastProposalError("Cannot cast a custom token", reason="custom_token")
     face = (
         None
-        if request.cast_method == MORPH_CAST_METHOD
+        if request.cast_method in FACE_DOWN_CAST_METHODS
         else _cast_face(host, request, record)
     )
     _validate_offer_fingerprint(host, request, card)
@@ -609,11 +632,17 @@ def build_cast_proposal(
                 "cast_method": request.cast_method,
                 **(
                     {
-                        "morph": compiled_fixed_mana_morph_spec(
-                            host, card
+                        (
+                            "morph"
+                            if request.cast_method == MORPH_CAST_METHOD
+                            else "face_down_method"
+                        ): compiled_fixed_mana_face_down_method_spec(
+                            host,
+                            card,
+                            method=request.cast_method,
                         ).to_dict()
                     }
-                    if request.cast_method == MORPH_CAST_METHOD
+                    if request.cast_method in FACE_DOWN_CAST_METHODS
                     else {}
                 ),
             }
@@ -690,19 +719,28 @@ def build_cast_offer(
     record = host.card_record(card)
     if not record:
         return CastProposalResult("unavailable", "custom_token")
-    morph_spec = (
-        compiled_fixed_mana_morph_spec(host, card)
-        if cast_method == MORPH_CAST_METHOD
+    method_spec = (
+        compiled_fixed_mana_face_down_method_spec(
+            host,
+            card,
+            method=cast_method,
+        )
+        if cast_method in FACE_DOWN_CAST_METHODS
         else None
     )
-    if cast_method is not None and morph_spec is None:
+    if cast_method is not None and method_spec is None:
         return CastProposalResult(
-            "unavailable", "morph_contract_unavailable"
+            "unavailable",
+            (
+                "morph_contract_unavailable"
+                if cast_method == MORPH_CAST_METHOD
+                else "face_down_method_contract_unavailable"
+            ),
         )
     front = record.faces[0] if record.faces else None
     type_line = (
         "Creature"
-        if morph_spec is not None
+        if method_spec is not None
         else str(front.get("type_line") or "") if front else record.type_line
     )
     if type_line_has_card_type(type_line, "land"):
@@ -713,7 +751,7 @@ def build_cast_offer(
         seat,
         type_line,
         ()
-        if morph_spec is not None
+        if method_spec is not None
         else compiled_cast_timing_permissions(
             host,
             card,
@@ -722,16 +760,16 @@ def build_cast_offer(
     ):
         return CastProposalResult("unavailable", "timing")
     semantic_key = (
-        "builtin:morph-face-down"
-        if morph_spec is not None
+        f"builtin:{cast_method}-face-down"
+        if method_spec is not None
         else _spell_semantic_key(record, front)
     )
-    program = None if morph_spec is not None else host.semantics.get(semantic_key)
+    program = None if method_spec is not None else host.semantics.get(semantic_key)
     enchant_spec = host._compiled_enchant_spec(
         card,
         face_name=(
             None
-            if morph_spec is not None
+            if method_spec is not None
             else str(front.get("name") or "") if front else None
         ),
     )
@@ -745,7 +783,7 @@ def build_cast_offer(
         )
     except CastProposalError as exc:
         return CastProposalResult(exc.status, exc.reason)
-    if morph_spec is None and host.state.config.semantic_policy == "trusted_only" and (
+    if method_spec is None and host.state.config.semantic_policy == "trusted_only" and (
         (program is not None and not host.semantic_program_is_current_trusted(program))
         or (program is None and not host._trusted_generic_spell(record))
     ):
@@ -759,19 +797,19 @@ def build_cast_offer(
             hint=True,
             alternative_base=(
                 {
-                    "id": "morph",
+                    "id": str(cast_method),
                     "kind": "alternate",
-                    "label": "Cast face down using Morph",
+                    "label": f"Cast face down using {str(cast_method).title()}",
                     "requirements": {
                         "GENERIC": 3,
                         **{color: 0 for color in "WUBRGC"},
                     },
                 }
-                if morph_spec is not None
+                if method_spec is not None
                 else None
             ),
-            cast_type_line=type_line if morph_spec is not None else None,
-            suppress_source_costs=morph_spec is not None,
+            cast_type_line=type_line if method_spec is not None else None,
+            suppress_source_costs=method_spec is not None,
         )
     )
     if not options:
@@ -781,29 +819,29 @@ def build_cast_offer(
         seat,
         card,
         record,
-        None if morph_spec is not None else front,
+        None if method_spec is not None else front,
         options,
         program,
         aura_target_schema,
     )
     if not legal:
         return CastProposalResult("unavailable", "mandatory_target_unavailable")
-    if morph_spec is not None:
+    if method_spec is not None:
         payload["cost"] = "{3}"
-        payload["cast_method"] = MORPH_CAST_METHOD
+        payload["cast_method"] = cast_method
     cast_name = str(front.get("name") or "") if front else record.name
     cast_cost = str(front.get("mana_cost") or "") if front else record.mana_cost
     offer = ActionOffer(
         action_id=(
-            f"cast-morph:{card.ref}"
-            if morph_spec is not None
+            f"cast-{cast_method}:{card.ref}"
+            if method_spec is not None
             else f"cast:{card.ref}"
         ),
         action="cast",
         seat=seat,
         label=(
             f"Cast {cast_name} face down — {{3}}"
-            if morph_spec is not None
+            if method_spec is not None
             else f"Cast {cast_name} — {cast_cost}"
             if cast_cost
             else f"Cast {cast_name}"

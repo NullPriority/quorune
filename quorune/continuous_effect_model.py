@@ -222,6 +222,7 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
             "subtypes",
             "colors",
             "abilities",
+            "ability_fragments",
             "power",
             "toughness",
         }
@@ -238,6 +239,19 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
                 raise ContinuousEffectError(
                     f"face_down.{field_name} must be a string"
                 )
+        if "ability_fragments" in value:
+            fragments = value["ability_fragments"]
+            if not isinstance(fragments, (list, tuple)):
+                raise ContinuousEffectError(
+                    "face_down.ability_fragments must be an array"
+                )
+            try:
+                for fragment in fragments:
+                    ability_fragment_from_dict(fragment)
+            except (TypeError, ValueError) as exc:
+                raise ContinuousEffectError(
+                    "face_down.ability_fragments are malformed"
+                ) from exc
         if "mana_value" in value and (
             type(value["mana_value"]) not in {int, float}
             or value["mana_value"] < 0

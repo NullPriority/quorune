@@ -8,9 +8,9 @@ from .model import CardInstance
 from .kicker import KICKER_ANNOTATION
 from .flashback import FLASHBACK_CAST_ANNOTATION
 from .morph import (
+    face_down_characteristics,
     FixedManaMorphSpec,
     MORPH_FACE_DOWN_ANNOTATION,
-    MORPH_FACE_DOWN_VALUES,
     MORPH_METHOD_ANNOTATION,
     morph_face_down_annotation,
 )
@@ -66,7 +66,7 @@ def mark_card_face_down_for_morph(
     controller: str,
     spec: FixedManaMorphSpec,
 ) -> None:
-    """Commit the represented layer-1b Morph state to one stack object."""
+    """Commit one represented layer-1b face-down method to a stack object."""
 
     if (
         not isinstance(card, CardInstance)
@@ -76,10 +76,10 @@ def mark_card_face_down_for_morph(
         or not controller
         or not isinstance(spec, FixedManaMorphSpec)
     ):
-        raise ZoneObjectStateError("Morph face-down state is malformed")
+        raise ZoneObjectStateError("Face-down casting state is malformed")
     card.face_down = True
     card.annotations[MORPH_FACE_DOWN_ANNOTATION] = copy.deepcopy(
-        MORPH_FACE_DOWN_VALUES
+        face_down_characteristics(spec.method)
     )
     card.annotations[MORPH_METHOD_ANNOTATION] = morph_face_down_annotation(spec)
     card.known_to = sorted({card.owner, controller, *card.known_to})

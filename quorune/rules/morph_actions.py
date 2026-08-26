@@ -1,17 +1,24 @@
 from __future__ import annotations
 
-"""Offer and commit the represented CR 702.37e Morph special action."""
+"""Offer and commit represented face-down turn-up special actions."""
 
 from collections.abc import Mapping, Sequence
 from dataclasses import replace
 from typing import Any, Protocol
 
-from ..compiled_morph import compiled_fixed_mana_morph_spec
+from ..compiled_morph import compiled_fixed_mana_face_down_method_spec
+from ..counter_placement import (
+    commit_prepared_counter_placements,
+    CounterPlacementError,
+    CounterPlacementRequest,
+    prepare_counter_placements,
+)
 from ..errors import GameRuleError
 from ..mana_undo import clear_mana_undo_stack
 from ..morph import (
-    current_face_up_has_morph,
-    MORPH_CAST_METHOD,
+    current_face_up_has_face_down_method,
+    FACE_DOWN_CAST_METHODS,
+    MEGAMORPH_CAST_METHOD,
     MorphError,
     validate_morph_face_down_state,
 )
@@ -82,12 +89,24 @@ def _eligible_spec(host: MorphActionHost, seat: str, card: Any) -> Any | None:
         or card.annotations.get("copy_overrides") is not None
     ):
         return None
-    spec = compiled_fixed_mana_morph_spec(host, card)
+    marker = card.annotations.get("face_down_method")
+    method = marker.get("kind") if isinstance(marker, Mapping) else None
+    if method not in FACE_DOWN_CAST_METHODS:
+        return None
+    spec = compiled_fixed_mana_face_down_method_spec(
+        host,
+        card,
+        method=method,
+    )
     if spec is None:
         return None
     try:
         validate_morph_face_down_state(card, spec)
-        if not current_face_up_has_morph(host, card):
+        if not current_face_up_has_face_down_method(
+            host,
+            card,
+            method=spec.method,
+        ):
             return None
     except (MorphError, ValueError):
         return None
@@ -119,7 +138,7 @@ def build_turn_face_up_offer(
                 "cost": spec.cost_text,
                 "requirements": spec.requirements_dict,
                 "auto_pay": True,
-                "method": MORPH_CAST_METHOD,
+                "method": spec.method,
             }
         ),
     )
@@ -156,7 +175,7 @@ def commit_turn_face_up(
             raise GameRuleError("The advertised turn-face-up action is stale")
     spec = _eligible_spec(host, seat, card)
     if spec is None:
-        raise GameRuleError("The Morph contract changed before payment")
+        raise GameRuleError("The face-down method contract changed before payment")
     clear_mana_undo_stack(host.state.players[seat].stats)
     spent, activations = host._pay_for_cost(
         seat,
@@ -168,13 +187,60 @@ def commit_turn_face_up(
         turn_card_face_up(card, viewers=tuple(host.seats))
     except ZoneObjectStateError as exc:
         raise GameRuleError(str(exc)) from exc
+    if spec.method == MEGAMORPH_CAST_METHOD:
+        payment_id = str(
+            response.get("_mana_payment_id") or offer.fingerprint
+        )
+        event_id = (
+            f"counter.place:{payment_id}:{card.ref}:megamorph"
+        )
+        raw_journal = response.get("_mana_replacement_selections") or {}
+        if (
+            not isinstance(raw_journal, Mapping)
+            or set(raw_journal) - {event_id}
+        ):
+            raise GameRuleError(
+                "The Megamorph replacement journal is malformed"
+            )
+        selections = raw_journal.get(event_id) or ()
+        if not isinstance(selections, (list, tuple)):
+            raise GameRuleError(
+                "The Megamorph replacement selections are malformed"
+            )
+        try:
+            prepared = prepare_counter_placements(
+                host,
+                (
+                    CounterPlacementRequest(
+                        subject_kind="permanent",
+                        subject_id=card.object_id,
+                        counter_name="+1/+1",
+                        amount=1,
+                        placing_player=seat,
+                        source_ref=card.ref,
+                    ),
+                ),
+                selections=tuple(selections),
+                event_ids=(event_id,),
+            )
+            commit_prepared_counter_placements(
+                host,
+                prepared,
+                reason="Megamorph turn-face-up effect",
+            )
+        except CounterPlacementError as exc:
+            raise GameRuleError(str(exc)) from exc
+    elif response.get("_mana_replacement_selections"):
+        raise GameRuleError(
+            "Turn-face-up replacement selections require Megamorph"
+        )
     host._log(
         seat,
         "permanent.turn_face_up",
         f"{seat} turned {card.ref} {card.printed_name} face up.",
         {
             "object": card.ref,
-            "method": MORPH_CAST_METHOD,
+            "method": spec.method,
             "requirements": spec.requirements_dict,
             "payment": {key: value for key, value in spent.items() if value},
             "mana_sources": [

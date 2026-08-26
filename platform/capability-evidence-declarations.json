@@ -2530,6 +2530,62 @@
       "applicability_note": "Replay the reduced cost offer, mana payment, stack transition, draw resolution, and final authoritative hash exactly."
     },
     {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Use the canonical current Ward fragment only while the Disguise card is face down, including opponent targeting and reveal removal."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Create one Ward occurrence for an opponent-controlled targeting spell in four-player priority state."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Remove or block the shared face-down keyword production and prove the real Disguise card loses exact admission."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_layer_six_removal_uses_shared_face_down_method_query",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Withhold the turn-up action when the shared current effective keyword query removes Disguise at layer 6."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Lower one source-spanned fixed ordinary-mana Disguise line to its method-pinned runtime descriptor."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Project the public face-down creature and Ward occurrence without disclosing its printed identity to opponents."
+    },
+    {
+      "capability_id": "casting.disguise.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.21","702.168","702.168a","702.168b","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Replay the face-down cast, opponent target commitment, Ward occurrence, and authoritative state hash."
+    },
+    {
       "capability_id": "casting.evoke.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_casting_payment_keywords.CastingPaymentKeywordRuntimeTests.test_evoke_uses_shared_trigger_owner_with_reviewed_override",
@@ -2792,6 +2848,62 @@
       "official_rule_ids": ["601.2f","601.2g","601.2h","601.2i","702.33","702.33a","702.33b","702.33c","702.33f"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Replay the total-cost selection, mana payment, paid-kicker stack fact, and final authoritative battlefield hash."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Commit the Megamorph counter through the canonical owner before detecting and resolving the source's face-up trigger."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Resolve the face-down spell, special action, and resulting trigger across four-player priority state."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Remove or block the shared face-down keyword production and prove the real Megamorph card loses exact admission."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_layer_six_removal_uses_shared_face_down_method_query",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Withhold the turn-up action when the shared current effective keyword query removes Megamorph at layer 6."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Lower one source-spanned fixed ordinary-mana Megamorph line to its method-pinned runtime descriptor."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_replacement_suspends_and_replays",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Expose the competing counter replacement order only to the affected controller while the card remains face down during suspension."
+    },
+    {
+      "capability_id": "casting.megamorph.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_replacement_suspends_and_replays",
+      "official_rule_ids": ["116.2b","601.2b","601.2f","601.2h","702.37","702.37c","702.37e","708.2","708.4","708.5","708.8","708.9"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Replay the rolled-back special action, selected counter replacement order, reveal, and final authoritative hash."
     },
     {
       "capability_id": "casting.morph.fixed_mana",
@@ -20443,57 +20555,113 @@
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
-      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Join semantic action triggers to the same pending stack-item list as intrinsic declaration triggers and place the result once."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
+      "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Detect the source-self face-up trigger only after the special action and Megamorph counter placement commit."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
-      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve four-player APNAP placement when different controllers observe the same public declaration or action."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
+      "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Place the source-self occurrence through ordinary four-player trigger and priority handling."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_event_dispatch_mutant_is_killed",
-      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suppress the shared semantic dispatch at a completed public declaration and prove no competing path creates the typed action trigger."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
+      "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Remove or block the closed face-up binding and prove the real trigger cannot retain exact CardProgram admission."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_near_misses_remain_material",
-      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Leave attachment-relative, aggregate, chosen, target, tap, counter-placement, combined-event, and reflexive clauses material."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
+      "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Require an exact source-self turned-face-up declaration and immutable source-reference predicate."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_trigger_bindings_compile_exactly",
-      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile attack, block, becomes-blocked, Cycling, and face-up clauses only from their closed public occurrence grammar."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_morph_rules.FixedManaMorphCompilerTests.test_fixed_face_down_methods_compile_and_fail_closed",
+      "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Compile the source-self face-up grammar to one permanent.turned_face_up event and card-reference predicate."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cycling_trigger_uses_public_hand_snapshot",
-      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose only the publicly cycled card and actor after the discard cost while retaining no unrelated hidden-hand identity."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
+      "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Dispatch only public revealed source facts after the face-down identity becomes public to every seat."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
-      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay each sealed action occurrence, trigger placement, optional decision, and typed effect to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
+      "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
+      "supported_profiles": ["traditional","commander_duel","commander_review"],
+      "applicability_note": "Replay the committed source-pinned occurrence, trigger placement, effect resolution, and final authoritative hash."
     },
     {
       "capability_id": "trigger.event.normalized_self_attack",
