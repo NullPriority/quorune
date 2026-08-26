@@ -606,22 +606,6 @@
       ],
       "approved_prerequisite_exceptions": []
     },
-    "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v130-fixed-source-event-triggers",
-      "bundle_id": "bundle:fixed-source-event-triggers",
-      "candidate_ids": ["compiler:fixed-source-event-triggers"],
-      "family_ids": [
-        "event_binding:normalized-source-damage",
-        "event_binding:normalized-source-zone-lifecycle"
-      ],
-      "capability_ids": [
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_damage",
-        "trigger.event.normalized_zone_change"
-      ],
-      "expected_complete_card_gain": 53,
-      "non_harvest_reason": null
-    },
     "harvest_provenance": [
       {
         "bundle_id": "bundle:typed-combat-prevention",
@@ -853,6 +837,13 @@
         "expected_complete_card_gain": 72,
         "base_commit": "f147c03b2923e45bde2e3845b2bb9680729c8be1",
         "head_commit": "6dfdb6d0418b0364da7042272ab1dbb0beee1f6d"
+      },
+      {
+        "bundle_id": "bundle:fixed-source-event-triggers",
+        "candidate_ids": ["compiler:fixed-source-event-triggers"],
+        "expected_complete_card_gain": 53,
+        "base_commit": "a5c7efd8e811244bfcb5930a5b55de6f668e2b13",
+        "head_commit": "21ccaaca182f93bf9ccf1215650da803270f5ffe"
       }
     ],
     "reviewed_rerank_history": [

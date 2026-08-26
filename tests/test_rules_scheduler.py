@@ -816,12 +816,12 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         latest = derived["entries"][-1]
         self.assertEqual(
-            "bundle:fixed-combat-state-direct-targets",
+            "bundle:fixed-source-event-triggers",
             latest["bundle_id"],
         )
-        self.assertEqual(90, latest["actual_complete_card_gain"])
-        self.assertEqual(104, latest["oracle_exact_ability_node_delta"])
-        self.assertEqual(48, latest["card_program_ability_record_delta"])
+        self.assertEqual(54, latest["actual_complete_card_gain"])
+        self.assertEqual(90, latest["oracle_exact_ability_node_delta"])
+        self.assertEqual(90, latest["card_program_ability_record_delta"])
         self.assertEqual(
             0,
             latest["architecture_delta"][
@@ -839,12 +839,12 @@ class RulesSchedulerTests(unittest.TestCase):
 
         penultimate = derived["entries"][-2]
         self.assertEqual(
-            "bundle:fixed-impulse-access",
+            "bundle:fixed-combat-state-direct-targets",
             penultimate["bundle_id"],
         )
-        self.assertEqual(22, penultimate["actual_complete_card_gain"])
-        self.assertEqual(41, penultimate["oracle_exact_ability_node_delta"])
-        self.assertEqual(24, penultimate["card_program_ability_record_delta"])
+        self.assertEqual(90, penultimate["actual_complete_card_gain"])
+        self.assertEqual(104, penultimate["oracle_exact_ability_node_delta"])
+        self.assertEqual(48, penultimate["card_program_ability_record_delta"])
 
         malformed = deepcopy(provenance)
         malformed[-1]["actual_complete_card_gain"] = 37
