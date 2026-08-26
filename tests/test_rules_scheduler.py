@@ -4,6 +4,8 @@ from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import tempfile
 import unittest
 
 from quorune.rules_corpus import (
@@ -31,6 +33,7 @@ from quorune.work_selection_bundles import (
 )
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
+    _require_landed_harvest_head,
     _semantic_outcome_state,
     build_harvest_outcome_history,
     HarvestOutcomeHistoryError,
@@ -837,6 +840,43 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             build_harvest_outcome_history(ROOT, malformed)
 
+    def test_harvest_provenance_rejects_squash_discardable_feature_heads(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            repository = Path(temporary)
+
+            def git(*arguments: str) -> str:
+                completed = subprocess.run(
+                    ["git", *arguments],
+                    cwd=repository,
+                    check=True,
+                    text=True,
+                    encoding="utf-8",
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+                return completed.stdout.strip()
+
+            git("init", "--initial-branch=main")
+            git("config", "user.email", "scheduler-test@example.invalid")
+            git("config", "user.name", "Rules Scheduler Test")
+            (repository / "receipt.txt").write_text("main\n", encoding="utf-8")
+            git("add", "receipt.txt")
+            git("commit", "-m", "test: seed landed receipt")
+            landed = git("rev-parse", "HEAD")
+            git("switch", "-c", "feature")
+            (repository / "receipt.txt").write_text(
+                "feature\n", encoding="utf-8"
+            )
+            git("commit", "-am", "test: add feature receipt")
+            feature = git("rev-parse", "HEAD")
+
+            _require_landed_harvest_head(repository, landed)
+            with self.assertRaisesRegex(
+                HarvestOutcomeHistoryError,
+                "must be landed on the durable main line",
+            ):
+                _require_landed_harvest_head(repository, feature)
+
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
         inputs = deepcopy(self.work_inputs)
         history = inputs["harvest_outcome_history"]
@@ -973,7 +1013,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertIsNotNone(selected)
         self.assertEqual(
-            "measurement:fixed-token-creation-contexts",
+            "measurement:fixed-exile-contexts",
             selected["candidate_id"],
         )
         self.assertEqual("cohort_measurement", selected["work_state"])
@@ -984,10 +1024,16 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(1, work["eligible_candidate_count"])
         self.assertEqual(0, work["implementation_eligible_candidate_count"])
         expected = {
-            "bundle:fixed-token-creation-contexts": (39, 150, 164),
-            "bundle:fixed-exile-contexts": (17, 94, 96),
+            "bundle:fixed-token-creation-contexts": (
+                "measured_nonviable",
+                (0, 17, 17),
+            ),
+            "bundle:fixed-exile-contexts": (
+                "upper_bound_only",
+                (17, 94, 96),
+            ),
         }
-        for candidate_id, gains in expected.items():
+        for candidate_id, (measurement_status, gains) in expected.items():
             candidate = next(
                 row
                 for row in work["candidates"]
@@ -996,7 +1042,7 @@ class RulesSchedulerTests(unittest.TestCase):
             self.assertFalse(candidate["eligible"])
             self.assertFalse(candidate["implementation_eligible"])
             self.assertEqual(
-                "upper_bound_only",
+                measurement_status,
                 candidate["bundle"]["measurement_status"],
             )
             self.assertEqual(
@@ -1202,7 +1248,7 @@ class RulesSchedulerTests(unittest.TestCase):
         selected = selected_work_candidate(work)
         self.assertIsNotNone(selected)
         self.assertEqual(
-            "measurement:fixed-token-creation-contexts",
+            "measurement:fixed-exile-contexts",
             selected["candidate_id"],
         )
         self.assertFalse(selected["implementation_eligible"])

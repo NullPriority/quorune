@@ -499,17 +499,17 @@
           "measurement_status": "measured_nonviable",
           "measurement_outcome": {
             "measurement_id": "measurement:fixed-token-creation-contexts",
-            "frontier_fingerprint": "29696dcf6b6ffa68a5747fe6412826021f767e906721bfbc2aa2eddfa142d123",
+            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
             "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
             "measurement_method": "frontier-sole-blocker-closure-v1",
-            "affected_commander_cards": 24,
+            "affected_commander_cards": 16,
             "complete_card_gain": 0,
-            "one_additional_blocker_cards": 1,
-            "two_additional_blocker_cards": 9,
-            "exact_ability_gain": 27,
-            "material_residual_reduction": 27,
+            "one_additional_blocker_cards": 0,
+            "two_additional_blocker_cards": 2,
+            "exact_ability_gain": 17,
+            "material_residual_reduction": 17,
             "decision": "retired_below_harvest_floor",
-            "reason": "The exact existing-owner fixed-definition token grammar closes no Commander cards and only 27 abilities or residuals. Dynamic, copied, named, custom-ability, attached, attacking, Role, conditional, linked-result, and unrelated enclosing grammars remain excluded, so this cohort is below every normal harvest floor.",
+            "reason": "The current-frontier existing-owner fixed-definition token cohort closes no Commander cards and only 17 abilities or residuals across 16 cards; every member retains modal, Spree, Entwine, or other enclosing grammar. The wider sole-family upper bound is dominated by custom quoted abilities, copies, named or legendary tokens, unsupported characteristic keywords or predefined tokens, dynamic quantities, delayed or non-controller instructions, and attached or Role tokens, so this cohort is below every normal harvest floor.",
             "grants_gameplay_trust": false
           }
         }
@@ -747,7 +747,7 @@
         "candidate_ids": ["compiler:fixed-combat-state-direct-targets"],
         "expected_complete_card_gain": 72,
         "base_commit": "f147c03b2923e45bde2e3845b2bb9680729c8be1",
-        "head_commit": "45b5c907e96614c23ae89f7be5e56caa7e97d515"
+        "head_commit": "6dfdb6d0418b0364da7042272ab1dbb0beee1f6d"
       }
     ],
     "reviewed_rerank_history": [
