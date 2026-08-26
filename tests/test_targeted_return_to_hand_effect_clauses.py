@@ -193,11 +193,16 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
                 self.assertTrue(node.exact)
                 self.assertEqual(kind, node.kind)
                 self.assertEqual(template_id, node.template_id)
+                expected_capabilities = {
+                    "permanent.return.owner_hand",
+                    "target.revalidate_resolution",
+                }
+                if template_id == "return-target-nonland-permanent-v2":
+                    expected_capabilities.add(
+                        "target.permanent.characteristic_predicate"
+                    )
                 self.assertEqual(
-                    {
-                        "permanent.return.owner_hand",
-                        "target.revalidate_resolution",
-                    },
+                    expected_capabilities,
                     set(node.capability_dependencies)
                     - {
                         "trigger.event.normalized_zone_change",
@@ -264,6 +269,7 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
         )
         expected = {
             "permanent.return.owner_hand",
+            "target.permanent.characteristic_predicate",
             "target.revalidate_resolution",
         }
         self.assertEqual(
