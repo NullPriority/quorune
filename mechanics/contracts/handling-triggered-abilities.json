@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 4,
+  "contract_version": 5,
   "mechanic_id": "cr-603-handling-triggered-abilities",
   "official_name": "Handling Triggered Abilities",
   "effective_date": "2026-08-07",
@@ -94,13 +94,14 @@
       "artifact enters or goes to a graveyard",
       "land enters",
       "second card is drawn",
-      "combat damage is dealt",
+      "positive post-replacement and post-prevention damage is dealt",
       "delayed trigger condition matches"
     ],
     "state_reads": [
       "source active zone",
       "event context",
       "source controller at trigger time",
+      "damage source, recipient kind, combat designation, and dealt amount",
       "intervening condition at trigger and resolution",
       "source and linked-object logical incarnation"
     ],
@@ -190,6 +191,22 @@
     {
       "name": "Daretti, Scrap Savant",
       "oracle_id": "ea9f4de3-fc35-435a-8dff-a5657d14a9bd"
+    },
+    {
+      "name": "Chromatic Star",
+      "oracle_id": "fedbd40b-e3a5-449c-a8a3-b42e9da191a9"
+    },
+    {
+      "name": "Dromad Purebred",
+      "oracle_id": "c7adac8f-8187-49a0-80b2-3281d42f1b92"
+    },
+    {
+      "name": "Fire Nation Warship",
+      "oracle_id": "987aab63-a889-400f-a3bd-feaef978b407"
+    },
+    {
+      "name": "Scroll Thief",
+      "oracle_id": "637c5583-4683-4ae4-8b4e-f5da42a772c7"
     }
   ],
   "rulings": [],
@@ -215,11 +232,17 @@
     "test_historical_delayed_order_validates_tree_before_stack_mutation",
     "test_daretti_ruling_does_not_follow_a_reentered_card",
     "test_unconditional_entry_tapped_is_engine_derived",
-    "test_damage_and_resulting_death_triggers_share_one_order_batch"
+    "test_damage_and_resulting_death_triggers_share_one_order_batch",
+    "test_fixed_source_zone_and_damage_bindings_compile_exactly",
+    "test_fixed_source_event_near_misses_remain_material",
+    "test_fixed_source_event_capabilities_fail_closed",
+    "test_source_zone_lifecycle_uses_last_known_controller_and_replays",
+    "test_source_damage_bindings_use_committed_damage_events",
+    "test_source_damage_event_dispatch_mutant_is_killed"
   ],
   "implementation": {
-    "component": "immutable zone_trigger_events occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
-    "version": "trigger-handling-foundation-v5"
+    "component": "immutable zone_trigger_events and post-result DamageEvent occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
+    "version": "trigger-handling-foundation-v6"
   },
   "known_blockers": [
     "the Oracle compiler recognizes selected whole-text trigger templates rather than the complete trigger grammar",
@@ -229,7 +252,7 @@
     "delayed-trigger creation provenance and simultaneous-event selection are not universally typed even though detected occurrences now share one typed placement path",
     "entry and leaves look-back evaluation does not yet use the complete continuous-effect and LKI exception matrix",
     "Aura paired-object zone-change lookup and hidden-zone finding are incomplete",
-    "generated trigger effects promote only when normalized event detection, placement, and every effect dependency are capability-closed; draw triggers remain provisional while zone.draw.library_to_hand retains its replacement blocker"
+    "generated trigger effects promote only when normalized event detection, placement, and every effect dependency are capability-closed; optional, intervening-if, reflexive, attachment-relative, aggregate, unrestricted-damage, creature-recipient, and unsupported-body variants remain outside the bounded fixed source-event family"
   ],
   "review_status": "draft"
 }
