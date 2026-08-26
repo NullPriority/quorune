@@ -358,8 +358,8 @@
     {
       "mechanic_id": "cr-603-handling-triggered-abilities",
       "path": "mechanics/contracts/handling-triggered-abilities.json",
-      "sha256": "f025a1aaa7ab1c1a78d4be044950aba8c9f6b5a0cb7a1e9baac7739605efd1fb",
-      "version": 4
+      "sha256": "8c7aa284a8365cba19604911e5c9562c43fac276ca19637ffe718f95d50f1665",
+      "version": 5
     },
     {
       "mechanic_id": "haste",
@@ -9216,12 +9216,12 @@
     {
       "category": "spells_abilities_effects",
       "contract_path": "mechanics/contracts/handling-triggered-abilities.json",
-      "contract_sha256": "f025a1aaa7ab1c1a78d4be044950aba8c9f6b5a0cb7a1e9baac7739605efd1fb",
-      "contract_version": 4,
+      "contract_sha256": "8c7aa284a8365cba19604911e5c9562c43fac276ca19637ffe718f95d50f1665",
+      "contract_version": 5,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "immutable zone_trigger_events occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
-      "implementation_version": "trigger-handling-foundation-v5",
+      "implementation_component": "immutable zone_trigger_events and post-result DamageEvent occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
+      "implementation_version": "trigger-handling-foundation-v6",
       "kind": "rules_section",
       "known_blockers": [
         "the Oracle compiler recognizes selected whole-text trigger templates rather than the complete trigger grammar",
@@ -9231,7 +9231,7 @@
         "delayed-trigger creation provenance and simultaneous-event selection are not universally typed even though detected occurrences now share one typed placement path",
         "entry and leaves look-back evaluation does not yet use the complete continuous-effect and LKI exception matrix",
         "Aura paired-object zone-change lookup and hidden-zone finding are incomplete",
-        "generated trigger effects promote only when normalized event detection, placement, and every effect dependency are capability-closed; draw triggers remain provisional while zone.draw.library_to_hand retains its replacement blocker"
+        "generated trigger effects promote only when normalized event detection, placement, and every effect dependency are capability-closed; optional, intervening-if, reflexive, attachment-relative, aggregate, unrestricted-damage, creature-recipient, and unsupported-body variants remain outside the bounded fixed source-event family"
       ],
       "mechanic_id": "cr-603-handling-triggered-abilities",
       "official_name": "Handling Triggered Abilities",
@@ -9260,7 +9260,13 @@
         "test_historical_delayed_order_validates_tree_before_stack_mutation",
         "test_daretti_ruling_does_not_follow_a_reentered_card",
         "test_unconditional_entry_tapped_is_engine_derived",
-        "test_damage_and_resulting_death_triggers_share_one_order_batch"
+        "test_damage_and_resulting_death_triggers_share_one_order_batch",
+        "test_fixed_source_zone_and_damage_bindings_compile_exactly",
+        "test_fixed_source_event_near_misses_remain_material",
+        "test_fixed_source_event_capabilities_fail_closed",
+        "test_source_zone_lifecycle_uses_last_known_controller_and_replays",
+        "test_source_damage_bindings_use_committed_damage_events",
+        "test_source_damage_event_dispatch_mutant_is_killed"
       ],
       "trust_level": "untrusted"
     },
