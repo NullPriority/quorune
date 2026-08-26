@@ -61,6 +61,48 @@ def _canonical_commit(root: Path, value: Any, label: str) -> str:
     return commit
 
 
+def _durable_main_tip(root: Path) -> str:
+    """Resolve the landed main line used by immutable harvest provenance."""
+
+    for reference in (
+        "refs/remotes/origin/HEAD",
+        "refs/remotes/origin/main",
+        "refs/heads/main",
+    ):
+        completed = subprocess.run(
+            ["git", "rev-parse", "--verify", f"{reference}^{{commit}}"],
+            cwd=root,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+        )
+        if completed.returncode == 0:
+            resolved = completed.stdout.decode().strip()
+            if _COMMIT.fullmatch(resolved):
+                return resolved
+    raise HarvestOutcomeHistoryError(
+        "Unable to resolve the durable main line for harvest provenance"
+    )
+
+
+def _require_landed_harvest_head(root: Path, head_commit: str) -> None:
+    """Reject feature-only receipt commits that a squash merge can discard."""
+
+    durable_tip = _durable_main_tip(root)
+    landed = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", head_commit, durable_tip],
+        cwd=root,
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    if landed.returncode != 0:
+        raise HarvestOutcomeHistoryError(
+            "Harvest head must be landed on the durable main line; keep the "
+            "semantic transition declaration pending until squash merge"
+        )
+
+
 def _blobs(
     root: Path,
     commit: str,
@@ -755,6 +797,7 @@ def build_harvest_outcome_history(
         head_commit = _canonical_commit(
             repository, row.get("head_commit"), "head_commit"
         )
+        _require_landed_harvest_head(repository, head_commit)
         ancestor = subprocess.run(
             ["git", "merge-base", "--is-ancestor", base_commit, head_commit],
             cwd=repository,

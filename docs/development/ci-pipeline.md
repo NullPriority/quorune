@@ -276,6 +276,13 @@ only provenance and candidate-bundle owner hypotheses; actual harvest counts
 are derived downstream. Family-level bundle closure is reported as
 `upper_bound_only` and cannot become implementation foreground until a
 generated bounded cohort establishes one executable grammar and lower bound.
+Harvest provenance may name only a head already reachable from the durable
+main line. A semantic harvest feature branch keeps its transition declaration
+pending through certification; it must not clear that declaration by recording
+a feature-only receipt commit that a squash merge can discard. The next
+substantive cycle materializes the landed merge receipt before selecting and
+shipping its next harvest, so immutable calibration remains available without
+an identity-only follow-up commit.
 If no implementation-eligible cohort exists, the same selector may choose one
 `cohort_measurement` task. That task pins the corpus filter, owner hypothesis,
 grammar boundary, exclusions, cards/residuals to inspect, probe effort, and
