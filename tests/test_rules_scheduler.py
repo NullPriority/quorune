@@ -1011,17 +1011,8 @@ class RulesSchedulerTests(unittest.TestCase):
         work = self.queue["work_selection"]
         selected = selected_work_candidate(work)
 
-        self.assertIsNotNone(selected)
-        self.assertEqual(
-            "measurement:fixed-exile-contexts",
-            selected["candidate_id"],
-        )
-        self.assertEqual("cohort_measurement", selected["work_state"])
-        self.assertFalse(selected["implementation_eligible"])
-        self.assertFalse(
-            selected["measurement_task"]["grants_gameplay_trust"]
-        )
-        self.assertEqual(1, work["eligible_candidate_count"])
+        self.assertIsNone(selected)
+        self.assertEqual(0, work["eligible_candidate_count"])
         self.assertEqual(0, work["implementation_eligible_candidate_count"])
         expected = {
             "bundle:fixed-token-creation-contexts": (
@@ -1029,8 +1020,8 @@ class RulesSchedulerTests(unittest.TestCase):
                 (0, 17, 17),
             ),
             "bundle:fixed-exile-contexts": (
-                "upper_bound_only",
-                (17, 94, 96),
+                "measured_nonviable",
+                (0, 19, 19),
             ),
         }
         for candidate_id, (measurement_status, gains) in expected.items():
@@ -1246,15 +1237,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertTrue(candidates)
         selected = selected_work_candidate(work)
-        self.assertIsNotNone(selected)
-        self.assertEqual(
-            "measurement:fixed-exile-contexts",
-            selected["candidate_id"],
-        )
-        self.assertFalse(selected["implementation_eligible"])
-        self.assertFalse(
-            selected["measurement_task"]["grants_gameplay_trust"]
-        )
+        self.assertIsNone(selected)
         structural = next(
             candidate
             for candidate in work["candidates"]

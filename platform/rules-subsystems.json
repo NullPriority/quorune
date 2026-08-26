@@ -449,17 +449,17 @@
           "measurement_status": "measured_nonviable",
           "measurement_outcome": {
             "measurement_id": "measurement:fixed-exile-contexts",
-            "frontier_fingerprint": "29696dcf6b6ffa68a5747fe6412826021f767e906721bfbc2aa2eddfa142d123",
+            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
             "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
             "measurement_method": "frontier-sole-blocker-closure-v1",
             "affected_commander_cards": 18,
             "complete_card_gain": 0,
             "one_additional_blocker_cards": 0,
-            "two_additional_blocker_cards": 8,
+            "two_additional_blocker_cards": 5,
             "exact_ability_gain": 19,
             "material_residual_reduction": 19,
             "decision": "retired_below_harvest_floor",
-            "reason": "The exact existing-owner battlefield and public-zone exile grammar closes no Commander cards and only 19 abilities or residuals. Hidden-zone, temporary, linked, variable, optional, random, cost, stack, and unrelated public-object grammars remain excluded, so this cohort is below every normal harvest floor.",
+            "reason": "The current-frontier existing-owner battlefield and public-zone exile cohort closes no Commander cards and only 19 abilities or residuals across 18 cards; every member retains modal or other enclosing grammar. The other 75 sole-family abilities are distinct alternative or Escape costs, spell self-exile, hidden-zone or ordered-zone movement, enchanted-object activations, compound targets or sets, linked results, or delayed self-exile families, so this cohort is below every normal harvest floor.",
             "grants_gameplay_trust": false
           }
         },
