@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "9eaf7e5e4138fba1e3f0aa3bb8c4205a9bb800b417f25adbbc805754e751c9e5"
+verified: "db4141ccc2f364a914d010112d1aaa420ad3377eab98209bd1ec586a7be388ab"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `6a41004111ceeffceda3284ec1d8ce3af8d550fa2c78560bbee036b30a62c08a`
+Source fingerprint: `24ed750b97c1f7a4e98ecaa0cbb2e10a6e14aa916263659ec76757ca43d4d646`
 
 ## Current top-level state
 
@@ -20,10 +20,10 @@ Source fingerprint: `6a41004111ceeffceda3284ec1d8ce3af8d550fa2c78560bbee036b30a6
 - Subsystems: `21`
 - Selected subsystem: `replacement-prevention`
 - Selected batch: `counter-producer-replacement-closure`
-- Selected cross-program work: `ci:materialize-harvest-outcome`
-- Selected work class: `ci_correctness`
-- Selected work state: `implementation`
-- Measurement grants gameplay trust: `not_applicable`
+- Selected cross-program work: `measurement:fixed-token-creation-contexts`
+- Selected work class: `compiler_harvest`
+- Selected work state: `cohort_measurement`
+- Measurement grants gameplay trust: `false`
 
 ## Cross-program work selection
 
@@ -34,9 +34,9 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 
 | Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |
 |---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | selected | implementation | true | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 2 | deferred | cohort_measurement | false | `measurement:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | unknown | unknown | 2.294118 | 0 | 0 |
-| 3 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 1 | selected | cohort_measurement | false | `measurement:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | unknown | unknown | 2.294118 | 0 | 0 |
+| 2 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 3 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 4 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 5 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 6 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 54 |
@@ -68,7 +68,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 32 | blocked | implementation | false | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 17 | 106 | 0.809524 | 0 | 0 |
 | 33 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 248 | 0.0 | 0 | 0 |
 
-Selected reason: Materialize the declared semantic transition from its immutable Git receipts before selecting another implementation cohort.
+Selected reason: No executable cohort outranks this bounded measurement. Classify 2 related frontier families without treating their aggregate upper bound as implementation authority.
 
 ## Top blockers
 
