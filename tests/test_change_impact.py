@@ -27,9 +27,40 @@ class ChangeImpactTests(unittest.TestCase):
 
     def test_policy_is_versioned_and_fingerprinted(self):
         policy, fingerprint = load_impact_policy()
-        self.assertEqual(4, policy["schema_version"])
+        self.assertEqual(5, policy["schema_version"])
         self.assertIn("generated-finalization", policy["default_checks"])
         self.assertEqual(64, len(fingerprint))
+
+    def test_compiler_promotion_owners_select_neighboring_expectations(self):
+        cases = {
+            "quorune/compiler/continuous_templates.py": {
+                "test_fixed_query_keyword_grants",
+                "test_typed_dynamic_characteristics",
+            },
+            "quorune/compiler/activated_costs.py": {
+                "test_activated_draw_abilities",
+                "test_capability_implementation_mutations",
+                "test_fixed_counter_placement_effects",
+                "test_fixed_nonrepeating_modal_programs",
+                "test_fixed_target_effect_sequences",
+                "test_high_risk_interaction_assurance",
+            },
+            "quorune/compiler/prevention_templates.py": {
+                "test_fixed_token_creation_effects",
+                "test_high_risk_interaction_assurance",
+            },
+        }
+        for owner, expected in cases.items():
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(expected, set(plan.test_modules))
+                self.assertTrue(
+                    any(
+                        rule.startswith("compiler-")
+                        and rule.endswith("-expectations")
+                        for rule in plan.matched_rule_ids
+                    )
+                )
 
     def test_changed_test_module_is_run_exactly(self):
         plan = classify_changes(["tests/test_life_change.py"])

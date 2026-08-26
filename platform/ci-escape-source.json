@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-25T02:10:12Z",
+  "observed_at": "2026-08-26T01:24:45Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -525,47 +525,107 @@
       "regressions": ["test_activated_draw_abilities.ActivatedDrawCompilerTests.test_dynamic_and_compound_draw_wording_remains_residual"],
       "impact_edge_status": "not_applicable",
       "resolution": "The stale compound negative is split into an exact shared-owner assertion plus the remaining unsupported dynamic and noncanonical shapes. The existing compiler impact path already selected the failing cloud shard, so no new broad local or CI edge is required."
+    },
+    {
+      "id": "ci-20260825-38",
+      "run_id": 32806924786,
+      "head_sha": "2a03f666e4e05d08ded7e20683e67f2721c61458",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The fixed static-characteristic harvest promoted ordinary Menace and Hexproof grants, but the neighboring dynamic-characteristic compiler module still treated those exact sentences as residual and treated Menace as a malformed descriptor keyword.",
+      "failed_surfaces": [
+        "PR / Python / counter-continuous-effects (job 97678858691)"
+      ],
+      "regressions": [
+        "test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests.test_characteristic_descriptors_reject_malformed_values",
+        "test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests.test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual[Menace]",
+        "test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests.test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual[Hexproof]"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The existing regression now records Menace and Hexproof as positive exact cases and uses unsupported Ward for malformed descriptor evidence. The family-indexed change-impact policy now links static-characteristic compiler owners to both their positive owner tests and neighboring dynamic exact/residual expectations."
+    },
+    {
+      "id": "ci-20260825-39",
+      "run_id": 32827593705,
+      "head_sha": "35a6c576245f5595b74ffc323d4e8a6cce378264",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The fixed activated zone-change-cost harvest promoted source-cost capabilities without updating neighboring exact capability sets, Tourach's Gate's activation status, and four residual-pair witnesses whose selected-cost residual was no longer present.",
+      "failed_surfaces": [
+        "PR / Generated and architecture (job 97745303453)",
+        "PR / Python / compiler-cardprogram (job 97745303738)",
+        "PR / Python / counter-continuous-effects (job 97745303760)",
+        "PR / Python / casting-costs-mana (job 97745303767)"
+      ],
+      "regressions": [
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_indefinite_keyword_sequence_compiles_the_closed_family",
+        "test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_fixed_activated_draw_capability_gate_mutant_is_killed",
+        "test_fixed_counter_placement_effects.FixedCounterPlacementCompilerTests.test_pinned_source_descriptors_lower_across_trigger_and_activation_contexts",
+        "test_activated_draw_abilities.ActivatedDrawCompilerTests.test_ordinary_activated_draw_is_exact_and_source_spanned"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The exact expectations now include the typed source-cost capability, Tourach's Gate is a positive activated case, and the four residual pairs use Etchings of the Chosen as a real fail-closed witness. The family-indexed policy links activated-cost compiler owners to these neighboring capability, exact/residual, mutation, and interaction modules before the next push."
+    },
+    {
+      "id": "ci-20260825-40",
+      "run_id": 32827593705,
+      "head_sha": "35a6c576245f5595b74ffc323d4e8a6cce378264",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The same activated-cost harvest exposed two program-closure defects: fixed modal activation did not validate the typed source cost, and trusted Knight-Captain prevention effects were still asserted through an obsolete residual boundary instead of their promoted executable composition.",
+      "failed_surfaces": [
+        "PR / Python / compiler-cardprogram (job 97745303738)"
+      ],
+      "regressions": [
+        "test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalCompilerTests.test_modal_activation_closure_validates_typed_source_cost",
+        "test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_modal_activation_pays_cost_resolves_selected_mode_and_replays",
+        "test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_selected_soldier_cost_resolves_combat_prevention_and_replays",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_fixed_token_with_damage_prevention_residual_fails_closed_at_runtime_boundary"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Modal closure now derives and validates activation descriptors and their capabilities, while the promoted Knight-Captain path has positive Soldier-cost, prevention, damage, and replay evidence beside a separate real residual prevention witness. Activated-cost, prevention, and central program-registration owners now select those focused expectation modules through the family-indexed policy."
     }
   ],
   "recent_pull_requests": [
     {
-      "number": 87,
-      "head_sha": "b5a59b8ab7a37866aaf3227f3e3bb3056035066d",
-      "final_run_id": 30913382652,
+      "number": 313,
+      "head_sha": "072c4ebffc9df80f16d9690a21e56148e068a8b5",
+      "final_run_id": 32812669794,
       "final_run_conclusion": "success",
-      "workflow_runs_observed": 5,
+      "workflow_runs_observed": 8,
       "push_count": null,
-      "critical_path_seconds": 1488.0,
+      "critical_path_seconds": 81.0,
       "slot_b_inactive_seconds": null
     },
     {
-      "number": 88,
-      "head_sha": "e9fd5ec666fdbef2cd4f5735dc734445572b7533",
-      "final_run_id": 30920252836,
+      "number": 314,
+      "head_sha": "5224941a7c2216461d4660ac19075f86c8979993",
+      "final_run_id": 32848970961,
       "final_run_conclusion": "success",
-      "workflow_runs_observed": 3,
+      "workflow_runs_observed": 13,
       "push_count": null,
-      "critical_path_seconds": 300.0,
+      "critical_path_seconds": 84.0,
       "slot_b_inactive_seconds": null
     },
     {
-      "number": 89,
-      "head_sha": "58f13457a2e4ade605f0ab788116fe62e9150d47",
-      "final_run_id": 30935545835,
+      "number": 315,
+      "head_sha": "ec73fce205c80351a7f4dff2343935c201cf3e3f",
+      "final_run_id": 32867891764,
       "final_run_conclusion": "success",
-      "workflow_runs_observed": 5,
+      "workflow_runs_observed": 6,
       "push_count": null,
-      "critical_path_seconds": 850.0,
+      "critical_path_seconds": 474.0,
       "slot_b_inactive_seconds": null
     },
     {
-      "number": 90,
-      "head_sha": "1776d5329d02e35d7dcff58f69a4aafb2cf484c9",
-      "final_run_id": 30945744299,
+      "number": 316,
+      "head_sha": "dd2c679cb6d03ce86d8037f9286a9f5441504ce3",
+      "final_run_id": 32898051146,
       "final_run_conclusion": "success",
-      "workflow_runs_observed": 3,
+      "workflow_runs_observed": 9,
       "push_count": null,
-      "critical_path_seconds": 724.0,
+      "critical_path_seconds": 86.0,
       "slot_b_inactive_seconds": null
     }
   ],

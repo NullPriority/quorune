@@ -8314,7 +8314,7 @@
           "module": "quorune.zone_transitions"
         }
       ],
-      "internal_edges": 2372,
+      "internal_edges": 2376,
       "modules": [
         {
           "fan_in": 2,
@@ -11003,13 +11003,28 @@
         },
         {
           "fan_in": 1,
-          "fan_out": 2,
+          "fan_out": 4,
           "module": "quorune.work_selection"
         },
         {
           "fan_in": 1,
           "fan_out": 0,
           "module": "quorune.work_selection_bundles"
+        },
+        {
+          "fan_in": 2,
+          "fan_out": 1,
+          "module": "quorune.work_selection_common"
+        },
+        {
+          "fan_in": 1,
+          "fan_out": 1,
+          "module": "quorune.work_selection_evidence"
+        },
+        {
+          "fan_in": 1,
+          "fan_out": 0,
+          "module": "quorune.work_selection_measurement"
         },
         {
           "fan_in": 2,
@@ -11151,7 +11166,7 @@
       ]
     },
     "production": {
-      "file_count": 570,
+      "file_count": 573,
       "largest_functions_and_methods": [
         {
           "end_line": 1619,
@@ -11484,7 +11499,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 180610,
+      "logical_lines": 181057,
       "methods": {
         "dunder": 507,
         "private": 823,
@@ -11536,10 +11551,10 @@
         },
         {
           "file": "quorune/work_selection.py",
-          "functions_and_methods": 33,
+          "functions_and_methods": 29,
           "language": "python",
-          "logical_lines": 1491,
-          "physical_lines": 1567
+          "logical_lines": 1489,
+          "physical_lines": 1553
         },
         {
           "file": "quorune/declaration_restrictions.py",
@@ -12543,6 +12558,13 @@
           "physical_lines": 404
         },
         {
+          "file": "quorune/work_selection_bundles.py",
+          "functions_and_methods": 9,
+          "language": "python",
+          "logical_lines": 364,
+          "physical_lines": 389
+        },
+        {
           "file": "quorune/aura/runtime.py",
           "functions_and_methods": 16,
           "language": "python",
@@ -12583,13 +12605,6 @@
           "language": "python",
           "logical_lines": 360,
           "physical_lines": 404
-        },
-        {
-          "file": "quorune/work_selection_bundles.py",
-          "functions_and_methods": 9,
-          "language": "python",
-          "logical_lines": 360,
-          "physical_lines": 385
         },
         {
           "file": "quorune/effect_runtime/life_effects.py",
@@ -12737,6 +12752,13 @@
           "language": "python",
           "logical_lines": 313,
           "physical_lines": 354
+        },
+        {
+          "file": "quorune/work_selection_evidence.py",
+          "functions_and_methods": 9,
+          "language": "python",
+          "logical_lines": 309,
+          "physical_lines": 331
         },
         {
           "file": "quorune/rules/graveyard_card_targets.py",
@@ -13976,6 +13998,13 @@
           "language": "python",
           "logical_lines": 120,
           "physical_lines": 153
+        },
+        {
+          "file": "quorune/work_selection_measurement.py",
+          "functions_and_methods": 1,
+          "language": "python",
+          "logical_lines": 120,
+          "physical_lines": 123
         },
         {
           "file": "quorune/death_return.py",
@@ -15364,6 +15393,13 @@
           "physical_lines": 24
         },
         {
+          "file": "quorune/work_selection_common.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 16,
+          "physical_lines": 26
+        },
+        {
           "file": "quorune/rules/casting/__init__.py",
           "functions_and_methods": 0,
           "language": "python",
@@ -15821,8 +15857,8 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 198167,
-      "python_file_count": 554,
+      "physical_lines": 198637,
+      "python_file_count": 557,
       "review_thresholds": {
         "function_logical_lines_review": 150,
         "module_logical_lines_review": 1500
@@ -15839,7 +15875,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 2593,
+      "top_level_functions": 2602,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -27787,7 +27823,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "009c2b409223823285712323595348ab259d223414657924a30df96a5605ec79",
+      "fingerprint": "5f51f724356b1892efc6685efe91b17d21e38ecdf812735681fa6b3bcb2aaa40",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -28645,11 +28681,11 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 3441,
-      "discovered_total": 6750,
+      "conventional_ast_cases": 3446,
+      "discovered_total": 6755,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
-        "compiler_named": 182,
+        "compiler_named": 185,
         "fuzz_named": 1,
         "privacy_or_projection_named": 45,
         "replay_named": 264,

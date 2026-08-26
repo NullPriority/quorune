@@ -1,12 +1,7 @@
 from __future__ import annotations
 
-import gzip
-import hashlib
-import json
-from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-from .util import stable_json
 from .work_selection_bundles import (
     atomic_frontier_bundle,
     bundle_measurement_decision,
@@ -15,16 +10,26 @@ from .work_selection_bundles import (
     validate_bundle_policy,
     WorkSelectionBundleError,
 )
+from .work_selection_common import (
+    WorkSelectionError,
+    mapping as _mapping,
+    nonnegative_int as _nonnegative_int,
+    stable_hash as _hash,
+)
+from .work_selection_evidence import (
+    load_work_selection_inputs,
+    validate_harvest_history,
+)
+from .work_selection_measurement import cohort_measurement_spec
 
 
-WORK_SELECTION_SCHEMA_VERSION = 3
+WORK_SELECTION_SCHEMA_VERSION = 4
 _CANDIDATE_CLASSES = {
     "ci_correctness",
     "replay_privacy_defect",
-    "architecture_owner_extraction",
-    "runtime_oracle_removal",
+    "prohibited_runtime_semantics",
+    "architecture_owner_or_mutation_defect",
     "interaction_assurance",
-    "architecture_debt",
     "rules_foundation",
     "compiler_harvest",
     "card_family",
@@ -53,6 +58,9 @@ _REQUIRED_CANDIDATE_FIELDS = {
     "estimated_effort",
     "reranking_reason",
     "eligible",
+    "implementation_eligible",
+    "work_state",
+    "measurement_task",
     "priority_within_class",
     "bundle",
 }
@@ -67,6 +75,7 @@ _BUNDLE_OUTPUT_FIELDS = {
     "shared_dependencies",
     "shared_grammar",
     "estimated_implementation_hours",
+    "estimated_probe_hours",
     "estimated_generation_hours",
     "estimated_cycle_hours",
     "predicted_complete_cards_per_cycle_hour",
@@ -76,26 +85,6 @@ _BUNDLE_OUTPUT_FIELDS = {
     "measurement_status",
     "synthesized",
 }
-
-
-class WorkSelectionError(ValueError):
-    pass
-
-
-def _hash(value: Any) -> str:
-    return hashlib.sha256(stable_json(value).encode("utf-8")).hexdigest()
-
-
-def _mapping(value: Any, label: str) -> Mapping[str, Any]:
-    if not isinstance(value, Mapping):
-        raise WorkSelectionError(f"{label} must be an object")
-    return value
-
-
-def _nonnegative_int(value: Any, label: str) -> int:
-    if type(value) is not int or value < 0:
-        raise WorkSelectionError(f"{label} must be a nonnegative integer")
-    return value
 
 
 def _validated_priority_policy(
@@ -211,80 +200,7 @@ def _validated_candidate_bundles(
 def _validated_harvest_history(
     value: Mapping[str, Any], *, minimum_gain: int
 ) -> dict[str, Any]:
-    if set(value) != {
-        "schema_version",
-        "algorithm_version",
-        "entries",
-        "outcome_basis",
-        "fingerprint",
-    } or int(value.get("schema_version") or 0) != 1:
-        raise WorkSelectionError("Generated harvest history has an invalid shape")
-    fingerprint_payload = dict(value)
-    fingerprint = str(fingerprint_payload.pop("fingerprint") or "")
-    if fingerprint != _hash(fingerprint_payload):
-        raise WorkSelectionError("Generated harvest history fingerprint is stale")
-    history = list(value.get("entries", []))
-    ids: set[str] = set()
-    expected = {
-        "bundle_id",
-        "candidate_ids",
-        "expected_complete_card_gain",
-        "base_receipt",
-        "head_receipt",
-        "actual_complete_card_gain",
-        "actual_exact_ability_gain",
-        "actual_material_residual_reduction",
-    }
-    for index, raw in enumerate(history):
-        row = _mapping(raw, f"harvest_outcome_history[{index}]")
-        if set(row) != expected:
-            raise WorkSelectionError(
-                "Harvest outcome history entries have an invalid shape"
-            )
-        bundle_id = str(row.get("bundle_id") or "")
-        candidate_ids = [str(value) for value in row.get("candidate_ids", [])]
-        if (
-            not bundle_id.startswith("bundle:")
-            or bundle_id in ids
-            or not candidate_ids
-            or candidate_ids != sorted(set(candidate_ids))
-            or not isinstance(row.get("base_receipt"), Mapping)
-            or not isinstance(row.get("head_receipt"), Mapping)
-        ):
-            raise WorkSelectionError(
-                "Harvest outcome history bundle identities must be unique"
-            )
-        ids.add(bundle_id)
-        for field in (
-            "expected_complete_card_gain",
-            "actual_complete_card_gain",
-            "actual_exact_ability_gain",
-            "actual_material_residual_reduction",
-        ):
-            _nonnegative_int(row.get(field), field)
-    consecutive_subthreshold = 0
-    for row in reversed(history):
-        if int(row["actual_complete_card_gain"]) >= minimum_gain:
-            break
-        consecutive_subthreshold += 1
-    subthreshold_harvests = sum(
-        int(row["actual_complete_card_gain"]) < minimum_gain
-        for row in history
-    )
-    card_gain_absolute_error = sum(
-        abs(
-            int(row["expected_complete_card_gain"])
-            - int(row["actual_complete_card_gain"])
-        )
-        for row in history
-    )
-    return {
-        "harvest_outcome_history": history,
-        "consecutive_subthreshold_harvests": consecutive_subthreshold,
-        "subthreshold_harvests": subthreshold_harvests,
-        "card_gain_absolute_error": card_gain_absolute_error,
-    }
-
+    return validate_harvest_history(value, minimum_gain=minimum_gain)
 
 def _validated_reviewed_history(
     policy: Mapping[str, Any]
@@ -316,7 +232,7 @@ def _validated_reviewed_history(
 def _validated_policy(
     policy: Mapping[str, Any], harvest_history: Mapping[str, Any]
 ) -> dict[str, Any]:
-    if int(policy.get("policy_version") or 0) != 5:
+    if int(policy.get("policy_version") or 0) != 6:
         raise WorkSelectionError("Unsupported work-selection policy")
     priority_classes, starting_uncovered = _validated_priority_policy(policy)
     coverage = _mapping(policy.get("coverage_family"), "coverage_family")
@@ -333,7 +249,7 @@ def _validated_policy(
         minimum_gain=int(validated_coverage["minimum_complete_card_gain"]),
     )
     return {
-        "policy_version": 5,
+        "policy_version": 6,
         "priority_classes": priority_classes,
         "starting_uncovered_high_risk_pairs": starting_uncovered,
         **validated_coverage,
@@ -342,66 +258,6 @@ def _validated_policy(
         "value_weights": value_weights,
         "approved_prerequisite_exceptions": prerequisite_exceptions,
         "reviewed_rerank_history": _validated_reviewed_history(policy),
-    }
-
-
-def _read_json(path: Path) -> dict[str, Any]:
-    if not path.is_file():
-        raise WorkSelectionError(f"Missing work-selection input: {path}")
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise WorkSelectionError(f"Invalid work-selection input: {path}") from exc
-    if not isinstance(value, dict):
-        raise WorkSelectionError(f"Work-selection input must be an object: {path}")
-    return value
-
-
-def _read_gzip_json(path: Path) -> dict[str, Any]:
-    if not path.is_file():
-        raise WorkSelectionError(f"Missing work-selection input: {path}")
-    try:
-        with gzip.open(path, "rt", encoding="utf-8") as handle:
-            value = json.load(handle)
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise WorkSelectionError(f"Invalid work-selection input: {path}") from exc
-    if not isinstance(value, dict):
-        raise WorkSelectionError(f"Work-selection input must be an object: {path}")
-    return value
-
-
-def load_work_selection_inputs(
-    root: str | Path,
-    *,
-    harvest_outcome_history: Mapping[str, Any] | None = None,
-) -> dict[str, Any]:
-    repository = Path(root)
-    return {
-        "architecture_audit": _read_json(
-            repository / "coverage" / "architecture-audit.json"
-        ),
-        "card_unlock_frontier": _read_gzip_json(
-            repository / "coverage" / "card-unlock-frontier.json.gz"
-        ),
-        "harvest_outcome_history": (
-            dict(harvest_outcome_history)
-            if harvest_outcome_history is not None
-            else _read_json(
-                repository / "coverage" / "harvest-outcome-history.json"
-            )
-        ),
-        "compact_ci_dependencies": _read_json(
-            repository / "coverage" / "compact-ci-card-dependencies.json"
-        ),
-        "platform_readiness": _read_json(
-            repository / "coverage" / "platform-readiness.json"
-        ),
-        "reusable_piece_delta": _read_json(
-            repository / "coverage" / "reusable-piece-delta.json"
-        ),
-        "reusable_piece_interactions": _read_gzip_json(
-            repository / "coverage" / "reusable-piece-interactions.json.gz"
-        ),
     }
 
 
@@ -440,6 +296,9 @@ def _candidate(
     runtime_oracle_text_removal: Mapping[str, Any] | None = None,
     priority_within_class: int = 0,
     bundle: Mapping[str, Any] | None = None,
+    work_state: str = "implementation",
+    implementation_eligible: bool | None = None,
+    measurement_task: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if candidate_class not in _CANDIDATE_CLASSES:
         raise WorkSelectionError(f"Unknown candidate class: {candidate_class}")
@@ -451,6 +310,42 @@ def _candidate(
         or type(bundle_payload.get("synthesized")) is not bool
     ):
         raise WorkSelectionError("Work-selection bundle output is incomplete")
+    effective_implementation_eligible = (
+        bool(eligible)
+        if implementation_eligible is None
+        else bool(implementation_eligible)
+    )
+    measurement_payload = (
+        dict(measurement_task) if measurement_task is not None else None
+    )
+    if work_state == "implementation":
+        if effective_implementation_eligible != bool(eligible) or measurement_payload:
+            raise WorkSelectionError(
+                "Implementation candidates cannot carry measurement-only state"
+            )
+    elif work_state == "cohort_measurement":
+        if (
+            not eligible
+            or effective_implementation_eligible
+            or not isinstance(measurement_payload, Mapping)
+            or set(measurement_payload)
+            != {
+                "source_corpus_filter",
+                "owner_operation_hypothesis",
+                "grammar_boundary",
+                "explicit_exclusions",
+                "cards_and_residuals_to_inspect",
+                "estimated_probe_hours",
+                "upgrade_evidence",
+                "grants_gameplay_trust",
+            }
+            or measurement_payload.get("grants_gameplay_trust") is not False
+        ):
+            raise WorkSelectionError(
+                "Cohort measurements require one complete non-authoritative task"
+            )
+    else:
+        raise WorkSelectionError(f"Unknown work state: {work_state}")
     row = {
         "candidate_id": candidate_id,
         "candidate_class": candidate_class,
@@ -477,6 +372,9 @@ def _candidate(
         "estimated_effort": estimated_effort,
         "reranking_reason": reranking_reason,
         "eligible": bool(eligible),
+        "implementation_eligible": effective_implementation_eligible,
+        "work_state": work_state,
+        "measurement_task": measurement_payload,
         "priority_within_class": _nonnegative_int(
             priority_within_class, "priority_within_class"
         ),
@@ -507,7 +405,7 @@ def _runtime_oracle_candidates(
         candidates.append(
             _candidate(
                 candidate_id=f"architecture:runtime-oracle-text-removal:{subsystem_id}",
-                candidate_class="runtime_oracle_removal",
+                candidate_class="prohibited_runtime_semantics",
                 universal_subsystem=subsystem_id,
                 reusable_piece_ids=capsule.get("reusable_pieces", []),
                 compiler_readiness=_readiness(
@@ -546,7 +444,7 @@ def _runtime_oracle_candidates(
         candidates.append(
             _candidate(
                 candidate_id="architecture:runtime-oracle-text-subsystem-attribution",
-                candidate_class="runtime_oracle_removal",
+                candidate_class="prohibited_runtime_semantics",
                 universal_subsystem="architecture_runtime_text_inventory",
                 compiler_readiness=_readiness(
                     "not_applicable", "architecture attribution"
@@ -622,7 +520,7 @@ def _architecture_candidates(
     return [
         _candidate(
             candidate_id="architecture:dedicated-owner-extraction",
-            candidate_class="architecture_owner_extraction",
+            candidate_class="architecture_owner_or_mutation_defect",
             universal_subsystem=",".join(missing) or "all_declared_subsystems",
             compiler_readiness=_readiness("not_applicable", "ownership boundary"),
             runtime_readiness=_readiness(
@@ -649,7 +547,7 @@ def _architecture_candidates(
         *runtime_candidates,
         _candidate(
             candidate_id="architecture:engine-mutation-and-specificity-debt",
-            candidate_class="architecture_debt",
+            candidate_class="architecture_owner_or_mutation_defect",
             universal_subsystem="commander_engine_compatibility_facade",
             compiler_readiness=_readiness("not_applicable", "architecture migration"),
             runtime_readiness=_readiness(
@@ -1204,6 +1102,9 @@ def _synthesized_frontier_candidates(
                     ),
                     "shared_grammar": str(bundle_policy["shared_grammar"]),
                     "estimated_implementation_hours": implementation_hours,
+                    "estimated_probe_hours": int(
+                        bundle_policy["estimated_probe_hours"]
+                    ),
                     "estimated_generation_hours": measurement["generation_hours"],
                     "estimated_cycle_hours": measurement["cycle_hours"],
                     "predicted_complete_cards_per_cycle_hour": measurement[
@@ -1284,6 +1185,48 @@ def _frontier_candidates(
     return limited
 
 
+def _harvest_outcome_candidate(validated: Mapping[str, Any]) -> dict[str, Any]:
+    pending = validated["pending_transition"]
+    is_pending = validated["semantic_outcome_status"] == "pending"
+    transition_id = (
+        str(pending.get("transition_id") or "")
+        if isinstance(pending, Mapping)
+        else ""
+    )
+    return _candidate(
+        candidate_id="ci:materialize-harvest-outcome",
+        candidate_class="ci_correctness",
+        universal_subsystem="generated_harvest_provenance",
+        compiler_readiness=_readiness(
+            "pending_outcome" if is_pending else "current",
+            transition_id or "latest semantic support has an immutable outcome",
+        ),
+        runtime_readiness=_readiness(
+            "blocked" if is_pending else "complete",
+            "downstream evidence only; no gameplay authority",
+        ),
+        assurance_readiness=_readiness(
+            "not_applicable",
+            "materializing immutable corpus receipts changes no runtime behavior",
+        ),
+        estimated_effort="small" if is_pending else "complete",
+        reranking_reason=(
+            "Materialize the declared semantic transition from its immutable Git "
+            "receipts before selecting another implementation cohort."
+            if is_pending
+            else "Every current semantic support transition has a downstream outcome."
+        ),
+        eligible=is_pending,
+    )
+
+
+def _cohort_measurement_candidate(
+    candidates: Sequence[Mapping[str, Any]],
+    frontier: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    spec = cohort_measurement_spec(candidates, frontier)
+    return _candidate(**spec) if spec is not None else None
+
 def _work_selection_candidates(
     *,
     selected_batch: Mapping[str, Any],
@@ -1303,7 +1246,9 @@ def _work_selection_candidates(
         raise WorkSelectionError(
             "Work-selection inputs must be the canonical generated reports"
         )
-    return [
+    frontier = _mapping(inputs["card_unlock_frontier"], "card-unlock frontier")
+    candidates = [
+        _harvest_outcome_candidate(validated),
         *_system_candidates(
             _mapping(inputs["compact_ci_dependencies"], "compact CI report"),
             _mapping(inputs["platform_readiness"], "platform readiness"),
@@ -1321,14 +1266,18 @@ def _work_selection_candidates(
         ),
         _rules_candidate(selected_batch),
         *_frontier_candidates(
-            _mapping(inputs["card_unlock_frontier"], "card-unlock frontier"),
+            frontier,
             validated,
         ),
         *_synthesized_frontier_candidates(
-            _mapping(inputs["card_unlock_frontier"], "card-unlock frontier"),
+            frontier,
             validated,
         ),
     ]
+    measurement = _cohort_measurement_candidate(candidates, frontier)
+    if measurement is not None:
+        candidates.append(measurement)
+    return candidates
 
 
 def _validate_candidate_context(
@@ -1368,6 +1317,7 @@ def _rank_candidates(
     candidates.sort(
         key=lambda row: (
             not bool(row["eligible"]),
+            bool(row["eligible"] and not row["implementation_eligible"]),
             priorities[str(row["candidate_class"])],
             -float(
                 row["bundle"].get(
@@ -1392,7 +1342,11 @@ def _rank_candidates(
             str(row["candidate_id"]),
         )
     )
-    selected = next((row for row in candidates if row["eligible"]), None)
+    selected = next(
+        (row for row in candidates if row["implementation_eligible"]), None
+    )
+    if selected is None:
+        selected = next((row for row in candidates if row["eligible"]), None)
     for index, row in enumerate(candidates, start=1):
         row["rank"] = index
         if row is selected:
@@ -1427,6 +1381,21 @@ def selected_work_candidate(
         raise WorkSelectionError(
             "Work-selection eligible candidate count does not match candidates"
         )
+    implementation_eligible = [
+        candidate
+        for candidate in candidates
+        if candidate.get("implementation_eligible") is True
+    ]
+    declared_implementation_count = work_selection.get(
+        "implementation_eligible_candidate_count"
+    )
+    if (
+        type(declared_implementation_count) is not int
+        or declared_implementation_count != len(implementation_eligible)
+    ):
+        raise WorkSelectionError(
+            "Work-selection implementation-eligible count does not match candidates"
+        )
     selected_id = work_selection.get("selected_candidate_id")
     selected_rows = [
         candidate
@@ -1456,6 +1425,13 @@ def selected_work_candidate(
     ):
         raise WorkSelectionError(
             "Selected work candidate must name one eligible selected row"
+        )
+    if (
+        implementation_eligible
+        and matches[0].get("implementation_eligible") is not True
+    ):
+        raise WorkSelectionError(
+            "A cohort measurement cannot outrank implementation-eligible work"
         )
     return matches[0]
 
@@ -1509,6 +1485,13 @@ def _selection_policy_payload(validated: Mapping[str, Any]) -> dict[str, Any]:
         "observed_card_gain_absolute_error": validated[
             "card_gain_absolute_error"
         ],
+        "observed_expected_gain_count": validated["known_expected_harvests"],
+        "harvest_outcome_status": validated["semantic_outcome_status"],
+        "pending_harvest_transition_id": (
+            str(validated["pending_transition"].get("transition_id") or "")
+            if validated["pending_transition"] is not None
+            else None
+        ),
         "coverage_rank_order": validated["coverage_rank_order"],
         "coverage_candidate_limit": validated["candidate_limit"],
         "excluded_efforts": sorted(validated["excluded_efforts"]),
@@ -1552,6 +1535,9 @@ def build_work_selection(
         ),
         "serious_candidate_count": len(candidates),
         "eligible_candidate_count": sum(bool(row["eligible"]) for row in candidates),
+        "implementation_eligible_candidate_count": sum(
+            bool(row["implementation_eligible"]) for row in candidates
+        ),
         "candidates": candidates,
     }
     payload["fingerprint"] = _hash(payload)

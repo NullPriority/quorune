@@ -9,6 +9,12 @@ import re
 import subprocess
 from typing import Any, Mapping
 
+from scripts.pr_evidence import (
+    build_pr_evidence,
+    pr_evidence_markdown_fields,
+    PullRequestEvidenceError,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / ".github" / "pull_request_template.md"
@@ -17,6 +23,7 @@ REQUIRED_SECTIONS = (
     "Summary",
     "Change class and authority",
     "Ownership and implementation",
+    "Generated base/head evidence",
     "Evidence",
     "Generated artifacts",
     "Documentation and decisions",
@@ -41,6 +48,28 @@ REQUIRED_FIELDS = {
         "Oracle-ID literal delta",
         "Compiler/CardProgram changes",
         "Card, residual, and capability-closure deltas",
+    ),
+    "Generated base/head evidence": (
+        "Represented family IDs",
+        "Represented capability IDs",
+        "Exact head SHA",
+        "Compiler version delta",
+        "CardProgram schema delta",
+        "Exact, trusted, and capability-closed card delta",
+        "Partial, unresolved, and failed card delta",
+        "Oracle and CardProgram ability delta",
+        "Executable trust transitions",
+        "Structural carrier delta and reconciliation",
+        "Oracle and CardProgram material residual delta",
+        "Interaction coverage delta",
+        "Actual CommanderEngine line delta",
+        "Reviewed architecture-baseline delta",
+        "Direct authoritative-write delta",
+        "Runtime-text delta",
+        "Printed-name and Oracle-ID delta",
+        "Production, test, and generated line delta",
+        "Evidence fingerprint",
+        "Evidence command",
     ),
     "Generated artifacts": (
         "Source inputs changed",
@@ -415,6 +444,28 @@ def validate_body(body: str, template: str) -> tuple[PolicyFailure, ...]:
     return tuple(failures)
 
 
+def validate_generated_evidence(
+    body: str, evidence: Mapping[str, Any]
+) -> tuple[PolicyFailure, ...]:
+    sections, _duplicates = _sections(body)
+    section = sections.get("Generated base/head evidence")
+    if section is None:
+        return ()
+    actual = _field_values(section)
+    expected = pr_evidence_markdown_fields(evidence)
+    failures = []
+    for label, value in expected.items():
+        if actual.get(label) != value:
+            failures.append(
+                PolicyFailure(
+                    "stale-pr-evidence",
+                    f"generated base/head field {label!r} does not match "
+                    "scripts/pr_evidence.py for the exact PR base and head",
+                )
+            )
+    return tuple(failures)
+
+
 def _flatten(value: Any, path: tuple[str, ...] = ()) -> dict[tuple[str, ...], Any]:
     if isinstance(value, Mapping):
         result: dict[tuple[str, ...], Any] = {}
@@ -524,7 +575,9 @@ def _event(path: Path) -> Mapping[str, Any]:
     return value
 
 
-def _event_body_and_base(event: Mapping[str, Any]) -> tuple[str, str]:
+def _event_body_base_and_head(
+    event: Mapping[str, Any]
+) -> tuple[str, str, str]:
     pull_request = event.get("pull_request")
     if not isinstance(pull_request, Mapping):
         raise PullRequestPolicyError("event has no pull_request object")
@@ -536,7 +589,10 @@ def _event_body_and_base(event: Mapping[str, Any]) -> tuple[str, str]:
     base = pull_request.get("base")
     if not isinstance(base, Mapping) or not isinstance(base.get("sha"), str):
         raise PullRequestPolicyError("pull_request.base.sha is missing")
-    return body, str(base["sha"])
+    head = pull_request.get("head")
+    if not isinstance(head, Mapping) or not isinstance(head.get("sha"), str):
+        raise PullRequestPolicyError("pull_request.head.sha is missing")
+    return body, str(base["sha"]), str(head["sha"])
 
 
 def main() -> int:
@@ -550,11 +606,19 @@ def main() -> int:
     try:
         if not args.event:
             raise PullRequestPolicyError("--event or GITHUB_EVENT_PATH is required")
-        body, event_base = _event_body_and_base(_event(Path(args.event)))
+        body, event_base, event_head = _event_body_base_and_head(
+            _event(Path(args.event))
+        )
         template = Path(args.template).read_text(encoding="utf-8")
         failures = [*validate_body(body, template)]
+        evidence = build_pr_evidence(
+            ROOT,
+            base_revision=args.base or event_base,
+            head_revision=event_head,
+        )
+        failures.extend(validate_generated_evidence(body, evidence))
         failures.extend(validate_durable_status_sources(ROOT, args.base or event_base))
-    except (OSError, PullRequestPolicyError) as exc:
+    except (OSError, PullRequestEvidenceError, PullRequestPolicyError) as exc:
         print(f"::error title=PR description policy setup::{exc}")
         return 2
     if failures:

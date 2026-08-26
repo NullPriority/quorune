@@ -60,8 +60,13 @@ Fixed current-turn and next-turn impulse access composes across spell,
 triggered, activated, and sequence contexts while retaining canonical zone,
 cast, land-play, target, cleanup, privacy, rollback, and replay owners. The
 operation adds no card-name, set, collector-number, or Oracle-ID dispatch; no
-new unowned GameState write; and no runtime Oracle-text access. CommanderEngine
-shrinks because permission currency is delegated.
+new unowned GameState write; and no runtime Oracle-text access. Permission
+responsibility is delegated out of CommanderEngine, but responsibility and
+line-count movement are separate facts. The #316 source transition changed
+CommanderEngine from 7,064 to 7,065 logical lines (`+1`). The contemporaneous
+architecture guard changed from an older reviewed 7,096-line allowance to the
+7,065-line head (`-31`); that baseline rebind is not the pull request's source
+delta.
 
 Dynamic counts, another player's library, cast-only or free-cast permission,
 type/color/mana-value/timing restrictions, one-of-many choices,

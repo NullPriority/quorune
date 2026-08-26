@@ -25,6 +25,31 @@ outcome and why this is one coherent change.
 - Compiler/CardProgram changes:
 - Card, residual, and capability-closure deltas: <!-- Link generated evidence, or N/A with reason. -->
 
+## Generated base/head evidence
+
+<!-- Paste the exact Markdown block from scripts/pr_evidence.py. CI recomputes it from the PR base and exact head. -->
+
+- Represented family IDs:
+- Represented capability IDs:
+- Exact head SHA:
+- Compiler version delta:
+- CardProgram schema delta:
+- Exact, trusted, and capability-closed card delta:
+- Partial, unresolved, and failed card delta:
+- Oracle and CardProgram ability delta:
+- Executable trust transitions:
+- Structural carrier delta and reconciliation:
+- Oracle and CardProgram material residual delta:
+- Interaction coverage delta:
+- Actual CommanderEngine line delta:
+- Reviewed architecture-baseline delta:
+- Direct authoritative-write delta:
+- Runtime-text delta:
+- Printed-name and Oracle-ID delta:
+- Production, test, and generated line delta:
+- Evidence fingerprint:
+- Evidence command:
+
 ## Evidence
 
 <!-- Give exact commands/results or N/A with a reason. Documentation-only changes may mark behavior-oriented rows N/A. -->

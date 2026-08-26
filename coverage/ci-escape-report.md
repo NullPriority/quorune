@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "9de4ec59b4369f062969eca5996ac43dbd9b6492d5421b2f8e9ff2491ef45cb6"
+verified: "b94c1abd4ff870bb17de11d9c7f9f2b5405b51c17a7a7d97e494db318e9b4ba3"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,13 +13,13 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 37
-- Deterministic escapes: 32
+- Escapes: 40
+- Deterministic escapes: 35
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
 - Exact-head pass rate: 1.0
-- Average observed critical path: 840.5 seconds
+- Average observed critical path: 181.25 seconds
 - Average Slot B inactive time: None
 
 ## Escapes
@@ -63,6 +63,9 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260821-35` | [32487783755](https://github.com/NullPriority/quorune/actions/runs/32487783755) | `missing_affected_test` | `not_applicable` | The closed runtime-family inventory now includes the Flashback component. The existing compiler/CardProgram impact path already selected the failing shard; focused preparation for future runtime-registry additions must run the global inventory method in addition to the new component's own tests. |
 | `ci-20260824-36` | [32619053986](https://github.com/NullPriority/quorune/actions/runs/32619053986) | `generated_artifact_drift` | `added` | Semantic-pack JSON now belongs to the shared rules-source group consumed by compiler-corpus and architecture owners, so their cache keys change before a stale reviewed-program artifact can be restored. The manifest regression locks both consumers to that shared input edge. |
 | `ci-20260824-37` | [32798435371](https://github.com/NullPriority/quorune/actions/runs/32798435371) | `missing_affected_test` | `not_applicable` | The stale compound negative is split into an exact shared-owner assertion plus the remaining unsupported dynamic and noncanonical shapes. The existing compiler impact path already selected the failing cloud shard, so no new broad local or CI edge is required. |
+| `ci-20260825-38` | [32806924786](https://github.com/NullPriority/quorune/actions/runs/32806924786) | `missing_affected_test` | `added` | The existing regression now records Menace and Hexproof as positive exact cases and uses unsupported Ward for malformed descriptor evidence. The family-indexed change-impact policy now links static-characteristic compiler owners to both their positive owner tests and neighboring dynamic exact/residual expectations. |
+| `ci-20260825-39` | [32827593705](https://github.com/NullPriority/quorune/actions/runs/32827593705) | `missing_affected_test` | `added` | The exact expectations now include the typed source-cost capability, Tourach's Gate is a positive activated case, and the four residual pairs use Etchings of the Chosen as a real fail-closed witness. The family-indexed policy links activated-cost compiler owners to these neighboring capability, exact/residual, mutation, and interaction modules before the next push. |
+| `ci-20260825-40` | [32827593705](https://github.com/NullPriority/quorune/actions/runs/32827593705) | `source_correctness` | `added` | Modal closure now derives and validates activation descriptors and their capabilities, while the promoted Knight-Captain path has positive Soldier-cost, prevention, damage, and replay evidence beside a separate real residual prevention witness. Activated-cost, prevention, and central program-registration owners now select those focused expectation modules through the family-indexed policy. |
 
 ## Measurement limitations
 

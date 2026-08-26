@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+import json
 import unittest
 
 from tests.common import ROOT
 from scripts.validate_pr_body import (
     EVIDENCE_CLASSES,
     validate_body,
+    validate_generated_evidence,
     validate_status_changes,
+)
+from scripts.pr_evidence import (
+    build_pr_evidence,
+    render_pr_evidence_markdown,
 )
 
 
@@ -42,6 +48,29 @@ Validate pull-request descriptions before expensive certification jobs begin.
 - Oracle-ID literal delta: zero
 - Compiler/CardProgram changes: none
 - Card, residual, and capability-closure deltas: N/A — no rules change.
+
+## Generated base/head evidence
+
+- Represented family IDs: N/A — no semantic support transition is represented.
+- Represented capability IDs: N/A — no semantic support transition is represented.
+- Exact head SHA: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
+- Compiler version delta: unchanged at `oracle-ir-v128`
+- CardProgram schema delta: unchanged at `2`
+- Exact, trusted, and capability-closed card delta: all zero
+- Partial, unresolved, and failed card delta: all zero
+- Oracle and CardProgram ability delta: both zero and reconciled
+- Executable trust transitions: zero
+- Structural carrier delta and reconciliation: zero with aggregate limits stated
+- Oracle and CardProgram material residual delta: both zero
+- Interaction coverage delta: zero
+- Actual CommanderEngine line delta: zero
+- Reviewed architecture-baseline delta: zero and separate from source
+- Direct authoritative-write delta: zero
+- Runtime-text delta: zero
+- Printed-name and Oracle-ID delta: both zero
+- Production, test, and generated line delta: tooling-only fixture
+- Evidence fingerprint: `fixture-evidence-fingerprint`
+- Evidence command: `python scripts/pr_evidence.py --base origin/main --head HEAD --format markdown`
 
 ## Evidence
 
@@ -143,6 +172,85 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
             "- Generators run: `.\\.venv\\Scripts\\python.exe scripts/finalize_generated.py --write`",
         )
         self.assertNotIn("missing-finalizer", self.codes(finalized))
+
+    def test_pr_evidence_reconciles_cardprogram_and_architecture_deltas(self) -> None:
+        catalog = json.loads(
+            (ROOT / "platform" / "rules-subsystems.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        provenance = {
+            row["bundle_id"]: row
+            for row in catalog["work_selection"]["harvest_provenance"]
+        }
+
+        def evidence(bundle_id: str, family_id: str, capability_id: str):
+            row = provenance[bundle_id]
+            return build_pr_evidence(
+                ROOT,
+                base_revision=row["base_commit"],
+                head_revision=row["head_commit"],
+                metadata={
+                    "transition_id": bundle_id.removeprefix("bundle:"),
+                    "bundle_id": bundle_id,
+                    "candidate_ids": row["candidate_ids"],
+                    "family_ids": [family_id],
+                    "capability_ids": [capability_id],
+                    "expected_complete_card_gain": row[
+                        "expected_complete_card_gain"
+                    ],
+                    "non_harvest_reason": None,
+                },
+            )
+
+        tap_costs = evidence(
+            "bundle:fixed-activated-tap-costs",
+            "activated_cost:fixed-tap-costs",
+            "activation.tap_untap_cost.fixed_set",
+        )
+        self.assertEqual(47, tap_costs["cards"]["oracle_exact"])
+        self.assertEqual(47, tap_costs["cards"]["trusted"])
+        self.assertEqual(
+            67, tap_costs["abilities"]["oracle_exact_node_delta"]
+        )
+        self.assertEqual(
+            0, tap_costs["abilities"]["card_program_record_delta"]
+        )
+
+        impulse = evidence(
+            "bundle:fixed-impulse-access",
+            "effect_clause:fixed-impulse-access",
+            "zone.impulse_access.fixed",
+        )
+        self.assertEqual(41, impulse["abilities"]["oracle_exact_node_delta"])
+        self.assertEqual(24, impulse["abilities"]["card_program_record_delta"])
+        actual = impulse["architecture"]["actual_pr_source"]
+        self.assertEqual(7064, actual["base"]["commander_engine_logical_lines"])
+        self.assertEqual(7065, actual["head"]["commander_engine_logical_lines"])
+        self.assertEqual(1, actual["delta"]["commander_engine_logical_lines"])
+        baseline = impulse["architecture"]["reviewed_baseline"]
+        self.assertEqual(
+            7096, baseline["base"]["commander_engine_logical_lines"]
+        )
+        self.assertEqual(
+            7065, baseline["head"]["commander_engine_logical_lines"]
+        )
+        self.assertEqual(-31, baseline["delta"]["commander_engine_logical_lines"])
+        self.assertTrue(baseline["separate_from_actual_pr_source_delta"])
+
+        body = valid_body()
+        prefix, remainder = body.split("## Generated base/head evidence", 1)
+        _old_evidence, suffix = remainder.split("## Evidence", 1)
+        body = prefix + render_pr_evidence_markdown(impulse) + "## Evidence" + suffix
+        self.assertEqual((), validate_generated_evidence(body, impulse))
+        stale = body.replace(impulse["exact_head_sha"], "f" * 40, 1)
+        self.assertEqual(
+            {"stale-pr-evidence"},
+            {
+                failure.code
+                for failure in validate_generated_evidence(stale, impulse)
+            },
+        )
 
     def test_broad_local_success_claim_requires_command_and_numeric_result(self) -> None:
         unsupported = valid_body().replace(

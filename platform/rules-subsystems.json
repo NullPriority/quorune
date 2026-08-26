@@ -335,17 +335,16 @@
     }
   ],
   "work_selection": {
-    "policy_version": 5,
+    "policy_version": 6,
     "priority_classes": [
       "ci_correctness",
       "replay_privacy_defect",
-      "architecture_owner_extraction",
-      "runtime_oracle_removal",
+      "prohibited_runtime_semantics",
+      "architecture_owner_or_mutation_defect",
       "interaction_assurance",
       "rules_foundation",
       "compiler_harvest",
-      "card_family",
-      "architecture_debt"
+      "card_family"
     ],
     "interaction_assurance": {
       "starting_uncovered_high_risk_pairs": 0
@@ -398,6 +397,7 @@
           "shared_dependencies": [],
           "shared_grammar": "exact printed Commander pairing declarations consumed by one typed game-setup owner",
           "estimated_implementation_hours": 10,
+          "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Establishes the shared pregame pairing boundary for later Partner-with search and named Partner variants without admitting those distinct grammars.",
           "explicit_exclusions": [
@@ -436,6 +436,7 @@
           ],
           "shared_grammar": "fixed public-object exile across effect contexts",
           "estimated_implementation_hours": 14,
+          "estimated_probe_hours": 2,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Unblocks one- and two-additional-blocker public-zone, modal, and linked-result cohorts after their separate typed owners are ready.",
           "explicit_exclusions": [
@@ -470,6 +471,7 @@
           "shared_dependencies": [],
           "shared_grammar": "fixed token creation through the canonical token transaction",
           "estimated_implementation_hours": 16,
+          "estimated_probe_hours": 2,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Unblocks one- and two-additional-blocker token, modal, replacement, and linked-result cohorts while reusing the shared token owner.",
           "explicit_exclusions": [
@@ -483,6 +485,7 @@
       ],
       "approved_prerequisite_exceptions": []
     },
+    "semantic_transition_declaration": null,
     "harvest_provenance": [
       {
         "bundle_id": "bundle:typed-combat-prevention",
@@ -581,6 +584,132 @@
         "expected_complete_card_gain": 37,
         "base_commit": "e700c6f6bb0dbcefc0060679e3d3bdbc76bab482",
         "head_commit": "ba67509f49cf60b1f26ac50e90d68d38bf8370dd"
+      },
+      {
+        "bundle_id": "bundle:typed-commander-pairing",
+        "candidate_ids": ["compiler:typed-commander-pairing"],
+        "expected_complete_card_gain": null,
+        "base_commit": "75f82dc20008d31dd93ab252853fa27c9784be7d",
+        "head_commit": "3bb502dc8dd6514f3745c83bd6024a29d0bbd335"
+      },
+      {
+        "bundle_id": "bundle:fixed-query-spell-cost-reductions",
+        "candidate_ids": ["compiler:fixed-query-spell-cost-reductions"],
+        "expected_complete_card_gain": null,
+        "base_commit": "3bb502dc8dd6514f3745c83bd6024a29d0bbd335",
+        "head_commit": "af117bb4e26f73589ad24eb91e99342f7ec3c943"
+      },
+      {
+        "bundle_id": "bundle:fixed-self-library-search-to-battlefield",
+        "candidate_ids": ["compiler:fixed-self-library-search-to-battlefield"],
+        "expected_complete_card_gain": null,
+        "base_commit": "af117bb4e26f73589ad24eb91e99342f7ec3c943",
+        "head_commit": "cf0b6c1e06869de5a58528c2f27baf0f306139a3"
+      },
+      {
+        "bundle_id": "bundle:fixed-self-entry-counters",
+        "candidate_ids": ["compiler:fixed-self-entry-counters"],
+        "expected_complete_card_gain": null,
+        "base_commit": "cf0b6c1e06869de5a58528c2f27baf0f306139a3",
+        "head_commit": "74be5440038f1c216b519bcf7f9d8f42f7d1220c"
+      },
+      {
+        "bundle_id": "bundle:closed-typed-effect-programs",
+        "candidate_ids": ["compiler:closed-typed-effect-programs"],
+        "expected_complete_card_gain": null,
+        "base_commit": "74be5440038f1c216b519bcf7f9d8f42f7d1220c",
+        "head_commit": "c0221e7a67fe7ec0188d6a2870356a83020223b7"
+      },
+      {
+        "bundle_id": "bundle:fixed-typed-event-effect-triggers",
+        "candidate_ids": ["compiler:fixed-typed-event-effect-triggers"],
+        "expected_complete_card_gain": null,
+        "base_commit": "c0221e7a67fe7ec0188d6a2870356a83020223b7",
+        "head_commit": "85c1969c7963fc84943e6f0b8e3aa2a8d019ce03"
+      },
+      {
+        "bundle_id": "bundle:typed-casting-payment-keywords",
+        "candidate_ids": ["compiler:typed-casting-payment-keywords"],
+        "expected_complete_card_gain": null,
+        "base_commit": "85c1969c7963fc84943e6f0b8e3aa2a8d019ce03",
+        "head_commit": "1b9f0f7f259cb4ffdb84e89d94e165a34ebaddf9"
+      },
+      {
+        "bundle_id": "bundle:closed-cast-and-attack-triggers",
+        "candidate_ids": ["compiler:closed-cast-and-attack-triggers"],
+        "expected_complete_card_gain": null,
+        "base_commit": "1b9f0f7f259cb4ffdb84e89d94e165a34ebaddf9",
+        "head_commit": "dfe937e8af8722b547525222e958909b6450b55e"
+      },
+      {
+        "bundle_id": "bundle:fixed-nonrepeating-modal-programs",
+        "candidate_ids": ["compiler:fixed-nonrepeating-modal-programs"],
+        "expected_complete_card_gain": null,
+        "base_commit": "dfe937e8af8722b547525222e958909b6450b55e",
+        "head_commit": "6df1d3aea71db7f3b6e35f6c96b391bc19d500bb"
+      },
+      {
+        "bundle_id": "bundle:closed-typed-effect-program-composition",
+        "candidate_ids": ["compiler:closed-typed-effect-program-composition"],
+        "expected_complete_card_gain": null,
+        "base_commit": "6df1d3aea71db7f3b6e35f6c96b391bc19d500bb",
+        "head_commit": "cf1ec2543949ec09a53a554406f3acd2b1b9dc90"
+      },
+      {
+        "bundle_id": "bundle:fixed-protection-qualities",
+        "candidate_ids": ["compiler:fixed-protection-qualities"],
+        "expected_complete_card_gain": null,
+        "base_commit": "cf1ec2543949ec09a53a554406f3acd2b1b9dc90",
+        "head_commit": "09614f71cd5a82eea852e90e4d13e846f10cfb22"
+      },
+      {
+        "bundle_id": "bundle:fixed-direct-target-predicates",
+        "candidate_ids": ["compiler:fixed-direct-target-predicates"],
+        "expected_complete_card_gain": null,
+        "base_commit": "09614f71cd5a82eea852e90e4d13e846f10cfb22",
+        "head_commit": "3a7a33780ba69f4676c287588ba1b93b83fe9b01"
+      },
+      {
+        "bundle_id": "bundle:fixed-typecycling",
+        "candidate_ids": ["compiler:fixed-typecycling"],
+        "expected_complete_card_gain": null,
+        "base_commit": "3a7a33780ba69f4676c287588ba1b93b83fe9b01",
+        "head_commit": "d6899f2069a9d5b59867a0fa62b2a6119ec3805a"
+      },
+      {
+        "bundle_id": "bundle:fixed-controller-draw-discard-sequences",
+        "candidate_ids": ["compiler:fixed-controller-draw-discard-sequences"],
+        "expected_complete_card_gain": null,
+        "base_commit": "d6899f2069a9d5b59867a0fa62b2a6119ec3805a",
+        "head_commit": "2f3bf9105bf0c417f176fca6a032ad9cb23ca99e"
+      },
+      {
+        "bundle_id": "bundle:fixed-static-characteristic-grants",
+        "candidate_ids": ["compiler:fixed-static-characteristic-grants"],
+        "expected_complete_card_gain": null,
+        "base_commit": "2f3bf9105bf0c417f176fca6a032ad9cb23ca99e",
+        "head_commit": "190519aa79ea73766494df05724ea9b39d1db0c9"
+      },
+      {
+        "bundle_id": "bundle:fixed-activated-zone-change-costs",
+        "candidate_ids": ["compiler:fixed-activated-zone-change-costs"],
+        "expected_complete_card_gain": null,
+        "base_commit": "190519aa79ea73766494df05724ea9b39d1db0c9",
+        "head_commit": "dfeda0a562e066849046bf419a85178f1ba31b38"
+      },
+      {
+        "bundle_id": "bundle:fixed-activated-tap-costs",
+        "candidate_ids": ["compiler:fixed-activated-tap-costs"],
+        "expected_complete_card_gain": null,
+        "base_commit": "dfeda0a562e066849046bf419a85178f1ba31b38",
+        "head_commit": "5bcc7ea5ab15a95eb7dad2ed82837a23e3402ead"
+      },
+      {
+        "bundle_id": "bundle:fixed-impulse-access",
+        "candidate_ids": ["compiler:fixed-impulse-access"],
+        "expected_complete_card_gain": null,
+        "base_commit": "5bcc7ea5ab15a95eb7dad2ed82837a23e3402ead",
+        "head_commit": "77a6cbae5bd91a75220c25051f9bb9fa61d0f36a"
       }
     ],
     "reviewed_rerank_history": [
