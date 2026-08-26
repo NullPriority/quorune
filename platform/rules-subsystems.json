@@ -516,7 +516,15 @@
       ],
       "approved_prerequisite_exceptions": []
     },
-    "semantic_transition_declaration": null,
+    "semantic_transition_declaration": {
+      "transition_id": "fixed-combat-state-direct-targets-v1",
+      "bundle_id": "bundle:fixed-combat-state-direct-targets",
+      "candidate_ids": ["compiler:fixed-combat-state-direct-targets"],
+      "family_ids": ["target_or_choice:target-predicate"],
+      "capability_ids": ["state_query.permanent.public_state_predicate"],
+      "expected_complete_card_gain": 72,
+      "non_harvest_reason": null
+    },
     "harvest_provenance": [
       {
         "bundle_id": "bundle:typed-combat-prevention",
