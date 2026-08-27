@@ -315,8 +315,11 @@ def _activated_effect_dependency_gate(
             "draw_with_actions",
             "destroy",
             "destroy_all",
+            "destroy_targets",
             "exile_permanent",
+            "exile_permanent_targets",
             "exile_public_graveyard_card",
+            "exile_public_graveyard_targets",
             "explore",
             "grant_keyword_until_end_of_turn",
             "grant_declaration_restriction_until_end_of_turn",
@@ -332,6 +335,8 @@ def _activated_effect_dependency_gate(
             "remove_counters",
             "remove_all_counters",
             "return_graveyard_card_to_owner_hand",
+            "return_graveyard_targets_to_owner_hand",
+            "return_permanent_targets_to_owner_hand",
             "fixed_self_counter_keyword_action",
             "fixed_bolster",
             "fixed_impulse_access",
@@ -347,7 +352,9 @@ def _activated_effect_dependency_gate(
             "surveil",
             "self_zone_move",
             "tap",
+            "tap_targets",
             "untap",
+            "untap_targets",
         }
     )
     closed_prevention_effect = (

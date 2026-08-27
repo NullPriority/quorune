@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "6503b81cd70971d1ac07d1f5de7ab9083567941989a316c2968ed1972051b3af"
+verified: "917a452965242580c5a8426ccd9649a285f143e66e625e93a2094e63899977a5"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,6 +14,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Card | Score | Pieces | Systems | Abilities | Blockers | Rulings | Status |
 |---|---:|---:|---:|---:|---:|---:|---|
 | Valki, God of Lies // Tibalt, Cosmic Impostor | 240 | 27 | 6 | 6 | 14 | 22 | `blocked` |
+| Ugin, Eye of the Storms | 218 | 40 | 6 | 5 | 13 | 3 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
 | Terra, Magical Adept // Esper Terra | 203 | 21 | 7 | 6 | 10 | 14 | `blocked` |
 | Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 201 | 23 | 7 | 6 | 10 | 10 | `blocked` |
@@ -25,6 +26,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Sheoldred // The True Scriptures | 192 | 22 | 7 | 7 | 11 | 4 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 190 | 23 | 4 | 7 | 10 | 19 | `blocked` |
 | Dion, Bahamut's Dominant // Bahamut, Warden of Light | 189 | 23 | 6 | 7 | 8 | 10 | `blocked` |
+| Invasion of Segovia // Caetus, Sea Tyrant of Segovia | 189 | 20 | 6 | 4 | 6 | 23 | `blocked` |
 | Conqueror's Galleon // Conqueror's Foothold | 187 | 28 | 5 | 7 | 3 | 14 | `blocked` |
 | Elesh Norn // The Argent Etchings | 187 | 21 | 7 | 7 | 12 | 2 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
@@ -40,7 +42,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
-| Ugin, Eye of the Storms | 176 | 26 | 6 | 5 | 13 | 3 | `blocked` |
 | Invasion of Fiora // Marchesa, Resolute Monarch | 175 | 17 | 5 | 7 | 6 | 17 | `blocked` |
 | Nicol Bolas, the Ravager // Nicol Bolas, the Arisen | 175 | 30 | 5 | 7 | 5 | 11 | `blocked` |
 | Ojer Taq, Deepest Foundation // Temple of Civilization | 175 | 23 | 7 | 6 | 9 | 2 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
 | Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
 | Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
-| Athreos, Shroud-Veiled | 165 | 18 | 5 | 4 | 3 | 24 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

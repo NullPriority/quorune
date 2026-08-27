@@ -99,3 +99,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0082 — typed fixed nonrepeating modal programs](0082-typed-fixed-nonrepeating-modal-programs.md)
 - [ADR 0083 — typed fixed impulse access](0083-typed-fixed-impulse-access.md)
 - [ADR 0084 — typed fixed regeneration effects](0084-typed-fixed-regeneration-effects.md)
+- [ADR 0085 — typed fixed homogeneous target sets](0085-typed-fixed-homogeneous-target-sets.md)

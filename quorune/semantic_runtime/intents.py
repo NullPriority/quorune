@@ -136,6 +136,31 @@ class SetPermanentTappedIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class SetPermanentsTappedIntent:
+    object_refs: tuple[str, ...]
+    actor: str
+    tapped: bool
+    reason: str
+
+    def __post_init__(self) -> None:
+        if (
+            not isinstance(self.object_refs, (list, tuple))
+            or any(
+                type(value) is not str or not value
+                for value in self.object_refs
+            )
+            or len(self.object_refs) != len(set(self.object_refs))
+            or type(self.actor) is not str
+            or not self.actor
+            or type(self.tapped) is not bool
+            or type(self.reason) is not str
+            or not self.reason
+        ):
+            raise ValueError("Target-set tap-state intent is malformed")
+        object.__setattr__(self, "object_refs", tuple(self.object_refs))
+
+
+@dataclass(frozen=True, slots=True)
 class UntapAllCreaturesIntent:
     actor: str
     reason: str
@@ -233,6 +258,40 @@ class DestroyPermanentSetIntent:
             _freeze_replacement_selections(
                 self.replacement_selections,
                 family="Destruction-set",
+            ),
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class DestroyPermanentTargetsIntent:
+    actor: str
+    object_refs: tuple[str, ...]
+    reason: str
+    regeneration_prohibited: bool = False
+    replacement_selections: tuple[str | FrozenMap, ...] = ()
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.actor) is not str
+            or not self.actor
+            or not isinstance(self.object_refs, (list, tuple))
+            or any(
+                type(value) is not str or not value
+                for value in self.object_refs
+            )
+            or len(self.object_refs) != len(set(self.object_refs))
+            or type(self.reason) is not str
+            or not self.reason
+            or type(self.regeneration_prohibited) is not bool
+        ):
+            raise ValueError("Target-set destruction intent is malformed")
+        object.__setattr__(self, "object_refs", tuple(self.object_refs))
+        object.__setattr__(
+            self,
+            "replacement_selections",
+            _freeze_replacement_selections(
+                self.replacement_selections,
+                family="Target-set destruction",
             ),
         )
 
@@ -1467,10 +1526,12 @@ SemanticIntent: TypeAlias = (
     | MillCardsIntent
     | BecomeMonarchIntent
     | SetPermanentTappedIntent
+    | SetPermanentsTappedIntent
     | UntapAllCreaturesIntent
     | CreateRegenerationShieldIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
+    | DestroyPermanentTargetsIntent
     | ReturnPermanentToOwnerHandIntent
     | ReturnGraveyardCardToOwnerHandIntent
     | ExilePermanentIntent

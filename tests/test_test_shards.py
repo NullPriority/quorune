@@ -18,9 +18,11 @@ from scripts.test_shards import (
     discovered_modules,
     functional_shards,
     load_manifest,
+    load_observed_module_timings,
     load_suite,
     primary_matrix,
     PytestShardRecorder,
+    rebalance_primary_shards,
     run_modules,
     suite_modules,
     test_collection_fingerprint,
@@ -77,17 +79,95 @@ class TestShardManifestTests(unittest.TestCase):
                         load_manifest(path)
 
     def test_duplicate_primary_assignment_fails_closed(self):
+        first, second = functional_shards(self.manifest)[:2]
         mutated = deepcopy(self.manifest)
-        module = mutated["primary_shards"]["core-domain"][0]
-        mutated["primary_shards"]["compiler-cardprogram"].append(module)
+        module = mutated["primary_shards"][first][0]
+        mutated["primary_shards"][second].append(module)
         with self.assertRaisesRegex(TestShardError, "duplicates"):
             validate_partition(mutated)
 
     def test_missing_primary_assignment_fails_closed(self):
+        first = functional_shards(self.manifest)[0]
         mutated = deepcopy(self.manifest)
-        mutated["primary_shards"]["core-domain"].pop()
+        mutated["primary_shards"][first].pop()
         with self.assertRaisesRegex(TestShardError, "missing"):
             validate_partition(mutated)
+
+    def test_observed_timing_loader_requires_one_successful_ubuntu_result(self):
+        document = {
+            "schema_version": 2,
+            "type": "pytest-xdist-shard-result",
+            "platform": "ubuntu",
+            "suite": "fixture",
+            "modules": ["test_first", "test_second"],
+            "successful": True,
+            "backend": "pytest-xdist",
+            "workers": 4,
+            "distribution": "loadfile",
+            "module_timings": [
+                {
+                    "module": "test_first",
+                    "worker_elapsed_seconds": 2.5,
+                },
+                {
+                    "module": "test_second",
+                    "worker_elapsed_seconds": 1.25,
+                },
+            ],
+        }
+        with TemporaryDirectory() as raw:
+            path = Path(raw) / "fixture.json"
+            path.write_text(json.dumps(document), encoding="utf-8")
+            self.assertEqual(
+                {"test_first": 2.5, "test_second": 1.25},
+                load_observed_module_timings(Path(raw)),
+            )
+            document["workers"] = 3
+            path.write_text(json.dumps(document), encoding="utf-8")
+            with self.assertRaisesRegex(TestShardError, "execution shape"):
+                load_observed_module_timings(Path(raw))
+
+    def test_duration_rebalance_preserves_semantic_impact_suites(self):
+        original_functional = functional_shards(self.manifest)
+        semantic_modules = {
+            name: suite_modules(self.manifest, name)
+            for name in (
+                "compiler-cardprogram",
+                "targets-choices-continuations",
+            )
+        }
+        modules = sorted(
+            module
+            for name in original_functional
+            for module in self.manifest["primary_shards"][name]
+        )
+        timings = {
+            module: float(1 + index % 23)
+            for index, module in enumerate(modules)
+        }
+        balanced, summary = rebalance_primary_shards(
+            self.manifest,
+            timings,
+        )
+        validate_partition(balanced)
+        self.assertEqual(len(original_functional), summary["functional_shards"])
+        self.assertTrue(
+            all(
+                name.startswith("functional-")
+                for name in functional_shards(balanced)
+            )
+        )
+        for name, expected in semantic_modules.items():
+            with self.subTest(name=name):
+                self.assertEqual(
+                    expected,
+                    suite_modules(balanced, name),
+                )
+        makespans = [
+            row["makespan_seconds"]
+            for row in summary["predicted_shards"].values()
+        ]
+        self.assertLessEqual(max(makespans) - min(makespans), 23.0)
 
     def test_overlay_suites_are_explicit_and_known(self):
         windows = suite_modules(self.manifest, "windows-compat")

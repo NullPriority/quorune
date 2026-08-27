@@ -309,8 +309,12 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                 )
 
     def test_unsupported_public_zone_move_shapes_remain_residual(self):
+        self.assertIsNone(
+            public_zone_move_effect_template(
+                "Exile up to one target card from a graveyard."
+            )
+        )
         unsupported = (
-            "Exile up to one target card from a graveyard.",
             "Exile target legendary creature card from a graveyard.",
             "Exile target Zombie card from a graveyard.",
             "Exile target card with mana value 3 from a graveyard.",

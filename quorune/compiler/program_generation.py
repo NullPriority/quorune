@@ -69,6 +69,9 @@ from ..rules.node_capability_shapes import (
     targeted_return_to_hand_node_capabilities,
     targeted_tap_state_node_capabilities,
 )
+from ..rules.fixed_homogeneous_target_set_capability_shapes import (
+    is_closed_fixed_homogeneous_target_set_program,
+)
 from ..rules.token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
@@ -1334,6 +1337,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_source_effect_sequence_program,
         _is_closed_fixed_counter_placement_set_program,
         _is_closed_fixed_counter_placement_target_set_program,
+        is_closed_fixed_homogeneous_target_set_program,
         _is_closed_fixed_player_counter_placement_program,
         _is_closed_fixed_life_cumulative_upkeep_program,
         _is_closed_fixed_mana_cumulative_upkeep_program,

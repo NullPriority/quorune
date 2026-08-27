@@ -31,6 +31,7 @@ jobs:
       ci_peak_jobs: ${{ steps.impact.outputs.ci_peak_jobs }}
       ci_job_headroom: ${{ steps.impact.outputs.ci_job_headroom }}
       reuse_certification: ${{ steps.certification_mode.outputs.reuse_certification }}
+      metadata_only: ${{ github.event.action == 'edited' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,7 +55,7 @@ jobs:
           --exact-head-sha "${{ github.event.pull_request.head.sha }}"
           --workflow-run-id "${GITHUB_RUN_ID}"
           --event-action "${{ github.event.action }}"
-          --wait-seconds "21600"
+          --wait-seconds "0"
           --github-output "${GITHUB_OUTPUT}"
       - id: impact
         name: Classify exact changed-file impact
@@ -65,7 +66,9 @@ jobs:
   python:
     name: PR / Python / ${{ matrix.shard }}
     needs: plan
-    if: needs.plan.outputs.reuse_certification != 'true'
+    if: >-
+      needs.plan.outputs.metadata_only != 'true' &&
+      needs.plan.outputs.reuse_certification != 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -105,7 +108,9 @@ jobs:
   generated:
     name: PR / Generated and architecture
     needs: plan
-    if: needs.plan.outputs.reuse_certification != 'true'
+    if: >-
+      needs.plan.outputs.metadata_only != 'true' &&
+      needs.plan.outputs.reuse_certification != 'true'
     runs-on: ubuntu-latest
     env:
       MTG_CARD_DB: data/test-ci.sqlite3
@@ -140,7 +145,9 @@ jobs:
   package:
     name: PR / Package
     needs: plan
-    if: needs.plan.outputs.reuse_certification != 'true'
+    if: >-
+      needs.plan.outputs.metadata_only != 'true' &&
+      needs.plan.outputs.reuse_certification != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -160,6 +167,7 @@ jobs:
     name: PR / Windows / compatibility
     needs: plan
     if: >-
+      needs.plan.outputs.metadata_only != 'true' &&
       needs.plan.outputs.reuse_certification != 'true' &&
       needs.plan.outputs.windows_full != 'true'
     runs-on: windows-latest
@@ -202,6 +210,7 @@ jobs:
     name: PR / Windows / ${{ matrix.shard }}
     needs: plan
     if: >-
+      needs.plan.outputs.metadata_only != 'true' &&
       needs.plan.outputs.reuse_certification != 'true' &&
       needs.plan.outputs.windows_full == 'true'
     runs-on: windows-latest
@@ -258,7 +267,9 @@ jobs:
   windows_package:
     name: PR / Windows / package
     needs: plan
-    if: needs.plan.outputs.reuse_certification != 'true'
+    if: >-
+      needs.plan.outputs.metadata_only != 'true' &&
+      needs.plan.outputs.reuse_certification != 'true'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -279,6 +290,7 @@ jobs:
     name: PR / Windows Certification
     if: >-
       always() &&
+      needs.plan.outputs.metadata_only != 'true' &&
       needs.plan.outputs.reuse_certification != 'true'
     needs: [plan, windows_compatibility, windows_full, windows_package]
     runs-on: ubuntu-latest
@@ -308,7 +320,9 @@ jobs:
   browser:
     name: PR / Browser / ${{ matrix.group }}
     needs: plan
-    if: needs.plan.outputs.reuse_certification != 'true'
+    if: >-
+      needs.plan.outputs.metadata_only != 'true' &&
+      needs.plan.outputs.reuse_certification != 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -383,7 +397,9 @@ jobs:
 
   certification:
     name: PR / Certification
-    if: always()
+    if: >-
+      always() &&
+      needs.plan.outputs.metadata_only != 'true'
     needs: [plan, python, generated, package, windows_certification, browser]
     runs-on: ubuntu-latest
     steps:
@@ -434,6 +450,7 @@ jobs:
     name: PR / Metrics
     if: >-
       always() &&
+      needs.plan.outputs.metadata_only != 'true' &&
       needs.plan.outputs.reuse_certification != 'true'
     needs: [plan, python, generated, package, windows_certification, browser, certification]
     runs-on: ubuntu-latest

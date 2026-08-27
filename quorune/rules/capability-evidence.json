@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "00066b899ab23198afc2a04fd15b7861edd0f9b3f2bef9fdbe7f30adc0afe85a",
-  "declaration_source_fingerprint": "ffaf0f9eb5dc22f10c33f0f411d20aefa0644ea4a9a518091399be4087d8a685",
+  "registry_fingerprint": "00553e1bef366e010311a040477cc4e10c7a6980c0ee4bcbbb1844260fbd8204",
+  "declaration_source_fingerprint": "d1c8ad9536f58b6ccbd44d68f7237e3d17c59007429a40aa23074afd2390932a",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -37567,6 +37567,176 @@
       "applicability_note": "Preserve the nested counter replacement journal and doubled committed amount through exact replay."
     },
     {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_multi_target_destruction_preserves_protections_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose one target set with ordinary destruction, a shield-counter replacement, Indestructible, and the canonical simultaneous destruction transaction."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_partial_illegality_resolves_surviving_target_atomically",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Revalidate the whole selected set, remove one stale incarnation, and commit only the surviving target without replaying or reparsing Oracle prose."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_tap_and_untap_sets_reuse_scalar_stun_owner",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Execute tap and untap target sets through the canonical scalar owner, including the represented stun-counter replacement on one member without suppressing the other member's untap."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_four_player_same_graveyard_offer_resolution_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Advertise public graveyard targets across four seats while enforcing one shared owner for the submitted homogeneous group."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_target_set_shape_and_handler_mutants_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject altered target references, bounds, operations, same-owner schemas, runtime cardinality, compiler production, and blocked dependency closure."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_homogeneous_target_set_grammar_stays_closed",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep heterogeneous, dynamic, linked, compound, hidden-zone, battlefield-return, and over-bound forms as material residuals."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_homogeneous_target_sets_compile_across_contexts",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lift the same singular typed target owner into exact, one-or-two, and up-to target groups across spell, trigger, and activated contexts."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_four_player_same_graveyard_offer_resolution_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only public legal references and the same-owner contract while excluding physical and logical object identities from every principal snapshot."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_four_player_same_graveyard_offer_resolution_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay target submission, shared-owner validation, simultaneous public-zone movement, and the final authoritative hash exactly."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_homogeneous_target_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_multi_target_destruction_preserves_protections_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay one ordinary destruction, one shield replacement, one Indestructible result, and their canonical simultaneous transition."
+    },
+    {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "interaction",
       "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
@@ -49374,5 +49544,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "18984c70699c2641f250a9c7c7452a91b0c8f193b12d16098cd2e71e6a39c978"
+  "fingerprint": "ef774d2f791754995dabecbfcb91fb38be24435c7588af35ab10b4cb347c8200"
 }

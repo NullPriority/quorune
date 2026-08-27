@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 5,
+  "contract_version": 6,
   "mechanic_id": "tap-and-untap",
   "official_name": "Tap and Untap",
   "effective_date": "2026-08-07",
@@ -39,6 +39,7 @@
     "events": [
       "one permanent becomes tapped",
       "one permanent becomes untapped",
+      "a bounded homogeneous target set changes tap state",
       "a stun counter replaces an untap",
       "all represented creatures become untapped"
     ],
@@ -63,6 +64,7 @@
     ],
     "targets": [
       "the shared typed direct-target compiler accepts exactly one closed permanent predicate, including represented type disjunctions, controller relations, source exclusion, creature subtypes, one fixed mana-value bound, and the Forest, Gate, and Vehicle noncreature subtypes",
+      "the fixed homogeneous target-set owner composes that same predicate with an exact, one-or-two, or up-to bound from one through six",
       "target legality is revalidated on resolution before the canonical tap-state effect executes"
     ],
     "choices": [
@@ -117,7 +119,8 @@
     "exact source-incarnation tap-state effects",
     "current-or-last-known enchanted-creature tap-state effects",
     "controller-scoped optional tap-or-untap choice with decline",
-    "fixed mana-value-qualified direct permanent target"
+    "fixed mana-value-qualified direct permanent target",
+    "bounded homogeneous tap and untap target sets"
   ],
   "witness_cards": [
     {
@@ -181,14 +184,16 @@
     "test_source_self_activation_is_incarnation_pinned_and_replays",
     "test_enchanted_creature_uses_pinned_attachment_and_replays",
     "test_optional_tap_state_choice_is_seat_scoped_atomic_and_replays",
-    "test_fixed_mana_value_targets_compile_across_effect_contexts"
+    "test_fixed_mana_value_targets_compile_across_effect_contexts",
+    "test_fixed_homogeneous_target_sets_compile_across_contexts",
+    "test_partial_illegality_resolves_surviving_target_atomically"
   ],
   "implementation": {
-    "component": "typed single-object compiler, shared direct-permanent predicate owner, source-incarnation and current-or-LKI attachment references, scalar option continuation, tap and untap semantic handlers, tap_state.untap_permanent, and the canonical exact counter-removal transaction",
-    "version": "tap-state-effects-v5"
+    "component": "typed single-object and fixed homogeneous target-set compilers, shared direct-permanent predicate owner, source-incarnation and current-or-LKI attachment references, scalar option continuation, tap and untap semantic handlers, tap_state.untap_permanent, and the canonical exact counter-removal transaction",
+    "version": "tap-state-effects-v6"
   },
   "known_blockers": [
-    "aggregate, multi-target, modal, quantified, linked, and compound tap-state clauses remain precise compiler residuals",
+    "aggregate, modal, quantified, linked, and compound tap-state clauses plus target sets outside the bounded homogeneous owner remain precise compiler residuals",
     "continuous effects that prohibit tapping or untapping are not represented generically; cards carrying those effects remain material residuals and fail match trust closed",
     "replacement discovery and affected-player ordering beyond the represented stun-counter replacement are incomplete",
     "complete layer dependencies and dynamically granted types are not capability-closed",

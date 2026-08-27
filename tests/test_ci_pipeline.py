@@ -20,7 +20,12 @@ from scripts.shard_result_validation import (
     ShardResultError,
     validate_result_document,
 )
-from scripts.test_shards import load_manifest, primary_matrix, suite_modules
+from scripts.test_shards import (
+    functional_shards,
+    load_manifest,
+    primary_matrix,
+    suite_modules,
+)
 from scripts.verify_ci_needs import failed_dependencies
 from scripts.verify_windows_ci import (
     WindowsCertificationError,
@@ -307,7 +312,8 @@ class CiPipelineTests(unittest.TestCase):
                     path.write_text(json.dumps(document), encoding="utf-8")
             summary = validate_nightly_results(root)
             self.assertEqual(2 * len(load_manifest()["execution_order"]), summary["assignments"])
-            (root / "ubuntu" / "core-domain" / "result.json").unlink()
+            first_functional = functional_shards(load_manifest())[0]
+            (root / "ubuntu" / first_functional / "result.json").unlink()
             with self.assertRaisesRegex(NightlyCertificationError, "incomplete"):
                 validate_nightly_results(root)
 
@@ -496,10 +502,17 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("PR / Certification", pr)
         self.assertIn("opened, synchronize, reopened, edited", pr)
         self.assertNotIn("ready_for_review", pr)
+        self.assertIn(
+            "metadata_only: ${{ github.event.action == 'edited' }}", pr
+        )
         self.assertIn("python scripts/validate_pr_body.py", pr)
         self.assertIn("certification_receipt.py can-reuse-pr", pr)
         self.assertIn("--event-action \"${{ github.event.action }}\"", pr)
-        self.assertIn("--wait-seconds \"21600\"", pr)
+        self.assertIn("--wait-seconds \"0\"", pr)
+        self.assertGreaterEqual(
+            pr.count("needs.plan.outputs.metadata_only"),
+            10,
+        )
         self.assertGreaterEqual(
             pr.count("needs.plan.outputs.reuse_certification"),
             12,

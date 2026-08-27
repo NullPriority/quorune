@@ -985,6 +985,32 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0043",
+      "adr": "docs/adr/0085-typed-fixed-homogeneous-target-sets.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "8b7299e531d82aeea91352ab676c89ae259d4cfbe3d11742fac26be3e3028e3d",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and seven reviewed fixed homogeneous target-set operations serialized after the typed target-set harvest.",
+      "rationale": "The measured broad family adds seven strict operations that lift existing scalar destroy, exile, return, tap, and untap owners through one shared target-cardinality and same-owner legality boundary. CommanderEngine, direct and unowned GameState writes, oversized symbols, Oracle-ID literals, runtime Oracle prose, and prohibited identity dispatch remain flat. Existing destruction, simultaneous zone-transition, target-revalidation, tap-state, rollback, privacy, and replay owners retain authority.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact residual identities and counts in the rebound schema-4 baseline plus destroy_targets, exile_permanent_targets, exile_public_graveyard_targets, return_graveyard_targets_to_owner_hand, return_permanent_targets_to_owner_hand, tap_targets, untap_targets, TargetGroup.same_owner, and the typed compiler, capability-shape, handler, and intent owners described by ADR 0085; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, oversized-symbol growth, arbitrary callbacks, family-specific ability-presence checks, dynamic characteristic counts, heterogeneous or divided targets, hidden zones, battlefield returns, linked results, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the target-set owner only while closed bounds, homogeneous predicates, same-owner legality, resolution revalidation, canonical simultaneous transactions, scalar tap-state replacements, rollback, privacy, mutation, and replay evidence remain enforced.",
+      "target_milestone": "capability-closed broad compiler harvest through reusable typed target-set owners",
+      "replay_implications": "CardPrograms record only the bounded target schema and typed operation; Game Record v3 preserves public offers, submitted stable references, same-owner validation, resolution-time survivor sets, replacement choices, canonical mutation journals, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "Only public battlefield and graveyard references are offered. Same-owner is exposed as a relation without physical or logical object identity, and owner-hand results retain existing principal-scoped known-information projection.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict operations; malformed bounds or fields, duplicate or mixed-owner submissions, stale incarnations, unsupported predicates, tampered replacement selections, and blocked scalar dependencies fail before mutation.",
+      "tests": [
+        "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_homogeneous_target_sets_compile_across_contexts",
+        "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_homogeneous_target_set_grammar_stays_closed",
+        "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetCompilerTests.test_fixed_target_set_shape_and_handler_mutants_fail_closed",
+        "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_four_player_same_graveyard_offer_resolution_and_replay",
+        "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_partial_illegality_resolves_surviving_target_atomically",
+        "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_multi_target_destruction_preserves_protections_and_replay",
+        "tests.test_fixed_homogeneous_target_sets.FixedHomogeneousTargetSetRuntimeTests.test_tap_and_untap_sets_reuse_scalar_stun_owner",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

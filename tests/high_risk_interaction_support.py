@@ -383,12 +383,14 @@ _WITNESSES = {
         "{R}, {T}: Shuffle your library. Activate only if you control two or "
         "more red permanents.",
     ),
-    "wintermoon-mesa": _Witness(
-        "Wintermoon Mesa",
+    "bretagard-stronghold": _Witness(
+        "Bretagard Stronghold",
         "Land",
         "This land enters tapped.\n"
-        "{T}: Add {C}.\n"
-        "{2}, {T}, Sacrifice this land: Tap two target lands.",
+        "{T}: Add {G}.\n"
+        "{G}{W}{W}, {T}, Sacrifice this land: Put a +1/+1 counter on each of "
+        "up to two target creatures you control. They gain vigilance and "
+        "lifelink until end of turn. Activate only as a sorcery.",
     ),
     "ebony-fly": _Witness(
         "Ebony Fly",
@@ -1011,7 +1013,7 @@ _bind("electrolyze", ZONE_AND_CHOICE_PAIRS[2], ZONE_AND_CHOICE_PAIRS[4])
 _bind("cunning-strike", ZONE_AND_CHOICE_PAIRS[3])
 _bind("blur", ZONE_AND_CHOICE_PAIRS[5])
 _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])
-_bind("wintermoon-mesa", ZONE_AND_CHOICE_PAIRS[7])
+_bind("bretagard-stronghold", ZONE_AND_CHOICE_PAIRS[7])
 _bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[8])
 _bind("heartless-pillage", ZONE_AND_CHOICE_PAIRS[9])
 _bind("snow-day", ZONE_AND_CHOICE_PAIRS[10])

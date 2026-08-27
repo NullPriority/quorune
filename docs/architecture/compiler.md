@@ -137,6 +137,17 @@ remains outside the choice. Modal, conditional, linked-result, pronoun,
 variable, repeated, independently targeted, unsupported optional, quoted-boundary,
 parenthetical-boundary, and larger sequences remain source-spanned residuals.
 
+`compiler/fixed_homogeneous_target_sets.py` lifts an existing reviewed scalar
+destroy, exile, tap, untap, battlefield-return, own-graveyard-return, or public-
+graveyard-exile clause into one interchangeable public target set. The grammar
+accepts exact counts from two through six, one-or-two, and up-to one through
+six. It reuses the scalar predicate and operation capability, adds one shared
+count and resolution-revalidation capability, and supports a single-graveyard
+constraint through target ownership. Heterogeneous roles, divided or dynamic
+quantities, linked results, compound or conditional tails, hidden zones,
+battlefield returns, and unsupported characteristic dependencies remain
+source-spanned residuals.
+
 `compiler/closed_effect_programs.py` owns the broader bounded composition
 boundary for two to four mandatory components. It partitions only top-level
 sentence, comma-then, and conjunction boundaries, requires every component to

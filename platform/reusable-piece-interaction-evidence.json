@@ -3047,6 +3047,21 @@
         "assertion": "The dedicated pair subtest compiles this exact residual boundary through the normal CardProgram path and proves runtime admission remains unresolved, non-strict, and incompatible until both represented pieces have trusted executable semantics."
     },
     {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_wintermoon_mesa_composes_tapped_entry_with_fixed_target_set",
+      "piece_ids": [
+        "capability.resolution.effect.fixed_homogeneous_target_set",
+        "capability.zone.entry.tapped_state"
+      ],
+      "capability_ids": [
+        "resolution.effect.fixed_homogeneous_target_set",
+        "zone.entry.tapped_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Wintermoon Mesa enters tapped through its typed entry owner, then after becoming untapped pays its tap-and-sacrifice costs and resolves one fixed two-land target set through the canonical tap-state owner with exact replay."
+    },
+    {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
         "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",

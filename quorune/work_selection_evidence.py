@@ -24,13 +24,12 @@ _HISTORY_FIELDS = {
     "pending_transition",
     "fingerprint",
 }
-_PENDING_FIELDS = {
+_PENDING_COMMON_FIELDS = {
     "transition_id",
     "bundle_id",
     "candidate_ids",
     "family_ids",
     "capability_ids",
-    "expected_complete_card_gain",
     "non_harvest_reason",
     "outcome_kind",
     "compiler_version",
@@ -40,6 +39,10 @@ _PENDING_FIELDS = {
     "grants_gameplay_trust",
     "resolution",
 }
+_PENDING_LEGACY_FIELDS = _PENDING_COMMON_FIELDS | {
+    "expected_complete_card_gain"
+}
+_PENDING_MEASURED_FIELDS = _PENDING_COMMON_FIELDS | {"measurement_id"}
 _RECEIPT_PATHS = {
     "coverage/card-program-coverage-commander.json",
     "coverage/oracle-coverage-commander.json",
@@ -89,6 +92,12 @@ _CONTENT_ENTRY_FIELDS = _LEGACY_ENTRY_FIELDS | {
     "receipt_identity_kind",
     "entry_fingerprint",
 }
+_MEASURED_CONTENT_ENTRY_FIELDS = _CONTENT_ENTRY_FIELDS | {
+    "measurement_id",
+    "measurement_probe_id",
+    "measurement_receipt_fingerprint",
+    "measurement_frontier_fingerprint",
+}
 _FORECAST_CORRECTION_FIELDS = {
     "transition_id",
     "original_expected_complete_card_gain",
@@ -101,8 +110,11 @@ _FORECAST_CORRECTION_FIELDS = {
 _CORRECTED_CONTENT_ENTRY_FIELDS = _CONTENT_ENTRY_FIELDS | {
     "forecast_correction"
 }
-COHORT_MEASUREMENT_SCHEMA_VERSION = 1
-COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v1"
+_CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS = (
+    _MEASURED_CONTENT_ENTRY_FIELDS | {"forecast_correction"}
+)
+COHORT_MEASUREMENT_SCHEMA_VERSION = 2
+COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v2"
 _COHORT_DECISIONS = {
     "bounded_executable",
     "retired_below_harvest_floor",
@@ -121,10 +133,62 @@ _COHORT_ROW_FIELDS = {
     "decision",
     "grants_gameplay_trust",
 }
+_TRANSITION_MEASUREMENT_FIELDS = {
+    "transition_id",
+    "frontier_fingerprint",
+    "oracle_source_sha256",
+    "measurement",
+    "receipt_fingerprint",
+}
 
 
 class WorkSelectionCohortMeasurementError(ValueError):
     pass
+
+
+def _validate_transition_measurements(
+    rows: Sequence[Any],
+    *,
+    expected_bundles: Mapping[str, str],
+    metric_fields: Sequence[str],
+) -> None:
+    seen_transitions: set[str] = set()
+    for raw in rows:
+        if not isinstance(raw, Mapping) or set(raw) != _TRANSITION_MEASUREMENT_FIELDS:
+            raise WorkSelectionCohortMeasurementError(
+                "Transition cohort measurement is malformed"
+            )
+        receipt = dict(raw)
+        receipt_fingerprint = receipt.pop("receipt_fingerprint", None)
+        transition_id = str(raw.get("transition_id") or "")
+        measurement = raw.get("measurement")
+        if (
+            not transition_id
+            or transition_id in seen_transitions
+            or receipt_fingerprint != stable_hash(receipt)
+            or not str(raw.get("frontier_fingerprint") or "")
+            or not str(raw.get("oracle_source_sha256") or "")
+            or not isinstance(measurement, Mapping)
+            or set(measurement) != _COHORT_ROW_FIELDS
+            or not str(measurement.get("cohort_fingerprint") or "")
+            or any(
+                type(measurement.get(field)) is not int
+                or measurement[field] < 0
+                for field in metric_fields
+            )
+            or measurement.get("decision") != "bounded_executable"
+            or measurement.get("grants_gameplay_trust") is not False
+            or measurement.get("bundle_id") not in expected_bundles
+            or expected_bundles.get(str(measurement.get("bundle_id") or ""))
+            != measurement.get("probe_id")
+            or measurement.get("measurement_id")
+            != "measurement:"
+            + str(measurement.get("bundle_id") or "").split(":", 1)[-1]
+        ):
+            raise WorkSelectionCohortMeasurementError(
+                "Transition cohort measurement identity is invalid"
+            )
+        seen_transitions.add(transition_id)
 
 
 def validate_work_selection_cohort_measurements(
@@ -145,6 +209,7 @@ def validate_work_selection_cohort_measurements(
         "frontier_fingerprint",
         "oracle_source_sha256",
         "measurements",
+        "transition_measurements",
         "fingerprint",
     }
     unsigned = dict(value)
@@ -173,9 +238,12 @@ def validate_work_selection_cohort_measurements(
             "Cohort measurement artifact is stale"
         )
     measurements = value.get("measurements")
-    if not isinstance(measurements, list):
+    transition_measurements = value.get("transition_measurements")
+    if not isinstance(measurements, list) or not isinstance(
+        transition_measurements, list
+    ):
         raise WorkSelectionCohortMeasurementError(
-            "Cohort measurements must be an array"
+            "Cohort measurements and transition receipts must be arrays"
         )
     expected_bundles = {
         str(bundle["bundle_id"]): str(bundle["measurement_probe_id"])
@@ -236,6 +304,11 @@ def validate_work_selection_cohort_measurements(
         raise WorkSelectionCohortMeasurementError(
             "Cohort measurement inventory is incomplete"
         )
+    _validate_transition_measurements(
+        transition_measurements,
+        expected_bundles=expected_bundles,
+        metric_fields=metric_fields,
+    )
     return result
 
 
@@ -299,7 +372,10 @@ def _validate_pending_transition(pending: Mapping[str, Any]) -> None:
     hashes = pending.get("semantic_receipt_sha256")
     support_counts = pending.get("support_counts")
     if (
-        set(pending) != _PENDING_FIELDS
+        set(pending) not in (
+            _PENDING_LEGACY_FIELDS,
+            _PENDING_MEASURED_FIELDS,
+        )
         or not str(pending.get("transition_id") or "")
         or pending.get("outcome_kind") not in {"harvest", "non_harvest"}
         or pending.get("grants_gameplay_trust") is not False
@@ -330,6 +406,7 @@ def _validate_pending_transition(pending: Mapping[str, Any]) -> None:
         "Generated harvest pending family and capability IDs are invalid",
     )
     expected = pending.get("expected_complete_card_gain")
+    measurement_id = pending.get("measurement_id")
     is_harvest = bool(
         isinstance(pending.get("bundle_id"), str)
         and str(pending["bundle_id"]).startswith("bundle:")
@@ -340,15 +417,31 @@ def _validate_pending_transition(pending: Mapping[str, Any]) -> None:
         and capabilities
         and capabilities == sorted(set(capabilities))
         and pending.get("non_harvest_reason") is None
-        and (expected is None or (type(expected) is int and expected >= 0))
+        and (
+            (
+                set(pending) == _PENDING_LEGACY_FIELDS
+                and (
+                    expected is None
+                    or (type(expected) is int and expected >= 0)
+                )
+            )
+            or (
+                set(pending) == _PENDING_MEASURED_FIELDS
+                and measurement_id
+                == "measurement:"
+                + str(pending.get("bundle_id") or "").split(":", 1)[-1]
+            )
+        )
     )
     reason = pending.get("non_harvest_reason")
     is_non_harvest = bool(
-        pending.get("bundle_id") is None
+        set(pending) == _PENDING_LEGACY_FIELDS
+        and pending.get("bundle_id") is None
         and not candidates
         and not families
         and not capabilities
         and expected is None
+        and measurement_id is None
         and isinstance(reason, str)
         and len(reason.strip()) >= 20
     )
@@ -359,16 +452,94 @@ def _validate_pending_transition(pending: Mapping[str, Any]) -> None:
         )
 
 
+def _validate_content_history_entry(
+    row: Mapping[str, Any], fields: set[str]
+) -> None:
+    if fields == _LEGACY_ENTRY_FIELDS:
+        return
+    unsigned = dict(row)
+    entry_fingerprint = str(unsigned.pop("entry_fingerprint") or "")
+    families = _validated_identity_list(
+        row.get("family_ids"),
+        "Content-bound harvest family IDs are invalid",
+    )
+    capabilities = _validated_identity_list(
+        row.get("capability_ids"),
+        "Content-bound harvest capability IDs are invalid",
+    )
+    base_receipt = row["base_receipt"]
+    head_receipt = row["head_receipt"]
+    if (
+        entry_fingerprint != stable_hash(unsigned)
+        or row.get("receipt_identity_kind") != "semantic_content"
+        or not str(row.get("transition_id") or "")
+        or not families
+        or families != sorted(set(families))
+        or not capabilities
+        or capabilities != sorted(set(capabilities))
+        or "commit" in base_receipt
+        or "commit" in head_receipt
+        or not str(base_receipt.get("content_fingerprint") or "")
+        or not str(head_receipt.get("content_fingerprint") or "")
+    ):
+        raise WorkSelectionError(
+            "Content-bound harvest outcome identity is invalid"
+        )
+    if fields not in (
+        _CORRECTED_CONTENT_ENTRY_FIELDS,
+        _CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS,
+    ):
+        return
+    correction = mapping(row.get("forecast_correction"), "forecast_correction")
+    integer_fields = (
+        "original_expected_complete_card_gain",
+        "certified_complete_card_lower_bound",
+        "certified_exact_ability_lower_bound",
+        "certified_material_residual_reduction_lower_bound",
+    )
+    if (
+        set(correction) != _FORECAST_CORRECTION_FIELDS
+        or correction.get("transition_id") != row.get("transition_id")
+        or not str(correction.get("measurement_probe_id") or "")
+        or len(str(correction.get("reason") or "").strip()) < 40
+        or any(
+            type(correction.get(field)) is not int or correction[field] < 0
+            for field in integer_fields
+        )
+        or correction["original_expected_complete_card_gain"]
+        != row.get("expected_complete_card_gain")
+        or correction["certified_complete_card_lower_bound"]
+        >= correction["original_expected_complete_card_gain"]
+        or type(row.get("actual_complete_card_gain")) is not int
+        or row["actual_complete_card_gain"]
+        >= correction["original_expected_complete_card_gain"]
+        or row["actual_complete_card_gain"]
+        < correction["certified_complete_card_lower_bound"]
+        or type(row.get("actual_exact_ability_gain")) is not int
+        or row["actual_exact_ability_gain"]
+        < correction["certified_exact_ability_lower_bound"]
+        or type(row.get("actual_material_residual_reduction")) is not int
+        or row["actual_material_residual_reduction"]
+        < correction["certified_material_residual_reduction_lower_bound"]
+    ):
+        raise WorkSelectionError(
+            "Content-bound harvest forecast correction is invalid"
+        )
+
+
 def _validate_history_entries(history: list[Any]) -> None:
     ids: set[str] = set()
+    valid_fields = (
+        _LEGACY_ENTRY_FIELDS,
+        _CONTENT_ENTRY_FIELDS,
+        _CORRECTED_CONTENT_ENTRY_FIELDS,
+        _MEASURED_CONTENT_ENTRY_FIELDS,
+        _CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS,
+    )
     for index, raw in enumerate(history):
         row = mapping(raw, f"harvest_outcome_history[{index}]")
         fields = set(row)
-        if fields not in (
-            _LEGACY_ENTRY_FIELDS,
-            _CONTENT_ENTRY_FIELDS,
-            _CORRECTED_CONTENT_ENTRY_FIELDS,
-        ):
+        if fields not in valid_fields:
             raise WorkSelectionError(
                 "Harvest outcome history entries have an invalid shape"
             )
@@ -386,86 +557,38 @@ def _validate_history_entries(history: list[Any]) -> None:
                 "Harvest outcome history bundle identities must be unique"
             )
         ids.add(bundle_id)
-        if fields in (_CONTENT_ENTRY_FIELDS, _CORRECTED_CONTENT_ENTRY_FIELDS):
-            unsigned = dict(row)
-            entry_fingerprint = str(unsigned.pop("entry_fingerprint") or "")
-            families = _validated_identity_list(
-                row.get("family_ids"),
-                "Content-bound harvest family IDs are invalid",
-            )
-            capabilities = _validated_identity_list(
-                row.get("capability_ids"),
-                "Content-bound harvest capability IDs are invalid",
-            )
-            base_receipt = row["base_receipt"]
-            head_receipt = row["head_receipt"]
-            if (
-                entry_fingerprint != stable_hash(unsigned)
-                or row.get("receipt_identity_kind") != "semantic_content"
-                or not str(row.get("transition_id") or "")
-                or not families
-                or families != sorted(set(families))
-                or not capabilities
-                or capabilities != sorted(set(capabilities))
-                or "commit" in base_receipt
-                or "commit" in head_receipt
-                or not str(base_receipt.get("content_fingerprint") or "")
-                or not str(head_receipt.get("content_fingerprint") or "")
-            ):
-                raise WorkSelectionError(
-                    "Content-bound harvest outcome identity is invalid"
-                )
-            if fields == _CORRECTED_CONTENT_ENTRY_FIELDS:
-                correction = mapping(
-                    row.get("forecast_correction"),
-                    "forecast_correction",
-                )
-                integer_fields = (
-                    "original_expected_complete_card_gain",
-                    "certified_complete_card_lower_bound",
-                    "certified_exact_ability_lower_bound",
-                    "certified_material_residual_reduction_lower_bound",
-                )
-                if (
-                    set(correction) != _FORECAST_CORRECTION_FIELDS
-                    or correction.get("transition_id")
-                    != row.get("transition_id")
-                    or not str(correction.get("measurement_probe_id") or "")
-                    or len(str(correction.get("reason") or "").strip()) < 40
-                    or any(
-                        type(correction.get(field)) is not int
-                        or correction[field] < 0
-                        for field in integer_fields
-                    )
-                    or correction["original_expected_complete_card_gain"]
-                    != row.get("expected_complete_card_gain")
-                    or correction["certified_complete_card_lower_bound"]
-                    >= correction["original_expected_complete_card_gain"]
-                    or type(row.get("actual_complete_card_gain")) is not int
-                    or row["actual_complete_card_gain"]
-                    >= correction["original_expected_complete_card_gain"]
-                    or row["actual_complete_card_gain"]
-                    < correction["certified_complete_card_lower_bound"]
-                    or type(row.get("actual_exact_ability_gain")) is not int
-                    or row["actual_exact_ability_gain"]
-                    < correction["certified_exact_ability_lower_bound"]
-                    or type(row.get("actual_material_residual_reduction"))
-                    is not int
-                    or row["actual_material_residual_reduction"]
-                    < correction[
-                        "certified_material_residual_reduction_lower_bound"
-                    ]
-                ):
-                    raise WorkSelectionError(
-                        "Content-bound harvest forecast correction is invalid"
-                    )
+        _validate_content_history_entry(row, fields)
         expected_gain = row.get("expected_complete_card_gain")
         if expected_gain is not None:
             nonnegative_int(expected_gain, "expected_complete_card_gain")
         basis = row.get("expected_complete_card_gain_basis")
-        if basis not in {"authoritative_source", "not_captured"} or (
-            expected_gain is None
-        ) != (basis == "not_captured"):
+        measured_entry = fields in (
+            _MEASURED_CONTENT_ENTRY_FIELDS,
+            _CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS,
+        )
+        if (
+            basis
+            not in {
+                "authoritative_source",
+                "generated_transition_cohort",
+                "not_captured",
+            }
+            or (expected_gain is None) != (basis == "not_captured")
+            or (basis == "generated_transition_cohort") != measured_entry
+            or (
+                measured_entry
+                and (
+                    not str(row.get("measurement_id") or "")
+                    or not str(row.get("measurement_probe_id") or "")
+                    or not str(
+                        row.get("measurement_receipt_fingerprint") or ""
+                    )
+                    or not str(
+                        row.get("measurement_frontier_fingerprint") or ""
+                    )
+                )
+            )
+        ):
             raise WorkSelectionError(
                 "Harvest outcome expected-gain basis is inconsistent"
             )

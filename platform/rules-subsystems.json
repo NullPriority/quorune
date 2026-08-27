@@ -487,6 +487,67 @@
           "measurement_probe_id": null
         },
         {
+          "bundle_id": "bundle:fixed-homogeneous-target-sets",
+          "member_family_ids": [
+            "activated_effect:destroy",
+            "activated_effect:exile",
+            "activated_effect:return",
+            "activated_effect:tap-state",
+            "effect_clause:destroy",
+            "effect_clause:destroy-target",
+            "effect_clause:exile",
+            "effect_clause:return",
+            "effect_clause:tap-state",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:multiple-targets",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:card.exile.public_graveyard",
+            "capability:card.return.own_graveyard_to_owner_hand",
+            "capability:permanent.destroy.effect",
+            "capability:permanent.exile.effect",
+            "capability:permanent.return.owner_hand",
+            "capability:permanent.tap.effect",
+            "capability:permanent.untap.effect",
+            "capability:resolution.effect.fixed_homogeneous_target_set",
+            "capability:target.revalidate_resolution",
+            "capability:zone.change.destination_replacement",
+            "component:quorune.compiler.fixed_homogeneous_target_sets.fixed_homogeneous_target_set_effect_template",
+            "component:quorune.semantic_runtime.fixed_target_set_handlers.FIXED_TARGET_SET_HANDLERS"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "bounded-one-through-six-cardinality",
+            "homogeneous-public-object-predicate",
+            "shared-owner-public-graveyard-relation"
+          ],
+          "shared_dependencies": [
+            "target.revalidate_resolution",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "bounded interchangeable destroy, exile, return, tap, or untap targets through one lifted scalar target owner",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Establishes one reusable target-cardinality and shared-owner boundary across spell, triggered, activated, and modal effect carriers while preserving each scalar predicate and mutation owner.",
+          "explicit_exclusions": [
+            "compound conditional tails, delayed results, and linked object references",
+            "divided effects, heterogeneous target roles, and independently targeted clauses",
+            "dynamic quantities, repeated selection, random selection, and targets beyond six",
+            "hidden-zone objects, battlefield returns, and unsupported characteristic predicates",
+            "optional-single-target wording from the measured plural cohort"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-homogeneous-target-set-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-optional-effect-choices",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",
@@ -702,20 +763,38 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v134-fixed-spell-cast-characteristic-triggers",
-      "compiler_version": "oracle-ir-v134",
-      "bundle_id": "bundle:fixed-spell-cast-characteristic-triggers",
-      "candidate_ids": ["compiler:fixed-spell-cast-characteristic-triggers"],
+      "transition_id": "oracle-ir-v135-fixed-homogeneous-target-sets",
+      "compiler_version": "oracle-ir-v135",
+      "bundle_id": "bundle:fixed-homogeneous-target-sets",
+      "candidate_ids": ["compiler:fixed-homogeneous-target-sets"],
       "family_ids": [
+        "activated_effect:destroy",
+        "activated_effect:exile",
+        "activated_effect:return",
+        "activated_effect:tap-state",
+        "effect_clause:destroy",
+        "effect_clause:destroy-target",
+        "effect_clause:exile",
+        "effect_clause:return",
+        "effect_clause:tap-state",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "event_binding:normalized-event-binding",
+        "target_or_choice:multiple-targets",
+        "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_spell_cast",
-        "trigger.placement.apnap"
+        "card.exile.public_graveyard",
+        "card.return.own_graveyard_to_owner_hand",
+        "permanent.destroy.effect",
+        "permanent.exile.effect",
+        "permanent.return.owner_hand",
+        "permanent.tap.effect",
+        "permanent.untap.effect",
+        "resolution.effect.fixed_homogeneous_target_set",
+        "target.revalidate_resolution",
+        "zone.change.destination_replacement"
       ],
-      "expected_complete_card_gain": 71,
+      "measurement_id": "measurement:fixed-homogeneous-target-sets",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1144,6 +1223,11 @@
         "candidate_id": "compiler:fixed-spell-cast-characteristic-triggers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "At main cc74d150dace25bfecb9de7a7b331887c3d7fa68 the generated selector reported no eligible foreground candidate, while the raw continuous-layer leader still combined unrelated characteristic, permission, and dynamic-count grammars. The current generated cohort measurement for the previously completed optional-effect bundle remains valid but its durable outcome identity correctly prevents reselection. A distinct implementation-backed frontier probe isolates spell-cast trigger abilities where one static color, color-cardinality, type, subtype, or supertype predicate and one independently exact typed body share the existing normalized event and APNAP owners. Exact-source certification found that the v1 probe's 71-card and 116-ability forecast admitted seven dependency-inexact regeneration or optional self-return bodies and missed two executable cards. The v2 probe asks the integrated owner for capability closure, producing a conservative 64-card and 109-ability lower bound; the landed census promotes 66 cards and 111 abilities. The cast transaction seals validated cast-selected types, subtypes, and supertypes plus cycle-safe effective colors, including Devoid, while history, origin, payment, kicked, targeted-spell, mana-value, conjunction, dynamic-count, cast-or-copy, intervening-if, reflexive, linked, and untyped-body families remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-homogeneous-target-sets",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reported no eligible foreground candidate, while its raw continuous-layer and additional-cost leaders remained heterogeneous. The selected generated transition cohort crosses the normal complete-card harvest floor through one bounded target-cardinality grammar shared by destroy, exile, return, tap, and untap effects across spell, triggered, activated, and modal carriers. It lifts existing scalar predicates and mutation owners into one typed interchangeable set, adds only shared-owner legality for public single-graveyard wording, and preserves target choice, resolution revalidation, replacement ordering, privacy, rollback, and replay. Heterogeneous roles, divided or dynamic quantities, linked results, compound conditions, hidden zones, battlefield returns, and unsupported characteristic predicates remain fail-closed. The cohort identity and measured lower bounds are materialized from the source-checkpoint frontier rather than copied into this policy."
       }
     ]
   },

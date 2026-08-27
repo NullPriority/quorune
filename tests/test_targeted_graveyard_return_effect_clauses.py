@@ -200,7 +200,6 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
 
     def test_unsupported_graveyard_return_variants_remain_material_residuals(self):
         for text in (
-            "Return up to one target card from your graveyard to your hand.",
             "Return target Goblin card from your graveyard to your hand.",
             "Return target card from a graveyard to its owner's hand.",
             "Return target card from an opponent's graveyard to your hand.",

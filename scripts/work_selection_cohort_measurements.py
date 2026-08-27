@@ -20,6 +20,9 @@ from quorune.compiler.fixed_counter_trigger_nodes import (
     fixed_counter_trigger_binding,
     fixed_typed_event_effect_trigger_node,
 )
+from quorune.compiler.fixed_homogeneous_target_sets import (
+    FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,
+)
 from quorune.compiler.ir_model import SourceSpan
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.oracle_ir import (
@@ -27,6 +30,7 @@ from quorune.oracle_ir import (
     _reviewed_atomic_effect_template,
     _reviewed_effect_template,
     _without_parenthetical_reminder,
+    compile_oracle_card,
 )
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.work_selection_evidence import (
@@ -44,12 +48,22 @@ _PROBE_REGENERATION = "fixed-regeneration-existing-owner-v1"
 _PROBE_SPELL_CAST_CHARACTERISTIC = (
     "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
 )
+_PROBE_FIXED_HOMOGENEOUS_TARGET_SET = (
+    "fixed-homogeneous-target-set-existing-owner-v1"
+)
 _PROBE_IDS = {
     _PROBE_EXILE,
+    _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
     _PROBE_TOKEN,
+}
+
+_FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
+    "fixed-effect-clause-sequence",
+    "fixed-nonrepeating-modal",
+    "fixed-optional-effect-choice",
 }
 
 
@@ -326,6 +340,16 @@ def _measurement(
             f"Unknown cohort measurement probe: {probe_id}"
         )
     member_ids = {str(value) for value in bundle["member_family_ids"]}
+    if probe_id == _PROBE_FIXED_HOMOGENEOUS_TARGET_SET:
+        return _fixed_homogeneous_target_set_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     matched_abilities = 0
     matched_cards: dict[str, int] = {}
     cards_with_unmatched_member_ability: set[str] = set()
@@ -389,6 +413,119 @@ def _measurement(
     }
 
 
+def _target_group_maximum(node: Any) -> int:
+    schema = node.target_schema
+    if not isinstance(schema, Mapping):
+        return 0
+    for field in ("count", "max", "up_to"):
+        value = schema.get(field)
+        if type(value) is int:
+            return value
+    return 0
+
+
+def _fixed_homogeneous_target_set_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure only direct plural target-set promotions through the full owner."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        candidates = []
+        for ability in card.get("abilities", []):
+            family_ids = {
+                str(value)
+                for value in ability.get("blockers", {}).get(
+                    "canonical_family_ids", []
+                )
+            }
+            if (
+                ability.get("status") == "exact"
+                or not family_ids
+                or not family_ids.intersection(member_ids)
+                or not family_ids <= member_ids
+            ):
+                continue
+            candidates.append(ability)
+        if not candidates:
+            continue
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        card_matches = 0
+        for ability in candidates:
+            node = nodes.get(str(ability.get("ability_id") or ""))
+            mechanics = set(node.mechanics) if node is not None else set()
+            if (
+                node is None
+                or not node.exact
+                or FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC not in mechanics
+                or mechanics.intersection(_FIXED_TARGET_SET_COMPOSITION_MECHANICS)
+                or _target_group_maximum(node) < 2
+            ):
+                continue
+            card_matches += 1
+        if not card_matches:
+            continue
+        matched_abilities += card_matches
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
 def build_work_selection_cohort_measurements(
     *,
     frontier: Mapping[str, Any],
@@ -396,6 +533,7 @@ def build_work_selection_cohort_measurements(
     cards_by_oracle_id: Mapping[str, Any],
     coverage: Mapping[str, Any],
     cohort_fingerprints: Mapping[str, str],
+    transition_measurements: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     measurements = [
         _measurement(
@@ -420,6 +558,9 @@ def build_work_selection_cohort_measurements(
         "frontier_fingerprint": str(frontier.get("fingerprint") or ""),
         "oracle_source_sha256": oracle_source,
         "measurements": measurements,
+        "transition_measurements": [
+            dict(value) for value in transition_measurements
+        ],
     }
     payload["fingerprint"] = stable_hash(payload)
     return payload

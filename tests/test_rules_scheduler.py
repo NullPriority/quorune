@@ -690,9 +690,10 @@ class RulesSchedulerTests(unittest.TestCase):
         history = inputs["harvest_outcome_history"]
         latest_outcome = history["entries"][-1]
         latest_outcome["actual_complete_card_gain"] = 0
-        latest_outcome["forecast_correction"][
-            "certified_complete_card_lower_bound"
-        ] = 0
+        if "forecast_correction" in latest_outcome:
+            latest_outcome["forecast_correction"][
+                "certified_complete_card_lower_bound"
+            ] = 0
         unsigned_outcome = dict(latest_outcome)
         unsigned_outcome.pop("entry_fingerprint")
         latest_outcome["entry_fingerprint"] = hashlib.sha256(
@@ -885,26 +886,39 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             declaration["capability_ids"], current["capability_ids"]
         )
-        correction = current["forecast_correction"]
+        measurement_receipt = next(
+            row
+            for row in self.work_inputs["cohort_measurements"][
+                "transition_measurements"
+            ]
+            if row["transition_id"] == declaration["transition_id"]
+        )
+        measurement = measurement_receipt["measurement"]
         self.assertEqual(
-            declaration["expected_complete_card_gain"],
-            correction["original_expected_complete_card_gain"],
+            declaration["measurement_id"], current["measurement_id"]
+        )
+        self.assertEqual(
+            measurement["complete_card_gain"],
+            current["expected_complete_card_gain"],
         )
         self.assertGreaterEqual(
             current["actual_complete_card_gain"],
-            correction["certified_complete_card_lower_bound"],
+            measurement["complete_card_gain"],
         )
         self.assertGreaterEqual(
             current["actual_exact_ability_gain"],
-            correction["certified_exact_ability_lower_bound"],
-        )
-        self.assertGreaterEqual(
-            current["actual_material_residual_reduction"],
-            correction[
-                "certified_material_residual_reduction_lower_bound"
-            ],
+            measurement["exact_ability_gain"],
         )
         self.assertEqual("semantic_content", current["receipt_identity_kind"])
+
+        corrected = by_bundle[
+            "bundle:fixed-spell-cast-characteristic-triggers"
+        ]
+        correction = corrected["forecast_correction"]
+        self.assertEqual(
+            corrected["expected_complete_card_gain"],
+            correction["original_expected_complete_card_gain"],
+        )
 
         malformed_corrections = deepcopy(
             self.catalog["work_selection"]["forecast_corrections"]
@@ -992,6 +1006,63 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(declaration["family_ids"], entry["family_ids"])
         self.assertEqual(
             declaration["capability_ids"], entry["capability_ids"]
+        )
+
+    def test_measured_content_receipt_preserves_generated_cohort_identity(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        latest = provenance[-1]
+        base = _receipt(ROOT, latest["base_commit"])
+        head = _receipt(ROOT, latest["head_commit"])
+        declaration = {
+            "transition_id": "fixture-measured-content-transition",
+            "compiler_version": head["compiler_version"],
+            "bundle_id": "bundle:fixture-measured-content-transition",
+            "candidate_ids": [
+                "compiler:fixture-measured-content-transition"
+            ],
+            "family_ids": [
+                "effect_clause:fixture-measured-content-transition"
+            ],
+            "capability_ids": [
+                "effect.fixture_measured_content_transition"
+            ],
+            "measurement_id": (
+                "measurement:fixture-measured-content-transition"
+            ),
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+        }
+        measurement_receipt = {
+            "transition_id": declaration["transition_id"],
+            "frontier_fingerprint": "a" * 64,
+            "oracle_source_sha256": "b" * 64,
+            "measurement": {
+                "measurement_id": declaration["measurement_id"],
+                "bundle_id": declaration["bundle_id"],
+                "probe_id": "fixture-existing-owner-v1",
+                "complete_card_gain": 7,
+            },
+        }
+        measurement_receipt["receipt_fingerprint"] = hashlib.sha256(
+            stable_json(measurement_receipt).encode("utf-8")
+        ).hexdigest()
+
+        entry = _content_entry(
+            declaration,
+            base=base,
+            head=head,
+            measurement_receipt=measurement_receipt,
+        )
+
+        self.assertEqual(entry, _validate_content_entry(entry))
+        self.assertEqual(7, entry["expected_complete_card_gain"])
+        self.assertEqual(
+            "generated_transition_cohort",
+            entry["expected_complete_card_gain_basis"],
+        )
+        self.assertEqual(
+            measurement_receipt["receipt_fingerprint"],
+            entry["measurement_receipt_fingerprint"],
         )
 
     def test_content_receipts_allow_non_harvest_drift_between_transitions(self):
@@ -1406,6 +1477,29 @@ class RulesSchedulerTests(unittest.TestCase):
         queue = build_rules_dependency_queue_from_root(ROOT)
 
         self.assertEqual(11, queue["work_selection"]["policy_version"])
+
+    def test_current_transition_measurement_is_generated_not_policy_counted(self):
+        work_selection = self.catalog["work_selection"]
+        declaration = work_selection["semantic_transition_declaration"]
+        bundle = next(
+            row
+            for row in work_selection["coverage_family"]["candidate_bundles"]
+            if row["bundle_id"] == declaration["bundle_id"]
+        )
+
+        self.assertEqual(
+            "measurement:fixed-homogeneous-target-sets",
+            declaration["measurement_id"],
+        )
+        self.assertNotIn("expected_complete_card_gain", declaration)
+        self.assertEqual("generated_probe", bundle["measurement_status"])
+        self.assertEqual(
+            "fixed-homogeneous-target-set-existing-owner-v1",
+            bundle["measurement_probe_id"],
+        )
+        self.assertFalse(
+            any(field.startswith("frontier_") for field in bundle)
+        )
 
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)

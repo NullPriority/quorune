@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "c86e71e5f437a8bbcb7585b2b8e1a7d29dcfc5b4",
+  "baseline_commit": "570df03f699507b29f45ddfe06aa02230632b702",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -1646,9 +1646,9 @@
     "physical_lines": 7577
   },
   "exception_binding": {
-    "adr": "docs/adr/0083-typed-fixed-impulse-access.md",
-    "allowance_fingerprint": "670e78fad45f9dcd87a33f5fbb9affb1b60749697998e84713ed7b25d4db126a",
-    "exception_id": "ARCH-EXC-0042"
+    "adr": "docs/adr/0085-typed-fixed-homogeneous-target-sets.md",
+    "allowance_fingerprint": "8b7299e531d82aeea91352ab676c89ae259d4cfbe3d11742fac26be3e3028e3d",
+    "exception_id": "ARCH-EXC-0043"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1737,7 +1737,7 @@
     },
     {
       "file": "quorune/compiler/activated_mana_nodes.py",
-      "logical_lines": 159,
+      "logical_lines": 156,
       "symbol": "activated_oracle_node"
     },
     {
@@ -1817,7 +1817,7 @@
     },
     {
       "file": "quorune/rules/capabilities.py",
-      "logical_lines": 155,
+      "logical_lines": 154,
       "symbol": "capability_covered_mechanics"
     },
     {
@@ -1920,6 +1920,7 @@
     "destroy_all",
     "destroy_selected",
     "destroy_selected_and_reward_source",
+    "destroy_targets",
     "discard",
     "discard_draw_up_to",
     "drain_each_opponent",
@@ -1937,7 +1938,9 @@
     "exile_graveyard",
     "exile_opponent_graveyards",
     "exile_permanent",
+    "exile_permanent_targets",
     "exile_public_graveyard_card",
+    "exile_public_graveyard_targets",
     "explore",
     "extra_turn",
     "fabricate",
@@ -1993,6 +1996,8 @@
     "reorder_top",
     "retarget_stack_item",
     "return_graveyard_card_to_owner_hand",
+    "return_graveyard_targets_to_owner_hand",
+    "return_permanent_targets_to_owner_hand",
     "return_transformed",
     "reveal_top_permanent",
     "sacrifice",
@@ -2007,10 +2012,12 @@
     "surveil",
     "sylvan_library_settle",
     "tap",
+    "tap_targets",
     "transmute_artifact",
     "unearth",
     "untap",
     "untap_all_creatures",
+    "untap_targets",
     "veil_of_summer"
   ],
   "runtime_oracle_text_access_identities": [],

@@ -35,6 +35,9 @@ from .fixed_target_effect_sequences import (
     fixed_target_effect_sequence_template,
     fixed_target_zone_object_keyword_sequence_template,
 )
+from .fixed_homogeneous_target_sets import (
+    fixed_homogeneous_target_set_effect_template,
+)
 from .fixed_source_effect_sequences import (
     fixed_source_effect_sequence_template,
 )
@@ -117,6 +120,11 @@ def typed_resolution_effect_template(
     )
     if affected_player_discard is not None:
         return affected_player_discard.compiled()
+    fixed_homogeneous_target_set = (
+        fixed_homogeneous_target_set_effect_template(text)
+    )
+    if fixed_homogeneous_target_set is not None:
+        return fixed_homogeneous_target_set.compiled()
     fixed_counter_placement_target_set = (
         fixed_counter_placement_target_set_effect_template(text)
     )

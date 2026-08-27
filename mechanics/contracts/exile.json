@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 2,
+  "contract_version": 3,
   "mechanic_id": "cr-406-exile",
   "official_name": "Exile",
   "effective_date": "2026-08-07",
@@ -59,6 +59,7 @@
     ],
     "events": [
       "exile an object",
+      "simultaneously exile a bounded homogeneous target set",
       "return an exiled object",
       "exile a card spell from the stack",
       "re-exile an exiled object",
@@ -92,6 +93,7 @@
     "targets": [
       "face-up exile cards can be selected through an explicit exile target schema",
       "battlefield permanents may use one fixed exact, minimum, or maximum mana-value qualifier through the shared direct-target schema",
+      "bounded homogeneous public battlefield or graveyard targets use an exact, one-or-two, or up-to bound from one through six, with a shared-owner constraint for one graveyard",
       "unauthorized face-down exile cards contribute no hidden characteristics",
       "pile-level random selection for an unexaminable card is not represented"
     ],
@@ -148,7 +150,8 @@
     "re-exile an exiled object",
     "temporary play from exile",
     "legacy removed-from-game terminology",
-    "fixed mana-value-qualified direct battlefield target"
+    "fixed mana-value-qualified direct battlefield target",
+    "bounded homogeneous public target-set exile"
   ],
   "witness_cards": [
     {
@@ -186,11 +189,13 @@
     "test_bojuka_bog_targets_and_exiles_one_graveyard",
     "test_dauthi_replaces_graveyard_moves_and_casts_opponent_card_for_free",
     "test_sundial_ends_turn_and_exiles_stack",
-    "test_fixed_mana_value_targets_compile_across_effect_contexts"
+    "test_fixed_mana_value_targets_compile_across_effect_contexts",
+    "test_fixed_homogeneous_target_sets_compile_across_contexts",
+    "test_four_player_same_graveyard_offer_resolution_and_replay"
   ],
   "implementation": {
-    "component": "Typed direct-target permanent-exile compiler, semantic handler, identity-pinned transaction, and canonical zone-change owner; CommanderEngine broad exile movement, stack removal, logical incarnations, and scoped play permissions; StateProjector public/face-down exile projection",
-    "version": "exile-foundation-v3"
+    "component": "Typed direct-target and bounded homogeneous target-set exile compilers, semantic handlers, identity-pinned transactions, and canonical zone-change owner; CommanderEngine broad exile movement, stack removal, logical incarnations, and scoped play permissions; StateProjector public/face-down exile projection",
+    "version": "exile-foundation-v4"
   },
   "known_blockers": [
     "generic exile-face-down instruction and persistent look authorization are missing",
