@@ -353,6 +353,7 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             "Cunning Maneuver",
             "Forecasting Fortune Teller",
             "Knowledge Seeker",
+            "True Ancestry",
         )
         for name in exact_names:
             with self.subTest(name=name):
@@ -377,10 +378,7 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
                     {program.trust_level for program in programs},
                 )
 
-        partial = {
-            "Devouring Sugarmaw // Have for Dinner": "trigger",
-            "True Ancestry": "spell_effect",
-        }
+        partial = {"Devouring Sugarmaw // Have for Dinner": "trigger"}
         for name, residual_kind in partial.items():
             with self.subTest(name=name):
                 ir = compile_oracle_card(

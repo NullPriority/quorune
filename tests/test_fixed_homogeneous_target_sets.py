@@ -128,6 +128,21 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
                 "exile_public_graveyard_targets",
                 {"up_to": 3, "same_owner": True},
             ),
+            (
+                "Exile up to one target creature.",
+                "Instant",
+                "spell_ability",
+                "exile_permanent_targets",
+                {"up_to": 1},
+            ),
+            (
+                "Return up to one target permanent card from your graveyard "
+                "to your hand.",
+                "Sorcery",
+                "spell_ability",
+                "return_graveyard_targets_to_owner_hand",
+                {"up_to": 1},
+            ),
         )
         for text, type_line, kind, operation, schema_fields in cases:
             with self.subTest(text=text):
