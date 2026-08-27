@@ -1002,6 +1002,8 @@ def _synthesized_frontier_candidates(
     frontier: Mapping[str, Any],
     policy: Mapping[str, Any],
     cohort_measurement_artifact: Mapping[str, Any],
+    *,
+    completed_bundle_ids: set[str],
 ) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     try:
@@ -1011,6 +1013,7 @@ def _synthesized_frontier_candidates(
             policy["value_weights"],
             cohort_measurement_artifact,
             policy,
+            completed_bundle_ids=completed_bundle_ids,
         )
     except WorkSelectionBundleError as exc:
         raise WorkSelectionError(str(exc)) from exc
@@ -1293,6 +1296,7 @@ def _work_selection_candidates(
                 inputs["cohort_measurements"],
                 "work-selection cohort measurements",
             ),
+            completed_bundle_ids=completed_bundle_ids,
         ),
     ]
     candidates = [row for row in candidates if row["candidate_id"] not in completed_bundle_ids]

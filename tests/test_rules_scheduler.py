@@ -1467,6 +1467,17 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             candidate_frontier_measurements(frontier, policies, weights, {})
 
+        self.assertEqual(
+            [],
+            candidate_frontier_measurements(
+                frontier,
+                policies,
+                weights,
+                {},
+                completed_bundle_ids={policies[0]["bundle_id"]},
+            ),
+        )
+
     def test_material_residual_threshold_is_disjunctive(self):
         inputs = deepcopy(self.work_inputs)
         inputs["card_unlock_frontier"]["family_candidates"] = [
