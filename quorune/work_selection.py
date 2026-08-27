@@ -5,6 +5,7 @@ from typing import Any, Mapping, Sequence
 from .work_selection_bundles import (
     atomic_frontier_bundle,
     bundle_measurement_decision,
+    estimated_bundle_effort,
     single_candidate_bundle,
     validate_bundle_policy,
     validated_candidate_frontier_measurements,
@@ -1024,13 +1025,7 @@ def _synthesized_frontier_candidates(
         gains = measurement["gains"]
         prerequisites = measurement["prerequisites"]
         implementation_hours = measurement["implementation_hours"]
-        effort = (
-            "small"
-            if implementation_hours <= 8
-            else "medium"
-            if implementation_hours <= 20
-            else "large"
-        )
+        effort = estimated_bundle_effort(implementation_hours)
         readiness, eligible, reason = _frontier_decision(
             candidate_id=bundle_id,
             complete_gain=gains["exact_cards"],

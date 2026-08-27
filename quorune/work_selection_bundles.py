@@ -259,6 +259,14 @@ def bundle_measurement_decision(
     )
 
 
+def estimated_bundle_effort(implementation_hours: int) -> str:
+    if implementation_hours <= 8:
+        return "small"
+    if implementation_hours <= 20:
+        return "medium"
+    return "large"
+
+
 def atomic_frontier_bundle(
     *,
     candidate_id: str,
@@ -626,6 +634,7 @@ __all__ = [
     "bundle_measurement_fingerprint",
     "bundle_measurement_decision",
     "candidate_frontier_measurements",
+    "estimated_bundle_effort",
     "single_candidate_bundle",
     "validated_candidate_frontier_measurements",
     "validate_bundle_policy",
