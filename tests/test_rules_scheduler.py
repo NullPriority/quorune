@@ -829,7 +829,10 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             self.work_inputs["harvest_outcome_history"], derived
         )
-        latest = derived["entries"][-1]
+        by_bundle = {
+            entry["bundle_id"]: entry for entry in derived["entries"]
+        }
+        latest = by_bundle["bundle:fixed-source-event-triggers"]
         self.assertEqual(
             "bundle:fixed-source-event-triggers",
             latest["bundle_id"],
@@ -852,7 +855,7 @@ class RulesSchedulerTests(unittest.TestCase):
             ]["git_blob_oid"],
         )
 
-        penultimate = derived["entries"][-2]
+        penultimate = by_bundle["bundle:fixed-combat-state-direct-targets"]
         self.assertEqual(
             "bundle:fixed-combat-state-direct-targets",
             penultimate["bundle_id"],
@@ -860,6 +863,24 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(90, penultimate["actual_complete_card_gain"])
         self.assertEqual(104, penultimate["oracle_exact_ability_node_delta"])
         self.assertEqual(48, penultimate["card_program_ability_record_delta"])
+
+        declaration = self.catalog["work_selection"][
+            "semantic_transition_declaration"
+        ]
+        current = by_bundle[declaration["bundle_id"]]
+        self.assertEqual(
+            declaration["transition_id"], current["transition_id"]
+        )
+        self.assertEqual(declaration["candidate_ids"], current["candidate_ids"])
+        self.assertEqual(declaration["family_ids"], current["family_ids"])
+        self.assertEqual(
+            declaration["capability_ids"], current["capability_ids"]
+        )
+        self.assertGreaterEqual(
+            current["actual_complete_card_gain"],
+            declaration["expected_complete_card_gain"],
+        )
+        self.assertEqual("semantic_content", current["receipt_identity_kind"])
 
         malformed = deepcopy(provenance)
         malformed[-1]["actual_complete_card_gain"] = 37
