@@ -2447,6 +2447,18 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
+        "test_id": "test_continuous_layer_regeneration_residual_pair_fails_closed_at_runtime_boundary",
+        "piece_ids": [
+            "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+            "residual.replacement.regeneration"
+        ],
+        "capability_ids": [],
+        "interaction_order": 2,
+        "assertion": "Knight of the Holy Nimbus retains both its static layer dependency and self-destruction regeneration replacement as material residuals, so the complete CardProgram fails closed at runtime admission."
+    },
+    {
+        "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
         "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
         "piece_ids": [
             "residual.continuous_layer.continuous-effect-layers-and-dependencies",
