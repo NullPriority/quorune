@@ -35,6 +35,7 @@ from quorune.work_selection_bundles import (
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _content_entry,
+    _refresh_content_entry,
     _receipt,
     _receipt_content_fingerprint,
     _require_landed_harvest_head,
@@ -964,6 +965,50 @@ class RulesSchedulerTests(unittest.TestCase):
         entry = _content_entry(declaration, base=base, head=head)
 
         self.assertEqual(entry, _validate_content_entry(entry))
+
+    def test_content_receipt_refreshes_downstream_assurance_at_fixed_point(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        latest = provenance[-1]
+        base = _receipt(ROOT, latest["base_commit"])
+        head = _receipt(ROOT, latest["head_commit"])
+        declaration = {
+            "transition_id": "fixture-content-fixed-point",
+            "compiler_version": head["compiler_version"],
+            "bundle_id": "bundle:fixture-content-fixed-point",
+            "candidate_ids": ["compiler:fixture-content-fixed-point"],
+            "family_ids": ["effect_clause:fixture-content-fixed-point"],
+            "capability_ids": ["effect.fixture_content_fixed_point"],
+            "expected_complete_card_gain": 1,
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+        }
+        entry = _content_entry(declaration, base=base, head=head)
+        corrected_head = deepcopy(head)
+        corrected_head["interaction_assurance"]["uncovered_high_risk"] = (
+            head["interaction_assurance"].get("uncovered_high_risk", 0) + 1
+        )
+        corrected_head["blobs"][
+            "coverage/reusable-piece-interactions.json.gz"
+        ]["raw_sha256"] = "a" * 64
+
+        refreshed = _refresh_content_entry(
+            entry,
+            declaration=declaration,
+            head=corrected_head,
+        )
+
+        self.assertEqual(refreshed, _validate_content_entry(refreshed))
+        self.assertEqual(
+            corrected_head["interaction_assurance"],
+            refreshed["head_receipt"]["interaction_assurance"],
+        )
+        self.assertEqual(
+            1,
+            refreshed["interaction_assurance_delta"]["uncovered_high_risk"],
+        )
+        self.assertNotEqual(
+            entry["entry_fingerprint"], refreshed["entry_fingerprint"]
+        )
 
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
         inputs = deepcopy(self.work_inputs)

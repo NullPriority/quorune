@@ -12,7 +12,7 @@ from quorune.util import stable_json
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
-HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-receipt-delta-v3"
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v4"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
@@ -914,6 +914,67 @@ def _declaration_matches_content_entry(
     )
 
 
+def _refresh_content_entry(
+    entry: Mapping[str, Any],
+    *,
+    declaration: Mapping[str, Any],
+    head: Mapping[str, Any],
+) -> dict[str, Any]:
+    validated = _validate_content_entry(entry)
+    if not _declaration_matches_content_entry(declaration, validated):
+        raise HarvestOutcomeHistoryError(
+            "Only the matching content-bound transition can be refreshed"
+        )
+    if not _semantic_receipts_match(validated["head_receipt"], head):
+        raise HarvestOutcomeHistoryError(
+            "A semantic content change requires a new harvest outcome"
+        )
+    base = validated["base_receipt"]
+    refreshed = {
+        **validated,
+        "head_receipt": _content_public_receipt(head),
+        "interaction_assurance_delta": _count_delta(
+            base["interaction_assurance"], head["interaction_assurance"]
+        ),
+        "architecture_delta": _count_delta(
+            base["architecture"], head["architecture"]
+        ),
+    }
+    refreshed.pop("entry_fingerprint", None)
+    refreshed["entry_fingerprint"] = _hash(refreshed)
+    return refreshed
+
+
+def _content_transition_is_landed(
+    repository: Path, transition_id: str
+) -> bool:
+    durable_tip = _durable_main_tip(repository)
+    completed = subprocess.run(
+        [
+            "git",
+            "show",
+            f"{durable_tip}:coverage/harvest-outcome-history.json",
+        ],
+        cwd=repository,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    )
+    if completed.returncode != 0:
+        return False
+    try:
+        value = json.loads(completed.stdout)
+    except (UnicodeError, json.JSONDecodeError):
+        return False
+    entries = value.get("entries") if isinstance(value, Mapping) else None
+    return isinstance(entries, list) and any(
+        isinstance(row, Mapping)
+        and row.get("receipt_identity_kind") == "semantic_content"
+        and row.get("transition_id") == transition_id
+        for row in entries
+    )
+
+
 def _tracked_legacy_entries(
     repository: Path,
     provenance_rows: Sequence[Mapping[str, Any]],
@@ -1075,17 +1136,36 @@ def build_harvest_outcome_history(
         else None
     )
     if _semantic_receipts_match(latest, current_receipt):
-        if validated_declaration is not None and not (
-            entries[-1].get("receipt_identity_kind") == "semantic_content"
-            and _declaration_matches_content_entry(
-                validated_declaration, entries[-1]
+        if validated_declaration is not None:
+            matching_content_entry = (
+                entries[-1].get("receipt_identity_kind") == "semantic_content"
+                and _declaration_matches_content_entry(
+                    validated_declaration, entries[-1]
+                )
             )
-        ) and validated_declaration["compiler_version"] == current_receipt[
-            "compiler_version"
-        ]:
-            raise HarvestOutcomeHistoryError(
-                "Semantic transition declaration is stale before a content change"
-            )
+            if (
+                matching_content_entry
+                and _receipt_content_fingerprint(latest)
+                != _receipt_content_fingerprint(current_receipt)
+                and not _content_transition_is_landed(
+                    repository,
+                    validated_declaration["transition_id"],
+                )
+            ):
+                entries[-1] = _refresh_content_entry(
+                    entries[-1],
+                    declaration=validated_declaration,
+                    head=current_receipt,
+                )
+                latest = entries[-1]["head_receipt"]
+            elif (
+                not matching_content_entry
+                and validated_declaration["compiler_version"]
+                == current_receipt["compiler_version"]
+            ):
+                raise HarvestOutcomeHistoryError(
+                    "Semantic transition declaration is stale before a content change"
+                )
     elif (
         validated_declaration is not None
         and validated_declaration["outcome_kind"] == "harvest"

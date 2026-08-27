@@ -638,6 +638,74 @@ class TemporaryDeclarationRestrictionRuntimeTests(unittest.TestCase):
             ),
         )
 
+    def test_cartouche_composes_aura_attachment_with_declaration_rule(self):
+        session = self.session_with_card("Cartouche of Zeal", seed=50811509)
+        engine = session.engine
+        aura = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A" and card.printed_name == "Cartouche of Zeal"
+        )
+        enchanted = self.creature(engine, "A", "Cartouche Attacker")
+        blocker = self.creature(engine, "B", "Cartouche Blocker")
+        engine.state.started = True
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+
+        engine.move_card(
+            aura.object_id,
+            "battlefield",
+            controller="A",
+            aura_target_ref=enchanted.ref,
+            semantic_events=True,
+            log=False,
+        )
+        self.assertTrue(engine._stabilize())
+        self.assertEqual("semantic.target", engine.state.pending_decision.kind)
+        schema = engine.state.pending_decision.payload_by_actor["A"][
+            "target_schema"
+        ]
+        self.assertIn(blocker.ref, schema["legal_refs"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        chosen = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "targets": {"target_0": [blocker.ref]},
+                "plan": "AURA_DECLARATION_COMPOSITION",
+                "reason": "Restrict the opposing blocker.",
+            },
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.pass_stack(session)
+
+        self.assertEqual(enchanted.object_id, aura.attached_to)
+        self.assertIn(aura.object_id, enchanted.attachments)
+        characteristics = engine._effective_card_data(enchanted)
+        self.assertEqual("3", characteristics["power"])
+        self.assertEqual("3", characteristics["toughness"])
+        self.assertIn("Haste", characteristics["keywords"])
+        self.assertEqual(
+            (
+                False,
+                "declaration_restriction:intrinsic-block-prohibition-v1",
+            ),
+            engine._can_block(enchanted, blocker),
+        )
+        self.assert_replays(session)
+
+        engine.move_card(aura.object_id, "graveyard", log=False)
+        engine._stabilize()
+        self.assertIsNone(aura.attached_to)
+        self.assertEqual(
+            "2", engine._effective_card_data(enchanted)["power"]
+        )
+        self.assertFalse(engine._can_block(enchanted, blocker)[0])
+
     def test_source_departure_preserves_rule_but_target_reentry_does_not(self):
         session = self.session_with_card(
             "Thundersong Trumpeter",

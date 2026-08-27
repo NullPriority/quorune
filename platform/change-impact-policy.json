@@ -93,6 +93,18 @@
       ]
     },
     {
+      "id": "semantic-transition-pr-evidence-contract",
+      "patterns": [
+        "platform/rules-subsystems.json",
+        "scripts/harvest_outcome_history.py",
+        "scripts/pr_evidence.py",
+        "scripts/validate_pr_body.py"
+      ],
+      "test_modules": [
+        "test_pr_body_policy"
+      ]
+    },
+    {
       "id": "generated-coverage-sources",
       "patterns": [
         "coverage/**",

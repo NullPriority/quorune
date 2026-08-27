@@ -259,6 +259,20 @@ class CommanderEngine:
                     plan.matched_rule_ids,
                 )
 
+    def test_semantic_transition_sources_select_pr_evidence_contract(self):
+        for path in (
+            "platform/rules-subsystems.json",
+            "scripts/harvest_outcome_history.py",
+            "scripts/pr_evidence.py",
+        ):
+            with self.subTest(path=path):
+                plan = classify_changes([path])
+                self.assertIn("test_pr_body_policy", plan.test_modules)
+                self.assertIn(
+                    "semantic-transition-pr-evidence-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_browser_action_and_choice_contracts_are_explicit(self):
         for path in (
             "quorune/rules/action_catalog.py",

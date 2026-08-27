@@ -15,6 +15,7 @@ from scripts.validate_pr_body import (
 from scripts.pr_evidence import (
     build_pr_evidence,
     render_pr_evidence_markdown,
+    semantic_evidence_metadata,
 )
 
 
@@ -115,6 +116,28 @@ Validate pull-request descriptions before expensive certification jobs begin.
 
 
 class PullRequestBodyPolicyTests(unittest.TestCase):
+    def test_semantic_evidence_omits_internal_compiler_guard(self) -> None:
+        catalog = json.loads(
+            (ROOT / "platform" / "rules-subsystems.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        metadata = semantic_evidence_metadata(catalog)
+
+        self.assertEqual(
+            {
+                "transition_id",
+                "bundle_id",
+                "candidate_ids",
+                "family_ids",
+                "capability_ids",
+                "expected_complete_card_gain",
+                "non_harvest_reason",
+            },
+            set(metadata),
+        )
+
     def test_ci_entrypoint_imports_repository_package(self) -> None:
         result = subprocess.run(
             [sys.executable, "scripts/validate_pr_body.py", "--help"],
@@ -199,12 +222,28 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
 
         def evidence(bundle_id: str, family_id: str, capability_id: str):
             row = provenance[bundle_id]
+            head_program = json.loads(
+                subprocess.run(
+                    [
+                        "git",
+                        "show",
+                        f"{row['head_commit']}:coverage/"
+                        "card-program-coverage-commander.json",
+                    ],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    check=True,
+                ).stdout
+            )
             return build_pr_evidence(
                 ROOT,
                 base_revision=row["base_commit"],
                 head_revision=row["head_commit"],
                 metadata={
                     "transition_id": bundle_id.removeprefix("bundle:"),
+                    "compiler_version": head_program["compiler_version"],
                     "bundle_id": bundle_id,
                     "candidate_ids": row["candidate_ids"],
                     "family_ids": [family_id],
