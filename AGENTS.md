@@ -397,6 +397,13 @@ authoritative GitHub Actions run URL. The early `PR / Plan` job enforces this
 policy on open, synchronize, reopen, and edit events. Moving a draft to ready
 for review reuses the exact-head checks already produced for that unchanged
 pull request instead of launching the full regression matrix again.
+Description edits are Plan-only metadata events and never launch or wait for a
+regression matrix. After making a later local commit, generate its exact
+base/head evidence and update the pull-request body **before** pushing that
+commit; the metadata event may temporarily compare against the still-published
+old head, while the following synchronize event sees the matching body and runs
+the one authoritative exact-head matrix. Do not push first and repair the body
+afterward, because the synchronize event retains its immutable pre-edit body.
 
 Public PR CI has a hard 20-job concurrency envelope. Its checked, mode-aware
 budget targets at most 18 simultaneous jobs so cancellation, certification,

@@ -496,10 +496,17 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("PR / Certification", pr)
         self.assertIn("opened, synchronize, reopened, edited", pr)
         self.assertNotIn("ready_for_review", pr)
+        self.assertIn(
+            "metadata_only: ${{ github.event.action == 'edited' }}", pr
+        )
         self.assertIn("python scripts/validate_pr_body.py", pr)
         self.assertIn("certification_receipt.py can-reuse-pr", pr)
         self.assertIn("--event-action \"${{ github.event.action }}\"", pr)
-        self.assertIn("--wait-seconds \"21600\"", pr)
+        self.assertIn("--wait-seconds \"0\"", pr)
+        self.assertGreaterEqual(
+            pr.count("needs.plan.outputs.metadata_only"),
+            10,
+        )
         self.assertGreaterEqual(
             pr.count("needs.plan.outputs.reuse_certification"),
             12,

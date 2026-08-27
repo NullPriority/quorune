@@ -469,11 +469,9 @@ the repository, pull request, exact PR-head SHA, publication workflow run,
 original evidence workflow run, executed-or-reused mode, complete required
 check suite, fingerprint algorithm, and tracked source-tree fingerprint. It
 does not contain or predict the eventual merge SHA. An unchanged-head metadata
-run may reissue a receipt only after downloading and validating the earlier
-live receipt; its provenance continues to name the original matrix run.
-Metadata edits do not cancel an in-progress source-changing run for the same
-pull request. They wait behind it, then validate and reuse its exact-head
-receipt instead of restarting the regression matrix.
+event runs only `PR / Plan`; it neither publishes a certification receipt nor
+launches, cancels, or waits for a regression matrix. The successful
+source-changing run for that exact head remains the sole certification owner.
 
 The pre-sharding public baseline is run `31025126367`: its single Windows
 discovery process executed the complete test allocation in 2,265.245 seconds
@@ -545,24 +543,26 @@ aggregate CardProgram record changes, structural carriers, material residuals,
 interactions, actual PR-source architecture deltas, the separately reviewed
 architecture baseline, and production/test/generated line changes. Missing
 source metadata remains an explicit reasoned N/A rather than an inferred
-identity. Editing the description
-restarts the gate, so a contributor can correct metadata without changing the
-certified source tree. For an `edited` event, Plan validates the new body and
-then looks for a live successful certification receipt for the same pull
-request and exact head. When that receipt and the checked-out tracked-source
-fingerprint match, every expensive Linux, Windows, package, generated, and
-browser job is skipped and `PR / Certification` publishes a provenance-carrying
-reuse receipt. If the unchanged head is still being certified, the metadata
-run waits for that earlier run and reuses its receipt instead of starting a
-second matrix. Missing, expired, malformed, mismatched, or unavailable evidence
-with no active exact-head run falls back to the complete matrix. Open,
-synchronize, and reopen events always run the complete matrix.
+identity. Editing the description restarts only the gate, so a contributor can
+correct metadata without changing the certified source tree or launching
+Linux, Windows, package, generated, or browser jobs. An `edited` event never
+falls back to the complete matrix and never publishes a substitute
+certification receipt. Open, synchronize, and reopen events remain the only
+complete-matrix pull-request events.
+
+For a later source commit, generate the exact base/head block after committing
+locally, update the pull-request description while the new commit is still
+unpublished, and then push. The metadata-only event may briefly reject that
+future head against the still-published old one; the following synchronize
+event carries the matching body snapshot and runs the one authoritative matrix.
+Pushing first and editing afterward is incorrect because the synchronize event
+retains its immutable pre-edit description and fails before the matrix.
 
 The PR workflow intentionally does not subscribe to `ready_for_review`; moving
 an unchanged draft into review therefore does not start regression by itself.
 Finalize the full template before the first source push and do not replace a
 green run's pending-CI sentence with a passed-CI sentence: that description
-edit is unnecessary even though it is now lightweight and exact-head safe.
+edit is unnecessary even though it is Plan-only.
 
 Generated work named in the description must cite the canonical
 `scripts/finalize_generated.py --write` command. A claimed broad local pass
