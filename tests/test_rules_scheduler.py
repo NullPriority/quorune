@@ -1175,10 +1175,6 @@ class RulesSchedulerTests(unittest.TestCase):
                 "measured_nonviable",
                 (0, 19, 19),
             ),
-            "bundle:fixed-optional-effect-choices": (
-                "measured_nonviable",
-                (0, 0, 0),
-            ),
         }
         for candidate_id, (measurement_status, gains) in expected.items():
             policy = next(
@@ -1232,7 +1228,6 @@ class RulesSchedulerTests(unittest.TestCase):
         expected_measurements = {
             "measurement:fixed-token-creation-contexts",
             "measurement:fixed-exile-contexts",
-            "measurement:fixed-optional-effect-choices",
         }
         self.assertLessEqual(expected_measurements, set(measured_outcomes))
         self.assertTrue(
@@ -1330,11 +1325,28 @@ class RulesSchedulerTests(unittest.TestCase):
             )
 
     def test_completed_bundle_retires_and_upper_bound_requires_bounded_cohort(self):
-        work = self.queue["work_selection"]
-        self.assertNotIn(
-            "bundle:commander-pairing-keywords",
-            {candidate["candidate_id"] for candidate in work["candidates"]},
+        work = build_work_selection(
+            selected_batch=self.queue["selected_batch"],
+            policy=self.catalog["work_selection"],
+            inputs=self.work_inputs,
         )
+        candidate_ids = {
+            candidate["candidate_id"] for candidate in work["candidates"]
+        }
+        self.assertTrue(
+            {
+                "bundle:commander-pairing-keywords",
+                "bundle:fixed-optional-effect-choices",
+            }.isdisjoint(candidate_ids)
+        )
+        optional_measurement = next(
+            row
+            for row in self.work_inputs["cohort_measurements"]["measurements"]
+            if row["bundle_id"] == "bundle:fixed-optional-effect-choices"
+        )
+        self.assertEqual("bounded_executable", optional_measurement["decision"])
+        self.assertEqual(98, optional_measurement["complete_card_gain"])
+        self.assertFalse(optional_measurement["grants_gameplay_trust"])
 
         frontier, policies, weights = _bounded_candidate_bundle_fixture()
         measurement = candidate_frontier_measurements(

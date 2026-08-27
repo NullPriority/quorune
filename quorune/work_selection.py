@@ -1004,6 +1004,10 @@ def _synthesized_frontier_candidates(
     cohort_measurement_artifact: Mapping[str, Any],
 ) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
+    completed_bundle_ids = {
+        str(row["bundle_id"])
+        for row in policy["harvest_outcome_history"]
+    }
     try:
         measurements = validated_candidate_frontier_measurements(
             frontier,
@@ -1017,6 +1021,8 @@ def _synthesized_frontier_candidates(
     for measurement in measurements:
         bundle_policy = measurement["policy"]
         bundle_id = str(bundle_policy["bundle_id"])
+        if bundle_id in completed_bundle_ids:
+            continue
         member_ids = measurement["member_ids"]
         gains = measurement["gains"]
         prerequisites = measurement["prerequisites"]
