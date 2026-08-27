@@ -1004,10 +1004,6 @@ def _synthesized_frontier_candidates(
     cohort_measurement_artifact: Mapping[str, Any],
 ) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
-    completed_bundle_ids = {
-        str(row["bundle_id"])
-        for row in policy["harvest_outcome_history"]
-    }
     try:
         measurements = validated_candidate_frontier_measurements(
             frontier,
@@ -1021,8 +1017,6 @@ def _synthesized_frontier_candidates(
     for measurement in measurements:
         bundle_policy = measurement["policy"]
         bundle_id = str(bundle_policy["bundle_id"])
-        if bundle_id in completed_bundle_ids:
-            continue
         member_ids = measurement["member_ids"]
         gains = measurement["gains"]
         prerequisites = measurement["prerequisites"]
@@ -1269,6 +1263,7 @@ def _work_selection_candidates(
             "Work-selection inputs must be the canonical generated reports"
         )
     frontier = _mapping(inputs["card_unlock_frontier"], "card-unlock frontier")
+    completed_bundle_ids = {str(row["bundle_id"]) for row in validated["harvest_outcome_history"]}
     candidates = [
         _harvest_outcome_candidate(validated),
         *_system_candidates(
@@ -1300,6 +1295,7 @@ def _work_selection_candidates(
             ),
         ),
     ]
+    candidates = [row for row in candidates if row["candidate_id"] not in completed_bundle_ids]
     measurement = _cohort_measurement_candidate(candidates, frontier)
     if measurement is not None:
         candidates.append(measurement)
