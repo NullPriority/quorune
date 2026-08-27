@@ -34,7 +34,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
     def test_all_declared_residual_pairs_fail_closed_at_runtime_boundary(
         self,
     ) -> None:
-        self.assertEqual(121, len(ALL_HIGH_RISK_BOUNDARY_PAIRS))
+        self.assertEqual(122, len(ALL_HIGH_RISK_BOUNDARY_PAIRS))
         assert_high_risk_boundary_pairs(
             self,
             ALL_HIGH_RISK_BOUNDARY_PAIRS,

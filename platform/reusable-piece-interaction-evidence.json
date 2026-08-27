@@ -3067,6 +3067,20 @@
         "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
         "piece_ids": [
             "capability.zone.entry.tapped_state",
+            "residual.target_or_choice.multiple-targets"
+        ],
+        "capability_ids": [
+            "zone.entry.tapped_state"
+        ],
+        "interaction_order": 2,
+        "assertion": "The dedicated pair subtest compiles this exact residual boundary through the normal CardProgram path and proves runtime admission remains unresolved, non-strict, and incompatible until both represented pieces have trusted executable semantics."
+    },
+    {
+        "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "piece_ids": [
+            "capability.zone.entry.tapped_state",
             "residual.target_or_choice.random-outcome"
         ],
         "capability_ids": [

@@ -383,6 +383,15 @@ _WITNESSES = {
         "{R}, {T}: Shuffle your library. Activate only if you control two or "
         "more red permanents.",
     ),
+    "bretagard-stronghold": _Witness(
+        "Bretagard Stronghold",
+        "Land",
+        "This land enters tapped.\n"
+        "{T}: Add {G}.\n"
+        "{G}{W}{W}, {T}, Sacrifice this land: Put a +1/+1 counter on each of "
+        "up to two target creatures you control. They gain vigilance and "
+        "lifelink until end of turn. Activate only as a sorcery.",
+    ),
     "ebony-fly": _Witness(
         "Ebony Fly",
         "Artifact",
@@ -828,6 +837,7 @@ ZONE_AND_CHOICE_PAIRS = (
     _pair("capability.zone.draw.library_to_hand", "residual.target_or_choice.multiple-targets"),
     _pair("capability.zone.draw.library_to_hand", "residual.target_or_choice.target-predicate"),
     _pair("capability.zone.entry.tapped_state", "residual.target_or_choice.conditional-effect"),
+    _pair("capability.zone.entry.tapped_state", "residual.target_or_choice.multiple-targets"),
     _pair("capability.zone.entry.tapped_state", "residual.target_or_choice.random-outcome"),
     _pair("capability.zone.change.destination_replacement", "residual.target_or_choice.conditional-effect"),
     _pair("capability.zone.change.destination_replacement", "residual.target_or_choice.multiple-targets"),
@@ -1003,9 +1013,10 @@ _bind("electrolyze", ZONE_AND_CHOICE_PAIRS[2], ZONE_AND_CHOICE_PAIRS[4])
 _bind("cunning-strike", ZONE_AND_CHOICE_PAIRS[3])
 _bind("blur", ZONE_AND_CHOICE_PAIRS[5])
 _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])
-_bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[7])
-_bind("heartless-pillage", ZONE_AND_CHOICE_PAIRS[8])
-_bind("snow-day", ZONE_AND_CHOICE_PAIRS[9])
+_bind("bretagard-stronghold", ZONE_AND_CHOICE_PAIRS[7])
+_bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[8])
+_bind("heartless-pillage", ZONE_AND_CHOICE_PAIRS[9])
+_bind("snow-day", ZONE_AND_CHOICE_PAIRS[10])
 _bind("descend-upon-the-sinful", PUBLIC_SET_AND_CHOICE_PAIRS[0])
 _bind("gideon-champion-of-justice", PUBLIC_SET_AND_CHOICE_PAIRS[1])
 _bind(
