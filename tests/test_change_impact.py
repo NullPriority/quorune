@@ -228,6 +228,51 @@ class CommanderEngine:
         )
         self.assertFalse(plan.browser_full)
 
+    def test_scheduler_sources_select_harvest_contract_fixtures(self):
+        for path in (
+            "platform/rules-subsystems.json",
+            "quorune/work_selection_bundles.py",
+            "scripts/harvest_outcome_history.py",
+        ):
+            with self.subTest(path=path):
+                plan = classify_changes([path])
+                self.assertIn("test_rules_scheduler", plan.test_modules)
+                self.assertIn("rules-scheduler", plan.checks)
+                self.assertIn(
+                    "scheduler-harvest-contract", plan.matched_rule_ids
+                )
+
+    def test_shared_target_sources_select_return_capability_inventory(self):
+        for path in (
+            "quorune/compiler/direct_target.py",
+            "quorune/compiler/return_to_hand_templates.py",
+            "quorune/rules/node_capability_shapes.py",
+        ):
+            with self.subTest(path=path):
+                plan = classify_changes([path])
+                self.assertIn(
+                    "test_targeted_return_to_hand_effect_clauses",
+                    plan.test_modules,
+                )
+                self.assertIn(
+                    "targeted-return-capability-contract",
+                    plan.matched_rule_ids,
+                )
+
+    def test_semantic_transition_sources_select_pr_evidence_contract(self):
+        for path in (
+            "platform/rules-subsystems.json",
+            "scripts/harvest_outcome_history.py",
+            "scripts/pr_evidence.py",
+        ):
+            with self.subTest(path=path):
+                plan = classify_changes([path])
+                self.assertIn("test_pr_body_policy", plan.test_modules)
+                self.assertIn(
+                    "semantic-transition-pr-evidence-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_browser_action_and_choice_contracts_are_explicit(self):
         for path in (
             "quorune/rules/action_catalog.py",

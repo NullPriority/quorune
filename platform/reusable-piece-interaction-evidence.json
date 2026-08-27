@@ -1765,6 +1765,15 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_cartouche_composes_aura_attachment_with_declaration_rule",
+      "piece_ids": ["capability.attachment.aura.simple_object", "capability.continuous.resolution.declaration_rules_until_end_of_turn"],
+      "capability_ids": ["attachment.aura.simple_object", "continuous.resolution.declaration_rules_until_end_of_turn"],
+      "interaction_order": 2,
+      "assertion": "Cartouche of Zeal enters attached to its legal creature, applies its typed attached characteristics, places and resolves its targeted declaration-rule trigger, and keeps the locked blocker restriction after the Aura later leaves."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
       "piece_ids": ["capability.attachment.aura.simple_object", "capability.zone.change.destination_replacement"],
       "capability_ids": ["attachment.aura.simple_object", "zone.change.destination_replacement"],

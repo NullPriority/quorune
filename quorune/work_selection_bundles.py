@@ -1,33 +1,25 @@
 from __future__ import annotations
 
+import hashlib
 import re
 from typing import Any, Mapping, Sequence
+
+from quorune.util import stable_json
+from quorune.work_selection_evidence import (
+    validate_work_selection_cohort_measurements,
+    WorkSelectionCohortMeasurementError,
+)
 
 
 _BUNDLE_CONTEXTS = {"activated", "modal", "setup", "spell", "triggered"}
 _BUNDLE_MEASUREMENT_STATUSES = {
     "bounded_executable",
-    "measured_nonviable",
+    "generated_probe",
     "upper_bound_only",
 }
 _BUNDLE_OWNER = re.compile(r"^(?:capability|component):[A-Za-z0-9_.:-]+$")
-_SHA256 = re.compile(r"^[0-9a-f]{64}$")
-_MEASUREMENT_OUTCOME_FIELDS = {
-    "measurement_id",
-    "frontier_fingerprint",
-    "oracle_source_sha256",
-    "measurement_method",
-    "affected_commander_cards",
-    "complete_card_gain",
-    "one_additional_blocker_cards",
-    "two_additional_blocker_cards",
-    "exact_ability_gain",
-    "material_residual_reduction",
-    "decision",
-    "reason",
-    "grants_gameplay_trust",
-}
 _MEASUREMENT_METHOD = "frontier-sole-blocker-closure-v1"
+_MEASUREMENT_FINGERPRINT_SCHEMA = 1
 _EFFORT_HOURS = {
     "small": 5,
     "medium": 10,
@@ -82,58 +74,20 @@ def _nonnegative_int(value: Any, label: str) -> int:
     return value
 
 
-def _validate_measurement_outcome(
+def _validate_measurement_probe(
     row: Mapping[str, Any],
     *,
-    bundle_id: str,
     measurement_status: str,
-    coverage: Mapping[str, Any],
 ) -> None:
-    raw = row.get("measurement_outcome")
-    if measurement_status != "measured_nonviable":
-        if raw is not None:
+    probe_id = row.get("measurement_probe_id")
+    if measurement_status == "generated_probe":
+        if not isinstance(probe_id, str) or not probe_id:
             raise WorkSelectionBundleError(
-                "Only measured nonviable bundles may carry an outcome"
+                "Generated cohort measurements require a probe ID"
             )
-        return
-    outcome = _mapping(raw, f"{bundle_id}.measurement_outcome")
-    if set(outcome) != _MEASUREMENT_OUTCOME_FIELDS:
+    elif probe_id is not None:
         raise WorkSelectionBundleError(
-            "Measured bundle outcomes have an invalid shape"
-        )
-    metrics = {
-        field: _nonnegative_int(outcome.get(field), field)
-        for field in (
-            "affected_commander_cards",
-            "complete_card_gain",
-            "one_additional_blocker_cards",
-            "two_additional_blocker_cards",
-            "exact_ability_gain",
-            "material_residual_reduction",
-        )
-    }
-    expected_measurement_id = "measurement:" + bundle_id.split(":", 1)[-1]
-    invalid_identity = (
-        outcome.get("measurement_id") != expected_measurement_id
-        or not _SHA256.fullmatch(str(outcome.get("frontier_fingerprint") or ""))
-        or not _SHA256.fullmatch(str(outcome.get("oracle_source_sha256") or ""))
-        or outcome.get("measurement_method") != _MEASUREMENT_METHOD
-        or outcome.get("decision") != "retired_below_harvest_floor"
-        or not str(outcome.get("reason") or "")
-        or outcome.get("grants_gameplay_trust") is not False
-    )
-    reaches_harvest_floor = (
-        metrics["complete_card_gain"]
-        >= int(coverage["minimum_complete_card_gain"])
-        or metrics["exact_ability_gain"]
-        >= int(coverage["minimum_exact_ability_gain"])
-        or metrics["material_residual_reduction"]
-        >= int(coverage["minimum_material_residual_reduction"])
-    )
-    if invalid_identity or reaches_harvest_floor:
-        raise WorkSelectionBundleError(
-            "Measured nonviable outcomes must be exact, no-trust, and below "
-            "every harvest floor"
+            "Only generated cohort measurements may carry a probe ID"
         )
 
 
@@ -172,7 +126,7 @@ def validate_bundle_policy(
         "expected_downstream_closure",
         "explicit_exclusions",
         "measurement_status",
-        "measurement_outcome",
+        "measurement_probe_id",
     }
     bundles = list(coverage.get("candidate_bundles", []))
     seen: set[str] = set()
@@ -221,11 +175,9 @@ def validate_bundle_policy(
                 "Candidate bundles require closed identities, owners, contexts, "
                 "grammar, parameters, dependencies, and exclusions"
             )
-        _validate_measurement_outcome(
+        _validate_measurement_probe(
             row,
-            bundle_id=bundle_id,
             measurement_status=measurement_status,
-            coverage=coverage,
         )
         for field in (
             "estimated_implementation_hours",
@@ -269,19 +221,26 @@ def coverage_scores(
 def bundle_measurement_decision(
     declared_status: str,
     bounded_verified: bool,
-    measurement_outcome_current: bool = False,
+    measurement_outcome: Mapping[str, Any] | None = None,
 ) -> tuple[str, str | None]:
-    if declared_status == "measured_nonviable" and measurement_outcome_current:
+    if (
+        declared_status == "generated_probe"
+        and measurement_outcome is not None
+        and measurement_outcome.get("decision") == "retired_below_harvest_floor"
+    ):
         return (
             "measured_nonviable",
-            "The fingerprinted bounded cohort is below every implementation "
-            "harvest floor and remains retired without granting gameplay trust.",
+            "The generated current-frontier bounded cohort is below every "
+            "implementation harvest floor and remains retired without granting "
+            "gameplay trust.",
         )
-    if declared_status == "measured_nonviable":
+    if declared_status == "generated_probe" and measurement_outcome is not None:
+        return "bounded_executable", None
+    if declared_status == "generated_probe":
         return (
             "upper_bound_only",
-            "The recorded bounded cohort no longer matches the current frontier "
-            "and Oracle snapshot; remeasure it before implementation eligibility.",
+            "The current frontier lacks a generated bounded cohort measurement; "
+            "materialize it before implementation eligibility.",
         )
     if declared_status == "bounded_executable" and bounded_verified:
         return "bounded_executable", None
@@ -384,10 +343,121 @@ def _bundle_frontier_gains(
     return result
 
 
+def _ability_references_bundle(
+    ability: Mapping[str, Any], member_family_ids: set[str]
+) -> bool:
+    if (
+        set(
+            ability.get("blockers", {}).get(
+                "canonical_family_ids", []
+            )
+        )
+        & member_family_ids
+    ):
+        return True
+    return any(
+        set(residual.get("family_ids", [])) & member_family_ids
+        for residual in ability.get("residuals", [])
+    )
+
+
+def _measurement_card_projection(
+    card: Mapping[str, Any], member_family_ids: set[str]
+) -> dict[str, Any] | None:
+    relevant_abilities = [
+        ability
+        for ability in card.get("abilities", [])
+        if _ability_references_bundle(ability, member_family_ids)
+    ]
+    if (
+        not relevant_abilities
+        and not set(card.get("minimum_known_blocker_set", []))
+        & member_family_ids
+    ):
+        return None
+    return {
+        "oracle_id": card.get("oracle_id"),
+        "card_name": card.get("card_name"),
+        "hard_construction_failure": card.get("hard_construction_failure"),
+        "minimum_known_blocker_set": card.get(
+            "minimum_known_blocker_set", []
+        ),
+        "abilities": relevant_abilities,
+    }
+
+
+def bundle_measurement_fingerprint(
+    frontier: Mapping[str, Any], bundle_policy: Mapping[str, Any]
+) -> str:
+    """Bind a bounded probe to its relevant frontier cohort and grammar."""
+    member_ids = sorted(
+        str(value) for value in bundle_policy["member_family_ids"]
+    )
+    member_id_set = set(member_ids)
+    family_rows = {
+        str(row.get("family_id") or ""): row
+        for row in frontier.get("family_candidates", [])
+    }
+    cards = frontier.get("cards")
+    if not isinstance(cards, list):
+        raise WorkSelectionBundleError(
+            "Card frontier lacks complete bundle card rows"
+        )
+    relevant_cards = sorted(
+        (
+            projected
+            for card in cards
+            if (
+                projected := _measurement_card_projection(
+                    card, member_id_set
+                )
+            )
+            is not None
+        ),
+        key=lambda card: (
+            str(card.get("oracle_id") or ""),
+            stable_json(card),
+        ),
+    )
+    payload = {
+        "schema_version": _MEASUREMENT_FINGERPRINT_SCHEMA,
+        "measurement_method": _MEASUREMENT_METHOD,
+        "frontier_contract": {
+            field: frontier.get(field)
+            for field in (
+                "schema_version",
+                "algorithm_version",
+                "boundary",
+                "profile",
+                "commander_legal_only",
+                "complete_snapshot_claimed",
+            )
+        },
+        "cohort_boundary": {
+            field: bundle_policy.get(field)
+            for field in (
+                "bundle_id",
+                "member_family_ids",
+                "canonical_owner_ids",
+                "source_contexts",
+                "normalized_literal_parameters",
+                "shared_dependencies",
+                "shared_grammar",
+                "explicit_exclusions",
+                "measurement_probe_id",
+            )
+        },
+        "family_rows": [family_rows.get(member_id) for member_id in member_ids],
+        "cards": relevant_cards,
+    }
+    return hashlib.sha256(stable_json(payload).encode("utf-8")).hexdigest()
+
+
 def candidate_frontier_measurements(
     frontier: Mapping[str, Any],
     bundle_policies: Sequence[Mapping[str, Any]],
     weights: Mapping[str, int],
+    cohort_measurements: Mapping[str, Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
     family_rows = {
         str(row.get("family_id") or ""): row
@@ -412,18 +482,15 @@ def candidate_frontier_measurements(
             )
         members = [family_rows[value] for value in member_ids]
         frontier_gains = _bundle_frontier_gains(cards, set(member_ids))
-        outcome = bundle_policy.get("measurement_outcome")
-        snapshot = frontier.get("card_data_snapshot")
-        oracle_source = (
-            str(snapshot.get("oracle_source_sha256") or "")
-            if isinstance(snapshot, Mapping)
-            else ""
+        outcome = cohort_measurements.get(bundle_id)
+        cohort_fingerprint = bundle_measurement_fingerprint(
+            frontier, bundle_policy
         )
         measurement_outcome_current = bool(
             isinstance(outcome, Mapping)
-            and outcome.get("frontier_fingerprint")
-            == frontier.get("fingerprint")
-            and outcome.get("oracle_source_sha256") == oracle_source
+            and outcome.get("cohort_fingerprint") == cohort_fingerprint
+            and outcome.get("probe_id")
+            == bundle_policy.get("measurement_probe_id")
         )
         gains = (
             {
@@ -451,10 +518,16 @@ def candidate_frontier_measurements(
             int(row.get("occurrences") or 0) for row in members
         )
         bounded_executable_verified = bool(
-            lowerable_occurrences
-            and lowerable_occurrences == total_occurrences
-            and gains["exact_abilities"] == lowerable_occurrences
-            and gains["material_residuals"] >= lowerable_occurrences
+            (
+                measurement_outcome_current
+                and outcome.get("decision") == "bounded_executable"
+            )
+            or (
+                lowerable_occurrences
+                and lowerable_occurrences == total_occurrences
+                and gains["exact_abilities"] == lowerable_occurrences
+                and gains["material_residuals"] >= lowerable_occurrences
+            )
         )
         prerequisites = sorted(
             {
@@ -493,6 +566,7 @@ def candidate_frontier_measurements(
                     bounded_executable_verified
                 ),
                 "measurement_outcome_current": measurement_outcome_current,
+                "measurement_cohort_fingerprint": cohort_fingerprint,
                 "measurement_outcome": (
                     dict(outcome) if measurement_outcome_current else None
                 ),
@@ -507,11 +581,45 @@ def candidate_frontier_measurements(
     return result
 
 
+def validated_candidate_frontier_measurements(
+    frontier: Mapping[str, Any],
+    bundle_policies: Sequence[Mapping[str, Any]],
+    weights: Mapping[str, int],
+    cohort_measurement_artifact: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    fingerprints = {
+        str(bundle["bundle_id"]): bundle_measurement_fingerprint(
+            frontier, bundle
+        )
+        for bundle in bundle_policies
+        if bundle.get("measurement_probe_id") is not None
+    }
+    try:
+        measurements = validate_work_selection_cohort_measurements(
+            cohort_measurement_artifact,
+            frontier=frontier,
+            bundle_policies=bundle_policies,
+            cohort_fingerprints=fingerprints,
+            coverage=coverage,
+        )
+    except WorkSelectionCohortMeasurementError as exc:
+        raise WorkSelectionBundleError(str(exc)) from exc
+    return candidate_frontier_measurements(
+        frontier,
+        bundle_policies,
+        weights,
+        measurements,
+    )
+
+
 __all__ = [
     "atomic_frontier_bundle",
+    "bundle_measurement_fingerprint",
     "bundle_measurement_decision",
     "candidate_frontier_measurements",
     "single_candidate_bundle",
+    "validated_candidate_frontier_measurements",
     "validate_bundle_policy",
     "WorkSelectionBundleError",
 ]

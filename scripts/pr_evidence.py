@@ -117,6 +117,7 @@ def semantic_evidence_metadata(catalog: Mapping[str, Any]) -> dict[str, Any]:
             "Semantic PR evidence metadata is invalid"
         ) from exc
     result.pop("outcome_kind")
+    result.pop("compiler_version")
     return result
 
 
@@ -280,6 +281,7 @@ def build_pr_evidence(
                 "PR evidence source metadata is invalid"
             ) from exc
         validated.pop("outcome_kind")
+        validated.pop("compiler_version")
         source_metadata = validated
     if set(source_metadata) != _SEMANTIC_METADATA_FIELDS:
         raise PullRequestEvidenceError("PR evidence source metadata is incomplete")

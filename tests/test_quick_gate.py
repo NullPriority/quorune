@@ -52,6 +52,20 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertNotIn("card-unlock-frontier", names)
         self.assertNotIn("reusable-pieces", names)
 
+    def test_pr322_escape_sources_select_focused_contract_modules(self):
+        plan = build_plan(
+            (
+                "platform/rules-subsystems.json",
+                "quorune/compiler/direct_target.py",
+            )
+        )
+
+        self.assertIn("test_rules_scheduler", plan["test_modules"])
+        self.assertIn(
+            "test_targeted_return_to_hand_effect_clauses",
+            plan["test_modules"],
+        )
+
     def test_pre_corpus_plan_runs_identity_sentinels_without_generators(self):
         plan = build_plan(
             ("quorune/compiler/oracle_parser.py",),

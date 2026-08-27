@@ -335,7 +335,7 @@
     }
   ],
   "work_selection": {
-    "policy_version": 7,
+    "policy_version": 9,
     "priority_classes": [
       "ci_correctness",
       "replay_privacy_defect",
@@ -407,7 +407,7 @@
             "provisional, stale, duplicated, and noncanonical declarations"
           ],
           "measurement_status": "bounded_executable",
-          "measurement_outcome": null
+          "measurement_probe_id": null
         },
         {
           "bundle_id": "bundle:fixed-exile-contexts",
@@ -446,22 +446,8 @@
             "linked returns and delayed results",
             "variable, optional, random, and cost exile"
           ],
-          "measurement_status": "measured_nonviable",
-          "measurement_outcome": {
-            "measurement_id": "measurement:fixed-exile-contexts",
-            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
-            "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
-            "measurement_method": "frontier-sole-blocker-closure-v1",
-            "affected_commander_cards": 18,
-            "complete_card_gain": 0,
-            "one_additional_blocker_cards": 0,
-            "two_additional_blocker_cards": 5,
-            "exact_ability_gain": 19,
-            "material_residual_reduction": 19,
-            "decision": "retired_below_harvest_floor",
-            "reason": "The current-frontier existing-owner battlefield and public-zone exile cohort closes no Commander cards and only 19 abilities or residuals across 18 cards; every member retains modal or other enclosing grammar. The other 75 sole-family abilities are distinct alternative or Escape costs, spell self-exile, hidden-zone or ordered-zone movement, enchanted-object activations, compound targets or sets, linked results, or delayed self-exile families, so this cohort is below every normal harvest floor.",
-            "grants_gameplay_trust": false
-          }
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-exile-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:fixed-face-down-methods",
@@ -497,22 +483,8 @@
             "dynamic or nonmana face-up costs and linked face-up results",
             "unrelated residual abilities on affected cards"
           ],
-          "measurement_status": "measured_nonviable",
-          "measurement_outcome": {
-            "measurement_id": "measurement:fixed-face-down-methods",
-            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
-            "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
-            "measurement_method": "frontier-sole-blocker-closure-v1",
-            "affected_commander_cards": 74,
-            "complete_card_gain": 29,
-            "one_additional_blocker_cards": 0,
-            "two_additional_blocker_cards": 0,
-            "exact_ability_gain": 76,
-            "material_residual_reduction": 76,
-            "decision": "retired_below_harvest_floor",
-            "reason": "An implementation-backed fixed Disguise and Megamorph probe found 62 ordinary method abilities and 14 exact source-face-up trigger bodies across 74 affected Commander cards, but only 29 complete-card closures and 76 exact abilities or removed residuals. The cohort remains below every normal harvest floor and leaves 61 material residuals on affected cards, so the coherent local draft is preserved without publication and must not be rediscovered as foreground work at this frontier.",
-            "grants_gameplay_trust": false
-          }
+          "measurement_status": "upper_bound_only",
+          "measurement_probe_id": null
         },
         {
           "bundle_id": "bundle:fixed-source-event-triggers",
@@ -551,7 +523,7 @@
             "tap, targeting, blocked-or-blocks, and leaves-the-battlefield events"
           ],
           "measurement_status": "bounded_executable",
-          "measurement_outcome": null
+          "measurement_probe_id": null
         },
         {
           "bundle_id": "bundle:fixed-token-creation-contexts",
@@ -586,25 +558,30 @@
             "custom quoted abilities and unsupported predefined tokens",
             "dynamic quantities, copies, and named legendary tokens"
           ],
-          "measurement_status": "measured_nonviable",
-          "measurement_outcome": {
-            "measurement_id": "measurement:fixed-token-creation-contexts",
-            "frontier_fingerprint": "a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c",
-            "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d",
-            "measurement_method": "frontier-sole-blocker-closure-v1",
-            "affected_commander_cards": 16,
-            "complete_card_gain": 0,
-            "one_additional_blocker_cards": 0,
-            "two_additional_blocker_cards": 2,
-            "exact_ability_gain": 17,
-            "material_residual_reduction": 17,
-            "decision": "retired_below_harvest_floor",
-            "reason": "The current-frontier existing-owner fixed-definition token cohort closes no Commander cards and only 17 abilities or residuals across 16 cards; every member retains modal, Spree, Entwine, or other enclosing grammar. The wider sole-family upper bound is dominated by custom quoted abilities, copies, named or legendary tokens, unsupported characteristic keywords or predefined tokens, dynamic quantities, delayed or non-controller instructions, and attached or Role tokens, so this cohort is below every normal harvest floor.",
-            "grants_gameplay_trust": false
-          }
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-token-creation-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
+    },
+    "semantic_transition_declaration": {
+      "transition_id": "oracle-ir-v131-fixed-temporary-declaration-contexts",
+      "compiler_version": "oracle-ir-v131",
+      "bundle_id": "bundle:fixed-temporary-declaration-contexts",
+      "candidate_ids": ["compiler:fixed-temporary-declaration-contexts"],
+      "family_ids": [
+        "activated_effect:unparsed-target-merfolk-can",
+        "activated_effect:unparsed-target-ninja-can",
+        "activated_effect:unparsed-this-creature-can",
+        "effect_clause:unparsed-target-creature-can"
+      ],
+      "capability_ids": [
+        "combat.declaration.typed_components",
+        "continuous.resolution.declaration_rules_until_end_of_turn",
+        "target.revalidate_resolution"
+      ],
+      "expected_complete_card_gain": 19,
+      "non_harvest_reason": null
     },
     "harvest_provenance": [
       {
@@ -1011,6 +988,11 @@
         "candidate_id": "compiler:fixed-source-event-triggers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "At main a5c7efd8e811244bfcb5930a5b55de6f668e2b13 the generated cross-program selector reported no eligible foreground candidate and its highest raw aggregates remained heterogeneous. An implementation-backed face-down method probe was first retired because 29 complete cards and 76 exact abilities or residuals fell below every normal harvest floor. A bounded probe against frontier a3d44986ce82dc59e6a6417cc70623b3951d2d70317221203386887324569f4c then isolated 60 mandatory source-self zone lifecycle or source/recipient damage bindings with independently exact typed bodies, measuring 53 complete Commander cards and 60 removed residuals. The selected family composes the existing canonical zone-change and damage event producers, ordinary APNAP placement, and existing body-specific effect owners; it introduces no tap, targeting, or alternate combat event system. Optional, intervening-if, reflexive, attachment-relative, aggregate, damage-to-creature, unrestricted-damage, leaves-the-battlefield, blocked-or-blocks, and unsupported-body variants remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-temporary-declaration-contexts",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector reopened fixed-token measurement solely because unrelated frontier churn changed a global fingerprint. Repeating the bounded owner probe produced the same below-floor result, exposing a recurring cache defect; current cohort identities and measurements now come from the generated frontier-owned artifact. With the current token and exile probes retired and the obsolete face-down families absent from the frontier, no implementation candidate remains eligible, while the raw continuous-layer leader is still heterogeneous. A bounded declaration probe instead isolates one positive complete-card lower bound through the existing object-anchored restriction journal. This reusable prerequisite extends that typed owner across direct spell, normalized trigger, target activation, source-self, named-source, and pinned creature-subtype contexts. Multiple-block capacity, defender suppression, all-able blocker requirements, filtered evasion, two-object source-relative rules, open costs, conditional bodies, and dynamic characteristic predicates remain fail-closed under their distinct solver owners."
       }
     ]
   },

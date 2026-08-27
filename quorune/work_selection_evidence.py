@@ -3,7 +3,7 @@ from __future__ import annotations
 import gzip
 import json
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from .work_selection_common import (
     WorkSelectionError,
@@ -16,6 +16,7 @@ from .work_selection_common import (
 _HISTORY_FIELDS = {
     "schema_version",
     "algorithm_version",
+    "legacy_provenance_fingerprint",
     "entries",
     "outcome_basis",
     "structural_carrier_limitation",
@@ -53,7 +54,7 @@ _SUPPORT_COUNT_FIELDS = {
     "card_program_ability_records",
     "hard_construction_failures",
 }
-_ENTRY_FIELDS = {
+_LEGACY_ENTRY_FIELDS = {
     "bundle_id",
     "candidate_ids",
     "expected_complete_card_gain",
@@ -81,12 +82,182 @@ _ENTRY_FIELDS = {
     "interaction_assurance_delta",
     "architecture_delta",
 }
+_CONTENT_ENTRY_FIELDS = _LEGACY_ENTRY_FIELDS | {
+    "transition_id",
+    "family_ids",
+    "capability_ids",
+    "receipt_identity_kind",
+    "entry_fingerprint",
+}
+COHORT_MEASUREMENT_SCHEMA_VERSION = 1
+COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v1"
+_COHORT_DECISIONS = {
+    "bounded_executable",
+    "retired_below_harvest_floor",
+}
+_COHORT_ROW_FIELDS = {
+    "measurement_id",
+    "bundle_id",
+    "probe_id",
+    "cohort_fingerprint",
+    "affected_commander_cards",
+    "complete_card_gain",
+    "one_additional_blocker_cards",
+    "two_additional_blocker_cards",
+    "exact_ability_gain",
+    "material_residual_reduction",
+    "decision",
+    "grants_gameplay_trust",
+}
+
+
+class WorkSelectionCohortMeasurementError(ValueError):
+    pass
+
+
+def validate_work_selection_cohort_measurements(
+    value: Any,
+    *,
+    frontier: Mapping[str, Any],
+    bundle_policies: Sequence[Mapping[str, Any]],
+    cohort_fingerprints: Mapping[str, str],
+    coverage: Mapping[str, Any],
+) -> dict[str, Mapping[str, Any]]:
+    if not isinstance(value, Mapping):
+        raise WorkSelectionCohortMeasurementError(
+            "Cohort measurements must be an object"
+        )
+    expected_fields = {
+        "schema_version",
+        "algorithm_version",
+        "frontier_fingerprint",
+        "oracle_source_sha256",
+        "measurements",
+        "fingerprint",
+    }
+    unsigned = dict(value)
+    fingerprint = unsigned.pop("fingerprint", None)
+    if (
+        set(value) != expected_fields
+        or value.get("schema_version") != COHORT_MEASUREMENT_SCHEMA_VERSION
+        or value.get("algorithm_version")
+        != COHORT_MEASUREMENT_ALGORITHM_VERSION
+        or fingerprint != stable_hash(unsigned)
+    ):
+        raise WorkSelectionCohortMeasurementError(
+            "Cohort measurement artifact is malformed"
+        )
+    snapshot = frontier.get("card_data_snapshot")
+    oracle_source = (
+        str(snapshot.get("oracle_source_sha256") or "")
+        if isinstance(snapshot, Mapping)
+        else ""
+    )
+    if (
+        value.get("frontier_fingerprint") != frontier.get("fingerprint")
+        or value.get("oracle_source_sha256") != oracle_source
+    ):
+        raise WorkSelectionCohortMeasurementError(
+            "Cohort measurement artifact is stale"
+        )
+    measurements = value.get("measurements")
+    if not isinstance(measurements, list):
+        raise WorkSelectionCohortMeasurementError(
+            "Cohort measurements must be an array"
+        )
+    expected_bundles = {
+        str(bundle["bundle_id"]): str(bundle["measurement_probe_id"])
+        for bundle in bundle_policies
+        if bundle.get("measurement_probe_id") is not None
+    }
+    metric_fields = (
+        "affected_commander_cards",
+        "complete_card_gain",
+        "one_additional_blocker_cards",
+        "two_additional_blocker_cards",
+        "exact_ability_gain",
+        "material_residual_reduction",
+    )
+    result: dict[str, Mapping[str, Any]] = {}
+    for row in measurements:
+        if not isinstance(row, Mapping) or set(row) != _COHORT_ROW_FIELDS:
+            raise WorkSelectionCohortMeasurementError(
+                "Cohort measurement row is malformed"
+            )
+        bundle_id = str(row.get("bundle_id") or "")
+        if (
+            bundle_id in result
+            or expected_bundles.get(bundle_id) != row.get("probe_id")
+            or row.get("measurement_id")
+            != "measurement:" + bundle_id.split(":", 1)[-1]
+            or row.get("cohort_fingerprint")
+            != cohort_fingerprints.get(bundle_id)
+            or row.get("decision") not in _COHORT_DECISIONS
+            or row.get("grants_gameplay_trust") is not False
+            or any(
+                type(row.get(field)) is not int or row[field] < 0
+                for field in metric_fields
+            )
+        ):
+            raise WorkSelectionCohortMeasurementError(
+                "Cohort measurement identity or metric is invalid"
+            )
+        reaches_floor = (
+            row["complete_card_gain"]
+            >= int(coverage["minimum_complete_card_gain"])
+            or row["exact_ability_gain"]
+            >= int(coverage["minimum_exact_ability_gain"])
+            or row["material_residual_reduction"]
+            >= int(coverage["minimum_material_residual_reduction"])
+        )
+        expected_decision = (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        )
+        if row["decision"] != expected_decision:
+            raise WorkSelectionCohortMeasurementError(
+                "Cohort measurement decision contradicts the harvest floors"
+            )
+        result[bundle_id] = row
+    if set(result) != set(expected_bundles):
+        raise WorkSelectionCohortMeasurementError(
+            "Cohort measurement inventory is incomplete"
+        )
+    return result
+
+
+def work_selection_source_fingerprints(
+    inputs: Mapping[str, Any],
+) -> dict[str, str]:
+    return {
+        "architecture_audit": stable_hash(inputs["architecture_audit"]),
+        "card_unlock_frontier": str(
+            inputs["card_unlock_frontier"].get("fingerprint") or ""
+        ),
+        "cohort_measurements": str(
+            inputs["cohort_measurements"].get("fingerprint") or ""
+        ),
+        "harvest_outcome_history": str(
+            inputs["harvest_outcome_history"].get("fingerprint") or ""
+        ),
+        "compact_ci_dependencies": stable_hash(
+            inputs["compact_ci_dependencies"]
+        ),
+        "platform_readiness": stable_hash(inputs["platform_readiness"]),
+        "reusable_piece_delta": str(
+            inputs["reusable_piece_delta"].get("fingerprint") or ""
+        ),
+        "reusable_piece_interactions": str(
+            inputs["reusable_piece_interactions"].get("fingerprint") or ""
+        ),
+    }
 
 
 def _validated_history_header(
     value: Mapping[str, Any],
 ) -> tuple[list[Any], str, Mapping[str, Any] | None]:
-    if set(value) != _HISTORY_FIELDS or int(value.get("schema_version") or 0) != 2:
+    if set(value) != _HISTORY_FIELDS or int(value.get("schema_version") or 0) != 3:
         raise WorkSelectionError("Generated harvest history has an invalid shape")
     fingerprint_payload = dict(value)
     fingerprint = str(fingerprint_payload.pop("fingerprint") or "")
@@ -180,7 +351,8 @@ def _validate_history_entries(history: list[Any]) -> None:
     ids: set[str] = set()
     for index, raw in enumerate(history):
         row = mapping(raw, f"harvest_outcome_history[{index}]")
-        if set(row) != _ENTRY_FIELDS:
+        fields = set(row)
+        if fields != _LEGACY_ENTRY_FIELDS and fields != _CONTENT_ENTRY_FIELDS:
             raise WorkSelectionError(
                 "Harvest outcome history entries have an invalid shape"
             )
@@ -198,6 +370,35 @@ def _validate_history_entries(history: list[Any]) -> None:
                 "Harvest outcome history bundle identities must be unique"
             )
         ids.add(bundle_id)
+        if fields == _CONTENT_ENTRY_FIELDS:
+            unsigned = dict(row)
+            entry_fingerprint = str(unsigned.pop("entry_fingerprint") or "")
+            families = _validated_identity_list(
+                row.get("family_ids"),
+                "Content-bound harvest family IDs are invalid",
+            )
+            capabilities = _validated_identity_list(
+                row.get("capability_ids"),
+                "Content-bound harvest capability IDs are invalid",
+            )
+            base_receipt = row["base_receipt"]
+            head_receipt = row["head_receipt"]
+            if (
+                entry_fingerprint != stable_hash(unsigned)
+                or row.get("receipt_identity_kind") != "semantic_content"
+                or not str(row.get("transition_id") or "")
+                or not families
+                or families != sorted(set(families))
+                or not capabilities
+                or capabilities != sorted(set(capabilities))
+                or "commit" in base_receipt
+                or "commit" in head_receipt
+                or not str(base_receipt.get("content_fingerprint") or "")
+                or not str(head_receipt.get("content_fingerprint") or "")
+            ):
+                raise WorkSelectionError(
+                    "Content-bound harvest outcome identity is invalid"
+                )
         expected_gain = row.get("expected_complete_card_gain")
         if expected_gain is not None:
             nonnegative_int(expected_gain, "expected_complete_card_gain")
@@ -310,6 +511,11 @@ def load_work_selection_inputs(
         ),
         "card_unlock_frontier": _read_gzip_json(
             repository / "coverage" / "card-unlock-frontier.json.gz"
+        ),
+        "cohort_measurements": _read_json(
+            repository
+            / "coverage"
+            / "work-selection-cohort-measurements.json"
         ),
         "harvest_outcome_history": (
             dict(harvest_outcome_history)

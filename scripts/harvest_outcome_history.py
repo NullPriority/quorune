@@ -11,8 +11,8 @@ from typing import Any, Mapping, Sequence
 from quorune.util import stable_json
 
 
-HARVEST_HISTORY_SCHEMA_VERSION = 2
-HARVEST_HISTORY_ALGORITHM_VERSION = "git-corpus-receipt-delta-v2"
+HARVEST_HISTORY_SCHEMA_VERSION = 3
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v4"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
@@ -202,23 +202,11 @@ def _architecture_metrics(value: Mapping[str, Any]) -> dict[str, int]:
     }
 
 
-def _receipt(root: Path, commit: str) -> dict[str, Any]:
-    reports: dict[str, tuple[str, bytes, dict[str, Any]]] = {}
-    report_specs = (
-        (_PROGRAM_PATH, False),
-        (_ORACLE_PATH, False),
-        (_FRONTIER_PATH, True),
-        (_INTERACTIONS_PATH, True),
-        (_ARCHITECTURE_PATH, False),
-    )
-    blobs = _blobs(root, commit, tuple(path for path, _compressed in report_specs))
-    for path, compressed in report_specs:
-        oid, raw = blobs[path]
-        reports[path] = (
-            oid,
-            raw,
-            _json_object(raw, path, compressed=compressed),
-        )
+def _receipt_from_reports(
+    *,
+    commit: str,
+    reports: Mapping[str, tuple[str, bytes, dict[str, Any]]],
+) -> dict[str, Any]:
     program = reports[_PROGRAM_PATH][2]
     oracle = reports[_ORACLE_PATH][2]
     frontier = reports[_FRONTIER_PATH][2]
@@ -380,6 +368,54 @@ def _receipt(root: Path, commit: str) -> dict[str, Any]:
     }
 
 
+def _report_specs() -> tuple[tuple[str, bool], ...]:
+    return (
+        (_PROGRAM_PATH, False),
+        (_ORACLE_PATH, False),
+        (_FRONTIER_PATH, True),
+        (_INTERACTIONS_PATH, True),
+        (_ARCHITECTURE_PATH, False),
+    )
+
+
+def _receipt(root: Path, commit: str) -> dict[str, Any]:
+    reports: dict[str, tuple[str, bytes, dict[str, Any]]] = {}
+    report_specs = _report_specs()
+    blobs = _blobs(root, commit, tuple(path for path, _compressed in report_specs))
+    for path, compressed in report_specs:
+        oid, raw = blobs[path]
+        reports[path] = (
+            oid,
+            raw,
+            _json_object(raw, path, compressed=compressed),
+        )
+    return _receipt_from_reports(commit=commit, reports=reports)
+
+
+def _worktree_receipt(root: Path) -> dict[str, Any]:
+    reports: dict[str, tuple[str, bytes, dict[str, Any]]] = {}
+    for path, compressed in _report_specs():
+        try:
+            raw = (root / path).read_bytes()
+        except OSError as exc:
+            raise HarvestOutcomeHistoryError(
+                f"Current harvest receipt is unavailable: {path}"
+            ) from exc
+        oid = _git(root, "hash-object", "--stdin", input_bytes=raw).decode().strip()
+        if not _COMMIT.fullmatch(oid):
+            raise HarvestOutcomeHistoryError(
+                f"Current harvest blob identity is invalid: {path}"
+            )
+        reports[path] = (
+            oid,
+            raw,
+            _json_object(raw, path, compressed=compressed),
+        )
+    receipt = _receipt_from_reports(commit="", reports=reports)
+    receipt.pop("commit", None)
+    return receipt
+
+
 def _provenance_rows(value: Any) -> list[Mapping[str, Any]]:
     if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
         raise HarvestOutcomeHistoryError("Harvest provenance must be an array")
@@ -537,66 +573,30 @@ def _transition_metrics(
 
 
 def _worktree_semantic_state(root: Path) -> dict[str, Any]:
-    reports: dict[str, tuple[bytes, dict[str, Any]]] = {}
-    for path, compressed in (
-        (_PROGRAM_PATH, False),
-        (_ORACLE_PATH, False),
-        (_FRONTIER_PATH, True),
-    ):
-        try:
-            raw = (root / path).read_bytes()
-        except OSError as exc:
-            raise HarvestOutcomeHistoryError(
-                f"Current semantic receipt is unavailable: {path}"
-            ) from exc
-        reports[path] = (
-            raw,
-            _json_object(raw, path, compressed=compressed),
-        )
-    program = reports[_PROGRAM_PATH][1]
-    oracle = reports[_ORACLE_PATH][1]
-    frontier = reports[_FRONTIER_PATH][1]
-    program_statuses = _status_counts(
-        program.get("status_counts"), "program.status_counts"
-    )
-    trust_basis = _status_counts(
-        program.get("trust_basis_counts"), "program.trust_basis_counts"
-    )
-    oracle_statuses = _status_counts(
-        oracle.get("status_counts"), "oracle.status_counts"
-    )
-    hard_failures = frontier.get("hard_construction_failures")
-    if not isinstance(hard_failures, list):
-        raise HarvestOutcomeHistoryError(
-            "Frontier hard construction failures must be an array"
-        )
+    receipt = _worktree_receipt(root)
     return {
-        "compiler_version": str(program.get("compiler_version") or ""),
-        "card_program_schema_version": _nonnegative_int(
-            program.get("card_program_schema_version"),
-            "program.card_program_schema_version",
-        ),
+        "compiler_version": receipt["compiler_version"],
+        "card_program_schema_version": receipt["card_program_schema_version"],
         "semantic_receipt_sha256": {
-            path: hashlib.sha256(raw).hexdigest()
-            for path, (raw, _value) in sorted(reports.items())
+            path: receipt["blobs"][path]["raw_sha256"]
+            for path in (_PROGRAM_PATH, _ORACLE_PATH, _FRONTIER_PATH)
         },
         "support_counts": {
-            "oracle_exact_cards": oracle_statuses.get("exact", 0),
-            "trusted_card_programs": program_statuses.get("trusted", 0),
-            "capability_closed_card_programs": trust_basis.get(
-                "capability_closed", 0
-            ),
-            "oracle_material_residuals": _nonnegative_int(
-                oracle.get("material_residuals"), "oracle.material_residuals"
-            ),
-            "card_program_material_residuals": _nonnegative_int(
-                program.get("material_residuals"),
-                "program.material_residuals",
-            ),
-            "card_program_ability_records": _nonnegative_int(
-                program.get("ability_programs"), "program.ability_programs"
-            ),
-            "hard_construction_failures": len(hard_failures),
+            "oracle_exact_cards": receipt["oracle_status_counts"].get("exact", 0),
+            "trusted_card_programs": receipt["trusted_programs"],
+            "capability_closed_card_programs": receipt[
+                "capability_closed_programs"
+            ],
+            "oracle_material_residuals": receipt["oracle_material_residuals"],
+            "card_program_material_residuals": receipt[
+                "card_program_material_residuals"
+            ],
+            "card_program_ability_records": receipt[
+                "card_program_ability_records"
+            ],
+            "hard_construction_failures": receipt[
+                "hard_construction_failures"
+            ],
         },
     }
 
@@ -606,6 +606,7 @@ def validated_semantic_transition_declaration(
 ) -> dict[str, Any]:
     if not isinstance(declaration, Mapping) or set(declaration) != {
         "transition_id",
+        "compiler_version",
         "bundle_id",
         "candidate_ids",
         "family_ids",
@@ -617,6 +618,7 @@ def validated_semantic_transition_declaration(
             "Changed semantic support requires one transition declaration"
         )
     transition_id = str(declaration.get("transition_id") or "")
+    compiler_version = str(declaration.get("compiler_version") or "")
     bundle_id = declaration.get("bundle_id")
     raw_candidate_ids = declaration.get("candidate_ids")
     raw_family_ids = declaration.get("family_ids")
@@ -664,6 +666,7 @@ def validated_semantic_transition_declaration(
     )
     if (
         not transition_id
+        or not compiler_version.startswith("oracle-ir-v")
         or not (harvest or non_harvest)
         or (
             expected_gain is not None
@@ -699,9 +702,9 @@ def _pending_transition(
         "support_counts": current["support_counts"],
         "grants_gameplay_trust": False,
         "resolution": (
-            "Commit the generated corpus receipts, then materialize this "
-            "downstream outcome from that immutable Git commit before the "
-            "selector admits another semantic harvest."
+            "Generate the complete semantic receipts so the scheduler can "
+            "materialize this content-bound outcome in the same feature fixed "
+            "point before the selector admits another semantic harvest."
         ),
     }
 
@@ -745,6 +748,276 @@ def _semantic_outcome_state(
     )
 
 
+_CONTENT_ENTRY_EXTRA_FIELDS = {
+    "transition_id",
+    "family_ids",
+    "capability_ids",
+    "receipt_identity_kind",
+    "entry_fingerprint",
+}
+
+
+def _receipt_content_fingerprint(receipt: Mapping[str, Any]) -> str:
+    blobs = receipt.get("blobs")
+    if not isinstance(blobs, Mapping):
+        raise HarvestOutcomeHistoryError("Harvest content receipt lacks blobs")
+    try:
+        identities = {
+            path: str(blobs[path]["raw_sha256"])
+            for path, _compressed in _report_specs()
+        }
+    except (KeyError, TypeError) as exc:
+        raise HarvestOutcomeHistoryError(
+            "Harvest content receipt is incomplete"
+        ) from exc
+    if any(not value for value in identities.values()):
+        raise HarvestOutcomeHistoryError(
+            "Harvest content receipt identities are empty"
+        )
+    return _hash(
+        {
+            "schema_version": 1,
+            "semantic_receipt_sha256": identities,
+        }
+    )
+
+
+def _content_public_receipt(receipt: Mapping[str, Any]) -> dict[str, Any]:
+    public = _public_receipt(receipt)
+    public.pop("commit", None)
+    public["content_fingerprint"] = _receipt_content_fingerprint(receipt)
+    return public
+
+
+def _semantic_receipts_match(
+    left: Mapping[str, Any], right: Mapping[str, Any]
+) -> bool:
+    try:
+        return all(
+            left["blobs"][path]["raw_sha256"]
+            == right["blobs"][path]["raw_sha256"]
+            for path in (_PROGRAM_PATH, _ORACLE_PATH, _FRONTIER_PATH)
+        )
+    except (KeyError, TypeError):
+        return False
+
+
+def _content_entry(
+    declaration: Mapping[str, Any],
+    *,
+    base: Mapping[str, Any],
+    head: Mapping[str, Any],
+) -> dict[str, Any]:
+    if (
+        base["card_data_snapshot"] != head["card_data_snapshot"]
+        or base["cards_considered"] != head["cards_considered"]
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Harvest corpus receipts must use one pinned card snapshot"
+        )
+    entry = {
+        "transition_id": str(declaration["transition_id"]),
+        "bundle_id": str(declaration["bundle_id"]),
+        "candidate_ids": list(declaration["candidate_ids"]),
+        "family_ids": list(declaration["family_ids"]),
+        "capability_ids": list(declaration["capability_ids"]),
+        "expected_complete_card_gain": declaration[
+            "expected_complete_card_gain"
+        ],
+        "expected_complete_card_gain_basis": (
+            "authoritative_source"
+            if declaration["expected_complete_card_gain"] is not None
+            else "not_captured"
+        ),
+        "receipt_identity_kind": "semantic_content",
+        "base_receipt": _content_public_receipt(base),
+        "head_receipt": _content_public_receipt(head),
+        **_transition_metrics(base, head),
+    }
+    entry["entry_fingerprint"] = _hash(entry)
+    return entry
+
+
+def _validate_content_entry(
+    entry: Any,
+) -> dict[str, Any]:
+    if not isinstance(entry, Mapping):
+        raise HarvestOutcomeHistoryError(
+            "Content-bound harvest outcome must be an object"
+        )
+    candidate = dict(entry)
+    fingerprint = candidate.pop("entry_fingerprint", None)
+    base = candidate.get("base_receipt")
+    head = candidate.get("head_receipt")
+    if (
+        set(entry) != set(candidate) | {"entry_fingerprint"}
+        or fingerprint != _hash(candidate)
+        or candidate.get("receipt_identity_kind") != "semantic_content"
+        or not str(candidate.get("transition_id") or "")
+        or not isinstance(base, Mapping)
+        or not isinstance(head, Mapping)
+        or "commit" in base
+        or "commit" in head
+        or base.get("content_fingerprint")
+        != _receipt_content_fingerprint(base)
+        or head.get("content_fingerprint")
+        != _receipt_content_fingerprint(head)
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Content-bound harvest outcome is malformed"
+        )
+    return dict(entry)
+
+
+def _tracked_content_entries(
+    repository: Path,
+    *,
+    legacy_entries: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    path = repository / "coverage" / "harvest-outcome-history.json"
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return []
+    if value.get("schema_version") != HARVEST_HISTORY_SCHEMA_VERSION:
+        return []
+    rows = value.get("entries")
+    if not isinstance(rows, list) or len(rows) < len(legacy_entries):
+        raise HarvestOutcomeHistoryError(
+            "Tracked content-bound harvest history is truncated"
+        )
+    content_rows = rows[len(legacy_entries) :]
+    result: list[dict[str, Any]] = []
+    for row in content_rows:
+        validated = _validate_content_entry(row)
+        result.append(validated)
+    return result
+
+
+def _declaration_matches_content_entry(
+    declaration: Mapping[str, Any], entry: Mapping[str, Any]
+) -> bool:
+    return (
+        declaration.get("compiler_version")
+        == entry.get("head_receipt", {}).get("compiler_version")
+        and all(
+        declaration.get(field) == entry.get(field)
+        for field in (
+            "transition_id",
+            "bundle_id",
+            "candidate_ids",
+            "family_ids",
+            "capability_ids",
+            "expected_complete_card_gain",
+        )
+        )
+    )
+
+
+def _refresh_content_entry(
+    entry: Mapping[str, Any],
+    *,
+    declaration: Mapping[str, Any],
+    head: Mapping[str, Any],
+) -> dict[str, Any]:
+    validated = _validate_content_entry(entry)
+    if not _declaration_matches_content_entry(declaration, validated):
+        raise HarvestOutcomeHistoryError(
+            "Only the matching content-bound transition can be refreshed"
+        )
+    if not _semantic_receipts_match(validated["head_receipt"], head):
+        raise HarvestOutcomeHistoryError(
+            "A semantic content change requires a new harvest outcome"
+        )
+    base = validated["base_receipt"]
+    refreshed = {
+        **validated,
+        "head_receipt": _content_public_receipt(head),
+        "interaction_assurance_delta": _count_delta(
+            base["interaction_assurance"], head["interaction_assurance"]
+        ),
+        "architecture_delta": _count_delta(
+            base["architecture"], head["architecture"]
+        ),
+    }
+    refreshed.pop("entry_fingerprint", None)
+    refreshed["entry_fingerprint"] = _hash(refreshed)
+    return refreshed
+
+
+def _content_transition_is_landed(
+    repository: Path, transition_id: str
+) -> bool:
+    durable_tip = _durable_main_tip(repository)
+    completed = subprocess.run(
+        [
+            "git",
+            "show",
+            f"{durable_tip}:coverage/harvest-outcome-history.json",
+        ],
+        cwd=repository,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    )
+    if completed.returncode != 0:
+        return False
+    try:
+        value = json.loads(completed.stdout)
+    except (UnicodeError, json.JSONDecodeError):
+        return False
+    entries = value.get("entries") if isinstance(value, Mapping) else None
+    return isinstance(entries, list) and any(
+        isinstance(row, Mapping)
+        and row.get("receipt_identity_kind") == "semantic_content"
+        and row.get("transition_id") == transition_id
+        for row in entries
+    )
+
+
+def _tracked_legacy_entries(
+    repository: Path,
+    provenance_rows: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    path = repository / "coverage" / "harvest-outcome-history.json"
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return []
+    if value.get("schema_version") != HARVEST_HISTORY_SCHEMA_VERSION:
+        return []
+    unsigned = dict(value)
+    fingerprint = unsigned.pop("fingerprint", None)
+    if fingerprint != _hash(unsigned):
+        raise HarvestOutcomeHistoryError(
+            "Tracked harvest outcome history fingerprint is stale"
+        )
+    entries = value.get("entries")
+    if not isinstance(entries, list) or len(entries) < len(provenance_rows):
+        raise HarvestOutcomeHistoryError(
+            "Tracked legacy harvest outcome history is truncated"
+        )
+    result: list[dict[str, Any]] = []
+    for source, entry in zip(
+        provenance_rows,
+        entries[: len(provenance_rows)],
+        strict=True,
+    ):
+        if (
+            not isinstance(entry, Mapping)
+            or entry.get("receipt_identity_kind") is not None
+            or entry.get("bundle_id") != source.get("bundle_id")
+            or entry.get("candidate_ids") != source.get("candidate_ids")
+            or entry.get("expected_complete_card_gain")
+            != source.get("expected_complete_card_gain")
+        ):
+            raise HarvestOutcomeHistoryError(
+                "Tracked legacy harvest outcome contradicts its provenance"
+            )
+        result.append(dict(entry))
+    return result
+
+
 def build_harvest_outcome_history(
     root: str | Path,
     provenance: Any,
@@ -768,8 +1041,12 @@ def build_harvest_outcome_history(
             receipt_cache[commit] = value
         return value
 
+    provenance_rows = _provenance_rows(provenance)
+    cached_legacy_entries = _tracked_legacy_entries(
+        repository, provenance_rows
+    )
     entries: list[dict[str, Any]] = []
-    for index, row in enumerate(_provenance_rows(provenance)):
+    for index, row in enumerate(provenance_rows):
         if set(row) != expected:
             raise HarvestOutcomeHistoryError(
                 f"Harvest provenance row {index} has an invalid shape"
@@ -808,6 +1085,9 @@ def build_harvest_outcome_history(
             raise HarvestOutcomeHistoryError(
                 "Harvest base must be a strict ancestor of its head"
             )
+        if cached_legacy_entries:
+            entries.append(cached_legacy_entries[index])
+            continue
         base = receipt(base_commit)
         head = receipt(head_commit)
         if (
@@ -836,20 +1116,98 @@ def build_harvest_outcome_history(
         raise HarvestOutcomeHistoryError(
             "Harvest history requires at least one immutable outcome"
         )
-    current = _worktree_semantic_state(repository)
-    latest = entries[-1]["head_receipt"]
-    semantic_outcome_status, pending = _semantic_outcome_state(
-        latest,
-        current,
-        transition_declaration,
+    entries.extend(
+        _tracked_content_entries(
+            repository,
+            legacy_entries=entries,
+        )
     )
+    if len({str(row["bundle_id"]) for row in entries}) != len(entries):
+        raise HarvestOutcomeHistoryError(
+            "Harvest outcome bundle identities must remain unique"
+        )
+    current_receipt = _worktree_receipt(repository)
+    latest = entries[-1]["head_receipt"]
+    semantic_outcome_status = "current"
+    pending = None
+    validated_declaration = (
+        validated_semantic_transition_declaration(transition_declaration)
+        if transition_declaration is not None
+        else None
+    )
+    if _semantic_receipts_match(latest, current_receipt):
+        if validated_declaration is not None:
+            matching_content_entry = (
+                entries[-1].get("receipt_identity_kind") == "semantic_content"
+                and _declaration_matches_content_entry(
+                    validated_declaration, entries[-1]
+                )
+            )
+            if (
+                matching_content_entry
+                and _receipt_content_fingerprint(latest)
+                != _receipt_content_fingerprint(current_receipt)
+                and not _content_transition_is_landed(
+                    repository,
+                    validated_declaration["transition_id"],
+                )
+            ):
+                entries[-1] = _refresh_content_entry(
+                    entries[-1],
+                    declaration=validated_declaration,
+                    head=current_receipt,
+                )
+                latest = entries[-1]["head_receipt"]
+            elif (
+                not matching_content_entry
+                and validated_declaration["compiler_version"]
+                == current_receipt["compiler_version"]
+            ):
+                raise HarvestOutcomeHistoryError(
+                    "Semantic transition declaration is stale before a content change"
+                )
+    elif (
+        validated_declaration is not None
+        and validated_declaration["outcome_kind"] == "harvest"
+    ):
+        if validated_declaration["compiler_version"] != current_receipt[
+            "compiler_version"
+        ]:
+            raise HarvestOutcomeHistoryError(
+                "Semantic transition compiler version does not match its receipt"
+            )
+        base = receipt(_durable_main_tip(repository))
+        if any(
+            row.get("transition_id") == validated_declaration["transition_id"]
+            for row in entries
+        ):
+            raise HarvestOutcomeHistoryError(
+                "Semantic transition identity has already been materialized"
+            )
+        entries.append(
+            _content_entry(
+                validated_declaration,
+                base=base,
+                head=current_receipt,
+            )
+        )
+        latest = entries[-1]["head_receipt"]
+    else:
+        current = _worktree_semantic_state(repository)
+        semantic_outcome_status, pending = _semantic_outcome_state(
+            latest,
+            current,
+            transition_declaration,
+        )
 
     payload: dict[str, Any] = {
         "schema_version": HARVEST_HISTORY_SCHEMA_VERSION,
         "algorithm_version": HARVEST_HISTORY_ALGORITHM_VERSION,
+        "legacy_provenance_fingerprint": _hash(provenance_rows),
         "entries": entries,
         "outcome_basis": (
-            "Actual outcomes are derived from immutable Git blobs for the "
+            "Actual outcomes are derived from immutable semantic content "
+            "receipts for the "
             "pinned Commander Oracle and CardProgram coverage, complete card "
             "frontier, reusable-piece interaction matrix, and architecture audit."
         ),

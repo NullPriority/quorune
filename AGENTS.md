@@ -170,13 +170,17 @@ database-backed finalizer arguments for the detected environment. Run it
 without `--install-hook` for a read-only recheck. A compact test database is
 not a substitute for the pinned corpus database.
 
-As the default development policy, do not run behavioral tests, broad suites,
+As the default development policy, do not run broad behavioral suites, broad
 gates, or historical regression journeys locally. During implementation, run
-changed-module compilation, JSON/schema parsing, applicable deterministic
-generators and freshness checks, and diff hygiene. Push the coherent head so
-public CI runs the exact affected regressions, replay and privacy shards, the
-broad suite, packaging, and headless browser certification. Inspect the
-deterministic impact plan without executing the broad gate:
+the exact new behavioral tests and the smallest directly affected owner or
+interaction tests that cover the changed contract, together with changed-module
+compilation, JSON/schema parsing, applicable deterministic generators and
+freshness checks, and diff hygiene. Keep that focused behavioral set within a
+small time budget; if the impact plan identifies a broader package, operating-
+system, browser, or regression set, leave that set to public CI. Push the
+coherent head so public CI runs the remaining affected regressions, replay and
+privacy shards, the broad suite, packaging, and headless browser certification.
+Inspect the deterministic impact plan without executing the broad gate:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\quick_gate.py --dry-run
@@ -337,10 +341,12 @@ non-behavioral command identified by the plan, including changed-module
 compilation, JSON/schema parsing, architecture or repository validators, and
 diff hygiene. Resolve every omission before pushing the coherent head.
 
-This does not authorize routine local behavioral tests, broad gates, historical
-regression journeys, package or operating-system matrices, or browser
-certification. Those remain public exact-head CI responsibilities except under
-the diagnostic and release-critical exceptions below.
+This authorizes only the exact new tests and smallest directly affected owner or
+interaction witnesses before the first cloud checkpoint. It does not authorize
+broad gates, historical regression journeys, package or operating-system
+matrices, or browser certification. Those remain public exact-head CI
+responsibilities except under the diagnostic and release-critical exceptions
+below.
 
 When adding or changing a fixture, manifest entry, registry record, generated
 source, schema, workflow input, or package input, identify every consumer before
@@ -412,11 +418,12 @@ run IDs into `platform/readiness-source.json` or
 with the base revision and rejects newly written volatile provenance; the
 historical CI escape ledger remains the explicit owner for observed workflow
 incidents. Never create a follow-up commit solely to reconcile squash-merge
-identity. A local behavioral test or broader gate is exceptional: use it only
-when the user asks or when diagnosing a specific CI-only or release-critical
-failure that cannot be isolated from the Actions evidence. Run only the
-directly relevant test in that case. Browser automation remains headless. The
-complete workflow and recovery commands are in
+identity. A broader local behavioral gate is exceptional: use it only when the
+user asks or when diagnosing a specific CI-only or release-critical failure
+that cannot be isolated from the Actions evidence. The required exact new and
+directly affected tests remain the normal pre-cloud evidence; any exceptional
+diagnostic must still run only the directly relevant test. Browser automation
+remains headless. The complete workflow and recovery commands are in
 `docs/development/ci-pipeline.md`.
 
 Never stage `run/`, `local/`, SQLite databases, Scryfall archives, image or deck

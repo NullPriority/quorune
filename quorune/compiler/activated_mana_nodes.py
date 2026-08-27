@@ -50,9 +50,7 @@ from .ir_model import (
 )
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .regeneration_templates import self_regeneration_effect_template
-from .temporary_declaration_templates import (
-    activated_temporary_declaration_restriction_effect_template,
-)
+from . import temporary_declaration_templates as declaration_templates
 
 
 def fixed_activated_mana_node(
@@ -698,8 +696,8 @@ def activated_oracle_node(
         effect_material
     )
     declaration_restriction = (
-        activated_temporary_declaration_restriction_effect_template(
-            effect_material
+        declaration_templates.activated_temporary_declaration_restriction_effect_template(
+            effect_material, card_name=card_name
         )
     )
     if self_zone_move is not None:

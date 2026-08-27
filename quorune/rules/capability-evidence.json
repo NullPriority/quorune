@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3646820bbd9cc58c5cf341fd31177be4c6c7efece186b56070adb29c604ecd5d",
-  "declaration_source_fingerprint": "d1aea4a6dfbbae6350ccac1527ad7c99f6f12756c007954d5bc0674d289a3286",
+  "registry_fingerprint": "f548f6e55c3795c6344d20659939797a7b31582aba8671fefa9020cf93936693",
+  "declaration_source_fingerprint": "d03d5ccb88119e4c216f76c654eebcf76709f9e86f23f9990215e12dbed9f6d2",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -12816,6 +12816,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionCompilerTests.test_spell_triggered_source_and_subtype_contexts_share_owner",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile the same fixed declaration rule through spell, normalized trigger, activated target, source-self, and subtype-target contexts."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "positive",
       "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionTemplateTests.test_closed_activated_temporary_declaration_restrictions_compile",
       "official_rule_ids": [
         "508.1c",
@@ -12831,6 +12850,44 @@
         "commander_review"
       ],
       "applicability_note": "Compile all four closed activated temporary restriction forms to one typed declaration operation."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionTemplateTests.test_source_and_creature_subtype_subjects_compile_closed_shapes",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower source-self and pinned creature-subtype subjects without widening the temporary declaration operation."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.TemporaryDeclarationRestrictionRuntimeTests.test_compiled_source_activation_locks_rule_to_source_incarnation",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a real compiled source-self activation and enforce the resulting identity-locked unblockable rule in the shared block query."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -15615,6 +15672,23 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionCompilerTests.test_spell_triggered_source_and_subtype_contexts_share_owner",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Admit the closed duration rule from spell, normalized trigger, target activation, source-self, and subtype-target compiler contexts."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionTemplateTests.test_closed_activated_temporary_declaration_restrictions_compile",
       "official_rule_ids": [
         "508.1c",
@@ -15632,6 +15706,23 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionTemplateTests.test_source_and_creature_subtype_subjects_compile_closed_shapes",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Represent source-self and pinned subtype target subjects through the same duration-bound typed operation."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_temporary_declaration_restriction_effects.TemporaryDeclarationRestrictionRuntimeTests.test_all_four_restrictions_change_declaration_behavior_and_expire",
       "official_rule_ids": [
         "508.1c",
@@ -15645,6 +15736,23 @@
         "commander_review"
       ],
       "applicability_note": "Create each closed resolved declaration rule and enforce its exact attack or block result until cleanup."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.TemporaryDeclarationRestrictionRuntimeTests.test_compiled_source_activation_locks_rule_to_source_incarnation",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commit a real compiled source-self rule against the source's exact current battlefield incarnation."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -48721,5 +48829,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "24f9aa0e59acc53fc86cce87a4c4ebe17627e30eaf7bd480e64364e6b10ba079"
+  "fingerprint": "edbdcf64da9e51850da148c79b339a528be3af9b4f4a6d00424485850c24a2be"
 }

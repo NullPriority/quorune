@@ -624,6 +624,7 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("max-parallel: 2", cloud)
         self.assertIn("owner: [card-unlock-frontier, platform-status]", cloud)
         self.assertIn("--owner compiler-corpus-coverage", cloud)
+        self.assertIn("--owner work-selection-cohort-measurements", cloud)
         self.assertIn("--owner reusable-pieces", cloud)
         self.assertIn("actions/download-artifact@v4", cloud)
         self.assertIn("merge-multiple: true", cloud)

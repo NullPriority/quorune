@@ -269,20 +269,25 @@ Windows checkout instead of producing false CRLF-only staleness. The rules
 scheduler and platform status explicitly depend on that owner, so a rules review
 or contract edit cannot leave their inputs stale while the finalizer still
 reports success.
-The rules-scheduler owner also generates
-`coverage/harvest-outcome-history.json` from immutable base/head Git blobs for
-the Commander CardProgram corpus and card-unlock frontier. Static policy stores
-only provenance and candidate-bundle owner hypotheses; actual harvest counts
-are derived downstream. Family-level bundle closure is reported as
-`upper_bound_only` and cannot become implementation foreground until a
-generated bounded cohort establishes one executable grammar and lower bound.
-Harvest provenance may name only a head already reachable from the durable
-main line. A semantic harvest feature branch keeps its transition declaration
-pending through certification; it must not clear that declaration by recording
-a feature-only receipt commit that a squash merge can discard. The next
-substantive cycle materializes the landed merge receipt before selecting and
-shipping its next harvest, so immutable calibration remains available without
-an identity-only follow-up commit.
+The database-backed `work-selection-cohort-measurements` owner joins static
+candidate probe definitions to the current card-unlock frontier and pinned
+Oracle lines. It writes current cohort fingerprints and observed card, ability,
+residual, and blocker-closure counts to
+`coverage/work-selection-cohort-measurements.json`; static selection policy
+contains no copied frontier fingerprint or observed count. Family-level bundle
+closure remains `upper_bound_only` until that generated probe establishes one
+executable grammar and lower bound.
+The rules-scheduler owner also maintains
+`coverage/harvest-outcome-history.json`. Existing historical rows retain their
+immutable Git provenance, while new semantic transitions use base and head
+content-receipt fingerprints over the Commander CardProgram corpus, Oracle
+coverage, card-unlock frontier, interaction inventory, and architecture audit.
+The transition declaration carries the bundle, candidate, family, capability,
+expected-gain, and compiler identities before corpus generation. Once the
+generated head receipts exist, the same feature fixed point appends the actual
+outcome automatically. Those content identities survive squash, so review,
+merge, and the next selector pass require neither a merge-commit association
+nor a bookkeeping follow-up.
 If no implementation-eligible cohort exists, the same selector may choose one
 `cohort_measurement` task. That task pins the corpus filter, owner hypothesis,
 grammar boundary, exclusions, cards/residuals to inspect, probe effort, and

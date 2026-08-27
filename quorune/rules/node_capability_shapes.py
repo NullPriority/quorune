@@ -22,6 +22,7 @@ from ..attachment_references import (
 from ..compiler.counter_placement_templates import (
     fixed_counter_set_spec_is_closed,
 )
+from ..compiler.creature_subtypes import canonical_creature_subtype
 from ..compiler.direct_target import DirectPermanentTargetSpec
 from ..compiler.fixed_target_effect_sequences import (
     FIXED_TARGET_CHARACTERISTIC_KEYWORDS,
@@ -1219,7 +1220,7 @@ def temporary_declaration_restriction_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return ownership for one closed target declaration restriction."""
+    """Return ownership for one closed target or source declaration rule."""
 
     if len(effects) != 1:
         return ()
@@ -1229,30 +1230,47 @@ def temporary_declaration_restriction_node_capabilities(
         set(effect) != {"op", "card", "restriction"}
         or effect.get("op")
         != "grant_declaration_restriction_until_end_of_turn"
-        or effect.get("card") != "$target.0"
+        or effect.get("card") not in {"$source", "$target.0"}
         or kind not in TEMPORARY_DECLARATION_RESTRICTION_KINDS
     ):
         return ()
     schema = dict(target_schema or {})
-    if schema != {
+    target_subject = effect.get("card") == "$target.0"
+    ordinary_creature_schema = {
         "zones": ["battlefield"],
         "categories": ["permanent"],
         "types_any": ["creature"],
         "count": 1,
-    }:
+    }
+    subtype_schema = bool(
+        set(schema) == {"zones", "categories", "subtypes_any", "count"}
+        and schema.get("zones") == ["battlefield"]
+        and schema.get("categories") == ["permanent"]
+        and schema.get("count") == 1
+        and isinstance(schema.get("subtypes_any"), list)
+        and len(schema["subtypes_any"]) == 1
+        and canonical_creature_subtype(schema["subtypes_any"][0])
+        == schema["subtypes_any"][0]
+    )
+    if (
+        target_subject
+        and schema != ordinary_creature_schema
+        and not subtype_schema
+    ) or (not target_subject and schema):
         return ()
     required_mechanics = {
-        "cr-115-targets",
         "cr-611-continuous-effects",
         *temporary_declaration_restriction(str(kind)).mechanics,
     }
+    if target_subject:
+        required_mechanics.add("cr-115-targets")
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not required_mechanics.issubset(mechanics):
         return ()
     return (
         "combat.declaration.typed_components",
         "continuous.resolution.declaration_rules_until_end_of_turn",
-        "target.revalidate_resolution",
+        *(("target.revalidate_resolution",) if target_subject else ()),
     )
 
 
