@@ -129,10 +129,31 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
                 {"up_to": 3, "same_owner": True},
             ),
             (
+                "Exile up to one target card from a graveyard.",
+                "Instant",
+                "spell_ability",
+                "exile_public_graveyard_targets",
+                {"up_to": 1},
+            ),
+            (
                 "Exile up to one target creature.",
                 "Instant",
                 "spell_ability",
                 "exile_permanent_targets",
+                {"up_to": 1},
+            ),
+            (
+                "Destroy up to one target creature.",
+                "Instant",
+                "spell_ability",
+                "destroy_targets",
+                {"up_to": 1},
+            ),
+            (
+                "Return up to one target creature to its owner's hand.",
+                "Instant",
+                "spell_ability",
+                "return_permanent_targets_to_owner_hand",
                 {"up_to": 1},
             ),
             (
@@ -142,6 +163,20 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
                 "spell_ability",
                 "return_graveyard_targets_to_owner_hand",
                 {"up_to": 1},
+            ),
+            (
+                "Return up to one target card from your graveyard to your hand.",
+                "Sorcery",
+                "spell_ability",
+                "return_graveyard_targets_to_owner_hand",
+                {"up_to": 1},
+            ),
+            (
+                "Tap up to two target creatures.",
+                "Instant",
+                "spell_ability",
+                "tap_targets",
+                {"up_to": 2},
             ),
         )
         for text, type_line, kind, operation, schema_fields in cases:
@@ -679,6 +714,77 @@ class FixedHomogeneousTargetSetRuntimeTests(unittest.TestCase):
         self.assertTrue(first.tapped)
         self.assertNotIn("stun", first.counters)
         self.assertFalse(second.tapped)
+
+    def test_wintermoon_mesa_composes_tapped_entry_with_fixed_target_set(self):
+        session = self.session(122006, spell="Wintermoon Mesa")
+        engine = session.engine
+        source = self.card(engine, "A", name="Wintermoon Mesa")
+        first = self.card(engine, "B", name="Island")
+        second = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "C"
+            and card.zone != "command"
+            and card.is_card_object
+            and "land"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        for target in (first, second):
+            engine.move_card(
+                target.object_id,
+                "battlefield",
+                controller=target.owner,
+                log=False,
+            )
+            target.tapped = False
+
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        self.assertTrue(source.tapped)
+        source.tapped = False
+        engine.state.players["A"].mana_pool["C"] = 2
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+
+        action = next(
+            row
+            for row in engine._priority_action_hints("A")["actions"]
+            if row.get("id") == f"activate:{source.ref}:ab3"
+        )
+        self.assertEqual(2, action["target_schema"]["count"])
+        self.assertTrue(
+            {first.ref, second.ref}.issubset(
+                action["target_schema"]["legal_refs"]
+            )
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        accepted = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [first.ref, second.ref],
+                "pay": "manual",
+                "payment": {"C": 2},
+            },
+        )
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", source.zone)
+        self.resolve_all(session)
+        self.assertTrue(first.tapped)
+        self.assertTrue(second.tapped)
+        self.assert_replays(session, "wintermoon-mesa-target-set")
 
     def test_multi_target_destruction_preserves_protections_and_replay(self):
         session = self.session(122004, spell="Homogeneous Ruin")

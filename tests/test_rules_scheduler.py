@@ -690,9 +690,10 @@ class RulesSchedulerTests(unittest.TestCase):
         history = inputs["harvest_outcome_history"]
         latest_outcome = history["entries"][-1]
         latest_outcome["actual_complete_card_gain"] = 0
-        latest_outcome["forecast_correction"][
-            "certified_complete_card_lower_bound"
-        ] = 0
+        if "forecast_correction" in latest_outcome:
+            latest_outcome["forecast_correction"][
+                "certified_complete_card_lower_bound"
+            ] = 0
         unsigned_outcome = dict(latest_outcome)
         unsigned_outcome.pop("entry_fingerprint")
         latest_outcome["entry_fingerprint"] = hashlib.sha256(

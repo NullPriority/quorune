@@ -20,7 +20,12 @@ from scripts.shard_result_validation import (
     ShardResultError,
     validate_result_document,
 )
-from scripts.test_shards import load_manifest, primary_matrix, suite_modules
+from scripts.test_shards import (
+    functional_shards,
+    load_manifest,
+    primary_matrix,
+    suite_modules,
+)
 from scripts.verify_ci_needs import failed_dependencies
 from scripts.verify_windows_ci import (
     WindowsCertificationError,
@@ -307,7 +312,8 @@ class CiPipelineTests(unittest.TestCase):
                     path.write_text(json.dumps(document), encoding="utf-8")
             summary = validate_nightly_results(root)
             self.assertEqual(2 * len(load_manifest()["execution_order"]), summary["assignments"])
-            (root / "ubuntu" / "core-domain" / "result.json").unlink()
+            first_functional = functional_shards(load_manifest())[0]
+            (root / "ubuntu" / first_functional / "result.json").unlink()
             with self.assertRaisesRegex(NightlyCertificationError, "incomplete"):
                 validate_nightly_results(root)
 

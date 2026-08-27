@@ -62,6 +62,26 @@
       "released_at": "2026-08-27",
       "legalities": {"commander": "legal"},
       "faces": []
+    },
+    {
+      "oracle_id": "12200000-0000-4000-8000-000000000004",
+      "name": "Wintermoon Mesa",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped.\n{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Tap two target lands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": ["C"],
+      "layout": "normal",
+      "released_at": "2001-02-05",
+      "legalities": {"commander": "legal"},
+      "faces": []
     }
   ],
   "rulings": []
