@@ -621,7 +621,7 @@
             "untyped or independently inexact effect bodies"
           ],
           "measurement_status": "generated_probe",
-          "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v1"
+          "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
         },
         {
           "bundle_id": "bundle:fixed-source-event-triggers",
@@ -1132,7 +1132,7 @@
       {
         "candidate_id": "compiler:fixed-spell-cast-characteristic-triggers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
-        "reason": "At main cc74d150dace25bfecb9de7a7b331887c3d7fa68 the generated selector reported no eligible foreground candidate, while the raw continuous-layer leader still combined unrelated characteristic, permission, and dynamic-count grammars. The current generated cohort measurement for the previously completed optional-effect bundle remains valid but its durable outcome identity correctly prevents reselection. A distinct implementation-backed frontier probe isolates 116 spell-cast trigger abilities across 107 Commander cards where one static color, color-cardinality, type, subtype, or supertype predicate and one independently exact typed body share the existing normalized event and APNAP owners. The measured lower bound is 71 newly exact capability-closed cards, 116 exact abilities, and 116 removed material residuals. The cast transaction seals validated cast-selected types, subtypes, and supertypes plus cycle-safe effective colors, including Devoid, while history, origin, payment, kicked, targeted-spell, mana-value, conjunction, dynamic-count, cast-or-copy, intervening-if, reflexive, linked, and untyped-body families remain fail-closed."
+        "reason": "At main cc74d150dace25bfecb9de7a7b331887c3d7fa68 the generated selector reported no eligible foreground candidate, while the raw continuous-layer leader still combined unrelated characteristic, permission, and dynamic-count grammars. The current generated cohort measurement for the previously completed optional-effect bundle remains valid but its durable outcome identity correctly prevents reselection. A distinct implementation-backed frontier probe isolates spell-cast trigger abilities where one static color, color-cardinality, type, subtype, or supertype predicate and one independently exact typed body share the existing normalized event and APNAP owners. Exact-source certification found that the v1 probe's 71-card and 116-ability forecast admitted seven dependency-inexact regeneration or optional self-return bodies and missed two executable cards. The v2 probe asks the integrated owner for capability closure, producing a conservative 64-card and 109-ability lower bound; the landed census promotes 66 cards and 111 abilities. The cast transaction seals validated cast-selected types, subtypes, and supertypes plus cycle-safe effective colors, including Devoid, while history, origin, payment, kicked, targeted-spell, mana-value, conjunction, dynamic-count, cast-or-copy, intervening-if, reflexive, linked, and untyped-body families remain fail-closed."
       }
     ]
   },

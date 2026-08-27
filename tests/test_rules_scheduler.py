@@ -1321,7 +1321,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
     def test_spell_cast_characteristic_probe_uses_closed_event_and_body(self):
         probe_id = (
-            "fixed-spell-cast-characteristic-trigger-existing-owner-v1"
+            "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
         )
         record = SimpleNamespace(
             name="Characteristic trigger source",
@@ -1348,6 +1348,14 @@ class RulesSchedulerTests(unittest.TestCase):
             "Whenever you cast a spell with mana value 3, draw a card.",
             "Whenever you cast a historic spell, draw a card.",
             "Whenever you cast a Spirit spell, perform an unsupported action.",
+            (
+                "Whenever you cast a Spirit or Arcane spell, regenerate "
+                "target creature."
+            ),
+            (
+                "Whenever you cast a Spirit or Arcane spell, you may return "
+                "Characteristic trigger source to its owner's hand."
+            ),
         ):
             with self.subTest(source=source):
                 self.assertFalse(
