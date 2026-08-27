@@ -74,6 +74,9 @@ class ProwessCompilerTests(unittest.TestCase):
             origin="hand",
             stack_ref="S9",
             types=("Artifact", "artifact"),
+            subtypes=("Vehicle", "vehicle"),
+            supertypes=("Legendary",),
+            colors=("u", "W"),
         )
         equivalent = SpellCastEvent(
             card_ref="A17",
@@ -83,15 +86,43 @@ class ProwessCompilerTests(unittest.TestCase):
             origin="hand",
             stack_ref="S9",
             types=("artifact",),
+            subtypes=("vehicle",),
+            supertypes=("legendary",),
+            colors=("W", "U"),
         )
 
         self.assertEqual(("artifact",), event.types)
+        self.assertEqual(("vehicle",), event.subtypes)
+        self.assertEqual(("legendary",), event.supertypes)
+        self.assertEqual(("W", "U"), event.colors)
         self.assertEqual(event, SpellCastEvent.from_context(event.to_context()))
         self.assertEqual(event.fingerprint, equivalent.fingerprint)
         self.assertEqual(
             ["artifact"],
             event.to_context()["types"],
         )
+
+    def test_spell_cast_event_replays_legacy_v1_shape_exactly(self):
+        legacy = {
+            "schema_version": 1,
+            "card": "A17",
+            "object_id": "object:A17",
+            "logical_object_id": "logical:A17:4",
+            "controller": "A",
+            "player": "A",
+            "from": "hand",
+            "to": "stack",
+            "types": ["artifact"],
+            "stack": "S9",
+        }
+
+        event = SpellCastEvent.from_context(legacy)
+
+        self.assertEqual(1, event.schema_version)
+        self.assertEqual((), event.subtypes)
+        self.assertEqual((), event.supertypes)
+        self.assertEqual((), event.colors)
+        self.assertEqual(legacy, event.to_context())
 
     def test_spell_cast_event_rejects_malformed_context_without_mutation(self):
         context = SpellCastEvent(
@@ -110,6 +141,19 @@ class ProwessCompilerTests(unittest.TestCase):
             SpellCastEvent.from_context(context)
 
         self.assertEqual(before, context)
+
+        malformed_colors = SpellCastEvent(
+            card_ref="A17",
+            object_id="object:A17",
+            logical_object_id="logical:A17:4",
+            controller="A",
+            origin="hand",
+            stack_ref="S9",
+            types=("artifact",),
+        ).to_context()
+        malformed_colors["colors"] = ["C"]
+        with self.assertRaises(SpellCastEventError):
+            SpellCastEvent.from_context(malformed_colors)
 
     def test_prowess_keyword_lowers_each_instance_with_precise_spans(self):
         text = "Haste, prowess, prowess"

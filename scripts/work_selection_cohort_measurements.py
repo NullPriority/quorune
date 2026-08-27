@@ -8,16 +8,22 @@ from quorune.compiler.destruction_templates import destruction_effect_template
 from quorune.compiler.optional_effect_templates import (
     fixed_optional_effect_template,
 )
+from quorune.compiler.modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
 from quorune.compiler.regeneration_templates import (
     fixed_regeneration_effect_template,
 )
+from quorune.compiler.fixed_counter_trigger_nodes import (
+    FixedSpellCastCharacteristicQuery,
+    fixed_counter_trigger_binding,
+)
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.oracle_ir import (
     _face_type_context,
     _reviewed_atomic_effect_template,
+    _reviewed_effect_template,
     _without_parenthetical_reminder,
 )
 from quorune.work_selection_evidence import (
@@ -32,10 +38,14 @@ _PROBE_TOKEN = "fixed-token-creation-existing-owner-v1"
 _PROBE_EXILE = "fixed-exile-existing-owner-v1"
 _PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
 _PROBE_REGENERATION = "fixed-regeneration-existing-owner-v1"
+_PROBE_SPELL_CAST_CHARACTERISTIC = (
+    "fixed-spell-cast-characteristic-trigger-existing-owner-v1"
+)
 _PROBE_IDS = {
     _PROBE_EXILE,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_REGENERATION,
+    _PROBE_SPELL_CAST_CHARACTERISTIC,
     _PROBE_TOKEN,
 }
 
@@ -140,6 +150,56 @@ def _fixed_regeneration_instruction_candidates(line: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(candidates))
 
 
+def _matches_spell_cast_characteristic_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    card_name, source_is_permanent, attachment_relation = (
+        _source_face_context(card_record, ability)
+    )
+    binding = fixed_counter_trigger_binding(source, card_name=card_name)
+    if (
+        binding is None
+        or binding.spell_subject is None
+        or not isinstance(
+            binding.spell_subject.characteristic_query,
+            FixedSpellCastCharacteristicQuery,
+        )
+    ):
+        return False
+    face_id = str(ability.get("face_id") or "front")
+    face = next(
+        (
+            value
+            for value in card_record.faces
+            if str(value.get("name") or "") == face_id
+        ),
+        None,
+    )
+    type_line = str(
+        (face or {}).get("type_line") or card_record.type_line
+    )
+    card_types, _permanent, _spell, _support, _attachment = (
+        _face_type_context(type_line)
+    )
+    template, effects, _target_schema, mechanics = _reviewed_effect_template(
+        binding.body,
+        card_name=card_name,
+        source_is_permanent=source_is_permanent,
+        source_card_types=tuple(sorted(card_types)),
+        source_attachment_relation=attachment_relation,
+    )
+    return bool(
+        template is not None
+        and (
+            effects
+            or FIXED_NONREPEATING_MODAL_MECHANIC in mechanics
+        )
+    )
+
+
 def _source_face_context(
     card_record: Any,
     ability: Mapping[str, Any],
@@ -222,6 +282,16 @@ def _matches_probe(
                 and template.regeneration_prohibited
             )
             for body in _fixed_regeneration_instruction_candidates(source)
+        )
+    if probe_id == _PROBE_SPELL_CAST_CHARACTERISTIC:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Spell-cast characteristic measurement requires card context"
+            )
+        return _matches_spell_cast_characteristic_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
         )
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"

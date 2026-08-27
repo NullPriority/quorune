@@ -156,10 +156,6 @@ def validate_bundle_policy(
             or owners != sorted(set(owners))
             or any(not _BUNDLE_OWNER.fullmatch(value) for value in owners)
             or not contexts
-            or (
-                len(contexts) < 2
-                and measurement_status != "bounded_executable"
-            )
             or contexts != sorted(set(contexts))
             or not set(contexts) <= _BUNDLE_CONTEXTS
             or not parameters

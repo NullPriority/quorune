@@ -31,6 +31,7 @@ from quorune.work_selection_bundles import (
     bundle_measurement_fingerprint,
     bundle_measurement_decision,
     candidate_frontier_measurements,
+    validate_bundle_policy,
     WorkSelectionBundleError,
 )
 from quorune.util import stable_json
@@ -1318,6 +1319,46 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_spell_cast_characteristic_probe_uses_closed_event_and_body(self):
+        probe_id = (
+            "fixed-spell-cast-characteristic-trigger-existing-owner-v1"
+        )
+        record = SimpleNamespace(
+            name="Characteristic trigger source",
+            type_line="Artifact",
+            oracle_text="",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "Whenever you cast a white spell, draw a card.",
+            "Whenever a player casts a Spirit or Arcane spell, you gain 1 life.",
+            "Whenever an opponent casts a colorless or multicolored spell, scry 1.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "Whenever you cast a spell with mana value 3, draw a card.",
+            "Whenever you cast a historic spell, draw a card.",
+            "Whenever you cast a Spirit spell, perform an unsupported action.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
     def test_current_work_selection_policy_version_is_supported(self):
         queue = build_rules_dependency_queue_from_root(ROOT)
 
@@ -1832,14 +1873,10 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["measurement_status"] == "generated_probe"
         )
         measured["source_contexts"] = ["spell"]
-        with self.assertRaisesRegex(
-            WorkSelectionError, "closed identities"
-        ):
-            build_work_selection(
-                selected_batch=self.queue["selected_batch"],
-                policy=policy,
-                inputs=self.work_inputs,
-            )
+        bundles, _weights = validate_bundle_policy(
+            policy["coverage_family"]
+        )
+        self.assertIn(measured, bundles)
 
         inputs = deepcopy(self.work_inputs)
         measured = next(

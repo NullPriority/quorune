@@ -916,7 +916,11 @@ def _dispatch_cast_events(
             reason=f"{card.printed_name} additional cost",
             trigger_batch=trigger_batch,
         )
-    cast_types, _, _ = host._type_parts(proposal.type_line)
+    cast_types, cast_subtypes, cast_supertypes = host._type_parts(
+        proposal.type_line
+    )
+    effective_spell = host._effective_card_data(card)
+    cast_colors = tuple(effective_spell.get("colors") or ())
     host._record_turn_history(
         "spell_cast",
         actor=proposal.seat,
@@ -931,6 +935,9 @@ def _dispatch_cast_events(
         origin=proposal.origin,
         stack_ref=item.ref,
         types=tuple(cast_types),
+        subtypes=tuple(cast_subtypes),
+        supertypes=tuple(cast_supertypes),
+        colors=cast_colors,
     ).to_context()
     host._dispatch_semantic_event("spell.cast", context, trigger_batch=trigger_batch)
     if "artifact" in cast_types:
