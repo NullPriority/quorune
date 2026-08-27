@@ -212,6 +212,7 @@ def main() -> int:
         ROOT,
         work_policy.get("harvest_provenance"),
         work_policy.get("semantic_transition_declaration"),
+        work_policy.get("forecast_corrections"),
     )
     value = build_rules_dependency_queue_from_root(
         ROOT, harvest_outcome_history=harvest_history

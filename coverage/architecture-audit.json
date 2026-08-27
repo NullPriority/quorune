@@ -11543,7 +11543,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 183206,
+      "logical_lines": 183266,
       "methods": {
         "dunder": 511,
         "private": 823,
@@ -12238,6 +12238,13 @@
           "physical_lines": 608
         },
         {
+          "file": "quorune/work_selection_evidence.py",
+          "functions_and_methods": 11,
+          "language": "python",
+          "logical_lines": 569,
+          "physical_lines": 597
+        },
+        {
           "file": "quorune/compiler/draw_templates.py",
           "functions_and_methods": 10,
           "language": "python",
@@ -12327,13 +12334,6 @@
           "language": "python",
           "logical_lines": 514,
           "physical_lines": 564
-        },
-        {
-          "file": "quorune/work_selection_evidence.py",
-          "functions_and_methods": 11,
-          "language": "python",
-          "logical_lines": 509,
-          "physical_lines": 537
         },
         {
           "file": "quorune/effect_runtime/damage_modifiers.py",
@@ -15929,7 +15929,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 200918,
+      "physical_lines": 200978,
       "python_file_count": 561,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -28007,7 +28007,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "d80a357e7c555b94d125d4d7610961eeb72f02122c98c264c63ec891b0ebe860",
+      "fingerprint": "c73623101c528641dec368d0805b24e101767146b56d0f4c9db805e677b50be8",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

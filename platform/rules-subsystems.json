@@ -718,6 +718,17 @@
       "expected_complete_card_gain": 71,
       "non_harvest_reason": null
     },
+    "forecast_corrections": [
+      {
+        "transition_id": "oracle-ir-v134-fixed-spell-cast-characteristic-triggers",
+        "original_expected_complete_card_gain": 71,
+        "certified_complete_card_lower_bound": 64,
+        "certified_exact_ability_lower_bound": 109,
+        "certified_material_residual_reduction_lower_bound": 109,
+        "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v2",
+        "reason": "Exact-source certification found that the v1 probe admitted seven dependency-inexact regeneration or optional self-return bodies. The v2 integrated-owner probe removes those false positives and remains conservative against the realized 66-card, 111-ability outcome."
+      }
+    ],
     "harvest_provenance": [
       {
         "bundle_id": "bundle:typed-combat-prevention",

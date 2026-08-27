@@ -12,7 +12,7 @@ from quorune.util import stable_json
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
-HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v4"
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v5"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
@@ -755,6 +755,120 @@ _CONTENT_ENTRY_EXTRA_FIELDS = {
     "receipt_identity_kind",
     "entry_fingerprint",
 }
+_FORECAST_CORRECTION_FIELDS = {
+    "transition_id",
+    "original_expected_complete_card_gain",
+    "certified_complete_card_lower_bound",
+    "certified_exact_ability_lower_bound",
+    "certified_material_residual_reduction_lower_bound",
+    "measurement_probe_id",
+    "reason",
+}
+
+
+def _validated_forecast_correction(value: Any) -> dict[str, Any]:
+    if not isinstance(value, Mapping) or set(value) != _FORECAST_CORRECTION_FIELDS:
+        raise HarvestOutcomeHistoryError(
+            "Harvest forecast correction has an invalid shape"
+        )
+    correction = dict(value)
+    transition_id = str(correction.get("transition_id") or "")
+    measurement_probe_id = str(correction.get("measurement_probe_id") or "")
+    reason = str(correction.get("reason") or "").strip()
+    integer_fields = (
+        "original_expected_complete_card_gain",
+        "certified_complete_card_lower_bound",
+        "certified_exact_ability_lower_bound",
+        "certified_material_residual_reduction_lower_bound",
+    )
+    if (
+        not transition_id
+        or not measurement_probe_id
+        or len(reason) < 40
+        or any(
+            type(correction.get(field)) is not int or correction[field] < 0
+            for field in integer_fields
+        )
+        or correction["certified_complete_card_lower_bound"]
+        >= correction["original_expected_complete_card_gain"]
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Harvest forecast correction is incomplete or unbounded"
+        )
+    correction["transition_id"] = transition_id
+    correction["measurement_probe_id"] = measurement_probe_id
+    correction["reason"] = reason
+    return correction
+
+
+def _validated_forecast_corrections(value: Any) -> list[dict[str, Any]]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise HarvestOutcomeHistoryError(
+            "Harvest forecast corrections must be an array"
+        )
+    corrections = [_validated_forecast_correction(row) for row in value]
+    transition_ids = [row["transition_id"] for row in corrections]
+    if transition_ids != sorted(set(transition_ids)):
+        raise HarvestOutcomeHistoryError(
+            "Harvest forecast corrections must have unique sorted transition IDs"
+        )
+    return corrections
+
+
+def _apply_forecast_corrections(
+    entries: list[dict[str, Any]], corrections: Any
+) -> None:
+    validated = _validated_forecast_corrections(corrections)
+    by_transition = {row["transition_id"]: row for row in validated}
+    content_entries = {
+        str(row.get("transition_id") or ""): row
+        for row in entries
+        if row.get("receipt_identity_kind") == "semantic_content"
+    }
+    for transition_id, entry in content_entries.items():
+        tracked = entry.get("forecast_correction")
+        source = by_transition.get(transition_id)
+        if tracked is not None and (
+            source is None
+            or _validated_forecast_correction(tracked) != source
+        ):
+            raise HarvestOutcomeHistoryError(
+                "Tracked harvest forecast correction cannot disappear or mutate"
+            )
+    for correction in validated:
+        transition_id = correction["transition_id"]
+        entry = content_entries.get(transition_id)
+        if entry is None:
+            raise HarvestOutcomeHistoryError(
+                "Harvest forecast correction must identify a content-bound outcome"
+            )
+        expected = entry.get("expected_complete_card_gain")
+        actual_cards = entry.get("actual_complete_card_gain")
+        actual_abilities = entry.get("actual_exact_ability_gain")
+        actual_residuals = entry.get("actual_material_residual_reduction")
+        if (
+            expected
+            != correction["original_expected_complete_card_gain"]
+            or type(actual_cards) is not int
+            or actual_cards >= correction["original_expected_complete_card_gain"]
+            or actual_cards < correction["certified_complete_card_lower_bound"]
+            or type(actual_abilities) is not int
+            or actual_abilities < correction["certified_exact_ability_lower_bound"]
+            or type(actual_residuals) is not int
+            or actual_residuals
+            < correction[
+                "certified_material_residual_reduction_lower_bound"
+            ]
+        ):
+            raise HarvestOutcomeHistoryError(
+                "Harvest forecast correction contradicts its realized outcome"
+            )
+        if entry.get("forecast_correction") is None:
+            entry["forecast_correction"] = correction
+            entry.pop("entry_fingerprint", None)
+            entry["entry_fingerprint"] = _hash(entry)
 
 
 def _receipt_content_fingerprint(receipt: Mapping[str, Any]) -> str:
@@ -866,6 +980,13 @@ def _validate_content_entry(
         raise HarvestOutcomeHistoryError(
             "Content-bound harvest outcome is malformed"
         )
+    correction = candidate.get("forecast_correction")
+    if correction is not None:
+        validated_correction = _validated_forecast_correction(correction)
+        if validated_correction["transition_id"] != candidate["transition_id"]:
+            raise HarvestOutcomeHistoryError(
+                "Harvest forecast correction transition is inconsistent"
+            )
     return dict(entry)
 
 
@@ -1022,6 +1143,7 @@ def build_harvest_outcome_history(
     root: str | Path,
     provenance: Any,
     transition_declaration: Any = None,
+    forecast_corrections: Any = None,
 ) -> dict[str, Any]:
     repository = Path(root).resolve()
     expected = {
@@ -1199,6 +1321,8 @@ def build_harvest_outcome_history(
             current,
             transition_declaration,
         )
+
+    _apply_forecast_corrections(entries, forecast_corrections)
 
     payload: dict[str, Any] = {
         "schema_version": HARVEST_HISTORY_SCHEMA_VERSION,

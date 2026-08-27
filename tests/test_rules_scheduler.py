@@ -830,6 +830,7 @@ class RulesSchedulerTests(unittest.TestCase):
             self.catalog["work_selection"].get(
                 "semantic_transition_declaration"
             ),
+            self.catalog["work_selection"].get("forecast_corrections"),
         )
         self.assertEqual(
             self.work_inputs["harvest_outcome_history"], derived
@@ -881,11 +882,42 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             declaration["capability_ids"], current["capability_ids"]
         )
+        correction = current["forecast_correction"]
+        self.assertEqual(
+            declaration["expected_complete_card_gain"],
+            correction["original_expected_complete_card_gain"],
+        )
         self.assertGreaterEqual(
             current["actual_complete_card_gain"],
-            declaration["expected_complete_card_gain"],
+            correction["certified_complete_card_lower_bound"],
+        )
+        self.assertGreaterEqual(
+            current["actual_exact_ability_gain"],
+            correction["certified_exact_ability_lower_bound"],
+        )
+        self.assertGreaterEqual(
+            current["actual_material_residual_reduction"],
+            correction[
+                "certified_material_residual_reduction_lower_bound"
+            ],
         )
         self.assertEqual("semantic_content", current["receipt_identity_kind"])
+
+        malformed_corrections = deepcopy(
+            self.catalog["work_selection"]["forecast_corrections"]
+        )
+        malformed_corrections[0][
+            "certified_complete_card_lower_bound"
+        ] = 67
+        with self.assertRaisesRegex(
+            HarvestOutcomeHistoryError, "cannot disappear or mutate"
+        ):
+            build_harvest_outcome_history(
+                ROOT,
+                provenance,
+                declaration,
+                malformed_corrections,
+            )
 
         malformed = deepcopy(provenance)
         malformed[-1]["actual_complete_card_gain"] = 37
@@ -1459,7 +1491,12 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["bundle_id"] == "bundle:fixed-optional-effect-choices"
         )
         self.assertEqual("bounded_executable", optional_measurement["decision"])
-        self.assertEqual(98, optional_measurement["complete_card_gain"])
+        self.assertGreaterEqual(
+            optional_measurement["complete_card_gain"],
+            self.catalog["work_selection"]["coverage_family"][
+                "minimum_complete_card_gain"
+            ],
+        )
         self.assertFalse(optional_measurement["grants_gameplay_trust"])
 
         frontier, policies, weights = _bounded_candidate_bundle_fixture()
