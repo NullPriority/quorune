@@ -16,6 +16,9 @@ from quorune.compiler.regeneration_templates import (
     fixed_regeneration_effect_template,
     self_regeneration_effect_template,
 )
+from quorune.compiler.affected_player_discard_templates import (
+    fixed_affected_player_discard_effect_template,
+)
 from quorune.compiler.destruction_templates import (
     mass_destruction_effect_template,
     targeted_destruction_effect_template,
@@ -30,7 +33,8 @@ from quorune.destruction import (
     prepare_destructions,
     request_for_card,
 )
-from quorune.model import CardInstance
+from quorune.model import CardInstance, StackItem
+from quorune.projection import StateProjector
 from quorune.oracle_ir import (
     compile_oracle_card,
     generated_programs,
@@ -749,6 +753,122 @@ class RegenerationRuntimeTests(unittest.TestCase):
                 if card["id"] == target.ref
             )
             self.assertEqual(1, public["regen"])
+        self.assert_replays(session)
+
+    def test_attached_regeneration_composes_with_destination_replacement_and_replay(
+        self,
+    ):
+        session = self.session(7011913, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.players["A"].mana_pool["B"] = 1
+        target = self.add_skeleton(
+            session,
+            ref="A-strands-target",
+            owner="A",
+        )
+        strands = self.add_card(
+            session,
+            name="Strands of Undeath",
+            ref="A-strands",
+            zone="hand",
+        )
+        engine.move_card(
+            strands.object_id,
+            "battlefield",
+            controller="A",
+            aura_target_ref=target.ref,
+            reason="Strands interaction witness",
+            log=False,
+        )
+        self.add_card(
+            session,
+            name="Dauthi Voidwalker",
+            ref="A-voidwalker",
+            owner="A",
+        )
+        discarded = [
+            engine.state.cards[object_id]
+            for object_id in engine.state.players["B"].zones["hand"][:2]
+        ]
+        template = fixed_affected_player_discard_effect_template(
+            "Target player discards two cards."
+        )
+        self.assertIsNotNone(template)
+        assert template is not None
+        stack_ref = engine._next_ref("S")
+        item = StackItem(
+            stack_id=engine._stable_runtime_id("stack", stack_ref),
+            ref=stack_ref,
+            kind="triggered_ability",
+            controller="A",
+            label="Strands of Undeath discard witness",
+            targets=["B"],
+            visibility=list(engine.seats),
+        )
+        engine.state.stack.append(item)
+        engine._begin_resolve_item(
+            item,
+            template.effects,
+            None,
+            note="Strands of Undeath discard witness",
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        choice = session.act(
+            "pilot:B",
+            {
+                "action_id": "choose",
+                "cards": [card.ref for card in discarded],
+            },
+        )
+        self.assertTrue(choice.ok, choice.summary)
+        while (
+            engine.state.pending_decision is not None
+            and engine.state.pending_decision.kind == "replacement.order"
+        ):
+            principal = session.pending_principals()[0]
+            projected = StateProjector(self.db, engine.state)._decision(
+                principal
+            )
+            self.assertIsNotNone(projected)
+            assert projected is not None
+            selected = projected["ctx"]["options"][0]["id"]
+            replacement = session.act(
+                principal,
+                {
+                    "action_id": "choose",
+                    "replacement": selected,
+                    "plan": "ORDER_REPLACEMENTS",
+                    "reason": "Choose the discard destination replacement.",
+                },
+            )
+            self.assertTrue(replacement.ok, replacement.summary)
+
+        self.assertTrue(all(card.zone == "exile" for card in discarded))
+        self.assertTrue(all(card.counters["void"] == 1 for card in discarded))
+        self.assertEqual(target.object_id, strands.attached_to)
+        offered = [
+            action
+            for action in session.packet("pilot:A", full=True)["decision"][
+                "ctx"
+            ]["legal"]["actions"]
+            if action["id"].startswith(f"activate:{strands.ref}:")
+        ]
+        self.assertEqual(1, len(offered))
+        action_id = offered[0]["id"]
+        activated = session.act("pilot:A", {"action_id": action_id})
+        self.assertTrue(activated.ok, activated.summary)
+        self.pass_until_resolved(session)
+
+        self.assertEqual(1, target.regeneration_shields)
+        self.assertEqual(0, engine.state.players["A"].mana_pool["B"])
+        self.assertEqual(target.object_id, strands.attached_to)
         self.assert_replays(session)
 
     def test_regeneration_prohibition_preserves_other_destruction_protections(self):

@@ -634,6 +634,17 @@ DESTROY_REGENERATION_PAIR = _pair(
     "residual.replacement.regeneration",
 )
 
+REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS = tuple(
+    _pair(
+        "capability.permanent.destroy.regeneration_prohibition",
+        residual,
+    )
+    for residual in (
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    )
+)
+
 PREVENTION_AND_REPLACEMENT_PAIRS = (
     _pair(
         "capability.damage.prevention.persistent_amount",
@@ -877,6 +888,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
             *IMPULSE_ACCESS_AND_CHOICE_PAIRS,
+            *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
         }
     )
 )
@@ -984,6 +996,10 @@ _bind("tangle-kelp", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[1])
 _bind("pemmins-aura", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[2])
 _bind("sleep-cursed-faerie", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
 _bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS)
+_bind(
+    "kirtars-wrath",
+    *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
+)
 
 if set(_PAIR_WITNESS) != set(ALL_HIGH_RISK_BOUNDARY_PAIRS):
     raise AssertionError("high-risk witness map is incomplete")
@@ -1156,6 +1172,7 @@ __all__ = [
     "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
+    "REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",
     "TOKEN_AND_DAMAGE_PREVENTION_PAIR",
     "TRIGGER_AND_REPLACEMENT_PAIRS",

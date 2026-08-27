@@ -892,6 +892,21 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_attached_regeneration_composes_with_destination_replacement_and_replay",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "A Strands of Undeath witness remains reciprocally attached while its independent private discard instruction completes through the canonical destination-replacement transaction; its attachment-relative regeneration activation then resolves on the same creature and exact replay reproduces both results."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_support_partial_target_revalidation_and_quantity_replacement_replay",
       "piece_ids": ["capability.counter.placement.quantity_replacement", "capability.counter.producer.support"],
       "capability_ids": ["counter.placement.quantity_replacement", "counter.producer.support"],
@@ -2070,6 +2085,34 @@
       ],
       "interaction_order": 2,
       "assertion": "Vile Requiem compiles its optional upkeep counter trigger exactly while its separate variable mass-destruction and regeneration prohibition remains material, so the complete CardProgram fails closed at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_regeneration_prohibition_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": [
+        "capability.permanent.destroy.regeneration_prohibition",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "permanent.destroy.regeneration_prohibition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Kirtar's Wrath compiles its ordinary regeneration-prohibited destruction clause exactly while its separate Threshold replacement-applicability grammar remains material, so the complete CardProgram fails closed at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_regeneration_prohibition_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": [
+        "capability.permanent.destroy.regeneration_prohibition",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "permanent.destroy.regeneration_prohibition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Kirtar's Wrath compiles its ordinary regeneration-prohibited destruction clause exactly while its separate Threshold self-replacement and prevention-ordering grammar remains material, so the complete CardProgram fails closed at runtime admission."
     },
     {
         "evidence_class": "interaction",

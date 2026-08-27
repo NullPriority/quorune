@@ -77,6 +77,25 @@
       "type_line": "Enchantment — Aura"
     },
     {
+      "cmc": 4.0,
+      "color_identity": ["B"],
+      "colors": ["B"],
+      "defense": null,
+      "keywords": ["Regenerate", "Enchant"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Strands of Undeath",
+      "oracle_id": "897c2c66-fedc-4201-b187-db79414583fb",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, target player discards two cards.\n{B}: Regenerate enchanted creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
       "cmc": 2.0,
       "color_identity": ["B", "R"],
       "colors": ["B", "R"],
