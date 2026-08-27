@@ -1318,6 +1318,11 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_current_work_selection_policy_version_is_supported(self):
+        queue = build_rules_dependency_queue_from_root(ROOT)
+
+        self.assertEqual(11, queue["work_selection"]["policy_version"])
+
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)
         token = next(

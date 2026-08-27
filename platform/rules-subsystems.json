@@ -562,8 +562,8 @@
             "triggered"
           ],
           "normalized_literal_parameters": [
-            "direct-target-artifact-creature-or-permanent",
             "current-attached-creature-or-named-source",
+            "direct-target-artifact-creature-or-permanent",
             "direct-target-or-fixed-set-destruction-prohibition"
           ],
           "shared_dependencies": [
@@ -576,10 +576,10 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Closes the reusable fixed regeneration-shield and destruction-prohibition boundary across spell, triggered, activated, attached-object, direct-target, and fixed-set contexts without widening into dynamic replacement grammar.",
           "explicit_exclusions": [
-            "variable, repeated, optional, conditional, subtype-qualified, color-qualified, controller-qualified, and multiple-target regeneration",
             "static regeneration, damage-linked prohibition, delayed results, and additional dependent results",
+            "unsupported activation costs, event bindings, attachment effects, target predicates, and unrelated residual siblings",
             "unsupported destruction grammar and affected-player ordering for ordinary competing regeneration and shield-counter replacements",
-            "unsupported activation costs, event bindings, attachment effects, target predicates, and unrelated residual siblings"
+            "variable, repeated, optional, conditional, subtype-qualified, color-qualified, controller-qualified, and multiple-target regeneration"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-regeneration-existing-owner-v1"
