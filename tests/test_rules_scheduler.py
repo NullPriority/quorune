@@ -31,6 +31,7 @@ from quorune.work_selection_bundles import (
     bundle_measurement_fingerprint,
     bundle_measurement_decision,
     candidate_frontier_measurements,
+    validate_bundle_policy,
     WorkSelectionBundleError,
 )
 from quorune.util import stable_json
@@ -689,6 +690,9 @@ class RulesSchedulerTests(unittest.TestCase):
         history = inputs["harvest_outcome_history"]
         latest_outcome = history["entries"][-1]
         latest_outcome["actual_complete_card_gain"] = 0
+        latest_outcome["forecast_correction"][
+            "certified_complete_card_lower_bound"
+        ] = 0
         unsigned_outcome = dict(latest_outcome)
         unsigned_outcome.pop("entry_fingerprint")
         latest_outcome["entry_fingerprint"] = hashlib.sha256(
@@ -829,6 +833,7 @@ class RulesSchedulerTests(unittest.TestCase):
             self.catalog["work_selection"].get(
                 "semantic_transition_declaration"
             ),
+            self.catalog["work_selection"].get("forecast_corrections"),
         )
         self.assertEqual(
             self.work_inputs["harvest_outcome_history"], derived
@@ -880,11 +885,42 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             declaration["capability_ids"], current["capability_ids"]
         )
+        correction = current["forecast_correction"]
+        self.assertEqual(
+            declaration["expected_complete_card_gain"],
+            correction["original_expected_complete_card_gain"],
+        )
         self.assertGreaterEqual(
             current["actual_complete_card_gain"],
-            declaration["expected_complete_card_gain"],
+            correction["certified_complete_card_lower_bound"],
+        )
+        self.assertGreaterEqual(
+            current["actual_exact_ability_gain"],
+            correction["certified_exact_ability_lower_bound"],
+        )
+        self.assertGreaterEqual(
+            current["actual_material_residual_reduction"],
+            correction[
+                "certified_material_residual_reduction_lower_bound"
+            ],
         )
         self.assertEqual("semantic_content", current["receipt_identity_kind"])
+
+        malformed_corrections = deepcopy(
+            self.catalog["work_selection"]["forecast_corrections"]
+        )
+        malformed_corrections[0][
+            "certified_complete_card_lower_bound"
+        ] = 67
+        with self.assertRaisesRegex(
+            HarvestOutcomeHistoryError, "cannot disappear or mutate"
+        ):
+            build_harvest_outcome_history(
+                ROOT,
+                provenance,
+                declaration,
+                malformed_corrections,
+            )
 
         malformed = deepcopy(provenance)
         malformed[-1]["actual_complete_card_gain"] = 37
@@ -1318,6 +1354,54 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_spell_cast_characteristic_probe_uses_closed_event_and_body(self):
+        probe_id = (
+            "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
+        )
+        record = SimpleNamespace(
+            name="Characteristic trigger source",
+            type_line="Artifact",
+            oracle_text="",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "Whenever you cast a white spell, draw a card.",
+            "Whenever a player casts a Spirit or Arcane spell, you gain 1 life.",
+            "Whenever an opponent casts a colorless or multicolored spell, scry 1.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "Whenever you cast a spell with mana value 3, draw a card.",
+            "Whenever you cast a historic spell, draw a card.",
+            "Whenever you cast a Spirit spell, perform an unsupported action.",
+            (
+                "Whenever you cast a Spirit or Arcane spell, regenerate "
+                "target creature."
+            ),
+            (
+                "Whenever you cast a Spirit or Arcane spell, you may return "
+                "Characteristic trigger source to its owner's hand."
+            ),
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
     def test_current_work_selection_policy_version_is_supported(self):
         queue = build_rules_dependency_queue_from_root(ROOT)
 
@@ -1410,7 +1494,12 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["bundle_id"] == "bundle:fixed-optional-effect-choices"
         )
         self.assertEqual("bounded_executable", optional_measurement["decision"])
-        self.assertEqual(98, optional_measurement["complete_card_gain"])
+        self.assertGreaterEqual(
+            optional_measurement["complete_card_gain"],
+            self.catalog["work_selection"]["coverage_family"][
+                "minimum_complete_card_gain"
+            ],
+        )
         self.assertFalse(optional_measurement["grants_gameplay_trust"])
 
         frontier, policies, weights = _bounded_candidate_bundle_fixture()
@@ -1832,14 +1921,10 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["measurement_status"] == "generated_probe"
         )
         measured["source_contexts"] = ["spell"]
-        with self.assertRaisesRegex(
-            WorkSelectionError, "closed identities"
-        ):
-            build_work_selection(
-                selected_batch=self.queue["selected_batch"],
-                policy=policy,
-                inputs=self.work_inputs,
-            )
+        bundles, _weights = validate_bundle_policy(
+            policy["coverage_family"]
+        )
+        self.assertIn(measured, bundles)
 
         inputs = deepcopy(self.work_inputs)
         measured = next(

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from functools import partial
+from functools import lru_cache, partial
 from typing import Any, Mapping, Sequence
 
 from quorune.compiler.exile_templates import targeted_exile_effect_template
@@ -8,18 +8,27 @@ from quorune.compiler.destruction_templates import destruction_effect_template
 from quorune.compiler.optional_effect_templates import (
     fixed_optional_effect_template,
 )
+from quorune.compiler.modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
 from quorune.compiler.regeneration_templates import (
     fixed_regeneration_effect_template,
 )
+from quorune.compiler.fixed_counter_trigger_nodes import (
+    FixedSpellCastCharacteristicQuery,
+    fixed_counter_trigger_binding,
+    fixed_typed_event_effect_trigger_node,
+)
+from quorune.compiler.ir_model import SourceSpan
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.oracle_ir import (
     _face_type_context,
     _reviewed_atomic_effect_template,
+    _reviewed_effect_template,
     _without_parenthetical_reminder,
 )
+from quorune.rules.capabilities import load_default_capability_registry
 from quorune.work_selection_evidence import (
     COHORT_MEASUREMENT_ALGORITHM_VERSION,
     COHORT_MEASUREMENT_SCHEMA_VERSION,
@@ -32,10 +41,14 @@ _PROBE_TOKEN = "fixed-token-creation-existing-owner-v1"
 _PROBE_EXILE = "fixed-exile-existing-owner-v1"
 _PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
 _PROBE_REGENERATION = "fixed-regeneration-existing-owner-v1"
+_PROBE_SPELL_CAST_CHARACTERISTIC = (
+    "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
+)
 _PROBE_IDS = {
     _PROBE_EXILE,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_REGENERATION,
+    _PROBE_SPELL_CAST_CHARACTERISTIC,
     _PROBE_TOKEN,
 }
 
@@ -140,6 +153,66 @@ def _fixed_regeneration_instruction_candidates(line: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(candidates))
 
 
+def _matches_spell_cast_characteristic_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    card_name, source_is_permanent, attachment_relation = (
+        _source_face_context(card_record, ability)
+    )
+    binding = fixed_counter_trigger_binding(source, card_name=card_name)
+    if (
+        binding is None
+        or binding.spell_subject is None
+        or not isinstance(
+            binding.spell_subject.characteristic_query,
+            FixedSpellCastCharacteristicQuery,
+        )
+    ):
+        return False
+    face_id = str(ability.get("face_id") or "front")
+    face = next(
+        (
+            value
+            for value in card_record.faces
+            if str(value.get("name") or "") == face_id
+        ),
+        None,
+    )
+    type_line = str(
+        (face or {}).get("type_line") or card_record.type_line
+    )
+    card_types, _permanent, _spell, _support, _attachment = (
+        _face_type_context(type_line)
+    )
+    residuals = []
+    node = fixed_typed_event_effect_trigger_node(
+        node_id="probe:n1",
+        line=source,
+        material_line=source,
+        span=SourceSpan(start=0, end=len(source), line=1),
+        card_name=card_name,
+        trusted_mechanics=frozenset(),
+        capability_registry=_spell_cast_probe_capability_registry(),
+        capability_profile="commander_review",
+        residuals=residuals,
+        effect_template=partial(
+            _reviewed_effect_template,
+            source_is_permanent=source_is_permanent,
+            source_card_types=tuple(sorted(card_types)),
+            source_attachment_relation=attachment_relation,
+        ),
+    )
+    return bool(node is not None and node.exact and not residuals)
+
+
+@lru_cache(maxsize=1)
+def _spell_cast_probe_capability_registry():
+    return load_default_capability_registry()
+
+
 def _source_face_context(
     card_record: Any,
     ability: Mapping[str, Any],
@@ -222,6 +295,16 @@ def _matches_probe(
                 and template.regeneration_prohibited
             )
             for body in _fixed_regeneration_instruction_candidates(source)
+        )
+    if probe_id == _PROBE_SPELL_CAST_CHARACTERISTIC:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Spell-cast characteristic measurement requires card context"
+            )
+        return _matches_spell_cast_characteristic_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
         )
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"

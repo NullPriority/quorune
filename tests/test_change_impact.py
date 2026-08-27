@@ -62,6 +62,28 @@ class ChangeImpactTests(unittest.TestCase):
                     )
                 )
 
+    def test_spell_cast_characteristic_contract_selects_both_owner_modules(self):
+        for owner in (
+            "quorune/compiler/fixed_counter_trigger_nodes.py",
+            "quorune/rules/casting/commit.py",
+            "quorune/rules/spell_cast_events.py",
+            "quorune/trigger_discovery.py",
+            "tests/fixtures/fixed-typed-event-trigger-cards.json",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(
+                    {
+                        "test_fixed_counter_event_triggers",
+                        "test_prowess_rules",
+                    },
+                    set(plan.test_modules),
+                )
+                self.assertIn(
+                    "spell-cast-characteristic-trigger-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_changed_test_module_is_run_exactly(self):
         plan = classify_changes(["tests/test_life_change.py"])
         self.assertEqual(("test_life_change",), plan.test_modules)

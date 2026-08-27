@@ -4,6 +4,7 @@ from dataclasses import FrozenInstanceError, replace
 import json
 from pathlib import Path
 import tempfile
+from typing import Mapping
 import unittest
 from unittest.mock import patch
 
@@ -21,6 +22,7 @@ from quorune.effect_runtime import dispatch_effect
 from quorune.compiler.fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_MECHANIC,
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
+    FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
     OPTIONAL_COUNTER_PLACEMENT_OPERATION,
@@ -30,6 +32,9 @@ from quorune.compiler.fixed_counter_trigger_nodes import (
     FixedCounterZoneController,
     FixedCounterZoneSubject,
     FixedSpellCastController,
+    FixedSpellCastCharacteristicKind,
+    FixedSpellCastCharacteristicQuery,
+    FixedSpellCastCharacteristicTerm,
     FixedSpellCastQuality,
     FixedSpellCastSubject,
     fixed_counter_trigger_binding,
@@ -409,6 +414,177 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 controller=FixedSpellCastController.SOURCE,
                 quality="artifact",
             )
+
+    def test_static_spell_cast_characteristic_bindings_compile_exactly(self):
+        cases = (
+            (
+                "Whenever you cast a white spell, draw a card.",
+                {
+                    "all": [
+                        {
+                            "field": "controller",
+                            "op": "eq",
+                            "value": "$source.controller",
+                        },
+                        {
+                            "field": "colors",
+                            "op": "contains_any",
+                            "value": ["W"],
+                        },
+                    ]
+                },
+            ),
+            (
+                "Whenever an opponent casts a colorless spell, you gain 1 life.",
+                {
+                    "all": [
+                        {
+                            "field": "controller",
+                            "op": "ne",
+                            "value": "$source.controller",
+                        },
+                        {"field": "colors", "op": "falsy", "value": True},
+                    ]
+                },
+            ),
+            (
+                "Whenever a player casts a multicolored spell, scry 1.",
+                {"field": "colors", "op": "count_gte", "value": 2},
+            ),
+            (
+                "Whenever you cast a legendary or Spirit spell, draw a card.",
+                {
+                    "all": [
+                        {
+                            "field": "controller",
+                            "op": "eq",
+                            "value": "$source.controller",
+                        },
+                        {
+                            "any": [
+                                {
+                                    "field": "subtypes",
+                                    "op": "contains_any",
+                                    "value": ["spirit"],
+                                },
+                                {
+                                    "field": "supertypes",
+                                    "op": "contains_any",
+                                    "value": ["legendary"],
+                                },
+                            ]
+                        },
+                    ]
+                },
+            ),
+            (
+                "Whenever you cast a Spirit or Arcane spell, surveil 1.",
+                {
+                    "all": [
+                        {
+                            "field": "controller",
+                            "op": "eq",
+                            "value": "$source.controller",
+                        },
+                        {
+                            "any": [
+                                {
+                                    "field": "subtypes",
+                                    "op": "contains_any",
+                                    "value": ["arcane"],
+                                },
+                                {
+                                    "field": "subtypes",
+                                    "op": "contains_any",
+                                    "value": ["spirit"],
+                                },
+                            ]
+                        },
+                    ]
+                },
+            ),
+        )
+        for text, condition in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(text)
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                self.assertEqual(condition, binding.event_condition)
+                self.assertIn(
+                    FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC,
+                    binding.event_mechanics,
+                )
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id
+                    == "fixed-typed-effect-spell-cast-characteristic-trigger-v1"
+                )
+                self.assertEqual(condition, node.event_condition)
+                self.assertIn(
+                    "trigger.event.normalized_spell_cast",
+                    node.capability_dependencies,
+                )
+                self.assertIn(
+                    "trigger.effect.fixed_event",
+                    node.capability_dependencies,
+                )
+
+        counter = self.compile(
+            "Whenever you cast a blue spell, put a +1/+1 counter on "
+            "this creature.",
+            type_line="Creature — Wizard",
+        )
+        counter_node = next(
+            value
+            for value in counter.faces[0].nodes
+            if value.template_id
+            == "fixed-counter-spell-cast-characteristic-trigger-v1"
+        )
+        self.assertEqual("exact", counter.status)
+        self.assertIn(
+            "counter.producer.fixed_event_trigger",
+            counter_node.capability_dependencies,
+        )
+        self.assertIn(
+            "trigger.event.normalized_spell_cast",
+            counter_node.capability_dependencies,
+        )
+
+        query = FixedSpellCastCharacteristicQuery(
+            (
+                FixedSpellCastCharacteristicTerm(
+                    FixedSpellCastCharacteristicKind.SUBTYPE,
+                    "Spirit",
+                ),
+            )
+        )
+        self.assertEqual("subtypes-spirit", query.terms_any[0].variant)
+        with self.assertRaises(ValueError):
+            FixedSpellCastCharacteristicQuery(())
+        with self.assertRaises(ValueError):
+            FixedSpellCastCharacteristicTerm(
+                FixedSpellCastCharacteristicKind.COLORLESS,
+                "colorless",
+            )
+
+    def test_dynamic_spell_cast_characteristic_variants_remain_material(self):
+        variants = (
+            "Whenever you cast a spell with mana value 3, draw a card.",
+            "Whenever you cast your first spell each turn, draw a card.",
+            "Whenever you cast a spell from your graveyard, draw a card.",
+            "Whenever you cast a spell that targets a creature, draw a card.",
+            "Whenever you cast a historic spell, draw a card.",
+            "Whenever you cast or copy a Spirit spell, draw a card.",
+            "Whenever you cast a Spirit spell, if you control an artifact, draw a card.",
+        )
+        for text in variants:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.faces[0].residuals)
 
     def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
         cases = (
@@ -1702,6 +1878,12 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "trigger.event.normalized_spell_cast",
                 "fixed-typed-effect-spell-cast-trigger-v1",
             ),
+            (
+                "Whenever you cast a multicolored spell, draw a card.",
+                "Artifact",
+                "trigger.event.normalized_spell_cast",
+                "fixed-typed-effect-spell-cast-characteristic-trigger-v1",
+            ),
         )
         for text, type_line, dependency_id, template_id in cases:
             with self.subTest(text=text, dependency=dependency_id):
@@ -2426,6 +2608,117 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         )
         self.assertEqual(before_life["B"] + 1, engine.state.players["B"].life)
         self.assertEqual(before_life["C"] + 1, engine.state.players["C"].life)
+
+    def test_cast_characteristics_use_one_sealed_stack_snapshot(self):
+        source_names = {
+            "multicolored": "Typed Multicolored Cast Life Trigger Fixture",
+            "colorless": "Typed Colorless Cast Life Trigger Fixture",
+            "legendary_or_spirit": (
+                "Typed Legendary or Spirit Cast Life Trigger Fixture"
+            ),
+            "red": "Typed Red Cast Life Trigger Fixture",
+        }
+
+        def setup(seed: int):
+            session = self.session(seed, players=4)
+            engine = session.engine
+            programs = {}
+            for index, (quality, name) in enumerate(source_names.items()):
+                source = self.add_card(
+                    engine,
+                    seat="B" if quality == "legendary_or_spirit" else "A",
+                    name=name,
+                    ref=f"{quality}-cast-source-{seed}-{index}",
+                    zone="battlefield",
+                )
+                programs[quality] = self.register_typed_event_trigger(
+                    engine,
+                    source,
+                )
+            return session, programs
+
+        def cast_fixture(engine, name: str, *, mana: Mapping[str, int]):
+            record = self.db.lookup(name)
+            for program in generated_programs(
+                self.db,
+                record,
+                trust_level="trusted",
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            ):
+                engine.semantics.put(program)
+            spell = self.add_card(
+                engine,
+                seat="A",
+                name=name,
+                ref=f"cast-{name.casefold().replace(' ', '-')}",
+                zone="hand",
+            )
+            engine.state.active_player = "A"
+            engine.state.phase = "precombat_main"
+            engine.state.step = "main"
+            engine.state.priority_player = "A"
+            engine.state.priority_passes = []
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            for symbol, amount in mana.items():
+                engine.state.players["A"].mana_pool[symbol] += amount
+            engine._cast("A", {"card": spell.ref, "pay": "auto"})
+            engine._stabilize()
+            return spell
+
+        session, programs = setup(121008)
+        spell = cast_fixture(
+            session.engine,
+            "Legendary Spirit Cast Fixture",
+            mana={"W": 1, "U": 1},
+        )
+        items = [
+            item
+            for item in session.engine.state.stack
+            if item.semantic_key in {program.key for program in programs.values()}
+        ]
+        self.assertEqual("stack", spell.zone)
+        self.assertEqual(
+            {
+                programs["multicolored"].key,
+                programs["legendary_or_spirit"].key,
+            },
+            {item.semantic_key for item in items},
+        )
+        self.assertEqual(2, len(items))
+        for item in items:
+            self.assertEqual(["creature"], item.context["types"])
+            self.assertEqual(["spirit"], item.context["subtypes"])
+            self.assertEqual(["legendary"], item.context["supertypes"])
+            self.assertEqual(["W", "U"], item.context["colors"])
+
+        devoid_session, devoid_programs = setup(121009)
+        devoid = cast_fixture(
+            devoid_session.engine,
+            "Devoid Spirit Cast Fixture",
+            mana={"C": 2, "R": 1},
+        )
+        devoid_items = [
+            item
+            for item in devoid_session.engine.state.stack
+            if item.semantic_key
+            in {program.key for program in devoid_programs.values()}
+        ]
+        self.assertEqual("stack", devoid.zone)
+        self.assertEqual(
+            {
+                devoid_programs["colorless"].key,
+                devoid_programs["legendary_or_spirit"].key,
+            },
+            {item.semantic_key for item in devoid_items},
+        )
+        self.assertEqual(2, len(devoid_items))
+        for item in devoid_items:
+            self.assertEqual(["creature"], item.context["types"])
+            self.assertEqual(["spirit"], item.context["subtypes"])
+            self.assertEqual([], item.context["supertypes"])
+            self.assertEqual([], item.context["colors"])
 
     def test_shroud_and_enchantment_cast_draw_compose(self):
         session = self.session(121007, players=4)

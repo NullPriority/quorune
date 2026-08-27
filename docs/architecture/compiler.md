@@ -521,12 +521,17 @@ source-spanned residuals.
 `compiler/fixed_counter_trigger_nodes.py` owns one shared closed normalized-
 event binding for represented beginnings of steps; a land entering under the
 source controller's control; a noncreature or instant-or-sorcery spell cast by
-the source controller; one closed public card-type spell cast by the source
-controller, an opponent, or any player; the source creature attacking;
+the source controller; one closed static color, color-cardinality, type,
+subtype, or supertype spell predicate with at most two alternatives and a
+source-controller, opponent, or any-player caster relation; the source creature attacking;
 controller life gains, card draws, and exact second draws; and public artifact,
 creature, enchantment, or permanent entries plus creature deaths. Cast
-predicates consume only the immutable controller and parsed card types already
-sealed by the normalized cast event. The self-attack predicate consumes the
+predicates consume only the immutable controller, cast-selected types,
+subtypes, and supertypes, and effective colors already sealed by the normalized
+cast event. The cast transaction takes type-line fields from the validated cast
+proposal so selected faces and cast methods remain authoritative, and takes
+colors from the cycle-safe effective stack object so all-zone definitions such
+as Devoid apply before the snapshot. The self-attack predicate consumes the
 exact attacker reference derived from the canonical completed attack
 transition. A mandatory body may compose with those bindings only when the body
 already lowers through one reviewed typed effect owner with a trusted
@@ -540,13 +545,14 @@ normalized owner's current entry facts or predeparture last-known facts and
 does not perform a characteristic query of its own. The binding emits only an
 immutable event predicate and ordinary triggered node; APNAP placement, target
 selection and revalidation, replacement suspension, and effect mutation stay
-with their existing owners. Cast-or-copy, cast qualities beyond the closed
-public card-type vocabulary, broader land-entry relations, attack-recipient or
+with their existing owners. Cast-or-copy, cast history and origin, payment and
+kicked state, targeted-spell relations, mana-value thresholds, dynamic
+characteristic counts, characteristic conjunctions, broader land-entry relations, attack-recipient or
 aggregate attack forms, characteristic-qualified zone changes, one-or-more
 aggregation, combined events, intervening-if, reflexive, optional noncounter,
-variable, linked, and unrepresented bodies remain material. Spell-cast type
-predicates explicitly exclude type-changing stack interactions until their
-characteristic boundary is trusted.
+variable, linked, and unrepresented bodies remain material. Same-layer and
+dynamic stack-characteristic interactions outside the sealed cast snapshot
+remain explicit trust exclusions.
 
 `compiler/counter_keyword_activation_nodes.py` composes that counter owner
 with one source-pinned activation family for fixed ordinary-mana Level Up,

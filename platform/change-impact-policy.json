@@ -249,6 +249,20 @@
       ]
     },
     {
+      "id": "spell-cast-characteristic-trigger-contract",
+      "patterns": [
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/spell_cast_events.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/fixed-typed-event-trigger-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_prowess_rules"
+      ]
+    },
+    {
       "id": "compiler-prevention-expectations",
       "patterns": [
         "quorune/compiler/prevention_templates.py"

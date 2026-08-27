@@ -585,6 +585,45 @@
           "measurement_probe_id": "fixed-regeneration-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-spell-cast-characteristic-triggers",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_spell_cast",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.rules.spell_cast_events.SpellCastEvent"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-caster-relation",
+            "one-or-two-static-characteristic-alternatives",
+            "sealed-color-type-subtype-supertype-snapshot"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_spell_cast",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "static color, color-cardinality, type, subtype, or supertype spell-cast predicates composed with independently exact typed effect bodies",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Establishes a sealed stack-characteristic event boundary reusable by later cast-origin, payment-state, history, and targeted-spell trigger families without admitting those distinct dynamic predicates.",
+          "explicit_exclusions": [
+            "cast-history ordinals and per-turn predicates",
+            "combined cast-or-copy, intervening-if, reflexive, and linked-result triggers",
+            "dynamic counts, mana-value thresholds, and characteristic conjunctions",
+            "origin-zone, payment-method, kicked, and targeted-spell relations",
+            "untyped or independently inexact effect bodies"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
+        },
+        {
           "bundle_id": "bundle:fixed-source-event-triggers",
           "member_family_ids": [
             "event_binding:normalized-source-damage",
@@ -663,39 +702,33 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v133-fixed-regeneration-effects",
-      "compiler_version": "oracle-ir-v133",
-      "bundle_id": "bundle:fixed-regeneration-effects",
-      "candidate_ids": ["compiler:fixed-regeneration-effects"],
+      "transition_id": "oracle-ir-v134-fixed-spell-cast-characteristic-triggers",
+      "compiler_version": "oracle-ir-v134",
+      "bundle_id": "bundle:fixed-spell-cast-characteristic-triggers",
+      "candidate_ids": ["compiler:fixed-spell-cast-characteristic-triggers"],
       "family_ids": [
-        "activated_effect:destroy-mass",
-        "activated_effect:destroy-target",
-        "activated_effect:ordered-effect-composition",
-        "activated_effect:unparsed-regenerate-cromat",
-        "activated_effect:unparsed-regenerate-enchanted-creature",
-        "activated_effect:unparsed-regenerate-equipped-creature",
-        "activated_effect:unparsed-regenerate-lord-of",
-        "activated_effect:unparsed-regenerate-target-artifact",
-        "activated_effect:unparsed-regenerate-target-creature",
-        "effect_clause:destroy-mass",
-        "effect_clause:destroy-target",
-        "effect_clause:ordered-effect-composition",
-        "effect_clause:unparsed-regenerate-target-creature",
-        "effect_clause:unparsed-regenerate-target-permanent",
-        "replacement:regeneration",
-        "target_or_choice:target-predicate"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "attachment.reference.current_or_lki",
-        "permanent.destroy.effect",
-        "permanent.destroy.fixed_set",
-        "permanent.destroy.regeneration_prohibition",
-        "permanent.regeneration.fixed_effect",
-        "target.revalidate_resolution"
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
       ],
-      "expected_complete_card_gain": 56,
+      "expected_complete_card_gain": 71,
       "non_harvest_reason": null
     },
+    "forecast_corrections": [
+      {
+        "transition_id": "oracle-ir-v134-fixed-spell-cast-characteristic-triggers",
+        "original_expected_complete_card_gain": 71,
+        "certified_complete_card_lower_bound": 64,
+        "certified_exact_ability_lower_bound": 109,
+        "certified_material_residual_reduction_lower_bound": 109,
+        "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v2",
+        "reason": "Exact-source certification found that the v1 probe admitted seven dependency-inexact regeneration or optional self-return bodies. The v2 integrated-owner probe removes those false positives and remains conservative against the realized 66-card, 111-ability outcome."
+      }
+    ],
     "harvest_provenance": [
       {
         "bundle_id": "bundle:typed-combat-prevention",
@@ -1106,6 +1139,11 @@
         "candidate_id": "compiler:fixed-temporary-declaration-contexts",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector reopened fixed-token measurement solely because unrelated frontier churn changed a global fingerprint. Repeating the bounded owner probe produced the same below-floor result, exposing a recurring cache defect; current cohort identities and measurements now come from the generated frontier-owned artifact. With the current token and exile probes retired and the obsolete face-down families absent from the frontier, no implementation candidate remains eligible, while the raw continuous-layer leader is still heterogeneous. A bounded declaration probe instead isolates one positive complete-card lower bound through the existing object-anchored restriction journal. This reusable prerequisite extends that typed owner across direct spell, normalized trigger, target activation, source-self, named-source, and pinned creature-subtype contexts. Multiple-block capacity, defender suppression, all-able blocker requirements, filtered evasion, two-object source-relative rules, open costs, conditional bodies, and dynamic characteristic predicates remain fail-closed under their distinct solver owners."
+      },
+      {
+        "candidate_id": "compiler:fixed-spell-cast-characteristic-triggers",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "At main cc74d150dace25bfecb9de7a7b331887c3d7fa68 the generated selector reported no eligible foreground candidate, while the raw continuous-layer leader still combined unrelated characteristic, permission, and dynamic-count grammars. The current generated cohort measurement for the previously completed optional-effect bundle remains valid but its durable outcome identity correctly prevents reselection. A distinct implementation-backed frontier probe isolates spell-cast trigger abilities where one static color, color-cardinality, type, subtype, or supertype predicate and one independently exact typed body share the existing normalized event and APNAP owners. Exact-source certification found that the v1 probe's 71-card and 116-ability forecast admitted seven dependency-inexact regeneration or optional self-return bodies and missed two executable cards. The v2 probe asks the integrated owner for capability closure, producing a conservative 64-card and 109-ability lower bound; the landed census promotes 66 cards and 111 abilities. The cast transaction seals validated cast-selected types, subtypes, and supertypes plus cycle-safe effective colors, including Devoid, while history, origin, payment, kicked, targeted-spell, mana-value, conjunction, dynamic-count, cast-or-copy, intervening-if, reflexive, linked, and untyped-body families remain fail-closed."
       }
     ]
   },

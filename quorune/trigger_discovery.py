@@ -421,6 +421,18 @@ def _semantic_condition_operator_matches(
         return actual not in (expected or [])
     if op == "contains_any":
         return bool(set(actual or []).intersection(expected or []))
+    if op == "count_gte":
+        if (
+            not isinstance(actual, Sequence)
+            or isinstance(actual, (str, bytes))
+            or type(expected) is not int
+            or expected < 0
+        ):
+            raise GameRuleError(
+                "Semantic event count_gte requires a sequence and "
+                "nonnegative integer"
+            )
+        return len(actual) >= expected
     if op == "gte":
         return actual is not None and actual >= expected
     if op == "gt":

@@ -89,6 +89,18 @@ _CONTENT_ENTRY_FIELDS = _LEGACY_ENTRY_FIELDS | {
     "receipt_identity_kind",
     "entry_fingerprint",
 }
+_FORECAST_CORRECTION_FIELDS = {
+    "transition_id",
+    "original_expected_complete_card_gain",
+    "certified_complete_card_lower_bound",
+    "certified_exact_ability_lower_bound",
+    "certified_material_residual_reduction_lower_bound",
+    "measurement_probe_id",
+    "reason",
+}
+_CORRECTED_CONTENT_ENTRY_FIELDS = _CONTENT_ENTRY_FIELDS | {
+    "forecast_correction"
+}
 COHORT_MEASUREMENT_SCHEMA_VERSION = 1
 COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v1"
 _COHORT_DECISIONS = {
@@ -352,7 +364,11 @@ def _validate_history_entries(history: list[Any]) -> None:
     for index, raw in enumerate(history):
         row = mapping(raw, f"harvest_outcome_history[{index}]")
         fields = set(row)
-        if fields != _LEGACY_ENTRY_FIELDS and fields != _CONTENT_ENTRY_FIELDS:
+        if fields not in (
+            _LEGACY_ENTRY_FIELDS,
+            _CONTENT_ENTRY_FIELDS,
+            _CORRECTED_CONTENT_ENTRY_FIELDS,
+        ):
             raise WorkSelectionError(
                 "Harvest outcome history entries have an invalid shape"
             )
@@ -370,7 +386,7 @@ def _validate_history_entries(history: list[Any]) -> None:
                 "Harvest outcome history bundle identities must be unique"
             )
         ids.add(bundle_id)
-        if fields == _CONTENT_ENTRY_FIELDS:
+        if fields in (_CONTENT_ENTRY_FIELDS, _CORRECTED_CONTENT_ENTRY_FIELDS):
             unsigned = dict(row)
             entry_fingerprint = str(unsigned.pop("entry_fingerprint") or "")
             families = _validated_identity_list(
@@ -399,6 +415,50 @@ def _validate_history_entries(history: list[Any]) -> None:
                 raise WorkSelectionError(
                     "Content-bound harvest outcome identity is invalid"
                 )
+            if fields == _CORRECTED_CONTENT_ENTRY_FIELDS:
+                correction = mapping(
+                    row.get("forecast_correction"),
+                    "forecast_correction",
+                )
+                integer_fields = (
+                    "original_expected_complete_card_gain",
+                    "certified_complete_card_lower_bound",
+                    "certified_exact_ability_lower_bound",
+                    "certified_material_residual_reduction_lower_bound",
+                )
+                if (
+                    set(correction) != _FORECAST_CORRECTION_FIELDS
+                    or correction.get("transition_id")
+                    != row.get("transition_id")
+                    or not str(correction.get("measurement_probe_id") or "")
+                    or len(str(correction.get("reason") or "").strip()) < 40
+                    or any(
+                        type(correction.get(field)) is not int
+                        or correction[field] < 0
+                        for field in integer_fields
+                    )
+                    or correction["original_expected_complete_card_gain"]
+                    != row.get("expected_complete_card_gain")
+                    or correction["certified_complete_card_lower_bound"]
+                    >= correction["original_expected_complete_card_gain"]
+                    or type(row.get("actual_complete_card_gain")) is not int
+                    or row["actual_complete_card_gain"]
+                    >= correction["original_expected_complete_card_gain"]
+                    or row["actual_complete_card_gain"]
+                    < correction["certified_complete_card_lower_bound"]
+                    or type(row.get("actual_exact_ability_gain")) is not int
+                    or row["actual_exact_ability_gain"]
+                    < correction["certified_exact_ability_lower_bound"]
+                    or type(row.get("actual_material_residual_reduction"))
+                    is not int
+                    or row["actual_material_residual_reduction"]
+                    < correction[
+                        "certified_material_residual_reduction_lower_bound"
+                    ]
+                ):
+                    raise WorkSelectionError(
+                        "Content-bound harvest forecast correction is invalid"
+                    )
         expected_gain = row.get("expected_complete_card_gain")
         if expected_gain is not None:
             nonnegative_int(expected_gain, "expected_complete_card_gain")

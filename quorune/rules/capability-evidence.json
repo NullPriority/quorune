@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "8e65bcd4ee70f9a0b144d157e61108a39f32170d20928ddfb70a429e6917f6fe",
-  "declaration_source_fingerprint": "ee408eb8e2de2bdf9821486cc353fb00721d8696eb5e25efd9a67e27d5f15cb0",
+  "registry_fingerprint": "00066b899ab23198afc2a04fd15b7861edd0f9b3f2bef9fdbe7f30adc0afe85a",
+  "declaration_source_fingerprint": "ffaf0f9eb5dc22f10c33f0f411d20aefa0644ea4a9a518091399be4087d8a685",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -43439,6 +43439,27 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Match static color, color-cardinality, subtype, and supertype alternatives against one immutable cast snapshot while keeping the typed result on the ordinary trigger path."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_relations_and_type_predicates_share_committed_event",
       "official_rule_ids": [
         "115.1",
@@ -43544,6 +43565,27 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Place matching characteristic triggers controlled by different players through one four-player APNAP batch without a characteristic-specific stack path."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_triggers_share_four_player_apnap_batch",
       "official_rule_ids": [
         "115.1",
@@ -43624,6 +43666,27 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the single generic composition call before any represented event-bound effect can retain exact trust."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_dynamic_spell_cast_characteristic_variants_remain_material",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep mana-value, origin, cast-history, targeted-spell, historic, cast-or-copy, and conditional variants outside the closed static characteristic grammar."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -43792,6 +43855,27 @@
         "commander_review"
       ],
       "applicability_note": "Compile represented step, cast, life, draw, entry, and death bindings with independently closed draw, token, Surveil, life, damage, Scry, and characteristic effect bodies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_static_spell_cast_characteristic_bindings_compile_exactly",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile one or two closed color, color-cardinality, type, subtype, or supertype alternatives with caster relation and an independently exact typed body."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -44474,6 +44558,22 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Seal cast-selected types, subtypes, and supertypes with effective colors so multicolored and Devoid colorless casts feed every represented consumer from one committed occurrence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_relations_and_type_predicates_share_committed_event",
       "official_rule_ids": [
         "601.2i",
@@ -44582,6 +44682,22 @@
         "commander_review"
       ],
       "applicability_note": "Canonicalize card types and preserve strict versioned cast facts and a deterministic fingerprint across reconstruction."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "positive",
+      "test_id": "tests.test_prowess_rules.ProwessCompilerTests.test_spell_cast_event_replays_legacy_v1_shape_exactly",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Read and re-emit the immutable legacy v1 event shape byte-for-shape while new casts use the closed v2 characteristic schema."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",
@@ -49258,5 +49374,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "59477919a77cc7cc87993bdd84d19dc897836a3fcf12149a70c7824324f350d0"
+  "fingerprint": "18984c70699c2641f250a9c7c7452a91b0c8f193b12d16098cd2e71e6a39c978"
 }

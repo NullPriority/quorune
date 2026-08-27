@@ -236,8 +236,13 @@ replacement semantics. This adds no counter write path and no runtime Oracle
 parser. Multi-subtype, multiword-subtype, characteristic-qualified, one-or-more
 aggregated, alternate-zone, and combined zone-change triggers remain residual.
 Granted, copied, or removed instances remain outside trust until all static
-components share the layer-6 ability-presence query; cast classification also
-excludes type-changing stack interactions.
+components share the layer-6 ability-presence query. Cast predicates consume a
+sealed committed snapshot: validated cast-selected types, subtypes, and
+supertypes plus cycle-safe effective stack colors. Static single or two-way
+alternatives over those fields, including colorless and multicolored, are
+represented; dynamic counts, history, origin, payment, targeted-spell,
+mana-value, conjunction, and same-layer stack-characteristic interactions
+remain excluded.
 
 Those same closed event and effect-body families accept an exact leading “you
 may” as a separate optional capability. Resolution issues one controller-owned
