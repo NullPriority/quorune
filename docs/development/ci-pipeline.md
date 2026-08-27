@@ -424,20 +424,37 @@ Slot B work.
 
 ## Pull-request certification
 
+The risk-based gate is justified by the first complete duration-balanced
+workflow observation. Its source path reached `PR / Certification` in 2,345
+seconds and completed telemetry in 2,362 seconds across 36 jobs and 419.13
+runner-minutes. The longest job took 1,125 seconds, while shared-runner queue
+delay reached 1,502 seconds. The preceding subsystem partition certified in
+1,725 seconds across 22 jobs and 181.7 runner-minutes. Duration balancing
+reduced the longest Ubuntu shard from 1,592 to 912 seconds, but duplicating the
+complete Windows matrix increased wall time by 620 seconds and runner use by
+130.7 percent. This measured result exceeds the fifteen-minute target and is
+the reason ordinary source changes use affected-module selection while
+selection-authority changes retain the complete gate.
+
 `.github/workflows/ci.yml` runs these independent jobs:
 
-- twelve duration-ordered Ubuntu functional shards;
+- impact-selected Ubuntu module slices partitioned by their existing primary
+  owners plus the compact `merge-core` invariant overlay; high-risk changes run
+  all twelve duration-ordered functional shards;
 - canonical generated-artifact finalization checks from the ownership
   manifest, followed by rules, documentation, repository, and architecture
   validation;
-- wheel build and clean-install verification;
+- an installed-package/import smoke for ordinary source changes, with wheel
+  build and clean-install verification for package-boundary and high-risk
+  changes;
 - a focused Windows compatibility overlay for ordinary changes;
-- for platform-sensitive changes or the `windows-full` label, all thirteen
+- for high-risk or explicitly platform-sensitive changes, all thirteen
   authoritative primary shards on isolated Windows runners and Python
-  processes, with `fail-fast: false`, at most five concurrent jobs,
+  processes, with `fail-fast: false`, at most seven concurrent jobs,
   per-shard compact databases and runtime roots, and no shared writable state;
-- one separate Windows wheel build and clean-install verification, followed by
-  `PR / Windows Certification`, which fails closed on the wrong mode, missing,
+- a separate Windows wheel build and clean-install verification for package or
+  high-risk changes, followed by `PR / Windows Certification`, which fails
+  closed on the wrong mode, missing,
   skipped, failed, duplicate, zero-test, wrong-platform, wrong-backend, stale
   collection, or incomplete module-timing results, a manifest partition gap,
   or package failure;
@@ -469,8 +486,9 @@ the repository, pull request, exact PR-head SHA, publication workflow run,
 original evidence workflow run, executed-or-reused mode, complete required
 check suite, fingerprint algorithm, and tracked source-tree fingerprint. It
 does not contain or predict the eventual merge SHA. An unchanged-head metadata
-event runs only `PR / Plan`; it neither publishes a certification receipt nor
-launches, cancels, or waits for a regression matrix. The successful
+event runs only the separate `PR metadata / Plan` workflow; it creates no
+`PR / Certification` job, publishes no receipt, and neither launches, cancels,
+nor waits for a regression matrix. The successful
 source-changing run for that exact head remains the sole certification owner.
 
 The pre-sharding public baseline is run `31025126367`: its single Windows
@@ -485,7 +503,8 @@ required check, GitHub may merge immediately while jobs are still running.
 Once protection is active, auto-merge is safe only for the immutable SHA whose
 certification is in progress.
 
-The nonblocking metrics job records observed queue, job, step, and critical-path
+The separate `CI metrics` completed-workflow observer records queue, job, step,
+and critical-path
 durations plus Playwright journey duration, status, retries, failure class,
 browser-context count, accepted command count, authoritative/projected
 revisions, and measured persistence/review time. It also reports each Windows
@@ -527,36 +546,32 @@ as pushes.
 `PR / Plan` runs `scripts/validate_pr_body.py` before change-impact planning or
 any expensive matrix job. It reads the pull-request event payload without a
 GitHub API call and fails deterministically when the tracked template is still
-untouched, a required section or evidence result is blank, an N/A has no
-reason, a safety assertion remains unchecked, or the generated base/head block
-does not match the event's immutable base and exact head. Generate the copyable
-block after the final source commit with:
+untouched, a required stable review field or compact evidence result is blank,
+an N/A has no reason, or a safety assertion remains unchecked. The body owns
+scope, typed ownership, explicit exclusions, semantic effect, focused evidence,
+limitations and rollback. It does not own exact-head fingerprints, generated
+metric tables, job conclusions or artifact inventories.
 
-```powershell
-.\.venv\Scripts\python.exe scripts\pr_evidence.py `
-  --base <base-sha> --head <head-sha> --format markdown
-```
-
-The command reads represented family and capability IDs from the head's
+For source events, `PR / Plan` runs `scripts/pr_evidence.py` itself and publishes
+the exact base/head block in the check summary. The command reads represented
+family and capability IDs from the head's
 semantic-transition declaration and reconciles Oracle ability promotions,
 aggregate CardProgram record changes, structural carriers, material residuals,
 interactions, actual PR-source architecture deltas, the separately reviewed
 architecture baseline, and production/test/generated line changes. Missing
 source metadata remains an explicit reasoned N/A rather than an inferred
-identity. Editing the description restarts only the gate, so a contributor can
-correct metadata without changing the certified source tree or launching
+identity. Editing the description starts only the separate metadata gate, so a
+contributor can correct metadata without changing the certified source tree or
+launching
 Linux, Windows, package, generated, or browser jobs. An `edited` event never
 falls back to the complete matrix and never publishes a substitute
 certification receipt. Open, synchronize, and reopen events remain the only
 complete-matrix pull-request events.
 
-For a later source commit, generate the exact base/head block after committing
-locally, update the pull-request description while the new commit is still
-unpublished, and then push. The metadata-only event may briefly reject that
-future head against the still-published old one; the following synchronize
-event carries the matching body snapshot and runs the one authoritative matrix.
-Pushing first and editing afterward is incorrect because the synchronize event
-retains its immutable pre-edit description and fails before the matrix.
+For a later source commit, keep stable review facts current and push the
+coherent head. Do not edit the description merely to copy a new SHA or replace
+pending CI wording; the synchronize event derives exact evidence from its own
+immutable base and head.
 
 The PR workflow intentionally does not subscribe to `ready_for_review`; moving
 an unchanged draft into review therefore does not start regression by itself.
@@ -580,10 +595,10 @@ observed CI incidents.
 
 ## Main and nightly assurance
 
-`.github/workflows/main-smoke.yml` runs after each push to `main`. It checks a
-compact replay/server suite, generated integration state, pinned rules, wheel
-metadata, and the production browser build. It is an integration alarm, not a
-second complete pre-merge suite. Before those checks, it resolves the pull
+`.github/workflows/main-smoke.yml` runs after each push to `main`. It checks the
+receipt/content mapping and one compact deterministic replay/server integration
+suite. It is a merge-specific integration alarm, not a second complete
+pre-merge suite. Before that check, it resolves the pull
 request associated with the current merge commit from both GitHub's
 commit-association endpoint and the recent closed-pull-request listing. The
 latter is required because GitHub may temporarily or indefinitely return no
@@ -595,6 +610,17 @@ have the same fingerprint. A squash merge passes without a follow-up status
 commit because commit identity is deliberately not the equivalence boundary;
 a materially different tree, missing/stale receipt, failed gate, direct push,
 or mismatched GitHub coordinate fails closed.
+
+`.github/workflows/main-broad.yml` runs the complete primary partition on both
+operating systems, every full browser group, both wheel paths, generated and
+repository validation, and complete interaction assurance for every exact main
+SHA. Runs never cancel one another. Its final `Main / Broad regression` result
+is the main-health authority. A pending run may remain in the background; a
+completed red run disables auto-merge on every open pull request and blocks
+later pull-request plans until a maintainer labels the single high-risk
+fix-forward pull request `main-red-recovery`. A successful
+later exact-main run clears the red state. The `CI metrics` observer records
+both PR and main-broad timings without participating in either certification.
 
 `.github/workflows/nightly.yml` owns expensive breadth:
 

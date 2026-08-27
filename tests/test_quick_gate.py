@@ -31,11 +31,12 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertIn("build-ci", build)
         self.assertNotIn("--fixture", build)
 
-    def test_docs_only_plan_skips_database_and_tests(self):
+    def test_docs_only_plan_runs_the_direct_policy_owner(self):
         plan = build_plan(("README.md",))
         names = [step.name for step in plan["steps"]]
-        self.assertNotIn("build-test-database", names)
-        self.assertNotIn("affected-tests", names)
+        self.assertIn("build-test-database", names)
+        self.assertIn("affected-tests", names)
+        self.assertEqual(("test_documentation_policy",), plan["test_modules"])
         self.assertIn("generated-finalization", names)
         self.assertNotIn("documentation", names)
 

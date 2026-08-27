@@ -12,43 +12,16 @@ outcome and why this is one coherent change.
 - Governing rules or capabilities: <!-- IDs, or N/A with reason -->
 - Oracle/rulings snapshot: <!-- fingerprint or N/A with reason; do not attach bulk data -->
 - Supported profile affected: <!-- profile and scope, or N/A with reason -->
+- Exact source head: <!-- Use "current GitHub PR head; see PR / Plan summary" unless a separate immutable checkpoint matters. -->
 
 ## Ownership and implementation
 
-- Owner before:
-- Owner after:
+- Shared owner:
+- Supported grammar or mechanic:
+- Explicit exclusions:
+- User-visible or semantic effect:
 - Duplicate or superseded paths removed:
-- `CommanderEngine` delta:
-- Direct authoritative-write delta:
-- Prohibited identity-dispatch delta:
-- Oracle-ID literal delta:
-- Compiler/CardProgram changes:
-- Card, residual, and capability-closure deltas: <!-- Link generated evidence, or N/A with reason. -->
-
-## Generated base/head evidence
-
-<!-- Paste the exact Markdown block from scripts/pr_evidence.py. CI recomputes it from the PR base and exact head. -->
-
-- Represented family IDs:
-- Represented capability IDs:
-- Exact head SHA:
-- Compiler version delta:
-- CardProgram schema delta:
-- Exact, trusted, and capability-closed card delta:
-- Partial, unresolved, and failed card delta:
-- Oracle and CardProgram ability delta:
-- Executable trust transitions:
-- Structural carrier delta and reconciliation:
-- Oracle and CardProgram material residual delta:
-- Interaction coverage delta:
-- Actual CommanderEngine line delta:
-- Reviewed architecture-baseline delta:
-- Direct authoritative-write delta:
-- Runtime-text delta:
-- Printed-name and Oracle-ID delta:
-- Production, test, and generated line delta:
-- Evidence fingerprint:
-- Evidence command:
+- Compiler/CardProgram effect:
 
 ## Evidence
 
@@ -56,17 +29,11 @@ outcome and why this is one coherent change.
 
 | Class | Result |
 | --- | --- |
-| Focused regression and affected module | |
-| Multiplayer/APNAP and interactions | |
-| Replay, byte/hash, and compatibility | |
-| Privacy and capability isolation | |
-| Transaction rollback and malformed input | |
+| Focused behavior and directly affected owner | |
+| Interactions, replay, privacy, and rollback | |
 | Headless browser and protocol | |
-| Property and fuzz | |
-| Focused mutation | |
-| Compiler/corpus and residuals | |
-| Architecture, ownership, and identity flow | |
-| Local quick gate | |
+| Compiler/corpus and generated freshness | |
+| Architecture and ownership | |
 | Required exact-head CI | |
 
 ## Generated artifacts

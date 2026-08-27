@@ -38,7 +38,7 @@ ACTIVE_WORKFLOW_RUN_STATUSES = frozenset(
     {"pending", "queued", "requested", "waiting", "in_progress"}
 )
 QUEUED_RUN_MATERIALIZATION_GRACE_SECONDS = 300
-REQUIRED_CHECK_SUITE = frozenset(
+FULL_REQUIRED_CHECK_SUITE = frozenset(
     {
         "browser",
         "generated",
@@ -47,6 +47,12 @@ REQUIRED_CHECK_SUITE = frozenset(
         "python",
         "windows_certification",
     }
+)
+# Compatibility name for callers that mean the complete source gate.
+REQUIRED_CHECK_SUITE = FULL_REQUIRED_CHECK_SUITE
+GOVERNANCE_REQUIRED_CHECK_SUITE = frozenset({"generated", "plan"})
+ALLOWED_REQUIRED_CHECK_SUITES = frozenset(
+    {FULL_REQUIRED_CHECK_SUITE, GOVERNANCE_REQUIRED_CHECK_SUITE}
 )
 _RECEIPT_FIELDS = frozenset(
     {
@@ -77,13 +83,21 @@ def _positive_integer(value: Any, *, field: str) -> int:
     return value
 
 
-def canonical_check_suite(needs: Mapping[str, Any]) -> dict[str, str]:
-    if not isinstance(needs, Mapping) or set(needs) != REQUIRED_CHECK_SUITE:
+def canonical_check_suite(
+    needs: Mapping[str, Any],
+    required_jobs: frozenset[str] | None = None,
+) -> dict[str, str]:
+    required = FULL_REQUIRED_CHECK_SUITE if required_jobs is None else required_jobs
+    if required not in ALLOWED_REQUIRED_CHECK_SUITES:
+        raise CertificationReceiptError(
+            "Certification selected an unsupported required-check profile"
+        )
+    if not isinstance(needs, Mapping) or not required.issubset(needs):
         raise CertificationReceiptError(
             "Certification check suite must contain every required PR gate"
         )
     result: dict[str, str] = {}
-    for name in sorted(REQUIRED_CHECK_SUITE):
+    for name in sorted(required):
         details = needs.get(name)
         if not isinstance(details, Mapping) or details.get("result") != "success":
             raise CertificationReceiptError(
@@ -155,7 +169,8 @@ class CertificationReceipt:
         if len(suite) != len(self.check_suite):
             raise CertificationReceiptError("check_suite contains duplicate gates")
         canonical_check_suite(
-            {name: {"result": result} for name, result in suite.items()}
+            {name: {"result": result} for name, result in suite.items()},
+            frozenset(suite),
         )
         if (
             type(self.source_tree_fingerprint) is not str
@@ -224,9 +239,10 @@ def build_receipt(
     exact_head_sha: str,
     workflow_run_id: int,
     needs: Mapping[str, Any],
+    required_jobs: frozenset[str] | None = None,
     root: Path = ROOT,
 ) -> CertificationReceipt:
-    suite = canonical_check_suite(needs)
+    suite = canonical_check_suite(needs, required_jobs)
     return CertificationReceipt(
         repository=repository,
         pull_request=pull_request,
@@ -746,6 +762,7 @@ def main(argv: list[str] | None = None) -> int:
     create.add_argument("--exact-head-sha", required=True)
     create.add_argument("--workflow-run-id", type=int, required=True)
     create.add_argument("--needs-json", required=True)
+    create.add_argument("--required-jobs-json", required=True)
     create.add_argument("--output", required=True)
     can_reuse = subparsers.add_parser("can-reuse-pr")
     can_reuse.add_argument("--repository", required=True)
@@ -772,12 +789,23 @@ def main(argv: list[str] | None = None) -> int:
                 "GH_TOKEN or GITHUB_TOKEN is required"
             )
         if args.operation == "create":
+            required_value = json.loads(args.required_jobs_json)
+            if (
+                not isinstance(required_value, list)
+                or not required_value
+                or any(not isinstance(item, str) for item in required_value)
+                or len(required_value) != len(set(required_value))
+            ):
+                raise CertificationReceiptError(
+                    "required-jobs-json must contain a list of strings"
+                )
             receipt = build_receipt(
                 repository=args.repository,
                 pull_request=args.pull_request,
                 exact_head_sha=args.exact_head_sha,
                 workflow_run_id=args.workflow_run_id,
                 needs=_read_needs(args.needs_json),
+                required_jobs=frozenset(required_value),
             )
             _write_receipt(receipt, args.output)
             print(json.dumps(receipt.to_dict(), sort_keys=True))
@@ -835,7 +863,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(json.dumps(receipt.to_dict(), sort_keys=True))
         return 0
-    except CertificationReceiptError as exc:
+    except (CertificationReceiptError, json.JSONDecodeError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
 

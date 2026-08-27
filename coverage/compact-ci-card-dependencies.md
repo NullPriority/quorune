@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "13dcaea818d2c8acc0dfc7b69f46bcbcc4f8cc2428e690c983ef8ae3d076b5ee"
+verified: "51744019bd0716e77b8177d7b5cb7a32f16b9fd128b572200783019f1785cb35"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -52,7 +52,9 @@ Overall closure: **closed**.
 | functional-11 | 37 | closed |
 | functional-12 | 25 | closed |
 | generated-validation | 30 | closed |
+| main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |
+| merge-core | 9 | closed |
 | multiplayer-commander | 9 | closed |
 | nightly-property | 3 | closed |
 | server-replay-privacy | 14 | closed |

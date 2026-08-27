@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "default_checks": [
     "compile",
     "python-runtime",
@@ -11,6 +11,77 @@
     "mana-action": "@mana-action",
     "turn-draw": "@turn-draw"
   },
+  "risk_rules": [
+    {
+      "id": "governance-only-sources",
+      "patterns": [
+        "AGENTS.md",
+        "README.md",
+        "coverage/**",
+        "docs/**"
+      ],
+      "risk_class": "governance_only"
+    },
+    {
+      "id": "merge-authority-sources",
+      "patterns": [
+        ".github/workflows/**",
+        "platform/change-impact-policy.json",
+        "platform/generated-artifacts.json",
+        "platform/test-shards.json",
+        "scripts/build_test_database.py",
+        "scripts/certification_receipt.py",
+        "scripts/change_impact.py",
+        "scripts/ci_plan.py",
+        "scripts/ci_risk_sentinel.py",
+        "scripts/compact_ci_dependencies.py",
+        "scripts/finalize_generated.py",
+        "scripts/generated_artifacts.py",
+        "scripts/main_health.py",
+        "scripts/main_broad_ci.py",
+        "scripts/source_tree_fingerprint.py",
+        "scripts/test_shards.py",
+        "scripts/validate_repository.py",
+        "scripts/verify_ci_needs.py",
+        "scripts/verify_main_broad_ci.py",
+        "scripts/verify_nightly_ci.py",
+        "scripts/verify_windows_ci.py",
+        "scripts/pytest_shard_plugin.py"
+      ],
+      "risk_class": "high_risk_source"
+    },
+    {
+      "id": "authoritative-state-and-protocol-sources",
+      "patterns": [
+        "quorune/engine.py",
+        "quorune/persistence.py",
+        "quorune/projection.py",
+        "quorune/protocol.py",
+        "quorune/record*.py",
+        "quorune/state.py",
+        "quorune/*transaction*.py",
+        "schemas/**",
+        "server/**"
+      ],
+      "risk_class": "high_risk_source"
+    },
+    {
+      "id": "package-boundary-sources",
+      "patterns": [
+        "MANIFEST.in",
+        "pyproject.toml",
+        "requirements*.txt",
+        "scripts/verify_wheel.py"
+      ],
+      "risk_class": "high_risk_source"
+    }
+  ],
+  "package_patterns": [
+    "MANIFEST.in",
+    "pyproject.toml",
+    "requirements*.txt",
+    "scripts/verify_wheel.py"
+  ],
   "path_rules": [
     {
       "id": "changed-python-test",
@@ -59,6 +130,9 @@
       ],
       "checks": [
         "documentation"
+      ],
+      "test_modules": [
+        "test_documentation_policy"
       ]
     },
     {
@@ -661,6 +735,7 @@
     "browser-combat": "browser_focus:combat",
     "browser-mana-action": "browser_focus:mana-action",
     "browser-turn-draw": "browser_focus:turn-draw",
-    "windows-full": "windows_full"
+    "windows-full": "windows_full",
+    "main-red-recovery": "high_risk_source"
   }
 }

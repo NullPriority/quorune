@@ -92,13 +92,27 @@ def _sorted_ids(value: Any, label: str) -> list[str]:
     return result
 
 
-def semantic_evidence_metadata(catalog: Mapping[str, Any]) -> dict[str, Any]:
+def semantic_evidence_metadata(
+    catalog: Mapping[str, Any],
+    *,
+    previous_catalog: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     work_selection = catalog.get("work_selection")
     if not isinstance(work_selection, Mapping):
         raise PullRequestEvidenceError(
             "Rules subsystem catalog lacks work-selection metadata"
         )
     declaration = work_selection.get("semantic_transition_declaration")
+    if previous_catalog is not None:
+        previous_selection = previous_catalog.get("work_selection")
+        if not isinstance(previous_selection, Mapping):
+            raise PullRequestEvidenceError(
+                "Base rules subsystem catalog lacks work-selection metadata"
+            )
+        if declaration == previous_selection.get(
+            "semantic_transition_declaration"
+        ):
+            declaration = None
     if declaration is None:
         return {
             "transition_id": None,
@@ -274,8 +288,11 @@ def build_pr_evidence(
         raise PullRequestEvidenceError("PR base must be an ancestor of its head")
 
     if metadata is None:
+        base_catalog = _git_json(repository, base_commit, metadata_path)
+        head_catalog = _git_json(repository, head_commit, metadata_path)
         source_metadata = semantic_evidence_metadata(
-            _git_json(repository, head_commit, metadata_path)
+            head_catalog,
+            previous_catalog=base_catalog,
         )
     else:
         try:

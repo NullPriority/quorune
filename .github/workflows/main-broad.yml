@@ -1,0 +1,245 @@
+name: Main broad regression
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: main-broad-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Main / Broad / Plan
+    runs-on: ubuntu-latest
+    outputs:
+      python_matrix: ${{ steps.plan.outputs.python_matrix }}
+      python_max_parallel: ${{ steps.plan.outputs.python_max_parallel }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+      - id: plan
+        name: Build exact-SHA cross-platform plan
+        run: python scripts/main_broad_ci.py
+
+  python:
+    name: Main / Broad / Python / ${{ matrix.platform }} / ${{ matrix.shard }}
+    needs: plan
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(needs.plan.outputs.python_max_parallel) }}
+      matrix: ${{ fromJSON(needs.plan.outputs.python_matrix) }}
+    env:
+      MTG_CARD_DB: data/test-ci-${{ matrix.platform }}-${{ matrix.shard }}.sqlite3
+      MTG_SERVER_DATA: local/main-broad-${{ matrix.platform }}-${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+          cache: pip
+      - name: Install package and test dependencies
+        run: python -m pip install -e . -r requirements-dev.txt
+      - name: Build isolated compact database
+        run: |
+          python scripts/build_test_database.py validate-ci-dependencies
+          python scripts/build_test_database.py build-ci --output "data/test-ci-${{ matrix.platform }}-${{ matrix.shard }}.sqlite3"
+      - name: Run complete functional shard
+        if: matrix.shard != 'generated-validation'
+        run: >-
+          python scripts/test_shards.py run "${{ matrix.shard }}"
+          --backend pytest-xdist
+          --workers 4
+          --platform "${{ matrix.platform }}"
+          --result-json "local/main-broad-python/${{ matrix.platform }}-${{ matrix.shard }}.json"
+      - name: Run complete generated and governance shard
+        if: matrix.shard == 'generated-validation'
+        run: >-
+          python scripts/test_shards.py run "${{ matrix.shard }}"
+          --platform "${{ matrix.platform }}"
+          --result-json "local/main-broad-python/${{ matrix.platform }}-${{ matrix.shard }}.json"
+      - name: Upload exact-SHA shard result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-broad-python-${{ matrix.platform }}-${{ matrix.shard }}-${{ github.run_id }}
+          path: local/main-broad-python/${{ matrix.platform }}-${{ matrix.shard }}.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  governance:
+    name: Main / Broad / Generated and repository
+    runs-on: ubuntu-latest
+    env:
+      MTG_CARD_DB: data/test-ci.sqlite3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+          cache: pip
+      - name: Install and prepare
+        run: |
+          python -m pip install -e . -r requirements-dev.txt
+          python scripts/build_test_database.py build-ci --output data/test-ci.sqlite3
+      - name: Verify generated, architecture, and repository state
+        run: |
+          python scripts/finalize_generated.py --check
+          python scripts/validate_repository.py
+
+  package:
+    name: Main / Broad / Package / ${{ matrix.platform }}
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu
+            runs_on: ubuntu-latest
+          - platform: windows
+            runs_on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+          cache: pip
+      - name: Build and verify clean wheel
+        run: |
+          python -m pip install -e . -r requirements-dev.txt
+          python -m build --wheel
+          python scripts/verify_wheel.py
+
+  browser:
+    name: Main / Broad / Browser / ${{ matrix.group }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: lifecycle
+            grep: "@browser-lifecycle"
+            server_port: 18081
+            web_port: 15171
+          - group: rules
+            grep: "@browser-rules"
+            server_port: 18082
+            web_port: 15172
+          - group: soak
+            grep: "@browser-soak"
+            server_port: 18083
+            web_port: 15173
+    env:
+      MTG_BROWSER_GROUP: ${{ matrix.group }}
+      MTG_BROWSER_GROUP_GREP: ${{ matrix.grep }}
+      MTG_CARD_DB: data/test-ci-${{ matrix.group }}.sqlite3
+      MTG_E2E_SERVER_PORT: ${{ matrix.server_port }}
+      MTG_E2E_WEB_PORT: ${{ matrix.web_port }}
+      MTG_E2E_RUNTIME_DIR: ../local/main-broad-${{ matrix.group }}
+      MTG_PLAYWRIGHT_JSON: ../local/main-broad-${{ matrix.group }}.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('web/package-lock.json') }}
+      - name: Install and prepare
+        run: |
+          python -m pip install -e . -r requirements-dev.txt
+          npm ci --prefix web
+          python scripts/build_test_database.py build-ci --output data/test-ci-${{ matrix.group }}.sqlite3
+      - name: Verify generated protocol and production build
+        run: |
+          npm run generate:types --prefix web
+          git diff --exit-code -- web/src/generated
+          npm run build --prefix web
+      - name: Install headless Chromium
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Run complete exact-SHA browser group
+        working-directory: web
+        run: npx playwright test --grep "$MTG_BROWSER_GROUP_GREP"
+      - name: Upload browser result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-broad-browser-${{ matrix.group }}-${{ github.run_id }}
+          path: |
+            local/main-broad-${{ matrix.group }}.json
+            web/test-results
+          if-no-files-found: warn
+          retention-days: 14
+
+  certification:
+    name: Main / Broad regression
+    if: always()
+    needs: [plan, python, governance, package, browser]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+      - name: Download every cross-platform shard result
+        uses: actions/download-artifact@v4
+        with:
+          pattern: main-broad-python-*-${{ github.run_id }}
+          path: local/main-broad-python-results
+          merge-multiple: false
+      - name: Certify exact-SHA dependencies and complete test inventory
+        env:
+          CI_MAIN_BROAD_NEEDS_JSON: ${{ toJSON(needs) }}
+        run: >-
+          python scripts/verify_main_broad_ci.py
+          --results-dir local/main-broad-python-results
+
+  halt_auto_merge:
+    name: Main / Broad / Halt auto-merge
+    if: always() && needs.certification.result != 'success'
+    needs: certification
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Disable auto-merge on every open pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"
+          repository="${GITHUB_REPOSITORY#*/}"
+          gh api graphql \
+            -f query='query($owner:String!,$repository:String!){repository(owner:$owner,name:$repository){pullRequests(states:OPEN,first:100){nodes{id number autoMergeRequest{enabledAt}}}}}' \
+            -F owner="$owner" -F repository="$repository" \
+            --jq '.data.repository.pullRequests.nodes[] | select(.autoMergeRequest != null) | .id' \
+          | while read -r pull_request_id; do
+              gh api graphql \
+                -f query='mutation($id:ID!){disablePullRequestAutoMerge(input:{pullRequestId:$id}){pullRequest{number}}}' \
+                -F id="$pull_request_id"
+            done

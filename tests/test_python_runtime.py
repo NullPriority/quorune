@@ -70,13 +70,23 @@ class PythonRuntimeTests(unittest.TestCase):
 
     def test_provenance_validating_workflows_fetch_complete_history(self):
         workflows = Path(__file__).resolve().parents[1] / ".github" / "workflows"
-        for workflow_name in ("main-smoke.yml", "nightly.yml"):
+        for workflow_name in ("nightly.yml",):
             with self.subTest(workflow=workflow_name):
                 workflow = (workflows / workflow_name).read_text(encoding="utf-8")
                 checkout = workflow.split("actions/checkout@v4", 1)[1].split(
                     "actions/setup-python@v5", 1
                 )[0]
                 self.assertIn("fetch-depth: 0", checkout)
+
+        main_smoke = (workflows / "main-smoke.yml").read_text(encoding="utf-8")
+        checkout = main_smoke.split("actions/checkout@v4", 1)[1].split(
+            "actions/setup-python@v5", 1
+        )[0]
+        self.assertIn("fetch-depth: 1", checkout)
+        self.assertIn(
+            "python scripts/certification_receipt.py verify-main",
+            main_smoke,
+        )
 
         ci = (workflows / "ci.yml").read_text(encoding="utf-8")
         certification = ci.split("  certification:\n", 1)[1].split(
@@ -85,7 +95,11 @@ class PythonRuntimeTests(unittest.TestCase):
         checkout = certification.split("actions/checkout@v4", 1)[1].split(
             "Require every PR gate", 1
         )[0]
-        self.assertIn("fetch-depth: 0", checkout)
+        self.assertIn(
+            "ref: ${{ github.event.pull_request.head.sha }}",
+            checkout,
+        )
+        self.assertIn("fetch-depth: 1", checkout)
 
         windows_full = ci.split("  windows_full:\n", 1)[1].split(
             "\n  windows_package:\n", 1

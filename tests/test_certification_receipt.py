@@ -10,6 +10,7 @@ import zipfile
 from scripts.certification_receipt import (
     CertificationReceipt,
     CertificationReceiptError,
+    GOVERNANCE_REQUIRED_CHECK_SUITE,
     RECEIPT_FILENAME,
     REQUIRED_CHECK_SUITE,
     build_reused_receipt,
@@ -129,6 +130,21 @@ class CertificationReceiptTests(unittest.TestCase):
         needs["generated"]["result"] = "skipped"
         with self.assertRaisesRegex(CertificationReceiptError, "did not succeed"):
             canonical_check_suite(needs)
+
+        governance = {
+            name: {"result": "success"}
+            for name in GOVERNANCE_REQUIRED_CHECK_SUITE
+        }
+        self.assertEqual(
+            {"generated": "success", "plan": "success"},
+            canonical_check_suite(
+                governance,
+                GOVERNANCE_REQUIRED_CHECK_SUITE,
+            ),
+        )
+        governance["generated"]["result"] = "skipped"
+        with self.assertRaisesRegex(CertificationReceiptError, "did not succeed"):
+            canonical_check_suite(governance, GOVERNANCE_REQUIRED_CHECK_SUITE)
 
     def test_current_clean_tree_matches_its_committed_head_without_self_reference(self):
         self.assertEqual(
@@ -606,7 +622,7 @@ class CertificationReceiptTests(unittest.TestCase):
         self.assertEqual(prior, actual)
         sleep.assert_called_once_with(15.0)
 
-    def test_workflow_preserves_required_gates_and_publishes_receipt(self):
+    def test_source_workflow_preserves_required_gates_and_publishes_receipt(self):
         workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(
             encoding="utf-8"
         )
@@ -619,8 +635,16 @@ class CertificationReceiptTests(unittest.TestCase):
         )
         self.assertIn("python scripts/verify_ci_needs.py", certification)
         self.assertIn("certification_receipt.py create", certification)
-        self.assertIn("certification_receipt.py reuse-pr", certification)
-        self.assertIn("needs.plan.outputs.reuse_certification", certification)
+        checkout = certification.split("actions/checkout@v4", 1)[1].split(
+            "Require every PR gate", 1
+        )[0]
+        self.assertIn(
+            "ref: ${{ github.event.pull_request.head.sha }}",
+            checkout,
+        )
+        self.assertIn("fetch-depth: 1", checkout)
+        self.assertNotIn("certification_receipt.py reuse-pr", certification)
+        self.assertNotIn("needs.plan.outputs.reuse_certification", certification)
         self.assertIn("actions/upload-artifact@v4", certification)
 
 
