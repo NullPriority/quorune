@@ -216,7 +216,6 @@ class TargetedDestructionCompilerTests(unittest.TestCase):
     def test_unsupported_destruction_variants_remain_material_residuals(self):
         for text in (
             "Destroy up to one target creature.",
-            "You may destroy target creature.",
             "Destroy target creature or Spacecraft.",
             "Destroy target Spirit or enchantment.",
             "Destroy target creature. It can't be regenerated.",

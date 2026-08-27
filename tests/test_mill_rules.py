@@ -107,7 +107,6 @@ class FixedMillCompilerTests(unittest.TestCase):
         base = self.db.lookup("Fixed Target Mill")
         variants = (
             "Mill X cards.",
-            "You may mill three cards.",
             "Each player mills a card.",
             "Target player mills half their library, rounded down.",
             "Target player mills two card.",

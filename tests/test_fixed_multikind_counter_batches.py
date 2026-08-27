@@ -269,7 +269,6 @@ class FixedCounterBatchCompilerTests(unittest.TestCase):
             "Put up to one +1/+1 counter and a lifelink counter on target creature.",
             "Put X charge counters and a flying counter on target artifact.",
             "Put a +1/+1 counter and another +1/+1 counter on target creature.",
-            "You may put a +1/+1 counter and a flying counter on target creature.",
             "Put a +1/+1 counter on target creature and a flying counter on another target creature.",
             "Put a +1/+1 counter, a flying counter, a vigilance counter, and a lifelink counter on target creature.",
             "Put a +1/+1 counter and a flying counter on target modified creature.",

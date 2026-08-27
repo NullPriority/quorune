@@ -373,7 +373,6 @@ class FixedCounterPlacementTargetSetCompilerTests(unittest.TestCase):
     def test_unsupported_target_set_variants_remain_material_residuals(self):
         texts = (
             "Put a +1/+1 counter on each of up to X target creatures.",
-            "You may put a +1/+1 counter on each of up to two target creatures.",
             "Put a +1/+1 counter on up to one target attacking creature.",
             "Put a +1/+1 counter on up to one target Dinosaur you control.",
             "Put a +1/+1 counter on each of up to two target attacking creatures.",

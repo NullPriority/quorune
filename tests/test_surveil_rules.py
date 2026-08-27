@@ -132,7 +132,6 @@ class FixedSurveilCompilerTests(unittest.TestCase):
         variants = (
             "Surveil 0.",
             "Surveil X.",
-            "You may surveil 2.",
             "Target player surveils 2.",
             "Surveil 2, then draw a card for each card put into your graveyard this way.",
             "Whenever you surveil, draw a card.",

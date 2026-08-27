@@ -158,22 +158,47 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
                 self.assertIn(FIXED_OPTIONAL_EFFECT_MECHANIC, node.mechanics)
 
     def test_optional_clause_preserves_mandatory_sequence_sibling(self):
-        text = (
-            "When this creature enters, you may destroy target artifact. "
-            "Draw a card."
+        fixtures = (
+            (
+                "When this creature enters, you may destroy target artifact. "
+                "Draw a card.",
+                "Creature — Wizard",
+                0,
+                "destroy",
+                (OPTIONAL_EFFECT_OPERATION, "draw"),
+            ),
+            (
+                "Destroy target creature. You may gain 3 life.",
+                "Instant",
+                1,
+                "life",
+                ("destroy", OPTIONAL_EFFECT_OPERATION),
+            ),
         )
-        ir = self.compile(text, type_line="Creature — Wizard")
+        for (
+            text,
+            type_line,
+            optional_index,
+            nested_operation,
+            operations,
+        ) in fixtures:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
 
-        self.assertEqual("exact", ir.status, ir.material_residuals)
-        node = ir.faces[0].nodes[0]
-        self.assertEqual(2, len(node.effects))
-        self.assertEqual(OPTIONAL_EFFECT_OPERATION, node.effects[0]["op"])
-        self.assertEqual("destroy", node.effects[0]["effects"][0]["op"])
-        self.assertEqual("draw", node.effects[1]["op"])
-        self.assertIn(
-            "resolution.effect_sequence.fixed_clauses",
-            node.capability_dependencies,
-        )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(
+                    operations,
+                    tuple(effect["op"] for effect in node.effects),
+                )
+                self.assertEqual(
+                    nested_operation,
+                    node.effects[optional_index]["effects"][0]["op"],
+                )
+                self.assertIn(
+                    "resolution.effect_sequence.fixed_clauses",
+                    node.capability_dependencies,
+                )
 
     def test_existing_optional_counter_identity_is_preserved(self):
         ir = self.compile(
@@ -186,6 +211,134 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
         node = ir.faces[0].nodes[0]
         self.assertEqual("offer_optional_counter_placement", node.effects[0]["op"])
         self.assertNotIn(FIXED_OPTIONAL_EFFECT_CAPABILITY, node.capability_dependencies)
+
+    def test_existing_atomic_owner_variants_are_explicit_positive_witnesses(self):
+        fixtures = (
+            (
+                "At the beginning of your upkeep, you may draw a card.",
+                "Creature — Fixture",
+                "offer_draw",
+                None,
+            ),
+            (
+                "Whenever this creature deals combat damage to a player, you may "
+                "draw a card.",
+                "Creature — Fixture",
+                "offer_draw",
+                None,
+            ),
+            (
+                "You may put a +1/+1 counter on target creature.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "place_counters",
+            ),
+            (
+                "You may remove all counters from target permanent.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "remove_all_counters",
+            ),
+            (
+                "You may remove a +1/+1 counter from target creature.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "remove_counters",
+            ),
+            (
+                "You may put a +1/+1 counter on each creature you control.",
+                "Sorcery",
+                OPTIONAL_EFFECT_OPERATION,
+                "place_counters_on_set",
+            ),
+            (
+                "You may put a +1/+1 counter on each of up to two target creatures.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "place_counters_on_targets",
+            ),
+            (
+                "You may support 2.",
+                "Sorcery",
+                OPTIONAL_EFFECT_OPERATION,
+                "place_counters_on_targets",
+            ),
+            (
+                "You may surveil 2.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "surveil",
+            ),
+            (
+                "You may put a +1/+1 counter and a flying counter on target "
+                "creature.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "place_counter_batch",
+            ),
+            (
+                "You may tap target creature.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "tap",
+            ),
+            (
+                "You may untap target creature.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "untap",
+            ),
+            (
+                "You may counter target spell.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "counter_stack_target",
+            ),
+            (
+                "You may mill three cards.",
+                "Sorcery",
+                OPTIONAL_EFFECT_OPERATION,
+                "mill",
+            ),
+            (
+                "You may destroy target creature.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "destroy",
+            ),
+            (
+                "You may return target creature to its owner's hand.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "bounce",
+            ),
+            (
+                "You may exile target creature.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "exile_permanent",
+            ),
+        )
+        for text, type_line, outer_operation, nested_operation in fixtures:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(outer_operation, node.effects[0]["op"])
+                if nested_operation is None:
+                    self.assertNotIn(
+                        FIXED_OPTIONAL_EFFECT_CAPABILITY,
+                        node.capability_dependencies,
+                    )
+                else:
+                    self.assertEqual(
+                        nested_operation,
+                        node.effects[0]["effects"][0]["op"],
+                    )
+                    self.assertIn(
+                        FIXED_OPTIONAL_EFFECT_CAPABILITY,
+                        node.capability_dependencies,
+                    )
 
     def test_optional_effect_exclusions_remain_material(self):
         fixtures = (

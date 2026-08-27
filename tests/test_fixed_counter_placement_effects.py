@@ -435,7 +435,6 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
             "Put a poison counter on target player.",
             "Put a +1/+1 counter on target modified creature.",
             "Move a +1/+1 counter onto target creature.",
-            "You may put a +1/+1 counter on target creature.",
         )
         for text in texts:
             with self.subTest(text=text):

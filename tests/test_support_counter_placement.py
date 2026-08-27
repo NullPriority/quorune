@@ -243,7 +243,6 @@ class SupportCounterPlacementCompilerTests(unittest.TestCase):
         cases = (
             ("Support X.", "Sorcery"),
             ("Support 0.", "Sorcery"),
-            ("You may support 2.", "Sorcery"),
             ("Support 2 twice.", "Sorcery"),
             ("At the beginning of combat on your turn, you may pay {3}{W}. If you do, support 2.", "Creature"),
         )
