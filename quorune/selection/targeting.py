@@ -515,6 +515,16 @@ class TargetSelectionOwnerMixin:
                     for other in group.different_from_groups
                 ):
                     continue
+                if group.same_owner:
+                    owner = self._target_snapshot(ref).get("owner")
+                    if type(owner) is not str or not owner:
+                        continue
+                    if own and any(
+                        self._target_snapshot(selected_ref).get("owner")
+                        != owner
+                        for selected_ref in own
+                    ):
+                        continue
                 own.append(ref)
                 added_global = ref not in globally_used
                 if added_global:
@@ -758,6 +768,18 @@ class TargetSelectionOwnerMixin:
                     raise GameRuleError(
                         "Selected target is not legal for this target group"
                     )
+                if group.same_owner and chosen:
+                    owners = [
+                        self._target_snapshot(ref).get("owner")
+                        for ref in chosen
+                    ]
+                    if any(
+                        type(owner) is not str or not owner
+                        for owner in owners
+                    ) or len(set(owners)) != 1:
+                        raise GameRuleError(
+                            "Selected targets must have the same owner"
+                        )
                 if any(
                     ref in grouped.get(other, ())
                     for other in group.different_from_groups

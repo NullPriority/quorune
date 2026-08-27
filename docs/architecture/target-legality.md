@@ -44,6 +44,14 @@ presence, and name or attachment relations remain residual. Ability-presence
 wording also remains residual until one shared layer-6 ability applicability
 query can serve every static and target consumer.
 
+A target group may additionally require every selected public object to share
+one owner. The planner proves that a legal combination exists before it offers
+the action, command validation applies the same constraint, and resolution
+still revalidates each surviving target independently. The public action schema
+emits `same_owner: true` only for such a group, preserving the existing schema
+for all other targets. This represents cards chosen from a single graveyard;
+it does not expose hidden zones or create a general relational-target grammar.
+
 ## Typed protection boundary
 
 The protection snapshot accepts already-derived current facts:

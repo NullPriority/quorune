@@ -35,6 +35,7 @@ from .intents import (
     DomainEffectIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
+    DestroyPermanentTargetsIntent,
     DrawCardsIntent,
     IntentPlan,
     EliminatePlayersIntent,
@@ -69,6 +70,7 @@ from .intents import (
     RevealLibraryCardsIntent,
     SetCardDesignationIntent,
     SetPermanentTappedIntent,
+    SetPermanentsTappedIntent,
     ShuffleLibraryIntent,
     UntapAllCreaturesIntent,
     ZoneMoveIntent,
@@ -320,6 +322,7 @@ PermanentObjectIntent = (
     CreateRegenerationShieldIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
+    | DestroyPermanentTargetsIntent
     | ExilePermanentIntent
     | ExilePublicGraveyardCardIntent
     | MovePublicZoneSetIntent
@@ -330,6 +333,7 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     CreateRegenerationShieldIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
+    DestroyPermanentTargetsIntent,
     ExilePermanentIntent,
     ExilePublicGraveyardCardIntent,
     MovePublicZoneSetIntent,
@@ -367,6 +371,18 @@ def _execute_permanent_object_intent(
         )
     if isinstance(intent, DestroyPermanentSetIntent):
         return intent.actor, sink.destroy_permanent_set_intent(intent)
+    if isinstance(intent, DestroyPermanentTargetsIntent):
+        return (
+            intent.actor,
+            destruction.destroy_permanent_refs(
+                sink,
+                intent.object_refs,
+                actor=intent.actor,
+                reason=intent.reason,
+                regeneration_prohibited=intent.regeneration_prohibited,
+                replacement_selections=intent.replacement_selections,
+            ),
+        )
     if isinstance(intent, ExilePermanentIntent):
         return (
             intent.object_ref,
@@ -507,6 +523,8 @@ def _execute_counter_placement_intent(
 
 PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent
 PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent)
+TapStateIntent = SetPermanentTappedIntent | SetPermanentsTappedIntent
+TAP_STATE_INTENT_TYPES = (SetPermanentTappedIntent, SetPermanentsTappedIntent)
 
 
 def _execute_player_intent(
@@ -549,6 +567,33 @@ def _execute_player_intent(
     return intent.player, result.refs
 
 
+def _execute_tap_state_intent(
+    sink: SemanticIntentSink,
+    intent: TapStateIntent,
+) -> tuple[str, object]:
+    if isinstance(intent, SetPermanentTappedIntent):
+        result = tap_state.set_permanent_tapped(
+            sink,
+            intent.object_ref,
+            actor=intent.actor,
+            tapped=intent.tapped,
+            reason=intent.reason,
+            logical_object_id=intent.logical_object_id,
+        )
+        return intent.object_ref, result
+    result = tuple(
+        tap_state.set_permanent_tapped(
+            sink,
+            object_ref,
+            actor=intent.actor,
+            tapped=intent.tapped,
+            reason=intent.reason,
+        )
+        for object_ref in intent.object_refs
+    )
+    return intent.actor, result
+
+
 def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
     if any(isinstance(intent, DrawCardsIntent) for intent in plan.intents):
         raise SemanticNodeError(
@@ -559,16 +604,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, PLAYER_INTENT_TYPES):
             results.append(_execute_player_intent(sink, intent))
             continue
-        if isinstance(intent, SetPermanentTappedIntent):
-            result = tap_state.set_permanent_tapped(
-                sink,
-                intent.object_ref,
-                actor=intent.actor,
-                tapped=intent.tapped,
-                reason=intent.reason,
-                logical_object_id=intent.logical_object_id,
-            )
-            results.append((intent.object_ref, result))
+        if isinstance(intent, TAP_STATE_INTENT_TYPES):
+            results.append(_execute_tap_state_intent(sink, intent))
             continue
         if isinstance(intent, UntapAllCreaturesIntent):
             result = tap_state.untap_all_creatures(

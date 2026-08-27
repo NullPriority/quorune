@@ -276,18 +276,25 @@ residual, and blocker-closure counts to
 `coverage/work-selection-cohort-measurements.json`; static selection policy
 contains no copied frontier fingerprint or observed count. Family-level bundle
 closure remains `upper_bound_only` until that generated probe establishes one
-executable grammar and lower bound.
+executable grammar and lower bound. When implementation and measurement share
+one feature checkpoint, the owner also seals the source-checkpoint frontier's
+selected measurement as a content-fingerprinted transition receipt before the
+new corpus frontier retires that completed cohort. Later writes preserve only
+the still-declared transition receipt; policy stores its stable measurement ID,
+not its observed counts or frontier fingerprint.
 The rules-scheduler owner also maintains
 `coverage/harvest-outcome-history.json`. Existing historical rows retain their
 immutable Git provenance, while new semantic transitions use base and head
 content-receipt fingerprints over the Commander CardProgram corpus, Oracle
 coverage, card-unlock frontier, interaction inventory, and architecture audit.
 The transition declaration carries the bundle, candidate, family, capability,
-expected-gain, and compiler identities before corpus generation. Once the
-generated head receipts exist, the same feature fixed point appends the actual
-outcome automatically. Those content identities survive squash, so review,
-merge, and the next selector pass require neither a merge-commit association
-nor a bookkeeping follow-up.
+generated-measurement, and compiler identities before corpus generation. Once
+the generated head receipts exist, the same feature fixed point appends the
+measured lower bound and actual outcome automatically. Base and head semantic
+receipts plus the transition-measurement receipt are content identities with no
+feature-commit field. They survive squash, so review, merge, and the next
+selector pass require neither a merge-commit association nor a bookkeeping
+follow-up.
 If no implementation-eligible cohort exists, the same selector may choose one
 `cohort_measurement` task. That task pins the corpus filter, owner hypothesis,
 grammar boundary, exclusions, cards/residuals to inspect, probe effort, and
@@ -633,7 +640,11 @@ On failure, prefer the exact `--grep` command printed by the progress diagnostic
 
 Every `tests/test_*.py` module belongs to exactly one primary shard in
 `platform/test-shards.json`. Overlay suites such as `main-smoke`,
-`windows-compat`, and `nightly-property` may intentionally reuse modules.
+`windows-compat`, and `nightly-property` may intentionally reuse modules. The
+named compiler, targeting, casting, combat, and other semantic suites are also
+overlays: they preserve focused change-impact routing while neutral
+`functional-NN` primary shards distribute complete modules by measured cloud
+duration.
 
 The PR workflow has a checked public concurrency budget of 20 jobs and reserves
 at least two slots for recovery. `scripts/ci_plan.py` derives the functional
@@ -685,17 +696,17 @@ write the same compact result record consumed by public certification and
 metrics:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/test_shards.py run core-domain `
+.\.venv\Scripts\python.exe scripts/test_shards.py run functional-01 `
   --backend pytest-xdist --workers 4 --platform windows `
-  --result-json local/windows-results/core-domain.json
+  --result-json local/windows-results/functional-01.json
 ```
 
 A focused Linux-equivalent parallel reproduction is:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/test_shards.py run core-domain `
+.\.venv\Scripts\python.exe scripts/test_shards.py run functional-01 `
   --backend pytest-xdist --workers 4 --platform ubuntu `
-  --result-json local/python-results/core-domain.json
+  --result-json local/python-results/functional-01.json
 ```
 
 Use that command only for a directly relevant diagnostic. Public exact-head CI
@@ -709,10 +720,29 @@ Windows and nightly OS partitions therefore execute every discovered test
 module exactly once per platform. `windows-compat` remains an intentionally
 overlapping focused suite and never runs alongside the full Windows matrix.
 
-Keep functional shard weights close enough to use parallel capacity. Split by
-coherent subsystem ownership, not by individual test methods. The generated
-inventory shard is separate because thousands of small generated cases have a
-different runtime profile from behavioral tests.
+Keep functional shard weights close enough to use parallel capacity. Semantic
+overlays remain coherent by subsystem; primary execution shards may mix those
+overlays but always move complete test modules, never individual test methods.
+The generated inventory shard is separate because thousands of small generated
+cases have a different runtime profile from behavioral tests.
+
+After a successful exact-head PR run, download its Ubuntu shard results and
+rebuild the primary partition from their complete module timing inventory:
+
+```powershell
+gh run download <run-id> --pattern 'python-results-*' `
+  --dir local/ci-rebalance
+.\.venv\Scripts\python.exe scripts/test_shards.py rebalance `
+  --results-root local/ci-rebalance --write
+```
+
+The command accepts only successful four-worker Ubuntu `loadfile` artifacts,
+rejects duplicate, missing, or unknown modules, preserves semantic overlays,
+and writes the slowest predicted primary shards first. A newly added module
+that is absent from the prior cloud run requires a measured focused estimate,
+for example `--estimate test_new_family=42.5`; once CI observes it, later
+rebalances use the artifact value. Validate the resulting exact partition and
+review the predicted makespans before committing it.
 
 Nightly uses the same manifest order, interleaved Ubuntu then Windows per
 shard, with `max-parallel: 6`. Its other browser, property, mutation, corpus,

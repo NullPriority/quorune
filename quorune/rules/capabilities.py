@@ -99,6 +99,9 @@ from .fixed_effect_clause_shapes import (
     fixed_effect_clause_sequence_node_capabilities,
     fixed_optional_effect_node_capabilities,
 )
+from .fixed_homogeneous_target_set_capability_shapes import (
+    fixed_homogeneous_target_set_node_capabilities,
+)
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
     FIXED_OPTIONAL_EFFECT_MECHANIC,
@@ -989,6 +992,7 @@ def _targeted_effect_capabilities(
         fixed_counter_removal_node_capabilities,
         fixed_counter_placement_set_node_capabilities,
         fixed_counter_placement_target_set_node_capabilities,
+        fixed_homogeneous_target_set_node_capabilities,
         fixed_player_counter_placement_node_capabilities,
         optional_fixed_counter_event_trigger_node_capabilities,
         fixed_target_characteristics_node_capabilities,
@@ -1366,10 +1370,10 @@ def capability_covered_mechanics(
         for mechanic, required in MECHANIC_CAPABILITY_DEPENDENCIES.items()
         if set(required).issubset(supplied)
     }
-    if "target.public.player_or_damageable_permanent" in supplied:
+    if supplied.intersection({"target.public.player_or_damageable_permanent", "target.revalidate_resolution"}):
         covered.add("cr-115-targets")
-    if "target.revalidate_resolution" in supplied:
-        covered.add("cr-115-targets")
+    if "resolution.effect.fixed_homogeneous_target_set" in supplied:
+        covered.add("fixed-homogeneous-target-set")
     if supplied.intersection(
         {"permanent.tap.effect", "permanent.untap.effect"}
     ):

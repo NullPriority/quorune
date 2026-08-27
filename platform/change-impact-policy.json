@@ -207,6 +207,22 @@
       ]
     },
     {
+      "id": "fixed-homogeneous-target-set-contract",
+      "patterns": [
+        "quorune/compiler/fixed_homogeneous_target_sets.py",
+        "quorune/rules/fixed_homogeneous_target_set_capability_shapes.py",
+        "quorune/selection/targeting.py",
+        "quorune/semantic_runtime/fixed_target_set_handlers.py",
+        "quorune/targets.py",
+        "tests/fixtures/fixed-homogeneous-target-set-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_homogeneous_target_sets",
+        "test_semantic_handlers",
+        "test_targeting_v070"
+      ]
+    },
+    {
       "id": "compiler-static-characteristic-expectations",
       "patterns": [
         "quorune/compiler/continuous_templates.py",

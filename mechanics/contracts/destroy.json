@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 4,
+  "contract_version": 5,
   "mechanic_id": "destroy",
   "official_name": "Destroy",
   "effective_date": "2026-08-07",
@@ -38,6 +38,7 @@
       "effect destruction",
       "lethal-damage state-based destruction",
       "deathtouch state-based destruction",
+      "bounded homogeneous target-set destruction",
       "shield-counter replacement",
       "regeneration replacement",
       "Indestructible prohibition"
@@ -64,6 +65,7 @@
     "targets": [
       "the bounded compiler accepts one canonical disjunction of up to four artifact, battle, creature, enchantment, land, or planeswalker types through the shared direct-permanent target owner",
       "the same owner accepts represented controller, source-exclusion, color, fixed mana-value, public-state, and up-to-four negative creature-subtype qualifiers",
+      "the fixed homogeneous target-set owner composes that same predicate with an exact, one-or-two, or up-to bound from one through six",
       "resolution-time target legality is revalidated before preparation"
     ],
     "choices": [
@@ -111,7 +113,8 @@
     "transaction rollback",
     "exact command replay",
     "closed direct-target grammar shared by spell, trigger, activated, and modal contexts",
-    "one fixed exact, minimum, or maximum target mana-value qualifier"
+    "one fixed exact, minimum, or maximum target mana-value qualifier",
+    "bounded homogeneous destruction target sets"
   ],
   "witness_cards": [
     {
@@ -150,16 +153,18 @@
     "test_compiled_union_destruction_offer_command_resolution_and_replay",
     "test_compiled_union_destruction_respects_indestructible",
     "test_fixed_mana_value_targets_compile_across_effect_contexts",
-    "test_current_copy_derived_mana_value_governs_offer_command_and_resolution"
+    "test_current_copy_derived_mana_value_governs_offer_command_and_resolution",
+    "test_fixed_homogeneous_target_sets_compile_across_contexts",
+    "test_multi_target_destruction_preserves_protections_and_replay"
   ],
   "implementation": {
-    "component": "typed direct-target compiler, strict destruction semantic handler, canonical destruction transaction, counter owner, and zone-transition owner",
-    "version": "destruction-v4"
+    "component": "typed direct-target and fixed homogeneous target-set compilers, strict destruction semantic handlers, canonical destruction transaction, counter owner, and zone-transition owner",
+    "version": "destruction-v5"
   },
   "known_blockers": [
     "effects that say a permanent cannot be regenerated are not represented",
     "competing shield-counter and regeneration replacement ordering is incomplete",
-    "optional, modal, aggregate, quantified, relational, qualified, and compound destruction clauses remain precise compiler residuals",
+    "optional, modal, relational, qualified, and compound destruction clauses plus aggregate or quantified forms outside the bounded homogeneous target-set and fixed-set owners remain precise compiler residuals",
     "complete ability-changing, copy, face-down, and continuous-effect dependency interactions remain blocked",
     "the mechanic contract is broader than the trusted bounded direct-target effect capability"
   ],

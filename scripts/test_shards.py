@@ -30,6 +30,8 @@ PYTEST_XDIST_WORKERS = 4
 PYTEST_XDIST_DISTRIBUTION = "loadfile"
 TEST_COLLECTION_FINGERPRINT_ALGORITHM = "canonical-unittest-ids-sha256-v1"
 EXPECTED_COLLECTION_ENV = "QUORUNE_EXPECTED_UNITTEST_COLLECTION"
+GENERATED_VALIDATION_SHARD = "generated-validation"
+BALANCED_FUNCTIONAL_SHARD_PREFIX = "functional-"
 
 
 def load_manifest(path: Path = MANIFEST) -> dict:
@@ -157,8 +159,231 @@ def functional_shards(manifest: Mapping) -> tuple[str, ...]:
     return tuple(
         name
         for name in manifest["execution_order"]
-        if name != "generated-validation"
+        if name != GENERATED_VALIDATION_SHARD
     )
+
+
+def load_observed_module_timings(root: Path) -> dict[str, float]:
+    """Load one successful Ubuntu loadfile result per functional module."""
+
+    if not root.is_dir():
+        raise TestShardError(f"Observed timing root does not exist: {root}")
+    found_documents = 0
+    timings: dict[str, float] = {}
+    for path in sorted(root.rglob("*.json")):
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise TestShardError(
+                f"Observed timing artifact is unreadable: {path}"
+            ) from exc
+        if not isinstance(value, dict) or value.get("type") != (
+            "pytest-xdist-shard-result"
+        ):
+            continue
+        found_documents += 1
+        if (
+            value.get("schema_version") != 2
+            or value.get("platform") != "ubuntu"
+            or value.get("backend") != "pytest-xdist"
+            or value.get("workers") != PYTEST_XDIST_WORKERS
+            or value.get("distribution") != PYTEST_XDIST_DISTRIBUTION
+            or value.get("successful") is not True
+        ):
+            raise TestShardError(
+                f"Observed timing artifact has an unsupported execution shape: {path}"
+            )
+        modules = value.get("modules")
+        rows = value.get("module_timings")
+        if (
+            not isinstance(modules, list)
+            or not modules
+            or any(
+                type(module) is not str or not module.startswith("test_")
+                for module in modules
+            )
+            or len(modules) != len(set(modules))
+            or not isinstance(rows, list)
+        ):
+            raise TestShardError(
+                f"Observed timing artifact has malformed module inventory: {path}"
+            )
+        document_timings: dict[str, float] = {}
+        for row in rows:
+            if not isinstance(row, dict) or set(row) != {
+                "module",
+                "worker_elapsed_seconds",
+            }:
+                raise TestShardError(
+                    f"Observed timing artifact has a malformed timing row: {path}"
+                )
+            module = row["module"]
+            seconds = row["worker_elapsed_seconds"]
+            if (
+                type(module) is not str
+                or module not in modules
+                or isinstance(seconds, bool)
+                or not isinstance(seconds, (int, float))
+                or not 0 <= float(seconds)
+                or module in document_timings
+            ):
+                raise TestShardError(
+                    f"Observed timing artifact has an invalid module timing: {path}"
+                )
+            document_timings[module] = float(seconds)
+        if set(document_timings) != set(modules):
+            raise TestShardError(
+                f"Observed timing artifact omits module timings: {path}"
+            )
+        duplicate = sorted(set(timings).intersection(document_timings))
+        if duplicate:
+            raise TestShardError(
+                "Observed timing artifacts assign modules more than once: "
+                + ", ".join(duplicate)
+            )
+        timings.update(document_timings)
+    if found_documents == 0:
+        raise TestShardError(
+            f"Observed timing root contains no shard results: {root}"
+        )
+    return timings
+
+
+def _predicted_worker_loads(
+    modules: Sequence[str],
+    timings: Mapping[str, float],
+) -> tuple[float, ...]:
+    loads = [0.0] * PYTEST_XDIST_WORKERS
+    for module in sorted(modules, key=lambda item: (-timings[item], item)):
+        worker = min(range(len(loads)), key=lambda index: (loads[index], index))
+        loads[worker] += timings[module]
+    return tuple(sorted(loads, reverse=True))
+
+
+def rebalance_primary_shards(
+    manifest: Mapping,
+    observed_timings: Mapping[str, float],
+    *,
+    estimated_timings: Mapping[str, float] | None = None,
+) -> tuple[dict, dict]:
+    """Build neutral primary shards while preserving semantic impact suites."""
+
+    validate_partition(manifest)
+    original_functional = functional_shards(manifest)
+    primary = manifest["primary_shards"]
+    generated_modules = tuple(primary[GENERATED_VALIDATION_SHARD])
+    functional_modules = tuple(
+        sorted(
+            module
+            for name in original_functional
+            for module in primary[name]
+        )
+    )
+    timings = {
+        str(module): float(seconds)
+        for module, seconds in observed_timings.items()
+    }
+    estimates = dict(estimated_timings or {})
+    for module, seconds in estimates.items():
+        if (
+            module not in functional_modules
+            or isinstance(seconds, bool)
+            or not isinstance(seconds, (int, float))
+            or float(seconds) < 0
+        ):
+            raise TestShardError(
+                f"Estimated module timing is invalid: {module}={seconds!r}"
+            )
+        timings[module] = float(seconds)
+    missing = sorted(set(functional_modules) - set(timings))
+    unknown = sorted(set(timings) - set(functional_modules))
+    if missing or unknown:
+        raise TestShardError(
+            "Observed timing inventory does not match functional modules: "
+            + json.dumps({"missing": missing, "unknown": unknown}, sort_keys=True)
+        )
+
+    shard_names = tuple(
+        f"{BALANCED_FUNCTIONAL_SHARD_PREFIX}{index:02d}"
+        for index in range(1, len(original_functional) + 1)
+    )
+    buckets: dict[str, list[str]] = {name: [] for name in shard_names}
+    for module in sorted(functional_modules, key=lambda item: (-timings[item], item)):
+        selected = min(
+            shard_names,
+            key=lambda name: (
+                max(
+                    _predicted_worker_loads(
+                        (*buckets[name], module),
+                        timings,
+                    )
+                ),
+                sum(timings[item] for item in buckets[name]),
+                len(buckets[name]),
+                name,
+            ),
+        )
+        buckets[selected].append(module)
+
+    overlays = {
+        str(name): list(modules)
+        for name, modules in manifest["overlay_suites"].items()
+    }
+    if not all(
+        name.startswith(BALANCED_FUNCTIONAL_SHARD_PREFIX)
+        for name in original_functional
+    ):
+        for name in original_functional:
+            if name in overlays:
+                raise TestShardError(
+                    f"Semantic overlay would replace existing suite {name!r}"
+                )
+            overlays[name] = list(primary[name])
+
+    predicted = {
+        name: _predicted_worker_loads(buckets[name], timings)
+        for name in shard_names
+    }
+    execution_order = sorted(
+        shard_names,
+        key=lambda name: (
+            -max(predicted[name]),
+            -sum(predicted[name]),
+            name,
+        ),
+    )
+    execution_order.append(GENERATED_VALIDATION_SHARD)
+    balanced = {
+        "schema_version": manifest["schema_version"],
+        "execution_order": execution_order,
+        "primary_shards": {
+            **{
+                name: sorted(buckets[name])
+                for name in shard_names
+            },
+            GENERATED_VALIDATION_SHARD: list(generated_modules),
+        },
+        "overlay_suites": {
+            name: sorted(modules)
+            for name, modules in sorted(overlays.items())
+        },
+    }
+    validate_partition(balanced)
+    summary = {
+        "functional_shards": len(shard_names),
+        "functional_modules": len(functional_modules),
+        "estimated_timings": sorted(estimates),
+        "predicted_shards": {
+            name: {
+                "modules": len(buckets[name]),
+                "worker_seconds": round(sum(predicted[name]), 3),
+                "makespan_seconds": round(max(predicted[name]), 3),
+            }
+            for name in execution_order
+            if name != GENERATED_VALIDATION_SHARD
+        },
+    }
+    return balanced, summary
 
 
 def load_suite(modules: Iterable[str]) -> unittest.TestSuite:
@@ -443,6 +668,15 @@ def main() -> int:
     subparsers = parser.add_subparsers(dest="operation", required=True)
     subparsers.add_parser("validate")
     subparsers.add_parser("describe")
+    rebalance = subparsers.add_parser("rebalance")
+    rebalance.add_argument("--results-root", required=True)
+    rebalance.add_argument(
+        "--estimate",
+        action="append",
+        default=[],
+        metavar="MODULE=SECONDS",
+    )
+    rebalance.add_argument("--write", action="store_true")
     run = subparsers.add_parser("run")
     run.add_argument("suite")
     run.add_argument("--result-json")
@@ -473,6 +707,43 @@ def main() -> int:
             return 0
         if args.operation == "describe":
             print(json.dumps(describe(manifest), indent=2, sort_keys=True))
+            return 0
+        if args.operation == "rebalance":
+            estimates: dict[str, float] = {}
+            for raw_estimate in args.estimate:
+                module, separator, raw_seconds = raw_estimate.partition("=")
+                if (
+                    not separator
+                    or not module.startswith("test_")
+                    or module in estimates
+                ):
+                    raise TestShardError(
+                        f"Invalid module timing estimate: {raw_estimate!r}"
+                    )
+                try:
+                    estimates[module] = float(raw_seconds)
+                except ValueError as exc:
+                    raise TestShardError(
+                        f"Invalid module timing estimate: {raw_estimate!r}"
+                    ) from exc
+            balanced, summary = rebalance_primary_shards(
+                manifest,
+                load_observed_module_timings(Path(args.results_root)),
+                estimated_timings=estimates,
+            )
+            if args.write:
+                MANIFEST.write_text(
+                    json.dumps(balanced, indent=2) + "\n",
+                    encoding="utf-8",
+                    newline="\n",
+                )
+            print(
+                json.dumps(
+                    {"ok": True, "written": bool(args.write), **summary},
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
             return 0
         selected = (
             suite_modules(manifest, args.suite)

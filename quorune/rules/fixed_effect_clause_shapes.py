@@ -47,6 +47,9 @@ from .node_capability_shapes import (
     targeted_return_to_hand_node_capabilities,
     targeted_tap_state_node_capabilities,
 )
+from .fixed_homogeneous_target_set_capability_shapes import (
+    fixed_homogeneous_target_set_node_capabilities,
+)
 from .library_search_capability_shapes import (
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,
@@ -81,6 +84,7 @@ _COMPONENT_RESOLVERS = (
     fixed_counter_placement_node_capabilities,
     fixed_counter_placement_set_node_capabilities,
     fixed_counter_placement_target_set_node_capabilities,
+    fixed_homogeneous_target_set_node_capabilities,
     fixed_counter_removal_node_capabilities,
     fixed_player_counter_placement_node_capabilities,
     fixed_target_characteristics_node_capabilities,

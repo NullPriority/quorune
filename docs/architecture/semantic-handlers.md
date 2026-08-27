@@ -94,6 +94,14 @@ strict operation, reference, reason, and immutable replacement-selection field
 validation. This shared code does not choose a target, infer a card family, or
 create a generic move operation.
 
+The fixed homogeneous target-set handlers receive only the already selected
+and resolution-revalidated public references. Destruction delegates the whole
+surviving set to the canonical destruction transaction; exile and return use
+one simultaneous replacement-aware zone-move intent; tap and untap use one
+typed set intent over the canonical tap-state owner. Empty up-to selections are
+valid no-ops, while duplicate references, excess references, unknown fields,
+and replacement selections on tap-state operations fail before mutation.
+
 Mandatory direct stack counters lower through a separate strict handler to one
 typed intent. The focused stack owner performs counterability, stack removal,
 replacement-aware physical spell movement, normalized pre-counter and

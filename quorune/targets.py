@@ -312,6 +312,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "another",
         "distinct",
         "allow_reuse",
+        "same_owner",
         "different_from_groups",
         "predicate",
         "resolution_condition",
@@ -385,6 +386,7 @@ class TargetGroup:
     max_targets: int = 1
     distinct: bool = True
     allow_reuse: bool = False
+    same_owner: bool = False
     different_from_groups: tuple[str, ...] = ()
     predicate: str = ""
     resolution_condition: dict[str, Any] = field(default_factory=dict)
@@ -392,6 +394,8 @@ class TargetGroup:
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
 
     def __post_init__(self) -> None:
+        if type(self.same_owner) is not bool:
+            raise ValueError("Target same_owner constraint must be boolean")
         if self.combat_state is not None and (
             self.combat_state
             not in {"attacking", "blocking", "attacking_or_blocking"}
@@ -527,6 +531,7 @@ class TargetGroup:
             "max_targets": maximum,
             "distinct": bool(raw.get("distinct", True)),
             "allow_reuse": bool(raw.get("allow_reuse", False)),
+            "same_owner": _optional_bool(raw.get("same_owner")) or False,
             "different_from_groups": _strings(raw.get("different_from_groups")),
             "predicate": predicate,
             "resolution_condition": _target_resolution_condition(
@@ -549,6 +554,7 @@ class TargetGroup:
             "max": self.max_targets,
             "distinct": self.distinct,
             "allow_reuse": self.allow_reuse,
+            **({"same_owner": True} if self.same_owner else {}),
             "different_from_groups": list(self.different_from_groups),
             "legal_refs": list(legal_refs),
         }

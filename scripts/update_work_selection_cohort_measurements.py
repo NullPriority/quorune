@@ -4,6 +4,7 @@ import argparse
 import gzip
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 
@@ -14,6 +15,7 @@ if str(ROOT) not in sys.path:
 from quorune.carddb import CardDatabase
 from quorune.util import stable_json
 from quorune.work_selection_bundles import bundle_measurement_fingerprint
+from quorune.work_selection_common import stable_hash
 from quorune.work_selection_evidence import (
     validate_work_selection_cohort_measurements,
 )
@@ -48,13 +50,163 @@ def _build(database: Path) -> dict:
             card.oracle_id: card
             for card in cards.iter_cards(commander_legal_only=True)
         }
-    return build_work_selection_cohort_measurements(
+    transition_measurements = _transition_measurements(
+        records=records,
+        coverage=coverage,
+        bundles=bundles,
+    )
+    value = build_work_selection_cohort_measurements(
         frontier=frontier,
         bundle_policies=bundles,
         cards_by_oracle_id=records,
         coverage=coverage,
         cohort_fingerprints=fingerprints,
+        transition_measurements=transition_measurements,
     )
+    validate_work_selection_cohort_measurements(
+        value,
+        frontier=frontier,
+        bundle_policies=bundles,
+        cohort_fingerprints=fingerprints,
+        coverage=coverage,
+    )
+    _validate_transition_binding(value)
+    return value
+
+
+def _source_checkpoint_frontier() -> dict:
+    completed = subprocess.run(
+        ["git", "show", "HEAD:coverage/card-unlock-frontier.json.gz"],
+        cwd=ROOT,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if completed.returncode:
+        raise ValueError(
+            "Cannot read the source-checkpoint card frontier for transition measurement"
+        )
+    try:
+        value = json.loads(gzip.decompress(completed.stdout))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(
+            "Source-checkpoint card frontier is malformed"
+        ) from exc
+    if not isinstance(value, dict):
+        raise ValueError("Source-checkpoint card frontier must be an object")
+    return value
+
+
+def _preserved_transition_measurement(
+    *, transition_id: str, measurement_id: str
+) -> dict | None:
+    try:
+        value = json.loads(OUTPUT.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return None
+    for row in value.get("transition_measurements", []):
+        measurement = row.get("measurement") if isinstance(row, dict) else None
+        if (
+            isinstance(measurement, dict)
+            and row.get("transition_id") == transition_id
+            and measurement.get("measurement_id") == measurement_id
+        ):
+            return dict(row)
+    return None
+
+
+def _transition_measurements(
+    *, records: dict, coverage: dict, bundles: list[dict]
+) -> list[dict]:
+    catalog = json.loads(POLICY.read_text(encoding="utf-8"))
+    declaration = catalog["work_selection"].get(
+        "semantic_transition_declaration"
+    )
+    if not isinstance(declaration, dict):
+        return []
+    transition_id = str(declaration.get("transition_id") or "")
+    measurement_id = declaration.get("measurement_id")
+    if not transition_id or not isinstance(measurement_id, str):
+        return []
+    preserved = _preserved_transition_measurement(
+        transition_id=transition_id,
+        measurement_id=measurement_id,
+    )
+    if preserved is not None:
+        return [preserved]
+    bundle_id = str(declaration.get("bundle_id") or "")
+    bundle = next(
+        (row for row in bundles if row.get("bundle_id") == bundle_id), None
+    )
+    if bundle is None or measurement_id != "measurement:" + bundle_id.split(
+        ":", 1
+    )[-1]:
+        raise ValueError(
+            "Semantic transition measurement does not identify its candidate bundle"
+        )
+    frontier = _source_checkpoint_frontier()
+    fingerprints = {
+        bundle_id: bundle_measurement_fingerprint(frontier, bundle)
+    }
+    measured = build_work_selection_cohort_measurements(
+        frontier=frontier,
+        bundle_policies=[bundle],
+        cards_by_oracle_id=records,
+        coverage=coverage,
+        cohort_fingerprints=fingerprints,
+    )["measurements"][0]
+    if (
+        measured.get("decision") != "bounded_executable"
+        or int(measured.get("complete_card_gain") or 0) <= 0
+    ):
+        raise ValueError(
+            "Semantic transition requires a generated positive complete-card "
+            "cohort lower bound"
+        )
+    snapshot = frontier.get("card_data_snapshot")
+    receipt = {
+        "transition_id": transition_id,
+        "frontier_fingerprint": str(frontier.get("fingerprint") or ""),
+        "oracle_source_sha256": (
+            str(snapshot.get("oracle_source_sha256") or "")
+            if isinstance(snapshot, dict)
+            else ""
+        ),
+        "measurement": measured,
+    }
+    receipt["receipt_fingerprint"] = stable_hash(receipt)
+    return [receipt]
+
+
+def _validate_transition_binding(value: dict) -> None:
+    catalog = json.loads(POLICY.read_text(encoding="utf-8"))
+    declaration = catalog["work_selection"].get(
+        "semantic_transition_declaration"
+    )
+    measurement_id = (
+        declaration.get("measurement_id")
+        if isinstance(declaration, dict)
+        else None
+    )
+    receipts = value.get("transition_measurements", [])
+    if measurement_id is None:
+        if receipts:
+            raise ValueError(
+                "Cohort artifact retains a transition measurement without a declaration"
+            )
+        return
+    matching = [
+        row
+        for row in receipts
+        if row.get("transition_id") == declaration.get("transition_id")
+        and row.get("measurement", {}).get("measurement_id") == measurement_id
+        and row.get("measurement", {}).get("bundle_id")
+        == declaration.get("bundle_id")
+    ]
+    if len(matching) != 1 or len(receipts) != 1:
+        raise ValueError(
+            "Cohort artifact lacks the declared transition measurement"
+        )
 
 
 def main() -> int:
@@ -87,6 +239,7 @@ def main() -> int:
         cohort_fingerprints=fingerprints,
         coverage=_coverage,
     )
+    _validate_transition_binding(value)
     if args.db is not None and value != _build(args.db):
         raise ValueError(
             "Work-selection cohort measurements do not match the pinned database"

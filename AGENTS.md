@@ -180,6 +180,9 @@ small time budget; if the impact plan identifies a broader package, operating-
 system, browser, or regression set, leave that set to public CI. Push the
 coherent head so public CI runs the remaining affected regressions, replay and
 privacy shards, the broad suite, packaging, and headless browser certification.
+This is a limit on local test breadth, not a prohibition on behavioral tests;
+new behavior requires its exact executable witnesses before the first cloud
+checkpoint.
 Inspect the deterministic impact plan without executing the broad gate:
 
 ```powershell

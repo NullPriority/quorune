@@ -12,13 +12,16 @@ from quorune.util import stable_json
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
-HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v5"
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v6"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
 _FRONTIER_PATH = "coverage/card-unlock-frontier.json.gz"
 _INTERACTIONS_PATH = "coverage/reusable-piece-interactions.json.gz"
 _ARCHITECTURE_PATH = "coverage/architecture-audit.json"
+_COHORT_MEASUREMENTS_PATH = (
+    "coverage/work-selection-cohort-measurements.json"
+)
 
 
 class HarvestOutcomeHistoryError(ValueError):
@@ -604,16 +607,23 @@ def _worktree_semantic_state(root: Path) -> dict[str, Any]:
 def validated_semantic_transition_declaration(
     declaration: Any,
 ) -> dict[str, Any]:
-    if not isinstance(declaration, Mapping) or set(declaration) != {
+    common_fields = {
         "transition_id",
         "compiler_version",
         "bundle_id",
         "candidate_ids",
         "family_ids",
         "capability_ids",
-        "expected_complete_card_gain",
         "non_harvest_reason",
-    }:
+    }
+    fields = set(declaration) if isinstance(declaration, Mapping) else set()
+    legacy_prediction = fields == common_fields | {
+        "expected_complete_card_gain"
+    }
+    generated_prediction = fields == common_fields | {"measurement_id"}
+    if not isinstance(declaration, Mapping) or not (
+        legacy_prediction or generated_prediction
+    ):
         raise HarvestOutcomeHistoryError(
             "Changed semantic support requires one transition declaration"
         )
@@ -640,6 +650,7 @@ def validated_semantic_transition_declaration(
         str(value) for value in raw_capability_ids
     ]
     expected_gain = declaration.get("expected_complete_card_gain")
+    measurement_id = declaration.get("measurement_id")
     non_harvest_reason = declaration.get("non_harvest_reason")
     harvest = (
         isinstance(bundle_id, str)
@@ -654,8 +665,25 @@ def validated_semantic_transition_declaration(
         and all(capability_ids)
         and capability_ids == sorted(set(capability_ids))
         and non_harvest_reason is None
+        and (
+            (
+                legacy_prediction
+                and (
+                    expected_gain is None
+                    or (type(expected_gain) is int and expected_gain >= 0)
+                )
+            )
+            or (
+                generated_prediction
+                and isinstance(measurement_id, str)
+                and measurement_id
+                == "measurement:" + str(bundle_id).split(":", 1)[-1]
+            )
+        )
     )
     non_harvest = (
+        legacy_prediction
+        and
         bundle_id is None
         and not candidate_ids
         and not family_ids
@@ -668,10 +696,6 @@ def validated_semantic_transition_declaration(
         not transition_id
         or not compiler_version.startswith("oracle-ir-v")
         or not (harvest or non_harvest)
-        or (
-            expected_gain is not None
-            and (type(expected_gain) is not int or expected_gain < 0)
-        )
     ):
         raise HarvestOutcomeHistoryError(
             "Semantic transition declarations must identify one harvest or "
@@ -754,6 +778,12 @@ _CONTENT_ENTRY_EXTRA_FIELDS = {
     "capability_ids",
     "receipt_identity_kind",
     "entry_fingerprint",
+}
+_MEASURED_CONTENT_ENTRY_FIELDS = {
+    "measurement_id",
+    "measurement_probe_id",
+    "measurement_receipt_fingerprint",
+    "measurement_frontier_fingerprint",
 }
 _FORECAST_CORRECTION_FIELDS = {
     "transition_id",
@@ -903,6 +933,78 @@ def _content_public_receipt(receipt: Mapping[str, Any]) -> dict[str, Any]:
     return public
 
 
+def _transition_measurement_receipt(
+    repository: Path,
+    declaration: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    measurement_id = declaration.get("measurement_id")
+    if measurement_id is None:
+        return None
+    path = repository / _COHORT_MEASUREMENTS_PATH
+    try:
+        artifact = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise HarvestOutcomeHistoryError(
+            "Generated transition cohort measurement is unavailable"
+        ) from exc
+    unsigned_artifact = dict(artifact)
+    artifact_fingerprint = unsigned_artifact.pop("fingerprint", None)
+    rows = artifact.get("transition_measurements")
+    if artifact_fingerprint != _hash(unsigned_artifact) or not isinstance(
+        rows, list
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Generated transition cohort artifact is malformed"
+        )
+    matches = []
+    for raw in rows:
+        if not isinstance(raw, Mapping):
+            continue
+        measurement = raw.get("measurement")
+        if (
+            raw.get("transition_id") == declaration.get("transition_id")
+            and isinstance(measurement, Mapping)
+            and measurement.get("measurement_id") == measurement_id
+        ):
+            matches.append(dict(raw))
+    if len(matches) != 1:
+        raise HarvestOutcomeHistoryError(
+            "Generated transition cohort measurement is not unique"
+        )
+    receipt = matches[0]
+    unsigned_receipt = dict(receipt)
+    receipt_fingerprint = unsigned_receipt.pop("receipt_fingerprint", None)
+    measurement = receipt.get("measurement")
+    metric_fields = (
+        "affected_commander_cards",
+        "complete_card_gain",
+        "one_additional_blocker_cards",
+        "two_additional_blocker_cards",
+        "exact_ability_gain",
+        "material_residual_reduction",
+    )
+    if (
+        receipt_fingerprint != _hash(unsigned_receipt)
+        or not str(receipt.get("frontier_fingerprint") or "")
+        or not str(receipt.get("oracle_source_sha256") or "")
+        or not isinstance(measurement, Mapping)
+        or measurement.get("bundle_id") != declaration.get("bundle_id")
+        or measurement.get("decision") != "bounded_executable"
+        or measurement.get("grants_gameplay_trust") is not False
+        or not str(measurement.get("probe_id") or "")
+        or not str(measurement.get("cohort_fingerprint") or "")
+        or any(
+            type(measurement.get(field)) is not int
+            or measurement[field] < 0
+            for field in metric_fields
+        )
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Generated transition cohort measurement is invalid"
+        )
+    return receipt
+
+
 def _semantic_receipts_match(
     left: Mapping[str, Any], right: Mapping[str, Any]
 ) -> bool:
@@ -921,6 +1023,7 @@ def _content_entry(
     *,
     base: Mapping[str, Any],
     head: Mapping[str, Any],
+    measurement_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if (
         base["card_data_snapshot"] != head["card_data_snapshot"]
@@ -929,23 +1032,43 @@ def _content_entry(
         raise HarvestOutcomeHistoryError(
             "Harvest corpus receipts must use one pinned card snapshot"
         )
+    expected_gain = declaration.get("expected_complete_card_gain")
+    measurement_fields: dict[str, Any] = {}
+    if "measurement_id" in declaration:
+        if measurement_receipt is None:
+            raise HarvestOutcomeHistoryError(
+                "Content-bound harvest lacks its generated cohort measurement"
+            )
+        measurement = measurement_receipt["measurement"]
+        expected_gain = measurement["complete_card_gain"]
+        measurement_fields = {
+            "measurement_id": declaration["measurement_id"],
+            "measurement_probe_id": measurement["probe_id"],
+            "measurement_receipt_fingerprint": measurement_receipt[
+                "receipt_fingerprint"
+            ],
+            "measurement_frontier_fingerprint": measurement_receipt[
+                "frontier_fingerprint"
+            ],
+        }
     entry = {
         "transition_id": str(declaration["transition_id"]),
         "bundle_id": str(declaration["bundle_id"]),
         "candidate_ids": list(declaration["candidate_ids"]),
         "family_ids": list(declaration["family_ids"]),
         "capability_ids": list(declaration["capability_ids"]),
-        "expected_complete_card_gain": declaration[
-            "expected_complete_card_gain"
-        ],
+        "expected_complete_card_gain": expected_gain,
         "expected_complete_card_gain_basis": (
-            "authoritative_source"
-            if declaration["expected_complete_card_gain"] is not None
+            "generated_transition_cohort"
+            if measurement_fields
+            else "authoritative_source"
+            if expected_gain is not None
             else "not_captured"
         ),
         "receipt_identity_kind": "semantic_content",
         "base_receipt": _content_public_receipt(base),
         "head_receipt": _content_public_receipt(head),
+        **measurement_fields,
         **_transition_metrics(base, head),
     }
     entry["entry_fingerprint"] = _hash(entry)
@@ -963,6 +1086,9 @@ def _validate_content_entry(
     fingerprint = candidate.pop("entry_fingerprint", None)
     base = candidate.get("base_receipt")
     head = candidate.get("head_receipt")
+    measured_fields = set(candidate).intersection(
+        _MEASURED_CONTENT_ENTRY_FIELDS
+    )
     if (
         set(entry) != set(candidate) | {"entry_fingerprint"}
         or fingerprint != _hash(candidate)
@@ -976,6 +1102,22 @@ def _validate_content_entry(
         != _receipt_content_fingerprint(base)
         or head.get("content_fingerprint")
         != _receipt_content_fingerprint(head)
+        or measured_fields not in (set(), _MEASURED_CONTENT_ENTRY_FIELDS)
+        or (
+            measured_fields
+            and (
+                candidate.get("expected_complete_card_gain_basis")
+                != "generated_transition_cohort"
+                or not str(candidate.get("measurement_id") or "")
+                or not str(candidate.get("measurement_probe_id") or "")
+                or not str(
+                    candidate.get("measurement_receipt_fingerprint") or ""
+                )
+                or not str(
+                    candidate.get("measurement_frontier_fingerprint") or ""
+                )
+            )
+        )
     ):
         raise HarvestOutcomeHistoryError(
             "Content-bound harvest outcome is malformed"
@@ -1029,8 +1171,14 @@ def _declaration_matches_content_entry(
             "candidate_ids",
             "family_ids",
             "capability_ids",
-            "expected_complete_card_gain",
         )
+        )
+        and (
+            declaration.get("measurement_id")
+            == entry.get("measurement_id")
+            if "measurement_id" in declaration
+            else declaration.get("expected_complete_card_gain")
+            == entry.get("expected_complete_card_gain")
         )
     )
 
@@ -1311,6 +1459,10 @@ def build_harvest_outcome_history(
                 validated_declaration,
                 base=base,
                 head=current_receipt,
+                measurement_receipt=_transition_measurement_receipt(
+                    repository,
+                    validated_declaration,
+                ),
             )
         )
         latest = entries[-1]["head_receipt"]

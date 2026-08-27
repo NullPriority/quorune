@@ -84,6 +84,30 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_fixed_target_set_sources_select_owner_and_interaction_evidence(self):
+        for owner in (
+            "quorune/compiler/fixed_homogeneous_target_sets.py",
+            "quorune/rules/fixed_homogeneous_target_set_capability_shapes.py",
+            "quorune/selection/targeting.py",
+            "quorune/semantic_runtime/fixed_target_set_handlers.py",
+            "quorune/targets.py",
+            "tests/fixtures/fixed-homogeneous-target-set-cards.json",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(
+                    {
+                        "test_fixed_homogeneous_target_sets",
+                        "test_semantic_handlers",
+                        "test_targeting_v070",
+                    },
+                    set(plan.test_modules),
+                )
+                self.assertIn(
+                    "fixed-homogeneous-target-set-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_changed_test_module_is_run_exactly(self):
         plan = classify_changes(["tests/test_life_change.py"])
         self.assertEqual(("test_life_change",), plan.test_modules)

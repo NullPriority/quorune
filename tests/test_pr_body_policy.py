@@ -133,6 +133,7 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
                 "family_ids",
                 "capability_ids",
                 "expected_complete_card_gain",
+                "measurement_id",
                 "non_harvest_reason",
             },
             set(metadata),

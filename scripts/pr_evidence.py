@@ -37,6 +37,7 @@ _SEMANTIC_METADATA_FIELDS = frozenset(
         "family_ids",
         "capability_ids",
         "expected_complete_card_gain",
+        "measurement_id",
         "non_harvest_reason",
     }
 )
@@ -106,6 +107,7 @@ def semantic_evidence_metadata(catalog: Mapping[str, Any]) -> dict[str, Any]:
             "family_ids": [],
             "capability_ids": [],
             "expected_complete_card_gain": None,
+            "measurement_id": None,
             "non_harvest_reason": (
                 "No semantic support transition is declared at the exact head."
             ),
@@ -118,6 +120,8 @@ def semantic_evidence_metadata(catalog: Mapping[str, Any]) -> dict[str, Any]:
         ) from exc
     result.pop("outcome_kind")
     result.pop("compiler_version")
+    result.setdefault("expected_complete_card_gain", None)
+    result.setdefault("measurement_id", None)
     return result
 
 
@@ -283,6 +287,8 @@ def build_pr_evidence(
         validated.pop("outcome_kind")
         validated.pop("compiler_version")
         source_metadata = validated
+        source_metadata.setdefault("expected_complete_card_gain", None)
+        source_metadata.setdefault("measurement_id", None)
     if set(source_metadata) != _SEMANTIC_METADATA_FIELDS:
         raise PullRequestEvidenceError("PR evidence source metadata is incomplete")
     candidate_ids = _sorted_ids(source_metadata["candidate_ids"], "candidate_ids")
