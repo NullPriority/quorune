@@ -208,8 +208,8 @@
     {
       "mechanic_id": "destroy",
       "path": "mechanics/contracts/destroy.json",
-      "sha256": "d4976aaf1cdfd1d77401c0927dcdc8aff3aa3ee55bae944315cc886b19139102",
-      "version": 4
+      "sha256": "0339add8cf52e466c9da9f92523e255af1f70fdb585c9b8b5fe260461dfb24cc",
+      "version": 5
     },
     {
       "mechanic_id": "dethrone",
@@ -298,8 +298,8 @@
     {
       "mechanic_id": "cr-406-exile",
       "path": "mechanics/contracts/exile.json",
-      "sha256": "4e0df6d8fd052fca7c4758ca414e139afe23bd5210bfa5e8fcc0d5c897fc0232",
-      "version": 2
+      "sha256": "6fbf1a3a8d8f43d654760f543d035ef6e0e051aeb5fe3efe44e70fbc433fa6a3",
+      "version": 3
     },
     {
       "mechanic_id": "fear",
@@ -658,8 +658,8 @@
     {
       "mechanic_id": "tap-and-untap",
       "path": "mechanics/contracts/tap-and-untap.json",
-      "sha256": "ff6c6e0154350cad9c98621b567fc8fc516b66d10b748b69044787c733bf9810",
-      "version": 5
+      "sha256": "2cf892b8f90509d71917d189baacc80c55aaf8315b5ab45e17d74ebc5235330a",
+      "version": 6
     },
     {
       "mechanic_id": "toxic",
@@ -5772,19 +5772,19 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/destroy.json",
-      "contract_sha256": "d4976aaf1cdfd1d77401c0927dcdc8aff3aa3ee55bae944315cc886b19139102",
-      "contract_version": 4,
+      "contract_sha256": "0339add8cf52e466c9da9f92523e255af1f70fdb585c9b8b5fe260461dfb24cc",
+      "contract_version": 5,
       "coverage_status": "tested",
       "dependencies": [
         "701"
       ],
-      "implementation_component": "typed direct-target compiler, strict destruction semantic handler, canonical destruction transaction, counter owner, and zone-transition owner",
-      "implementation_version": "destruction-v4",
+      "implementation_component": "typed direct-target and fixed homogeneous target-set compilers, strict destruction semantic handlers, canonical destruction transaction, counter owner, and zone-transition owner",
+      "implementation_version": "destruction-v5",
       "kind": "keyword_action",
       "known_blockers": [
         "effects that say a permanent cannot be regenerated are not represented",
         "competing shield-counter and regeneration replacement ordering is incomplete",
-        "optional, modal, aggregate, quantified, relational, qualified, and compound destruction clauses remain precise compiler residuals",
+        "optional, modal, relational, qualified, and compound destruction clauses plus aggregate or quantified forms outside the bounded homogeneous target-set and fixed-set owners remain precise compiler residuals",
         "complete ability-changing, copy, face-down, and continuous-effect dependency interactions remain blocked",
         "the mechanic contract is broader than the trusted bounded direct-target effect capability"
       ],
@@ -5811,7 +5811,9 @@
         "test_compiled_union_destruction_offer_command_resolution_and_replay",
         "test_compiled_union_destruction_respects_indestructible",
         "test_fixed_mana_value_targets_compile_across_effect_contexts",
-        "test_current_copy_derived_mana_value_governs_offer_command_and_resolution"
+        "test_current_copy_derived_mana_value_governs_offer_command_and_resolution",
+        "test_fixed_homogeneous_target_sets_compile_across_contexts",
+        "test_multi_target_destruction_preserves_protections_and_replay"
       ],
       "trust_level": "untrusted"
     },
@@ -6706,17 +6708,17 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/tap-and-untap.json",
-      "contract_sha256": "ff6c6e0154350cad9c98621b567fc8fc516b66d10b748b69044787c733bf9810",
-      "contract_version": 5,
+      "contract_sha256": "2cf892b8f90509d71917d189baacc80c55aaf8315b5ab45e17d74ebc5235330a",
+      "contract_version": 6,
       "coverage_status": "tested",
       "dependencies": [
         "701"
       ],
-      "implementation_component": "typed single-object compiler, shared direct-permanent predicate owner, source-incarnation and current-or-LKI attachment references, scalar option continuation, tap and untap semantic handlers, tap_state.untap_permanent, and the canonical exact counter-removal transaction",
-      "implementation_version": "tap-state-effects-v5",
+      "implementation_component": "typed single-object and fixed homogeneous target-set compilers, shared direct-permanent predicate owner, source-incarnation and current-or-LKI attachment references, scalar option continuation, tap and untap semantic handlers, tap_state.untap_permanent, and the canonical exact counter-removal transaction",
+      "implementation_version": "tap-state-effects-v6",
       "kind": "keyword_action",
       "known_blockers": [
-        "aggregate, multi-target, modal, quantified, linked, and compound tap-state clauses remain precise compiler residuals",
+        "aggregate, modal, quantified, linked, and compound tap-state clauses plus target sets outside the bounded homogeneous owner remain precise compiler residuals",
         "continuous effects that prohibit tapping or untapping are not represented generically; cards carrying those effects remain material residuals and fail match trust closed",
         "replacement discovery and affected-player ordering beyond the represented stun-counter replacement are incomplete",
         "complete layer dependencies and dynamically granted types are not capability-closed",
@@ -6750,7 +6752,9 @@
         "test_source_self_activation_is_incarnation_pinned_and_replays",
         "test_enchanted_creature_uses_pinned_attachment_and_replays",
         "test_optional_tap_state_choice_is_seat_scoped_atomic_and_replays",
-        "test_fixed_mana_value_targets_compile_across_effect_contexts"
+        "test_fixed_mana_value_targets_compile_across_effect_contexts",
+        "test_fixed_homogeneous_target_sets_compile_across_contexts",
+        "test_partial_illegality_resolves_surviving_target_atomically"
       ],
       "trust_level": "untrusted"
     },
@@ -8332,12 +8336,12 @@
     {
       "category": "zones",
       "contract_path": "mechanics/contracts/exile.json",
-      "contract_sha256": "4e0df6d8fd052fca7c4758ca414e139afe23bd5210bfa5e8fcc0d5c897fc0232",
-      "contract_version": 2,
+      "contract_sha256": "6fbf1a3a8d8f43d654760f543d035ef6e0e051aeb5fe3efe44e70fbc433fa6a3",
+      "contract_version": 3,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "Typed direct-target permanent-exile compiler, semantic handler, identity-pinned transaction, and canonical zone-change owner; CommanderEngine broad exile movement, stack removal, logical incarnations, and scoped play permissions; StateProjector public/face-down exile projection",
-      "implementation_version": "exile-foundation-v3",
+      "implementation_component": "Typed direct-target and bounded homogeneous target-set exile compilers, semantic handlers, identity-pinned transactions, and canonical zone-change owner; CommanderEngine broad exile movement, stack removal, logical incarnations, and scoped play permissions; StateProjector public/face-down exile projection",
+      "implementation_version": "exile-foundation-v4",
       "kind": "rules_section",
       "known_blockers": [
         "generic exile-face-down instruction and persistent look authorization are missing",
@@ -8370,7 +8374,9 @@
         "test_bojuka_bog_targets_and_exiles_one_graveyard",
         "test_dauthi_replaces_graveyard_moves_and_casts_opponent_card_for_free",
         "test_sundial_ends_turn_and_exiles_stack",
-        "test_fixed_mana_value_targets_compile_across_effect_contexts"
+        "test_fixed_mana_value_targets_compile_across_effect_contexts",
+        "test_fixed_homogeneous_target_sets_compile_across_contexts",
+        "test_four_player_same_graveyard_offer_resolution_and_replay"
       ],
       "trust_level": "untrusted"
     },
