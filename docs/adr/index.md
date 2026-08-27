@@ -98,3 +98,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0081 — bounded-cohort work selection](0081-bounded-cohort-work-selection.md)
 - [ADR 0082 — typed fixed nonrepeating modal programs](0082-typed-fixed-nonrepeating-modal-programs.md)
 - [ADR 0083 — typed fixed impulse access](0083-typed-fixed-impulse-access.md)
+- [ADR 0084 — typed fixed regeneration effects](0084-typed-fixed-regeneration-effects.md)

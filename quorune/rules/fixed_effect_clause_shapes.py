@@ -161,7 +161,10 @@ def closed_effect_component_capabilities(
                 ),
             }
         elif resolver is self_regeneration_node_capabilities:
-            component_mechanics = {"regenerate"}
+            component_mechanics = {
+                "regenerate",
+                *(("cr-115-targets",) if target_schema is not None else ()),
+            }
         dependencies.update(
             resolver(
                 effects=effects,

@@ -648,13 +648,16 @@ descriptors carry that limit, and each nonmana result still needs its own
 ordinary effect and cost closure. Wording that permits another Exhaust use
 remains a material residual.
 
-The exact activated-effect sentence `Regenerate this creature.` lowers to one
-`regenerate` instruction over `$source.zone_object`. Cost compilation remains
-independent, so unsupported counter-removal, typed-sacrifice, snow, hybrid,
-exile, or restricted activation costs stay residual even when the effect
-sentence matches. Targeted, static, noncreature-self, repeated, qualified, and
-cannot-be-regenerated grammar remains residual rather than widening this
-self-activation family.
+Exact fixed regeneration instructions lower to one `regenerate` operation over
+`$source.zone_object`, a revalidated direct artifact, creature, or permanent
+target, or the typed current-or-last-known creature attached to the source.
+Exact direct-target and fixed-set destruction may carry an immediately
+adjacent cannot-be-regenerated rider as a flag on the same destruction effect.
+Cost, event, target-predicate, and sibling-effect compilation remain
+independent, so unsupported surrounding grammar stays residual even when the
+fixed effect sentence matches. Static, variable, repeated, optional,
+conditional, qualified, controller-relative, multiple-target, damage-linked,
+delayed, and linked-result forms remain outside this family.
 
 Fixed mass-damage lowering uses the same complete `ObjectQuerySpec` descriptor
 consumed by the runtime affected-set snapshot. The compiler emits ordered

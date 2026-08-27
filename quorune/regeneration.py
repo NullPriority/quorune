@@ -48,16 +48,19 @@ def create_regeneration_shield(
     *,
     actor: str,
     reason: str,
-    logical_object_id: str,
+    logical_object_id: str | None,
 ) -> str:
     """Create one identity-pinned, until-cleanup regeneration shield."""
 
     if any(
         type(value) is not str or not value
-        for value in (object_ref, actor, reason, logical_object_id)
+        for value in (object_ref, actor, reason)
+    ) or (
+        logical_object_id is not None
+        and (type(logical_object_id) is not str or not logical_object_id)
     ):
         raise RegenerationError(
-            "Regeneration requires actor, object, incarnation, and reason"
+            "Regeneration requires actor, object, optional incarnation, and reason"
         )
     card = next(
         (
@@ -73,10 +76,11 @@ def create_regeneration_shield(
             object_ref,
             zones={"battlefield"},
         )
+    expected_logical_object_id = logical_object_id or card.logical_object_id
     if (
         card.zone != "battlefield"
         or bool(card.phased_out)
-        or card.logical_object_id != logical_object_id
+        or card.logical_object_id != expected_logical_object_id
     ):
         return card.ref
     shields = getattr(card, "regeneration_shields", None)

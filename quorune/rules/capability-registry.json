@@ -192,7 +192,14 @@
     {
       "mechanic_id": "regenerate",
       "capabilities": [
+        "permanent.regeneration.fixed_effect",
         "permanent.regeneration.self_activation"
+      ]
+    },
+    {
+      "mechanic_id": "regeneration-prohibition",
+      "capabilities": [
+        "permanent.destroy.regeneration_prohibition"
       ]
     },
     {
@@ -3871,7 +3878,7 @@
         "summary": "Compile and execute one mandatory direct-target destruction instruction through target revalidation and a typed precommit transaction that distinguishes actual destruction, Indestructible prohibition, and the intrinsic shield-counter replacement.",
         "inputs": ["closed typed direct-target clause", "revalidated phased-in battlefield permanent", "current represented effective keywords", "current shield-counter count", "physical and logical object identity"],
         "outputs": ["canonical destruction zone event", "one removed shield counter instead of effect destruction", "one consumed regeneration shield with its alternate result", "Indestructible no-change result", "public typed result journal"],
-        "exclusions": ["effects that say a permanent cannot be regenerated", "affected-player ordering between regeneration and shield-counter replacements", "optional, modal, aggregate, quantified, relational, qualified, or compound destruction clauses", "complete ability-changing, copy, face-down, and dependency interactions", "other unrepresented destruction replacement effects; cards representing those interactions remain material residuals and fail match trust closed"]
+        "exclusions": ["regeneration-prohibition riders without permanent.destroy.regeneration_prohibition", "affected-player ordering between regeneration and shield-counter replacements", "optional, modal, aggregate, quantified, relational, qualified, or compound destruction clauses", "complete ability-changing, copy, face-down, and dependency interactions", "other unrepresented destruction replacement effects; cards representing those interactions remain material residuals and fail match trust closed"]
       },
       "dependencies": ["target.revalidate_resolution"],
       "implementation_components": ["quorune.compiler.destruction_templates.TargetedDestructionEffectTemplate", "quorune.rules.node_capability_shapes.targeted_destruction_node_capabilities", "quorune.semantic_runtime.destruction_handlers.DestroyPermanentHandler", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan"],
@@ -3898,7 +3905,7 @@
         "summary": "Compile and execute one mandatory fixed public battlefield-set destruction instruction as a simultaneous typed precommit transaction with immutable APNAP selection, Indestructible prohibition, shield-counter replacement, and canonical zone-change ownership.",
         "inputs": ["closed typed affected-permanent set", "complete public APNAP battlefield snapshot", "current represented effective types, colors, supertypes, keywords, token state, and tapped state", "physical and logical object identity", "current shield-counter counts"],
         "outputs": ["one immutable affected-set snapshot", "canonical simultaneous destruction zone events", "regeneration, shield-counter, and Indestructible dispositions", "public typed result journal"],
-        "exclusions": ["cannot-be-regenerated riders", "affected-player ordering between regeneration and shield-counter replacements", "variable, quantified, comparative, chosen, named, or history-dependent predicates", "negative color, subtype, or keyword predicates", "linked destroyed-this-way results, costs, modes, choices, and delayed destruction", "unrepresented continuous-effect, copy, face-down, and replacement interactions; cards representing those interactions remain material residuals and fail match trust closed"]
+        "exclusions": ["regeneration-prohibition riders without permanent.destroy.regeneration_prohibition", "affected-player ordering between regeneration and shield-counter replacements", "variable, quantified, comparative, chosen, named, or history-dependent predicates", "negative color, subtype, or keyword predicates", "linked destroyed-this-way results, costs, modes, choices, and delayed destruction", "unrepresented continuous-effect, copy, face-down, and replacement interactions; cards representing those interactions remain material residuals and fail match trust closed"]
       },
       "dependencies": [],
       "implementation_components": ["quorune.affected_permanents.AffectedPermanentSetSpec", "quorune.destruction_sets.snapshot_destruction_set", "quorune.destruction_sets.resolve_destruction_set", "quorune.compiler.destruction_templates.MassDestructionEffectTemplate", "quorune.rules.node_capability_shapes.mass_destruction_node_capabilities", "quorune.semantic_runtime.destruction_handlers.DestroyPermanentSetHandler", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan"],
@@ -3913,6 +3920,60 @@
       "dependency_fail_closed_rationale": "The non-target fixed-set owner has no optional capability dependency; targeted-controller nodes separately require the existing target-revalidation capability in their exact node shape.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_mass_destruction_selection_mutant_is_killed changes the affected-set controller boundary and the focused four-player assertions reject the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "permanent.destroy.regeneration_prohibition",
+      "version": 1,
+      "official_rules": ["701.8", "701.8a", "701.8b", "701.8c", "701.19", "701.19a", "702.12b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and execute an exact cannot-be-regenerated rider as a flag on the same direct-target or fixed-set destruction transaction, suppressing only regeneration while preserving Indestructible and shield-counter dispositions.",
+        "inputs": ["one exact supported destruction instruction", "immediately adjacent exact cannot-be-regenerated rider", "same immutable direct target or fixed affected set", "current destruction-protection state"],
+        "outputs": ["one regeneration-prohibited destruction plan", "unconsumed regeneration shields", "ordinary Indestructible prohibition", "ordinary shield-counter replacement", "canonical simultaneous destruction results"],
+        "exclusions": ["damage-linked or delayed regeneration prohibition", "conditional, optional, modal, qualified, dynamic, repeated, or additional-target riders", "linked results beyond the prohibition", "unsupported destruction grammar", "affected-player ordering for ordinary destruction with competing regeneration and shield-counter replacements"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.destruction_templates.TargetedDestructionEffectTemplate", "quorune.compiler.destruction_templates.MassDestructionEffectTemplate", "quorune.rules.node_capability_shapes.targeted_destruction_node_capabilities", "quorune.rules.node_capability_shapes.mass_destruction_node_capabilities", "quorune.semantic_runtime.destruction_handlers.DestroyPermanentHandler", "quorune.semantic_runtime.destruction_handlers.DestroyPermanentSetHandler", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan"],
+      "positive_tests": ["test_exact_fixed_regeneration_and_prohibition_grammar_compiles", "test_regeneration_prohibition_preserves_other_destruction_protections"],
+      "negative_tests": ["test_unsupported_regeneration_grammar_remains_residual", "test_regeneration_prohibition_shape_and_intent_mutants_fail_closed"],
+      "interaction_tests": ["test_regeneration_prohibition_preserves_other_destruction_protections"],
+      "multiplayer_tests": ["test_regeneration_prohibited_mass_destruction_is_atomic_and_replays"],
+      "privacy_tests": ["test_regeneration_prohibited_mass_destruction_is_atomic_and_replays"],
+      "replay_tests": ["test_regeneration_prohibited_mass_destruction_is_atomic_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Each exact node also requires its ordinary direct-target or fixed-set destruction owner, so the prohibition capability adds no optional standalone runtime dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused shape, intent, and disposition tests reject altered flags and prove regeneration is skipped without changing the Indestructible or shield-counter branches.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "permanent.regeneration.fixed_effect",
+      "version": 1,
+      "official_rules": ["506.4", "701.19", "701.19a", "701.19c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and execute one exact fixed direct-target, attached-creature, or named-source regeneration instruction by creating an identity-pinned public shield on the resolved phased-in battlefield permanent.",
+        "inputs": ["exact supported fixed regeneration instruction", "revalidated direct permanent target or current/LKI attachment reference or named source", "phased-in battlefield incarnation", "represented effect or damage state-based destruction"],
+        "outputs": ["one public regeneration shield on the resolved permanent", "one replaced destruction event", "tapped permanent with no marked or Deathtouch damage", "canonical removal from combat", "exact command replay"],
+        "exclusions": ["static regeneration abilities", "variable, repeated, optional, conditional, subtype-qualified, color-qualified, controller-qualified, or multiple-target regeneration", "affected-player ordering between regeneration and shield-counter replacements", "sacrifice, exile, zero-toughness, and other non-destruction zone changes", "unrepresented attachment, target, destruction, or continuous-effect semantics"]
+      },
+      "dependencies": ["permanent.destroy.effect", "permanent.destroy.state_based_damage"],
+      "implementation_components": ["quorune.compiler.regeneration_templates.FixedRegenerationEffectTemplate", "quorune.rules.node_capability_shapes.self_regeneration_node_capabilities", "quorune.semantic_runtime.regeneration_handlers.CreateRegenerationShieldHandler", "quorune.regeneration.create_regeneration_shield", "quorune.regeneration.apply_regeneration_replacement", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan", "quorune.tap_state.set_permanent_tapped", "quorune.damage_results.clear_permanent_damage"],
+      "positive_tests": ["test_exact_fixed_regeneration_and_prohibition_grammar_compiles", "test_fixed_regeneration_handler_resolves_source_and_other_object_identity"],
+      "negative_tests": ["test_unsupported_regeneration_grammar_remains_residual", "test_regeneration_shape_and_dependency_mutants_fail_closed"],
+      "interaction_tests": ["test_targeted_regeneration_creates_shield_on_the_chosen_permanent", "test_regeneration_prohibition_preserves_other_destruction_protections"],
+      "multiplayer_tests": ["test_targeted_regeneration_creates_shield_on_the_chosen_permanent"],
+      "privacy_tests": ["test_targeted_regeneration_creates_shield_on_the_chosen_permanent"],
+      "replay_tests": ["test_targeted_regeneration_creates_shield_on_the_chosen_permanent"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The exact node closes over both represented destruction causes, while direct targets and attachment references separately close over their target or current/LKI reference owners.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler, handler-identity, target, attachment, and destruction-disposition assertions reject broadened grammar, stale references, and a shield applied to the wrong permanent.",
       "blockers": [],
       "status": "trusted"
     },

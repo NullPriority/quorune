@@ -55,11 +55,15 @@ temporary, continuous-grant, and keyword-counter instances already represented
 by that view. It prohibits only destruction: zero toughness, sacrifice, exile,
 and other nondestruction movement remain owned by their normal rules paths.
 Ordinary Trample still assigns lethal damage without treating Indestructible as
-damage already assigned. The exact self-creature regeneration activation now
-replaces represented effect or damage state-based destruction; static,
-targeted, cannot-be-regenerated, and competing shield-counter choice grammar
-remains fail closed. Qualified or conditional player-facing Indestructible and
-unrepresented copy, face-down, merged-object, or ability-changing producers
+damage already assigned. Exact self, named-source, direct-target, and
+attached-creature regeneration instructions create the same public shield for
+represented effect or damage state-based destruction. An exact direct-target
+or fixed-set cannot-be-regenerated rider suppresses only that regeneration
+disposition; Indestructible and effect-destruction shield counters retain their
+ordinary outcomes. Static, variable, qualified, damage-linked, and ordinary
+competing shield-counter choice grammar remains fail closed. Qualified or
+conditional player-facing Indestructible and unrepresented copy, face-down,
+merged-object, or ability-changing producers
 also remain blockers; both aggregate mechanics remain partial.
 Capability lifecycle and replay hydration have narrowly declared compatibility
 ownership. All other rules helpers return values or operate through an
@@ -77,8 +81,9 @@ likewise commit only through their focused transactions. Battlefield and
 graveyard return share one origin-pinned, replacement-aware single-object
 transition substrate while retaining distinct compiler shapes, handlers,
 capabilities, and journals. The aggregate mechanics remain untrusted where
-regeneration, mass selection, linked exile, opponent-graveyard recursion,
-reanimation, conditional payment, alternate counter destinations, or other
+dynamic regeneration, replacement ordering, mass selection, linked exile,
+opponent-graveyard recursion, reanimation, conditional payment, alternate
+counter destinations, or other
 unsupported grammar and interactions are materially reachable.
 The fixed public-zone-move handlers are a separate broad grammar over the same
 owners: one handler revalidates a public graveyard-card target, while the set

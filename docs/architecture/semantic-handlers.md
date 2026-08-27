@@ -75,12 +75,17 @@ events, Commander choices, projection, and journaling to existing owners.
 Dynamic characteristic counts and linked or delayed movement never enter this
 handler family.
 
-Self-regeneration lowers through its own strict source-identity handler. It
-creates public until-cleanup shield state on the same logical source object;
-the destruction transaction consumes that state for represented effect or
-damage state-based destruction and coordinates tapping, damage removal, and
-combat removal. A simultaneous shield-counter choice fails before mutation
-until the affected-player ordering continuation is represented.
+Fixed regeneration lowers through one strict versioned handler. It preserves a
+logical-object pin for the source form and accepts only an already-resolved
+public direct-target or current/LKI attachment reference for the other forms.
+The regeneration owner creates public until-cleanup shield state; the
+destruction transaction consumes it for represented effect or damage
+state-based destruction and coordinates tapping, damage removal, and combat
+removal. Exact cannot-be-regenerated destruction carries a boolean on that same
+transaction, making regeneration inapplicable without consuming its shield or
+changing Indestructible and shield-counter behavior. An ordinary simultaneous
+shield-counter choice still fails before mutation until the affected-player
+ordering continuation is represented.
 
 The direct-target compiler families share structural builders for their one
 effect, closed target schema, and mechanics tuple, while each family retains

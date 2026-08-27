@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 from quorune.rules_corpus import (
@@ -1257,6 +1258,65 @@ class RulesSchedulerTests(unittest.TestCase):
         for source in rejected:
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
+
+    def test_fixed_regeneration_probe_uses_closed_contextual_owners(self):
+        probe_id = "fixed-regeneration-existing-owner-v1"
+        spell = SimpleNamespace(
+            name="Death Ward",
+            type_line="Instant",
+            oracle_text="Regenerate target creature.",
+            faces=(),
+        )
+        aura = SimpleNamespace(
+            name="Gaea's Embrace",
+            type_line="Enchantment — Aura",
+            oracle_text="{G}: Regenerate enchanted creature.",
+            faces=(),
+        )
+        creature = SimpleNamespace(
+            name="Cromat",
+            type_line="Legendary Creature — Illusion",
+            oracle_text="{B}{G}: Regenerate Cromat.",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for record, source in (
+            (spell, spell.oracle_text),
+            (aura, aura.oracle_text),
+            (creature, creature.oracle_text),
+            (
+                spell,
+                "Destroy target creature. It can't be regenerated.",
+            ),
+            (
+                spell,
+                "Destroy all creatures. They can't be regenerated.",
+            ),
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "Regenerate target Elf.",
+            "Regenerate two target creatures.",
+            "Destroy target creature. It can't be regenerated if it attacked.",
+            "Destroy target creature. Draw a card for each creature destroyed this way.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=spell,
+                        ability=ability,
+                    )
+                )
 
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)

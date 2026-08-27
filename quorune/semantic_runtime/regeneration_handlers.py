@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Strict semantic lowering for self-regeneration shield creation."""
+"""Strict semantic lowering for fixed regeneration shield creation."""
 
 from dataclasses import dataclass
 from typing import Any, Mapping
@@ -12,9 +12,9 @@ from .intents import CreateRegenerationShieldIntent, IntentPlan
 
 @dataclass(frozen=True, slots=True)
 class CreateRegenerationShieldHandler:
-    handler_id: str = "generic.create-regeneration-shield.v1"
-    schema_version: int = 1
-    family: str = "effect.self-regeneration"
+    handler_id: str = "generic.create-regeneration-shield.v2"
+    schema_version: int = 2
+    family: str = "effect.fixed-regeneration"
     operation: str = "regenerate"
     rule_references: tuple[str, ...] = (
         "506.4",
@@ -40,15 +40,11 @@ class CreateRegenerationShieldHandler:
             allow_replacement_selections=False,
         )
         source = context.source
-        if (
-            source is None
-            or source.card_ref != fields.object_ref
-            or type(source.logical_object_id) is not str
-            or not source.logical_object_id
-        ):
-            raise SemanticNodeError(
-                "Regeneration requires the current source zone object"
-            )
+        source_logical_object_id = (
+            source.logical_object_id
+            if source is not None and source.card_ref == fields.object_ref
+            else None
+        )
         return IntentPlan(
             operation=self.operation,
             handler_id=self.handler_id,
@@ -56,7 +52,7 @@ class CreateRegenerationShieldHandler:
                 CreateRegenerationShieldIntent(
                     actor=context.actor,
                     object_ref=fields.object_ref,
-                    logical_object_id=source.logical_object_id,
+                    logical_object_id=source_logical_object_id,
                     reason=fields.reason,
                 ),
             ),
