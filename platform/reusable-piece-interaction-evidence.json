@@ -4398,6 +4398,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Chandra, Pyromaster compiles its independent fixed impulse-access loyalty ability while its separate controller-relative target predicate remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+      "piece_ids": [
+        "capability.effect.choice.optional_fixed",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "effect.choice.optional_fixed",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "A nonactive resolving controller privately accepts the fixed optional wrapper before the canonical draw transaction mutates hidden state, and save/replay reproduces the same single draw exactly."
     }
   ]
 }

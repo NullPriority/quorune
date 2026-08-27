@@ -125,14 +125,16 @@ source-spanned residuals.
 
 `compiler/fixed_effect_clause_sequences.py` owns the general closed
 two-sentence composition boundary. It accepts exactly two top-level,
-period-separated, mandatory clauses when each clause independently lowers to
+period-separated clauses when each clause independently lowers to
 one effect through an existing reviewed atomic owner and the pair contains at
 most one target schema. Direct targets and bounded optional target sets are
 associated with their component through typed target references; every other
 component must remain nontargeted. The composed node preserves printed order
 and the exact union of both component capabilities across spell, triggered,
-and activated contexts. Optional, modal, conditional, linked-result, pronoun,
-variable, repeated, independently targeted, quoted-boundary,
+and activated contexts. One clause may use the fixed optional-effect owner
+described below; its choice wraps only that clause, so a mandatory sibling
+remains outside the choice. Modal, conditional, linked-result, pronoun,
+variable, repeated, independently targeted, unsupported optional, quoted-boundary,
 parenthetical-boundary, and larger sequences remain source-spanned residuals.
 
 `compiler/closed_effect_programs.py` owns the broader bounded composition
@@ -143,9 +145,21 @@ printed order, and permits at most one shared direct target group. The
 corresponding capability shape revalidates every flattened component through
 the existing effect capability resolvers before admitting the program. The
 older exact two-sentence owner retains precedence for historical semantic
-identity. Conditional, optional, random, repeated, variable, linked-result,
+identity. Independently exact optional atomic components may use the fixed
+optional-effect owner without changing sibling scope. Conditional, random,
+repeated, variable, linked-result, unsupported optional,
 shared-subject, multi-target-group, quoted-boundary, parenthetical-boundary,
 and more-than-four-component programs remain source-spanned residuals.
+
+`compiler/optional_effect_templates.py` owns one leading `You may` around one
+independently exact atomic effect. It preserves the nested effect's target
+schema and mechanic dependencies, adds only the generic controller choice,
+and is shared by spell, normalized-trigger, activated, and bounded sequence
+contexts. Existing specialized optional owners retain precedence and semantic
+identity. Optional costs, permissions, replacements, pay-or-have wording,
+modal or repeated choices, linked or conditional results, multiple effects in
+one optional body, and bodies without an independently exact typed owner remain
+source-spanned residuals.
 
 `compiler/monarch_templates.py` owns the mandatory controller-becomes-monarch
 instruction. Its strict node shape declares only the existing canonical

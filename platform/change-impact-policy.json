@@ -234,6 +234,21 @@
       ]
     },
     {
+      "id": "fixed-optional-effect-choice-contract",
+      "patterns": [
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/optional_effect_templates.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/semantic_choices/optional_effect.py"
+      ],
+      "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_fixed_effect_clause_sequences",
+        "test_fixed_optional_effect_choices",
+        "test_optional_draw_choices"
+      ]
+    },
+    {
       "id": "compiler-prevention-expectations",
       "patterns": [
         "quorune/compiler/prevention_templates.py"

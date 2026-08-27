@@ -45,6 +45,7 @@ from scripts.harvest_outcome_history import (
     HarvestOutcomeHistoryError,
 )
 from scripts.update_rules_scheduler import _compact_markdown
+from scripts.work_selection_cohort_measurements import _matches_probe
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1174,6 +1175,10 @@ class RulesSchedulerTests(unittest.TestCase):
                 "measured_nonviable",
                 (0, 19, 19),
             ),
+            "bundle:fixed-optional-effect-choices": (
+                "measured_nonviable",
+                (0, 0, 0),
+            ),
         }
         for candidate_id, (measurement_status, gains) in expected.items():
             policy = next(
@@ -1227,6 +1232,7 @@ class RulesSchedulerTests(unittest.TestCase):
         expected_measurements = {
             "measurement:fixed-token-creation-contexts",
             "measurement:fixed-exile-contexts",
+            "measurement:fixed-optional-effect-choices",
         }
         self.assertLessEqual(expected_measurements, set(measured_outcomes))
         self.assertTrue(
@@ -1235,6 +1241,27 @@ class RulesSchedulerTests(unittest.TestCase):
                 for measurement_id in expected_measurements
             )
         )
+
+    def test_fixed_optional_effect_probe_uses_the_closed_typed_body_boundary(self):
+        probe_id = "fixed-optional-effect-choice-existing-owner-v1"
+        accepted = (
+            "You may destroy target artifact.",
+            "{2}, {T}: You may create a Treasure token.",
+            "Whenever you cast a noncreature spell, you may gain 2 life.",
+            "Landfall — Whenever a land enters under your control, you may draw a card.",
+        )
+        rejected = (
+            "You may pay {1}. If you do, draw a card.",
+            "You may choose target creature.",
+            "You may destroy target artifact if you control a Wizard.",
+        )
+
+        for source in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
 
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)

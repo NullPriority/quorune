@@ -103,6 +103,7 @@ from .compiler.prevention_templates import (
 from .compiler.resolution_effect_templates import (
     typed_resolution_effect_template,
 )
+from .compiler.optional_effect_templates import fixed_optional_effect_template
 from .compiler.scry_templates import fixed_scry_effect_template
 from .compiler.self_return_templates import fixed_self_return_effect_template
 from .compiler.storm_nodes import STORM_MECHANIC_ID
@@ -126,7 +127,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v131"
+ORACLE_COMPILER_VERSION = "oracle-ir-v132"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -418,13 +419,26 @@ def _reviewed_atomic_effect_template(
         text.strip(),
         card_name=card_name,
     )
-    return prevention or _effect_template(
+    compiled = prevention or _effect_template(
         text,
         card_name=card_name,
         source_is_permanent=source_is_permanent,
         source_card_types=source_card_types,
         source_attachment_relation=source_attachment_relation,
     )
+    if compiled[0] is not None:
+        return compiled
+    optional = fixed_optional_effect_template(
+        text,
+        compile_effect=partial(
+            _effect_template,
+            card_name=card_name,
+            source_is_permanent=source_is_permanent,
+            source_card_types=source_card_types,
+            source_attachment_relation=source_attachment_relation,
+        ),
+    )
+    return optional.compiled() if optional is not None else compiled
 
 
 def _reviewed_effect_template(

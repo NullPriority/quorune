@@ -36,6 +36,15 @@ stable inventory. A handler may request a narrowly defined continuation for a
 choice or replacement-aware transaction, but it may not retain mutable state
 or commit around the canonical owner. Rollback must leave no partial mutation.
 
+The fixed optional-effect choice handler accepts exactly one already represented
+atomic instruction for the resolving controller. It exposes only apply or
+decline, commits nothing before the response, and on acceptance prepends the
+unchanged typed instruction so its existing semantic or choice owner performs
+all validation and mutation. The wrapper rejects unknown operations, changed
+chooser identity, extra fields, and nested optional wrappers. Specialized
+optional choices such as fixed counter placement retain their historical
+operation and replay identity rather than being rewritten through this owner.
+
 A fixed semantic-choice life gain uses `LifeChangeIntent` rather than writing a
 life total directly. The intent host prepares the canonical life-change batch;
 when multiple replacements apply, the ordinary private replacement task stores

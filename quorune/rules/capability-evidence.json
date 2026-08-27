@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f548f6e55c3795c6344d20659939797a7b31582aba8671fefa9020cf93936693",
-  "declaration_source_fingerprint": "d03d5ccb88119e4c216f76c654eebcf76709f9e86f23f9990215e12dbed9f6d2",
+  "registry_fingerprint": "35b3ee7f9e9a462de0b28887d7245dc1754206c492c356de947df85f33123409",
+  "declaration_source_fingerprint": "fa85872aa3923dcc172fbb43dd03cfda4b831ca28db206c1ab1dac14efa3506c",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -30609,6 +30609,176 @@
       "applicability_note": "Emit normalized noncombat damage events after final damage results for trigger discovery."
     },
     {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose the controller choice with the canonical private draw transaction, retaining zero mutation before the choice and one ordinary draw after acceptance."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the optional instruction under a nonactive controller in four-player state without granting another seat authority over the choice."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_shape_and_handler_mutants_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the generic optional compiler production and mutate every wrapper boundary so exact trust disappears instead of falling through to an unowned choice."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_exclusions_remain_material",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep optional costs, choose-or-have wording, conditional predicates, multiple optional clauses, and if-you-do continuations source-spanned and inexact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_shape_and_handler_mutants_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject changed chooser identity, extra fields, missing or unknown nested effects, nested optional wrappers, absent target schemas, and unrepresented runtime instructions."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectChoiceTests.test_optional_choice_apply_and_decline_resume_exact_effect",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer only apply and decline, prepend the exact nested effect after acceptance, and produce no continuation effect after decline."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_clause_preserves_mandatory_sequence_sibling",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep a later mandatory draw outside the optional wrapper while preserving printed effect order and the shared target schema."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_spell_trigger_and_activation_share_optional_effect_lowering",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower the same exact controller choice around independently typed destroy, return, token, and life effects across spell, triggered, activated, and normalized-event contexts."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the apply-or-decline request only to the resolving controller while other principals retain the same public stack view."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the controller-scoped choice, resumed typed effect, private draw, and final authoritative state exactly."
+    },
+    {
       "capability_id": "format.commander.damage.physical_identity",
       "evidence_class": "interaction",
       "test_id": "tests.test_commander_damage_identity.CommanderDamageIdentityTests.test_designation_survives_zone_and_control_changes",
@@ -48829,5 +48999,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "edbdcf64da9e51850da148c79b339a528be3af9b4f4a6d00424485850c24a2be"
+  "fingerprint": "31b2329329efb3d8d5f5b6b96a11556b599d78ee37c6002590184e396202417b"
 }

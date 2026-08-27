@@ -154,6 +154,7 @@
       "test_explore_rules",
       "test_fixed_direct_target_predicates",
       "test_fixed_mana_value_target_predicates",
+      "test_fixed_optional_effect_choices",
       "test_hexproof_targeting",
       "test_interactions_v070",
       "test_linked_abilities",
