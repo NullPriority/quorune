@@ -2383,14 +2383,16 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_regeneration_prohibition_continuous_residual_pairs_fail_closed_at_runtime_boundary",
         "piece_ids": [
-            "residual.continuous_layer.affected-player-ordering",
-            "residual.replacement.regeneration"
+            "capability.permanent.destroy.regeneration_prohibition",
+            "residual.continuous_layer.affected-player-ordering"
         ],
-        "capability_ids": [],
+        "capability_ids": [
+            "permanent.destroy.regeneration_prohibition"
+        ],
         "interaction_order": 2,
-        "assertion": "The dedicated pair subtest compiles this exact residual boundary through the normal CardProgram path and proves runtime admission remains unresolved, non-strict, and incompatible until both represented pieces have trusted executable semantics."
+        "assertion": "Kirtar's Wrath compiles its ordinary regeneration-prohibited destruction clause exactly while its Threshold affected-player-ordering grammar remains material, so the complete CardProgram fails closed at runtime admission."
     },
     {
         "evidence_class": "interaction",
@@ -2431,14 +2433,16 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_regeneration_prohibition_continuous_residual_pairs_fail_closed_at_runtime_boundary",
         "piece_ids": [
-            "residual.continuous_layer.continuous-effect-layers-and-dependencies",
-            "residual.replacement.regeneration"
+            "capability.permanent.destroy.regeneration_prohibition",
+            "residual.continuous_layer.continuous-effect-layers-and-dependencies"
         ],
-        "capability_ids": [],
+        "capability_ids": [
+            "permanent.destroy.regeneration_prohibition"
+        ],
         "interaction_order": 2,
-        "assertion": "The dedicated pair subtest compiles this exact residual boundary through the normal CardProgram path and proves runtime admission remains unresolved, non-strict, and incompatible until both represented pieces have trusted executable semantics."
+        "assertion": "Avatar of Woe compiles its direct regeneration-prohibited destruction clause exactly while its separate static cost-reduction layer grammar remains material, so the complete CardProgram fails closed at runtime admission."
     },
     {
         "evidence_class": "interaction",

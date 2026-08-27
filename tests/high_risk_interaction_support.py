@@ -645,6 +645,17 @@ REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS = tuple(
     )
 )
 
+REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS = (
+    _pair(
+        "capability.permanent.destroy.regeneration_prohibition",
+        "residual.continuous_layer.affected-player-ordering",
+    ),
+    _pair(
+        "capability.permanent.destroy.regeneration_prohibition",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+    ),
+)
+
 PREVENTION_AND_REPLACEMENT_PAIRS = (
     _pair(
         "capability.damage.prevention.persistent_amount",
@@ -829,19 +840,49 @@ COST_AND_REPLACEMENT_PAIRS = tuple(
     )
 )
 
-CONTINUOUS_AND_REPLACEMENT_PAIRS = tuple(
-    _pair(continuous, replacement)
-    for continuous in (
+CONTINUOUS_AND_REPLACEMENT_PAIRS = (
+    _pair(
         "residual.continuous_layer.affected-player-ordering",
-        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
-        "residual.duration.until-end-of-turn",
-    )
-    for replacement in (
         "residual.replacement.damage-prevention",
-        "residual.replacement.regeneration",
+    ),
+    REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS[0],
+    _pair(
+        "residual.continuous_layer.affected-player-ordering",
         "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "residual.continuous_layer.affected-player-ordering",
         "residual.replacement.self-replacement-and-prevention-ordering",
-    )
+    ),
+    _pair(
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.replacement.damage-prevention",
+    ),
+    REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS[1],
+    _pair(
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.damage-prevention",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.regeneration",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
 )
 
 TRIGGER_AND_REPLACEMENT_PAIRS = tuple(
@@ -1172,6 +1213,7 @@ __all__ = [
     "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
+    "REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS",
     "REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",
     "TOKEN_AND_DAMAGE_PREVENTION_PAIR",
