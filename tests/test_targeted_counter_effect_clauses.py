@@ -227,7 +227,6 @@ class TargetedCounterCompilerTests(unittest.TestCase):
     def test_unsupported_counter_variants_remain_material_residuals(self):
         for text in (
             "Counter up to one target spell.",
-            "You may counter target spell.",
             "Counter target spell unless its controller pays {2}.",
             "Counter target spell with mana value 2 or less.",
             "Counter all spells.",

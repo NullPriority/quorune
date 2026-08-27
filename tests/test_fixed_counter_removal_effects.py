@@ -177,7 +177,6 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
             "Remove X charge counters from target artifact.",
             "Remove a poison counter from target player.",
             "Remove a +1/+1 counter from this creature.",
-            "You may remove a +1/+1 counter from target creature.",
             "Move a +1/+1 counter from target creature.",
         )
         for text in texts:
@@ -334,7 +333,6 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
             "Remove all counters from this creature.",
             "Remove all counters from each creature.",
             "Remove all counters from up to one target permanent.",
-            "You may remove all counters from target permanent.",
         )
         for text in texts:
             with self.subTest(text=text):

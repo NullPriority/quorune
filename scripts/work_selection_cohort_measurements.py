@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+from functools import partial
 from typing import Any, Mapping, Sequence
 
 from quorune.compiler.exile_templates import targeted_exile_effect_template
+from quorune.compiler.optional_effect_templates import (
+    fixed_optional_effect_template,
+)
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
+from quorune.oracle_ir import _reviewed_atomic_effect_template
 from quorune.work_selection_evidence import (
     COHORT_MEASUREMENT_ALGORITHM_VERSION,
     COHORT_MEASUREMENT_SCHEMA_VERSION,
@@ -17,7 +22,8 @@ from quorune.work_selection_common import stable_hash
 
 _PROBE_TOKEN = "fixed-token-creation-existing-owner-v1"
 _PROBE_EXILE = "fixed-exile-existing-owner-v1"
-_PROBE_IDS = {_PROBE_EXILE, _PROBE_TOKEN}
+_PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
+_PROBE_IDS = {_PROBE_EXILE, _PROBE_OPTIONAL_EFFECT, _PROBE_TOKEN}
 
 
 def _source_line(card_record: Any, ability: Mapping[str, Any]) -> str:
@@ -76,6 +82,30 @@ def _exile_instruction_candidates(line: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(bodies))
 
 
+def _optional_effect_instruction_candidates(line: str) -> tuple[str, ...]:
+    normalized = " ".join(line.strip().split())
+    candidates = [normalized]
+    for candidate in tuple(candidates):
+        if candidate.startswith("• "):
+            candidates.append(candidate[2:].strip())
+        if ": " in candidate and not candidate.startswith("{TK}"):
+            candidates.append(candidate.split(": ", 1)[1].strip())
+        if " — " in candidate:
+            candidates.append(candidate.split(" — ", 1)[1].strip())
+    for candidate in tuple(candidates):
+        if candidate.casefold().startswith(
+            ("when ", "whenever ", "at the beginning of ")
+        ) and ", " in candidate:
+            candidates.append(candidate.split(", ", 1)[1].strip())
+    return tuple(
+        dict.fromkeys(
+            candidate
+            for candidate in candidates
+            if candidate.casefold().startswith("you may ")
+        )
+    )
+
+
 def _matches_probe(probe_id: str, source: str) -> bool:
     if probe_id == _PROBE_TOKEN:
         return any(
@@ -87,6 +117,20 @@ def _matches_probe(probe_id: str, source: str) -> bool:
             targeted_exile_effect_template(body) is not None
             or public_zone_move_effect_template(body) is not None
             for body in _exile_instruction_candidates(source)
+        )
+    if probe_id == _PROBE_OPTIONAL_EFFECT:
+        compile_effect = partial(
+            _reviewed_atomic_effect_template,
+            card_name="Cohort source",
+            source_is_permanent=True,
+        )
+        return any(
+            fixed_optional_effect_template(
+                body,
+                compile_effect=compile_effect,
+            )
+            is not None
+            for body in _optional_effect_instruction_candidates(source)
         )
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
@@ -110,6 +154,7 @@ def _measurement(
     member_ids = {str(value) for value in bundle["member_family_ids"]}
     matched_abilities = 0
     matched_cards: dict[str, int] = {}
+    cards_with_unmatched_member_ability: set[str] = set()
     for card in frontier.get("cards", []):
         oracle_id = str(card.get("oracle_id") or "")
         record = cards_by_oracle_id.get(oracle_id)
@@ -127,12 +172,16 @@ def _measurement(
             if not family_ids.intersection(member_ids) or not family_ids <= member_ids:
                 continue
             if not _matches_probe(probe_id, _source_line(record, ability)):
+                cards_with_unmatched_member_ability.add(oracle_id)
                 continue
             matched_abilities += 1
             matched_cards[oracle_id] = len(
                 set(card.get("minimum_known_blocker_set", [])) - member_ids
             )
-    complete_cards = sum(count == 0 for count in matched_cards.values())
+    complete_cards = sum(
+        count == 0 and oracle_id not in cards_with_unmatched_member_ability
+        for oracle_id, count in matched_cards.items()
+    )
     reaches_floor = (
         complete_cards >= int(coverage["minimum_complete_card_gain"])
         or matched_abilities >= int(coverage["minimum_exact_ability_gain"])

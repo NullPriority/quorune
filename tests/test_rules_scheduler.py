@@ -45,6 +45,7 @@ from scripts.harvest_outcome_history import (
     HarvestOutcomeHistoryError,
 )
 from scripts.update_rules_scheduler import _compact_markdown
+from scripts.work_selection_cohort_measurements import _matches_probe
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1236,6 +1237,27 @@ class RulesSchedulerTests(unittest.TestCase):
             )
         )
 
+    def test_fixed_optional_effect_probe_uses_the_closed_typed_body_boundary(self):
+        probe_id = "fixed-optional-effect-choice-existing-owner-v1"
+        accepted = (
+            "You may destroy target artifact.",
+            "{2}, {T}: You may create a Treasure token.",
+            "Whenever you cast a noncreature spell, you may gain 2 life.",
+            "Landfall — Whenever a land enters under your control, you may draw a card.",
+        )
+        rejected = (
+            "You may pay {1}. If you do, draw a card.",
+            "You may choose target creature.",
+            "You may destroy target artifact if you control a Wizard.",
+        )
+
+        for source in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)
         token = next(
@@ -1303,11 +1325,28 @@ class RulesSchedulerTests(unittest.TestCase):
             )
 
     def test_completed_bundle_retires_and_upper_bound_requires_bounded_cohort(self):
-        work = self.queue["work_selection"]
-        self.assertNotIn(
-            "bundle:commander-pairing-keywords",
-            {candidate["candidate_id"] for candidate in work["candidates"]},
+        work = build_work_selection(
+            selected_batch=self.queue["selected_batch"],
+            policy=self.catalog["work_selection"],
+            inputs=self.work_inputs,
         )
+        candidate_ids = {
+            candidate["candidate_id"] for candidate in work["candidates"]
+        }
+        self.assertTrue(
+            {
+                "bundle:commander-pairing-keywords",
+                "bundle:fixed-optional-effect-choices",
+            }.isdisjoint(candidate_ids)
+        )
+        optional_measurement = next(
+            row
+            for row in self.work_inputs["cohort_measurements"]["measurements"]
+            if row["bundle_id"] == "bundle:fixed-optional-effect-choices"
+        )
+        self.assertEqual("bounded_executable", optional_measurement["decision"])
+        self.assertEqual(98, optional_measurement["complete_card_gain"])
+        self.assertFalse(optional_measurement["grants_gameplay_trust"])
 
         frontier, policies, weights = _bounded_candidate_bundle_fixture()
         measurement = candidate_frontier_measurements(

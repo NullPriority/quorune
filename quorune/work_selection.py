@@ -233,7 +233,7 @@ def _validated_reviewed_history(
 def _validated_policy(
     policy: Mapping[str, Any], harvest_history: Mapping[str, Any]
 ) -> dict[str, Any]:
-    if int(policy.get("policy_version") or 0) != 9:
+    if int(policy.get("policy_version") or 0) != 10:
         raise WorkSelectionError("Unsupported work-selection policy")
     priority_classes, starting_uncovered = _validated_priority_policy(policy)
     coverage = _mapping(policy.get("coverage_family"), "coverage_family")
@@ -250,7 +250,7 @@ def _validated_policy(
         minimum_gain=int(validated_coverage["minimum_complete_card_gain"]),
     )
     return {
-        "policy_version": 9,
+        "policy_version": 10,
         "priority_classes": priority_classes,
         "starting_uncovered_high_risk_pairs": starting_uncovered,
         **validated_coverage,
@@ -1263,6 +1263,7 @@ def _work_selection_candidates(
             "Work-selection inputs must be the canonical generated reports"
         )
     frontier = _mapping(inputs["card_unlock_frontier"], "card-unlock frontier")
+    completed_bundle_ids = {str(row["bundle_id"]) for row in validated["harvest_outcome_history"]}
     candidates = [
         _harvest_outcome_candidate(validated),
         *_system_candidates(
@@ -1294,6 +1295,7 @@ def _work_selection_candidates(
             ),
         ),
     ]
+    candidates = [row for row in candidates if row["candidate_id"] not in completed_bundle_ids]
     measurement = _cohort_measurement_candidate(candidates, frontier)
     if measurement is not None:
         candidates.append(measurement)

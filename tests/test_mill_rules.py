@@ -107,7 +107,6 @@ class FixedMillCompilerTests(unittest.TestCase):
         base = self.db.lookup("Fixed Target Mill")
         variants = (
             "Mill X cards.",
-            "You may mill three cards.",
             "Each player mills a card.",
             "Target player mills half their library, rounded down.",
             "Target player mills two card.",
@@ -171,6 +170,34 @@ class FixedMillCompilerTests(unittest.TestCase):
                 for node in face.nodes
             )
         )
+
+    def test_typed_attachment_and_target_predicate_mill_pairs_compile_exactly(self):
+        expected = {
+            "Fixed Typed Mill Aura": {
+                "attachment.aura.typed_restriction",
+                "effect.choice.optional_fixed",
+                "zone.mill.fixed",
+            },
+            "Fixed Mill Targeter": {
+                "target.permanent.characteristic_predicate",
+                "zone.mill.fixed",
+            },
+        }
+        for name, dependencies in expected.items():
+            with self.subTest(card=name):
+                ir = compile_oracle_card(
+                    self.db.lookup(name),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                observed = {
+                    dependency
+                    for face in ir.faces
+                    for node in face.nodes
+                    for dependency in node.capability_dependencies
+                }
+                self.assertTrue(dependencies <= observed, observed)
 
     def test_residual_mill_pairs_remain_fail_closed_at_cardprogram_boundary(self):
         base = self.db.lookup("Fixed Target Mill")
@@ -476,6 +503,196 @@ class FixedMillRuntimeTests(unittest.TestCase):
 
         self.assertEqual(["graveyard", "graveyard"], [c.zone for c in top_first])
         self.assertEqual(target.object_id, aura.attached_to)
+
+    def test_typed_aura_optional_triggered_mill_is_atomic_private_and_replays(self):
+        session = self.session(7011715)
+        engine = session.engine
+        self.register(engine, "Fixed Typed Mill Aura")
+        aura = self.add_card(
+            engine,
+            seat="A",
+            name="Fixed Typed Mill Aura",
+            ref="fixed-typed-mill-aura",
+            zone="hand",
+        )
+        vehicle_ref = engine.create_token(
+            "A",
+            name="Fixed Mill Vehicle",
+            characteristics={"type_line": "Token Artifact — Vehicle"},
+        )[0]
+        food_ref = engine.create_token(
+            "A",
+            name="Fixed Mill Food",
+            characteristics={"type_line": "Token Artifact — Food"},
+        )[0]
+        vehicle = next(
+            card for card in engine.state.cards.values() if card.ref == vehicle_ref
+        )
+        food = next(
+            card for card in engine.state.cards.values() if card.ref == food_ref
+        )
+        top_first = self.isolate_library(engine, "A", 2)
+        top_refs = tuple(card.ref for card in top_first)
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.players["A"].mana_pool["U"] = 2
+        before = authoritative_state_hash(engine.state)
+        with self.assertRaises(GameRuleError):
+            with engine.transaction():
+                engine._cast("A", {"card": aura.ref, "targets": [food.ref]})
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        aura = next(
+            card
+            for card in engine.state.cards.values()
+            if card.ref == "fixed-typed-mill-aura"
+        )
+        vehicle = next(
+            card for card in engine.state.cards.values() if card.ref == vehicle_ref
+        )
+
+        engine._cast("A", {"card": aura.ref, "targets": [vehicle.ref]})
+        self.resolve_top(engine)
+        self.assertEqual(vehicle.object_id, aura.attached_to)
+        self.assertIn(aura.object_id, vehicle.attachments)
+        self.assertTrue(engine.state.stack)
+        self.resolve_top(engine)
+
+        self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        self.assertEqual(["library", "library"], [card.zone for card in top_first])
+        projector = StateProjector(self.db, engine.state)
+        self.assertIsNotNone(projector._decision("pilot:A"))
+        for seat in ("B", "C", "D"):
+            with self.subTest(seat=seat):
+                self.assertIsNone(projector._decision(f"pilot:{seat}"))
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        result = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choice": "apply",
+                "reason": "Apply the represented optional Mill effect.",
+            },
+        )
+
+        self.assertTrue(result.ok, result.summary)
+        resolved_top = [
+            next(
+                card
+                for card in engine.state.cards.values()
+                if card.ref == card_ref
+            )
+            for card_ref in top_refs
+        ]
+        self.assertEqual(
+            ["graveyard", "graveyard"],
+            [card.zone for card in resolved_top],
+        )
+        aura = next(
+            card
+            for card in engine.state.cards.values()
+            if card.ref == "fixed-typed-mill-aura"
+        )
+        vehicle = next(
+            card for card in engine.state.cards.values() if card.ref == vehicle_ref
+        )
+        self.assertEqual(vehicle.object_id, aura.attached_to)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "typed-aura-optional-mill"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_characteristic_target_and_triggered_mill_compose_on_one_object(self):
+        session = self.session(7011716)
+        engine = session.engine
+        self.register(engine, "Fixed Mill Targeter")
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Fixed Mill Targeter",
+            ref="fixed-mill-targeter",
+            zone="hand",
+        )
+        legal_ref = engine.create_token(
+            "A",
+            name="Fixed Mill Target Artifact",
+            characteristics={"type_line": "Token Artifact"},
+        )[0]
+        illegal_ref = engine.create_token(
+            "A",
+            name="Fixed Mill Target Enchantment",
+            characteristics={"type_line": "Token Enchantment"},
+        )[0]
+        legal = next(
+            card for card in engine.state.cards.values() if card.ref == legal_ref
+        )
+        illegal = next(
+            card for card in engine.state.cards.values() if card.ref == illegal_ref
+        )
+        milled = self.isolate_library(engine, "A", 1)[0]
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.players["A"].mana_pool["U"] = 3
+        engine._cast("A", {"card": source.ref})
+        self.resolve_top(engine)
+        self.assertTrue(engine.state.stack)
+        self.resolve_top(engine)
+        self.assertEqual("graveyard", milled.zone)
+
+        source = next(
+            card
+            for card in engine.state.cards.values()
+            if card.ref == "fixed-mill-targeter"
+        )
+        engine.state.priority_player = "A"
+        engine.state.players["A"].turns_begun = 1
+        source.acquired_control_turn_count = 0
+        ability = engine._activated_abilities(source)[0]
+        before = authoritative_state_hash(engine.state)
+        with self.assertRaises(GameRuleError):
+            with engine.transaction():
+                engine._activate(
+                    "A",
+                    {
+                        "source": source.ref,
+                        "ability": ability.ability_id,
+                        "targets": [illegal.ref],
+                    },
+                )
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        source = next(
+            card
+            for card in engine.state.cards.values()
+            if card.ref == "fixed-mill-targeter"
+        )
+        legal = next(
+            card for card in engine.state.cards.values() if card.ref == legal_ref
+        )
+        illegal = next(
+            card for card in engine.state.cards.values() if card.ref == illegal_ref
+        )
+        ability = engine._activated_abilities(source)[0]
+
+        engine._activate(
+            "A",
+            {
+                "source": source.ref,
+                "ability": ability.ability_id,
+                "targets": [legal.ref],
+            },
+        )
+        self.resolve_top(engine)
+
+        self.assertTrue(source.tapped)
+        self.assertTrue(legal.tapped)
+        self.assertFalse(illegal.tapped)
 
     def test_hexproof_target_legality_and_activated_mill_compose(self):
         session = self.session(7011706)

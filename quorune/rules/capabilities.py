@@ -97,6 +97,11 @@ from .fixed_controller_effect_shapes import (
 from .fixed_effect_clause_shapes import (
     FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
     fixed_effect_clause_sequence_node_capabilities,
+    fixed_optional_effect_node_capabilities,
+)
+from ..compiler.optional_effect_templates import (
+    FIXED_OPTIONAL_EFFECT_CAPABILITY,
+    FIXED_OPTIONAL_EFFECT_MECHANIC,
 )
 from .closed_effect_program_shapes import (
     CLOSED_EFFECT_PROGRAM_MECHANIC,
@@ -380,6 +385,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "surveil",
         "counter",
         "optional-fixed-counter-event-trigger",
+        FIXED_OPTIONAL_EFFECT_MECHANIC,
         "destroy",
         _EXILE_MECHANIC,
         "return-to-owner-hand",
@@ -1001,6 +1007,7 @@ def _targeted_effect_capabilities(
         fixed_controller_effect_sequence_node_capabilities,
         fixed_counter_controller_effect_sequence_node_capabilities,
         fixed_effect_clause_sequence_node_capabilities,
+        fixed_optional_effect_node_capabilities,
         closed_effect_program_node_capabilities,
         fixed_scry_node_capabilities,
         fixed_surveil_node_capabilities,
@@ -1291,6 +1298,7 @@ def _affected_player_choice_covered_mechanics(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
+        FIXED_OPTIONAL_EFFECT_CAPABILITY: FIXED_OPTIONAL_EFFECT_MECHANIC,
         "zone.mill.fixed": "mill",
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         FIXED_LIBRARY_SEARCH_CAPABILITY_ID: FIXED_LIBRARY_SEARCH_MECHANIC_ID,

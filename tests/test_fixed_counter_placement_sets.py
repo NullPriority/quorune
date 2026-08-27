@@ -446,7 +446,6 @@ class FixedCounterPlacementSetCompilerTests(unittest.TestCase):
 
     def test_unsupported_counter_set_variants_remain_material_residuals(self):
         texts = (
-            "You may put a +1/+1 counter on each creature you control.",
             "Put X +1/+1 counters on each creature you control.",
             "Put a +1/+1 counter on each modified creature you control.",
             "Put a +1/+1 counter on each attacking creature.",

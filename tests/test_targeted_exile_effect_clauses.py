@@ -211,7 +211,6 @@ class TargetedExileCompilerTests(unittest.TestCase):
     def test_unsupported_exile_variants_remain_material_residuals(self):
         for text in (
             "Exile up to one target creature.",
-            "You may exile target creature.",
             "Exile target creature or Spacecraft.",
             "Exile target creature, then return it to the battlefield.",
         ):

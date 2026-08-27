@@ -335,7 +335,7 @@
     }
   ],
   "work_selection": {
-    "policy_version": 9,
+    "policy_version": 10,
     "priority_classes": [
       "ci_correctness",
       "replay_privacy_defect",
@@ -487,6 +487,46 @@
           "measurement_probe_id": null
         },
         {
+          "bundle_id": "bundle:fixed-optional-effect-choices",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:effect.choice.optional_fixed",
+            "capability:trigger.effect.fixed_event",
+            "component:quorune.semantic_choices.optional_effect.OptionalEffectHandler"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "controller-apply-or-decline",
+            "one-independently-exact-atomic-effect",
+            "preserved-mandatory-sibling-scope"
+          ],
+          "shared_dependencies": [
+            "trigger.effect.fixed_event",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one leading controller 'you may' choice around one independently exact atomic effect across spell, triggered, and activated contexts",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 2,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Establishes one generic semantic choice boundary that can compose with existing typed effect owners across spell, triggered, activated, sequence, and normalized-event contexts without duplicating their mutation logic.",
+          "explicit_exclusions": [
+            "conditional, linked, reflexive, and delayed-result optional instructions",
+            "modal, repeated, and multi-atomic optional bodies",
+            "nested optional choices and bodies with another unresolved choice",
+            "optional costs, permissions, replacements, and pay-or-have wording",
+            "typed bodies that are not independently exact"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-optional-effect-choice-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-source-event-triggers",
           "member_family_ids": [
             "event_binding:normalized-source-damage",
@@ -565,22 +605,20 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v131-fixed-temporary-declaration-contexts",
-      "compiler_version": "oracle-ir-v131",
-      "bundle_id": "bundle:fixed-temporary-declaration-contexts",
-      "candidate_ids": ["compiler:fixed-temporary-declaration-contexts"],
+      "transition_id": "oracle-ir-v132-fixed-optional-effect-choices",
+      "compiler_version": "oracle-ir-v132",
+      "bundle_id": "bundle:fixed-optional-effect-choices",
+      "candidate_ids": ["compiler:fixed-optional-effect-choices"],
       "family_ids": [
-        "activated_effect:unparsed-target-merfolk-can",
-        "activated_effect:unparsed-target-ninja-can",
-        "activated_effect:unparsed-this-creature-can",
-        "effect_clause:unparsed-target-creature-can"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "combat.declaration.typed_components",
-        "continuous.resolution.declaration_rules_until_end_of_turn",
-        "target.revalidate_resolution"
+        "effect.choice.optional_fixed",
+        "trigger.effect.fixed_event",
+        "trigger.placement.apnap"
       ],
-      "expected_complete_card_gain": 19,
+      "expected_complete_card_gain": 94,
       "non_harvest_reason": null
     },
     "harvest_provenance": [

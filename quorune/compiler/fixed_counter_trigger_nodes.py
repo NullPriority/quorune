@@ -1079,11 +1079,7 @@ def fixed_typed_event_effect_trigger_node(
         material_line,
         card_name=card_name,
     )
-    if binding is None or re.fullmatch(
-        r"you may .+",
-        binding.body,
-        re.IGNORECASE,
-    ):
+    if binding is None:
         return None
     template, effects, target_schema, body_mechanics = effect_template(
         binding.body,

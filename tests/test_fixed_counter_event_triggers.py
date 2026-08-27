@@ -412,7 +412,6 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
         cases = (
-            "At the beginning of your upkeep, you may draw a card.",
             "At the beginning of your upkeep, if you have no cards in hand, "
             "draw a card.",
             "Whenever an opponent casts or copies a spell, draw a card.",
@@ -590,8 +589,6 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever this creature deals damage, draw a card.",
             "Whenever equipped creature deals combat damage to a player, draw "
             "a card.",
-            "Whenever this creature deals combat damage to a player, you may "
-            "draw a card.",
             "Whenever one or more creatures deal combat damage to a player, "
             "draw a card.",
         )

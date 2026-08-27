@@ -393,7 +393,6 @@ class FixedEffectClauseSequenceCompilerTests(unittest.TestCase):
                 )
 
         for text in (
-            "Destroy target creature. You may gain 3 life.",
             "Destroy target creature. If it died this way, draw a card.",
             "Destroy target creature. Exile target creature.",
         ):

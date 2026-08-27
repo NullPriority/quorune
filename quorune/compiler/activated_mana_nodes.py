@@ -322,6 +322,7 @@ def _activated_effect_dependency_gate(
             "grant_keyword_until_end_of_turn",
             "grant_declaration_restriction_until_end_of_turn",
             "offer_draw",
+            "offer_optional_effect",
             "proliferate",
             "regenerate",
             "place_counters",

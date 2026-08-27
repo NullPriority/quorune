@@ -60,6 +60,11 @@ from .token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
+from ..compiler.optional_effect_templates import (
+    FIXED_OPTIONAL_EFFECT_CAPABILITY,
+    FIXED_OPTIONAL_EFFECT_MECHANIC,
+    OPTIONAL_EFFECT_OPERATION,
+)
 
 
 FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC = "fixed-effect-clause-sequence"
@@ -126,6 +131,13 @@ def closed_effect_component_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> tuple[str, ...]:
+    optional = fixed_optional_effect_node_capabilities(
+        effects=effects,
+        target_schema=target_schema,
+        mechanic_ids=mechanics,
+    )
+    if optional:
+        return optional
     dependencies: set[str] = set()
     for resolver in _COMPONENT_RESOLVERS:
         component_mechanics = mechanics
@@ -158,6 +170,47 @@ def closed_effect_component_capabilities(
             )
         )
     return tuple(sorted(dependencies))
+
+
+def fixed_optional_effect_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, Any]],
+    target_schema: Mapping[str, Any] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    """Recognize one optional wrapper around one closed atomic effect."""
+
+    mechanics = {str(value).casefold() for value in mechanic_ids}
+    if FIXED_OPTIONAL_EFFECT_MECHANIC not in mechanics or len(effects) != 1:
+        return ()
+    wrapper = effects[0]
+    if (
+        set(wrapper) != {"op", "player", "effects"}
+        or wrapper.get("op") != OPTIONAL_EFFECT_OPERATION
+        or wrapper.get("player") != "$controller"
+    ):
+        return ()
+    nested = wrapper.get("effects")
+    if (
+        not isinstance(nested, (list, tuple))
+        or len(nested) != 1
+        or not isinstance(nested[0], Mapping)
+        or nested[0].get("op") == OPTIONAL_EFFECT_OPERATION
+    ):
+        return ()
+    references_target = _contains_target_reference(nested[0])
+    if (target_schema is None) == references_target:
+        return ()
+    dependencies = closed_effect_component_capabilities(
+        (nested[0],),
+        target_schema=target_schema,
+        mechanics=mechanics - {FIXED_OPTIONAL_EFFECT_MECHANIC},
+    )
+    if not dependencies:
+        return ()
+    return tuple(
+        sorted({FIXED_OPTIONAL_EFFECT_CAPABILITY, *dependencies})
+    )
 
 
 def fixed_effect_clause_sequence_node_capabilities(
@@ -205,4 +258,5 @@ __all__ = [
     "FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC",
     "closed_effect_component_capabilities",
     "fixed_effect_clause_sequence_node_capabilities",
+    "fixed_optional_effect_node_capabilities",
 ]

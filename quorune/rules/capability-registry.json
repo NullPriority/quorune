@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 135,
+  "registry_version": 136,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6154,6 +6154,33 @@
       "dependency_fail_closed_rationale": "Blocking fixed Kicker, counter quantity replacement, or any represented keyword consumer prevents the kicked-entry node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_kicker_dependency_and_compiler_mutations_fail_closed removes the kicked-entry production and independently blocks its dependencies, so no card retains exact entry behavior.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "effect.choice.optional_fixed",
+      "version": 1,
+      "official_rules": ["109.5", "608.2c", "608.2d", "609.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and resolve one exact leading 'you may' around one independently represented atomic effect by issuing the resolving controller a choice before the ordinary typed effect resumes.",
+        "inputs": ["one source-spanned atomic resolution instruction", "the exact leading words you may", "one independently exact typed effect body", "the resolving stack controller", "body-owned targets chosen before resolution"],
+        "outputs": ["one controller-scoped apply-or-decline choice", "no mutation before the choice or after decline", "ordinary body-specific typed resolution after acceptance", "exact continuation replay"],
+        "exclusions": ["optional costs, casting permissions, replacements, and static permissions", "may pay, may choose, may have, and player-relative choice wording", "if-you-do, if-you-don't, reflexive, linked, delayed, modal, repeated, and conditional continuations", "nested optional choices and bodies with more than one atomic effect", "bodies without an independently exact capability-closed owner"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.optional_effect_templates.FixedOptionalEffectTemplate", "quorune.rules.fixed_effect_clause_shapes.fixed_optional_effect_node_capabilities", "quorune.semantic_choices.optional_effect.OptionalEffectHandler", "quorune.semantic_choices.engine_coordination.continue_semantic_choice", "CommanderEngine._continue_resolution"],
+      "positive_tests": ["test_spell_trigger_and_activation_share_optional_effect_lowering", "test_optional_clause_preserves_mandatory_sequence_sibling", "test_optional_choice_apply_and_decline_resume_exact_effect"],
+      "negative_tests": ["test_optional_effect_exclusions_remain_material", "test_optional_effect_shape_and_handler_mutants_fail_closed"],
+      "interaction_tests": ["test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays"],
+      "multiplayer_tests": ["test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays"],
+      "privacy_tests": ["test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays"],
+      "replay_tests": ["test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The wrapper shape receives no trust unless its nested body independently resolves to an existing capability-closed effect and its exact target schema; removing any body dependency returns the complete ability to a material residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler, capability-shape, and handler mutations remove the wrapper, alter its chooser or continuation, or admit an unrepresented nested instruction and are rejected before trusted promotion or mutation.",
       "blockers": [],
       "status": "trusted"
     },
