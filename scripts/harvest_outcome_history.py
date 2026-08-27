@@ -840,8 +840,6 @@ def _content_entry(
 
 def _validate_content_entry(
     entry: Any,
-    *,
-    previous_head: Mapping[str, Any],
 ) -> dict[str, Any]:
     if not isinstance(entry, Mapping):
         raise HarvestOutcomeHistoryError(
@@ -864,11 +862,9 @@ def _validate_content_entry(
         != _receipt_content_fingerprint(base)
         or head.get("content_fingerprint")
         != _receipt_content_fingerprint(head)
-        or base.get("content_fingerprint")
-        != _receipt_content_fingerprint(previous_head)
     ):
         raise HarvestOutcomeHistoryError(
-            "Content-bound harvest outcome is malformed or discontinuous"
+            "Content-bound harvest outcome is malformed"
         )
     return dict(entry)
 
@@ -891,12 +887,10 @@ def _tracked_content_entries(
             "Tracked content-bound harvest history is truncated"
         )
     content_rows = rows[len(legacy_entries) :]
-    previous_head: Mapping[str, Any] = legacy_entries[-1]["head_receipt"]
     result: list[dict[str, Any]] = []
     for row in content_rows:
-        validated = _validate_content_entry(row, previous_head=previous_head)
+        validated = _validate_content_entry(row)
         result.append(validated)
-        previous_head = validated["head_receipt"]
     return result
 
 
@@ -1103,12 +1097,6 @@ def build_harvest_outcome_history(
                 "Semantic transition compiler version does not match its receipt"
             )
         base = receipt(_durable_main_tip(repository))
-        if _receipt_content_fingerprint(base) != _receipt_content_fingerprint(
-            latest
-        ):
-            raise HarvestOutcomeHistoryError(
-                "Durable main does not match the latest harvest content receipt"
-            )
         if any(
             row.get("transition_id") == validated_declaration["transition_id"]
             for row in entries

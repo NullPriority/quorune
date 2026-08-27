@@ -35,8 +35,8 @@ from quorune.work_selection_bundles import (
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _content_entry,
-    _public_receipt,
     _receipt,
+    _receipt_content_fingerprint,
     _require_landed_harvest_head,
     _semantic_outcome_state,
     _validate_content_entry,
@@ -922,12 +922,7 @@ class RulesSchedulerTests(unittest.TestCase):
         }
 
         entry = _content_entry(declaration, base=base, head=head)
-        squash_equivalent_base = _public_receipt(base)
-        squash_equivalent_base["commit"] = "f" * 40
-        validated = _validate_content_entry(
-            entry,
-            previous_head=squash_equivalent_base,
-        )
+        validated = _validate_content_entry(entry)
 
         self.assertEqual(entry, validated)
         self.assertNotIn("commit", entry["base_receipt"])
@@ -936,6 +931,39 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             declaration["capability_ids"], entry["capability_ids"]
         )
+
+    def test_content_receipts_allow_non_harvest_drift_between_transitions(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        penultimate = provenance[-2]
+        latest = provenance[-1]
+        previous_head = _receipt(ROOT, penultimate["head_commit"])
+        base = _receipt(ROOT, latest["base_commit"])
+        head = _receipt(ROOT, latest["head_commit"])
+        declaration = {
+            "transition_id": "fixture-independent-content-transition",
+            "compiler_version": head["compiler_version"],
+            "bundle_id": "bundle:fixture-independent-content-transition",
+            "candidate_ids": [
+                "compiler:fixture-independent-content-transition"
+            ],
+            "family_ids": [
+                "effect_clause:fixture-independent-content-transition"
+            ],
+            "capability_ids": [
+                "effect.fixture_independent_content_transition"
+            ],
+            "expected_complete_card_gain": 1,
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+        }
+
+        self.assertNotEqual(
+            _receipt_content_fingerprint(previous_head),
+            _receipt_content_fingerprint(base),
+        )
+        entry = _content_entry(declaration, base=base, head=head)
+
+        self.assertEqual(entry, _validate_content_entry(entry))
 
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
         inputs = deepcopy(self.work_inputs)
