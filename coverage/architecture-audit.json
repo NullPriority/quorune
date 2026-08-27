@@ -11538,7 +11538,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 182438,
+      "logical_lines": 182440,
       "methods": {
         "dunder": 508,
         "private": 823,
@@ -11592,8 +11592,8 @@
           "file": "quorune/work_selection.py",
           "functions_and_methods": 28,
           "language": "python",
-          "logical_lines": 1491,
-          "physical_lines": 1553
+          "logical_lines": 1493,
+          "physical_lines": 1555
         },
         {
           "file": "quorune/rules/node_capability_shapes.py",
@@ -15917,7 +15917,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 200094,
+      "physical_lines": 200096,
       "python_file_count": 560,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -27974,7 +27974,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "8c702689d4dd239a8ea227fb5c7d4fda82dab7822b138503d7b2cee86475eb54",
+      "fingerprint": "bd8cfd79f3d8014409d93c60eae16db33220ade43844eaafbcad8c853eec5ae3",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
