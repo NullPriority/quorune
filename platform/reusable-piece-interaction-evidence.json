@@ -3693,6 +3693,36 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_typed_aura_optional_triggered_mill_is_atomic_private_and_replays",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "A creature-or-Vehicle Aura rejects a Food before payment, remains attached to the legal Vehicle, exposes its optional triggered Mill only to its controller without pre-choice mutation, and replays the canonical Mill result exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_characteristic_target_and_triggered_mill_compose_on_one_object",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "One artifact creature resolves its independent entry Mill, rejects an enchantment from the later artifact-or-creature activation without tapping, then accepts and taps a legal artifact through the shared characteristic target predicate."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_hexproof_target_legality_and_activated_mill_compose",
       "piece_ids": [
         "capability.target.protection.hexproof_permanent",
