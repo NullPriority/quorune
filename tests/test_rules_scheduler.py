@@ -685,12 +685,14 @@ class RulesSchedulerTests(unittest.TestCase):
     def test_prerequisite_exception_requires_measured_fanout_and_open_budget(self):
         inputs = _with_large_ability_compiler_harvest(self.work_inputs)
         history = inputs["harvest_outcome_history"]
-        history["entries"][-1]["actual_complete_card_gain"] = 0
-        fingerprinted = dict(history)
-        fingerprinted.pop("fingerprint")
-        history["fingerprint"] = hashlib.sha256(
-            stable_json(fingerprinted).encode("utf-8")
+        latest_outcome = history["entries"][-1]
+        latest_outcome["actual_complete_card_gain"] = 0
+        unsigned_outcome = dict(latest_outcome)
+        unsigned_outcome.pop("entry_fingerprint")
+        latest_outcome["entry_fingerprint"] = hashlib.sha256(
+            stable_json(unsigned_outcome).encode("utf-8")
         ).hexdigest()
+        _refingerprint(history)
         prerequisite = next(
             row
             for row in inputs["card_unlock_frontier"]["family_candidates"]
