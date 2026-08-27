@@ -5,6 +5,7 @@ from typing import Any, Mapping, Sequence
 from .work_selection_bundles import (
     atomic_frontier_bundle,
     bundle_measurement_decision,
+    estimated_bundle_effort,
     single_candidate_bundle,
     validate_bundle_policy,
     validated_candidate_frontier_measurements,
@@ -233,7 +234,7 @@ def _validated_reviewed_history(
 def _validated_policy(
     policy: Mapping[str, Any], harvest_history: Mapping[str, Any]
 ) -> dict[str, Any]:
-    if int(policy.get("policy_version") or 0) != 10:
+    if int(policy.get("policy_version") or 0) != 11:
         raise WorkSelectionError("Unsupported work-selection policy")
     priority_classes, starting_uncovered = _validated_priority_policy(policy)
     coverage = _mapping(policy.get("coverage_family"), "coverage_family")
@@ -250,7 +251,7 @@ def _validated_policy(
         minimum_gain=int(validated_coverage["minimum_complete_card_gain"]),
     )
     return {
-        "policy_version": 10,
+        "policy_version": 11,
         "priority_classes": priority_classes,
         "starting_uncovered_high_risk_pairs": starting_uncovered,
         **validated_coverage,
@@ -1002,6 +1003,8 @@ def _synthesized_frontier_candidates(
     frontier: Mapping[str, Any],
     policy: Mapping[str, Any],
     cohort_measurement_artifact: Mapping[str, Any],
+    *,
+    completed_bundle_ids: set[str],
 ) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     try:
@@ -1011,6 +1014,7 @@ def _synthesized_frontier_candidates(
             policy["value_weights"],
             cohort_measurement_artifact,
             policy,
+            completed_bundle_ids=completed_bundle_ids,
         )
     except WorkSelectionBundleError as exc:
         raise WorkSelectionError(str(exc)) from exc
@@ -1021,13 +1025,7 @@ def _synthesized_frontier_candidates(
         gains = measurement["gains"]
         prerequisites = measurement["prerequisites"]
         implementation_hours = measurement["implementation_hours"]
-        effort = (
-            "small"
-            if implementation_hours <= 8
-            else "medium"
-            if implementation_hours <= 20
-            else "large"
-        )
+        effort = estimated_bundle_effort(implementation_hours)
         readiness, eligible, reason = _frontier_decision(
             candidate_id=bundle_id,
             complete_gain=gains["exact_cards"],
@@ -1293,6 +1291,7 @@ def _work_selection_candidates(
                 inputs["cohort_measurements"],
                 "work-selection cohort measurements",
             ),
+            completed_bundle_ids=completed_bundle_ids,
         ),
     ]
     candidates = [row for row in candidates if row["candidate_id"] not in completed_bundle_ids]

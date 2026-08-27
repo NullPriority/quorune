@@ -474,6 +474,20 @@ _WITNESSES = {
         "6",
         "5",
     ),
+    "knight-of-the-holy-nimbus": _Witness(
+        "Knight of the Holy Nimbus",
+        "Creature — Human Rebel Knight",
+        "Flanking (Whenever a creature without flanking blocks this creature, "
+        "the blocking creature gets -1/-1 until end of turn.)\n"
+        "If this creature would be destroyed, regenerate it. (Tap it, remove "
+        "it from combat, and heal all damage on it.)\n"
+        "{2}: This creature can't be regenerated this turn. Only your "
+        "opponents may activate this ability.",
+        "{W}{W}",
+        ("Flanking", "Heal", "Regenerate"),
+        "2",
+        "2",
+    ),
     "gideon-oathsworn": _Witness(
         "Gideon, the Oathsworn",
         "Legendary Planeswalker — Gideon",
@@ -631,6 +645,33 @@ DESTROY_DAMAGE_PREVENTION_PAIR = _pair(
 
 DESTROY_REGENERATION_PAIR = _pair(
     "capability.permanent.destroy.effect",
+    "residual.replacement.regeneration",
+)
+
+REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS = tuple(
+    _pair(
+        "capability.permanent.destroy.regeneration_prohibition",
+        residual,
+    )
+    for residual in (
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    )
+)
+
+REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS = (
+    _pair(
+        "capability.permanent.destroy.regeneration_prohibition",
+        "residual.continuous_layer.affected-player-ordering",
+    ),
+    _pair(
+        "capability.permanent.destroy.regeneration_prohibition",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+    ),
+)
+
+CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR = _pair(
+    "residual.continuous_layer.continuous-effect-layers-and-dependencies",
     "residual.replacement.regeneration",
 )
 
@@ -818,19 +859,49 @@ COST_AND_REPLACEMENT_PAIRS = tuple(
     )
 )
 
-CONTINUOUS_AND_REPLACEMENT_PAIRS = tuple(
-    _pair(continuous, replacement)
-    for continuous in (
+CONTINUOUS_AND_REPLACEMENT_PAIRS = (
+    _pair(
         "residual.continuous_layer.affected-player-ordering",
-        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
-        "residual.duration.until-end-of-turn",
-    )
-    for replacement in (
         "residual.replacement.damage-prevention",
-        "residual.replacement.regeneration",
+    ),
+    REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS[0],
+    _pair(
+        "residual.continuous_layer.affected-player-ordering",
         "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "residual.continuous_layer.affected-player-ordering",
         "residual.replacement.self-replacement-and-prevention-ordering",
-    )
+    ),
+    _pair(
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.replacement.damage-prevention",
+    ),
+    REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS[1],
+    _pair(
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.damage-prevention",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.regeneration",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "residual.duration.until-end-of-turn",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
 )
 
 TRIGGER_AND_REPLACEMENT_PAIRS = tuple(
@@ -870,6 +941,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *ZONE_AND_CHOICE_PAIRS,
             *COST_AND_REPLACEMENT_PAIRS,
             *CONTINUOUS_AND_REPLACEMENT_PAIRS,
+            CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
             *TRIGGER_AND_REPLACEMENT_PAIRS,
             *DECLARATION_AND_REPLACEMENT_PAIRS,
             *PREVENTION_AND_REPLACEMENT_PAIRS,
@@ -877,6 +949,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
             *IMPULSE_ACCESS_AND_CHOICE_PAIRS,
+            *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
         }
     )
 )
@@ -961,6 +1034,10 @@ _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
 _bind("mourners-shield", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
 _bind("avatar-of-woe", CONTINUOUS_AND_REPLACEMENT_PAIRS[5])
+_bind(
+    "knight-of-the-holy-nimbus",
+    CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
+)
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[6:8])
 _bind("gideon-oathsworn", CONTINUOUS_AND_REPLACEMENT_PAIRS[8])
 _bind("runesword", CONTINUOUS_AND_REPLACEMENT_PAIRS[9])
@@ -984,6 +1061,10 @@ _bind("tangle-kelp", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[1])
 _bind("pemmins-aura", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[2])
 _bind("sleep-cursed-faerie", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
 _bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS)
+_bind(
+    "kirtars-wrath",
+    *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
+)
 
 if set(_PAIR_WITNESS) != set(ALL_HIGH_RISK_BOUNDARY_PAIRS):
     raise AssertionError("high-risk witness map is incomplete")
@@ -1144,6 +1225,7 @@ def assert_high_risk_boundary_pairs(
 
 __all__ = [
     "ALL_HIGH_RISK_BOUNDARY_PAIRS",
+    "CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR",
     "ATTACHMENT_AND_CONTINUOUS_PAIRS",
     "CONTINUOUS_AND_REPLACEMENT_PAIRS",
     "COST_AND_REPLACEMENT_PAIRS",
@@ -1156,6 +1238,8 @@ __all__ = [
     "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
+    "REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS",
+    "REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",
     "TOKEN_AND_DAMAGE_PREVENTION_PAIR",
     "TRIGGER_AND_REPLACEMENT_PAIRS",

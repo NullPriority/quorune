@@ -145,7 +145,7 @@ class UntapAllCreaturesIntent:
 class CreateRegenerationShieldIntent:
     actor: str
     object_ref: str
-    logical_object_id: str
+    logical_object_id: str | None
     reason: str
 
     def __post_init__(self) -> None:
@@ -154,12 +154,17 @@ class CreateRegenerationShieldIntent:
             for value in (
                 self.actor,
                 self.object_ref,
-                self.logical_object_id,
                 self.reason,
+            )
+        ) or (
+            self.logical_object_id is not None
+            and (
+                type(self.logical_object_id) is not str
+                or not self.logical_object_id
             )
         ):
             raise ValueError(
-                "Regeneration intents require actor, object, incarnation, and reason"
+                "Regeneration intents require actor, object, optional incarnation, and reason"
             )
 
 
@@ -168,12 +173,17 @@ class DestroyPermanentIntent:
     actor: str
     object_ref: str
     reason: str
+    regeneration_prohibited: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
         if not all((self.actor, self.object_ref, self.reason)):
             raise ValueError(
                 "Destruction intents require actor, object, and reason"
+            )
+        if type(self.regeneration_prohibited) is not bool:
+            raise ValueError(
+                "Destruction regeneration prohibition must be boolean"
             )
         object.__setattr__(
             self,
@@ -191,6 +201,7 @@ class DestroyPermanentSetIntent:
     spec: AffectedPermanentSetSpec
     reason: str
     source_ref: str | None = None
+    regeneration_prohibited: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
@@ -201,6 +212,10 @@ class DestroyPermanentSetIntent:
         if not isinstance(self.spec, AffectedPermanentSetSpec):
             raise ValueError(
                 "Destruction-set intents require a typed affected set"
+            )
+        if type(self.regeneration_prohibited) is not bool:
+            raise ValueError(
+                "Destruction-set regeneration prohibition must be boolean"
             )
         if self.source_ref is not None and (
             type(self.source_ref) is not str or not self.source_ref

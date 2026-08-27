@@ -23,18 +23,32 @@ class TargetedDestructionEffectTemplate:
     """Closed lowering for one mandatory direct-target destruction."""
 
     target_spec: DirectPermanentTargetSpec
+    regeneration_prohibited: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.target_spec, DirectPermanentTargetSpec):
             raise ValueError("Destruction target predicate is unsupported")
+        if type(self.regeneration_prohibited) is not bool:
+            raise ValueError(
+                "Destruction regeneration prohibition must be boolean"
+            )
 
     @property
     def template_id(self) -> str:
-        return f"destroy-target-{self.target_spec.slug}-v2"
+        return (
+            f"destroy-target-{self.target_spec.slug}-regeneration-prohibited-v1"
+            if self.regeneration_prohibited
+            else f"destroy-target-{self.target_spec.slug}-v2"
+        )
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
-        return direct_target_effect("destroy", reference_field="card")
+        effect = dict(
+            direct_target_effect("destroy", reference_field="card")[0]
+        )
+        if self.regeneration_prohibited:
+            effect["regeneration_prohibited"] = True
+        return (effect,)
 
     @property
     def target_schema(self) -> Mapping[str, Any]:
@@ -42,7 +56,11 @@ class TargetedDestructionEffectTemplate:
 
     @property
     def mechanics(self) -> tuple[str, ...]:
-        return ("destroy", "cr-115-targets")
+        return (
+            "destroy",
+            "cr-115-targets",
+            *(("regeneration-prohibition",) if self.regeneration_prohibited else ()),
+        )
 
     def compiled(
         self,
@@ -66,10 +84,15 @@ class MassDestructionEffectTemplate:
 
     spec: AffectedPermanentSetSpec
     target_schema: Mapping[str, Any] | None = None
+    regeneration_prohibited: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.spec, AffectedPermanentSetSpec):
             raise ValueError("Mass destruction requires a typed affected set")
+        if type(self.regeneration_prohibited) is not bool:
+            raise ValueError(
+                "Mass-destruction regeneration prohibition must be boolean"
+            )
         schema = self.target_schema
         if schema is not None:
             schema = dict(schema)
@@ -90,17 +113,23 @@ class MassDestructionEffectTemplate:
 
     @property
     def template_id(self) -> str:
-        return f"destroy-fixed-set-{self.spec.fingerprint[:16]}-v1"
+        return (
+            "destroy-fixed-set-"
+            f"{self.spec.fingerprint[:16]}-regeneration-prohibited-v1"
+            if self.regeneration_prohibited
+            else f"destroy-fixed-set-{self.spec.fingerprint[:16]}-v1"
+        )
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
-        return (
-            {
-                "op": "destroy_all",
-                "source": "$source",
-                "set": self.spec.to_dict(),
-            },
-        )
+        effect = {
+            "op": "destroy_all",
+            "source": "$source",
+            "set": self.spec.to_dict(),
+        }
+        if self.regeneration_prohibited:
+            effect["regeneration_prohibited"] = True
+        return (effect,)
 
     @property
     def mechanics(self) -> tuple[str, ...]:
@@ -112,6 +141,7 @@ class MassDestructionEffectTemplate:
                 if self.target_schema is not None
                 else ()
             ),
+            *(("regeneration-prohibition",) if self.regeneration_prohibited else ()),
         )
 
     def compiled(
@@ -155,6 +185,26 @@ _BASIC_LAND_SUBTYPES = {
     ): land_type
     for land_type in BASIC_LAND_MANA
 }
+_REGENERATION_PROHIBITION = re.compile(
+    r"(?P<destruction>destroy .+?\.)\s+"
+    r"(?P<subject>it|they|those creatures|a creature destroyed this way|"
+    r"creatures destroyed this way) can(?:not|'t) be regenerated"
+    r"(?: this turn)?\.?",
+    re.IGNORECASE,
+)
+
+
+def _split_regeneration_prohibition(
+    text: str,
+) -> tuple[str, str | None] | None:
+    normalized = " ".join(text.strip().split())
+    match = _REGENERATION_PROHIBITION.fullmatch(normalized)
+    if match is None:
+        return normalized, None
+    return (
+        match.group("destruction"),
+        match.group("subject").casefold(),
+    )
 
 
 def _player_target_schema(*, opponent: bool) -> dict[str, Any]:
@@ -241,11 +291,22 @@ def fixed_affected_permanent_query(
 def mass_destruction_effect_template(
     text: str,
 ) -> MassDestructionEffectTemplate | None:
+    split = _split_regeneration_prohibition(text)
+    if split is None:
+        return None
+    destruction, prohibition_subject = split
+    if prohibition_subject not in {
+        None,
+        "they",
+        "those creatures",
+        "creatures destroyed this way",
+    }:
+        return None
     match = re.fullmatch(
         r"destroy (?:all|each) (?P<subject>.+?)"
         r"(?P<controller> target opponent controls| target player controls|"
         r" you control| your opponents control)?\.?",
-        text.strip(),
+        destruction,
         re.IGNORECASE,
     )
     if match is None:
@@ -276,6 +337,7 @@ def mass_destruction_effect_template(
             exclude_source=exclude_source,
         ),
         target_schema=target_schema,
+        regeneration_prohibited=prohibition_subject is not None,
     )
 
 
@@ -293,18 +355,35 @@ def destruction_effect_template(
 def targeted_destruction_effect_template(
     text: str,
 ) -> TargetedDestructionEffectTemplate | None:
+    split = _split_regeneration_prohibition(text)
+    if split is None:
+        return None
+    destruction, prohibition_subject = split
+    if prohibition_subject not in {
+        None,
+        "it",
+        "a creature destroyed this way",
+    }:
+        return None
     match = re.fullmatch(
         r"destroy (?P<subject>(?:another )?target .+?)\.?",
-        text.strip(),
+        destruction,
         re.IGNORECASE,
     )
     if match is None:
         return None
     target_spec = direct_permanent_target_spec(match.group("subject"))
-    return (
-        TargetedDestructionEffectTemplate(target_spec)
-        if target_spec is not None
-        else None
+    if target_spec is None:
+        return None
+    if prohibition_subject == "a creature destroyed this way" and not (
+        target_spec.subtypes_any
+        or target_spec.types_any == ("creature",)
+        or "creature" in target_spec.types_all
+    ):
+        return None
+    return TargetedDestructionEffectTemplate(
+        target_spec,
+        regeneration_prohibited=prohibition_subject is not None,
     )
 
 

@@ -207,6 +207,7 @@ class SemanticChoiceIntentHostMixin:
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                regeneration_prohibited=intent.regeneration_prohibited,
                 replacement_selections=tuple(
                     thaw_value(value)
                     for value in intent.replacement_selections

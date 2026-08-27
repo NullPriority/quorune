@@ -1141,7 +1141,7 @@ def _is_closed_targeted_destruction_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"destroy", "cr-115-targets"}
+                if value in {"destroy", "cr-115-targets", "regeneration-prohibition"}
             ),
         )
     )
@@ -1153,14 +1153,14 @@ def _is_closed_targeted_destruction_program(
 def _is_closed_self_regeneration_program(
     program: SemanticProgram,
 ) -> bool:
-    """Recognize only the reviewed self-regeneration activation effect."""
+    """Recognize only the reviewed fixed regeneration effect family."""
 
     required = set(
         self_regeneration_node_capabilities(
             effects=program.effects,
             target_schema=program.target_schema,
             mechanic_ids=(
-                value for value in program.coverage if value == "regenerate"
+                value for value in program.coverage if value in {"regenerate", "cr-115-targets"}
             ),
         )
     )
@@ -1181,7 +1181,7 @@ def _is_closed_mass_destruction_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"destroy", "destroy-fixed-set", "cr-115-targets"}
+                if value in {"destroy", "destroy-fixed-set", "cr-115-targets", "regeneration-prohibition"}
             ),
         )
     )

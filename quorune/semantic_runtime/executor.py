@@ -361,6 +361,7 @@ def _execute_permanent_object_intent(
                 (intent.object_ref,),
                 actor=intent.actor,
                 reason=intent.reason,
+                regeneration_prohibited=intent.regeneration_prohibited,
                 replacement_selections=intent.replacement_selections,
             ),
         )

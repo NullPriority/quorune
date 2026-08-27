@@ -335,7 +335,7 @@
     }
   ],
   "work_selection": {
-    "policy_version": 10,
+    "policy_version": 11,
     "priority_classes": [
       "ci_correctness",
       "replay_privacy_defect",
@@ -527,6 +527,64 @@
           "measurement_probe_id": "fixed-optional-effect-choice-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-regeneration-effects",
+          "member_family_ids": [
+            "activated_effect:destroy-mass",
+            "activated_effect:destroy-target",
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:unparsed-regenerate-cromat",
+            "activated_effect:unparsed-regenerate-enchanted-creature",
+            "activated_effect:unparsed-regenerate-equipped-creature",
+            "activated_effect:unparsed-regenerate-lord-of",
+            "activated_effect:unparsed-regenerate-target-artifact",
+            "activated_effect:unparsed-regenerate-target-creature",
+            "effect_clause:destroy-mass",
+            "effect_clause:destroy-target",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unparsed-regenerate-target-creature",
+            "effect_clause:unparsed-regenerate-target-permanent",
+            "replacement:regeneration",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:permanent.destroy.effect",
+            "capability:permanent.destroy.fixed_set",
+            "capability:permanent.destroy.regeneration_prohibition",
+            "capability:permanent.regeneration.fixed_effect",
+            "component:quorune.semantic_runtime.destruction_handlers.DestroyPermanentHandler",
+            "component:quorune.semantic_runtime.destruction_handlers.DestroyPermanentSetHandler",
+            "component:quorune.semantic_runtime.regeneration_handlers.CreateRegenerationShieldHandler"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "current-attached-creature-or-named-source",
+            "direct-target-artifact-creature-or-permanent",
+            "direct-target-or-fixed-set-destruction-prohibition"
+          ],
+          "shared_dependencies": [
+            "attachment.reference.current_or_lki",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "fixed regeneration shields and exact cannot-be-regenerated riders through the canonical regeneration and destruction owners",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes the reusable fixed regeneration-shield and destruction-prohibition boundary across spell, triggered, activated, attached-object, direct-target, and fixed-set contexts without widening into dynamic replacement grammar.",
+          "explicit_exclusions": [
+            "static regeneration, damage-linked prohibition, delayed results, and additional dependent results",
+            "unsupported activation costs, event bindings, attachment effects, target predicates, and unrelated residual siblings",
+            "unsupported destruction grammar and affected-player ordering for ordinary competing regeneration and shield-counter replacements",
+            "variable, repeated, optional, conditional, subtype-qualified, color-qualified, controller-qualified, and multiple-target regeneration"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-regeneration-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-source-event-triggers",
           "member_family_ids": [
             "event_binding:normalized-source-damage",
@@ -605,20 +663,37 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v132-fixed-optional-effect-choices",
-      "compiler_version": "oracle-ir-v132",
-      "bundle_id": "bundle:fixed-optional-effect-choices",
-      "candidate_ids": ["compiler:fixed-optional-effect-choices"],
+      "transition_id": "oracle-ir-v133-fixed-regeneration-effects",
+      "compiler_version": "oracle-ir-v133",
+      "bundle_id": "bundle:fixed-regeneration-effects",
+      "candidate_ids": ["compiler:fixed-regeneration-effects"],
       "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "activated_effect:destroy-mass",
+        "activated_effect:destroy-target",
+        "activated_effect:ordered-effect-composition",
+        "activated_effect:unparsed-regenerate-cromat",
+        "activated_effect:unparsed-regenerate-enchanted-creature",
+        "activated_effect:unparsed-regenerate-equipped-creature",
+        "activated_effect:unparsed-regenerate-lord-of",
+        "activated_effect:unparsed-regenerate-target-artifact",
+        "activated_effect:unparsed-regenerate-target-creature",
+        "effect_clause:destroy-mass",
+        "effect_clause:destroy-target",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:unparsed-regenerate-target-creature",
+        "effect_clause:unparsed-regenerate-target-permanent",
+        "replacement:regeneration",
+        "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "effect.choice.optional_fixed",
-        "trigger.effect.fixed_event",
-        "trigger.placement.apnap"
+        "attachment.reference.current_or_lki",
+        "permanent.destroy.effect",
+        "permanent.destroy.fixed_set",
+        "permanent.destroy.regeneration_prohibition",
+        "permanent.regeneration.fixed_effect",
+        "target.revalidate_resolution"
       ],
-      "expected_complete_card_gain": 94,
+      "expected_complete_card_gain": 56,
       "non_harvest_reason": null
     },
     "harvest_provenance": [

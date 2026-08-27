@@ -49,7 +49,6 @@ from .ir_model import (
     SourceSpan,
 )
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
-from .regeneration_templates import self_regeneration_effect_template
 from . import temporary_declaration_templates as declaration_templates
 
 
@@ -692,7 +691,6 @@ def activated_oracle_node(
     effect_material = _activated_effect_material(ability)
     self_zone_move = compile_self_zone_move(ability)
     handlers: tuple[Mapping[str, Any], ...] = ()
-    regeneration = self_regeneration_effect_template(effect_material)
     activated_damage = activated_source_damage_effect_template(
         effect_material
     )
@@ -712,8 +710,6 @@ def activated_oracle_node(
         template, effects, target_schema, mechanics = (
             declaration_restriction.compiled()
         )
-    elif regeneration is not None:
-        template, effects, target_schema, mechanics = regeneration.compiled()
     elif activated_damage is not None:
         template, effects, target_schema, mechanics = activated_damage.compiled()
     else:

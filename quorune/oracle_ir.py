@@ -100,6 +100,9 @@ from .compiler.prevention_templates import (
     fixed_prevention_effect_template,
     prevention_trigger_effect_template,
 )
+from .compiler.regeneration_templates import (
+    fixed_regeneration_effect_template,
+)
 from .compiler.resolution_effect_templates import (
     typed_resolution_effect_template,
 )
@@ -127,7 +130,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v132"
+ORACLE_COMPILER_VERSION = "oracle-ir-v133"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -304,6 +307,14 @@ def _effect_template(
     sequence = fixed_controller_effect_sequence_template(normalized)
     if sequence is not None:
         return sequence.compiled()
+    regeneration = fixed_regeneration_effect_template(
+        normalized,
+        card_name=card_name,
+        source_is_permanent=source_is_permanent,
+        source_attachment_relation=source_attachment_relation,
+    )
+    if regeneration is not None:
+        return regeneration.compiled()
     typed = typed_resolution_effect_template(normalized, card_name=card_name, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
     if typed is not None:
         return typed

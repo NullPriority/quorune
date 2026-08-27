@@ -163,12 +163,17 @@ def resolve_destruction_set(
     spec: AffectedPermanentSetSpec,
     reason: str,
     source_ref: str | None = None,
+    regeneration_prohibited: bool = False,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
 ) -> DestructionResult:
     """Resolve one fixed affected set through the canonical destruction owner."""
 
     _nonempty(actor, field="Destruction set actor")
     _nonempty(reason, field="Destruction set reason")
+    if type(regeneration_prohibited) is not bool:
+        raise DestructionSetError(
+            "Destruction-set regeneration prohibition must be boolean"
+        )
     snapshot = snapshot_destruction_set(
         host,
         actor=actor,
@@ -188,6 +193,7 @@ def resolve_destruction_set(
             cause=DestructionCause.EFFECT,
             actor=actor,
             reason=reason,
+            regeneration_prohibited=regeneration_prohibited,
             event_order=tuple(
                 value.object_id for value in snapshot.permanents
             ),

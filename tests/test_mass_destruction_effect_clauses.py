@@ -213,6 +213,14 @@ class MassDestructionCompilerTests(unittest.TestCase):
         self.assertEqual("$target.0", targeted.spec.target_controller)
         self.assertEqual("opponent", targeted.target_schema["player_relation"])
 
+        prohibited = mass_destruction_effect_template(
+            "Destroy all creatures. They can't be regenerated."
+        )
+        self.assertIsNotNone(prohibited)
+        assert prohibited is not None
+        self.assertTrue(prohibited.regeneration_prohibited)
+        self.assertTrue(prohibited.effects[0]["regeneration_prohibited"])
+
     def test_spell_trigger_and_activated_contexts_share_mass_destruction_lowering(self):
         contexts = (
             ("Destroy all creatures.", "Sorcery", "spell_ability"),
@@ -242,7 +250,6 @@ class MassDestructionCompilerTests(unittest.TestCase):
 
     def test_unsupported_mass_destruction_variants_remain_residuals(self):
         unsupported = (
-            "Destroy all creatures. They can't be regenerated.",
             "Destroy all creatures with mana value 3 or less.",
             "Destroy all nonwhite creatures.",
             "Destroy all non-Human creatures.",

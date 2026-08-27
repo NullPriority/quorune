@@ -160,6 +160,7 @@ class DestructionPlan:
     reason: str
     entries: tuple[DestructionEntry, ...]
     shield_counter_plan: CounterStatePlan
+    regeneration_prohibited: bool = False
     destruction_event_order: tuple[str, ...] = ()
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
@@ -168,11 +169,20 @@ class DestructionPlan:
             raise DestructionError("Destruction cause must be typed")
         if not isinstance(self.reason, str) or not self.reason:
             raise DestructionError("Destruction requires a nonempty reason")
+        if type(self.regeneration_prohibited) is not bool:
+            raise DestructionError(
+                "Destruction regeneration prohibition must be boolean"
+            )
         if self.cause is DestructionCause.EFFECT:
             if not isinstance(self.actor, str) or not self.actor:
                 raise DestructionError("Effect destruction requires an actor")
-        elif self.actor is not None:
-            raise DestructionError("State-based destruction has no actor")
+        else:
+            if self.actor is not None:
+                raise DestructionError("State-based destruction has no actor")
+            if self.regeneration_prohibited:
+                raise DestructionError(
+                    "State-based destruction cannot prohibit regeneration"
+                )
         if not isinstance(self.entries, tuple) or any(
             not isinstance(entry, DestructionEntry) for entry in self.entries
         ):
@@ -193,13 +203,14 @@ class DestructionPlan:
                 indestructible=entry.indestructible,
                 shield_counters=entry.shield_counters,
                 regeneration_shields=entry.regeneration_shields,
+                regeneration_prohibited=self.regeneration_prohibited,
             )
             for entry in self.entries
         ):
             raise DestructionError(
                 "Destruction entry disposition contradicts its snapshot"
             )
-        if self.cause is DestructionCause.EFFECT and any(
+        if self.cause is DestructionCause.EFFECT and not self.regeneration_prohibited and any(
             not entry.indestructible
             and entry.shield_counters
             and entry.regeneration_shields
@@ -324,6 +335,7 @@ def _destruction_disposition(
     indestructible: bool,
     shield_counters: int,
     regeneration_shields: int = 0,
+    regeneration_prohibited: bool = False,
 ) -> DestructionDisposition:
     if not isinstance(cause, DestructionCause):
         raise DestructionError("Destruction cause must be typed")
@@ -339,9 +351,13 @@ def _destruction_disposition(
         raise DestructionError(
             "Regeneration shield count must be a nonnegative integer"
         )
+    if type(regeneration_prohibited) is not bool:
+        raise DestructionError(
+            "Destruction regeneration prohibition must be boolean"
+        )
     if indestructible:
         return DestructionDisposition.INDESTRUCTIBLE
-    if regeneration_shields:
+    if regeneration_shields and not regeneration_prohibited:
         return DestructionDisposition.REGENERATION
     if cause is DestructionCause.EFFECT and shield_counters:
         return DestructionDisposition.SHIELD_COUNTER
@@ -381,6 +397,7 @@ def prepare_destructions(
     cause: DestructionCause,
     actor: str | None,
     reason: str,
+    regeneration_prohibited: bool = False,
     event_order: Sequence[str] = (),
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
 ) -> DestructionPlan:
@@ -390,12 +407,18 @@ def prepare_destructions(
         raise DestructionError("Destruction cause must be typed")
     if not isinstance(reason, str) or not reason:
         raise DestructionError("Destruction requires a nonempty reason")
+    if type(regeneration_prohibited) is not bool:
+        raise DestructionError(
+            "Destruction regeneration prohibition must be boolean"
+        )
     if cause is DestructionCause.EFFECT and (
         not isinstance(actor, str) or not actor
     ):
         raise DestructionError("Effect destruction requires an actor")
     if cause is DestructionCause.STATE_BASED_ACTION and actor is not None:
         raise DestructionError("State-based destruction has no actor")
+    if cause is DestructionCause.STATE_BASED_ACTION and regeneration_prohibited:
+        raise DestructionError("State-based destruction cannot prohibit regeneration")
 
     supplied_requests = tuple(requests)
     if any(
@@ -439,6 +462,7 @@ def prepare_destructions(
         indestructible = "indestructible" in keywords
         if (
             cause is DestructionCause.EFFECT
+            and not regeneration_prohibited
             and not indestructible
             and shield_count
             and regeneration_count
@@ -452,6 +476,7 @@ def prepare_destructions(
             indestructible=indestructible,
             shield_counters=shield_count,
             regeneration_shields=regeneration_count,
+            regeneration_prohibited=regeneration_prohibited,
         )
         if disposition is DestructionDisposition.SHIELD_COUNTER:
             shield_changes.append(
@@ -512,6 +537,7 @@ def prepare_destructions(
         reason=reason,
         entries=tuple(entries),
         shield_counter_plan=shield_plan,
+        regeneration_prohibited=regeneration_prohibited,
         destruction_event_order=destruction_order,
         replacement_selections=selections,
     )
@@ -549,6 +575,7 @@ def validate_destruction_plan(
             indestructible=current_indestructible,
             shield_counters=current_shields,
             regeneration_shields=current_regeneration,
+            regeneration_prohibited=plan.regeneration_prohibited,
         )
         if (
             card.ref != entry.object_ref
@@ -734,6 +761,7 @@ def destroy_permanent_refs(
     *,
     actor: str,
     reason: str,
+    regeneration_prohibited: bool = False,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
 ) -> DestructionResult:
     cards = tuple(
@@ -748,6 +776,7 @@ def destroy_permanent_refs(
             cause=DestructionCause.EFFECT,
             actor=actor,
             reason=reason,
+            regeneration_prohibited=regeneration_prohibited,
             replacement_selections=replacement_selections,
         ),
     )

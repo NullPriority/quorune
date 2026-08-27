@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "35b3ee7f9e9a462de0b28887d7245dc1754206c492c356de947df85f33123409",
-  "declaration_source_fingerprint": "fa85872aa3923dcc172fbb43dd03cfda4b831ca28db206c1ab1dac14efa3506c",
+  "registry_fingerprint": "8e65bcd4ee70f9a0b144d157e61108a39f32170d20928ddfb70a429e6917f6fe",
+  "declaration_source_fingerprint": "ee408eb8e2de2bdf9821486cc353fb00721d8696eb5e25efd9a67e27d5f15cb0",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -35056,6 +35056,146 @@
       "applicability_note": "Reject stale logical identity or effective disposition before any object moves or shield counter changes."
     },
     {
+      "capability_id": "permanent.destroy.regeneration_prohibition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_regeneration_prohibition_preserves_other_destruction_protections",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "701.19",
+        "701.19a",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suppress only regeneration while retaining the ordinary Indestructible and shield-counter dispositions in one destruction batch."
+    },
+    {
+      "capability_id": "permanent.destroy.regeneration_prohibition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "701.19",
+        "701.19a",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve one four-player fixed destruction set with ordinary, regeneration-shielded, shield-counter, and Indestructible objects."
+    },
+    {
+      "capability_id": "permanent.destroy.regeneration_prohibition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_regeneration_prohibition_shape_and_intent_mutants_fail_closed",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "701.19",
+        "701.19a",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject removed, false, mistyped, or shape-incoherent regeneration-prohibition flags before runtime mutation."
+    },
+    {
+      "capability_id": "permanent.destroy.regeneration_prohibition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_regeneration_prohibition_shape_and_intent_mutants_fail_closed",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "701.19",
+        "701.19a",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fail closed when the exact rider, compiled mechanic, semantic field, and typed intent do not agree."
+    },
+    {
+      "capability_id": "permanent.destroy.regeneration_prohibition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_exact_fixed_regeneration_and_prohibition_grammar_compiles",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "701.19",
+        "701.19a",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile real direct-target and fixed-set cannot-be-regenerated cards into the same flagged destruction owners."
+    },
+    {
+      "capability_id": "permanent.destroy.regeneration_prohibition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "701.19",
+        "701.19a",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only public fixed-set destruction outcomes and public remaining protection state to every seat."
+    },
+    {
+      "capability_id": "permanent.destroy.regeneration_prohibition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_regeneration_prohibited_mass_destruction_is_atomic_and_replays",
+      "official_rule_ids": [
+        "701.8",
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "701.19",
+        "701.19a",
+        "702.12b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the exact rider, fixed-set snapshot, protection dispositions, simultaneous moves, and final state hash."
+    },
+    {
       "capability_id": "permanent.destroy.state_based_damage",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_keyword_rules.CombatKeywordRuleTests.test_indestructible_consumes_deathtouch_at_the_first_sba_check",
@@ -35694,6 +35834,125 @@
         "commander_review"
       ],
       "applicability_note": "Reject a destruction plan after the current Indestructible characteristic changes and preserve the authoritative state hash."
+    },
+    {
+      "capability_id": "permanent.regeneration.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_targeted_regeneration_creates_shield_on_the_chosen_permanent",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a real direct-target regeneration spell onto the chosen opponent-controlled permanent rather than the spell source."
+    },
+    {
+      "capability_id": "permanent.regeneration.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_targeted_regeneration_creates_shield_on_the_chosen_permanent",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer and resolve the fixed target across a four-player battlefield with the shield owned by the selected permanent."
+    },
+    {
+      "capability_id": "permanent.regeneration.fixed_effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_regeneration_shape_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill altered direct-target and attachment-reference shapes and blocked canonical destruction dependencies."
+    },
+    {
+      "capability_id": "permanent.regeneration.fixed_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_unsupported_regeneration_grammar_remains_residual",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep variable, multiple, qualified, repeated, conditional, malformed, and static regeneration outside the fixed grammar."
+    },
+    {
+      "capability_id": "permanent.regeneration.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_regeneration_rules.RegenerationCompilerTests.test_exact_fixed_regeneration_and_prohibition_grammar_compiles",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile real direct-target, activated target, and attached-creature regeneration cards through the shared fixed owner."
+    },
+    {
+      "capability_id": "permanent.regeneration.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_targeted_regeneration_creates_shield_on_the_chosen_permanent",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the public shield identically while keeping casting and target decision authority scoped to the acting seat."
+    },
+    {
+      "capability_id": "permanent.regeneration.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_regeneration_rules.RegenerationRuntimeTests.test_targeted_regeneration_creates_shield_on_the_chosen_permanent",
+      "official_rule_ids": [
+        "506.4",
+        "701.19",
+        "701.19a",
+        "701.19c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay casting, target selection, resolution-time object lookup, public shield creation, and the final authoritative hash."
     },
     {
       "capability_id": "permanent.regeneration.self_activation",
@@ -48999,5 +49258,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "31b2329329efb3d8d5f5b6b96a11556b599d78ee37c6002590184e396202417b"
+  "fingerprint": "59477919a77cc7cc87993bdd84d19dc897836a3fcf12149a70c7824324f350d0"
 }

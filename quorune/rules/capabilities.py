@@ -1335,6 +1335,25 @@ def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
     }
 
 
+_REGENERATION_MECHANIC_CAPABILITIES = {
+    "regenerate": {
+        "permanent.regeneration.fixed_effect",
+        "permanent.regeneration.self_activation",
+    },
+    "regeneration-prohibition": {
+        "permanent.destroy.regeneration_prohibition"
+    },
+}
+
+
+def _regeneration_covered_mechanics(supplied: set[str]) -> set[str]:
+    return {
+        mechanic
+        for mechanic, capabilities in _REGENERATION_MECHANIC_CAPABILITIES.items()
+        if supplied.intersection(capabilities)
+    }
+
+
 def capability_covered_mechanics(
     dependencies: Iterable[str],
 ) -> tuple[str, ...]:
@@ -1356,8 +1375,7 @@ def capability_covered_mechanics(
         {"permanent.destroy.effect", "permanent.destroy.fixed_set"}
     ):
         covered.add("destroy")
-    if "permanent.regeneration.self_activation" in supplied:
-        covered.add("regenerate")
+    covered.update(_regeneration_covered_mechanics(supplied))
     if "permanent.destroy.fixed_set" in supplied:
         covered.add("destroy-fixed-set")
     if "permanent.exile.effect" in supplied:

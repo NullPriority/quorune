@@ -20,7 +20,14 @@ _REASON_FIELD = "reason"
 
 
 _SET_FIELDS = frozenset(
-    {"op", "source", "set", _REASON_FIELD, "_replacement_selections"}
+    {
+        "op",
+        "source",
+        "set",
+        "regeneration_prohibited",
+        _REASON_FIELD,
+        "_replacement_selections",
+    }
 )
 
 
@@ -54,7 +61,14 @@ class DestroyPermanentHandler:
             reference_field="card",
             family_label="Destroy",
             allow_replacement_selections=True,
+            additional_allowed_fields=("regeneration_prohibited",),
         )
+        has_regeneration_prohibition = "regeneration_prohibited" in effect
+        regeneration_prohibited = effect.get("regeneration_prohibited", False)
+        if has_regeneration_prohibition and regeneration_prohibited is not True:
+            raise SemanticNodeError(
+                "Destroy regeneration prohibition must be true when present"
+            )
         return IntentPlan(
             operation=self.operation,
             handler_id=self.handler_id,
@@ -63,6 +77,7 @@ class DestroyPermanentHandler:
                     actor=context.actor,
                     object_ref=fields.object_ref,
                     reason=fields.reason,
+                    regeneration_prohibited=regeneration_prohibited,
                     replacement_selections=fields.replacement_selections,
                 ),
             ),
@@ -128,6 +143,12 @@ class DestroyPermanentSetHandler:
             raise SemanticNodeError(
                 "Destroy-set reason must be a nonempty string"
             )
+        has_regeneration_prohibition = "regeneration_prohibited" in effect
+        regeneration_prohibited = effect.get("regeneration_prohibited", False)
+        if has_regeneration_prohibition and regeneration_prohibited is not True:
+            raise SemanticNodeError(
+                "Destroy-set regeneration prohibition must be true when present"
+            )
         raw_selections = effect.get("_replacement_selections")
         if raw_selections is None:
             raw_selections = ()
@@ -141,6 +162,7 @@ class DestroyPermanentSetHandler:
                 spec=spec,
                 reason=raw_reason or context.default_reason,
                 source_ref=source_ref,
+                regeneration_prohibited=regeneration_prohibited,
                 replacement_selections=tuple(raw_selections),
             )
         except ValueError as exc:

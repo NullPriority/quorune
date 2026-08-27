@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from typing import Any, Mapping, Sequence
+from typing import Any, Collection, Mapping, Sequence
 
 from quorune.util import stable_json
 from quorune.work_selection_evidence import (
@@ -259,6 +259,14 @@ def bundle_measurement_decision(
     )
 
 
+def estimated_bundle_effort(implementation_hours: int) -> str:
+    if implementation_hours <= 8:
+        return "small"
+    if implementation_hours <= 20:
+        return "medium"
+    return "large"
+
+
 def atomic_frontier_bundle(
     *,
     candidate_id: str,
@@ -458,6 +466,8 @@ def candidate_frontier_measurements(
     bundle_policies: Sequence[Mapping[str, Any]],
     weights: Mapping[str, int],
     cohort_measurements: Mapping[str, Mapping[str, Any]],
+    *,
+    completed_bundle_ids: Collection[str] = (),
 ) -> list[dict[str, Any]]:
     family_rows = {
         str(row.get("family_id") or ""): row
@@ -469,8 +479,11 @@ def candidate_frontier_measurements(
             "Card frontier lacks complete bundle card rows"
         )
     result = []
+    completed = set(completed_bundle_ids)
     for bundle_policy in bundle_policies:
         bundle_id = str(bundle_policy["bundle_id"])
+        if bundle_id in completed:
+            continue
         member_ids = [str(value) for value in bundle_policy["member_family_ids"]]
         missing = sorted(set(member_ids) - set(family_rows))
         if len(missing) == len(member_ids):
@@ -587,6 +600,8 @@ def validated_candidate_frontier_measurements(
     weights: Mapping[str, int],
     cohort_measurement_artifact: Mapping[str, Any],
     coverage: Mapping[str, Any],
+    *,
+    completed_bundle_ids: Collection[str] = (),
 ) -> list[dict[str, Any]]:
     fingerprints = {
         str(bundle["bundle_id"]): bundle_measurement_fingerprint(
@@ -610,6 +625,7 @@ def validated_candidate_frontier_measurements(
         bundle_policies,
         weights,
         measurements,
+        completed_bundle_ids=completed_bundle_ids,
     )
 
 
@@ -618,6 +634,7 @@ __all__ = [
     "bundle_measurement_fingerprint",
     "bundle_measurement_decision",
     "candidate_frontier_measurements",
+    "estimated_bundle_effort",
     "single_candidate_bundle",
     "validated_candidate_frontier_measurements",
     "validate_bundle_policy",

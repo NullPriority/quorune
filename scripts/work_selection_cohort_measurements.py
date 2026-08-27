@@ -4,14 +4,22 @@ from functools import partial
 from typing import Any, Mapping, Sequence
 
 from quorune.compiler.exile_templates import targeted_exile_effect_template
+from quorune.compiler.destruction_templates import destruction_effect_template
 from quorune.compiler.optional_effect_templates import (
     fixed_optional_effect_template,
 )
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
+from quorune.compiler.regeneration_templates import (
+    fixed_regeneration_effect_template,
+)
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
-from quorune.oracle_ir import _reviewed_atomic_effect_template
+from quorune.oracle_ir import (
+    _face_type_context,
+    _reviewed_atomic_effect_template,
+    _without_parenthetical_reminder,
+)
 from quorune.work_selection_evidence import (
     COHORT_MEASUREMENT_ALGORITHM_VERSION,
     COHORT_MEASUREMENT_SCHEMA_VERSION,
@@ -23,7 +31,13 @@ from quorune.work_selection_common import stable_hash
 _PROBE_TOKEN = "fixed-token-creation-existing-owner-v1"
 _PROBE_EXILE = "fixed-exile-existing-owner-v1"
 _PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
-_PROBE_IDS = {_PROBE_EXILE, _PROBE_OPTIONAL_EFFECT, _PROBE_TOKEN}
+_PROBE_REGENERATION = "fixed-regeneration-existing-owner-v1"
+_PROBE_IDS = {
+    _PROBE_EXILE,
+    _PROBE_OPTIONAL_EFFECT,
+    _PROBE_REGENERATION,
+    _PROBE_TOKEN,
+}
 
 
 def _source_line(card_record: Any, ability: Mapping[str, Any]) -> str:
@@ -106,7 +120,62 @@ def _optional_effect_instruction_candidates(line: str) -> tuple[str, ...]:
     )
 
 
-def _matches_probe(probe_id: str, source: str) -> bool:
+def _fixed_regeneration_instruction_candidates(line: str) -> tuple[str, ...]:
+    normalized = " ".join(
+        _without_parenthetical_reminder(line).strip().split()
+    )
+    candidates = [normalized]
+    for candidate in tuple(candidates):
+        if candidate.startswith("• "):
+            candidates.append(candidate[2:].strip())
+        if ": " in candidate and not candidate.startswith("{TK}"):
+            candidates.append(candidate.split(": ", 1)[1].strip())
+        if " — " in candidate:
+            candidates.append(candidate.split(" — ", 1)[1].strip())
+    for candidate in tuple(candidates):
+        if candidate.casefold().startswith(
+            ("when ", "whenever ", "at the beginning of ")
+        ) and ", " in candidate:
+            candidates.append(candidate.split(", ", 1)[1].strip())
+    return tuple(dict.fromkeys(candidates))
+
+
+def _source_face_context(
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> tuple[str, bool | None, Any]:
+    face_id = str(ability.get("face_id") or "front")
+    if face_id == "front":
+        face_name = str(card_record.name)
+        type_line = str(card_record.type_line)
+    else:
+        face = next(
+            (
+                value
+                for value in card_record.faces
+                if str(value.get("name") or "") == face_id
+            ),
+            None,
+        )
+        if face is None:
+            face_name = str(card_record.name)
+            type_line = str(card_record.type_line)
+        else:
+            face_name = str(face.get("name") or card_record.name)
+            type_line = str(face.get("type_line") or card_record.type_line)
+    _types, _permanent, _spell, support_source, attachment = (
+        _face_type_context(type_line)
+    )
+    return face_name, support_source, attachment
+
+
+def _matches_probe(
+    probe_id: str,
+    source: str,
+    *,
+    card_record: Any | None = None,
+    ability: Mapping[str, Any] | None = None,
+) -> bool:
     if probe_id == _PROBE_TOKEN:
         return any(
             fixed_token_creation_effect_template(body) is not None
@@ -131,6 +200,28 @@ def _matches_probe(probe_id: str, source: str) -> bool:
             )
             is not None
             for body in _optional_effect_instruction_candidates(source)
+        )
+    if probe_id == _PROBE_REGENERATION:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Fixed-regeneration measurement requires card context"
+            )
+        card_name, source_is_permanent, attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        return any(
+            fixed_regeneration_effect_template(
+                body,
+                card_name=card_name,
+                source_is_permanent=source_is_permanent,
+                source_attachment_relation=attachment_relation,
+            )
+            is not None
+            or (
+                (template := destruction_effect_template(body)) is not None
+                and template.regeneration_prohibited
+            )
+            for body in _fixed_regeneration_instruction_candidates(source)
         )
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
@@ -171,7 +262,12 @@ def _measurement(
             }
             if not family_ids.intersection(member_ids) or not family_ids <= member_ids:
                 continue
-            if not _matches_probe(probe_id, _source_line(record, ability)):
+            if not _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            ):
                 cards_with_unmatched_member_ability.add(oracle_id)
                 continue
             matched_abilities += 1

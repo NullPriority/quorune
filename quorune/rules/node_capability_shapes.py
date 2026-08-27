@@ -42,6 +42,11 @@ from .cumulative_upkeep_capability_shapes import (
     fixed_life_cumulative_upkeep_node_capabilities,
     fixed_mana_cumulative_upkeep_node_capabilities,
 )
+from .destruction_regeneration_capability_shapes import (
+    mass_destruction_node_capabilities as _mass_destruction_capabilities,
+    self_regeneration_node_capabilities as _self_regeneration_capabilities,
+    targeted_destruction_node_capabilities as _targeted_destruction_capabilities,
+)
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
@@ -639,26 +644,10 @@ def targeted_destruction_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed direct destruction grammar."""
-
-    mechanics = {str(value).casefold() for value in mechanic_ids}
-    if (
-        not {"destroy", "cr-115-targets"}.issubset(mechanics)
-        or len(effects) != 1
-        or not direct_permanent_target_schema_is_closed(target_schema)
-    ):
-        return ()
-    effect = effects[0]
-    if (
-        set(effect) != {"op", "card"}
-        or effect.get("op") != "destroy"
-        or effect.get("card") != "$target.0"
-    ):
-        return ()
-    assert target_schema is not None
-    return (
-        "permanent.destroy.effect",
-        *direct_target_predicate_capabilities(target_schema),
-        "target.revalidate_resolution",
+    return _targeted_destruction_capabilities(
+        effects=effects,
+        target_schema=target_schema,
+        mechanic_ids=mechanic_ids,
     )
 
 
@@ -668,21 +657,12 @@ def self_regeneration_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return ownership only for one self-zone-object regeneration action."""
-
-    mechanics = {str(value).casefold() for value in mechanic_ids}
-    if mechanics != {"regenerate"} or target_schema is not None:
-        return ()
-    if len(effects) != 1:
-        return ()
-    effect = effects[0]
-    if (
-        set(effect) != {"op", "card"}
-        or effect.get("op") != "regenerate"
-        or effect.get("card") != SOURCE_ZONE_OBJECT
-    ):
-        return ()
-    return ("permanent.regeneration.self_activation",)
+    """Return ownership for one closed fixed-object regeneration action."""
+    return _self_regeneration_capabilities(
+        effects=effects,
+        target_schema=target_schema,
+        mechanic_ids=mechanic_ids,
+    )
 
 
 def mass_destruction_node_capabilities(
@@ -692,49 +672,11 @@ def mass_destruction_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed fixed-set destruction grammar."""
-
-    mechanics = {str(value).casefold() for value in mechanic_ids}
-    if not {"destroy", "destroy-fixed-set"}.issubset(mechanics) or len(effects) != 1:
-        return ()
-    effect = effects[0]
-    if (
-        set(effect) != {"op", "source", "set"}
-        or effect.get("op") != "destroy_all"
-        or effect.get("source") != "$source"
-    ):
-        return ()
-    try:
-        spec = AffectedPermanentSetSpec.from_dict(effect["set"])
-    except (AffectedPermanentSetError, KeyError, TypeError):
-        return ()
-    targeted = spec.controller_relation is AffectedControllerRelation.TARGET_PLAYER
-    schema = dict(target_schema or {})
-    valid_player_schemas = (
-        {
-            "zones": ["player"],
-            "categories": ["player"],
-            "count": 1,
-            "player_relation": "any",
-        },
-        {
-            "zones": ["player"],
-            "categories": ["player"],
-            "count": 1,
-            "player_relation": "opponent",
-        },
+    return _mass_destruction_capabilities(
+        effects=effects,
+        target_schema=target_schema,
+        mechanic_ids=mechanic_ids,
     )
-    if targeted:
-        if "cr-115-targets" not in mechanics or schema not in valid_player_schemas:
-            return ()
-        if spec.target_controller != "$target.0":
-            return ()
-        return (
-            "permanent.destroy.fixed_set",
-            "target.revalidate_resolution",
-        )
-    if target_schema is not None or "cr-115-targets" in mechanics:
-        return ()
-    return ("permanent.destroy.fixed_set",)
 
 
 def targeted_return_to_hand_node_capabilities(
