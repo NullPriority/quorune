@@ -4520,7 +4520,7 @@
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "runtime_composition",
+      "assurance_kind": "pair_derived",
       "test_id": "test_resolution_and_static_ability_changes_share_layer_six_ordering",
       "piece_ids": [
         "capability.continuous.ability.fixed_query_keyword_grant",
