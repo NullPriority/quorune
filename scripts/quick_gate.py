@@ -125,6 +125,14 @@ def build_plan(
                         "--validate-declarations",
                     ),
                 ),
+                QuickStep(
+                    "rules-selection-policy",
+                    (
+                        python,
+                        "scripts/update_rules_scheduler.py",
+                        "--validate-policy",
+                    ),
+                ),
             )
         )
     if phase == "normal" and "compact-ci-dependencies" in impact.checks:

@@ -523,12 +523,12 @@
           ],
           "canonical_owner_ids": [
             "capability:continuous.characteristics.query_count_modifier",
-            "component:quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
-            "component:quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
-            "component:quorune.dynamic_characteristics.query_characteristic_count",
             "component:quorune.characteristic_evaluation.evaluate_card_characteristics",
             "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
-            "component:quorune.continuous_effects.evaluate_continuous_effects"
+            "component:quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
+            "component:quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
+            "component:quorune.continuous_effects.evaluate_continuous_effects",
+            "component:quorune.dynamic_characteristics.query_characteristic_count"
           ],
           "source_contexts": [
             "static"
@@ -551,9 +551,9 @@
           "expected_downstream_closure": "Replaces three legacy count enums with a reusable typed object-query quantity across controller, opponent, global, graveyard, hand-size, attachment, and source-counter contexts while preserving ordinary layer-6 and layer-7c ordering.",
           "explicit_exclusions": [
             "Delirium distinct-type, Domain or color cardinality, chosen, named, modified, shared-type, top-library, secret-identity, and ability-presence counts",
+            "ability-addition or ability-removal applicability until the shared layer-6 ability-presence query owns those interactions",
             "dynamic coefficients, base-setting, characteristic-defining, type, color, comparison, modal, triggered, activated, attached-subject, and quoted-rule carriers",
-            "negative, maximum, historical-event, combat-state, life, emblem, dungeon, party, and unsupported keyword conditions",
-            "ability-addition or ability-removal applicability until the shared layer-6 ability-presence query owns those interactions"
+            "negative, maximum, historical-event, combat-state, life, emblem, dungeon, party, and unsupported keyword conditions"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "typed-query-self-characteristic-existing-owner-v1"

@@ -17,6 +17,7 @@ from quorune.rules_scheduler import (
 )
 from quorune.util import stable_json
 from quorune.work_selection import selected_work_candidate
+from quorune.work_selection_bundles import validate_bundle_policy
 from scripts.harvest_outcome_history import build_harvest_outcome_history
 
 
@@ -201,6 +202,7 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
+    mode.add_argument("--validate-policy", action="store_true")
     args = parser.parse_args()
     catalog = json.loads(
         (ROOT / "platform" / "rules-subsystems.json").read_text(
@@ -208,6 +210,9 @@ def main() -> int:
         )
     )
     work_policy = catalog.get("work_selection") or {}
+    if args.validate_policy:
+        validate_bundle_policy(work_policy.get("coverage_family") or {})
+        return 0
     harvest_history = build_harvest_outcome_history(
         ROOT,
         work_policy.get("harvest_provenance"),
