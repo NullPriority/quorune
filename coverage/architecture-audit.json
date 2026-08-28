@@ -5108,60 +5108,60 @@
           "classification": "rules_value",
           "file": "quorune/trigger_discovery.py",
           "flow_id": "card-identity-flow:91da9a9e85933d490536",
-          "line": 360,
+          "line": 362,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 360,
+          "source_line": 362,
           "symbol": "_semantic_condition_actual"
         },
         {
           "classification": "rules_value",
           "file": "quorune/trigger_discovery.py",
           "flow_id": "card-identity-flow:332a0c38ff2a335d3e09",
-          "line": 361,
+          "line": 363,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 361,
+          "source_line": 363,
           "symbol": "_semantic_condition_actual"
         },
         {
           "classification": "rules_value",
           "file": "quorune/trigger_discovery.py",
           "flow_id": "card-identity-flow:78fd499db8ea9984c688",
-          "line": 364,
+          "line": 366,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "mapping_get",
-          "source_line": 364,
+          "source_line": 366,
           "symbol": "_semantic_condition_actual"
         },
         {
           "classification": "rules_value",
           "file": "quorune/trigger_discovery.py",
           "flow_id": "card-identity-flow:65942090b872a83dd3ed",
-          "line": 758,
+          "line": 776,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 758,
+          "source_line": 776,
           "symbol": "_event_programs_for_source"
         },
         {
           "classification": "rules_value",
           "file": "quorune/trigger_discovery.py",
           "flow_id": "card-identity-flow:1e063dc8f43167146a04",
-          "line": 905,
+          "line": 923,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 905,
+          "source_line": 923,
           "symbol": "_shared_evoke_trigger_item"
         },
         {
@@ -11581,7 +11581,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 186950,
+      "logical_lines": 186967,
       "methods": {
         "dunder": 519,
         "private": 826,
@@ -11856,18 +11856,18 @@
           "physical_lines": 1057
         },
         {
+          "file": "quorune/trigger_discovery.py",
+          "functions_and_methods": 31,
+          "language": "python",
+          "logical_lines": 997,
+          "physical_lines": 1065
+        },
+        {
           "file": "quorune/token_creation.py",
           "functions_and_methods": 34,
           "language": "python",
           "logical_lines": 986,
           "physical_lines": 1060
-        },
-        {
-          "file": "quorune/trigger_discovery.py",
-          "functions_and_methods": 30,
-          "language": "python",
-          "logical_lines": 980,
-          "physical_lines": 1045
         },
         {
           "file": "quorune/semantic_choices/intent_replacement.py",
@@ -16023,7 +16023,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 204926,
+      "physical_lines": 204946,
       "python_file_count": 569,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -16041,7 +16041,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 2668,
+      "top_level_functions": 2669,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -23127,7 +23127,7 @@
         {
           "condition": "op == \"eq\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 414,
+          "line": 416,
           "string_literals": [
             "eq"
           ],
@@ -23136,7 +23136,7 @@
         {
           "condition": "op == \"ne\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 416,
+          "line": 418,
           "string_literals": [
             "ne"
           ],
@@ -23145,7 +23145,7 @@
         {
           "condition": "op == \"in\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 418,
+          "line": 420,
           "string_literals": [
             "in"
           ],
@@ -23154,7 +23154,7 @@
         {
           "condition": "op == \"not_in\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 420,
+          "line": 422,
           "string_literals": [
             "not_in"
           ],
@@ -23163,7 +23163,7 @@
         {
           "condition": "op == \"contains_any\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 422,
+          "line": 424,
           "string_literals": [
             "contains_any"
           ],
@@ -23172,7 +23172,7 @@
         {
           "condition": "op == \"count_gte\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 424,
+          "line": 426,
           "string_literals": [
             "count_gte"
           ],
@@ -23181,7 +23181,7 @@
         {
           "condition": "op == \"gte\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 436,
+          "line": 438,
           "string_literals": [
             "gte"
           ],
@@ -23190,7 +23190,7 @@
         {
           "condition": "op == \"gt\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 438,
+          "line": 440,
           "string_literals": [
             "gt"
           ],
@@ -23199,7 +23199,7 @@
         {
           "condition": "op == \"lte\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 440,
+          "line": 442,
           "string_literals": [
             "lte"
           ],
@@ -23208,7 +23208,7 @@
         {
           "condition": "op == \"lt\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 442,
+          "line": 444,
           "string_literals": [
             "lt"
           ],
@@ -23217,7 +23217,7 @@
         {
           "condition": "op == \"truthy\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 444,
+          "line": 446,
           "string_literals": [
             "truthy"
           ],
@@ -23226,7 +23226,7 @@
         {
           "condition": "op == \"falsy\"",
           "file": "quorune/trigger_discovery.py",
-          "line": 446,
+          "line": 448,
           "string_literals": [
             "falsy"
           ],
@@ -23235,7 +23235,7 @@
         {
           "condition": "any( effect.get(\"op\") == \"offer_modular_counter_transfer\" for effect in program.effects )",
           "file": "quorune/trigger_discovery.py",
-          "line": 834,
+          "line": 852,
           "string_literals": [
             "offer_modular_counter_transfer",
             "op"
@@ -28346,7 +28346,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "333a05911d44ef5a0268aa87e43adf4328d84e98c5337214adb992c62b42b8ac",
+      "fingerprint": "120a59ef4f09e7b6b771a17f8294ff29c1441559248865f61772bcb63fb98152",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
