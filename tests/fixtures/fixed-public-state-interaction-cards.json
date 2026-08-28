@@ -1,0 +1,46 @@
+{
+  "cards": [
+    {
+      "cmc": 1.0,
+      "color_identity": ["U"],
+      "colors": ["U"],
+      "defense": null,
+      "keywords": ["Enchant", "Threshold"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Aboshan's Desire",
+      "oracle_id": "95db05eb-2c25-43f2-8e18-dfc64f490634",
+      "oracle_text": "Enchant creature\nEnchanted creature has flying.\nThreshold — Enchanted creature has shroud as long as there are seven or more cards in your graveyard. (It can't be the target of spells or abilities.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2001-10-01",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": ["W"],
+      "colors": ["W"],
+      "defense": null,
+      "keywords": ["Flying"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Angel of Vitality",
+      "oracle_id": "635fe908-6f58-4c9e-ac55-0775a7c6f278",
+      "oracle_text": "Flying\nIf you would gain life, you gain that much life plus 1 instead.\nThis creature gets +2/+2 as long as you have 25 or more life.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "2",
+      "type_line": "Creature — Angel"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [],
+  "schema_version": 1,
+  "source": "Scryfall Oracle subset for fixed public-state interaction tests"
+}

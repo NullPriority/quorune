@@ -9,7 +9,10 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
-from quorune.card_programs import compile_card_program
+from quorune.card_programs import (
+    bind_card_program_runtime,
+    compile_card_program,
+)
 from quorune.carddb import CardDatabase
 from quorune.compiler.continuous_templates import (
     fixed_public_state_characteristics_handler,
@@ -23,7 +26,6 @@ from quorune.continuous_effects import (
     Layer,
     evaluate_continuous_effects,
 )
-from quorune.attachments import attach_objects
 from quorune.deck import DeckLoader
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
@@ -53,6 +55,10 @@ def focused_card_database(directory: str) -> CardDatabase:
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
             FIXTURE,
+            ROOT
+            / "tests"
+            / "fixtures"
+            / "fixed-public-state-interaction-cards.json",
         ],
         path,
     )
@@ -332,6 +338,7 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         name: str,
         ref: str,
         seat: str = "A",
+        zone: str = "battlefield",
     ) -> CardInstance:
         engine = session.engine
         record = self.db.lookup(name)
@@ -351,15 +358,30 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             printed_name=record.name,
             owner=seat,
             controller=seat,
-            zone="battlefield",
+            zone=zone,
             zone_timestamp=engine._next_zone_timestamp(),
             entered_battlefield_turn_sequence=engine.state.turn_sequence,
-            known_to=list(engine.seats),
-            revealed_to=list(engine.seats),
+            known_to=(
+                [seat]
+                if zone in {"hand", "library"}
+                else list(engine.seats)
+            ),
+            revealed_to=(
+                []
+                if zone in {"hand", "library"}
+                else list(engine.seats)
+            ),
         )
         engine.state.cards[card.object_id] = card
-        engine.state.players[seat].zones["battlefield"].append(card.object_id)
+        engine.state.players[seat].zones[zone].append(card.object_id)
         return card
+
+    @staticmethod
+    def resolve_top(engine) -> None:
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine._prepare_stack_resolution()
 
     @staticmethod
     def creature(
@@ -491,7 +513,7 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             ),
         )
 
-    def test_turn_gated_attachment_and_anthem_compose(self):
+    def test_aura_and_equip_attachments_compose_with_public_state_characteristics(self):
         session = self.session(118_220_001)
         engine = session.engine
         riot = self.add_source(session, name="Street Riot", ref="RIOT")
@@ -500,25 +522,69 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             name="Javelin of Lightning",
             ref="JAVELIN",
         )
-        target = self.creature(engine, seat="A", name="Conditional Target")
-        attach_objects(
-            engine.state.cards,
-            javelin,
-            target,
-            source_timestamp=engine._next_zone_timestamp(),
+        desire = self.add_source(
+            session,
+            name="Aboshan's Desire",
+            ref="DESIRE",
+            zone="hand",
         )
-
+        target = self.creature(engine, seat="A", name="Conditional Target")
         engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.priority_passes = []
+        engine.state.players["A"].mana_pool["C"] = 4
+        engine._activate(
+            "A",
+            {
+                "source": javelin.ref,
+                "ability": "ab4",
+                "targets": [target.ref],
+            },
+        )
+        self.assertEqual("builtin:equip", engine.state.stack[-1].semantic_key)
+        self.resolve_top(engine)
+        self.assertEqual(target.object_id, javelin.attached_to)
+
+        engine.state.players["A"].mana_pool["U"] = 1
+        engine._cast(
+            "A",
+            {
+                "card": desire.ref,
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"U": 1},
+            },
+        )
+        self.resolve_top(engine)
+        self.assertEqual(target.object_id, desire.attached_to)
+
         active = engine._effective_card_data(target)
         self.assertEqual("6", active["power"])
         self.assertIn("First Strike", active["keywords"])
         self.assertIn("Trample", active["keywords"])
+        self.assertIn("Flying", active["keywords"])
+
+        threshold_cards = list(
+            engine.state.players["A"].zones["library"][-7:]
+        )
+        for object_id in threshold_cards:
+            engine.move_card(object_id, "graveyard", log=False)
+        self.assertIn(
+            "Shroud",
+            engine._effective_card_data(target)["keywords"],
+        )
+        for object_id in threshold_cards:
+            engine.move_card(object_id, "library", log=False)
 
         engine.state.active_player = "B"
         inactive = engine._effective_card_data(target)
         self.assertEqual("3", inactive["power"])
         self.assertNotIn("First Strike", inactive["keywords"])
         self.assertNotIn("Trample", inactive["keywords"])
+        self.assertIn("Flying", inactive["keywords"])
+        self.assertNotIn("Shroud", inactive["keywords"])
 
         engine.change_control(
             riot.object_id,
@@ -539,6 +605,57 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         departed = engine._effective_card_data(target)
         self.assertEqual("3", departed["power"])
         self.assertNotIn("Trample", departed["keywords"])
+
+    def test_public_state_characteristics_execute_while_replacement_siblings_fail_closed(self):
+        session = self.session(118_220_003)
+        engine = session.engine
+        record = self.db.lookup("Angel of Vitality")
+        program = compile_card_program(
+            self.db,
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="provisional",
+        )
+        blockers = {
+            blocker
+            for residual in program.residuals
+            for blocker in residual["blockers"]
+        }
+        self.assertGreaterEqual(
+            blockers,
+            {
+                "replacement applicability",
+                "self-replacement and prevention ordering",
+            },
+        )
+        binding = bind_card_program_runtime(
+            program,
+            capability_registry=self.capabilities,
+            profile="commander_review",
+        )
+        self.assertFalse(binding["strict_capability_ready"])
+        self.assertFalse(binding["compatible_ready"])
+
+        angel = self.add_source(
+            session,
+            name="Angel of Vitality",
+            ref="ANGEL-OF-VITALITY",
+        )
+        engine.state.players["A"].life = 25
+        active = engine._effective_card_data(angel)
+        self.assertEqual("4", active["power"])
+        self.assertEqual("4", active["toughness"])
+        self.assertIn("Flying", active["keywords"])
+        self.assertFalse(
+            any(
+                "replacement" in runtime_program.event
+                and engine.semantic_program_is_current_trusted(runtime_program)
+                for runtime_program in engine.semantics.programs_for_oracle(
+                    angel.oracle_id
+                )
+            )
+        )
 
     def test_hand_count_condition_projects_and_replays_without_hidden_identity(self):
         session = self.session(118_220_002)

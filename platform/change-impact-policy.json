@@ -318,6 +318,7 @@
         "quorune/continuous_effects.py",
         "quorune/semantic_runtime/conditional_continuous.py",
         "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/fixed-public-state-interaction-cards.json",
         "tests/fixtures/fixed-public-state-characteristics-cards.json"
       ],
       "test_modules": [
