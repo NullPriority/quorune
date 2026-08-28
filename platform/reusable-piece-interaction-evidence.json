@@ -4606,6 +4606,34 @@
       ],
       "interaction_order": 2,
       "assertion": "Angel of Vitality's exact life-gated characteristic handler can be promoted independently, but its unsupported self-replacement and CR 616 ordering boundary remains outside every trusted replacement program."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_transforming_query_characteristics_keep_replacement_siblings_fail_closed",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_count_modifier",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_count_modifier"
+      ],
+      "interaction_order": 2,
+      "assertion": "The typed hand- and land-count characteristic modifiers on the creature backs of transforming Sagas compile independently, while their unsupported transformation replacement applicability remains material and keeps both complete CardPrograms unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_transforming_query_characteristics_keep_replacement_siblings_fail_closed",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_count_modifier",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_count_modifier"
+      ],
+      "interaction_order": 2,
+      "assertion": "The typed query-characteristic ability does not lower or bypass either transforming Saga's unsupported self-replacement and CR 616 ordering boundary, so the residual interaction remains fail closed at runtime admission."
     }
   ]
 }

@@ -461,7 +461,7 @@ def fixed_query_characteristic_grant_handler(
 
 def _self_subject_pattern(source_name: str) -> str:
     source = SourceReferenceSpec(source_name).regex_pattern
-    return rf"(?:This creature|This token|{source})"
+    return rf"(?:This creature|This permanent|This token|{source})"
 
 
 _CONDITION_NUMBER_WORDS = {

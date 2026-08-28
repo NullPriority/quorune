@@ -517,6 +517,48 @@
           "measurement_probe_id": "fixed-public-state-characteristic-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:typed-query-self-characteristics",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.query_count_modifier",
+            "component:quorune.characteristic_evaluation.evaluate_card_characteristics",
+            "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+            "component:quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
+            "component:quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
+            "component:quorune.continuous_effects.evaluate_continuous_effects",
+            "component:quorune.dynamic_characteristics.query_characteristic_count"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "controller-opponent-or-global-public-object-query",
+            "cycle-safe-characteristics-through-layer-five",
+            "per-object-or-fixed-minimum-self-modifier",
+            "source-attachment-counter-or-raw-hand-size"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.changeling",
+            "continuous.characteristics.devoid",
+            "continuous.characteristics.dynamic_power_toughness"
+          ],
+          "shared_grammar": "fixed self power, toughness, and supported keyword changes over one closed typed public quantity through the cycle-safe layer-5 characteristic boundary",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Replaces three legacy count enums with a reusable typed object-query quantity across controller, opponent, global, graveyard, hand-size, attachment, and source-counter contexts while preserving ordinary layer-6 and layer-7c ordering.",
+          "explicit_exclusions": [
+            "Delirium distinct-type, Domain or color cardinality, chosen, named, modified, shared-type, top-library, secret-identity, and ability-presence counts",
+            "ability-addition or ability-removal applicability until the shared layer-6 ability-presence query owns those interactions",
+            "dynamic coefficients, base-setting, characteristic-defining, type, color, comparison, modal, triggered, activated, attached-subject, and quoted-rule carriers",
+            "negative, maximum, historical-event, combat-state, life, emblem, dungeon, party, and unsupported keyword conditions"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-query-self-characteristic-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-exile-contexts",
           "member_family_ids": [
             "activated_effect:exile",
@@ -870,10 +912,10 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v137-fixed-public-state-characteristics",
-      "compiler_version": "oracle-ir-v137",
-      "bundle_id": "bundle:fixed-public-state-characteristics",
-      "candidate_ids": ["compiler:fixed-public-state-characteristics"],
+      "transition_id": "oracle-ir-v138-typed-query-self-characteristics",
+      "compiler_version": "oracle-ir-v138",
+      "bundle_id": "bundle:typed-query-self-characteristics",
+      "candidate_ids": ["compiler:typed-query-self-characteristics"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
@@ -889,10 +931,7 @@
         "combat.damage.assignment.deathtouch",
         "combat.damage.assignment.trample",
         "combat.damage.participation.strike_steps",
-        "continuous.ability.fixed_query_keyword_grant",
-        "continuous.attached.fixed_characteristics",
-        "continuous.characteristics.fixed_public_state",
-        "continuous.power_toughness.fixed_anthem",
+        "continuous.characteristics.query_count_modifier",
         "damage.result.deathtouch",
         "damage.result.infect",
         "damage.result.lifelink",
@@ -901,7 +940,7 @@
         "target.protection.hexproof_permanent",
         "target.protection.shroud_permanent"
       ],
-      "measurement_id": "measurement:fixed-public-state-characteristics",
+      "measurement_id": "measurement:typed-query-self-characteristics",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1345,6 +1384,11 @@
         "candidate_id": "compiler:fixed-public-state-characteristics",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector reports no eligible carried candidate, while its raw continuous-layer leader still combines thousands of unrelated characteristic, permission, and dynamic-count grammars. A bounded integrated probe isolates fixed source, attached-object, and ObjectQuerySpec characteristic grants gated by one non-characteristic public turn, raw card-count, life-total, entry-turn, or named-counter condition. The typed condition snapshot is recomputed from authoritative state and both layer-6 additions and layer-7c modifiers share the same target applicability and source identity. Current cohort identities and lower bounds are derived into the generated measurement artifact; Delirium, Metalcraft, dynamic characteristic counts and amounts, combat state, top-library, chosen or secret contents, source attachment-state predicates, quoted rules text, type or color changes, ability removal, Class levels, Protection, Ward, and unsupported keywords remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:typed-query-self-characteristics",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader still combines unrelated characteristic, permission, and declaration grammars. Two bounded probes retired fixed group power/toughness below every harvest floor and rejected a fixed-target leaf whose apparent card closure depended on distinct missing carriers. The selected strict self-characteristic grammar shares one typed controller, opponent, global, graveyard, hand-size, attachment, or counter quantity. Counted objects cross a cycle-safe copy, type, and color boundary before ordinary layer-6 and layer-7c effects, including current-controller graveyards and all in-game opponents. Current cohort identities and conservative complete-card lower bounds are derived into the generated measurement artifact; Delirium, Domain, color cardinality, chosen, named, modified, shared-type, top-library, secret-identity, dynamic-coefficient, comparison, attached-subject, modal, triggered, activated, quoted, and ability-presence interactions remain fail-closed."
       }
     ]
   },

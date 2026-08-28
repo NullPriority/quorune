@@ -205,6 +205,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.declaration_restriction",
                 "ability.static.dynamic_power_toughness",
                 "ability.static.protection",
+                "ability.static.query_characteristic_modifier",
                 "ability.static.toxic",
                 "ability.static.trigger_multiplier",
                 "ability.trigger.bushido",

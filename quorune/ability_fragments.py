@@ -23,6 +23,7 @@ from .characteristic_fragments import (
     ColorlessCharacteristicDefinitionSpec,
     ConditionalKeywordSpec,
     DynamicPowerToughnessSpec,
+    QueryCharacteristicModifierSpec,
 )
 from .declaration_fragments import (
     DeclarationCostTemplate,
@@ -818,6 +819,7 @@ StaticAbilityFragment: TypeAlias = (
     | ColorlessCharacteristicDefinitionSpec
     | ConditionalKeywordSpec
     | DynamicPowerToughnessSpec
+    | QueryCharacteristicModifierSpec
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
@@ -861,6 +863,8 @@ def ability_fragment_to_dict(
         kind = "conditional_keyword"
     elif isinstance(fragment, DynamicPowerToughnessSpec):
         kind = "dynamic_power_toughness"
+    elif isinstance(fragment, QueryCharacteristicModifierSpec):
+        kind = "query_characteristic_modifier"
     elif isinstance(fragment, DeclarationCostTemplate):
         kind = "declaration_cost"
     elif isinstance(fragment, DeclarationRequirementTemplate):
@@ -941,6 +945,11 @@ def ability_fragment_from_dict(
             return DynamicPowerToughnessSpec.from_dict(value["value"])
         except CharacteristicFragmentError as exc:
             raise AbilityFragmentError(str(exc)) from exc
+    if value["kind"] == "query_characteristic_modifier":
+        try:
+            return QueryCharacteristicModifierSpec.from_dict(value["value"])
+        except CharacteristicFragmentError as exc:
+            raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "declaration_cost":
         try:
             return DeclarationCostTemplate.from_dict(value["value"])
@@ -986,6 +995,7 @@ def canonical_ability_fragments(
                 ColorlessCharacteristicDefinitionSpec,
                 ConditionalKeywordSpec,
                 DynamicPowerToughnessSpec,
+                QueryCharacteristicModifierSpec,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,
                 DeclarationRestrictionTemplate,
@@ -1285,6 +1295,7 @@ __all__ = [
     "DamageKeywordTriggerKind",
     "DamageKeywordTriggerSpec",
     "DynamicPowerToughnessSpec",
+    "QueryCharacteristicModifierSpec",
     "DeclarationCostTemplate",
     "DeclarationRequirementTemplate",
     "DeclarationRestrictionTemplate",

@@ -28,10 +28,8 @@ if [ -n "${QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON:-}" ]; then
         echo "Quorune pre-push: cloud source checkpoints are forbidden on main or detached HEAD." >&2
         exit 1
     fi
-    "$PYTHON" "$ROOT/scripts/cloud_generated_artifacts.py" \
-        plan --base-ref origin/main
-    "$PYTHON" "$ROOT/scripts/cloud_generated_artifacts.py" \
-        verify-compiler-identity --base-ref origin/main
+    "$PYTHON" "$ROOT/scripts/quick_gate.py" \
+        --phase pre-corpus --base origin/main
     echo "Quorune pre-push: authorized cloud source checkpoint: $QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON"
     exit 0
 fi

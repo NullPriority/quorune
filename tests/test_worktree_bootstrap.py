@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from scripts.worktree_bootstrap import (
     DatabaseInspection,
@@ -212,6 +213,28 @@ class WorktreeBootstrapTests(unittest.TestCase):
             self.assertFalse(rejected["ok"])
             self.assertTrue(
                 any("worktree-local" in item for item in rejected["failures"])
+            )
+
+    def test_runtime_rejects_a_linked_worktree_environment(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            _write_repository_policy(root)
+            launcher = _write_launcher(root)
+
+            with mock.patch(
+                "scripts.worktree_bootstrap._is_linked_directory",
+                return_value=True,
+            ):
+                report = inspect_runtime(
+                    root, **_runtime_options(root, launcher)
+                )
+
+            self.assertFalse(report["ok"])
+            self.assertTrue(
+                any(
+                    "symlink or junction" in failure
+                    for failure in report["failures"]
+                )
             )
 
     def test_database_backed_finalizer_uses_the_detected_path(self):

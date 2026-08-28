@@ -8,7 +8,11 @@ from .characteristic_fragments import (
     ConditionalKeywordSpec,
     DynamicPowerToughnessSpec,
     PowerToughnessCalculation,
+    CharacteristicQuantityScope,
+    CharacteristicQuantitySpec,
 )
+from .continuous_effects import Layer
+from .object_query import object_matches_query, object_query_result
 from .util import unique_preserving_order
 
 
@@ -20,6 +24,85 @@ class DynamicCharacteristicHost(Protocol):
     def _type_parts(
         self, type_line: str
     ) -> tuple[set[str], set[str], set[str]]: ...
+
+    def _effective_card_data(
+        self,
+        card: Any,
+        *,
+        maximum_layer: Layer | None = None,
+    ) -> Mapping[str, Any]: ...
+
+
+def query_characteristic_count(
+    host: DynamicCharacteristicHost,
+    source: Any,
+    quantity: CharacteristicQuantitySpec,
+) -> int:
+    """Resolve one closed public quantity through layer 5 only."""
+
+    if quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
+        assert quantity.counter_name is not None
+        raw = source.counters.get(quantity.counter_name, 0)
+        if type(raw) is not int or raw < 0:
+            raise ValueError(
+                "Characteristic source counters must be nonnegative integers"
+            )
+        return raw
+
+    assert quantity.query is not None
+    zone = quantity.query.zones[0]
+    controller = source.controller
+    if quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE:
+        object_ids = tuple(source.attachments)
+    elif quantity.scope is CharacteristicQuantityScope.CONTROLLER_ZONE:
+        object_ids = tuple(host.state.players[controller].zones[zone])
+    elif quantity.scope is CharacteristicQuantityScope.OPPONENT_ZONES:
+        object_ids = tuple(
+            object_id
+            for seat, player in host.state.players.items()
+            if seat != controller and player.in_game
+            for object_id in player.zones[zone]
+        )
+    else:
+        object_ids = tuple(
+            object_id
+            for player in host.state.players.values()
+            for object_id in player.zones[zone]
+        )
+
+    if zone == "hand":
+        # The closed hand grammar carries no identity predicates. Counting the
+        # zone directly keeps hidden card characteristics outside this owner.
+        return len(object_ids)
+
+    count = 0
+    for object_id in object_ids:
+        if object_id not in host.state.cards:
+            continue
+        candidate = host.state.cards[object_id]
+        if quantity.exclude_source and candidate.ref == source.ref:
+            continue
+        effective = host._effective_card_data(
+            candidate,
+            maximum_layer=Layer.COLOR,
+        )
+        attached = (
+            host.state.cards.get(candidate.attached_to)
+            if candidate.attached_to is not None
+            else None
+        )
+        row = object_query_result(
+            candidate,
+            effective,
+            type_parts=host._type_parts(
+                str(effective.get("type_line") or "")
+            ),
+            known_to_actor=True,
+            attached_to_ref=attached.ref if attached is not None else None,
+        )
+        if object_matches_query(row, quantity.query):
+            count += 1
+    return count
 
 
 def _has_card_type(
@@ -126,4 +209,5 @@ def apply_dynamic_characteristic_fragments(
 __all__ = [
     "DynamicCharacteristicHost",
     "apply_dynamic_characteristic_fragments",
+    "query_characteristic_count",
 ]

@@ -1,0 +1,76 @@
+---
+title: "ADR 0088: typed query-count self characteristics"
+status: "ADR"
+authoritative_source: "query-count characteristic compiler and layer evaluator"
+verified: "2026-08-28"
+audience: "rules, compiler, continuous-effect, replay, and architecture maintainers"
+maintenance: "hand-maintained"
+adr_id: "0088"
+decision_status: "accepted"
+date: "2026-08-28"
+---
+
+# ADR 0088: typed query-count self characteristics
+
+## Context
+
+Static self modifiers commonly count artifacts, creatures, lands, cards in a
+public graveyard, attachments, source counters, or raw hand size. The legacy
+owner represented only three enum cases, evaluated graveyards by physical
+owner instead of current controller, and inspected copyable rather than current
+type-changing characteristics. Expanding that enum would preserve both defects;
+evaluating complete characteristics recursively could instead make a count
+depend on the modifier it is calculating.
+
+## Decision
+
+Compile one closed `CharacteristicQuantitySpec` and one
+`QueryCharacteristicModifierSpec`. The quantity selects a controller,
+opponent, or global public zone through `ObjectQuerySpec`, the source's current
+attachments or counters, or the controller's raw hand size. The modifier is
+either a fixed power/toughness coefficient per matching object or a fixed
+minimum gate for fixed power/toughness and supported keywords.
+
+Before materializing the modifier, evaluate source and counted-object
+characteristics only through layer 5: copy, control, text, type, and color.
+The resulting integer becomes ordinary layer-6 keyword operations and layer-7c
+power/toughness operations. This boundary admits current Changeling, Devoid,
+and represented type/color changes without consulting later-layer abilities or
+power/toughness and therefore cannot recurse into its own result. Controller-
+relative graveyards use the source's current controller; opponent scopes use
+every other in-game seat. Hand quantities read only zone cardinality.
+
+Historical `DynamicPowerToughnessSpec` records remain readable, but current
+compilation emits the query descriptor.
+
+## Alternatives
+
+- Add more legacy count enums. Rejected because each term would duplicate zone,
+  controller, and characteristic logic.
+- Query complete effective characteristics. Rejected because later layers can
+  depend on the count currently being calculated.
+- Use printed or copyable types. Rejected because represented layer-4 and
+  layer-5 changes are authoritative inputs to these quantities.
+- Add a family-specific ability-removal check. Rejected because static ability
+  addition and removal must share one future layer-6 applicability query.
+
+## Consequences
+
+The represented family recomputes after control, zone, phasing, attachment,
+counter, hand-size, and layer-5 characteristic changes, composes in ordinary
+layer order, copies as typed executable data, preserves hidden identity, and
+replays exactly.
+
+Delirium distinct-type counts, Domain or color cardinality, chosen, named,
+modified, shared-type, top-library, secret-identity, ability-presence, dynamic-
+coefficient, comparison, attached-subject, modal, triggered, activated, and
+quoted carriers remain residual. Cards with an ability-removal sibling remain
+withheld by complete-card admission until the shared layer-6 ability-presence
+owner exists.
+
+## Removal condition
+
+Retire these descriptors only if a successor preserves the same closed grammar,
+cycle-safe layer-5 boundary, current-controller and multiplayer relations,
+ordinary layer ordering, copied-source identity, privacy, replay, and explicit
+ability-removal exclusion without runtime prose or card identity dispatch.

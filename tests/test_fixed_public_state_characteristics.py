@@ -41,6 +41,7 @@ from scripts.build_test_database import build_fixture_database
 
 CAPABILITY_ID = "continuous.characteristics.fixed_public_state"
 TEMPLATE_ID = "continuous-fixed-public-state-characteristics-v1"
+QUERY_HANDLER_ID = "ability.static.query-characteristic-modifier.v1"
 FIXTURE = (
     ROOT
     / "tests"
@@ -115,7 +116,6 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
         cases = {
             "Fresh-Faced Recruit": "controller_turn",
             "Street Riot": "controller_turn",
-            "Krosan Beast": "controller_graveyard_card_count_at_least",
             "Chaos Imps": "source_counter_at_least",
             "Keldon Strike Team": "source_entered_this_turn",
             "Neheb, the Worthy": "controller_hand_count_at_most",
@@ -171,14 +171,29 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             },
         )
 
+    def test_graveyard_threshold_migrates_to_typed_query_owner(self):
+        program = compile_card_program(
+            self.db,
+            self.db.lookup("Krosan Beast"),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+
+        self.assertEqual((), program.residuals)
+        handlers = [
+            descriptor.get("handler_id")
+            for ability in program.abilities
+            for descriptor in ability.handlers
+        ]
+        self.assertIn(QUERY_HANDLER_ID, handlers)
+        self.assertNotIn(FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID, handlers)
+
     def test_unrepresented_conditions_and_bodies_remain_residual(self):
         base = self.db.lookup("Fresh-Faced Recruit")
         unsupported = (
             "Delirium — This creature gets +2/+2 as long as there are four "
             "or more card types among cards in your graveyard.",
-            "Metalcraft — This creature gets +2/+2 as long as you control "
-            "three or more artifacts.",
-            "This creature gets +1/+1 as long as you control a Forest.",
             "This creature gets +X/+X during your turn.",
             "During your turn, this creature has ward {2}.",
             "During your turn, this creature has \"{T}: Draw a card.\"",

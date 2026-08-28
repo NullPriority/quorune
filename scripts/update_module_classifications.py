@@ -441,6 +441,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/declaration_rule_effects.py",
         "quorune/dynamic_characteristics.py",
+        "quorune/characteristic_evaluation_host.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
         "quorune/zone_object_subtype_grants.py",
@@ -659,6 +660,7 @@ def build_classifications() -> dict[str, Any]:
                             "ability_fragment_host.py",
                             "ability_fragments.py",
                             "characteristic_fragments.py",
+                            "characteristic_evaluation_host.py",
                             "aura/",
                             "engine.py",
                             "enchant_spec.py",

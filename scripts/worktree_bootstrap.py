@@ -111,6 +111,14 @@ def _local_python(root: Path) -> tuple[Path | None, str]:
     )
 
 
+def _is_linked_directory(path: Path) -> bool:
+    """Return whether a directory aliases storage outside this worktree."""
+
+    return path.is_symlink() or (
+        hasattr(path, "is_junction") and path.is_junction()
+    )
+
+
 def inspect_runtime(
     root: Path,
     *,
@@ -124,6 +132,10 @@ def inspect_runtime(
     launcher, display = _local_python(root)
     running = (executable or Path(sys.executable)).resolve()
     failures = list(project_policy_failures(root))
+    if _is_linked_directory(root / ".venv"):
+        failures.append(
+            "worktree-local .venv must be a real directory, not a symlink or junction"
+        )
     try:
         require_supported_runtime(
             version_info or sys.version_info,

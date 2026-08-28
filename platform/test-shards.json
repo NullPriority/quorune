@@ -295,6 +295,7 @@
       "test_storm_rules",
       "test_typed_activated_ability_catalog",
       "test_typed_dynamic_characteristics",
+      "test_typed_query_self_characteristics",
       "test_zone_replacement_compiler"
     ],
     "functional-12": [
@@ -525,7 +526,8 @@
       "test_station_rules",
       "test_sunburst_rules",
       "test_support_counter_placement",
-      "test_typed_dynamic_characteristics"
+      "test_typed_dynamic_characteristics",
+      "test_typed_query_self_characteristics"
     ],
     "deterministic-game-regressions": [
       "test_codex_arena",

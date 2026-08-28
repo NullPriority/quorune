@@ -25,6 +25,7 @@ from .continuous_templates import (
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
+from .query_characteristic_templates import query_self_characteristics_handler
 from .counter_replacement_templates import (
     static_counter_quantity_replacement_handler,
 )
@@ -308,6 +309,24 @@ def _continuous_static_runtime_template(
             ),
         )
     if source_name is not None:
+        query_characteristics = (
+            None
+            if source_is_class
+            else query_self_characteristics_handler(
+                text,
+                source_name=source_name,
+            )
+        )
+        if query_characteristics is not None:
+            return StaticRuntimeTemplate(
+                compiled=query_characteristics,
+                kind="static_ability",
+                event="continuous",
+                dependency_reason=(
+                    "typed public quantities require their cycle-safe "
+                    "characteristic capability"
+                ),
+            )
         fixed_public_state = (
             None
             if source_is_class

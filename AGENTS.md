@@ -141,6 +141,10 @@ authorization.
 ## Development and certification
 
 Use the worktree-local CPython 3.12 environment, never a global `python` alias.
+Each worktree's `.venv` must be a real directory created in that worktree;
+never symlink or junction it to another checkout's environment. When reusing a
+canonical checkout's pinned database, select that file with `--db` or
+`MTG_CARD_DB` instead of linking either `data` or `.venv`.
 Keep one substantive branch under certification and at most one independent
 next-batch worktree. Do not mix their changes.
 

@@ -877,7 +877,10 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
         self.assertIn("data/scryfall-current.sqlite3", hook)
         self.assertIn('"$ROOT/scripts/test_shards.py" validate', hook)
         self.assertIn("QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON", hook)
-        self.assertIn("verify-compiler-identity --base-ref origin/main", hook)
+        self.assertIn(
+            '"$ROOT/scripts/quick_gate.py" \\\n        --phase pre-corpus --base origin/main',
+            hook,
+        )
         self.assertIn('if [ -z "$BRANCH" ] || [ "$BRANCH" = "main" ]', hook)
         self.assertIn("--verify-receipt", hook)
         self.assertIn("--write --fail-on-change", hook)

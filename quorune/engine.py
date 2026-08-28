@@ -31,21 +31,15 @@ from .compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
 )
-from .carddb_characteristics import (
-    separate_custom_display_text,
-)
 from .card_programs.validation import (
     canonical_program_fingerprint,
     program_source_is_current,
 )
-from .card_programs.runtime import (
-    collect_card_program_continuous_effects,
-)
 from .rules.activation_costs import activation_choice_candidates
 from .characteristic_evaluation import (
-    evaluate_card_characteristics,
     type_parts,
 )
+from .characteristic_evaluation_host import CharacteristicEvaluationHostMixin
 from .combat import (
     LIFELINK,
     assigns_in_damage_step,
@@ -66,12 +60,6 @@ from .combat_damage_sequence import (
 from . import block_transition_engine_adapter as block_triggers
 from . import attack_transition_engine_adapter as attack_transitions
 from .combat_relationship_state import remove_combat_relationships
-from .continuous_effects import (
-    ContinuousEffect,
-)
-from .continuous_effect_state import (
-    active_resolution_effects,
-)
 from . import control_history
 from .counter_placement import (
     CounterPlacementError,
@@ -131,7 +119,6 @@ from .damage import (
 from .damage_results import (
     consume_deathtouch_damage_checks,
 )
-from .dynamic_characteristics import apply_dynamic_characteristic_fragments
 from .drawing import (
     begin_draw_batch,
     begin_draw_sequence,
@@ -392,6 +379,7 @@ class ActionResult:
 
 class CommanderEngine(
     AbilityFragmentHostMixin,
+    CharacteristicEvaluationHostMixin,
     CastingCostHostMixin,
     TriggerProcessingHostMixin,
     TargetSelectionOwnerMixin,
@@ -868,72 +856,6 @@ class CommanderEngine(
         ):
             return None
         return self.card_db.by_oracle_id(card.oracle_id)
-
-    def _apply_layered_characteristic_annotations(
-        self,
-        card: CardInstance,
-        base: Mapping[str, Any],
-        *,
-        runtime_effects: Sequence[ContinuousEffect] = (),
-        ignore_face_down: bool = False,
-    ) -> dict[str, Any]:
-        """Delegate CR 613 evaluation to its rules-owned subsystem."""
-
-        return separate_custom_display_text(
-            card,
-            evaluate_card_characteristics(
-                card,
-                base,
-                runtime_effects=runtime_effects,
-                ignore_face_down=ignore_face_down,
-            ),
-        )
-
-    def _effective_card_data(
-        self,
-        value: str | CardInstance,
-        *,
-        printed_entry_characteristics: bool = False,
-        ignore_face_down: bool = False,
-    ) -> dict[str, Any]:
-        card = value if isinstance(value, CardInstance) else self.state.cards[value]
-        record = self.card_record(card)
-        base = self._compiled_base_characteristics(card, record, error_type=GameRuleError)
-        runtime_effects = (
-            (
-                *active_resolution_effects(self.state, card),
-                *collect_card_program_continuous_effects(
-                    self.state,
-                    self.semantics,
-                    self.semantic_program_is_current_trusted,
-                ),
-            )
-            if card.zone == "battlefield"
-            else ()
-        )
-        base = self._apply_layered_characteristic_annotations(
-            card,
-            base,
-            runtime_effects=runtime_effects,
-            ignore_face_down=ignore_face_down,
-        )
-        base = apply_dynamic_characteristic_fragments(self, card, base)
-        if (
-            card.zone == "battlefield"
-            and not printed_entry_characteristics
-            and "battle"
-            in self._type_parts(
-                str(base.get("type_line") or "")
-            )[0]
-        ):
-            # CR 310.4c makes a battlefield Battle's defense equal to
-            # its defense-counter count.  The printed number remains the
-            # copiable/off-battlefield characteristic and is read explicitly
-            # while applying the intrinsic as-enters counter effect.
-            base["defense"] = str(
-                max(0, int(card.counters.get("defense", 0)))
-            )
-        return base
 
     def display_name(self, object_id: str) -> str:
         return str(self._effective_card_data(object_id).get("name") or self.state.cards[object_id].printed_name)

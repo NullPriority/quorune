@@ -200,7 +200,7 @@ class CiPipelineTests(unittest.TestCase):
         self.assertEqual(all_modules, set(high["selected_test_modules"]))
         self.assertEqual([], governance["python_matrix"]["include"])
         self.assertEqual(
-            ("test_documentation_policy",),
+            ("test_documentation_policy", "test_worktree_bootstrap"),
             governance["generated_test_modules"],
         )
 

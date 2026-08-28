@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "224f56dfcddb337583bfadf6087b45be171430752cbb98ba9f054e81503f9e43",
-  "declaration_source_fingerprint": "24b896e739abb08e35c5ad36846d03d22cf7d6e74fce262942b88922797609af",
+  "registry_fingerprint": "a8dd9300dbe5f5a2a6d91d86f3d00bd356ed7af5df534a8230eab658df8a9753",
+  "declaration_source_fingerprint": "83f5c81e7bd615f4ff791c7b2049a7eb4abc29c85689bbef2c6a68613b1d287e",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -15529,6 +15529,226 @@
         "commander_review"
       ],
       "applicability_note": "Pin the typed hand-count predicate and source identity into a checkpoint, then replay the following multiplayer priority commands exactly."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_ability_removal_sibling_withholds_runtime_admission",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Withhold the complete card when a material ability-removal sibling would require the future shared layer-6 ability-presence applicability owner."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_counts_use_layer_five_types_and_compose_in_layer_seven_c",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Feed a layer-4 artifact addition into the count, then order its concrete modifier after layer 7b base setting and before layer 7d switching."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_fragment_copy_uses_current_source_and_controller",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Copy typed attachment and counter quantities while preserving independent current source identity and noncopiable public state."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Count only the current controller's objects or all three in-game opponents after a four-player control change."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the typed query-characteristic compiler owner by requiring its exact handler at the source span."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_descriptors_fail_closed_without_behavior",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject widened handler fields, non-array keyword bodies, and unknown quantity scopes before runtime lowering."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_grammar_keeps_ambiguous_families_residual",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep distinct-type, color-cardinality, named, ability-presence, attached-subject, multiplied-keyword, and activated carriers residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_grammar_compiles_closed_fragments",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile closed controller, opponent, global, graveyard, hand, attachment, and counter quantities into one typed self-characteristic fragment."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute controller and all in-game opponent battlefield quantities after control and zone changes in a four-player game."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_hand_count_projects_and_replays_without_hidden_identity",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Consume only raw controller hand size and exclude every hidden card identifier and name from opposing principal projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_hand_count_projects_and_replays_without_hidden_identity",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pin the typed hand-size fragment and hidden zone membership into a checkpoint, then replay the following multiplayer priority commands exactly."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -49902,5 +50122,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "ab86d47684e4fdc00e2877c80bce711dd65324bc388367b99b32c665992949d3"
+  "fingerprint": "d9262d009caf3a8bb77d0ba90d7f8001f13d5026326261daf1346df243723eaf"
 }
