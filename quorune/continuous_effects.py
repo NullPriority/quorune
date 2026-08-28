@@ -437,10 +437,10 @@ def evaluate_continuous_effects(
     ordered, cycles = order_continuous_effects(present)
     applied: list[str] = []
     for effect in ordered:
-        if (
-            effect.relation
-            is ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT
-        ):
+        if effect.relation in {
+            ContinuousEffectRelation.SOURCE_OBJECT,
+            ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,
+        }:
             object_id = str(context.get("object_id") or "")
             logical_object_id = str(
                 context.get("logical_object_id") or ""

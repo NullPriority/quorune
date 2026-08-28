@@ -1488,17 +1488,31 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            "measurement:fixed-controlled-characteristic-effects",
+            "measurement:fixed-public-state-characteristics",
             declaration["measurement_id"],
         )
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
         self.assertEqual(
-            "fixed-controlled-characteristic-effect-existing-owner-v1",
+            "fixed-public-state-characteristic-existing-owner-v1",
             bundle["measurement_probe_id"],
         )
         self.assertFalse(
             any(field.startswith("frontier_") for field in bundle)
+        )
+        measurement = next(
+            row
+            for row in self.work_inputs["cohort_measurements"]["measurements"]
+            if row["measurement_id"] == declaration["measurement_id"]
+        )
+        coverage = work_selection["coverage_family"]
+        self.assertGreaterEqual(
+            measurement["complete_card_gain"],
+            coverage["minimum_complete_card_gain"],
+        )
+        self.assertGreaterEqual(
+            measurement["exact_ability_gain"],
+            coverage["minimum_exact_ability_gain"],
         )
 
     def test_stale_generated_measurement_fails_before_selection(self):

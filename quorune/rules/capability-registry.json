@@ -2682,6 +2682,33 @@
       "status": "trusted"
     },
     {
+      "id": "continuous.characteristics.fixed_public_state",
+      "version": 1,
+      "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed non-characteristic public-state condition is true.",
+        "inputs": ["active phased-in battlefield source", "source controller turn, life, public hand count, graveyard card count, entry sequence, or named counter state", "source, attached-object, or fixed ObjectQuerySpec target", "fixed represented keyword and power/toughness modifier"],
+        "outputs": ["one source-bound condition snapshot", "identical layer-6 and layer-7c target applicability", "live condition removal after authoritative state changes", "exact source or attachment logical-object identity", "per-keyword capability closure"],
+        "exclusions": ["Delirium, Metalcraft, and every type-dependent or dynamic characteristic count", "combat-state, top-library, chosen, secret-content, source enchanted or equipped, and historical action predicates", "dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies", "Class levels, copied or granted source abilities without shared typed propagation, and dependency interactions outside the represented fixed conditions"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler", "quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler", "quorune.card_programs.runtime.collect_card_program_continuous_effects", "quorune.continuous_effects.evaluate_continuous_effects"],
+      "positive_tests": ["test_closed_public_state_grammar_compiles_capability_closed", "test_public_state_conditions_recompute_layer_six_and_seven_results"],
+      "negative_tests": ["test_unrepresented_conditions_and_bodies_remain_residual", "test_public_state_descriptors_fail_closed_without_effects"],
+      "interaction_tests": ["test_public_state_conditions_recompute_layer_six_and_seven_results", "test_turn_gated_attachment_and_anthem_compose"],
+      "multiplayer_tests": ["test_turn_gated_attachment_and_anthem_compose"],
+      "privacy_tests": ["test_hand_count_condition_projects_and_replays_without_hidden_identity"],
+      "replay_tests": ["test_hand_count_condition_projects_and_replays_without_hidden_identity"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The condition and layer owner use the shared continuous evaluator directly; each emitted keyword and power/toughness body independently declares and closes its exact consumer capability.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused tests remove or invert the typed state condition, target identity, layer-6 grant, or layer-7c modifier and exact current-characteristic assertions reject each survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "continuous.characteristics.conditional_keyword",
       "version": 1,
       "official_rules": ["604.1", "611.3a", "613.1f"],

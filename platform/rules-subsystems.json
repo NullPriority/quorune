@@ -478,6 +478,45 @@
           "measurement_probe_id": "fixed-controlled-characteristic-effect-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-public-state-characteristics",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.fixed_public_state",
+            "component:quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler",
+            "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+            "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler",
+            "component:quorune.continuous_effects.evaluate_continuous_effects"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-public-condition",
+            "source-attached-or-fixed-query-target",
+            "fixed-supported-characteristic-modifier"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_keyword_grant",
+            "continuous.attached.fixed_characteristics",
+            "continuous.power_toughness.fixed_anthem"
+          ],
+          "shared_grammar": "fixed layer-6 and layer-7c characteristics gated by one closed public-state predicate through a shared typed condition and target owner",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing source, attached-object, and fixed-query characteristic owners across turn, public card-count, life-total, entry-turn, and named-counter gates without adding a second applicability path.",
+          "explicit_exclusions": [
+            "Delirium, Metalcraft, and every type-dependent or dynamic characteristic count",
+            "combat-state, top-library, chosen, secret-content, source enchanted or equipped, and historical action predicates",
+            "dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
+            "Class levels, copied or granted source abilities without shared typed propagation, and dependency interactions outside the represented fixed conditions"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-public-state-characteristic-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-exile-contexts",
           "member_family_ids": [
             "activated_effect:exile",
@@ -831,72 +870,38 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v136-fixed-controlled-characteristic-effects",
-      "compiler_version": "oracle-ir-v136",
-      "bundle_id": "bundle:fixed-controlled-characteristic-effects",
-      "candidate_ids": ["compiler:fixed-controlled-characteristic-effects"],
+      "transition_id": "oracle-ir-v137-fixed-public-state-characteristics",
+      "compiler_version": "oracle-ir-v137",
+      "bundle_id": "bundle:fixed-public-state-characteristics",
+      "candidate_ids": ["compiler:fixed-public-state-characteristics"],
       "family_ids": [
-        "activated_effect:create-token",
-        "activated_effect:life-change",
-        "activated_effect:ordered-effect-composition",
-        "activated_effect:put-counter",
-        "activated_effect:unparsed-creature-tokens-you",
-        "activated_effect:unparsed-creatures-you-control",
-        "activated_effect:unparsed-elf-creatures-you",
-        "activated_effect:unparsed-elves-you-control",
-        "activated_effect:unparsed-goblins-you-control",
-        "activated_effect:unparsed-humans-you-control",
-        "activated_effect:unparsed-knights-you-control",
-        "activated_effect:unparsed-legendary-creatures-you",
-        "activated_effect:unparsed-other-creatures-you",
-        "activated_effect:unparsed-permanents-you-control",
-        "activated_effect:unparsed-samurai-creatures-you",
-        "activated_effect:unparsed-spirits-you-control",
-        "activated_effect:unparsed-squirrels-you-control",
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "duration:until-end-of-turn",
-        "effect_clause:create-token",
-        "effect_clause:life-change",
-        "effect_clause:ordered-effect-composition",
-        "effect_clause:unparsed-artifact-creatures-you",
-        "effect_clause:unparsed-creatures-you-control",
-        "effect_clause:unparsed-permanents-you-control",
-        "effect_clause:unparsed-until-end-of",
-        "effect_clause:unparsed-vampire-creatures-you",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "activation.exhaust.once_per_object",
-        "activation.loyalty.positive_counter_cost",
-        "activation.selected_zone_change.fixed",
-        "activation.source_zone_change.fixed",
         "activation.tap_untap_cost.haste",
+        "combat.attack.defender",
         "combat.attack.haste",
         "combat.attack.vigilance",
         "combat.block.flying",
         "combat.block.menace",
         "combat.block.reach",
+        "combat.block.shadow",
         "combat.damage.assignment.deathtouch",
         "combat.damage.assignment.trample",
         "combat.damage.participation.strike_steps",
-        "continuous.resolution.fixed_characteristics_until_end_of_turn",
-        "counter.producer.fixed_effect",
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.attached.fixed_characteristics",
+        "continuous.characteristics.fixed_public_state",
+        "continuous.power_toughness.fixed_anthem",
         "damage.result.deathtouch",
         "damage.result.infect",
         "damage.result.lifelink",
+        "damage.result.wither",
         "permanent.indestructible.ordinary",
-        "resolution.effect_sequence.fixed_clauses",
         "target.protection.hexproof_permanent",
-        "target.protection.shroud_permanent",
-        "token.creation.fixed_definition",
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_self_attack",
-        "trigger.event.normalized_spell_cast",
-        "trigger.event.normalized_zone_change",
-        "trigger.placement.apnap"
+        "target.protection.shroud_permanent"
       ],
-      "measurement_id": "measurement:fixed-controlled-characteristic-effects",
+      "measurement_id": "measurement:fixed-public-state-characteristics",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1335,6 +1340,11 @@
         "candidate_id": "compiler:fixed-controlled-characteristic-effects",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector has no eligible carried candidate after the fixed homogeneous target-set harvest, while its raw continuous-layer leader remains a heterogeneous aggregate. A bounded integrated probe against the current frontier isolates controller-relative power, toughness, and supported keyword changes with a fixed until-end-of-turn duration across spell, triggered, activated, loyalty, and modal contexts. The source-controlled candidate reuses the existing typed resolution-created continuous-effect journal, locks one cycle-safe effective battlefield set at resolution, and sends layer-6 additions through the same applicability evaluator used by static additions and removals. Current cohort identities and lower bounds are derived into the generated measurement artifact; targeted, opponent-relative, combat-state, dynamic, chosen, conditional, quoted, protection, type-changing, linked, variable, and unsupported-keyword forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-public-state-characteristics",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector reports no eligible carried candidate, while its raw continuous-layer leader still combines thousands of unrelated characteristic, permission, and dynamic-count grammars. A bounded integrated probe isolates fixed source, attached-object, and ObjectQuerySpec characteristic grants gated by one non-characteristic public turn, raw card-count, life-total, entry-turn, or named-counter condition. The typed condition snapshot is recomputed from authoritative state and both layer-6 additions and layer-7c modifiers share the same target applicability and source identity. Current cohort identities and lower bounds are derived into the generated measurement artifact; Delirium, Metalcraft, dynamic characteristic counts and amounts, combat state, top-library, chosen or secret contents, source attachment-state predicates, quoted rules text, type or color changes, ability removal, Class levels, Protection, Ward, and unsupported keywords remain fail-closed."
       }
     ]
   },
