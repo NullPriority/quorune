@@ -95,7 +95,7 @@ class TestShardManifestTests(unittest.TestCase):
 
     def test_observed_timing_loader_requires_one_successful_ubuntu_result(self):
         document = {
-            "schema_version": 2,
+            "schema_version": 3,
             "type": "pytest-xdist-shard-result",
             "platform": "ubuntu",
             "suite": "fixture",
@@ -258,6 +258,11 @@ class TestShardManifestTests(unittest.TestCase):
         )
         self.assertEqual(2, len(recorder.seen_items))
         self.assertEqual(1, recorder.failures)
+        self.assertEqual(
+            {"tests.test_sample.Case.test_bad"},
+            recorder.failed_test_ids,
+        )
+        self.assertEqual(set(), recorder.error_test_ids)
         self.assertEqual(
             [{"module": "test_sample", "worker_elapsed_seconds": 1.75}],
             recorder.module_timings(),

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-26T01:24:45Z",
+  "observed_at": "2026-08-28T18:20:30Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -585,6 +585,23 @@
       ],
       "impact_edge_status": "added",
       "resolution": "Modal closure now derives and validates activation descriptors and their capabilities, while the promoted Knight-Captain path has positive Soldier-cost, prevention, damage, and replay evidence beside a separate real residual prevention witness. Activated-cost, prevention, and central program-registration owners now select those focused expectation modules through the family-indexed policy."
+    },
+    {
+      "id": "ci-20260828-41",
+      "run_id": 33143128153,
+      "head_sha": "ea541fabb6e6cf2120501ade79fe4d2a63d8274a",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The complete main matrix exposed a deterministic replacement-continuation fixture failure, but schema-v2 shard artifacts did not name the failed test and the main-red recovery path trusted a label without binding the run, job, artifact, or assertion-preserving diff.",
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-05 (job 98758217961)",
+        "Main / Broad regression (job 98764043605)"
+      ],
+      "regressions": [
+        "test_fixed_counter_placement_target_sets.FixedCounterPlacementTargetSetRuntimeTests.test_target_set_suspends_for_quantity_replacement_and_replays"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Shard result schema v3 records canonical failed and errored test IDs. The recovery planner now proves the latest failed main SHA, immutable run and Ubuntu job IDs, matching shard artifact, exact failing test module, affected-owner generated outputs, unchanged nonfailing tests and decorators, and structurally identical assertions before selecting the focused recovery profile."
     }
   ],
   "recent_pull_requests": [

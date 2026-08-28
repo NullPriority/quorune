@@ -181,7 +181,8 @@ class ChangeImpactTests(unittest.TestCase):
         self.assertEqual("high_risk_source", planner.risk_class)
         self.assertEqual("high_risk_source", package.risk_class)
         self.assertTrue(package.package_full)
-        self.assertEqual("high_risk_source", recovery.risk_class)
+        self.assertEqual("ordinary_source", recovery.risk_class)
+        self.assertNotIn("label:main-red-recovery", recovery.risk_reasons)
 
     def test_browser_protocol_change_requests_full_browser_gate(self):
         plan = classify_changes(["web/src/protocol.ts"])

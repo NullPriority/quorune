@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 import json
 import os
 from pathlib import Path
@@ -139,6 +140,59 @@ def selected_test_plan(impact: ImpactPlan) -> dict[str, object]:
     }
 
 
+def recovery_impact_plan(
+    impact: ImpactPlan,
+    recovery: object,
+) -> ImpactPlan:
+    if not isinstance(recovery, dict):
+        raise ValueError("recovery plan must be an object")
+    required = {
+        "schema_version",
+        "main_run_id",
+        "main_head_sha",
+        "failed_jobs",
+        "failed_test_ids",
+        "test_modules",
+        "changed_files",
+        "generated_owners",
+        "generated_outputs",
+    }
+    if set(recovery) != required or recovery.get("schema_version") != 1:
+        raise ValueError("recovery plan fields are incomplete or unknown")
+    modules = recovery.get("test_modules")
+    changed = recovery.get("changed_files")
+    if (
+        not isinstance(modules, list)
+        or not modules
+        or any(not isinstance(module, str) or not module for module in modules)
+        or len(modules) != len(set(modules))
+        or not isinstance(changed, list)
+        or any(not isinstance(path, str) or not path for path in changed)
+        or tuple(sorted(changed)) != impact.changed_files
+    ):
+        raise ValueError("recovery plan does not match the exact changed files")
+    return replace(
+        impact,
+        test_modules=tuple(sorted(modules)),
+        test_suites=(),
+        browser_full=False,
+        browser_focuses=(),
+        browser_focus_patterns=(),
+        windows_full=False,
+        matched_rule_ids=tuple(
+            sorted(set(impact.matched_rule_ids) | {"verified-main-red-recovery"})
+        ),
+        browser_full_reasons=(),
+        windows_full_reasons=(),
+        risk_class="recovery_source",
+        risk_reasons=(
+            f"verified-main-red-recovery:{recovery['main_run_id']}",
+        ),
+        package_full=False,
+        package_full_reasons=(),
+    )
+
+
 def ci_concurrency_budget(
     *,
     browser_full: bool,
@@ -255,22 +309,37 @@ def browser_matrix(browser_full: bool) -> dict:
 def _write_github_output(path: Path, plan: dict) -> None:
     python_jobs = len(plan["python_matrix"]["include"])
     source_required = plan["risk_class"] != "governance_only"
+    recovery = plan["risk_class"] == "recovery_source"
+    broad_source_required = source_required and not recovery
     budget = ci_concurrency_budget(
         browser_full=bool(plan["browser_full"]),
         windows_full=bool(plan["windows_full"]),
         python_job_count=python_jobs,
-        browser_required=source_required,
-        windows_required=source_required,
+        browser_required=broad_source_required,
+        windows_required=broad_source_required,
     )
     values = {
         "risk_class": str(plan["risk_class"]),
+        "certification_profile": (
+            "complete"
+            if plan["risk_class"] == "high_risk_source"
+            else (
+                "governance"
+                if plan["risk_class"] == "governance_only"
+                else (
+                    "recovery"
+                    if plan["risk_class"] == "recovery_source"
+                    else "affected"
+                )
+            )
+        ),
         "browser_full": str(plan["browser_full"]).lower(),
-        "browser_required": str(source_required).lower(),
+        "browser_required": str(broad_source_required).lower(),
         "browser_focus_grep": "|".join(plan["browser_focus_patterns"]),
         "windows_full": str(plan["windows_full"]).lower(),
-        "windows_required": str(source_required).lower(),
+        "windows_required": str(broad_source_required).lower(),
         "package_full": str(plan["package_full"]).lower(),
-        "package_required": str(source_required).lower(),
+        "package_required": str(broad_source_required).lower(),
         "python_required": str(bool(python_jobs)).lower(),
         "required_jobs": json.dumps(
             (
@@ -282,7 +351,9 @@ def _write_github_output(path: Path, plan: dict) -> None:
                     "python",
                     "windows_certification",
                 ]
-                if source_required
+                if broad_source_required
+                else ["generated", "plan", "python"]
+                if recovery
                 else ["generated", "plan"]
             ),
             separators=(",", ":"),
@@ -318,9 +389,19 @@ def main() -> int:
         choices=("true", "false"),
         default="false",
     )
+    parser.add_argument(
+        "--additive-selection-paths-json",
+        default="[]",
+    )
+    parser.add_argument("--recovery-plan-json", default="null")
     args = parser.parse_args()
     base = args.base or github_base(args.event)
     paths = changed_files(base, include_worktree=False)
+    additive_selection_paths = json.loads(args.additive_selection_paths_json)
+    if not isinstance(additive_selection_paths, list) or any(
+        not isinstance(path, str) for path in additive_selection_paths
+    ):
+        raise ValueError("additive-selection-paths-json must be a string list")
     plan_value = classify_changes(
         paths,
         changed_symbols=changed_python_symbols(
@@ -334,7 +415,11 @@ def main() -> int:
             diff_filter="DR",
         ),
         force_high_risk=args.force_high_risk == "true",
+        additive_selection_paths=additive_selection_paths,
     )
+    recovery_plan = json.loads(args.recovery_plan_json)
+    if recovery_plan is not None:
+        plan_value = recovery_impact_plan(plan_value, recovery_plan)
     plan = plan_value.to_dict()
     plan.update(selected_test_plan(plan_value))
     plan["ci_concurrency_budget"] = ci_concurrency_budget(

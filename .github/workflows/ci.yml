@@ -33,6 +33,7 @@ jobs:
       package_required: ${{ steps.impact.outputs.package_required }}
       required_jobs: ${{ steps.impact.outputs.required_jobs }}
       risk_class: ${{ steps.impact.outputs.risk_class }}
+      certification_profile: ${{ steps.impact.outputs.certification_profile }}
       windows_max_parallel: ${{ steps.impact.outputs.windows_max_parallel }}
       ci_peak_jobs: ${{ steps.impact.outputs.ci_peak_jobs }}
       ci_job_headroom: ${{ steps.impact.outputs.ci_job_headroom }}
@@ -47,14 +48,49 @@ jobs:
       - name: Validate pull request description and status provenance
         if: github.event_name == 'pull_request'
         run: python scripts/validate_pr_body.py
+      - id: main_state
+        name: Classify completed main regression state
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p local
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?branch=main&status=completed&per_page=100" > local/main-runs.json
+          python scripts/main_health.py --runs-json local/main-runs.json --event "${GITHUB_EVENT_PATH}" --discovery-only --github-output "${GITHUB_OUTPUT}"
+      - id: recovery
+        name: Prove focused main-red recovery provenance
+        if: steps.main_state.outputs.main_state == 'red-recovery-requested'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MTG_MAIN_RUN_ID: ${{ steps.main_state.outputs.main_run_id }}
+          MTG_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          MTG_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -o pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${MTG_MAIN_RUN_ID}/jobs?filter=latest&per_page=100" > local/main-red-jobs.json
+          gh run download "${MTG_MAIN_RUN_ID}" --pattern "main-broad-python-ubuntu-*-${MTG_MAIN_RUN_ID}" --dir local/main-red-results
+          python scripts/main_health.py --runs-json local/main-runs.json --jobs-json local/main-red-jobs.json --results-dir local/main-red-results --event "${GITHUB_EVENT_PATH}" --base-sha "${MTG_BASE_SHA}" --head-sha "${MTG_HEAD_SHA}" --github-output "${GITHUB_OUTPUT}" | tee local/main-red-recovery.json
+          echo '### Verified main-red recovery' >> "${GITHUB_STEP_SUMMARY}"
+          cat local/main-red-recovery.json >> "${GITHUB_STEP_SUMMARY}"
       - id: risk_sentinel
         name: Independently protect test-selection authority
-        run: python scripts/ci_risk_sentinel.py --github-output "${GITHUB_OUTPUT}"
+        env:
+          MTG_BASE_SHA: ${{ github.event.pull_request.base.sha || 'origin/main' }}
+        run: |
+          git show "${MTG_BASE_SHA}:scripts/ci_risk_sentinel.py" > scripts/.ci-risk-sentinel-base.py
+          if python scripts/.ci-risk-sentinel-base.py --help | grep -q -- '--root'; then
+            python scripts/.ci-risk-sentinel-base.py --base "${MTG_BASE_SHA}" --root "${GITHUB_WORKSPACE}" --github-output "${GITHUB_OUTPUT}"
+          else
+            python scripts/.ci-risk-sentinel-base.py --base "${MTG_BASE_SHA}" --github-output "${GITHUB_OUTPUT}"
+            echo 'additive_selection_paths_json=[]' >> "${GITHUB_OUTPUT}"
+          fi
       - id: impact
         name: Classify exact changed-file impact
         run: >-
           python scripts/ci_plan.py
           --force-high-risk "${{ steps.risk_sentinel.outputs.force_high_risk }}"
+          --additive-selection-paths-json '${{ steps.risk_sentinel.outputs.additive_selection_paths_json }}'
+          --recovery-plan-json '${{ steps.recovery.outputs.recovery_plan_json || 'null' }}'
       - name: Publish generated exact-head evidence
         if: github.event_name == 'pull_request'
         run: >-
@@ -64,14 +100,6 @@ jobs:
           --format markdown >> "${GITHUB_STEP_SUMMARY}"
       - name: Validate compact card and deck dependency closure
         run: python scripts/build_test_database.py validate-ci-dependencies
-      - name: Require green completed main regression
-        if: github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p local
-          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?branch=main&status=completed&per_page=100" > local/main-runs.json
-          python scripts/main_health.py --runs-json local/main-runs.json --event "${GITHUB_EVENT_PATH}"
 
   python:
     name: PR / Python / ${{ matrix.suite }}
@@ -108,6 +136,7 @@ jobs:
           --result-json "local/python-results/${{ matrix.shard }}.json"
       - name: Upload Linux shard result
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: python-results-${{ matrix.shard }}-${{ github.run_id }}
@@ -220,7 +249,7 @@ jobs:
         with:
           name: windows-results-compatibility-${{ github.run_id }}
           path: local/windows-results/windows-compat.json
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
 
   windows_full:
@@ -277,7 +306,7 @@ jobs:
         with:
           name: windows-results-${{ matrix.shard }}-${{ github.run_id }}
           path: local/windows-results/${{ matrix.shard }}.json
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
 
   windows_package:
@@ -399,6 +428,7 @@ jobs:
         run: npx playwright test --grep "$MTG_BROWSER_GROUP_GREP"
       - name: Upload browser journey report
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: browser-results-${{ matrix.group }}-${{ github.run_id }}
@@ -436,6 +466,7 @@ jobs:
           --workflow-run-id "${GITHUB_RUN_ID}"
           --needs-json "${CI_NEEDS_JSON}"
           --required-jobs-json '${{ needs.plan.outputs.required_jobs }}'
+          --certification-profile '${{ needs.plan.outputs.certification_profile }}'
           --output local/certification-receipt.json
       - name: Publish exact-head certification receipt
         uses: actions/upload-artifact@v4

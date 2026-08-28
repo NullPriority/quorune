@@ -16,6 +16,9 @@ from urllib.parse import quote, urlparse
 from urllib.request import build_opener, HTTPRedirectHandler, Request
 import zipfile
 
+from scripts.generated_artifacts import load_manifest
+from scripts.generated_finalization_receipt import generated_outputs_fingerprint
+
 try:
     from scripts.source_tree_fingerprint import (
         SOURCE_TREE_FINGERPRINT_ALGORITHM,
@@ -31,9 +34,12 @@ except ModuleNotFoundError:  # Direct execution from scripts/.
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECEIPT_SCHEMA_VERSION = 2
+RECEIPT_SCHEMA_VERSION = 3
 RECEIPT_FILENAME = "certification-receipt.json"
 CERTIFICATION_MODES = frozenset({"executed", "reused"})
+CERTIFICATION_PROFILES = frozenset(
+    {"complete", "affected", "governance", "recovery"}
+)
 ACTIVE_WORKFLOW_RUN_STATUSES = frozenset(
     {"pending", "queued", "requested", "waiting", "in_progress"}
 )
@@ -51,9 +57,20 @@ FULL_REQUIRED_CHECK_SUITE = frozenset(
 # Compatibility name for callers that mean the complete source gate.
 REQUIRED_CHECK_SUITE = FULL_REQUIRED_CHECK_SUITE
 GOVERNANCE_REQUIRED_CHECK_SUITE = frozenset({"generated", "plan"})
+RECOVERY_REQUIRED_CHECK_SUITE = frozenset({"generated", "plan", "python"})
 ALLOWED_REQUIRED_CHECK_SUITES = frozenset(
-    {FULL_REQUIRED_CHECK_SUITE, GOVERNANCE_REQUIRED_CHECK_SUITE}
+    {
+        FULL_REQUIRED_CHECK_SUITE,
+        GOVERNANCE_REQUIRED_CHECK_SUITE,
+        RECOVERY_REQUIRED_CHECK_SUITE,
+    }
 )
+PROFILE_REQUIRED_CHECK_SUITE = {
+    "complete": FULL_REQUIRED_CHECK_SUITE,
+    "affected": FULL_REQUIRED_CHECK_SUITE,
+    "governance": GOVERNANCE_REQUIRED_CHECK_SUITE,
+    "recovery": RECOVERY_REQUIRED_CHECK_SUITE,
+}
 _RECEIPT_FIELDS = frozenset(
     {
         "schema_version",
@@ -63,10 +80,12 @@ _RECEIPT_FIELDS = frozenset(
         "workflow_run_id",
         "evidence_workflow_run_id",
         "certification_mode",
+        "certification_profile",
         "workflow_name",
         "check_suite",
         "source_tree_fingerprint_algorithm",
         "source_tree_fingerprint",
+        "generated_outputs_fingerprint",
     }
 )
 _SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -115,9 +134,11 @@ class CertificationReceipt:
     workflow_run_id: int
     check_suite: tuple[tuple[str, str], ...]
     source_tree_fingerprint: str
+    generated_outputs_fingerprint: str
     workflow_name: str = "PR"
     evidence_workflow_run_id: int | None = None
     certification_mode: str = "executed"
+    certification_profile: str = "affected"
 
     def __post_init__(self) -> None:
         if (
@@ -157,6 +178,10 @@ class CertificationReceipt:
             raise CertificationReceiptError(
                 "Reused certification must identify an earlier evidence run"
             )
+        if self.certification_profile not in CERTIFICATION_PROFILES:
+            raise CertificationReceiptError(
+                "certification_profile is unsupported"
+            )
         if type(self.exact_head_sha) is not str or not _SHA.fullmatch(
             self.exact_head_sha
         ):
@@ -172,12 +197,25 @@ class CertificationReceipt:
             {name: {"result": result} for name, result in suite.items()},
             frozenset(suite),
         )
+        if frozenset(suite) != PROFILE_REQUIRED_CHECK_SUITE[
+            self.certification_profile
+        ]:
+            raise CertificationReceiptError(
+                "certification_profile does not match its required checks"
+            )
         if (
             type(self.source_tree_fingerprint) is not str
             or not _FINGERPRINT.fullmatch(self.source_tree_fingerprint)
         ):
             raise CertificationReceiptError(
                 "source_tree_fingerprint must be a lowercase SHA-256 value"
+            )
+        if (
+            type(self.generated_outputs_fingerprint) is not str
+            or not _FINGERPRINT.fullmatch(self.generated_outputs_fingerprint)
+        ):
+            raise CertificationReceiptError(
+                "generated_outputs_fingerprint must be a lowercase SHA-256 value"
             )
         object.__setattr__(self, "check_suite", tuple(sorted(suite.items())))
         object.__setattr__(self, "evidence_workflow_run_id", evidence_run)
@@ -191,12 +229,14 @@ class CertificationReceipt:
             "workflow_run_id": self.workflow_run_id,
             "evidence_workflow_run_id": self.evidence_workflow_run_id,
             "certification_mode": self.certification_mode,
+            "certification_profile": self.certification_profile,
             "workflow_name": self.workflow_name,
             "check_suite": dict(self.check_suite),
             "source_tree_fingerprint_algorithm": (
                 SOURCE_TREE_FINGERPRINT_ALGORITHM
             ),
             "source_tree_fingerprint": self.source_tree_fingerprint,
+            "generated_outputs_fingerprint": self.generated_outputs_fingerprint,
         }
 
     @classmethod
@@ -226,9 +266,13 @@ class CertificationReceipt:
             workflow_run_id=value.get("workflow_run_id"),
             evidence_workflow_run_id=value.get("evidence_workflow_run_id"),
             certification_mode=value.get("certification_mode"),
+            certification_profile=value.get("certification_profile"),
             workflow_name=value.get("workflow_name"),
             check_suite=tuple(suite.items()),
             source_tree_fingerprint=value.get("source_tree_fingerprint"),
+            generated_outputs_fingerprint=value.get(
+                "generated_outputs_fingerprint"
+            ),
         )
 
 
@@ -240,17 +284,29 @@ def build_receipt(
     workflow_run_id: int,
     needs: Mapping[str, Any],
     required_jobs: frozenset[str] | None = None,
+    certification_profile: str = "affected",
     root: Path = ROOT,
 ) -> CertificationReceipt:
     suite = canonical_check_suite(needs, required_jobs)
+    if certification_profile not in PROFILE_REQUIRED_CHECK_SUITE:
+        raise CertificationReceiptError("Certification profile is unsupported")
+    if frozenset(suite) != PROFILE_REQUIRED_CHECK_SUITE[certification_profile]:
+        raise CertificationReceiptError(
+            "Certification profile does not match its required checks"
+        )
     return CertificationReceipt(
         repository=repository,
         pull_request=pull_request,
         exact_head_sha=exact_head_sha,
         workflow_run_id=workflow_run_id,
         check_suite=tuple(suite.items()),
+        certification_profile=certification_profile,
         source_tree_fingerprint=tracked_ref_source_fingerprint(
             root, exact_head_sha
+        ),
+        generated_outputs_fingerprint=generated_outputs_fingerprint(
+            load_manifest(root / "platform/generated-artifacts.json", root=root),
+            root=root,
         ),
     )
 
@@ -277,8 +333,10 @@ def build_reused_receipt(
         workflow_run_id=workflow_run_id,
         evidence_workflow_run_id=prior.evidence_workflow_run_id,
         certification_mode="reused",
+        certification_profile=prior.certification_profile,
         check_suite=prior.check_suite,
         source_tree_fingerprint=prior.source_tree_fingerprint,
+        generated_outputs_fingerprint=prior.generated_outputs_fingerprint,
     )
 
 
@@ -290,6 +348,7 @@ def validate_receipt(
     exact_head_sha: str,
     workflow_run_id: int,
     evaluated_source_tree_fingerprint: str,
+    evaluated_generated_outputs_fingerprint: str,
 ) -> None:
     expected = {
         "repository": repository,
@@ -305,6 +364,13 @@ def validate_receipt(
     if receipt.source_tree_fingerprint != evaluated_source_tree_fingerprint:
         raise CertificationReceiptError(
             "Current main source tree is not equivalent to the certified PR head"
+        )
+    if (
+        receipt.generated_outputs_fingerprint
+        != evaluated_generated_outputs_fingerprint
+    ):
+        raise CertificationReceiptError(
+            "Current generated outputs are not equivalent to the certified PR head"
         )
 
 
@@ -558,6 +624,10 @@ def find_previous_pr_certification(
         exact_head_sha=exact_head_sha,
     )
     fingerprint = tracked_worktree_source_fingerprint(root)
+    generated_fingerprint = generated_outputs_fingerprint(
+        load_manifest(root / "platform/generated-artifacts.json", root=root),
+        root=root,
+    )
     last_error: CertificationReceiptError | None = None
     for run in runs:
         run_id = int(run["id"])
@@ -581,6 +651,7 @@ def find_previous_pr_certification(
                 exact_head_sha=exact_head_sha,
                 workflow_run_id=run_id,
                 evaluated_source_tree_fingerprint=fingerprint,
+                evaluated_generated_outputs_fingerprint=generated_fingerprint,
             )
             return receipt
         except CertificationReceiptError as exc:
@@ -717,6 +788,15 @@ def verify_main_certification(
                     evaluated_source_tree_fingerprint=(
                         tracked_worktree_source_fingerprint(root)
                     ),
+                    evaluated_generated_outputs_fingerprint=(
+                        generated_outputs_fingerprint(
+                            load_manifest(
+                                root / "platform/generated-artifacts.json",
+                                root=root,
+                            ),
+                            root=root,
+                        )
+                    ),
                 )
                 return receipt
             except CertificationReceiptError as exc:
@@ -748,9 +828,14 @@ def _write_receipt(receipt: CertificationReceipt, output: str | Path) -> None:
     )
 
 
-def _write_github_output(path: str | Path, *, reusable: bool) -> None:
+def _write_github_output(
+    path: str | Path,
+    *,
+    reusable: bool,
+    key: str = "reuse_certification",
+) -> None:
     with Path(path).open("a", encoding="utf-8", newline="\n") as stream:
-        stream.write(f"reuse_certification={str(reusable).lower()}\n")
+        stream.write(f"{key}={str(reusable).lower()}\n")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -763,6 +848,11 @@ def main(argv: list[str] | None = None) -> int:
     create.add_argument("--workflow-run-id", type=int, required=True)
     create.add_argument("--needs-json", required=True)
     create.add_argument("--required-jobs-json", required=True)
+    create.add_argument(
+        "--certification-profile",
+        choices=sorted(CERTIFICATION_PROFILES),
+        required=True,
+    )
     create.add_argument("--output", required=True)
     can_reuse = subparsers.add_parser("can-reuse-pr")
     can_reuse.add_argument("--repository", required=True)
@@ -781,6 +871,10 @@ def main(argv: list[str] | None = None) -> int:
     verify = subparsers.add_parser("verify-main")
     verify.add_argument("--repository", required=True)
     verify.add_argument("--merge-sha", required=True)
+    broad_reuse = subparsers.add_parser("can-reuse-main-broad")
+    broad_reuse.add_argument("--repository", required=True)
+    broad_reuse.add_argument("--merge-sha", required=True)
+    broad_reuse.add_argument("--github-output", required=True)
     args = parser.parse_args(argv)
     try:
         token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
@@ -806,6 +900,7 @@ def main(argv: list[str] | None = None) -> int:
                 workflow_run_id=args.workflow_run_id,
                 needs=_read_needs(args.needs_json),
                 required_jobs=frozenset(required_value),
+                certification_profile=args.certification_profile,
             )
             _write_receipt(receipt, args.output)
             print(json.dumps(receipt.to_dict(), sort_keys=True))
@@ -855,6 +950,35 @@ def main(argv: list[str] | None = None) -> int:
             )
             _write_receipt(receipt, args.output)
             print(json.dumps(receipt.to_dict(), sort_keys=True))
+            return 0
+        if args.operation == "can-reuse-main-broad":
+            reusable = False
+            reason = "no valid complete PR certification"
+            try:
+                receipt = verify_main_certification(
+                    repository=args.repository,
+                    merge_sha=args.merge_sha,
+                    token=token,
+                )
+                reusable = receipt.certification_profile == "complete"
+                reason = (
+                    "verified complete source-tree certification"
+                    if reusable
+                    else f"receipt profile is {receipt.certification_profile}"
+                )
+            except CertificationReceiptError as exc:
+                reason = str(exc)
+            _write_github_output(
+                args.github_output,
+                reusable=reusable,
+                key="reuse_main_broad",
+            )
+            print(
+                json.dumps(
+                    {"reuse_main_broad": reusable, "reason": reason},
+                    sort_keys=True,
+                )
+            )
             return 0
         receipt = verify_main_certification(
             repository=args.repository,

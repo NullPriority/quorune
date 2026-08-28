@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import io
 import json
+from dataclasses import replace
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 import zipfile
@@ -16,6 +18,7 @@ from scripts.certification_receipt import (
     build_reused_receipt,
     canonical_check_suite,
     find_previous_pr_certification,
+    main as certification_receipt_main,
     receipt_from_archive,
     select_merged_pull_request,
     select_receipt_artifact,
@@ -48,6 +51,7 @@ def receipt() -> CertificationReceipt:
         workflow_run_id=12345,
         check_suite=tuple(canonical_check_suite(required_needs()).items()),
         source_tree_fingerprint="b" * 64,
+        generated_outputs_fingerprint="c" * 64,
     )
 
 
@@ -61,6 +65,17 @@ class CertificationReceiptTests(unittest.TestCase):
             exact_head_sha=value.exact_head_sha,
             workflow_run_id=value.workflow_run_id,
             evaluated_source_tree_fingerprint=value.source_tree_fingerprint,
+            evaluated_generated_outputs_fingerprint=(
+                value.generated_outputs_fingerprint
+            ),
+        )
+
+    def test_complete_profile_is_explicit_and_survives_metadata_reuse(self):
+        complete = replace(receipt(), certification_profile="complete")
+        self.assertEqual("complete", complete.to_dict()["certification_profile"])
+        self.assertEqual(
+            "complete",
+            build_reused_receipt(complete, workflow_run_id=23456).certification_profile,
         )
 
     def test_metadata_only_publication_preserves_original_evidence_run(self):
@@ -91,6 +106,19 @@ class CertificationReceiptTests(unittest.TestCase):
                 exact_head_sha=value.exact_head_sha,
                 workflow_run_id=value.workflow_run_id,
                 evaluated_source_tree_fingerprint="c" * 64,
+                evaluated_generated_outputs_fingerprint=(
+                    value.generated_outputs_fingerprint
+                ),
+            )
+        with self.assertRaisesRegex(CertificationReceiptError, "generated outputs"):
+            validate_receipt(
+                value,
+                repository=value.repository,
+                pull_request=value.pull_request,
+                exact_head_sha=value.exact_head_sha,
+                workflow_run_id=value.workflow_run_id,
+                evaluated_source_tree_fingerprint=value.source_tree_fingerprint,
+                evaluated_generated_outputs_fingerprint="d" * 64,
             )
 
     def test_stale_or_mismatched_receipt_fails_closed(self):
@@ -107,6 +135,9 @@ class CertificationReceiptTests(unittest.TestCase):
                 "exact_head_sha": value.exact_head_sha,
                 "workflow_run_id": value.workflow_run_id,
                 "evaluated_source_tree_fingerprint": value.source_tree_fingerprint,
+                "evaluated_generated_outputs_fingerprint": (
+                    value.generated_outputs_fingerprint
+                ),
             }
             arguments[field] = replacement
             with self.subTest(field=field):
@@ -294,6 +325,11 @@ class CertificationReceiptTests(unittest.TestCase):
                 "tracked_worktree_source_fingerprint",
                 return_value=expected.source_tree_fingerprint,
             ),
+            patch(
+                "scripts.certification_receipt."
+                "generated_outputs_fingerprint",
+                return_value=expected.generated_outputs_fingerprint,
+            ),
         ):
             actual = verify_main_certification(
                 repository=expected.repository,
@@ -371,6 +407,11 @@ class CertificationReceiptTests(unittest.TestCase):
                 "scripts.certification_receipt."
                 "tracked_worktree_source_fingerprint",
                 return_value=prior.source_tree_fingerprint,
+            ),
+            patch(
+                "scripts.certification_receipt."
+                "generated_outputs_fingerprint",
+                return_value=prior.generated_outputs_fingerprint,
             ),
         ):
             found = find_previous_pr_certification(
@@ -635,6 +676,7 @@ class CertificationReceiptTests(unittest.TestCase):
         )
         self.assertIn("python scripts/verify_ci_needs.py", certification)
         self.assertIn("certification_receipt.py create", certification)
+        self.assertIn("--certification-profile", certification)
         checkout = certification.split("actions/checkout@v4", 1)[1].split(
             "Require every PR gate", 1
         )[0]
@@ -646,6 +688,32 @@ class CertificationReceiptTests(unittest.TestCase):
         self.assertNotIn("certification_receipt.py reuse-pr", certification)
         self.assertNotIn("needs.plan.outputs.reuse_certification", certification)
         self.assertIn("actions/upload-artifact@v4", certification)
+
+    def test_invalid_main_receipt_falls_closed_to_a_fresh_broad_matrix(self):
+        with TemporaryDirectory() as raw:
+            output = Path(raw) / "github-output.txt"
+            with (
+                patch.dict("os.environ", {"GH_TOKEN": "test-token"}, clear=False),
+                patch(
+                    "scripts.certification_receipt.verify_main_certification",
+                    side_effect=CertificationReceiptError("stale receipt"),
+                ),
+            ):
+                status = certification_receipt_main(
+                    [
+                        "can-reuse-main-broad",
+                        "--repository",
+                        "MoellerJDev/quorune",
+                        "--merge-sha",
+                        "d" * 40,
+                        "--github-output",
+                        str(output),
+                    ]
+                )
+            self.assertEqual(0, status)
+            self.assertEqual(
+                "reuse_main_broad=false\n", output.read_text(encoding="utf-8")
+            )
 
 
 if __name__ == "__main__":

@@ -25,6 +25,7 @@ _EXECUTION_CLASSES = {
     "scheduler",
 }
 _REUSE_POLICIES = {"safe", "noncacheable"}
+_DEPENDENT_CHANGE_POLICIES = {"inputs", "outputs"}
 
 
 class GeneratedArtifactManifestError(ValueError):
@@ -46,6 +47,7 @@ class GeneratorSpec:
     database_identity: str = "none"
     execution_class: str = "foundation"
     reuse_policy: str = "noncacheable"
+    dependent_change_policy: str = "inputs"
 
 
 @dataclass(frozen=True)
@@ -228,7 +230,8 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
         raise GeneratedArtifactManifestError(
             "generated-artifact manifest has unknown or missing top-level fields"
         )
-    if value.get("schema_version") != 3:
+    schema_version = value.get("schema_version")
+    if schema_version not in {3, 4}:
         raise GeneratedArtifactManifestError(
             "unsupported generated-artifact manifest schema_version"
         )
@@ -267,7 +270,13 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
     seen_ids: set[str] = set()
     output_owners: dict[str, str] = {}
     for index, row in enumerate(rows):
-        if not isinstance(row, Mapping) or set(row) != expected_fields:
+        if (
+            not isinstance(row, Mapping)
+            or not expected_fields.issubset(row)
+            or set(row) - expected_fields != (
+                {"dependent_change_policy"} if schema_version == 4 and "dependent_change_policy" in row else set()
+            )
+        ):
             raise GeneratedArtifactManifestError(
                 f"generators[{index}] has unknown or missing fields"
             )
@@ -393,6 +402,13 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
             raise GeneratedArtifactManifestError(
                 f"generator {generator_id} has unsupported reuse_policy"
             )
+        dependent_change_policy = str(
+            row.get("dependent_change_policy") or "inputs"
+        )
+        if dependent_change_policy not in _DEPENDENT_CHANGE_POLICIES:
+            raise GeneratedArtifactManifestError(
+                f"generator {generator_id} has unsupported dependent_change_policy"
+            )
         if reuse_policy == "safe" and (
             policy == "manual"
             or not implementation_inputs
@@ -418,6 +434,7 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
                 database_identity=database_identity,
                 execution_class=execution_class,
                 reuse_policy=reuse_policy,
+                dependent_change_policy=dependent_change_policy,
             )
         )
 
@@ -646,6 +663,7 @@ def generator_manifest_fingerprint(spec: GeneratorSpec) -> str:
         "database_identity": spec.database_identity,
         "execution_class": spec.execution_class,
         "reuse_policy": spec.reuse_policy,
+        "dependent_change_policy": spec.dependent_change_policy,
     }
     return hashlib.sha256(
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")

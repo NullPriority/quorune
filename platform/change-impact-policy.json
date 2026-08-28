@@ -37,6 +37,7 @@
         "scripts/compact_ci_dependencies.py",
         "scripts/finalize_generated.py",
         "scripts/generated_artifacts.py",
+        "scripts/generated_owner_cache.py",
         "scripts/main_health.py",
         "scripts/main_broad_ci.py",
         "scripts/source_tree_fingerprint.py",
@@ -838,7 +839,6 @@
     "browser-combat": "browser_focus:combat",
     "browser-mana-action": "browser_focus:mana-action",
     "browser-turn-draw": "browser_focus:turn-draw",
-    "windows-full": "windows_full",
-    "main-red-recovery": "high_risk_source"
+    "windows-full": "windows_full"
   }
 }

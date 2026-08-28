@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "discovery": {
     "path_prefixes": [
       "coverage/",
@@ -103,18 +103,19 @@
       ],
       "write_with_database": null,
       "write_policy": "automatic",
-      "input_groups": [
-        "platform-source",
-        "python-product",
-        "tests-source"
+      "input_groups": [],
+      "input_paths": [
+        "platform/capability-evidence-declarations.json",
+        "quorune/rules/capability-registry.json",
+        "rules/rule-index.json"
       ],
-      "input_paths": [],
       "implementation_inputs": [
         "scripts/update_capability_evidence.py"
       ],
       "database_identity": "none",
       "execution_class": "foundation",
-      "reuse_policy": "safe"
+      "reuse_policy": "safe",
+      "dependent_change_policy": "outputs"
     },
     {
       "id": "compact-ci-card-dependencies",

@@ -7,7 +7,7 @@
   },
   "provenance": {
     "certification_policy": "exact_head_actions_receipt_and_source_tree_equivalence",
-    "certification_receipt_schema_version": 2,
+    "certification_receipt_schema_version": 3,
     "source_tree_fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
   },
   "snapshots": {

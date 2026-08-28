@@ -40,11 +40,34 @@ def validate_dependencies(needs: Mapping) -> None:
         )
 
 
+def validate_reused_dependencies(needs: Mapping) -> None:
+    if set(needs) != EXPECTED_DEPENDENCIES:
+        raise NightlyCertificationError(
+            "Main broad dependency graph is incomplete or unreviewed"
+        )
+    if not isinstance(needs.get("plan"), Mapping) or needs["plan"].get(
+        "result"
+    ) != "success":
+        raise NightlyCertificationError("Main broad reuse plan did not pass")
+    executed = sorted(
+        name
+        for name in EXPECTED_DEPENDENCIES - {"plan"}
+        if not isinstance(needs.get(name), Mapping)
+        or needs[name].get("result") != "skipped"
+    )
+    if executed:
+        raise NightlyCertificationError(
+            "Main broad reuse unexpectedly executed matrix jobs: "
+            + ", ".join(executed)
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Fail-closed exact-main broad regression certification"
     )
-    parser.add_argument("--results-dir", required=True)
+    parser.add_argument("--results-dir")
+    parser.add_argument("--reuse-complete", action="store_true")
     args = parser.parse_args()
     raw = os.environ.get("CI_MAIN_BROAD_NEEDS_JSON")
     if not raw:
@@ -56,8 +79,16 @@ def main() -> int:
             raise NightlyCertificationError(
                 "CI_MAIN_BROAD_NEEDS_JSON must contain an object"
             )
-        validate_dependencies(needs)
-        summary = validate_results(Path(args.results_dir))
+        if args.reuse_complete:
+            validate_reused_dependencies(needs)
+            summary = {"mode": "reused-complete-pr-certification"}
+        else:
+            if not args.results_dir:
+                raise NightlyCertificationError(
+                    "results-dir is required for an executed broad matrix"
+                )
+            validate_dependencies(needs)
+            summary = validate_results(Path(args.results_dir))
     except (
         json.JSONDecodeError,
         NightlyCertificationError,

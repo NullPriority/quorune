@@ -183,7 +183,7 @@ def load_observed_module_timings(root: Path) -> dict[str, float]:
             continue
         found_documents += 1
         if (
-            value.get("schema_version") != 2
+            value.get("schema_version") != 3
             or value.get("platform") != "ubuntu"
             or value.get("backend") != "pytest-xdist"
             or value.get("workers") != PYTEST_XDIST_WORKERS
@@ -438,6 +438,8 @@ class PytestShardRecorder:
         self.skipped = 0
         self.expected_failures = 0
         self.unexpected_successes = 0
+        self.failed_test_ids: set[str] = set()
+        self.error_test_ids: set[str] = set()
 
     def pytest_runtest_logreport(self, report: Any) -> None:
         nodeid = str(report.nodeid)
@@ -453,8 +455,10 @@ class PytestShardRecorder:
         elif report.failed:
             if report.when == "call":
                 self.failures += 1
+                self.failed_test_ids.add(_pytest_nodeid_to_test_id(nodeid))
             else:
                 self.errors += 1
+                self.error_test_ids.add(_pytest_nodeid_to_test_id(nodeid))
         elif report.passed and was_expected_failure:
             self.unexpected_successes += 1
 
@@ -469,6 +473,16 @@ class PytestShardRecorder:
                 key=lambda item: (-item[1], item[0]),
             )
         ]
+
+
+def _pytest_nodeid_to_test_id(nodeid: str) -> str:
+    path, *parts = nodeid.split("::")
+    if not path.startswith("tests/") or not path.endswith(".py") or not parts:
+        raise TestShardError(f"Pytest reported a noncanonical test id: {nodeid}")
+    clean_parts = [part.split("[", 1)[0] for part in parts]
+    return ".".join(
+        [path.removesuffix(".py").replace("/", "."), *clean_parts]
+    )
 
 
 def describe(manifest: Mapping) -> dict:
@@ -517,7 +531,7 @@ def run_modules(
     successful = result.wasSuccessful() and result.testsRun > 0
     if result_json is not None:
         document = {
-            "schema_version": 2,
+            "schema_version": 3,
             "type": "unittest-shard-result",
             "platform": platform,
             "suite": suite_name,
@@ -531,6 +545,8 @@ def run_modules(
             "skipped": len(result.skipped),
             "expected_failures": len(result.expectedFailures),
             "unexpected_successes": len(result.unexpectedSuccesses),
+            "failed_test_ids": sorted(test.id() for test, _ in result.failures),
+            "error_test_ids": sorted(test.id() for test, _ in result.errors),
             "backend": "unittest",
             "workers": 1,
             "distribution": "sequential",
@@ -628,7 +644,7 @@ def run_modules_pytest_xdist(
     successful = exit_code == 0 and tests_run == configured_test_count
     if result_json is not None:
         document = {
-            "schema_version": 2,
+            "schema_version": 3,
             "type": "pytest-xdist-shard-result",
             "platform": platform,
             "suite": suite_name,
@@ -642,6 +658,8 @@ def run_modules_pytest_xdist(
             "skipped": recorder.skipped,
             "expected_failures": recorder.expected_failures,
             "unexpected_successes": recorder.unexpected_successes,
+            "failed_test_ids": sorted(recorder.failed_test_ids),
+            "error_test_ids": sorted(recorder.error_test_ids),
             "backend": "pytest-xdist",
             "workers": workers,
             "distribution": PYTEST_XDIST_DISTRIBUTION,
