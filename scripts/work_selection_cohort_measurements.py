@@ -276,7 +276,7 @@ def _matches_typed_spell_cast_fact_probe(
     ability: Mapping[str, Any],
 ) -> bool:
     return _matches_integrated_spell_cast_probe(
-        source,
+        _without_parenthetical_reminder(source),
         card_record=card_record,
         ability=ability,
         extended_only=True,

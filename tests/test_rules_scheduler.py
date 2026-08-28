@@ -1486,6 +1486,10 @@ class RulesSchedulerTests(unittest.TestCase):
             "When you cast this spell, draw a card.",
             "Whenever you cast your second spell each turn, you gain 1 life.",
             "Whenever you cast a historic spell, scry 1.",
+            (
+                "Whenever you cast a historic spell, draw a card. "
+                "(Artifacts, legendaries, and Sagas are historic.)"
+            ),
             "Whenever you cast a green permanent spell, draw a card.",
         ):
             with self.subTest(source=source):
