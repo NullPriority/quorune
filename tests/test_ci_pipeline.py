@@ -738,6 +738,20 @@ class CiPipelineTests(unittest.TestCase):
             ):
                 self.assertIn("build-ci", line)
 
+    def test_main_broad_certifier_installs_collection_dependencies(self):
+        workflow = (ROOT / ".github/workflows/main-broad.yml").read_text(
+            encoding="utf-8"
+        )
+        certification = workflow.split("\n  certification:", 1)[1].split(
+            "\n  halt_auto_merge:", 1
+        )[0]
+        install = "python -m pip install -e . -r requirements-dev.txt"
+        verify = "python scripts/verify_main_broad_ci.py"
+
+        self.assertIn("cache: pip", certification)
+        self.assertIn(install, certification)
+        self.assertLess(certification.index(install), certification.index(verify))
+
     def test_browser_smoke_is_headless_and_never_opens_report(self):
         package = json.loads((ROOT / "web/package.json").read_text(encoding="utf-8"))
         self.assertIn("--grep @smoke", package["scripts"]["e2e:smoke"])
