@@ -81,6 +81,7 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertIn("architecture-policy", names)
         self.assertIn("capability-evidence-declarations", names)
         self.assertIn("rules-selection-policy", names)
+        self.assertIn("change-impact-contract", names)
         self.assertNotIn("generated-finalization", names)
         self.assertNotIn("compact-ci-dependencies", names)
         self.assertNotIn("build-test-database", names)

@@ -133,6 +133,18 @@ def build_plan(
                         "--validate-policy",
                     ),
                 ),
+                QuickStep(
+                    "change-impact-contract",
+                    (
+                        python,
+                        "-m",
+                        "unittest",
+                        (
+                            "tests.test_ci_pipeline.CiPipelineTests."
+                            "test_risk_plan_selects_owned_modules_and_fails_closed"
+                        ),
+                    ),
+                ),
             )
         )
     if phase == "normal" and "compact-ci-dependencies" in impact.checks:
