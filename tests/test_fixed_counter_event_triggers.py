@@ -43,6 +43,7 @@ from quorune.compiler.target_effect_corpus_assurance import (
     TargetEffectCorpusCollector,
 )
 from quorune.deck import DeckLoader
+from quorune.kicker import KICKER_CAST_OPTION_ID
 from quorune.model import CardInstance, CombatState
 from quorune.oracle_ir import (
     compile_oracle_card,
@@ -104,6 +105,7 @@ def focused_database(directory: str) -> CardDatabase:
             / "tests"
             / "fixtures"
             / "fixed-typed-event-trigger-cards.json",
+            ROOT / "tests" / "fixtures" / "kicker-rules-cards.json",
         ],
         database,
     )
@@ -570,15 +572,138 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "colorless",
             )
 
+    def test_typed_spell_cast_fact_predicates_compile_exactly(self):
+        cases = (
+            (
+                "When you cast this spell, draw a card.",
+                "Creature — Eldrazi",
+                "stack",
+                {"field": "card", "op": "eq", "value": "$source.ref"},
+            ),
+            (
+                "Whenever you cast your second spell each turn, draw a card.",
+                "Artifact",
+                "battlefield",
+                {
+                    "field": "caster_spell_number",
+                    "op": "eq",
+                    "value": 2,
+                },
+            ),
+            (
+                "Whenever you cast a creature spell with mana value 5 or "
+                "greater, draw a card.",
+                "Artifact",
+                "battlefield",
+                {"field": "mana_value", "op": "gte", "value": 5},
+            ),
+            (
+                "Whenever you cast a spell from anywhere other than your "
+                "hand, draw a card.",
+                "Artifact",
+                "battlefield",
+                {"field": "from", "op": "ne", "value": "hand"},
+            ),
+            (
+                "Whenever you cast your first spell during each opponent's "
+                "turn, draw a card.",
+                "Artifact",
+                "battlefield",
+                {
+                    "field": "active_player",
+                    "op": "ne",
+                    "value": "$source.controller",
+                },
+            ),
+            (
+                "Whenever you cast a kicked spell, draw a card.",
+                "Artifact",
+                "battlefield",
+                {"field": "kicked", "op": "truthy", "value": True},
+            ),
+            (
+                "Whenever you cast a spell with {X} in its mana cost, "
+                "draw a card.",
+                "Artifact",
+                "battlefield",
+                {"field": "has_x_cost", "op": "truthy", "value": True},
+            ),
+            (
+                "Whenever you cast a spell you don't own, draw a card.",
+                "Artifact",
+                "battlefield",
+                {
+                    "field": "owner",
+                    "op": "ne",
+                    "value": "$source.controller",
+                },
+            ),
+            (
+                "Whenever you cast a green permanent spell, draw a card.",
+                "Artifact",
+                "battlefield",
+                {
+                    "field": "colors",
+                    "op": "contains_any",
+                    "value": ["G"],
+                },
+            ),
+            (
+                "Whenever you cast a creature spell that has an Adventure, "
+                "draw a card.",
+                "Artifact",
+                "battlefield",
+                {
+                    "field": "has_adventure",
+                    "op": "truthy",
+                    "value": True,
+                },
+            ),
+        )
+        for text, type_line, active_zone, leaf in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(text)
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                self.assertEqual(active_zone, binding.active_zone)
+                self.assertIn(
+                    FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC,
+                    binding.event_mechanics,
+                )
+                serialized = json.dumps(binding.event_condition, sort_keys=True)
+                self.assertIn(json.dumps(leaf, sort_keys=True), serialized)
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.event == "spell.cast"
+                )
+                self.assertEqual(active_zone, node.active_zone)
+                self.assertEqual(binding.event_condition, node.event_condition)
+
+        historic = fixed_counter_trigger_binding(
+            "Whenever you cast a historic spell, draw a card."
+        )
+        self.assertIsNotNone(historic)
+        assert historic is not None
+        historic_condition = json.dumps(
+            historic.event_condition,
+            sort_keys=True,
+        )
+        for value in ("artifact", "legendary", "saga"):
+            self.assertIn(value, historic_condition)
+
     def test_dynamic_spell_cast_characteristic_variants_remain_material(self):
         variants = (
             "Whenever you cast a spell with mana value 3, draw a card.",
-            "Whenever you cast your first spell each turn, draw a card.",
-            "Whenever you cast a spell from your graveyard, draw a card.",
             "Whenever you cast a spell that targets a creature, draw a card.",
-            "Whenever you cast a historic spell, draw a card.",
             "Whenever you cast or copy a Spirit spell, draw a card.",
             "Whenever you cast a Spirit spell, if you control an artifact, draw a card.",
+            "Whenever you cast a spell of the chosen color, draw a card.",
+            "Whenever you cast a spell with mana value greater than the "
+            "number of counters on this artifact, draw a card.",
+            "Whenever you play a land or cast a spell, draw a card.",
         )
         for text in variants:
             with self.subTest(text=text):
@@ -2719,6 +2844,210 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
             self.assertEqual(["spirit"], item.context["subtypes"])
             self.assertEqual([], item.context["supertypes"])
             self.assertEqual([], item.context["colors"])
+
+    def test_spell_cast_predicates_share_v3_event_and_stack_source(self):
+        def cast_fixture(
+            current_session,
+            name: str,
+            ref: str,
+            mana: Mapping[str, int],
+            response: Mapping[str, object] | None = None,
+        ):
+            engine = current_session.engine
+            record = self.db.lookup(name)
+            for program in generated_programs(
+                self.db,
+                record,
+                trust_level="trusted",
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            ):
+                engine.semantics.put(program)
+            spell = self.add_card(
+                engine,
+                seat="A",
+                name=name,
+                ref=ref,
+                zone="hand",
+            )
+            engine.state.active_player = "A"
+            engine.state.phase = "precombat_main"
+            engine.state.step = "main"
+            engine.state.priority_player = "A"
+            engine.state.priority_passes = []
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            for symbol, amount in mana.items():
+                engine.state.players["A"].mana_pool[symbol] += amount
+            engine._cast(
+                "A",
+                {
+                    "card": spell.ref,
+                    "pay": "auto",
+                    **dict(response or {}),
+                },
+            )
+            if (
+                engine.state.pending_decision is not None
+                and engine.state.pending_decision.kind == "trigger.order"
+            ):
+                refs = [
+                    item["id"]
+                    for item in engine.state.pending_decision.payload_by_actor[
+                        "A"
+                    ]["triggers"]
+                ]
+                ordered = current_session.act(
+                    "pilot:A",
+                    {"action_id": "order", "triggers": refs},
+                )
+                self.assertTrue(ordered.ok, ordered.summary)
+            return spell
+
+        session = self.session(121010, players=4)
+        engine = session.engine
+        sources = tuple(
+            self.add_card(
+                engine,
+                seat="A",
+                name=name,
+                ref=f"cast-predicate-{index}",
+                zone="battlefield",
+            )
+            for index, name in enumerate(
+                (
+                    "Typed Second Cast Life Trigger Fixture",
+                    "Typed Mana Value Cast Life Trigger Fixture",
+                    "Typed Historic Cast Life Trigger Fixture",
+                ),
+                start=1,
+            )
+        )
+        programs = {
+            self.register_typed_event_trigger(engine, source).key
+            for source in sources
+        }
+        engine._record_turn_history(
+            "spell_cast",
+            actor="A",
+            object_incarnation="fixture:prior-cast",
+            types=("instant",),
+        )
+
+        spell = cast_fixture(
+            session,
+            "Legendary Spirit Cast Fixture",
+            "typed-v3-cast",
+            {"W": 1, "U": 1},
+        )
+        items = [
+            item for item in engine.state.stack if item.semantic_key in programs
+        ]
+
+        self.assertEqual("stack", spell.zone)
+        self.assertEqual(programs, {item.semantic_key for item in items})
+        self.assertEqual(3, len(items))
+        for item in items:
+            self.assertEqual(3, item.context["schema_version"])
+            self.assertEqual(2.0, item.context["mana_value"])
+            self.assertEqual(2, item.context["caster_spell_number"])
+            self.assertEqual("A", item.context["owner"])
+            self.assertEqual("A", item.context["active_player"])
+            self.assertFalse(item.context["kicked"])
+            self.assertFalse(item.context["has_x_cost"])
+            self.assertFalse(item.context["has_adventure"])
+
+        self_session = self.session(121011, players=4)
+        self_engine = self_session.engine
+        self_spell = self.add_card(
+            self_engine,
+            seat="A",
+            name="Typed Self Cast Life Trigger Fixture",
+            ref="typed-self-cast",
+            zone="hand",
+        )
+        self_program = self.register_typed_event_trigger(
+            self_engine,
+            self_spell,
+        )
+        self_engine.state.active_player = "A"
+        self_engine.state.phase = "precombat_main"
+        self_engine.state.step = "main"
+        self_engine.state.priority_player = "A"
+        self_engine.state.players["A"].mana_pool["C"] += 1
+        self_engine._cast("A", {"card": self_spell.ref, "pay": "auto"})
+        self_item = next(
+            item
+            for item in self_engine.state.stack
+            if item.semantic_key == self_program.key
+        )
+        self.assertEqual("stack", self_spell.zone)
+        self.assertEqual(self_spell.ref, self_item.context["card"])
+        self.assertEqual(self_spell.object_id, self_item.source_object_id)
+        self.assertEqual("stack", self_item.context["source_zone"])
+
+        fact_session = self.session(121012, players=4)
+        fact_engine = fact_session.engine
+        fact_programs = {}
+        for index, (fact, name) in enumerate(
+            (
+                ("kicked", "Typed Kicked Cast Life Trigger Fixture"),
+                ("has_x_cost", "Typed X Cost Cast Life Trigger Fixture"),
+                (
+                    "has_adventure",
+                    "Typed Adventure Cast Life Trigger Fixture",
+                ),
+            ),
+            start=1,
+        ):
+            source = self.add_card(
+                fact_engine,
+                seat="A",
+                name=name,
+                ref=f"typed-positive-fact-{index}",
+                zone="battlefield",
+            )
+            fact_programs[fact] = self.register_typed_event_trigger(
+                fact_engine,
+                source,
+            ).key
+
+        positive_contexts = {}
+        for field, name, ref, mana, response in (
+            (
+                "kicked",
+                "Kavu Titan",
+                "typed-kicked-cast",
+                {"C": 3, "G": 2},
+                {"cost_option": KICKER_CAST_OPTION_ID},
+            ),
+            (
+                "has_x_cost",
+                "Typed X Cast Fixture",
+                "typed-x-cast",
+                {"C": 2, "G": 1},
+                {"x": 2},
+            ),
+            (
+                "has_adventure",
+                "Typed Adventure Cast Fixture // Typed Adventure Effect Fixture",
+                "typed-adventure-cast",
+                {"C": 2, "B": 1},
+                {},
+            ),
+        ):
+            cast_fixture(fact_session, name, ref, mana, response)
+            item = next(
+                value
+                for value in fact_engine.state.stack
+                if value.semantic_key == fact_programs[field]
+            )
+            positive_contexts[field] = dict(item.context)
+            fact_engine.state.stack.clear()
+            fact_engine.state.pending_trigger_batches.clear()
+        for field, context in positive_contexts.items():
+            self.assertTrue(context[field])
+        self.assertEqual(3.0, positive_contexts["has_x_cost"]["mana_value"])
 
     def test_shroud_and_enchantment_cast_draw_compose(self):
         session = self.session(121007, players=4)

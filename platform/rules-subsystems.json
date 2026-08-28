@@ -834,6 +834,49 @@
           "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
         },
         {
+          "bundle_id": "bundle:typed-spell-cast-fact-predicates",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_spell_cast",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.compiler.spell_cast_predicates.fixed_spell_cast_binding_spec",
+            "component:quorune.rules.spell_cast_events.SpellCastEvent"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "cast-origin-and-owner-relations",
+            "caster-and-turn-ordinal-facts",
+            "fixed-kicked-x-cost-and-adventure-facts",
+            "fixed-mana-value-lower-bound",
+            "historic-or-fixed-color-permanent-characteristics",
+            "source-spell-stack-identity"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_spell_cast",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "immutable spell-cast transaction facts composed with independently exact typed effect bodies",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends one normalized spell-cast event and the existing typed event-effect owner across reusable source identity, public cast history, turn relation, origin, ownership, payment-state, fixed mana-value, and bounded characteristic predicates.",
+          "explicit_exclusions": [
+            "cast-or-copy and copied-spell triggers",
+            "chosen values, target-relative predicates, and mixed land-or-cast events",
+            "dynamic power, counter, characteristic, or mana-value comparisons",
+            "linked names, unsupported keyword combinations, and payment history beyond kicked",
+            "optional, intervening-if, reflexive, and independently inexact effect bodies"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-spell-cast-fact-predicate-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-source-event-triggers",
           "member_family_ids": [
             "event_binding:normalized-source-damage",
@@ -912,35 +955,19 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v138-typed-query-self-characteristics",
-      "compiler_version": "oracle-ir-v138",
-      "bundle_id": "bundle:typed-query-self-characteristics",
-      "candidate_ids": ["compiler:typed-query-self-characteristics"],
+      "transition_id": "oracle-ir-v139-typed-spell-cast-fact-predicates",
+      "compiler_version": "oracle-ir-v139",
+      "bundle_id": "bundle:typed-spell-cast-fact-predicates",
+      "candidate_ids": ["compiler:typed-spell-cast-fact-predicates"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "activation.tap_untap_cost.haste",
-        "combat.attack.defender",
-        "combat.attack.haste",
-        "combat.attack.vigilance",
-        "combat.block.flying",
-        "combat.block.menace",
-        "combat.block.reach",
-        "combat.block.shadow",
-        "combat.damage.assignment.deathtouch",
-        "combat.damage.assignment.trample",
-        "combat.damage.participation.strike_steps",
-        "continuous.characteristics.query_count_modifier",
-        "damage.result.deathtouch",
-        "damage.result.infect",
-        "damage.result.lifelink",
-        "damage.result.wither",
-        "permanent.indestructible.ordinary",
-        "target.protection.hexproof_permanent",
-        "target.protection.shroud_permanent"
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_spell_cast"
       ],
-      "measurement_id": "measurement:typed-query-self-characteristics",
+      "measurement_id": "measurement:typed-spell-cast-fact-predicates",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1389,6 +1416,11 @@
         "candidate_id": "compiler:typed-query-self-characteristics",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader still combines unrelated characteristic, permission, and declaration grammars. Two bounded probes retired fixed group power/toughness below every harvest floor and rejected a fixed-target leaf whose apparent card closure depended on distinct missing carriers. The selected strict self-characteristic grammar shares one typed controller, opponent, global, graveyard, hand-size, attachment, or counter quantity. Counted objects cross a cycle-safe copy, type, and color boundary before ordinary layer-6 and layer-7c effects, including current-controller graveyards and all in-game opponents. Current cohort identities and conservative complete-card lower bounds are derived into the generated measurement artifact; Delirium, Domain, color cardinality, chosen, named, modified, shared-type, top-library, secret-identity, dynamic-coefficient, comparison, attached-subject, modal, triggered, activated, quoted, and ability-presence interactions remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:typed-spell-cast-fact-predicates",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired strict source-self lifecycle, exact fixed public-state conditions, and already-supported effect-sequence slices below every harvest floor. The selected spell-cast predicate family instead composes one versioned normalized cast event with the existing typed event-effect owner across source identity, caster history, turn relation, public origin and ownership, fixed payment facts, fixed mana-value lower bounds, Historic, fixed-color permanents, and Adventure. Current cohort identities and conservative complete-card lower bounds are derived into the generated measurement artifact; chosen, target-relative, cast-or-copy, linked-name, mixed-event, unsupported payment-history, and dynamic comparison forms remain fail-closed."
       }
     ]
   },

@@ -446,6 +446,7 @@
       "id": "spell-cast-characteristic-trigger-contract",
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/spell_cast_predicates.py",
         "quorune/rules/casting/commit.py",
         "quorune/rules/spell_cast_events.py",
         "quorune/trigger_discovery.py",

@@ -124,6 +124,46 @@ class ProwessCompilerTests(unittest.TestCase):
         self.assertEqual((), event.colors)
         self.assertEqual(legacy, event.to_context())
 
+    def test_spell_cast_event_v3_seals_public_predicate_facts(self):
+        event = SpellCastEvent(
+            schema_version=3,
+            card_ref="A17",
+            object_id="object:A17",
+            logical_object_id="logical:A17:4",
+            controller="A",
+            origin="exile",
+            stack_ref="S9",
+            types=("creature",),
+            subtypes=("wizard",),
+            supertypes=("legendary",),
+            colors=("U",),
+            mana_value=5,
+            owner="B",
+            active_player="C",
+            caster_spell_number=2,
+            kicked=True,
+            has_x_cost=True,
+            has_adventure=True,
+            keywords=("Adventure",),
+        )
+
+        context = event.to_context()
+
+        self.assertEqual(event, SpellCastEvent.from_context(context))
+        self.assertEqual(5.0, context["mana_value"])
+        self.assertEqual("B", context["owner"])
+        self.assertEqual("C", context["active_player"])
+        self.assertEqual(2, context["caster_spell_number"])
+        self.assertTrue(context["kicked"])
+        self.assertTrue(context["has_x_cost"])
+        self.assertTrue(context["has_adventure"])
+        self.assertEqual(["adventure"], context["keywords"])
+
+        malformed = deepcopy(context)
+        malformed["caster_spell_number"] = 0
+        with self.assertRaises(SpellCastEventError):
+            SpellCastEvent.from_context(malformed)
+
     def test_spell_cast_event_rejects_malformed_context_without_mutation(self):
         context = SpellCastEvent(
             card_ref="A17",
@@ -470,7 +510,7 @@ class ProwessRuntimeTests(unittest.TestCase):
             self.prepare_noncreature_cast(engine)
             engine._stabilize()
             context = engine.state.stack[-1].context
-            self.assertEqual(2, context["schema_version"])
+            self.assertEqual(3, context["schema_version"])
             self.assertTrue(context["object_id"])
             self.assertTrue(context["logical_object_id"])
 

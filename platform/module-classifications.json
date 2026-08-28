@@ -2549,6 +2549,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/spell_cast_predicates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/static_runtime_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8205,5 +8220,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "03194bdaf7ac9a398a03221718ed5a5e2a4f234ea9221d1d81092596d21abd70"
+  "fingerprint": "72d254c0b879752da435ea8cc67e7a4ec13b00fd9d2c1d50d0b842c1205248a0"
 }
