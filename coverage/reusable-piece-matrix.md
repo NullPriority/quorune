@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "3cf6ca768ddbfdee8624269ea55bbc248cb699bd36c62e1908fd8a80f28fde13"
+verified: "d60ef603f11bfe254413267d3b2950920c11a4e61d3a806c8dc46288c780e09c"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,12 +17,12 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 2,171
+- Pieces: 2,176
 - Cards indexed: 31,623
-- Material abilities classified: 59,308
+- Material abilities classified: 59,304
 - Unclassified material spans: 0
 - Mapped pinned rules: 922 / 3,309
-- Applicable piece pairs: 58,519
+- Applicable piece pairs: 59,029
 - Covered piece pairs: 793
 
 ## Ontology classes
@@ -37,7 +37,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `continuous_effects` — Static abilities and continuous effects | 44 |
 | `costs_mana` — Costs and mana | 8 |
 | `events_mutations` — Typed events and mutations | 111 |
-| `keyword_mechanics` — Keyword actions and keyword abilities | 559 |
+| `keyword_mechanics` — Keyword actions and keyword abilities | 564 |
 | `multiplayer_commander` — Multiplayer, Commander, and profile pieces | 4 |
 | `object_identity` — Object identity and lifetime | 31 |
 | `one_shot_effects` — One-shot semantic effects | 171 |
@@ -67,7 +67,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 7,866 | 3,643 | 3,643 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 7,862 | 3,665 | 3,665 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,472 | 225 | 225 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,873 | 133 | 133 | `absent` | `untested` |
 | `residual.replacement.damage-prevention` | `replacement_prevention` | 167 | 23 | 23 | `absent` | `untested` |
