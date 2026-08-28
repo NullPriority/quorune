@@ -102,6 +102,26 @@
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
       "faces": []
+    },
+    {
+      "oracle_id": "fda76032-7e6f-416f-8874-2a0642837522",
+      "name": "Jirina, Dauntless General",
+      "mana_cost": "{W}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Soldier",
+      "oracle_text": "When Jirina enters, exile target player's graveyard.\nSacrifice Jirina: Humans you control gain hexproof and indestructible until end of turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": ["B", "W"],
+      "color_identity": ["B", "W"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-05-12",
+      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "faces": []
     }
   ],
   "rulings": []

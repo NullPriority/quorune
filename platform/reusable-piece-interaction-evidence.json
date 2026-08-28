@@ -4185,6 +4185,21 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_jirina_graveyard_trigger_and_protection_activation_replay",
+      "piece_ids": [
+        "capability.target.protection.hexproof_permanent",
+        "capability.zone.move.fixed_public_set"
+      ],
+      "capability_ids": [
+        "target.protection.hexproof_permanent",
+        "zone.move.fixed_public_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Jirina's source-sacrifice activation locks hexproof and indestructible onto the surviving Humans before its target-player entry trigger resolves, while the public graveyard-set move retains the chosen opponent, excludes Jirina's new graveyard incarnation, and replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_public_set_residual_pairs_fail_closed_at_runtime_boundary",
       "piece_ids": [

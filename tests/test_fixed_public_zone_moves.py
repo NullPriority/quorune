@@ -22,10 +22,10 @@ from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
 from quorune.deck import DeckLoader
-from quorune.model import CardInstance
+from quorune.model import CardInstance, StackItem
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.object_query import ObjectQueryResult
-from quorune.oracle_ir import compile_oracle_card
+from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.projection import StateProjector
 from quorune.public_zone_moves import (
     PublicZoneDestination,
@@ -590,6 +590,197 @@ class _RuntimeBase(unittest.TestCase):
 
 
 class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
+    def test_jirina_graveyard_trigger_and_protection_activation_replay(self):
+        session = self.session(729410)
+        engine = session.engine
+        record = self.db.lookup("Jirina, Dauntless General")
+        registration = register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            capability_registry=load_default_capability_registry(),
+            capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+        )
+        self.assertEqual(2, registration["programs_generated"])
+        programs = engine.semantics.programs_for_oracle(record.oracle_id)
+        trigger = next(
+            program
+            for program in programs
+            if program.event == "permanent.enter.self"
+        )
+        activation = next(
+            program for program in programs if program.event == "activate"
+        )
+        self.assertEqual(
+            {
+                "target.revalidate_resolution",
+                "trigger.event.normalized_zone_change",
+                "trigger.placement.apnap",
+                "zone.move.fixed_public_set",
+            },
+            set(trigger.capability_dependencies),
+        )
+        self.assertGreaterEqual(
+            set(activation.capability_dependencies),
+            {
+                "activation.source_zone_change.fixed",
+                "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                "permanent.indestructible.ordinary",
+                "target.protection.hexproof_permanent",
+            },
+        )
+
+        jirina = CardInstance(
+            object_id="fixture:jirina",
+            ref="A-JIRINA",
+            oracle_id=record.oracle_id,
+            printed_name=record.name,
+            owner="A",
+            controller="A",
+            zone="battlefield",
+            zone_timestamp=engine.state.timestamp_sequence + 1,
+            known_to=list(engine.seats),
+            revealed_to=list(engine.seats),
+        )
+        engine.state.cards[jirina.object_id] = jirina
+        engine.state.players["A"].zones["battlefield"].append(
+            jirina.object_id
+        )
+        human_ref = engine.create_token(
+            "A",
+            name="Human witness",
+            characteristics={
+                "type_line": "Token Creature — Human",
+                "power": "1",
+                "toughness": "1",
+            },
+            reason="Jirina interaction witness",
+        )[0]
+        human = engine._resolve_object(
+            "A", human_ref, zones={"battlefield"}
+        )
+        nonhuman_ref = engine.create_token(
+            "A",
+            name="Non-Human witness",
+            characteristics={
+                "type_line": "Token Creature — Spirit",
+                "power": "1",
+                "toughness": "1",
+            },
+            reason="Jirina exclusion witness",
+        )[0]
+        nonhuman = engine._resolve_object(
+            "A", nonhuman_ref, zones={"battlefield"}
+        )
+        graveyard_cards = []
+        for _ in range(2):
+            card = self.card(
+                engine,
+                "B",
+                exclude=(value.object_id for value in graveyard_cards),
+            )
+            engine.move_card(card.object_id, "graveyard", log=False)
+            graveyard_cards.append(card)
+
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.stack.append(
+            StackItem(
+                stack_id="jirina-entry-trigger",
+                ref="S-JIRINA-ENTRY",
+                kind="triggered_ability",
+                controller="A",
+                label=trigger.label,
+                semantic_key=trigger.key,
+                source_object_id=jirina.object_id,
+                targets=["B"],
+                visibility=list(engine.seats),
+                context={
+                    "event": "permanent.enter.self",
+                    "source_logical_object_id": jirina.logical_object_id,
+                },
+            )
+        )
+        engine.permissions.invalidate_current()
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        action = next(
+            row
+            for row in engine._priority_action_hints("A")["actions"]
+            if row.get("source") == jirina.ref
+            and row.get("ability") == "ab2"
+        )
+        accepted = session.act("pilot:A", {"action_id": action["id"]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", jirina.zone)
+        for iteration in range(24):
+            if not session.state.stack:
+                break
+            decision = session.state.pending_decision
+            principals = session.pending_principals()
+            self.assertTrue(principals)
+            self.assertIsNotNone(decision)
+            if decision.kind == "arbiter.resolve":
+                stack_program = engine.semantics.get(
+                    engine.state.stack[-1].semantic_key
+                )
+                self.assertIsNotNone(stack_program)
+                resolved = session.act(
+                    "arbiter",
+                    {
+                        "action_id": "resolve",
+                        "effects": stack_program.effects,
+                    },
+                )
+                self.assertTrue(resolved.ok, resolved.summary)
+                continue
+            self.assertEqual(
+                "priority",
+                decision.kind,
+                (iteration, decision.to_dict()),
+            )
+            projected = StateProjector(self.db, session.state)._decision(
+                principals[0]
+            )
+            self.assertIsNotNone(projected)
+            pass_action = next(
+                row
+                for row in projected["ctx"]["legal"]["actions"]
+                if row.get("action") == "pass"
+            )
+            result = session.act(
+                principals[0], {"action_id": pass_action["id"]}
+            )
+            self.assertTrue(
+                result.ok,
+                (iteration, decision.to_dict(), result.summary),
+            )
+        else:
+            self.fail("Jirina interaction stack did not stabilize")
+
+        human_keywords = set(engine._effective_card_data(human)["keywords"])
+        self.assertGreaterEqual(
+            human_keywords, {"Hexproof", "Indestructible"}
+        )
+        self.assertNotIn(
+            "Hexproof", engine._effective_card_data(nonhuman)["keywords"]
+        )
+        self.assertEqual("graveyard", jirina.zone)
+        self.assertTrue(
+            all(card.zone == "exile" for card in graveyard_cards)
+        )
+        self.assertFalse(engine.state.players["B"].zones["graveyard"])
+        self.assert_replays(session, "jirina-public-set-protection-record")
+
     def test_target_graveyard_exile_revalidates_and_replays(self):
         session = self.session(729401, spell="Public Grave Exile")
         engine = session.engine
