@@ -853,6 +853,14 @@ class FixedCounterPlacementTargetSetRuntimeTests(unittest.TestCase):
         engine.state.step = "main"
         engine._grant_priority("A")
         engine._issue_priority("A")
+        hidden_refs = set()
+        for seat in ("B", "C", "D"):
+            for index, object_id in enumerate(
+                engine.state.players[seat].zones["hand"]
+            ):
+                hidden_ref = f"private-hand-ref:{seat}:{index}"
+                engine.state.cards[object_id].ref = hidden_ref
+                hidden_refs.add(hidden_ref)
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()
         session.decisions.clear()
@@ -868,11 +876,6 @@ class FixedCounterPlacementTargetSetRuntimeTests(unittest.TestCase):
             self.assertIsNone(projector._decision(f"pilot:{seat}"))
         serialized = json.dumps(projected, sort_keys=True)
         self.assertNotIn(target.object_id, serialized)
-        hidden_refs = {
-            engine.state.cards[object_id].ref
-            for seat in ("B", "C", "D")
-            for object_id in engine.state.players[seat].zones["hand"]
-        }
         self.assertTrue(all(ref not in serialized for ref in hidden_refs))
         selected = projected["ctx"]["options"][0]["id"]
         result = session.act(
