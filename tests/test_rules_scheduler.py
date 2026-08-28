@@ -1488,13 +1488,13 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            "measurement:fixed-homogeneous-target-sets",
+            "measurement:fixed-controlled-characteristic-effects",
             declaration["measurement_id"],
         )
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
         self.assertEqual(
-            "fixed-homogeneous-target-set-existing-owner-v1",
+            "fixed-controlled-characteristic-effect-existing-owner-v1",
             bundle["measurement_probe_id"],
         )
         self.assertFalse(

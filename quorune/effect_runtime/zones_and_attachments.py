@@ -17,6 +17,7 @@ from ..effect_contracts import (
     effect_family_contract,
     REANIMATE_OPERATION,
 )
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..model import CardInstance
 from ..milling import mill_cards, MillRequest
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
@@ -698,6 +699,30 @@ def _apply_destroy_selected(
 
 
 
+def _fixed_characteristic_keywords(
+    effect: Mapping[str, Any],
+) -> tuple[str, ...]:
+    if "keywords" not in effect:
+        return ()
+    raw_keywords = effect["keywords"]
+    if not isinstance(raw_keywords, list):
+        raise GameRuleError("Fixed characteristic keywords must be a list")
+    keywords = tuple(raw_keywords)
+    if (
+        not keywords
+        or any(type(keyword) is not str for keyword in keywords)
+        or len(set(keywords)) != len(keywords)
+        or any(
+            keyword not in FIXED_CHARACTERISTIC_KEYWORDS
+            for keyword in keywords
+        )
+    ):
+        raise GameRuleError(
+            "Fixed characteristic keywords must be unique supported keywords"
+        )
+    return keywords
+
+
 def _apply_modify_all_matching_permanents_until_end_of_turn(
     host: Any,
     effect: Mapping[str, Any],
@@ -707,6 +732,7 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     reason: str,
 ) -> Any:
     op = operation
+    keywords = _fixed_characteristic_keywords(effect)
     raw_predicate = effect.get("predicate")
     if raw_predicate is not None:
         try:
@@ -738,19 +764,37 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     affected_ids = [card.object_id for card in affected]
     if host.state.continuous_effects is not None:
         try:
-            create_resolution_continuous_effect(
-                host,
-                source=resolution_effect_source(host, effect),
-                targets=affected,
-                layer=Layer.POWER_TOUGHNESS,
-                sublayer="7c",
-                operations=(
-                    ContinuousOperation(
-                        "modify_power_toughness",
-                        [power_delta, toughness_delta],
+            source = resolution_effect_source(host, effect)
+            if (
+                "keywords" not in effect
+                or power_delta
+                or toughness_delta
+            ):
+                create_resolution_continuous_effect(
+                    host,
+                    source=source,
+                    targets=affected,
+                    layer=Layer.POWER_TOUGHNESS,
+                    sublayer="7c",
+                    operations=(
+                        ContinuousOperation(
+                            "modify_power_toughness",
+                            [power_delta, toughness_delta],
+                        ),
                     ),
-                ),
-            )
+                )
+            if keywords:
+                create_resolution_continuous_effect(
+                    host,
+                    source=source,
+                    targets=affected,
+                    layer=Layer.ABILITY,
+                    sublayer="6",
+                    operations=tuple(
+                        ContinuousOperation("add_ability", keyword)
+                        for keyword in keywords
+                    ),
+                )
         except ContinuousEffectStateError as exc:
             raise GameRuleError(str(exc)) from exc
     else:
@@ -764,6 +808,9 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
             until_end["toughness"] = (
                 int(until_end.get("toughness", 0)) + toughness_delta
             )
+            card.temporary_keywords = unique_preserving_order(
+                [*card.temporary_keywords, *keywords]
+            )
     host._log(
         actor,
         str(effect.get("event_code") or "effect.mass_modify"),
@@ -775,6 +822,7 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
             "amount": effect.get("amount"),
             "power_delta": power_delta,
             "toughness_delta": toughness_delta,
+            "keywords": list(keywords),
             "objects": [
                 host.state.cards[object_id].ref
                 for object_id in affected_ids

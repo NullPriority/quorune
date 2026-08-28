@@ -148,6 +148,19 @@ quantities, linked results, compound or conditional tails, hidden zones,
 battlefield returns, and unsupported characteristic dependencies remain
 source-spanned residuals.
 
+`compiler/continuous_templates.py` also lowers fixed controlled permanent sets
+that gain supported keywords, or gain fixed power/toughness and supported
+keywords, until end of turn. It reuses the static fixed-query grammar only to
+derive one closed `ObjectQuerySpec`; resolution evaluates current effective
+type, subtype, color, supertype, and token facts, then locks the matching
+logical objects. The runtime sends ability additions through shared layer 6
+and power/toughness changes through layer 7c over that same locked set. The
+source leaving or changing controller does not end the effect, later entrants
+do not join it, returned objects are new logical objects, and cleanup expires
+both layers. Targeted, opponent-relative, combat-state, counter-qualified,
+dynamic, chosen, conditional, quoted, Protection, type-changing, and variable-duration
+forms remain source-spanned residuals.
+
 `compiler/closed_effect_programs.py` owns the broader bounded composition
 boundary for two to four mandatory components. It partitions only top-level
 sentence, comma-then, and conjunction boundaries, requires every component to

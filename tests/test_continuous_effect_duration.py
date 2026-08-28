@@ -11,6 +11,7 @@ from common import keep_all, load_assets, make_session
 from quorune.carddb import CardRecord
 from quorune.attachments import attach_objects
 from quorune.compiler.continuous_templates import (
+    controlled_characteristic_until_end_of_turn_effect,
     controlled_creature_fixed_modifier,
     controlled_creature_until_end_of_turn_effect,
     fixed_power_toughness_anthem_handler,
@@ -70,6 +71,37 @@ def activated_characteristic_card(text: str) -> CardRecord:
         defense=None,
         colors=(),
         color_identity=(),
+        keywords=(),
+        produced_mana=(),
+        layout="normal",
+        released_at="2026-01-01",
+        legalities={"commander": "legal"},
+        faces=(),
+        raw={},
+    )
+
+
+def characteristic_card(
+    text: str,
+    *,
+    type_line: str,
+    name: str,
+    oracle_suffix: int,
+) -> CardRecord:
+    creature = "Creature" in type_line
+    return CardRecord(
+        oracle_id=f"00000000-0000-4000-8000-{oracle_suffix:012d}",
+        name=name,
+        mana_cost="{2}",
+        mana_value=2.0,
+        type_line=type_line,
+        oracle_text=text,
+        power="2" if creature else None,
+        toughness="2" if creature else None,
+        loyalty="4" if "Planeswalker" in type_line else None,
+        defense=None,
+        colors=("G",),
+        color_identity=("G",),
         keywords=(),
         produced_mana=(),
         layout="normal",
@@ -326,6 +358,61 @@ class ContinuousEffectModelTests(unittest.TestCase):
         self.assertEqual(1, evaluate("new", "new@0", "Elf").characteristics["power"])
         self.assertEqual(1, evaluate("object", "object@1", "Elf").characteristics["power"])
 
+    def test_resolution_and_static_ability_changes_share_layer_six_ordering(self):
+        identity = ContinuousObjectIdentity("object", "object@0")
+        grant = ContinuousEffect(
+            effect_id="grant",
+            source_id="resolved-source",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=1,
+            operations=(ContinuousOperation("add_ability", "Flying"),),
+            origin=ContinuousEffectOrigin.RESOLUTION,
+            duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+            applies=ObjectQuerySpec(zones=("battlefield",)),
+            locked_objects=(identity,),
+        )
+        removal = ContinuousEffect(
+            effect_id="removal",
+            source_id="static-source",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=2,
+            operations=(ContinuousOperation("remove_ability", "Flying"),),
+            origin=ContinuousEffectOrigin.STATIC_ABILITY,
+            applies=ObjectQuerySpec(
+                zones=("battlefield",),
+                controller="A",
+                types_all=("creature",),
+            ),
+        )
+        context = {
+            "object_id": "object",
+            "logical_object_id": "object@0",
+            "ref": "A01",
+            "owner": "A",
+            "zone": "battlefield",
+        }
+        state = CharacteristicState(
+            name="Creature",
+            controller="A",
+            card_types={"Creature"},
+            power=1,
+            toughness=1,
+        )
+        removed = evaluate_continuous_effects(
+            state,
+            (grant, removal),
+            context=context,
+        )
+        self.assertNotIn("Flying", removed.characteristics["abilities"])
+        added_last = evaluate_continuous_effects(
+            state,
+            (removal, ContinuousEffect.from_dict({**grant.to_dict(), "timestamp": 3})),
+            context=context,
+        )
+        self.assertIn("Flying", added_last.characteristics["abilities"])
+
     def test_duplicate_continuous_effect_ids_fail_closed(self):
         effect = locked_effect(
             ContinuousObjectIdentity("object", "object@0")
@@ -472,6 +559,113 @@ class ContinuousEffectModelTests(unittest.TestCase):
         )
         self.assertEqual("$source", other[1][0]["predicate"]["exclude_ref"])
 
+    def test_fixed_controlled_characteristics_compile_across_contexts(self):
+        registry = load_default_capability_registry()
+        cases = (
+            (
+                "spell",
+                "Creatures you control gain flying until end of turn.",
+                "Instant",
+            ),
+            (
+                "triggered",
+                (
+                    "When this creature enters, other creatures you control "
+                    "gain vigilance until end of turn."
+                ),
+                "Creature — Test",
+            ),
+            (
+                "activated",
+                (
+                    "{2}: Artifact creatures you control gain flying until "
+                    "end of turn."
+                ),
+                "Artifact Creature — Test",
+            ),
+            (
+                "loyalty",
+                (
+                    "+1: Creatures you control gain vigilance until end of "
+                    "turn."
+                ),
+                "Legendary Planeswalker — Test",
+            ),
+            (
+                "modal",
+                (
+                    "Choose one —\n"
+                    "• Rally — Creature tokens you control gain trample until "
+                    "end of turn.\n"
+                    "• Recover — You gain 3 life."
+                ),
+                "Sorcery",
+            ),
+        )
+        for index, (context, text, type_line) in enumerate(cases):
+            with self.subTest(context=context):
+                ir = compile_oracle_card(
+                    characteristic_card(
+                        text,
+                        type_line=type_line,
+                        name=f"Characteristic {context}",
+                        oracle_suffix=611_210 + index,
+                    ),
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertEqual((), ir.material_residuals)
+                self.assertIn(
+                    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                    {
+                        capability
+                        for node in ir.faces[0].nodes
+                        for capability in node.capability_dependencies
+                    },
+                )
+
+    def test_fixed_controlled_characteristic_query_grammar_is_closed(self):
+        supported = (
+            "Creatures you control gain flying until end of turn.",
+            "Until end of turn, other creatures you control gain haste and trample.",
+            "Creature tokens you control gain vigilance until end of turn.",
+            "Nontoken creatures you control gain lifelink until end of turn.",
+            "Red creatures you control gain first strike until end of turn.",
+            "Colorless creatures you control gain menace until end of turn.",
+            "Legendary creatures you control gain indestructible until end of turn.",
+            "Goblin creatures you control get +1/+1 and gain vigilance until end of turn.",
+            "Artifacts you control gain indestructible until end of turn.",
+            "Lands you control gain hexproof until end of turn.",
+            "Until end of turn, permanents you control gain shroud.",
+        )
+        for text in supported:
+            with self.subTest(text=text):
+                lowered = controlled_characteristic_until_end_of_turn_effect(text)
+                self.assertIsNotNone(lowered)
+                assert lowered is not None
+                self.assertEqual(
+                    "modify-controlled-fixed-characteristics-eot-v2",
+                    lowered[0],
+                )
+
+        unsupported = (
+            "Target creature you control gains flying until end of turn.",
+            "Attacking creatures you control gain flying until end of turn.",
+            "Creatures your opponents control gain flying until end of turn.",
+            "Creatures you control with a +1/+1 counter on them gain trample until end of turn.",
+            "Creatures you control get +X/+X until end of turn.",
+            "Creatures you control gain protection from red until end of turn.",
+            "Creatures you control gain \"{T}: Add {G}.\" until end of turn.",
+            "Creatures you control become artifacts until end of turn.",
+            "Creatures you control gain flying until your next turn.",
+        )
+        for text in unsupported:
+            with self.subTest(text=text):
+                self.assertIsNone(
+                    controlled_characteristic_until_end_of_turn_effect(text)
+                )
+
     def test_fixed_resolution_characteristic_shape_excludes_dynamic_queries(self):
         template = controlled_creature_until_end_of_turn_effect(
             "Other creatures you control get +1/+1 until end of turn."
@@ -495,7 +689,10 @@ class ContinuousEffectModelTests(unittest.TestCase):
             {**effect, "power": {"kind": "dynamic"}},
             {
                 **effect,
-                "predicate": {**effect["predicate"], "token": True},
+                "predicate": {
+                    **effect["predicate"],
+                    "state_predicate": {"kind": "attacking"},
+                },
             },
             {
                 **effect,
@@ -512,6 +709,59 @@ class ContinuousEffectModelTests(unittest.TestCase):
                         effects=(mutated,),
                         target_schema=None,
                         mechanic_ids=mechanics,
+                    ),
+                )
+
+    def test_fixed_resolution_keyword_shape_requires_exact_consumers(self):
+        lowered = controlled_characteristic_until_end_of_turn_effect(
+            "Other Goblin creatures you control get +1/+1 and gain flying "
+            "until end of turn."
+        )
+        self.assertIsNotNone(lowered)
+        assert lowered is not None
+        _template_id, effects, mechanics = lowered
+        capability = (
+            "continuous.resolution.fixed_characteristics_until_end_of_turn"
+        )
+        self.assertIn(
+            capability,
+            capability_dependencies_for_node(
+                effects=effects,
+                target_schema=None,
+                mechanic_ids=mechanics,
+            ),
+        )
+        effect = effects[0]
+        mutations = (
+            ({**effect, "keywords": ["Flying", "Flying"]}, mechanics),
+            ({**effect, "keywords": ["Protection"]}, mechanics),
+            (
+                effect,
+                tuple(
+                    mechanic
+                    for mechanic in mechanics
+                    if mechanic != "flying"
+                ),
+            ),
+            (
+                {
+                    **effect,
+                    "predicate": {
+                        **effect["predicate"],
+                        "controller": "$target.0",
+                    },
+                },
+                mechanics,
+            ),
+        )
+        for mutated_effect, mutated_mechanics in mutations:
+            with self.subTest(effect=mutated_effect):
+                self.assertNotIn(
+                    capability,
+                    capability_dependencies_for_node(
+                        effects=(mutated_effect,),
+                        target_schema=None,
+                        mechanic_ids=mutated_mechanics,
                     ),
                 )
 
@@ -769,6 +1019,137 @@ class ContinuousEffectEngineTests(unittest.TestCase):
         engine.move_card(first.object_id, "battlefield", controller="B", reason="identity test")
         self.assertEqual(1, engine._numeric_stat(first.object_id, "power"))
 
+    def test_fixed_controlled_characteristics_lock_effective_set_and_cleanup(self):
+        session = self.session(6112010, players=4)
+        engine = session.engine
+        source = self.creature(engine, "A", "Source")
+        first = self.creature(engine, "A", "First")
+        second = self.creature(engine, "A", "Second")
+        opponent = self.creature(engine, "B", "Opponent")
+        artifact_ref = engine.create_token(
+            "A",
+            name="Animated artifact",
+            characteristics={
+                "type_line": "Token Artifact — Device",
+                "power": "1",
+                "toughness": "1",
+            },
+            reason="effective type boundary witness",
+        )[0]
+        artifact = engine._resolve_object(
+            "A", artifact_ref, zones={"battlefield"}
+        )
+        engine.apply_effect(
+            {
+                "op": "add_types_until_end_of_turn",
+                "card": artifact.ref,
+                "types": ["Creature"],
+            },
+            actor="A",
+        )
+        engine.apply_effect(
+            {
+                "op": "modify_all_matching_permanents_until_end_of_turn",
+                "predicate": ObjectQuerySpec(
+                    zones=("battlefield",),
+                    controller="A",
+                    types_all=("creature",),
+                    exclude_ref=source.ref,
+                ).to_dict(),
+                "power": 1,
+                "toughness": 2,
+                "keywords": ["Haste", "Trample"],
+            },
+            actor="A",
+        )
+        engine.apply_effect(
+            {
+                "op": "modify_all_matching_permanents_until_end_of_turn",
+                "predicate": ObjectQuerySpec(
+                    zones=("battlefield",),
+                    controller="A",
+                    types_all=("artifact", "creature"),
+                ).to_dict(),
+                "power": 0,
+                "toughness": 0,
+                "keywords": ["Flying"],
+            },
+            actor="A",
+        )
+        later = self.creature(engine, "A", "Later")
+
+        first_data = engine._effective_card_data(first)
+        artifact_data = engine._effective_card_data(artifact)
+        self.assertEqual("2", first_data["power"])
+        self.assertEqual("3", first_data["toughness"])
+        self.assertGreaterEqual(
+            set(first_data["keywords"]), {"Haste", "Trample"}
+        )
+        self.assertIn("Flying", artifact_data["keywords"])
+        self.assertNotIn("Haste", engine._effective_card_data(source)["keywords"])
+        self.assertNotIn("Haste", engine._effective_card_data(later)["keywords"])
+        self.assertNotIn(
+            "Haste", engine._effective_card_data(opponent)["keywords"]
+        )
+
+        engine.change_control(first.object_id, "B", reason="locked-set test")
+        self.assertIn("Haste", engine._effective_card_data(first)["keywords"])
+        engine.move_card(source.object_id, "graveyard", reason="source departure")
+        self.assertIn("Haste", engine._effective_card_data(second)["keywords"])
+        engine.move_card(first.object_id, "graveyard", reason="identity test")
+        engine.move_card(
+            first.object_id,
+            "battlefield",
+            controller="B",
+            reason="identity test",
+        )
+        self.assertNotIn("Haste", engine._effective_card_data(first)["keywords"])
+
+        projected = StateProjector(self.db, engine.state)._snapshot("pilot:C")
+        rendered = json.dumps(projected, sort_keys=True)
+        self.assertNotIn("continuous_effects", rendered)
+        self.assertNotIn(second.object_id, rendered)
+        self.assertGreater(expire_end_of_turn_continuous_effects(engine.state), 0)
+        second_data = engine._effective_card_data(second)
+        self.assertEqual("1", second_data["power"])
+        self.assertEqual("1", second_data["toughness"])
+        self.assertNotIn("Haste", second_data["keywords"])
+        self.assertNotIn(
+            "Flying", engine._effective_card_data(artifact)["keywords"]
+        )
+
+    def test_malformed_fixed_characteristic_keywords_roll_back(self):
+        for index, keywords in enumerate(
+            (["Flying", "Flying"], ["Unsupported"])
+        ):
+            with self.subTest(keywords=keywords):
+                session = self.session(6112011 + index)
+                engine = session.engine
+                self.creature(engine, "A", "Target")
+                before = engine.state.to_dict()
+                with self.assertRaisesRegex(
+                    Exception,
+                    "list|unique supported keywords",
+                ):
+                    engine.apply_effect(
+                        {
+                            "op": (
+                                "modify_all_matching_permanents_"
+                                "until_end_of_turn"
+                            ),
+                            "predicate": ObjectQuerySpec(
+                                zones=("battlefield",),
+                                controller="A",
+                                types_all=("creature",),
+                            ).to_dict(),
+                            "power": 1,
+                            "toughness": 1,
+                            "keywords": keywords,
+                        },
+                        actor="A",
+                    )
+                self.assertEqual(before, engine.state.to_dict())
+
     def test_targeted_effect_expires_and_round_trips_without_private_projection(self):
         session = self.session(6112002)
         engine = session.engine
@@ -958,6 +1339,67 @@ class ContinuousEffectEngineTests(unittest.TestCase):
         self.assertEqual(3, engine._numeric_stat(source.object_id, "power"))
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "continuous-duration-record"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(2, replay["commands"])
+
+    def test_fixed_controlled_characteristic_command_replays_exactly(self):
+        session = self.session(6112012)
+        engine = session.engine
+        source = self.creature(engine, "A", "Source")
+        target = self.creature(engine, "A", "Target")
+        program = SemanticProgram(
+            key="test:locked-controlled-characteristics",
+            label="Locked controlled characteristics",
+            effects=[
+                {
+                    "op": "modify_all_matching_permanents_until_end_of_turn",
+                    "predicate": ObjectQuerySpec(
+                        zones=("battlefield",),
+                        controller="A",
+                        types_all=("creature",),
+                        exclude_ref=source.ref,
+                    ).to_dict(),
+                    "power": 1,
+                    "toughness": 1,
+                    "keywords": ["Flying"],
+                }
+            ],
+            trust_level="provisional",
+        )
+        engine.semantics.put(program)
+        engine.state.stack.append(
+            StackItem(
+                stack_id="locked-controlled-characteristics",
+                ref="S-locked-controlled-characteristics",
+                kind="triggered_ability",
+                controller="A",
+                label=program.label,
+                semantic_key=program.key,
+                source_object_id=source.object_id,
+                visibility=["A", "B"],
+                context={
+                    "source_logical_object_id": source.logical_object_id
+                },
+            )
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        for principal in ("pilot:A", "pilot:B"):
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        target_data = engine._effective_card_data(target)
+        self.assertEqual("2", target_data["power"])
+        self.assertIn("Flying", target_data["keywords"])
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "controlled-characteristic-record"
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)

@@ -17,6 +17,7 @@ from ..continuous_effects import (
     ContinuousOperation,
     Layer,
 )
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..mana import BASIC_LAND_MANA
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..rules.capabilities import load_default_capability_registry
@@ -44,29 +45,6 @@ _FIXED_QUERY_KEYWORD_GRANT_HANDLER_ID = (
 _FIXED_QUERY_CHARACTERISTIC_GRANT_HANDLER_ID = (
     "continuous.characteristics.fixed-query-grant.v1"
 )
-_SUPPORTED_QUERY_KEYWORDS = frozenset(
-    {
-        "Deathtouch",
-        "Defender",
-        "Double Strike",
-        "First Strike",
-        "Flying",
-        "Haste",
-        "Hexproof",
-        "Indestructible",
-        "Infect",
-        "Lifelink",
-        "Menace",
-        "Reach",
-        "Shadow",
-        "Shroud",
-        "Trample",
-        "Vigilance",
-        "Wither",
-    }
-)
-
-
 @dataclass(frozen=True, slots=True)
 class FixedPowerToughnessAnthemNode:
     target_controller: str
@@ -784,7 +762,10 @@ class FixedQueryKeywordGrantHandler:
         if (
             not abilities
             or len(set(abilities)) != len(abilities)
-            or any(ability not in _SUPPORTED_QUERY_KEYWORDS for ability in abilities)
+            or any(
+                ability not in FIXED_CHARACTERISTIC_KEYWORDS
+                for ability in abilities
+            )
         ):
             raise SemanticNodeError(
                 "fixed query keyword grants require unique supported keywords"

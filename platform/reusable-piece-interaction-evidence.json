@@ -4517,6 +4517,22 @@
       ],
       "interaction_order": 2,
       "assertion": "A nonactive resolving controller privately accepts the fixed optional wrapper before the canonical draw transaction mutates hidden state, and save/replay reproduces the same single draw exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_resolution_and_static_ability_changes_share_layer_six_ordering",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "mechanic.cr-611-continuous-effects"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 3,
+      "assertion": "Static and resolution-created layer-6 ability changes share one timestamp-ordered applicability evaluator, so neither owner can bypass additions or removals produced by the other."
     }
   ]
 }

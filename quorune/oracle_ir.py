@@ -21,7 +21,7 @@ from .compiler.corpus_reporting import (
     oracle_corpus_coverage,
 )
 from .compiler.continuous_templates import (
-    controlled_creature_until_end_of_turn_effect,
+    controlled_characteristic_until_end_of_turn_effect,
 )
 from .compiler.closed_effect_programs import (
     closed_effect_program_template,
@@ -130,7 +130,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v135"
+ORACLE_COMPILER_VERSION = "oracle-ir-v136"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -420,7 +420,7 @@ def _reviewed_atomic_effect_template(
     Mapping[str, Any] | None,
     tuple[str, ...],
 ]:
-    temporary_modifier = controlled_creature_until_end_of_turn_effect(
+    temporary_modifier = controlled_characteristic_until_end_of_turn_effect(
         text.strip()
     )
     if temporary_modifier is not None:
