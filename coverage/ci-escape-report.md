@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "b94c1abd4ff870bb17de11d9c7f9f2b5405b51c17a7a7d97e494db318e9b4ba3"
+verified: "e222d26f7acdb683a21ad13e49daf52ea770ce1de6c33def35dadae59c018451"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 40
-- Deterministic escapes: 35
+- Escapes: 41
+- Deterministic escapes: 36
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -66,6 +66,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260825-38` | [32806924786](https://github.com/NullPriority/quorune/actions/runs/32806924786) | `missing_affected_test` | `added` | The existing regression now records Menace and Hexproof as positive exact cases and uses unsupported Ward for malformed descriptor evidence. The family-indexed change-impact policy now links static-characteristic compiler owners to both their positive owner tests and neighboring dynamic exact/residual expectations. |
 | `ci-20260825-39` | [32827593705](https://github.com/NullPriority/quorune/actions/runs/32827593705) | `missing_affected_test` | `added` | The exact expectations now include the typed source-cost capability, Tourach's Gate is a positive activated case, and the four residual pairs use Etchings of the Chosen as a real fail-closed witness. The family-indexed policy links activated-cost compiler owners to these neighboring capability, exact/residual, mutation, and interaction modules before the next push. |
 | `ci-20260825-40` | [32827593705](https://github.com/NullPriority/quorune/actions/runs/32827593705) | `source_correctness` | `added` | Modal closure now derives and validates activation descriptors and their capabilities, while the promoted Knight-Captain path has positive Soldier-cost, prevention, damage, and replay evidence beside a separate real residual prevention witness. Activated-cost, prevention, and central program-registration owners now select those focused expectation modules through the family-indexed policy. |
+| `ci-20260828-41` | [33143128153](https://github.com/NullPriority/quorune/actions/runs/33143128153) | `source_correctness` | `added` | Shard result schema v3 records canonical failed and errored test IDs. The recovery planner now proves the latest failed main SHA, immutable run and Ubuntu job IDs, matching shard artifact, exact failing test module, affected-owner generated outputs, unchanged nonfailing tests and decorators, and structurally identical assertions before selecting the focused recovery profile. |
 
 ## Measurement limitations
 

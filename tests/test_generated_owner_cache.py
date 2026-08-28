@@ -18,6 +18,7 @@ from scripts.generated_owner_cache import (
     GeneratedOwnerCacheError,
     _python_import_closure,
     affected_owner_plan,
+    propagated_affected_owner_ids,
     compiler_identity_status,
     owner_input_identity,
     restore_owner_artifact,
@@ -28,6 +29,43 @@ from scripts.find_reusable_workflow_artifact import find_reusable_run
 
 
 class GeneratedOwnerCacheTests(unittest.TestCase):
+    def test_validation_only_owner_change_fans_out_only_when_output_changes(self):
+        capability = GeneratorSpec(
+            id="capability",
+            depends_on=(),
+            outputs=("capability.json",),
+            check=("check",),
+            write=("write",),
+            write_with_database=None,
+            write_policy="automatic",
+            dependent_change_policy="outputs",
+        )
+        corpus = GeneratorSpec(
+            id="corpus",
+            depends_on=("capability",),
+            outputs=("corpus.json",),
+            check=("check",),
+            write=("write",),
+            write_with_database=None,
+            write_policy="automatic",
+        )
+        self.assertEqual(
+            ("capability",),
+            propagated_affected_owner_ids(
+                (capability, corpus),
+                directly_affected={"capability"},
+                output_changed=set(),
+            ),
+        )
+        self.assertEqual(
+            ("capability", "corpus"),
+            propagated_affected_owner_ids(
+                (capability, corpus),
+                directly_affected={"capability"},
+                output_changed={"capability"},
+            ),
+        )
+
     def _repository(self, root: Path) -> None:
         subprocess.run(["git", "init", "-q"], cwd=root, check=True)
         subprocess.run(

@@ -936,13 +936,17 @@ def affected_owner_plan(
         )
         base_import_cache: dict[str, tuple[str, ...]] = {}
         current_paths = {
-            spec.id: resolved_worktree_inputs(
-                spec,
-                specs=specs,
-                input_groups=groups,
-                root=root,
-                available_paths=worktree_paths,
-                import_cache=worktree_import_cache,
+            spec.id: tuple(
+                path
+                for path in resolved_worktree_inputs(
+                    spec,
+                    specs=specs,
+                    input_groups=groups,
+                    root=root,
+                    available_paths=worktree_paths,
+                    import_cache=worktree_import_cache,
+                )
+                if path not in _IDENTITY_IMPLEMENTATION_PATHS
             )
             for spec in cacheable
         }
@@ -961,15 +965,19 @@ def affected_owner_plan(
             )
         )
         base_paths = {
-            spec.id: _resolved_ref_inputs(
-                spec,
-                specs=base_specs,
-                input_groups=base_groups,
-                root=root,
-                ref=base_ref,
-                entries=base_entries,
-                content_cache=base_content_cache,
-                import_cache=base_import_cache,
+            spec.id: tuple(
+                path
+                for path in _resolved_ref_inputs(
+                    spec,
+                    specs=base_specs,
+                    input_groups=base_groups,
+                    root=root,
+                    ref=base_ref,
+                    entries=base_entries,
+                    content_cache=base_content_cache,
+                    import_cache=base_import_cache,
+                )
+                if path not in _IDENTITY_IMPLEMENTATION_PATHS
             )
             for spec in base_specs
             if spec.id in {candidate.id for candidate in cacheable}
@@ -1010,13 +1018,30 @@ def affected_owner_plan(
         directly_affected = {spec.id for spec in cacheable}
         reason = "base-manifest-has-no-input-closure"
     affected = set(directly_affected)
-    changed = True
-    while changed:
-        changed = False
-        for spec in cacheable:
-            if spec.id not in affected and set(spec.depends_on) & affected:
-                affected.add(spec.id)
-                changed = True
+    output_paths = tuple(
+        sorted({output for spec in cacheable for output in spec.outputs})
+    )
+    try:
+        if reason != "declared-input-change":
+            raise GeneratedOwnerCacheError("base owner inputs are unavailable")
+        worktree_outputs = dict(_path_entries(root, output_paths))
+        output_changed = {
+            spec.id
+            for spec in cacheable
+            if any(
+                worktree_outputs.get(output) != base_entries.get(output)
+                for output in spec.outputs
+            )
+        }
+    except GeneratedOwnerCacheError:
+        output_changed = {spec.id for spec in cacheable}
+    affected = set(
+        propagated_affected_owner_ids(
+            cacheable,
+            directly_affected=affected,
+            output_changed=output_changed,
+        )
+    )
     selected = [spec for spec in ordered if spec.id in affected]
     stages: dict[str, list[str]] = {}
     for spec in selected:
@@ -1033,6 +1058,32 @@ def affected_owner_plan(
         ),
         "stages": stages,
     }
+
+
+def propagated_affected_owner_ids(
+    specs: Sequence[GeneratorSpec],
+    *,
+    directly_affected: set[str],
+    output_changed: set[str],
+) -> tuple[str, ...]:
+    affected = set(directly_affected)
+    changed = True
+    while changed:
+        changed = False
+        propagating = {
+            spec.id
+            for spec in specs
+            if spec.id in affected
+            and (
+                spec.dependent_change_policy == "inputs"
+                or spec.id in output_changed
+            )
+        }
+        for spec in specs:
+            if spec.id not in affected and set(spec.depends_on) & propagating:
+                affected.add(spec.id)
+                changed = True
+    return tuple(sorted(affected))
 
 
 def _assigned_literals(source: str, names: set[str]) -> dict[str, object]:

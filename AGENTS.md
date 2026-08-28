@@ -235,6 +235,11 @@ source. The cloud run executes the same final freshness and architecture
 checks; it does not authorize a source-only merge or a generated follow-up.
 Owner artifacts are keyed by declared content inputs rather than commit SHA,
 so a content-identical merge commit reuses the PR census and downstream work.
+Generated-owner planning excludes cache-identity implementation files from
+semantic affected-owner selection. An output-triggered validation owner fans
+out to semantic dependents only when its committed generated output changes;
+CI, receipt, shard, and recovery tooling changes must not request a compiler
+census merely because they changed cache or validation machinery.
 `main` pushes still publish a separately exact-main bundle without write
 permissions. Use manual `workflow_dispatch` only for recovery or diagnosis.
 The checkpoint environment variable is permitted only for this intermediate
@@ -511,6 +516,27 @@ infrastructure failure.
 Do not add a prose-only checklist item when the repository can mechanically
 derive, validate, or centralize the obligation. Do not weaken or bypass a real
 check merely because the immediate implementation appears correct.
+
+The `main-red-recovery` label requests a machine recovery audit; it does not
+authorize focused CI by itself. The audit must bind the latest failed main
+source tree, exact run and Ubuntu Python job IDs, the failed shard artifact and
+named test IDs, and a diff confined to those failing test modules plus
+affected-owner generated outputs. It rejects assertion or decorator changes,
+nonfailing test changes, product or compiler source, browser failures, missing
+artifacts, and ambiguous provenance. A rejected recovery uses the normal
+high-risk gate.
+
+Selection-authority changes remain high risk except when the base revision's
+sentinel proves a structural monotonic addition to
+`platform/change-impact-policy.json` or `platform/test-shards.json`. Existing
+rules, assignments, overlays, workflows, planners, sentinels, and certifiers
+cannot be removed, moved, or weakened through that exception. High-risk PR
+receipts bind source and generated-output content and carry a `complete`
+profile. A content-identical squash merge reuses that one complete matrix;
+missing, stale, mismatched, or non-complete evidence makes main run the full
+matrix. Optional metrics and browser-report publication never participate in
+semantic certification, while required shard results, generated bundles, and
+receipts fail closed when absent.
 
 ## Documentation contract
 

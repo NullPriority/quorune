@@ -6,7 +6,9 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
+  pull-requests: read
 
 concurrency:
   group: main-broad-${{ github.sha }}
@@ -19,12 +21,26 @@ jobs:
     outputs:
       python_matrix: ${{ steps.plan.outputs.python_matrix }}
       python_max_parallel: ${{ steps.plan.outputs.python_max_parallel }}
+      reuse_main_broad: ${{ steps.receipt.outputs.reuse_main_broad || steps.manual.outputs.reuse_main_broad }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           architecture: x64
+      - id: receipt
+        if: github.event_name == 'push'
+        name: Verify complete PR source-tree receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/certification_receipt.py can-reuse-main-broad
+          --repository "${GITHUB_REPOSITORY}"
+          --merge-sha "${GITHUB_SHA}"
+          --github-output "${GITHUB_OUTPUT}"
+      - id: manual
+        if: github.event_name != 'push'
+        run: echo 'reuse_main_broad=false' >> "${GITHUB_OUTPUT}"
       - id: plan
         name: Build exact-SHA cross-platform plan
         run: python scripts/main_broad_ci.py
@@ -32,6 +48,7 @@ jobs:
   python:
     name: Main / Broad / Python / ${{ matrix.platform }} / ${{ matrix.shard }}
     needs: plan
+    if: needs.plan.outputs.reuse_main_broad != 'true'
     runs-on: ${{ matrix.runs_on }}
     strategy:
       fail-fast: false
@@ -75,11 +92,13 @@ jobs:
         with:
           name: main-broad-python-${{ matrix.platform }}-${{ matrix.shard }}-${{ github.run_id }}
           path: local/main-broad-python/${{ matrix.platform }}-${{ matrix.shard }}.json
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
 
   governance:
     name: Main / Broad / Generated and repository
+    needs: plan
+    if: needs.plan.outputs.reuse_main_broad != 'true'
     runs-on: ubuntu-latest
     env:
       MTG_CARD_DB: data/test-ci.sqlite3
@@ -103,6 +122,8 @@ jobs:
 
   package:
     name: Main / Broad / Package / ${{ matrix.platform }}
+    needs: plan
+    if: needs.plan.outputs.reuse_main_broad != 'true'
     runs-on: ${{ matrix.runs_on }}
     strategy:
       fail-fast: false
@@ -127,6 +148,8 @@ jobs:
 
   browser:
     name: Main / Broad / Browser / ${{ matrix.group }}
+    needs: plan
+    if: needs.plan.outputs.reuse_main_broad != 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -186,6 +209,7 @@ jobs:
         run: npx playwright test --grep "$MTG_BROWSER_GROUP_GREP"
       - name: Upload browser result
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: main-broad-browser-${{ matrix.group }}-${{ github.run_id }}
@@ -210,6 +234,7 @@ jobs:
       - name: Install package and test dependencies
         run: python -m pip install -e . -r requirements-dev.txt
       - name: Download every cross-platform shard result
+        if: needs.plan.outputs.reuse_main_broad != 'true'
         uses: actions/download-artifact@v4
         with:
           pattern: main-broad-python-*-${{ github.run_id }}
@@ -218,9 +243,12 @@ jobs:
       - name: Certify exact-SHA dependencies and complete test inventory
         env:
           CI_MAIN_BROAD_NEEDS_JSON: ${{ toJSON(needs) }}
-        run: >-
-          python scripts/verify_main_broad_ci.py
-          --results-dir local/main-broad-python-results
+        run: |
+          if [ "${{ needs.plan.outputs.reuse_main_broad }}" = "true" ]; then
+            python scripts/verify_main_broad_ci.py --reuse-complete
+          else
+            python scripts/verify_main_broad_ci.py --results-dir local/main-broad-python-results
+          fi
 
   halt_auto_merge:
     name: Main / Broad / Halt auto-merge

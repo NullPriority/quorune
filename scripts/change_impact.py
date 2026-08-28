@@ -505,10 +505,20 @@ def classify_changes(
     labels: Sequence[str] = (),
     removed_paths: Sequence[str] = (),
     force_high_risk: bool = False,
+    additive_selection_paths: Sequence[str] = (),
     policy_path: Path = POLICY_PATH,
 ) -> ImpactPlan:
     changed = _normalized(paths)
     removed = set(_normalized(removed_paths))
+    additive_selection = set(_normalized(additive_selection_paths))
+    allowed_additive_selection = {
+        "platform/change-impact-policy.json",
+        "platform/test-shards.json",
+    }
+    if not additive_selection.issubset(allowed_additive_selection):
+        raise ValueError("additive_selection_paths contains unsupported authority")
+    if not additive_selection.issubset(changed) or additive_selection & removed:
+        raise ValueError("additive selection authority must be changed and present")
     normalized_symbols = tuple(sorted(set(changed_symbols)))
     normalized_labels = {label.casefold() for label in labels}
     policy, policy_fingerprint = load_impact_policy(policy_path)
@@ -577,7 +587,10 @@ def classify_changes(
             for rule in policy["risk_rules"]
             if _matches_patterns(path, rule["patterns"])
         ]
-        if path in removed:
+        if path in additive_selection:
+            path_risks.append("ordinary_source")
+            risk_reasons.add(f"additive-selection-authority:{path}")
+        elif path in removed:
             path_risks.append("high_risk_source")
             risk_reasons.add(f"removed:{path}")
         elif any(

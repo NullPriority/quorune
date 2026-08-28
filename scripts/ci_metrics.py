@@ -73,7 +73,47 @@ def _failure_classification(status: str, errors: Sequence[Any]) -> str:
         str(error.get("message") if isinstance(error, Mapping) else error)
         for error in errors
     ).lower()
-    return "timeout" if "timeout" in joined else "test_failure"
+    driver_markers = (
+        "browser has been closed",
+        "browser disconnected",
+        "executable doesn't exist",
+        "failed to launch",
+        "target page, context or browser has been closed",
+        "playwright install",
+    )
+    if any(marker in joined for marker in driver_markers):
+        return "browser_driver"
+    return "timeout" if "timeout" in joined else "browser_behavior"
+
+
+def _job_failure_classification(
+    name: str,
+    conclusion: object,
+    steps: Sequence[Mapping[str, Any]],
+) -> str:
+    if conclusion in {"success", "skipped", "neutral", None}:
+        return "none"
+    failed_steps = [
+        str(step.get("name") or "").lower()
+        for step in steps
+        if step.get("conclusion") == "failure"
+    ]
+    if any("upload" in step or "publish" in step for step in failed_steps):
+        return "artifact_publication"
+    if "browser" in name.casefold():
+        if any(
+            marker in step
+            for step in failed_steps
+            for marker in (
+                "install headless chromium",
+                "install server and browser dependencies",
+                "setup-node",
+                "cache",
+            )
+        ):
+            return "browser_driver"
+        return "browser_behavior"
+    return "job_failure"
 
 
 def _annotation_metrics(test: Mapping[str, Any]) -> dict[str, Any]:
@@ -440,16 +480,23 @@ def build_metrics(
     for job in jobs:
         if not isinstance(job, Mapping):
             raise ValueError("Every jobs entry must be an object")
+        step_rows = _step_rows(job)
+        name = str(job.get("name") or "unknown")
         rows.append(
             {
-                "name": str(job.get("name") or "unknown"),
+                "name": name,
                 "conclusion": job.get("conclusion"),
+                "failure_classification": _job_failure_classification(
+                    name,
+                    job.get("conclusion"),
+                    step_rows,
+                ),
                 "started_at": job.get("started_at"),
                 "completed_at": job.get("completed_at"),
                 "duration_seconds": _duration(
                     job.get("started_at"), job.get("completed_at")
                 ),
-                "steps": _step_rows(job),
+                "steps": step_rows,
             }
         )
     created = _time(str(run.get("created_at") or ""))
@@ -473,7 +520,7 @@ def build_metrics(
         for journey in playwright_metrics(document, group=group)
     ]
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "run_id": run.get("id"),
         "head_sha": run.get("head_sha"),
         "status": run.get("status"),
@@ -502,12 +549,13 @@ def markdown(metrics: Mapping) -> str:
         "- Agent idle time: unavailable from GitHub Actions (not estimated)",
         "- Stale-run cancellation count: unavailable per run (not estimated)",
         "",
-        "| Job | Conclusion | Duration (seconds) |",
-        "|---|---|---:|",
+        "| Job | Conclusion | Failure class | Duration (seconds) |",
+        "|---|---|---|---:|",
     ]
     for row in metrics["jobs"]:
         lines.append(
-            f"| {row['name']} | {row['conclusion']} | {row['duration_seconds']} |"
+            f"| {row['name']} | {row['conclusion']} | "
+            f"{row['failure_classification']} | {row['duration_seconds']} |"
         )
     journeys = metrics.get("browser_journeys") or []
     if journeys:

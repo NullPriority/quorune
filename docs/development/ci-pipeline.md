@@ -176,6 +176,11 @@ Each reusable owner is keyed by its Git-clean implementation and direct-source
 closure, dependency-output fingerprints, canonical manifest row, and governed
 pinned-database identity where applicable. The key deliberately excludes the
 commit SHA. A PR owner artifact can therefore be reused by a content-identical
+merge tree. Cache-identity implementation files invalidate reusable receipts
+without becoming semantic generator inputs. Owners with output-triggered fanout
+select database-backed dependents only when their committed generated outputs
+changed; tooling-only changes must not launch the compiler census through a
+validation-only dependency.
 merge commit, while its staged envelope and the complete
 `cloud-generated-<commit>` bundle remain exact-commit and exact-source bound.
 Cross-run lookup accepts artifacts only from a completed execution of this
@@ -441,6 +446,16 @@ complete Windows matrix increased wall time by 620 seconds and runner use by
 the reason ordinary source changes use affected-module selection while
 selection-authority changes retain the complete gate.
 
+Two source-controlled selection files have a narrower additive path. The base
+revision's standalone sentinel structurally compares
+`platform/change-impact-policy.json` and `platform/test-shards.json`. A new test
+assignment for a newly added module, an added overlay membership, or added
+checks/tests on an existing rule remains ordinary. Removed or moved modules,
+reduced overlays or evidence, changed risk contracts, malformed documents, new
+primary shards, and every workflow, planner, sentinel, comparator, or certifier
+change remain high risk. The candidate revision never evaluates its own
+authority change to obtain this exception.
+
 `.github/workflows/ci.yml` runs these independent jobs:
 
 - impact-selected Ubuntu module slices partitioned by their existing primary
@@ -488,8 +503,10 @@ succeeded. Protect `main` with the exact required status context
 `PR / Certification`. After verifying those dependencies, the job publishes an
 untracked `exact-head-certification-<run-id>` artifact. Its strict receipt pins
 the repository, pull request, exact PR-head SHA, publication workflow run,
-original evidence workflow run, executed-or-reused mode, complete required
-check suite, fingerprint algorithm, and tracked source-tree fingerprint. It
+original evidence workflow run, executed-or-reused mode, explicit `complete`,
+`affected`, `governance`, or `recovery` profile, required check suite,
+fingerprint algorithm, tracked source-tree fingerprint, and generated-output
+fingerprint. It
 does not contain or predict the eventual merge SHA. An unchanged-head metadata
 event runs only the separate `PR metadata / Plan` workflow; it creates no
 `PR / Certification` job, publishes no receipt, and neither launches, cancels,
@@ -521,6 +538,11 @@ Raw JSON reports and the combined `ci-metrics` artifact are retained for 14
 days so future shard changes use measured history. Cache-hit rate, agent idle
 time, and stale-run cancellation remain `null` when GitHub does not expose
 measured data; the reporting code never estimates them as observations.
+Browser behavior failures, browser-driver/setup failures, and artifact-
+publication failures have separate classifications. Optional Linux timing and
+browser-report uploads may fail visibly without changing certification. Shard
+results consumed by Windows or main-broad certification, generated bundles,
+and certification receipts use `if-no-files-found: error` and remain required.
 
 Long browser journeys use one shared progress driver rather than nested timeout
 loops. It observes the decision ID, phase/step, active and priority players,
@@ -618,14 +640,20 @@ or mismatched GitHub coordinate fails closed.
 
 `.github/workflows/main-broad.yml` runs the complete primary partition on both
 operating systems, every full browser group, both wheel paths, generated and
-repository validation, and complete interaction assurance for every exact main
-SHA. Runs never cancel one another. Its final `Main / Broad regression` result
-is the main-health authority. A pending run may remain in the background; a
-completed red run disables auto-merge on every open pull request and blocks
-later pull-request plans until a maintainer labels the single high-risk
-fix-forward pull request `main-red-recovery`. A successful
-later exact-main run clears the red state. The `CI metrics` observer records
-both PR and main-broad timings without participating in either certification.
+repository validation, and complete interaction assurance unless the merge has
+a valid `complete` receipt for the same source and generated-output tree. In
+that case only plan, compact merge verification, main smoke, and publication
+run. Missing, stale, malformed, mismatched, and non-complete receipts execute
+the matrix; manual runs always execute it. Runs never cancel one another. Its
+final `Main / Broad regression` result is the main-health authority. A completed
+red run disables auto-merge and blocks later plans. The
+`main-red-recovery` label requests a provenance audit but does not authorize
+focused execution: the audit requires the failed main SHA, run, Ubuntu Python
+job, shard artifact, canonical test IDs, an exact test/derived-output diff, and
+unchanged decorators and assertions. Ambiguous, browser, product, compiler, or
+assertion-changing fixes use the normal high-risk route. A later successful
+exact-main run clears red state. The `CI metrics` observer records both paths
+without participating in certification.
 
 `.github/workflows/nightly.yml` owns expensive breadth:
 
@@ -710,8 +738,10 @@ Generated validation remains on the sequential unittest backend because it
 exercises repository-wide generated and governance state. The sequential
 runner is also the local default and compatibility fallback; pytest-xdist is
 an explicit functional-CI backend, not a replacement test inventory. Result
-schema v2 records platform, backend, fixed worker policy, collection parity,
-the canonical collection fingerprint, and exact per-module timing coverage.
+schema v3 records platform, backend, fixed worker policy, collection parity,
+the canonical collection fingerprint, exact per-module timing coverage, and
+canonical failed and errored test IDs. Successful artifacts require empty
+failure-ID lists; failed main artifacts use those IDs as recovery provenance.
 The Windows and nightly certification jobs independently reconstruct the
 manifest collection and reject incomplete or dishonest result sets.
 

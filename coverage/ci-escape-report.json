@@ -691,6 +691,23 @@
       "resolution": "Modal closure now derives and validates activation descriptors and their capabilities, while the promoted Knight-Captain path has positive Soldier-cost, prevention, damage, and replay evidence beside a separate real residual prevention witness. Activated-cost, prevention, and central program-registration owners now select those focused expectation modules through the family-indexed policy.",
       "run_id": 32827593705,
       "summary": "The same activated-cost harvest exposed two program-closure defects: fixed modal activation did not validate the typed source cost, and trusted Knight-Captain prevention effects were still asserted through an obsolete residual boundary instead of their promoted executable composition."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-05 (job 98758217961)",
+        "Main / Broad regression (job 98764043605)"
+      ],
+      "head_sha": "ea541fabb6e6cf2120501ade79fe4d2a63d8274a",
+      "id": "ci-20260828-41",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_counter_placement_target_sets.FixedCounterPlacementTargetSetRuntimeTests.test_target_set_suspends_for_quantity_replacement_and_replays"
+      ],
+      "resolution": "Shard result schema v3 records canonical failed and errored test IDs. The recovery planner now proves the latest failed main SHA, immutable run and Ubuntu job IDs, matching shard artifact, exact failing test module, affected-owner generated outputs, unchanged nonfailing tests and decorators, and structurally identical assertions before selecting the focused recovery profile.",
+      "run_id": 33143128153,
+      "summary": "The complete main matrix exposed a deterministic replacement-continuation fixture failure, but schema-v2 shard artifacts did not name the failed test and the main-red recovery path trusted a label without binding the run, job, artifact, or assertion-preserving diff."
     }
   ],
   "known_flaky_tests": [],
@@ -698,7 +715,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-08-26T01:24:45Z",
+  "observed_at": "2026-08-28T18:20:30Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -743,7 +760,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "b94c1abd4ff870bb17de11d9c7f9f2b5405b51c17a7a7d97e494db318e9b4ba3",
+  "source_fingerprint": "e222d26f7acdb683a21ad13e49daf52ea770ce1de6c33def35dadae59c018451",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -754,11 +771,11 @@
       "generated_artifact_drift": 3,
       "infrastructure": 1,
       "missing_affected_test": 12,
-      "source_correctness": 16
+      "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 35,
-    "escape_count": 40,
+    "deterministic_escape_count": 36,
+    "escape_count": 41,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [

@@ -38,6 +38,8 @@ RESULT_FIELDS = frozenset(
         "skipped",
         "expected_failures",
         "unexpected_successes",
+        "failed_test_ids",
+        "error_test_ids",
         "backend",
         "workers",
         "distribution",
@@ -89,6 +91,7 @@ def validate_result_document(
     expected_suite: str,
     expected_platform: str,
     expected_backend: str,
+    require_success: bool = True,
 ) -> dict:
     if set(document) != RESULT_FIELDS:
         raise ShardResultError(
@@ -96,7 +99,7 @@ def validate_result_document(
             f"missing={sorted(RESULT_FIELDS - set(document))} "
             f"unknown={sorted(set(document) - RESULT_FIELDS)}"
         )
-    if document["schema_version"] != 2:
+    if document["schema_version"] != 3:
         raise ShardResultError("Shard result has an unsupported schema")
     if document["suite"] != expected_suite:
         raise ShardResultError("Shard result suite does not match its assignment")
@@ -118,7 +121,11 @@ def validate_result_document(
     tests_run = _exact_nonnegative_int(document["tests_run"], field="tests_run")
     if configured <= 0 or tests_run <= 0:
         raise ShardResultError(f"Shard {expected_suite!r} ran zero tests")
-    if configured != expected_count or tests_run != expected_count:
+    if configured != expected_count or (
+        tests_run != expected_count
+        if require_success
+        else tests_run > expected_count
+    ):
         raise ShardResultError(
             f"Shard {expected_suite!r} did not execute its exact collection"
         )
@@ -131,10 +138,44 @@ def validate_result_document(
         "unexpected_successes",
     ):
         _exact_nonnegative_int(document[field], field=field)
-    if document["successful"] is not True:
-        raise ShardResultError(f"Shard {expected_suite!r} did not pass")
-    if any(document[field] for field in ("failures", "errors", "unexpected_successes")):
-        raise ShardResultError(f"Shard {expected_suite!r} reports failed outcomes")
+    for count_field, ids_field in (
+        ("failures", "failed_test_ids"),
+        ("errors", "error_test_ids"),
+    ):
+        identifiers = document[ids_field]
+        if (
+            not isinstance(identifiers, list)
+            or any(not isinstance(item, str) or not item for item in identifiers)
+            or identifiers != sorted(set(identifiers))
+            or len(identifiers) != document[count_field]
+        ):
+            raise ShardResultError(
+                f"{ids_field} must exactly identify every reported outcome"
+            )
+    expected_identifiers = set(canonical_test_ids(load_suite(modules)))
+    reported_identifiers = set(document["failed_test_ids"]) | set(
+        document["error_test_ids"]
+    )
+    if not reported_identifiers.issubset(expected_identifiers):
+        raise ShardResultError("Shard result names tests outside its collection")
+    if require_success:
+        if document["successful"] is not True:
+            raise ShardResultError(f"Shard {expected_suite!r} did not pass")
+        if any(
+            document[field]
+            for field in ("failures", "errors", "unexpected_successes")
+        ):
+            raise ShardResultError(
+                f"Shard {expected_suite!r} reports failed outcomes"
+            )
+    elif (
+        document["successful"] is not False
+        or not reported_identifiers
+        or document["unexpected_successes"]
+    ):
+        raise ShardResultError(
+            f"Shard {expected_suite!r} has no provenance-bearing failure"
+        )
     if (
         document["collection_fingerprint_algorithm"]
         != TEST_COLLECTION_FINGERPRINT_ALGORITHM

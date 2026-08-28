@@ -17,6 +17,7 @@ from scripts.ci_plan import (
     browser_matrix,
     ci_concurrency_budget,
     python_matrix,
+    recovery_impact_plan,
     selected_test_plan,
     workflow_job_ids,
 )
@@ -50,6 +51,7 @@ from scripts.verify_nightly_ci import (
 )
 from scripts.verify_main_broad_ci import (
     validate_dependencies as validate_main_broad_dependencies,
+    validate_reused_dependencies as validate_main_broad_reused_dependencies,
 )
 
 
@@ -60,7 +62,7 @@ class CiPipelineTests(unittest.TestCase):
         count = 0 if tests_run == 0 else exact_count
         backend = "unittest" if suite == "generated-validation" else "pytest-xdist"
         return {
-            "schema_version": 2,
+            "schema_version": 3,
             "type": (
                 "unittest-shard-result"
                 if backend == "unittest"
@@ -78,6 +80,8 @@ class CiPipelineTests(unittest.TestCase):
             "skipped": 0,
             "expected_failures": 0,
             "unexpected_successes": 0,
+            "failed_test_ids": [],
+            "error_test_ids": [],
             "backend": backend,
             "workers": 1 if backend == "unittest" else 4,
             "distribution": "sequential" if backend == "unittest" else "loadfile",
@@ -98,7 +102,7 @@ class CiPipelineTests(unittest.TestCase):
     def _python_result(suite: str, *, tests_run: int = 3) -> dict:
         modules, exact_count, fingerprint = suite_expectation(suite)
         return {
-            "schema_version": 2,
+            "schema_version": 3,
             "type": "pytest-xdist-shard-result",
             "platform": "ubuntu",
             "suite": suite,
@@ -112,6 +116,8 @@ class CiPipelineTests(unittest.TestCase):
             "skipped": 0,
             "expected_failures": 0,
             "unexpected_successes": 0,
+            "failed_test_ids": [],
+            "error_test_ids": [],
             "backend": "pytest-xdist",
             "workers": 4,
             "distribution": "loadfile",
@@ -204,6 +210,36 @@ class CiPipelineTests(unittest.TestCase):
             governance["generated_test_modules"],
         )
 
+    def test_verified_recovery_runs_only_the_exact_failed_test_module(self):
+        path = "tests/test_rules_primitives.py"
+        recovery = recovery_impact_plan(
+            classify_changes((path,)),
+            {
+                "schema_version": 1,
+                "main_run_id": 42,
+                "main_head_sha": "a" * 40,
+                "failed_jobs": [
+                    {
+                        "id": 700,
+                        "name": "Main / Broad / Python / ubuntu / functional-04",
+                        "suite": "functional-04",
+                    }
+                ],
+                "failed_test_ids": [
+                    "tests.test_rules_primitives.Case.test_fixture"
+                ],
+                "test_modules": ["test_rules_primitives"],
+                "changed_files": [path],
+                "generated_owners": [],
+                "generated_outputs": [],
+            },
+        )
+        plan = selected_test_plan(recovery)
+        self.assertEqual("recovery_source", recovery.risk_class)
+        self.assertEqual(
+            ("test_rules_primitives",), plan["selected_test_modules"]
+        )
+
     def test_independent_sentinel_and_main_red_gate_fail_closed(self):
         self.assertTrue(
             requires_high_risk_gate(("scripts/ci_plan.py",))
@@ -228,7 +264,7 @@ class CiPipelineTests(unittest.TestCase):
         with self.assertRaises(MainHealthError):
             verify_main_health(red, allow_recovery=False)
         self.assertEqual(
-            "red-recovery",
+            "red-recovery-requested",
             verify_main_health(red, allow_recovery=True)["state"],
         )
         self.assertEqual(2, main_broad_concurrency_budget()["headroom"])
@@ -245,6 +281,19 @@ class CiPipelineTests(unittest.TestCase):
             with self.subTest(name=name):
                 with self.assertRaises(NightlyCertificationError):
                     validate_main_broad_dependencies(changed)
+        reused = {
+            "plan": {"result": "success"},
+            **{
+                name: {"result": "skipped"}
+                for name in ("browser", "governance", "package", "python")
+            },
+        }
+        validate_main_broad_reused_dependencies(reused)
+        reused["browser"]["result"] = "success"
+        with self.assertRaisesRegex(
+            NightlyCertificationError, "unexpectedly executed"
+        ):
+            validate_main_broad_reused_dependencies(reused)
 
     def test_nightly_matrix_is_slow_first_cross_platform_and_budgeted(self):
         manifest = load_manifest()
@@ -655,6 +704,61 @@ class CiPipelineTests(unittest.TestCase):
         self.assertEqual(10.0, observed["windows"]["package_duration_seconds"])
         self.assertEqual("success", observed["python"]["shards"][0]["conclusion"])
 
+    def test_metrics_separate_browser_driver_behavior_and_publication_failures(self):
+        run = {
+            "id": 44,
+            "head_sha": "def",
+            "status": "completed",
+            "conclusion": "failure",
+            "created_at": "2026-08-03T12:00:00Z",
+        }
+        jobs = {
+            "jobs": [
+                {
+                    "name": "PR / Browser / rules",
+                    "conclusion": "failure",
+                    "steps": [
+                        {
+                            "name": "Install headless Chromium",
+                            "conclusion": "failure",
+                        }
+                    ],
+                },
+                {
+                    "name": "PR / Browser / lifecycle",
+                    "conclusion": "failure",
+                    "steps": [
+                        {
+                            "name": "Run complete browser journeys",
+                            "conclusion": "failure",
+                        }
+                    ],
+                },
+                {
+                    "name": "PR / Python / functional-01",
+                    "conclusion": "failure",
+                    "steps": [
+                        {
+                            "name": "Upload Linux shard result",
+                            "conclusion": "failure",
+                        }
+                    ],
+                },
+            ]
+        }
+        metrics = build_metrics(run, jobs)
+        classes = {
+            row["name"]: row["failure_classification"]
+            for row in metrics["jobs"]
+        }
+        self.assertEqual("browser_driver", classes["PR / Browser / rules"])
+        self.assertEqual(
+            "browser_behavior", classes["PR / Browser / lifecycle"]
+        )
+        self.assertEqual(
+            "artifact_publication", classes["PR / Python / functional-01"]
+        )
+
     def test_workflows_separate_pr_main_and_nightly_responsibilities(self):
         pr = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
         main = (ROOT / ".github/workflows/main-smoke.yml").read_text(
@@ -751,6 +855,9 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("name: Main broad regression", broad)
         self.assertIn("cancel-in-progress: false", broad)
         self.assertIn("python scripts/main_broad_ci.py", broad)
+        self.assertIn("can-reuse-main-broad", broad)
+        self.assertIn("reuse_main_broad", broad)
+        self.assertIn("--reuse-complete", broad)
         self.assertIn("python scripts/verify_main_broad_ci.py", broad)
         self.assertIn("main-broad-${{ github.sha }}", broad)
         self.assertIn("disablePullRequestAutoMerge", broad)
@@ -775,6 +882,38 @@ class CiPipelineTests(unittest.TestCase):
                 and "validate-ci" not in line
             ):
                 self.assertIn("build-ci", line)
+
+    def test_optional_reports_cannot_fail_authority_but_required_receipts_do(self):
+        pr = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        broad = (ROOT / ".github/workflows/main-broad.yml").read_text(
+            encoding="utf-8"
+        )
+        python_upload = pr.split("- name: Upload Linux shard result", 1)[1].split(
+            "\n\n", 1
+        )[0]
+        browser_upload = pr.split("- name: Upload browser journey report", 1)[
+            1
+        ].split("\n\n", 1)[0]
+        windows_upload = pr.split("- name: Upload Windows shard result", 1)[1].split(
+            "\n\n", 1
+        )[0]
+        receipt_upload = pr.split(
+            "- name: Publish exact-head certification receipt", 1
+        )[1]
+        broad_python = broad.split("- name: Upload exact-SHA shard result", 1)[
+            1
+        ].split("\n\n", 1)[0]
+        broad_browser = broad.split("- name: Upload browser result", 1)[1].split(
+            "\n\n", 1
+        )[0]
+        self.assertIn("continue-on-error: true", python_upload)
+        self.assertIn("continue-on-error: true", browser_upload)
+        self.assertIn("if-no-files-found: error", windows_upload)
+        self.assertNotIn("continue-on-error", windows_upload)
+        self.assertIn("if-no-files-found: error", receipt_upload)
+        self.assertIn("if-no-files-found: error", broad_python)
+        self.assertNotIn("continue-on-error", broad_python)
+        self.assertIn("continue-on-error: true", broad_browser)
 
     def test_main_broad_certifier_installs_collection_dependencies(self):
         workflow = (ROOT / ".github/workflows/main-broad.yml").read_text(
