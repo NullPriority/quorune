@@ -4552,7 +4552,7 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
-      "test_id": "test_aura_and_equip_attachments_compose_with_public_state_characteristics",
+      "test_id": "test_turn_gated_attachment_and_anthem_compose",
       "piece_ids": [
         "capability.attachment.aura.simple_object",
         "capability.continuous.characteristics.fixed_public_state"
@@ -4567,7 +4567,7 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
-      "test_id": "test_aura_and_equip_attachments_compose_with_public_state_characteristics",
+      "test_id": "test_turn_gated_attachment_and_anthem_compose",
       "piece_ids": [
         "capability.attachment.equip.fixed_mana",
         "capability.continuous.characteristics.fixed_public_state"

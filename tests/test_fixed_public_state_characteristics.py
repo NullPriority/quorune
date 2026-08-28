@@ -513,7 +513,7 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             ),
         )
 
-    def test_aura_and_equip_attachments_compose_with_public_state_characteristics(self):
+    def test_turn_gated_attachment_and_anthem_compose(self):
         session = self.session(118_220_001)
         engine = session.engine
         riot = self.add_source(session, name="Street Riot", ref="RIOT")
