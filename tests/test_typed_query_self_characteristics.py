@@ -17,7 +17,7 @@ from quorune.characteristic_fragments import (
     PowerToughnessCalculation,
     QueryCharacteristicModifierSpec,
 )
-from quorune.compiler.continuous_templates import (
+from quorune.compiler.query_characteristic_templates import (
     query_self_characteristics_handler,
 )
 from quorune.continuous_effects import (

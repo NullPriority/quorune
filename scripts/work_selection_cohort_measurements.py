@@ -25,6 +25,8 @@ from quorune.compiler.fixed_homogeneous_target_sets import (
 )
 from quorune.compiler.continuous_templates import (
     fixed_public_state_characteristics_handler,
+)
+from quorune.compiler.query_characteristic_templates import (
     query_self_characteristics_handler,
 )
 from quorune.compiler.ir_model import SourceSpan

@@ -524,9 +524,10 @@
           "canonical_owner_ids": [
             "capability:continuous.characteristics.query_count_modifier",
             "component:quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
-            "component:quorune.compiler.continuous_templates.query_self_characteristics_handler",
+            "component:quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
             "component:quorune.dynamic_characteristics.query_characteristic_count",
             "component:quorune.characteristic_evaluation.evaluate_card_characteristics",
+            "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
             "component:quorune.continuous_effects.evaluate_continuous_effects"
           ],
           "source_contexts": [

@@ -734,8 +734,9 @@ suffix, nickname, or subtype. Lowered instructions use `$source`; runtime
 handlers do not receive names or reinterpret Oracle text. See
 [ADR 0040](../adr/0040-closed-source-self-references.md).
 
-Fixed self power/toughness and supported-keyword modifiers over one typed
-public quantity lower to `QueryCharacteristicModifierSpec`. Controller,
+Fixed self power/toughness and supported-keyword modifiers compile through the
+dedicated `query_characteristic_templates` owner and lower to
+`QueryCharacteristicModifierSpec`. Controller,
 opponent, and global object sets use `ObjectQuerySpec`; attachments, source
 counters, and raw controller hand size use closed quantity scopes. Counted
 objects are evaluated only through layer 5 before concrete layer-6 and layer-7c

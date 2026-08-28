@@ -335,8 +335,10 @@
       "patterns": [
         "quorune/ability_fragments.py",
         "quorune/characteristic_evaluation.py",
+        "quorune/characteristic_evaluation_host.py",
         "quorune/characteristic_fragments.py",
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/query_characteristic_templates.py",
         "quorune/compiler/runtime_templates.py",
         "quorune/dynamic_characteristics.py",
         "quorune/engine.py",

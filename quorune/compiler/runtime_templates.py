@@ -20,12 +20,12 @@ from .continuous_templates import (
     basic_land_type_addition_handler,
     conditional_self_keyword_handler,
     dynamic_self_power_toughness_handler,
-    query_self_characteristics_handler,
     fixed_public_state_characteristics_handler,
     fixed_query_characteristic_grant_handler,
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
+from .query_characteristic_templates import query_self_characteristics_handler
 from .counter_replacement_templates import (
     static_counter_quantity_replacement_handler,
 )

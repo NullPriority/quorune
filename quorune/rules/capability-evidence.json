@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "853f2523a31e9a7e79ee049918660118a7feda8fe215d5c1b0f08082d7159826",
+  "registry_fingerprint": "a8dd9300dbe5f5a2a6d91d86f3d00bd356ed7af5df534a8230eab658df8a9753",
   "declaration_source_fingerprint": "83f5c81e7bd615f4ff791c7b2049a7eb4abc29c85689bbef2c6a68613b1d287e",
   "declarations": [
     {
@@ -50122,5 +50122,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "c2df6f97ad27cc8a9782e61fc3c00f206af2ba6477b96693b610de3100823e14"
+  "fingerprint": "d9262d009caf3a8bb77d0ba90d7f8001f13d5026326261daf1346df243723eaf"
 }
