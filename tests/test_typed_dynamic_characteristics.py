@@ -8,6 +8,9 @@ from unittest import mock
 from common import keep_all, load_assets, make_session
 from quorune.card_programs import compile_card_program
 from quorune.carddb import CardRecord
+from quorune.continuous_conditions import (
+    FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+)
 from quorune.compiler.continuous_templates import (
     conditional_self_keyword_handler,
     dynamic_self_power_toughness_handler,
@@ -25,6 +28,7 @@ from quorune.semantic_runtime.context import SemanticNodeError
 
 
 CONDITIONAL_HANDLER = "ability.static.conditional-keyword.v1"
+PUBLIC_STATE_HANDLER = FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
 DYNAMIC_HANDLER = "ability.static.dynamic-power-toughness.v1"
 KEYWORD_GRANT_HANDLER = (
     "continuous.ability.fixed-query-keyword-grant.v1"
@@ -93,8 +97,8 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
             (
                 "Bloodghast",
                 "This creature has haste as long as an opponent has 10 or less life.",
-                CONDITIONAL_HANDLER,
-                "continuous.characteristics.conditional_keyword",
+                PUBLIC_STATE_HANDLER,
+                "continuous.characteristics.fixed_public_state",
             ),
             (
                 "Padeem, Consul of Innovation",
@@ -170,7 +174,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
             "Creatures your opponents control have haste.",
             "Attacking creatures you control have flying.",
             "Multicolored creatures you control have vigilance.",
-            "This creature has haste as long as you have 10 or less life.",
+            "This creature has haste as long as you have exactly 10 life.",
             "This creature gets +1/+1 for each enchantment you control.",
             "This creature gets +2/+2 if there are three land cards in your graveyard.",
         )
@@ -192,6 +196,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                             CONDITIONAL_HANDLER,
                             DYNAMIC_HANDLER,
                             KEYWORD_GRANT_HANDLER,
+                            PUBLIC_STATE_HANDLER,
                         }
                         for ability in program.abilities
                         for descriptor in ability.handlers
@@ -265,15 +270,6 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
     def test_characteristic_lowering_mutants_are_killed(self):
         fixtures = (
             (
-                "conditional_self_keyword_handler",
-                _permanent(
-                    "This creature has haste as long as an opponent has 10 or less life.",
-                    suffix=117_002_001,
-                    name="Conditional Fixture",
-                ),
-                CONDITIONAL_HANDLER,
-            ),
-            (
                 "dynamic_self_power_toughness_handler",
                 _permanent(
                     "This creature gets +1/+1 for each artifact you control.",
@@ -310,6 +306,38 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
             ):
                 with self.assertRaises(AssertionError):
                     assert_boundary()
+
+        conditional_record = _permanent(
+            "This creature has haste as long as an opponent has 10 or less life.",
+            suffix=117_002_001,
+            name="Conditional Fixture",
+        )
+
+        def assert_compatibility_boundary() -> None:
+            with mock.patch(
+                "quorune.compiler.runtime_templates."
+                "fixed_public_state_characteristics_handler",
+                return_value=None,
+            ):
+                program = self.compile(
+                    conditional_record,
+                    trust_level="provisional",
+                )
+            self.assertTrue(
+                any(
+                    descriptor.get("handler_id") == CONDITIONAL_HANDLER
+                    for ability in program.abilities
+                    for descriptor in ability.handlers
+                )
+            )
+
+        assert_compatibility_boundary()
+        with mock.patch(
+            "quorune.compiler.runtime_templates.conditional_self_keyword_handler",
+            return_value=None,
+        ):
+            with self.assertRaises(AssertionError):
+                assert_compatibility_boundary()
 
 
 class TypedDynamicCharacteristicRuntimeTests(unittest.TestCase):
@@ -472,18 +500,20 @@ class TypedDynamicCharacteristicRuntimeTests(unittest.TestCase):
         bloodghast = self.card(engine, "B", "Bloodghast")
         engine.move_card(bloodghast.object_id, "battlefield", controller="B", log=False)
         engine.state.players["A"].life = 10
-        for program in tuple(
-            engine.semantics.runtime_handler_programs_for_oracle(
-                bloodghast.oracle_id,
-                active_zone="battlefield",
-                event="continuous",
-            )
-        ):
-            if any(
-                descriptor.get("handler_id") == CONDITIONAL_HANDLER
-                for descriptor in program.handlers
+        for event in ("continuous", "characteristics.evaluate"):
+            for program in tuple(
+                engine.semantics.runtime_handler_programs_for_oracle(
+                    bloodghast.oracle_id,
+                    active_zone="battlefield",
+                    event=event,
+                )
             ):
-                engine.semantics.remove(program.key)
+                if any(
+                    descriptor.get("handler_id")
+                    in {CONDITIONAL_HANDLER, PUBLIC_STATE_HANDLER}
+                    for descriptor in program.handlers
+                ):
+                    engine.semantics.remove(program.key)
         self.assertNotIn(
             "Haste", engine._effective_card_data(bloodghast)["keywords"]
         )
