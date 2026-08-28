@@ -330,6 +330,21 @@
       ]
     },
     {
+      "id": "continuous-effect-performance-contract",
+      "patterns": [
+        "platform/continuous-effect-performance-baseline.json",
+        "quorune/card_programs/runtime.py",
+        "quorune/continuous_effects.py",
+        "scripts/benchmark_continuous_effects.py"
+      ],
+      "checks": [
+        "continuous-effect-performance"
+      ],
+      "test_modules": [
+        "test_continuous_effect_performance"
+      ]
+    },
+    {
       "id": "ci-metrics-artifact-ownership",
       "patterns": [
         ".github/workflows/ci-metrics.yml",

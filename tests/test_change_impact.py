@@ -132,6 +132,27 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_continuous_runtime_changes_select_performance_contract(self):
+        for owner in (
+            "quorune/card_programs/runtime.py",
+            "quorune/continuous_effects.py",
+            "scripts/benchmark_continuous_effects.py",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertIn(
+                    "continuous-effect-performance",
+                    plan.checks,
+                )
+                self.assertIn(
+                    "test_continuous_effect_performance",
+                    plan.test_modules,
+                )
+                self.assertIn(
+                    "continuous-effect-performance-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_changed_test_module_is_run_exactly(self):
         plan = classify_changes(["tests/test_life_change.py"])
         self.assertEqual(("test_life_change",), plan.test_modules)

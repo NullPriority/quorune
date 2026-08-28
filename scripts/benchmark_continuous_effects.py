@@ -58,6 +58,7 @@ def _fixture(players: int, permanents: int, descriptors: int):
             battlefield.append(object_id)
             cards[object_id] = SimpleNamespace(
                 object_id=object_id,
+                logical_object_id=f"logical-{object_id}",
                 ref=f"P-{seat}-{index}",
                 oracle_id=oracle_id,
                 controller=seat,
