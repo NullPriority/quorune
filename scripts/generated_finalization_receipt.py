@@ -9,10 +9,19 @@ import re
 import subprocess
 from typing import Any, Mapping, Sequence
 
-from scripts.generated_artifacts import GeneratorSpec, all_outputs
-from scripts.source_tree_fingerprint import (
-    tracked_worktree_source_fingerprint,
-)
+try:
+    from scripts.generated_artifacts import GeneratorSpec, all_outputs
+    from scripts.source_tree_fingerprint import (
+        tracked_worktree_source_fingerprint,
+    )
+except ModuleNotFoundError:  # Direct execution from scripts/.
+    from generated_artifacts import (  # type: ignore[no-redef]
+        GeneratorSpec,
+        all_outputs,
+    )
+    from source_tree_fingerprint import (  # type: ignore[no-redef]
+        tracked_worktree_source_fingerprint,
+    )
 
 
 RECEIPT_SCHEMA_VERSION = 1

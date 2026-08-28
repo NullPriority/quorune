@@ -16,16 +16,19 @@ from urllib.parse import quote, urlparse
 from urllib.request import build_opener, HTTPRedirectHandler, Request
 import zipfile
 
-from scripts.generated_artifacts import load_manifest
-from scripts.generated_finalization_receipt import generated_outputs_fingerprint
-
 try:
+    from scripts.generated_artifacts import load_manifest
+    from scripts.generated_finalization_receipt import generated_outputs_fingerprint
     from scripts.source_tree_fingerprint import (
         SOURCE_TREE_FINGERPRINT_ALGORITHM,
         tracked_ref_source_fingerprint,
         tracked_worktree_source_fingerprint,
     )
 except ModuleNotFoundError:  # Direct execution from scripts/.
+    from generated_artifacts import load_manifest  # type: ignore[no-redef]
+    from generated_finalization_receipt import (  # type: ignore[no-redef]
+        generated_outputs_fingerprint,
+    )
     from source_tree_fingerprint import (  # type: ignore[no-redef]
         SOURCE_TREE_FINGERPRINT_ALGORITHM,
         tracked_ref_source_fingerprint,
