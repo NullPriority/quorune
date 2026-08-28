@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "917a452965242580c5a8426ccd9649a285f143e66e625e93a2094e63899977a5"
+verified: "defec8e512e1fbd351564aa7c5de8c39da954176a4e774d99a443ea9e8f781b9"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -49,8 +49,10 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Moag // Bloomwielder Dryads | 173 | 20 | 6 | 4 | 5 | 16 | `blocked` |
 | Miles Morales // Ultimate Spider-Man | 172 | 24 | 6 | 5 | 6 | 11 | `blocked` |
 | Overwhelmed Archivist // Archive Haunt | 172 | 29 | 5 | 5 | 4 | 7 | `blocked` |
+| Invasion of Mercadia // Kyren Flamewright | 171 | 20 | 6 | 3 | 5 | 17 | `blocked` |
 | Invasion of Tolvada // The Broken Sky | 171 | 18 | 6 | 4 | 6 | 17 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 171 | 14 | 5 | 5 | 11 | 18 | `blocked` |
+| Invasion of Gobakhan // Lightshield Array | 170 | 17 | 6 | 4 | 5 | 19 | `blocked` |
 | Invasion of Kaladesh // Aetherwing, Golden-Scale Flagship | 170 | 18 | 5 | 5 | 6 | 17 | `blocked` |
 | Invasion of Vryn // Overloaded Mage-Ring | 170 | 13 | 6 | 3 | 8 | 24 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 170 | 17 | 6 | 5 | 10 | 8 | `blocked` |
@@ -61,6 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Karsus // Refraction Elemental | 167 | 19 | 5 | 4 | 6 | 16 | `blocked` |
 | Lunarch Veteran // Luminous Phantom | 167 | 22 | 6 | 5 | 6 | 7 | `blocked` |
 | Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
-| Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
-| Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
