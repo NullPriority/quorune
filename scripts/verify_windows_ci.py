@@ -37,7 +37,7 @@ def validate_dependencies(needs: Mapping, *, full: bool) -> None:
         "plan": "success",
         "windows_compatibility": "skipped" if full else "success",
         "windows_full": "success" if full else "skipped",
-        "windows_package": "success",
+        "windows_package": "success" if full else "skipped",
     }
     failures = {}
     for name, result in expected.items():

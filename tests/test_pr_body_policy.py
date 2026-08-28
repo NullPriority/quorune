@@ -39,41 +39,16 @@ Validate pull-request descriptions before expensive certification jobs begin.
 - Governing rules or capabilities: N/A — repository policy only.
 - Oracle/rulings snapshot: N/A — no card data is changed.
 - Supported profile affected: N/A — protocol behavior is unchanged.
+- Exact source head: current GitHub PR head; see PR / Plan summary.
 
 ## Ownership and implementation
 
-- Owner before: prose-only pull-request template
-- Owner after: deterministic early CI validator
+- Shared owner: deterministic early CI validator
+- Supported grammar or mechanic: N/A — CI policy only.
+- Explicit exclusions: gameplay and compiler behavior are unchanged.
+- User-visible or semantic effect: pull-request review metadata is smaller.
 - Duplicate or superseded paths removed: none
-- `CommanderEngine` delta: zero
-- Direct authoritative-write delta: zero
-- Prohibited identity-dispatch delta: zero
-- Oracle-ID literal delta: zero
-- Compiler/CardProgram changes: none
-- Card, residual, and capability-closure deltas: N/A — no rules change.
-
-## Generated base/head evidence
-
-- Represented family IDs: N/A — no semantic support transition is represented.
-- Represented capability IDs: N/A — no semantic support transition is represented.
-- Exact head SHA: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
-- Compiler version delta: unchanged at `oracle-ir-v128`
-- CardProgram schema delta: unchanged at `2`
-- Exact, trusted, and capability-closed card delta: all zero
-- Partial, unresolved, and failed card delta: all zero
-- Oracle and CardProgram ability delta: both zero and reconciled
-- Executable trust transitions: zero
-- Structural carrier delta and reconciliation: zero with aggregate limits stated
-- Oracle and CardProgram material residual delta: both zero
-- Interaction coverage delta: zero
-- Actual CommanderEngine line delta: zero
-- Reviewed architecture-baseline delta: zero and separate from source
-- Direct authoritative-write delta: zero
-- Runtime-text delta: zero
-- Printed-name and Oracle-ID delta: both zero
-- Production, test, and generated line delta: tooling-only fixture
-- Evidence fingerprint: `fixture-evidence-fingerprint`
-- Evidence command: `python scripts/pr_evidence.py --base origin/main --head HEAD --format markdown`
+- Compiler/CardProgram effect: none
 
 ## Evidence
 
@@ -139,6 +114,22 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
             set(metadata),
         )
 
+    def test_semantic_evidence_does_not_inherit_base_transition(self) -> None:
+        catalog = json.loads(
+            (ROOT / "platform" / "rules-subsystems.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        metadata = semantic_evidence_metadata(
+            catalog,
+            previous_catalog=catalog,
+        )
+
+        self.assertIsNone(metadata["transition_id"])
+        self.assertEqual([], metadata["family_ids"])
+        self.assertIn("No semantic support transition", metadata["non_harvest_reason"])
+
     def test_ci_entrypoint_imports_repository_package(self) -> None:
         result = subprocess.run(
             [sys.executable, "scripts/validate_pr_body.py", "--help"],
@@ -179,19 +170,19 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
 
     def test_structured_fields_cannot_be_left_blank(self) -> None:
         body = valid_body().replace(
-            "- Owner after: deterministic early CI validator", "- Owner after:"
+            "- Shared owner: deterministic early CI validator", "- Shared owner:"
         )
         self.assertIn("blank-field", self.codes(body))
 
     def test_every_evidence_row_requires_a_result_or_reasoned_not_applicable(self) -> None:
         blank = valid_body().replace(
-            "| Focused mutation | N/A — this CI-policy change does not alter that behavioral surface. |",
-            "| Focused mutation | |",
+            "| Architecture and ownership | N/A — this CI-policy change does not alter that behavioral surface. |",
+            "| Architecture and ownership | |",
         )
         self.assertIn("blank-evidence", self.codes(blank))
         bare = valid_body().replace(
-            "| Property and fuzz | N/A — this CI-policy change does not alter that behavioral surface. |",
-            "| Property and fuzz | N/A |",
+            "| Headless browser and protocol | N/A — this CI-policy change does not alter that behavioral surface. |",
+            "| Headless browser and protocol | N/A |",
         )
         self.assertIn("bare-not-applicable", self.codes(bare))
 
@@ -292,8 +283,7 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
         self.assertTrue(baseline["separate_from_actual_pr_source_delta"])
 
         body = valid_body()
-        prefix, remainder = body.split("## Generated base/head evidence", 1)
-        _old_evidence, suffix = remainder.split("## Evidence", 1)
+        prefix, suffix = body.split("## Evidence", 1)
         body = prefix + render_pr_evidence_markdown(impulse) + "## Evidence" + suffix
         self.assertEqual((), validate_generated_evidence(body, impulse))
         stale = body.replace(impulse["exact_head_sha"], "f" * 40, 1)

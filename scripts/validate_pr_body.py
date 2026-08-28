@@ -16,9 +16,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.pr_evidence import (
-    build_pr_evidence,
     pr_evidence_markdown_fields,
-    PullRequestEvidenceError,
 )
 
 
@@ -28,7 +26,6 @@ REQUIRED_SECTIONS = (
     "Summary",
     "Change class and authority",
     "Ownership and implementation",
-    "Generated base/head evidence",
     "Evidence",
     "Generated artifacts",
     "Documentation and decisions",
@@ -42,39 +39,15 @@ REQUIRED_FIELDS = {
         "Governing rules or capabilities",
         "Oracle/rulings snapshot",
         "Supported profile affected",
+        "Exact source head",
     ),
     "Ownership and implementation": (
-        "Owner before",
-        "Owner after",
+        "Shared owner",
+        "Supported grammar or mechanic",
+        "Explicit exclusions",
+        "User-visible or semantic effect",
         "Duplicate or superseded paths removed",
-        "`CommanderEngine` delta",
-        "Direct authoritative-write delta",
-        "Prohibited identity-dispatch delta",
-        "Oracle-ID literal delta",
-        "Compiler/CardProgram changes",
-        "Card, residual, and capability-closure deltas",
-    ),
-    "Generated base/head evidence": (
-        "Represented family IDs",
-        "Represented capability IDs",
-        "Exact head SHA",
-        "Compiler version delta",
-        "CardProgram schema delta",
-        "Exact, trusted, and capability-closed card delta",
-        "Partial, unresolved, and failed card delta",
-        "Oracle and CardProgram ability delta",
-        "Executable trust transitions",
-        "Structural carrier delta and reconciliation",
-        "Oracle and CardProgram material residual delta",
-        "Interaction coverage delta",
-        "Actual CommanderEngine line delta",
-        "Reviewed architecture-baseline delta",
-        "Direct authoritative-write delta",
-        "Runtime-text delta",
-        "Printed-name and Oracle-ID delta",
-        "Production, test, and generated line delta",
-        "Evidence fingerprint",
-        "Evidence command",
+        "Compiler/CardProgram effect",
     ),
     "Generated artifacts": (
         "Source inputs changed",
@@ -95,17 +68,11 @@ REQUIRED_FIELDS = {
 }
 
 EVIDENCE_CLASSES = (
-    "Focused regression and affected module",
-    "Multiplayer/APNAP and interactions",
-    "Replay, byte/hash, and compatibility",
-    "Privacy and capability isolation",
-    "Transaction rollback and malformed input",
+    "Focused behavior and directly affected owner",
+    "Interactions, replay, privacy, and rollback",
     "Headless browser and protocol",
-    "Property and fuzz",
-    "Focused mutation",
-    "Compiler/corpus and residuals",
-    "Architecture, ownership, and identity flow",
-    "Local quick gate",
+    "Compiler/corpus and generated freshness",
+    "Architecture and ownership",
     "Required exact-head CI",
 )
 
@@ -616,14 +583,8 @@ def main() -> int:
         )
         template = Path(args.template).read_text(encoding="utf-8")
         failures = [*validate_body(body, template)]
-        evidence = build_pr_evidence(
-            ROOT,
-            base_revision=args.base or event_base,
-            head_revision=event_head,
-        )
-        failures.extend(validate_generated_evidence(body, evidence))
         failures.extend(validate_durable_status_sources(ROOT, args.base or event_base))
-    except (OSError, PullRequestEvidenceError, PullRequestPolicyError) as exc:
+    except (OSError, PullRequestPolicyError) as exc:
         print(f"::error title=PR description policy setup::{exc}")
         return 2
     if failures:

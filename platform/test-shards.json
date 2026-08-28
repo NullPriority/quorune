@@ -570,6 +570,11 @@
       "test_typed_land_entry_participation",
       "test_zone_replacement_compiler"
     ],
+    "main-integration-smoke": [
+      "test_application_protocol",
+      "test_game_record_v3",
+      "test_server_launcher"
+    ],
     "main-smoke": [
       "test_application_protocol",
       "test_deterministic_full_game",
@@ -577,6 +582,17 @@
       "test_protocol",
       "test_python_runtime",
       "test_server_launcher"
+    ],
+    "merge-core": [
+      "test_architecture_guards",
+      "test_card_program_trust",
+      "test_casting_activation_proposal_equivalence",
+      "test_draw_transaction_commit",
+      "test_game_record_v3",
+      "test_high_risk_interaction_assurance",
+      "test_permissions_projection",
+      "test_stack_rules",
+      "test_zone_transition_owner"
     ],
     "multiplayer-commander": [
       "test_ante_rules",

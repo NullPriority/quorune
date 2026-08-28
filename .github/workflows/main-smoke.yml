@@ -11,8 +11,8 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: main-smoke
-  cancel-in-progress: true
+  group: main-smoke-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   smoke:
@@ -24,17 +24,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           # Main certification resolves the merged PR and exact-head receipt.
-          fetch-depth: 0
+          fetch-depth: 1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           architecture: x64
           cache: pip
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: web/package-lock.json
       - name: Verify exact-head certification receipt
         env:
           GH_TOKEN: ${{ github.token }}
@@ -43,19 +38,10 @@ jobs:
           --repository "${GITHUB_REPOSITORY}"
           --merge-sha "${GITHUB_SHA}"
       - name: Install dependencies
-        run: |
-          python -m pip install -e . -r requirements-dev.txt
-          npm ci --prefix web
+        run: python -m pip install -e . -r requirements-dev.txt
       - name: Build compact database
         run: |
           python scripts/build_test_database.py validate-ci-dependencies
           python scripts/build_test_database.py build-ci --output data/test-ci.sqlite3
-      - name: Run deterministic replay and server smoke
-        run: python scripts/test_shards.py run main-smoke
-      - name: Verify generated integration state and rules
-        run: python scripts/finalize_generated.py --check
-      - name: Verify wheel metadata and browser production build
-        run: |
-          python -m build --wheel
-          python scripts/verify_wheel.py
-          npm run build --prefix web
+      - name: Load committed state and run deterministic replay/server integration
+        run: python scripts/test_shards.py run main-integration-smoke

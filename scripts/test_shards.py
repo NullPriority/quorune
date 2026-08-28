@@ -690,6 +690,7 @@ def main() -> int:
     modules = subparsers.add_parser("run-modules")
     modules.add_argument("module", nargs="+")
     modules.add_argument("--result-json")
+    modules.add_argument("--suite-name", default="run-modules")
     modules.add_argument(
         "--backend",
         choices=("unittest", "pytest-xdist"),
@@ -750,7 +751,7 @@ def main() -> int:
             if args.operation == "run"
             else tuple(args.module)
         )
-        suite_name = args.suite if args.operation == "run" else "run-modules"
+        suite_name = args.suite if args.operation == "run" else args.suite_name
         result_json = Path(args.result_json) if args.result_json else None
         workers = (
             args.workers

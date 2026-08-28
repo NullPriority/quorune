@@ -844,17 +844,25 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
         self.assertEqual(2, result["passes"])
         self.assertEqual(["failed-owner", "failed-owner"], calls)
 
-    def test_generated_ci_uses_the_canonical_finalizer_only(self):
+    def test_broad_generated_ci_uses_the_canonical_finalizer_only(self):
         workflow_dir = ROOT / ".github" / "workflows"
         workflows = {
             path.name: path.read_text(encoding="utf-8")
             for path in workflow_dir.glob("*.yml")
         }
-        for name in ("ci.yml", "main-smoke.yml", "nightly.yml"):
+        for name in ("ci.yml", "main-broad.yml", "nightly.yml"):
             self.assertIn(
                 "python scripts/finalize_generated.py --check",
                 workflows[name],
             )
+        self.assertNotIn(
+            "python scripts/finalize_generated.py --check",
+            workflows["main-smoke.yml"],
+        )
+        self.assertIn(
+            "python scripts/certification_receipt.py verify-main",
+            workflows["main-smoke.yml"],
+        )
         combined = "\n".join(workflows.values())
         for spec in load_manifest():
             command = "python " + " ".join(spec.check)

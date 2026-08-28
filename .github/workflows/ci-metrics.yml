@@ -1,0 +1,48 @@
+name: CI metrics
+
+on:
+  workflow_run:
+    workflows: ["PR", "Main broad regression"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: ci-metrics-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+jobs:
+  metrics:
+    name: Observability / CI metrics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download available run artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OBSERVED_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          mkdir -p local/run-artifacts
+          gh run download "$OBSERVED_RUN_ID" --dir local/run-artifacts || true
+      - name: Fetch observed run timings
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OBSERVED_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${OBSERVED_RUN_ID}" > local/ci-run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${OBSERVED_RUN_ID}/jobs?per_page=100" > local/ci-jobs.json
+          python scripts/ci_metrics.py \
+            --run-json local/ci-run.json \
+            --jobs-json local/ci-jobs.json \
+            --browser-report-dir local/run-artifacts \
+            --windows-report-dir local/run-artifacts \
+            --python-report-dir local/run-artifacts \
+            --output local/ci-metrics.json \
+            --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ci-metrics-${{ github.event.workflow_run.id }}
+          path: local/ci-metrics.json
+          retention-days: 14

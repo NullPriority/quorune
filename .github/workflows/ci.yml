@@ -2,7 +2,7 @@ name: PR
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
@@ -10,9 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: >-
-    pr-${{ github.event.pull_request.number || github.ref }}-
-    ${{ github.event.action == 'edited' && 'metadata' || 'source' }}
+  group: pr-${{ github.event.pull_request.number || github.ref }}-source
   cancel-in-progress: true
 
 jobs:
@@ -21,17 +19,23 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       browser_full: ${{ steps.impact.outputs.browser_full }}
+      browser_required: ${{ steps.impact.outputs.browser_required }}
       browser_focus_grep: ${{ steps.impact.outputs.browser_focus_grep }}
       browser_matrix: ${{ steps.impact.outputs.browser_matrix }}
       windows_full: ${{ steps.impact.outputs.windows_full }}
+      windows_required: ${{ steps.impact.outputs.windows_required }}
       windows_matrix: ${{ steps.impact.outputs.windows_matrix }}
       python_matrix: ${{ steps.impact.outputs.python_matrix }}
       python_max_parallel: ${{ steps.impact.outputs.python_max_parallel }}
+      python_required: ${{ steps.impact.outputs.python_required }}
+      generated_test_modules: ${{ steps.impact.outputs.generated_test_modules }}
+      package_full: ${{ steps.impact.outputs.package_full }}
+      package_required: ${{ steps.impact.outputs.package_required }}
+      required_jobs: ${{ steps.impact.outputs.required_jobs }}
+      risk_class: ${{ steps.impact.outputs.risk_class }}
       windows_max_parallel: ${{ steps.impact.outputs.windows_max_parallel }}
       ci_peak_jobs: ${{ steps.impact.outputs.ci_peak_jobs }}
       ci_job_headroom: ${{ steps.impact.outputs.ci_job_headroom }}
-      reuse_certification: ${{ steps.certification_mode.outputs.reuse_certification }}
-      metadata_only: ${{ github.event.action == 'edited' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,32 +47,37 @@ jobs:
       - name: Validate pull request description and status provenance
         if: github.event_name == 'pull_request'
         run: python scripts/validate_pr_body.py
-      - id: certification_mode
-        name: Reuse unchanged exact-head certification when available
+      - id: risk_sentinel
+        name: Independently protect test-selection authority
+        run: python scripts/ci_risk_sentinel.py --github-output "${GITHUB_OUTPUT}"
+      - id: impact
+        name: Classify exact changed-file impact
+        run: >-
+          python scripts/ci_plan.py
+          --force-high-risk "${{ steps.risk_sentinel.outputs.force_high_risk }}"
+      - name: Publish generated exact-head evidence
+        if: github.event_name == 'pull_request'
+        run: >-
+          python scripts/pr_evidence.py
+          --base "${{ github.event.pull_request.base.sha }}"
+          --head "${{ github.event.pull_request.head.sha }}"
+          --format markdown >> "${GITHUB_STEP_SUMMARY}"
+      - name: Validate compact card and deck dependency closure
+        run: python scripts/build_test_database.py validate-ci-dependencies
+      - name: Require green completed main regression
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          python scripts/certification_receipt.py can-reuse-pr
-          --repository "${GITHUB_REPOSITORY}"
-          --pull-request "${{ github.event.pull_request.number }}"
-          --exact-head-sha "${{ github.event.pull_request.head.sha }}"
-          --workflow-run-id "${GITHUB_RUN_ID}"
-          --event-action "${{ github.event.action }}"
-          --wait-seconds "0"
-          --github-output "${GITHUB_OUTPUT}"
-      - id: impact
-        name: Classify exact changed-file impact
-        run: python scripts/ci_plan.py
-      - name: Validate compact card and deck dependency closure
-        run: python scripts/build_test_database.py validate-ci-dependencies
+        run: |
+          mkdir -p local
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs?branch=main&status=completed&per_page=100" > local/main-runs.json
+          python scripts/main_health.py --runs-json local/main-runs.json --event "${GITHUB_EVENT_PATH}"
 
   python:
-    name: PR / Python / ${{ matrix.shard }}
+    name: PR / Python / ${{ matrix.suite }}
     needs: plan
     if: >-
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true'
+      needs.plan.outputs.python_required == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -91,7 +100,8 @@ jobs:
           --output data/test-ci.sqlite3
       - name: Run functional shard
         run: >-
-          python scripts/test_shards.py run "${{ matrix.shard }}"
+          python scripts/test_shards.py run-modules ${{ matrix.modules }}
+          --suite-name "${{ matrix.suite }}"
           --backend pytest-xdist
           --workers 4
           --platform ubuntu
@@ -108,9 +118,6 @@ jobs:
   generated:
     name: PR / Generated and architecture
     needs: plan
-    if: >-
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true'
     runs-on: ubuntu-latest
     env:
       MTG_CARD_DB: data/test-ci.sqlite3
@@ -138,7 +145,15 @@ jobs:
       - name: Verify generated outputs
         run: python scripts/finalize_generated.py --check
       - name: Run generated conformance and governance tests
+        if: needs.plan.outputs.risk_class == 'high_risk_source'
         run: python scripts/test_shards.py run generated-validation
+      - name: Run impact-selected governance and invariant tests
+        if: >-
+          needs.plan.outputs.risk_class != 'high_risk_source' &&
+          needs.plan.outputs.generated_test_modules != ''
+        run: >-
+          python scripts/test_shards.py run-modules
+          ${{ needs.plan.outputs.generated_test_modules }}
       - name: Verify architecture, documentation, and repository policy
         run: python scripts/validate_repository.py
 
@@ -146,8 +161,7 @@ jobs:
     name: PR / Package
     needs: plan
     if: >-
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true'
+      needs.plan.outputs.package_required == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -156,19 +170,22 @@ jobs:
           python-version: "3.12"
           architecture: x64
           cache: pip
-      - name: Install build tooling
+      - name: Install package and test dependencies
         run: python -m pip install -e . -r requirements-dev.txt
+      - name: Verify installed package and entry points
+        run: python -c "import quorune; import server"
       - name: Build wheel
+        if: needs.plan.outputs.package_full == 'true'
         run: python -m build --wheel
       - name: Verify clean wheel installation and CLI
+        if: needs.plan.outputs.package_full == 'true'
         run: python scripts/verify_wheel.py
 
   windows_compatibility:
     name: PR / Windows / compatibility
     needs: plan
     if: >-
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true' &&
+      needs.plan.outputs.windows_required == 'true' &&
       needs.plan.outputs.windows_full != 'true'
     runs-on: windows-latest
     env:
@@ -210,8 +227,7 @@ jobs:
     name: PR / Windows / ${{ matrix.shard }}
     needs: plan
     if: >-
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true' &&
+      needs.plan.outputs.windows_required == 'true' &&
       needs.plan.outputs.windows_full == 'true'
     runs-on: windows-latest
     strategy:
@@ -268,8 +284,7 @@ jobs:
     name: PR / Windows / package
     needs: plan
     if: >-
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true'
+      needs.plan.outputs.package_full == 'true'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -290,8 +305,7 @@ jobs:
     name: PR / Windows Certification
     if: >-
       always() &&
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true'
+      needs.plan.outputs.windows_required == 'true'
     needs: [plan, windows_compatibility, windows_full, windows_package]
     runs-on: ubuntu-latest
     steps:
@@ -321,8 +335,7 @@ jobs:
     name: PR / Browser / ${{ matrix.group }}
     needs: plan
     if: >-
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true'
+      needs.plan.outputs.browser_required == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -397,22 +410,20 @@ jobs:
 
   certification:
     name: PR / Certification
-    if: >-
-      always() &&
-      needs.plan.outputs.metadata_only != 'true'
+    if: always()
     needs: [plan, python, generated, package, windows_certification, browser]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
       - name: Require every PR gate
-        if: needs.plan.outputs.reuse_certification != 'true'
         env:
           CI_NEEDS_JSON: ${{ toJSON(needs) }}
+          CI_REQUIRED_JOBS_JSON: ${{ needs.plan.outputs.required_jobs }}
         run: python scripts/verify_ci_needs.py
       - name: Create exact-head certification receipt
-        if: needs.plan.outputs.reuse_certification != 'true'
         env:
           CI_NEEDS_JSON: ${{ toJSON(needs) }}
           MTG_EXACT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -424,19 +435,7 @@ jobs:
           --exact-head-sha "${MTG_EXACT_HEAD_SHA}"
           --workflow-run-id "${GITHUB_RUN_ID}"
           --needs-json "${CI_NEEDS_JSON}"
-          --output local/certification-receipt.json
-      - name: Reissue validated unchanged-head certification receipt
-        if: needs.plan.outputs.reuse_certification == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          MTG_EXACT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          MTG_PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: >-
-          python scripts/certification_receipt.py reuse-pr
-          --repository "${GITHUB_REPOSITORY}"
-          --pull-request "${MTG_PR_NUMBER}"
-          --exact-head-sha "${MTG_EXACT_HEAD_SHA}"
-          --workflow-run-id "${GITHUB_RUN_ID}"
+          --required-jobs-json '${{ needs.plan.outputs.required_jobs }}'
           --output local/certification-receipt.json
       - name: Publish exact-head certification receipt
         uses: actions/upload-artifact@v4
@@ -445,52 +444,3 @@ jobs:
           path: local/certification-receipt.json
           if-no-files-found: error
           retention-days: 30
-
-  metrics:
-    name: PR / Metrics
-    if: >-
-      always() &&
-      needs.plan.outputs.metadata_only != 'true' &&
-      needs.plan.outputs.reuse_certification != 'true'
-    needs: [plan, python, generated, package, windows_certification, browser, certification]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download browser journey reports
-        uses: actions/download-artifact@v4
-        with:
-          pattern: browser-results-*-${{ github.run_id }}
-          path: local/browser-results
-          merge-multiple: false
-      - name: Download Windows shard reports
-        uses: actions/download-artifact@v4
-        with:
-          pattern: windows-results-*-${{ github.run_id }}
-          path: local/windows-results
-          merge-multiple: false
-      - name: Download Linux Python shard reports
-        uses: actions/download-artifact@v4
-        with:
-          pattern: python-results-*-${{ github.run_id }}
-          path: local/python-results
-          merge-multiple: false
-      - name: Fetch observed run timings
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p local
-          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" > local/ci-run.json
-          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?per_page=100" > local/ci-jobs.json
-          python scripts/ci_metrics.py \
-            --run-json local/ci-run.json \
-            --jobs-json local/ci-jobs.json \
-            --browser-report-dir local/browser-results \
-            --windows-report-dir local/windows-results \
-            --python-report-dir local/python-results \
-            --output local/ci-metrics.json \
-            --summary "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ci-metrics-${{ github.run_id }}
-          path: local/ci-metrics.json
-          retention-days: 14

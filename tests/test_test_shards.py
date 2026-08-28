@@ -173,6 +173,10 @@ class TestShardManifestTests(unittest.TestCase):
         windows = suite_modules(self.manifest, "windows-compat")
         self.assertIn("test_server_app", windows)
         self.assertIn("test_game_record_v3", windows)
+        merge_core = suite_modules(self.manifest, "merge-core")
+        self.assertIn("test_card_program_trust", merge_core)
+        self.assertIn("test_permissions_projection", merge_core)
+        self.assertIn("test_high_risk_interaction_assurance", merge_core)
 
     def test_unknown_suite_fails_closed(self):
         with self.assertRaisesRegex(TestShardError, "Unknown test suite"):

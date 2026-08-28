@@ -1,0 +1,40 @@
+name: PR metadata
+
+on:
+  pull_request:
+    types: [edited]
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}-metadata
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    name: PR metadata / Plan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+      - name: Validate pull request description and status provenance
+        run: python scripts/validate_pr_body.py
+      - name: Inspect unchanged-head source certification without waiting
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python scripts/certification_receipt.py can-reuse-pr
+          --repository "${GITHUB_REPOSITORY}"
+          --pull-request "${{ github.event.pull_request.number }}"
+          --exact-head-sha "${{ github.event.pull_request.head.sha }}"
+          --workflow-run-id "${GITHUB_RUN_ID}"
+          --event-action "edited"
+          --wait-seconds "0"
+          --github-output "${GITHUB_OUTPUT}"

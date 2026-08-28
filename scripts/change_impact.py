@@ -32,6 +32,10 @@ class ImpactPlan:
     matched_rule_ids: tuple[str, ...]
     browser_full_reasons: tuple[str, ...]
     windows_full_reasons: tuple[str, ...]
+    risk_class: str
+    risk_reasons: tuple[str, ...]
+    package_full: bool
+    package_full_reasons: tuple[str, ...]
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -59,6 +63,7 @@ def changed_files(
     base: str,
     *,
     include_worktree: bool,
+    diff_filter: str = "ACMRD",
     root: Path = ROOT,
 ) -> tuple[str, ...]:
     subprocess.run(
@@ -74,7 +79,7 @@ def changed_files(
             "git",
             "diff",
             "--name-only",
-            "--diff-filter=ACMR",
+            f"--diff-filter={diff_filter}",
             f"{base}{separator}",
         ],
         cwd=root,
@@ -278,13 +283,15 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
         "schema_version",
         "default_checks",
         "browser_focuses",
+        "risk_rules",
+        "package_patterns",
         "path_rules",
         "symbol_rules",
         "fallback_test_suites",
         "forced_labels",
     }:
         raise ValueError("Change-impact policy has unknown or missing fields")
-    if value["schema_version"] != 5:
+    if value["schema_version"] != 6:
         raise ValueError("Unsupported change-impact policy schema")
     _string_tuple(value["default_checks"], field="default_checks")
     browser_focuses = value["browser_focuses"]
@@ -302,6 +309,42 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
         raise ValueError(
             "browser_focuses must map nonempty IDs to Playwright tags"
         )
+    risk_rules = value["risk_rules"]
+    if not isinstance(risk_rules, list) or not risk_rules:
+        raise ValueError("risk_rules must be a nonempty list")
+    risk_rule_ids: set[str] = set()
+    for index, rule in enumerate(risk_rules):
+        if not isinstance(rule, dict) or set(rule) != {
+            "id",
+            "patterns",
+            "risk_class",
+        }:
+            raise ValueError(f"risk_rules[{index}] has invalid fields")
+        rule_id = rule.get("id")
+        if (
+            not isinstance(rule_id, str)
+            or not rule_id
+            or rule_id in risk_rule_ids
+        ):
+            raise ValueError(f"risk_rules[{index}].id must be unique and nonempty")
+        risk_rule_ids.add(rule_id)
+        patterns = _string_tuple(
+            rule.get("patterns"), field=f"risk_rules[{index}].patterns"
+        )
+        if not patterns:
+            raise ValueError(f"risk_rules[{index}].patterns cannot be empty")
+        if rule.get("risk_class") not in {
+            "governance_only",
+            "high_risk_source",
+        }:
+            raise ValueError(
+                f"risk_rules[{index}].risk_class must be governance_only or high_risk_source"
+            )
+    package_patterns = _string_tuple(
+        value["package_patterns"], field="package_patterns"
+    )
+    if not package_patterns:
+        raise ValueError("package_patterns cannot be empty")
     rules = value["path_rules"]
     if not isinstance(rules, list) or not rules:
         raise ValueError("path_rules must be a nonempty list")
@@ -316,7 +359,7 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
         "browser_full",
         "windows_full",
     }
-    seen: set[str] = set()
+    seen: set[str] = set(risk_rule_ids)
     for index, rule in enumerate(rules):
         if not isinstance(rule, dict) or not set(rule).issubset(allowed_rule_fields):
             raise ValueError(f"path_rules[{index}] has invalid fields")
@@ -435,7 +478,7 @@ def load_impact_policy(path: Path = POLICY_PATH) -> tuple[dict, str]:
         isinstance(key, str)
         and key
         and (
-            target in {"browser_full", "windows_full"}
+            target in {"browser_full", "windows_full", "high_risk_source"}
             or (
                 isinstance(target, str)
                 and target.startswith("browser_focus:")
@@ -460,9 +503,12 @@ def classify_changes(
     *,
     changed_symbols: Sequence[str] = (),
     labels: Sequence[str] = (),
+    removed_paths: Sequence[str] = (),
+    force_high_risk: bool = False,
     policy_path: Path = POLICY_PATH,
 ) -> ImpactPlan:
     changed = _normalized(paths)
+    removed = set(_normalized(removed_paths))
     normalized_symbols = tuple(sorted(set(changed_symbols)))
     normalized_labels = {label.casefold() for label in labels}
     policy, policy_fingerprint = load_impact_policy(policy_path)
@@ -473,13 +519,21 @@ def classify_changes(
     browser_reasons: set[str] = set()
     browser_focuses: set[str] = set()
     windows_reasons: set[str] = set()
+    risk_reasons: set[str] = set()
+    path_risks: list[str] = []
+    package_reasons: set[str] = set()
+
+    if force_high_risk:
+        risk_reasons.add("independent-sentinel")
 
     for path in changed:
         path_has_suite = False
+        path_has_rule = False
         for rule in policy["path_rules"]:
             patterns = _string_tuple(rule["patterns"], field=f"{rule['id']}.patterns")
             if not _matches_patterns(path, patterns):
                 continue
+            path_has_rule = True
             rule_id = str(rule["id"])
             matched_rule_ids.add(rule_id)
             selected_suites = _string_tuple(
@@ -515,7 +569,42 @@ def classify_changes(
                 if _matches_patterns(path, patterns):
                     suites.add(str(fallback["test_suite"]))
                     matched_rule_ids.add(str(fallback["id"]))
+                    path_has_rule = True
                     break
+
+        matched_risks = [
+            rule
+            for rule in policy["risk_rules"]
+            if _matches_patterns(path, rule["patterns"])
+        ]
+        if path in removed:
+            path_risks.append("high_risk_source")
+            risk_reasons.add(f"removed:{path}")
+        elif any(
+            rule["risk_class"] == "high_risk_source"
+            for rule in matched_risks
+        ):
+            path_risks.append("high_risk_source")
+            risk_reasons.update(
+                f"path:{path}:{rule['id']}"
+                for rule in matched_risks
+                if rule["risk_class"] == "high_risk_source"
+            )
+        elif not path_has_rule:
+            path_risks.append("high_risk_source")
+            risk_reasons.add(f"unclassified:{path}")
+        elif matched_risks and all(
+            rule["risk_class"] == "governance_only"
+            for rule in matched_risks
+        ):
+            path_risks.append("governance_only")
+            risk_reasons.update(
+                f"path:{path}:{rule['id']}" for rule in matched_risks
+            )
+        else:
+            path_risks.append("ordinary_source")
+        if _matches_patterns(path, policy["package_patterns"]):
+            package_reasons.add(f"path:{path}")
 
     for entry in normalized_symbols:
         path, separator, symbol = entry.rpartition(":")
@@ -562,8 +651,24 @@ def classify_changes(
             browser_reasons.add(f"label:{label}")
         elif target == "windows_full":
             windows_reasons.add(f"label:{label}")
+        elif target == "high_risk_source":
+            force_high_risk = True
+            risk_reasons.add(f"label:{label}")
         elif target.startswith("browser_focus:"):
             browser_focuses.add(target.removeprefix("browser_focus:"))
+    risk_class = (
+        "high_risk_source"
+        if force_high_risk or "high_risk_source" in path_risks or not changed
+        else (
+            "ordinary_source"
+            if "ordinary_source" in path_risks
+            else "governance_only"
+        )
+    )
+    if risk_class == "high_risk_source":
+        browser_reasons.add("risk:high_risk_source")
+        windows_reasons.add("risk:high_risk_source")
+        package_reasons.add("risk:high_risk_source")
     ordered_focuses = tuple(sorted(browser_focuses))
     return ImpactPlan(
         changed_files=changed,
@@ -583,6 +688,10 @@ def classify_changes(
         matched_rule_ids=tuple(sorted(matched_rule_ids)),
         browser_full_reasons=tuple(sorted(browser_reasons)),
         windows_full_reasons=tuple(sorted(windows_reasons)),
+        risk_class=risk_class,
+        risk_reasons=tuple(sorted(risk_reasons)),
+        package_full=bool(package_reasons),
+        package_full_reasons=tuple(sorted(package_reasons)),
     )
 
 

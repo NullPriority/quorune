@@ -260,9 +260,17 @@ def windows_metrics(
     by_name = {str(job.get("name") or "unknown"): job for job in jobs}
     shards = []
     worker_jobs = []
+    main_broad = run.get("name") == "Main broad regression"
     for report in reports:
         suite = str(report.get("suite") or "unknown")
-        name = f"PR / Windows / {'compatibility' if suite == 'windows-compat' else suite}"
+        name = (
+            f"Main / Broad / Python / windows / {suite}"
+            if main_broad
+            else (
+                "PR / Windows / "
+                + ("compatibility" if suite == "windows-compat" else suite)
+            )
+        )
         job = by_name.get(name)
         if job is not None:
             worker_jobs.append(job)
@@ -294,18 +302,31 @@ def windows_metrics(
                 ),
             }
         )
-    package = by_name.get("PR / Windows / package")
+    package = by_name.get(
+        "Main / Broad / Package / windows"
+        if main_broad
+        else "PR / Windows / package"
+    )
     windows_jobs = [
         job
         for job in jobs
-        if str(job.get("name") or "").startswith("PR / Windows")
+        if str(job.get("name") or "").startswith(
+            "Main / Broad / Python / windows"
+            if main_broad
+            else "PR / Windows"
+        )
     ]
     completions = [_runner_interval(job)[1] for job in windows_jobs]
     completions = [value for value in completions if value is not None]
     return {
         "shards": sorted(shards, key=lambda row: row["name"]),
         "package_duration_seconds": (
-            _step_duration(package, "Build and verify Windows wheel")
+            _step_duration(
+                package,
+                "Build and verify clean wheel"
+                if main_broad
+                else "Build and verify Windows wheel",
+            )
             if package is not None
             else None
         ),
@@ -327,9 +348,14 @@ def python_metrics(
     by_name = {str(job.get("name") or "unknown"): job for job in jobs}
     shards = []
     worker_jobs = []
+    main_broad = run.get("name") == "Main broad regression"
     for report in reports:
         suite = str(report.get("suite") or "unknown")
-        job = by_name.get(f"PR / Python / {suite}")
+        job = by_name.get(
+            f"Main / Broad / Python / ubuntu / {suite}"
+            if main_broad
+            else f"PR / Python / {suite}"
+        )
         if job is not None:
             worker_jobs.append(job)
         started, completed = _runner_interval(job) if job is not None else (None, None)

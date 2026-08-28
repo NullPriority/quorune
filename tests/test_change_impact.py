@@ -27,7 +27,7 @@ class ChangeImpactTests(unittest.TestCase):
 
     def test_policy_is_versioned_and_fingerprinted(self):
         policy, fingerprint = load_impact_policy()
-        self.assertEqual(5, policy["schema_version"])
+        self.assertEqual(6, policy["schema_version"])
         self.assertIn("generated-finalization", policy["default_checks"])
         self.assertEqual(64, len(fingerprint))
 
@@ -111,6 +111,32 @@ class ChangeImpactTests(unittest.TestCase):
     def test_changed_test_module_is_run_exactly(self):
         plan = classify_changes(["tests/test_life_change.py"])
         self.assertEqual(("test_life_change",), plan.test_modules)
+        self.assertEqual("ordinary_source", plan.risk_class)
+
+    def test_deleted_test_and_unknown_path_force_high_risk(self):
+        deleted = classify_changes(
+            ["tests/test_life_change.py"],
+            removed_paths=["tests/test_life_change.py"],
+        )
+        unknown = classify_changes(["unowned/new-surface.txt"])
+        self.assertEqual("high_risk_source", deleted.risk_class)
+        self.assertEqual("high_risk_source", unknown.risk_class)
+        self.assertIn("removed:tests/test_life_change.py", deleted.risk_reasons)
+        self.assertIn("unclassified:unowned/new-surface.txt", unknown.risk_reasons)
+
+    def test_governance_and_merge_authority_risk_classes_are_explicit(self):
+        docs = classify_changes(["docs/development/ci-pipeline.md"])
+        planner = classify_changes(["scripts/ci_plan.py"])
+        package = classify_changes(["pyproject.toml"])
+        recovery = classify_changes(
+            ["quorune/compiler/prevention_templates.py"],
+            labels=("main-red-recovery",),
+        )
+        self.assertEqual("governance_only", docs.risk_class)
+        self.assertEqual("high_risk_source", planner.risk_class)
+        self.assertEqual("high_risk_source", package.risk_class)
+        self.assertTrue(package.package_full)
+        self.assertEqual("high_risk_source", recovery.risk_class)
 
     def test_browser_protocol_change_requests_full_browser_gate(self):
         plan = classify_changes(["web/src/protocol.ts"])
@@ -139,16 +165,21 @@ class ChangeImpactTests(unittest.TestCase):
                 self.assertFalse(plan.browser_full)
                 self.assertEqual(expected, plan.browser_focuses)
 
-    def test_compiler_and_engine_only_changes_keep_compact_smoke_only(self):
+    def test_compiler_and_session_only_changes_keep_compact_smoke_only(self):
         for path in (
             "quorune/compiler/damage_templates.py",
-            "quorune/engine.py",
             "quorune/session.py",
         ):
             with self.subTest(path=path):
                 plan = classify_changes([path])
                 self.assertFalse(plan.browser_full)
                 self.assertEqual((), plan.browser_focuses)
+
+    def test_engine_changes_force_complete_high_risk_gate(self):
+        plan = classify_changes(["quorune/engine.py"])
+        self.assertEqual("high_risk_source", plan.risk_class)
+        self.assertTrue(plan.browser_full)
+        self.assertTrue(plan.windows_full)
 
     def test_engine_priority_or_yield_symbols_require_complete_browser(self):
         for symbol in (
@@ -339,6 +370,7 @@ class CommanderEngine:
         self.assertTrue(plan.browser_full)
         self.assertTrue(plan.windows_full)
         self.assertIn("generated-validation", plan.test_suites)
+        self.assertEqual("high_risk_source", plan.risk_class)
 
     def test_unknown_core_module_falls_back_to_core_domain(self):
         plan = classify_changes(["quorune/example_future.py"])

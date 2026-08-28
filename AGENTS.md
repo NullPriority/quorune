@@ -381,35 +381,44 @@ form to the composition owner's positive regression table. This cross-leaf
 audit is part of the focused compiler check; do not wait for separate CI shards
 to discover the promoted forms one at a time.
 
-Push the coherent exact head and let public pull-request CI run the broad
-Python, generated, package, platform and headless-browser checks. Use that CI
-window for independent Slot B work instead of repeating the same suite
-locally. Every commit subject and pull-request title must use the Conventional
-Commit form `<type>: <imperative subject>`, for example `fix: preserve replay
+Push the coherent exact head and let public pull-request CI run the fail-closed
+impact-selected Python, generated, package, platform and headless-browser
+checks. Changes to selection, certification, test inventory, generated
+ownership, broad state, replay, privacy, protocol or unknown paths retain the
+complete pre-merge gate. The exact-main broad workflow executes the complete
+cross-platform inventory after every merge without cancelling an older merge
+SHA. Use that CI window for independent Slot B work instead of repeating the
+same suite locally. Every commit subject and pull-request title must use the
+Conventional Commit form `<type>: <imperative subject>`, for example `fix: preserve replay
 ordering`; choose the type that describes the durable outcome. Complete
 `.github/pull_request_template.md` before opening the pull request: remove its
-instructional comments, fill every required section and evidence row, give a
-concrete reason for every N/A, and check every safety assertion. When generated
-inputs or outputs changed, the Generators run field must name
+instructional comments, fill every required stable review field and compact
+evidence row, give a concrete reason for every N/A, and check every safety
+assertion. The exact source head and generated base/head evidence are published
+automatically in the `PR / Plan` summary; do not paste fingerprints, metric
+tables, job conclusions or generated inventories into the description. When
+generated inputs or outputs changed, the Generators run field must name
 `scripts/finalize_generated.py --write`. Do not claim a broad local pass without
 the exact command and numeric result, or a broad CI pass without the
-authoritative GitHub Actions run URL. The early `PR / Plan` job enforces this
-policy on open, synchronize, reopen, and edit events. Moving a draft to ready
-for review reuses the exact-head checks already produced for that unchanged
-pull request instead of launching the full regression matrix again.
-Description edits are Plan-only metadata events and never launch or wait for a
-regression matrix. After making a later local commit, generate its exact
-base/head evidence and update the pull-request body **before** pushing that
-commit; the metadata event may temporarily compare against the still-published
-old head, while the following synchronize event sees the matching body and runs
-the one authoritative exact-head matrix. Do not push first and repair the body
-afterward, because the synchronize event retains its immutable pre-edit body.
+authoritative GitHub Actions run URL. `PR / Plan` enforces source-event policy
+on open, synchronize, and reopen. The separate `PR metadata / Plan` workflow
+validates edits without creating a newer `PR / Certification` check. Moving a
+draft to ready for review starts no workflow and preserves the exact-head checks
+already produced for that unchanged pull request. Description edits never
+launch, replace, cancel, or wait for a regression matrix. Keep the
+description's scope, owner, exclusions, behavioral
+evidence, limitations and rollback facts current, but do not edit it merely to
+copy a new source SHA or change pending CI wording. The source event derives
+its own exact base/head evidence from the immutable GitHub event.
 
-Public PR CI has a hard 20-job concurrency envelope. Its checked, mode-aware
-budget targets at most 18 simultaneous jobs so cancellation, certification,
-and incident recovery retain two slots. Do not add or widen a matrix without
-updating and passing `scripts.ci_plan.ci_concurrency_budget` for all four
-browser/Windows impact combinations. Functional Ubuntu and Windows shards use
+Public CI has a hard 20-job concurrency envelope. Both the pull-request and
+exact-main broad planners target at most 18 simultaneous jobs so cancellation,
+certification, and incident recovery retain two slots. Do not add or widen a
+matrix without updating and passing the corresponding checked concurrency
+budget. Ordinary pull requests partition only the impact-selected module set
+by its existing primary owners and add the compact `merge-core` overlay;
+high-risk changes retain every primary module. Functional Ubuntu and Windows
+shards use
 four-process pytest-xdist execution with `loadfile` scheduling and exact
 unittest collection parity; generated-governance remains on the sequential
 unittest runner. The manifest owns one explicit observed-duration launch order.
@@ -428,7 +437,14 @@ run IDs into `platform/readiness-source.json` or
 with the base revision and rejects newly written volatile provenance; the
 historical CI escape ledger remains the explicit owner for observed workflow
 incidents. Never create a follow-up commit solely to reconcile squash-merge
-identity. A broader local behavioral gate is exceptional: use it only when the
+identity. Metrics run through a separate nonblocking completed-workflow
+observer and never delay or invalidate the receipt. Main smoke then runs only
+the merge-specific receipt/fingerprint check and compact deterministic
+replay/server integration. `Main / Broad regression` preserves the complete
+Ubuntu, Windows, package, generated, interaction and browser inventory for
+every exact main SHA. A completed red broad run blocks later automatic merges;
+only a labeled high-risk fix-forward PR may bypass that red-state query. A
+broader local behavioral gate is exceptional: use it only when the
 user asks or when diagnosing a specific CI-only or release-critical failure
 that cannot be isolated from the Actions evidence. The required exact new and
 directly affected tests remain the normal pre-cloud evidence; any exceptional

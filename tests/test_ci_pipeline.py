@@ -12,8 +12,13 @@ from scripts.ci_plan import (
     browser_matrix,
     ci_concurrency_budget,
     python_matrix,
+    selected_test_plan,
     workflow_job_ids,
 )
+from scripts.change_impact import classify_changes
+from scripts.ci_risk_sentinel import requires_high_risk_gate
+from scripts.main_broad_ci import main_broad_concurrency_budget
+from scripts.main_health import MainHealthError, verify_main_health
 from scripts.nightly_ci import nightly_concurrency_budget, nightly_python_matrix
 from scripts.shard_result_validation import suite_expectation
 from scripts.shard_result_validation import (
@@ -37,6 +42,9 @@ from scripts.verify_nightly_ci import (
     NightlyCertificationError,
     validate_dependencies as validate_nightly_dependencies,
     validate_results as validate_nightly_results,
+)
+from scripts.verify_main_broad_ci import (
+    validate_dependencies as validate_main_broad_dependencies,
 )
 
 
@@ -164,6 +172,75 @@ class CiPipelineTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "budget review"):
                 workflow_job_ids(changed)
 
+    def test_risk_plan_selects_owned_modules_and_fails_closed(self):
+        ordinary = selected_test_plan(
+            classify_changes(["quorune/compiler/prevention_templates.py"])
+        )
+        high = selected_test_plan(
+            classify_changes([".github/workflows/ci.yml"])
+        )
+        governance = selected_test_plan(
+            classify_changes(["docs/development/ci-pipeline.md"])
+        )
+        manifest = load_manifest()
+        all_modules = {
+            module
+            for modules in manifest["primary_shards"].values()
+            for module in modules
+        }
+        self.assertLess(set(ordinary["selected_test_modules"]), all_modules)
+        self.assertIn(
+            "test_card_program_trust", ordinary["selected_test_modules"]
+        )
+        self.assertEqual(all_modules, set(high["selected_test_modules"]))
+        self.assertEqual([], governance["python_matrix"]["include"])
+        self.assertEqual(
+            ("test_documentation_policy",),
+            governance["generated_test_modules"],
+        )
+
+    def test_independent_sentinel_and_main_red_gate_fail_closed(self):
+        self.assertTrue(
+            requires_high_risk_gate(("scripts/ci_plan.py",))
+        )
+        self.assertTrue(
+            requires_high_risk_gate(
+                ("tests/test_removed.py",),
+                removed_paths=("tests/test_removed.py",),
+            )
+        )
+        red = {
+            "workflow_runs": [
+                {
+                    "id": 42,
+                    "path": ".github/workflows/main-broad.yml",
+                    "event": "push",
+                    "status": "completed",
+                    "conclusion": "failure",
+                }
+            ]
+        }
+        with self.assertRaises(MainHealthError):
+            verify_main_health(red, allow_recovery=False)
+        self.assertEqual(
+            "red-recovery",
+            verify_main_health(red, allow_recovery=True)["state"],
+        )
+        self.assertEqual(2, main_broad_concurrency_budget()["headroom"])
+
+    def test_main_broad_certification_rejects_any_missing_or_failed_family(self):
+        valid = {
+            name: {"result": "success"}
+            for name in ("browser", "governance", "package", "plan", "python")
+        }
+        validate_main_broad_dependencies(valid)
+        for name in tuple(valid):
+            changed = {key: dict(value) for key, value in valid.items()}
+            changed[name]["result"] = "skipped"
+            with self.subTest(name=name):
+                with self.assertRaises(NightlyCertificationError):
+                    validate_main_broad_dependencies(changed)
+
     def test_nightly_matrix_is_slow_first_cross_platform_and_budgeted(self):
         manifest = load_manifest()
         rows = nightly_python_matrix()["include"]
@@ -195,6 +272,15 @@ class CiPipelineTests(unittest.TestCase):
         self.assertEqual((), failed_dependencies({"python": {"result": "success"}}))
 
     def test_windows_certification_requires_exact_mode_dependencies(self):
+        validate_dependencies(
+            {
+                "plan": {"result": "success"},
+                "windows_compatibility": {"result": "success"},
+                "windows_full": {"result": "skipped"},
+                "windows_package": {"result": "skipped"},
+            },
+            full=False,
+        )
         validate_dependencies(
             {
                 "plan": {"result": "success"},
@@ -483,6 +569,54 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("rules journey", markdown(metrics))
         self.assertIn("core-domain", markdown(metrics))
 
+    def test_metrics_bind_exact_main_cross_platform_job_names(self):
+        run = {
+            "id": 43,
+            "name": "Main broad regression",
+            "head_sha": "def",
+            "status": "completed",
+            "conclusion": "success",
+            "created_at": "2026-08-03T12:00:00Z",
+        }
+        jobs = {
+            "jobs": [
+                {
+                    "name": "Main / Broad / Python / ubuntu / core-domain",
+                    "conclusion": "success",
+                    "started_at": "2026-08-03T12:00:05Z",
+                    "completed_at": "2026-08-03T12:00:25Z",
+                    "steps": [],
+                },
+                {
+                    "name": "Main / Broad / Python / windows / core-domain",
+                    "conclusion": "success",
+                    "started_at": "2026-08-03T12:00:06Z",
+                    "completed_at": "2026-08-03T12:00:30Z",
+                    "steps": [],
+                },
+                {
+                    "name": "Main / Broad / Package / windows",
+                    "conclusion": "success",
+                    "started_at": "2026-08-03T12:00:07Z",
+                    "completed_at": "2026-08-03T12:00:27Z",
+                    "steps": [
+                        {
+                            "name": "Build and verify clean wheel",
+                            "conclusion": "success",
+                            "started_at": "2026-08-03T12:00:10Z",
+                            "completed_at": "2026-08-03T12:00:20Z",
+                        }
+                    ],
+                },
+            ]
+        }
+        windows = self._windows_result("core-domain")
+        python = self._python_result("core-domain")
+        observed = build_metrics(run, jobs, [], [windows], [python])
+        self.assertEqual("success", observed["windows"]["shards"][0]["conclusion"])
+        self.assertEqual(10.0, observed["windows"]["package_duration_seconds"])
+        self.assertEqual("success", observed["python"]["shards"][0]["conclusion"])
+
     def test_workflows_separate_pr_main_and_nightly_responsibilities(self):
         pr = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
         main = (ROOT / ".github/workflows/main-smoke.yml").read_text(
@@ -491,32 +625,34 @@ class CiPipelineTests(unittest.TestCase):
         nightly = (ROOT / ".github/workflows/nightly.yml").read_text(
             encoding="utf-8"
         )
+        broad = (ROOT / ".github/workflows/main-broad.yml").read_text(
+            encoding="utf-8"
+        )
+        metrics = (ROOT / ".github/workflows/ci-metrics.yml").read_text(
+            encoding="utf-8"
+        )
+        metadata = (ROOT / ".github/workflows/pr-metadata.yml").read_text(
+            encoding="utf-8"
+        )
         self.assertIn(
             "cancel-in-progress: true",
             pr,
         )
-        self.assertIn(
-            "${{ github.event.action == 'edited' && 'metadata' || 'source' }}",
-            pr,
-        )
         self.assertIn("PR / Certification", pr)
-        self.assertIn("opened, synchronize, reopened, edited", pr)
+        self.assertIn("opened, synchronize, reopened", pr)
+        self.assertNotIn("edited", pr.split("jobs:", 1)[0])
         self.assertNotIn("ready_for_review", pr)
-        self.assertIn(
-            "metadata_only: ${{ github.event.action == 'edited' }}", pr
-        )
         self.assertIn("python scripts/validate_pr_body.py", pr)
-        self.assertIn("certification_receipt.py can-reuse-pr", pr)
-        self.assertIn("--event-action \"${{ github.event.action }}\"", pr)
-        self.assertIn("--wait-seconds \"0\"", pr)
-        self.assertGreaterEqual(
-            pr.count("needs.plan.outputs.metadata_only"),
-            10,
-        )
-        self.assertGreaterEqual(
-            pr.count("needs.plan.outputs.reuse_certification"),
-            12,
-        )
+        self.assertIn("scripts/ci_risk_sentinel.py", pr)
+        self.assertIn("scripts/main_health.py", pr)
+        self.assertNotIn("certification_receipt.py can-reuse-pr", pr)
+        self.assertIn("types: [edited]", metadata)
+        self.assertIn("certification_receipt.py can-reuse-pr", metadata)
+        self.assertIn('--event-action "edited"', metadata)
+        self.assertIn('--wait-seconds "0"', metadata)
+        self.assertNotIn("PR / Certification", metadata)
+        self.assertNotIn("ci_plan.py", metadata)
+        self.assertNotIn("test_shards.py", metadata)
         self.assertLess(
             pr.index("python scripts/validate_pr_body.py"),
             pr.index("python scripts/ci_plan.py"),
@@ -534,11 +670,11 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("Run focused browser journeys for affected rules", pr)
         self.assertIn('npx playwright test --grep "$MTG_BROWSER_GROUP_GREP"', pr)
         self.assertNotIn("--shard=", pr)
-        self.assertIn("actions/download-artifact@v4", pr)
-        self.assertIn("--browser-report-dir local/browser-results", pr)
-        self.assertIn("--windows-report-dir local/windows-results", pr)
-        self.assertIn("--python-report-dir local/python-results", pr)
-        self.assertIn("scripts/test_shards.py run", pr)
+        self.assertNotIn("PR / Metrics", pr)
+        self.assertIn("workflow_run:", metrics)
+        self.assertIn('workflows: ["PR", "Main broad regression"]', metrics)
+        self.assertIn("scripts/ci_metrics.py", metrics)
+        self.assertIn("scripts/test_shards.py run-modules", pr)
         self.assertIn("--backend pytest-xdist", pr)
         self.assertIn("--workers 4", pr)
         self.assertIn("python-results-${{ matrix.shard }}", pr)
@@ -557,6 +693,7 @@ class CiPipelineTests(unittest.TestCase):
             "scripts/update_reusable_piece_matrix.py --check", generated
         )
         self.assertIn("python -m pip install -e .", package)
+        self.assertIn("needs.plan.outputs.package_full", package)
         self.assertIn("needs.plan.outputs.windows_max_parallel", windows_full)
         self.assertIn("validate-ci-dependencies", windows_full)
         self.assertIn('python scripts/test_shards.py run "${{ matrix.shard }}"', windows_full)
@@ -570,6 +707,19 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("pull-requests: read", main)
         self.assertIn("certification_receipt.py verify-main", main)
         self.assertIn("validate-ci-dependencies", main)
+        self.assertIn("main-integration-smoke", main)
+        self.assertNotIn("verify_wheel.py", main)
+        self.assertNotIn("npm run build", main)
+        self.assertIn("name: Main broad regression", broad)
+        self.assertIn("cancel-in-progress: false", broad)
+        self.assertIn("python scripts/main_broad_ci.py", broad)
+        self.assertIn("python scripts/verify_main_broad_ci.py", broad)
+        self.assertIn("main-broad-${{ github.sha }}", broad)
+        self.assertIn("disablePullRequestAutoMerge", broad)
+        self.assertIn("pull-requests: write", broad)
+        self.assertIn("--backend pytest-xdist", broad)
+        self.assertIn("python scripts/verify_wheel.py", broad)
+        self.assertIn('npx playwright test --grep "$MTG_BROWSER_GROUP_GREP"', broad)
         self.assertNotIn("test_*.py", main)
         self.assertIn("schedule:", nightly)
         self.assertIn("python scripts/nightly_ci.py", nightly)
@@ -579,7 +729,7 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("MTG_PROPERTY_TRANSITIONS: \"33334\"", nightly)
         self.assertGreaterEqual(nightly.count("validate-ci-dependencies"), 4)
         self.assertNotIn("unittest discover", nightly)
-        combined = "\n".join((pr, main, nightly))
+        combined = "\n".join((pr, main, broad, nightly))
         self.assertNotIn("--fixture tests/fixtures/", combined)
         for line in combined.splitlines():
             if (
