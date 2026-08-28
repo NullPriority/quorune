@@ -451,7 +451,6 @@
           ],
           "source_contexts": [
             "activated",
-            "loyalty",
             "modal",
             "spell",
             "triggered"
@@ -470,10 +469,10 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Extends one typed duration owner across spell, triggered, activated, loyalty, modal, subtype, color, supertype, token, permanent, and source-excluding contexts while sharing the layer-6 applicability evaluator with static additions and removals.",
           "explicit_exclusions": [
-            "targeted, opponent-relative, combat-state, counter-qualified, and state-qualified sets",
             "chosen, dynamic, conditional, quoted, protection, type-changing, linked, and compound effects",
-            "variable durations, variable quantities, unsupported keywords, and unrepresented keyword consumers",
-            "dynamic characteristic counts and query shapes outside the cycle-safe effective characteristic boundary"
+            "dynamic characteristic counts and query shapes outside the cycle-safe effective characteristic boundary",
+            "targeted, opponent-relative, combat-state, counter-qualified, and state-qualified sets",
+            "variable durations, variable quantities, unsupported keywords, and unrepresented keyword consumers"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-controlled-characteristic-effect-existing-owner-v1"
