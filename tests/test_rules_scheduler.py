@@ -1500,10 +1500,16 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertFalse(
             any(field.startswith("frontier_") for field in bundle)
         )
-        measurement = next(
+        transition_measurement = next(
             row
-            for row in self.work_inputs["cohort_measurements"]["measurements"]
-            if row["measurement_id"] == declaration["measurement_id"]
+            for row in self.work_inputs["cohort_measurements"][
+                "transition_measurements"
+            ]
+            if row["transition_id"] == declaration["transition_id"]
+        )
+        measurement = transition_measurement["measurement"]
+        self.assertEqual(
+            declaration["measurement_id"], measurement["measurement_id"]
         )
         coverage = work_selection["coverage_family"]
         self.assertGreaterEqual(
