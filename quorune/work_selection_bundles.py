@@ -11,7 +11,14 @@ from quorune.work_selection_evidence import (
 )
 
 
-_BUNDLE_CONTEXTS = {"activated", "modal", "setup", "spell", "triggered"}
+_BUNDLE_CONTEXTS = {
+    "activated",
+    "modal",
+    "setup",
+    "spell",
+    "static",
+    "triggered",
+}
 _BUNDLE_MEASUREMENT_STATUSES = {
     "bounded_executable",
     "generated_probe",
@@ -149,7 +156,7 @@ def validate_bundle_policy(
         if (
             not bundle_id.startswith("bundle:")
             or bundle_id in seen
-            or len(members) < 2
+            or not members
             or members != sorted(set(members))
             or any(":" not in value for value in members)
             or not owners

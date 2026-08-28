@@ -486,16 +486,16 @@
             "capability:continuous.characteristics.fixed_public_state",
             "component:quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler",
             "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
-            "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler",
-            "component:quorune.continuous_effects.evaluate_continuous_effects"
+            "component:quorune.continuous_effects.evaluate_continuous_effects",
+            "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler"
           ],
           "source_contexts": [
             "static"
           ],
           "normalized_literal_parameters": [
             "fixed-public-condition",
-            "source-attached-or-fixed-query-target",
-            "fixed-supported-characteristic-modifier"
+            "fixed-supported-characteristic-modifier",
+            "source-attached-or-fixed-query-target"
           ],
           "shared_dependencies": [
             "continuous.ability.fixed_query_keyword_grant",
@@ -508,10 +508,10 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Extends the existing source, attached-object, and fixed-query characteristic owners across turn, public card-count, life-total, entry-turn, and named-counter gates without adding a second applicability path.",
           "explicit_exclusions": [
+            "Class levels, copied or granted source abilities without shared typed propagation, and dependency interactions outside the represented fixed conditions",
             "Delirium, Metalcraft, and every type-dependent or dynamic characteristic count",
             "combat-state, top-library, chosen, secret-content, source enchanted or equipped, and historical action predicates",
-            "dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
-            "Class levels, copied or granted source abilities without shared typed propagation, and dependency interactions outside the represented fixed conditions"
+            "dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-public-state-characteristic-existing-owner-v1"

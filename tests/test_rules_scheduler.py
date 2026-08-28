@@ -1992,6 +1992,27 @@ class RulesSchedulerTests(unittest.TestCase):
             self.assertNotEqual(row["candidate_id"], row["selected_over"])
             self.assertGreaterEqual(len(row["reason"].split()), 12)
 
+    def test_single_family_static_probe_policy_is_closed(self):
+        policy = deepcopy(self.catalog["work_selection"])
+        measured = next(
+            row
+            for row in policy["coverage_family"]["candidate_bundles"]
+            if row["bundle_id"]
+            == "bundle:fixed-public-state-characteristics"
+        )
+        bundles, _weights = validate_bundle_policy(
+            policy["coverage_family"]
+        )
+        self.assertEqual(["static"], measured["source_contexts"])
+        self.assertEqual(1, len(measured["member_family_ids"]))
+        self.assertIn(measured, bundles)
+
+        measured["member_family_ids"] = []
+        with self.assertRaisesRegex(
+            WorkSelectionBundleError, "closed identities"
+        ):
+            validate_bundle_policy(policy["coverage_family"])
+
     def test_work_selection_policy_fails_closed(self):
         policy = deepcopy(self.catalog["work_selection"])
         policy["priority_classes"].append(policy["priority_classes"][0])
