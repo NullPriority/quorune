@@ -633,6 +633,19 @@ _WITNESSES = {
         "{2}{R}{R}",
         loyalty="4",
     ),
+    "stella-lee-wild-card": _Witness(
+        "Stella Lee, Wild Card",
+        "Legendary Creature — Human Rogue",
+        "Whenever you cast your second spell each turn, exile the top card "
+        "of your library. Until the end of your next turn, you may play that "
+        "card.\n"
+        "{T}: Copy target instant or sorcery spell you control. You may "
+        "choose new targets for the copy. Activate only if you've cast three "
+        "or more spells this turn.",
+        "{1}{U}{R}",
+        power="2",
+        toughness="4",
+    ),
 }
 
 
@@ -751,6 +764,10 @@ IMPULSE_ACCESS_AND_CHOICE_PAIRS = (
     _pair(
         "capability.zone.impulse_access.fixed",
         "residual.target_or_choice.target-predicate",
+    ),
+    _pair(
+        "capability.zone.impulse_access.fixed",
+        "residual.target_or_choice.conditional-effect",
     ),
 )
 
@@ -1062,7 +1079,8 @@ _bind(
 _bind("tangle-kelp", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[1])
 _bind("pemmins-aura", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[2])
 _bind("sleep-cursed-faerie", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
-_bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS)
+_bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS[:2])
+_bind("stella-lee-wild-card", IMPULSE_ACCESS_AND_CHOICE_PAIRS[2])
 _bind(
     "kirtars-wrath",
     *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,

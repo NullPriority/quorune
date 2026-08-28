@@ -374,6 +374,7 @@ class SelfZoneMoveRuntimeTests(unittest.TestCase):
         seat: str = "B",
         zone: str = "graveyard",
         controller: str | None = None,
+        promote_triggers: bool = False,
     ) -> CardInstance:
         engine = session.engine
         record = self.db.lookup(name)
@@ -399,6 +400,7 @@ class SelfZoneMoveRuntimeTests(unittest.TestCase):
             capability_registry=self.capabilities,
             capability_profile=engine.state.config.review_profile,
             promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=promote_triggers,
             promote_exact_effect_programs=True,
         )
         return card
@@ -637,6 +639,84 @@ class SelfZoneMoveRuntimeTests(unittest.TestCase):
         engine._prepare_stack_resolution()
         self.assertEqual("hand", tymaret.zone)
         self.assertEqual("graveyard", second_fodder.zone)
+
+    def test_world_breaker_cast_target_and_self_return_keep_independent_state(
+        self,
+    ):
+        session = self.session(70123005, players=2)
+        engine = session.engine
+        world_breaker = self.add_card(
+            session,
+            name="World Breaker",
+            ref="SELF-WORLD-BREAKER",
+            zone="hand",
+            promote_triggers=True,
+        )
+        stale_target = self.add_card(
+            session,
+            name="Sol Ring",
+            ref="SELF-WORLD-BREAKER-TARGET",
+            seat="A",
+            zone="battlefield",
+        )
+        cost_land = self.add_card(
+            session,
+            name="Island",
+            ref="SELF-WORLD-BREAKER-LAND",
+            zone="battlefield",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 6, "G": 1})
+        self.prepare_main(session)
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = "B"
+        engine._cast("B", {"card": world_breaker.ref, "pay": "auto"})
+        self.assertEqual("semantic.target", engine.state.pending_decision.kind)
+        target_schema = engine.state.pending_decision.payload_by_actor["B"][
+            "target_schema"
+        ]
+        self.assertIn(stale_target.ref, target_schema["legal_refs"])
+        chosen = session.act(
+            "pilot:B",
+            {"action_id": "choose", "targets": [stale_target.ref]},
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        stale_target = engine.move_card(
+            stale_target.object_id,
+            "graveyard",
+            reason="World Breaker target revalidation fixture",
+        )
+        self.resolve_stack_with_passes(session)
+
+        self.assertEqual("graveyard", stale_target.zone)
+        self.assertEqual("battlefield", world_breaker.zone)
+        world_breaker = engine.move_card(
+            world_breaker.object_id,
+            "graveyard",
+            reason="World Breaker self-return fixture",
+        )
+        engine.state.players["B"].mana_pool["C"] = 3
+        self.prepare_main(session)
+        action = self.action_for(session, world_breaker, "ab4")
+        engine.permissions.invalidate_current()
+        engine._activate(
+            "B",
+            {
+                "source": action["source"],
+                "ability": action["ability"],
+                "cost_cards": [cost_land.ref],
+            },
+        )
+        engine.state.priority_player = None
+        engine._prepare_stack_resolution()
+
+        self.assertEqual("hand", world_breaker.zone)
+        self.assertEqual("graveyard", cost_land.zone)
+        self.assertEqual(
+            engine.state.to_dict(),
+            type(engine.state).from_dict(engine.state.to_dict()).to_dict(),
+        )
 
 
 if __name__ == "__main__":

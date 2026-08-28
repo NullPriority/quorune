@@ -21,6 +21,7 @@ from quorune.engine import CommanderEngine
 from quorune.model import GameConfig, GameState
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.spell_cast_events import SpellCastEvent
 from quorune.semantics import SemanticRegistry
 from scripts.build_test_database import build_fixture_database
 
@@ -284,6 +285,92 @@ class CommanderPairingTests(unittest.TestCase):
         self.assertEqual(designation_id, source.commander_designation_id)
         self.assertIn(source.oracle_id, state.commander_oracle_ids["A"])
         self.assertEqual(2, len(state.players["B"].zones["command"]))
+        self.assertEqual(
+            state.to_dict(),
+            GameState.from_dict(state.to_dict()).to_dict(),
+        )
+
+    def test_partner_commander_second_opponent_cast_draws_without_losing_identity(
+        self,
+    ):
+        names = ("Kraum, Ludevic's Opus", "Thrasios, Triton Hero")
+        registry = SemanticRegistry(include_builtin_packs=False)
+        register_generated_programs(
+            self.db,
+            registry,
+            [self.db.lookup(name) for name in names],
+            trust_level="provisional",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        deck = pairing_deck(*names)
+        deck.entries.extend(
+            DeckEntry(name)
+            for name in (
+                "Tymna the Weaver",
+                "Wilson, Refined Grizzly",
+                "Rose Tyler",
+                "The Tenth Doctor",
+            )
+        )
+        state = initial_commander_state(
+            self.db,
+            {seat: deck for seat in "ABCD"},
+            first_player="B",
+            config=GameConfig(seed=702_124_007),
+            semantics=registry,
+        )
+        engine = CommanderEngine(self.db, state, registry)
+        kraum = next(
+            card
+            for card in state.cards.values()
+            if card.owner == "A" and card.printed_name == names[0]
+        )
+        designation_id = kraum.commander_designation_id
+        kraum = engine.move_card(kraum.object_id, "battlefield", log=False)
+        hand_before = len(state.players["A"].zones["hand"])
+        library_top = state.players["A"].zones["library"][-1]
+
+        engine.state.active_player = "B"
+        engine._dispatch_semantic_event(
+            "spell.cast",
+            SpellCastEvent(
+                schema_version=3,
+                card_ref="fixture:B:second-spell",
+                object_id="fixture:B:second-spell",
+                logical_object_id="fixture:B:second-spell@1",
+                controller="B",
+                owner="B",
+                active_player="B",
+                origin="hand",
+                stack_ref="fixture:stack:B:second-spell",
+                types=("instant",),
+                mana_value=1,
+                caster_spell_number=2,
+                kicked=False,
+                has_x_cost=False,
+                has_adventure=False,
+                keywords=(),
+            ).to_context(),
+        )
+        engine._stabilize()
+
+        self.assertEqual(1, len(state.stack))
+        self.assertEqual("A", state.stack[-1].controller)
+        self.assertEqual(kraum.object_id, state.stack[-1].source_object_id)
+        engine.state.priority_player = None
+        engine._prepare_stack_resolution()
+
+        self.assertEqual(hand_before + 1, len(state.players["A"].zones["hand"]))
+        self.assertIn(library_top, state.players["A"].zones["hand"])
+        self.assertEqual("battlefield", kraum.zone)
+        self.assertTrue(kraum.is_commander)
+        self.assertEqual(designation_id, kraum.commander_designation_id)
+        self.assertIn(kraum.oracle_id, state.commander_oracle_ids["A"])
         self.assertEqual(
             state.to_dict(),
             GameState.from_dict(state.to_dict()).to_dict(),
