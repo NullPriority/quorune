@@ -7,6 +7,8 @@ from typing import Any, Protocol
 
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    SpellCastKeywordTriggerKind,
+    SpellCastKeywordTriggerSpec,
     canonical_ability_fragments,
     granted_triggered_specs,
 )
@@ -727,6 +729,22 @@ def program_has_current_ability_fragments(
     return True
 
 
+def _uses_specialized_stack_spell_cast_owner(program: SemanticProgram) -> bool:
+    """Keep intrinsic cast keywords in their dedicated occurrence owners."""
+
+    if program.active_zone != "stack" or program.event != "spell.cast":
+        return False
+    return any(
+        isinstance(fragment, SpellCastKeywordTriggerSpec)
+        and fragment.kind
+        in {
+            SpellCastKeywordTriggerKind.CASCADE,
+            SpellCastKeywordTriggerKind.STORM,
+        }
+        for fragment in fragments_from_descriptors(program.handlers)
+    )
+
+
 def _event_programs_for_source(
     host: TriggerDiscoveryHost,
     source: CardInstance,
@@ -954,6 +972,8 @@ def dispatch_semantic_event(
             source_characteristics=source_characteristics,
         )
         for program in programs:
+            if _uses_specialized_stack_spell_cast_owner(program):
+                continue
             if program.trust_level == "unresolved":
                 continue
             if (
