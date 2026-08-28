@@ -4,6 +4,38 @@ from collections.abc import Mapping
 from typing import Any, Protocol
 
 
+FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[
+    str, tuple[str, ...]
+] = {
+    "Deathtouch": (
+        "combat.damage.assignment.deathtouch",
+        "damage.result.deathtouch",
+    ),
+    "Defender": ("combat.attack.defender",),
+    "Double Strike": ("combat.damage.participation.strike_steps",),
+    "First Strike": ("combat.damage.participation.strike_steps",),
+    "Flying": ("combat.block.flying",),
+    "Haste": (
+        "activation.tap_untap_cost.haste",
+        "combat.attack.haste",
+    ),
+    "Hexproof": ("target.protection.hexproof_permanent",),
+    "Indestructible": ("permanent.indestructible.ordinary",),
+    "Infect": ("damage.result.infect",),
+    "Lifelink": ("damage.result.lifelink",),
+    "Menace": ("combat.block.menace",),
+    "Reach": ("combat.block.reach",),
+    "Shadow": ("combat.block.shadow",),
+    "Shroud": ("target.protection.shroud_permanent",),
+    "Trample": ("combat.damage.assignment.trample",),
+    "Vigilance": ("combat.attack.vigilance",),
+    "Wither": ("damage.result.wither",),
+}
+FIXED_CHARACTERISTIC_KEYWORDS = frozenset(
+    FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+)
+
+
 class EffectiveKeywordError(ValueError):
     """The represented current keyword snapshot is malformed."""
 
@@ -44,6 +76,8 @@ def normalized_characteristic_keywords(
 __all__ = [
     "EffectiveKeywordError",
     "EffectiveKeywordHost",
+    "FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES",
+    "FIXED_CHARACTERISTIC_KEYWORDS",
     "normalized_characteristic_keywords",
     "normalized_effective_keywords",
 ]

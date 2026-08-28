@@ -102,6 +102,15 @@ typed set intent over the canonical tap-state owner. Empty up-to selections are
 valid no-ops, while duplicate references, excess references, unknown fields,
 and replacement selections on tap-state operations fail before mutation.
 
+Fixed controlled characteristic effects do not register a new family-specific
+static component. Resolution snapshots one closed query through the canonical
+effective-characteristic boundary, commits supported keyword additions as
+ordinary layer-6 operations, and commits any fixed power/toughness delta as an
+ordinary layer-7c operation over the identical locked identities. Static
+ability addition and removal therefore retain the shared applicability and
+timestamp ordering rules; the duration owner does not special-case whether an
+ability came from a static or resolving source.
+
 Mandatory direct stack counters lower through a separate strict handler to one
 typed intent. The focused stack owner performs counterability, stack removal,
 replacement-aware physical spell movement, normalized pre-counter and

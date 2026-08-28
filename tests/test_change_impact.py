@@ -108,6 +108,30 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_fixed_characteristic_sources_select_shared_layer_owners(self):
+        for owner in (
+            "quorune/compiler/continuous_templates.py",
+            "quorune/continuous_effects.py",
+            "quorune/effect_runtime/zones_and_attachments.py",
+            "quorune/keyword_abilities.py",
+            "quorune/rules/fixed_resolution_characteristic_shapes.py",
+            "quorune/semantic_runtime/continuous_components.py",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(
+                    {
+                        "test_continuous_effect_duration",
+                        "test_fixed_query_keyword_grants",
+                        "test_rules_scheduler",
+                    },
+                    set(plan.test_modules),
+                )
+                self.assertIn(
+                    "fixed-resolution-characteristic-effect-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_changed_test_module_is_run_exactly(self):
         plan = classify_changes(["tests/test_life_change.py"])
         self.assertEqual(("test_life_change",), plan.test_modules)

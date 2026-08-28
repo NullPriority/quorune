@@ -15,6 +15,10 @@ from ..characteristic_fragments import (
     CharacteristicCountKind,
     PowerToughnessCalculation,
 )
+from ..keyword_abilities import (
+    FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
+    FIXED_CHARACTERISTIC_KEYWORDS,
+)
 from .creature_subtypes import canonical_creature_subtype
 from ..rules.source_references import SourceReferenceSpec
 from ..trigger_participation import WardSpec
@@ -142,52 +146,6 @@ _FIXED_QUERY_CHARACTERISTIC_GRANT = re.compile(
     r"(?P<abilities>.+?)\.?$",
     re.IGNORECASE,
 )
-_FIXED_QUERY_COMBAT_KEYWORDS = frozenset(
-    {
-        "Deathtouch",
-        "Defender",
-        "Double Strike",
-        "First Strike",
-        "Flying",
-        "Haste",
-        "Hexproof",
-        "Indestructible",
-        "Infect",
-        "Lifelink",
-        "Menace",
-        "Reach",
-        "Shadow",
-        "Shroud",
-        "Trample",
-        "Vigilance",
-        "Wither",
-    }
-)
-_FIXED_QUERY_KEYWORD_CAPABILITIES = {
-    "Deathtouch": (
-        "combat.damage.assignment.deathtouch",
-        "damage.result.deathtouch",
-    ),
-    "Defender": ("combat.attack.defender",),
-    "Double Strike": ("combat.damage.participation.strike_steps",),
-    "First Strike": ("combat.damage.participation.strike_steps",),
-    "Flying": ("combat.block.flying",),
-    "Haste": (
-        "activation.tap_untap_cost.haste",
-        "combat.attack.haste",
-    ),
-    "Hexproof": ("target.protection.hexproof_permanent",),
-    "Indestructible": ("permanent.indestructible.ordinary",),
-    "Infect": ("damage.result.infect",),
-    "Lifelink": ("damage.result.lifelink",),
-    "Menace": ("combat.block.menace",),
-    "Reach": ("combat.block.reach",),
-    "Shadow": ("combat.block.shadow",),
-    "Shroud": ("target.protection.shroud_permanent",),
-    "Trample": ("combat.damage.assignment.trample",),
-    "Vigilance": ("combat.attack.vigilance",),
-    "Wither": ("damage.result.wither",),
-}
 _COLOR_SYMBOLS = {
     "black": "B",
     "blue": "U",
@@ -420,7 +378,7 @@ def fixed_query_keyword_grant_handler(
         return None
     predicate = ObjectQuerySpec(**fields)
     if any(
-        ability not in _FIXED_QUERY_COMBAT_KEYWORDS for ability in abilities
+        ability not in FIXED_CHARACTERISTIC_KEYWORDS for ability in abilities
     ):
         return None
     capabilities = {
@@ -428,7 +386,7 @@ def fixed_query_keyword_grant_handler(
         *(
             capability
             for ability in abilities
-            for capability in _FIXED_QUERY_KEYWORD_CAPABILITIES[ability]
+            for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[ability]
         ),
     }
     return (
@@ -664,7 +622,7 @@ def _attached_ability_capabilities(
             capabilities.add("trigger.keyword.ward.fixed_generic")
         else:
             capabilities.update(
-                _FIXED_QUERY_KEYWORD_CAPABILITIES.get(ability, ())
+                FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES.get(ability, ())
             )
     return capabilities
 
@@ -814,6 +772,159 @@ def controlled_creature_until_end_of_turn_effect(
             },
         ),
         ("cr-611-continuous-effects",),
+    )
+
+
+def fixed_controlled_characteristic_query_is_closed(
+    query: ObjectQuerySpec,
+) -> bool:
+    """Return whether one resolution-time controlled set is represented."""
+
+    if (
+        query.zones != ("battlefield",)
+        or query.owner is not None
+        or query.controller != "$controller"
+        or query.types_any
+        or query.excluded_types
+        or query.subtypes_any
+        or query.excluded_subtypes
+        or query.colors_any
+        or query.keywords_all
+        or query.tapped is not None
+        or query.include_phased_out
+        or query.known_to_actor is not None
+        or query.state_predicate is not None
+        or query.exclude_ref not in {None, "$source"}
+    ):
+        return False
+    qualifiers = sum(
+        bool(value)
+        for value in (
+            query.subtypes_all,
+            query.supertypes_all,
+            query.colors_all,
+            query.colorless is not None,
+            query.token is not None,
+        )
+    )
+    if query.subtypes_all:
+        return (
+            query.types_all == ("creature",)
+            and qualifiers == 1
+            and len(query.subtypes_all) == 1
+            and canonical_creature_subtype(query.subtypes_all[0])
+            == query.subtypes_all[0]
+        )
+    if query.supertypes_all:
+        return (
+            query.types_all == ("creature",)
+            and qualifiers == 1
+            and query.supertypes_all == ("legendary",)
+        )
+    if query.colors_all:
+        return (
+            query.types_all == ("creature",)
+            and qualifiers == 1
+            and len(query.colors_all) == 1
+            and query.colors_all[0] in "WUBRG"
+        )
+    if query.colorless is not None:
+        return (
+            query.types_all == ("creature",)
+            and qualifiers == 1
+            and query.colorless is True
+        )
+    if query.token is not None:
+        return query.types_all == ("creature",) and qualifiers == 1
+    return query.types_all in {
+        (),
+        ("artifact",),
+        ("land",),
+        ("creature",),
+        ("artifact", "creature"),
+        ("land", "creature"),
+    }
+
+
+def controlled_characteristic_until_end_of_turn_effect(
+    oracle_line: str,
+) -> tuple[str, tuple[Mapping[str, Any], ...], tuple[str, ...]] | None:
+    """Lower one fixed, resolution-locked controlled characteristic set."""
+
+    existing = controlled_creature_until_end_of_turn_effect(oracle_line)
+    if existing is not None:
+        return existing
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    prefix = re.fullmatch(
+        r"Until end of turn, (?P<body>.+?)\.?",
+        text,
+        flags=re.IGNORECASE,
+    )
+    suffix = re.fullmatch(
+        r"(?P<body>.+?) until end of turn\.?",
+        text,
+        flags=re.IGNORECASE,
+    )
+    match = prefix or suffix
+    if match is None:
+        return None
+    body = match.group("body").rstrip(".")
+    existing = controlled_creature_until_end_of_turn_effect(
+        f"{body} until end of turn."
+    )
+    if existing is not None:
+        return existing
+    normalized = re.sub(
+        r"\bgain\b",
+        "have",
+        body,
+        count=1,
+        flags=re.IGNORECASE,
+    )
+    lowered = fixed_query_characteristic_grant_handler(normalized)
+    if lowered is None:
+        lowered = fixed_query_keyword_grant_handler(normalized)
+    if lowered is None:
+        return None
+    _template_id, descriptor, _capabilities = lowered
+    condition = descriptor["condition"]
+    if condition["target_controller"] != "source_controller":
+        return None
+    predicate = ObjectQuerySpec.from_dict(
+        {
+            **condition["predicate"],
+            "controller": "$controller",
+            **(
+                {"exclude_ref": "$source"}
+                if condition["exclude_source"]
+                else {}
+            ),
+        }
+    )
+    if not fixed_controlled_characteristic_query_is_closed(predicate):
+        return None
+    modifier = descriptor["modifier"]
+    keywords = tuple(modifier["add_abilities"])
+    mechanics = tuple(
+        sorted(
+            {
+                "cr-611-continuous-effects",
+                *(keyword.casefold() for keyword in keywords),
+            }
+        )
+    )
+    return (
+        "modify-controlled-fixed-characteristics-eot-v2",
+        (
+            {
+                "op": "modify_all_matching_permanents_until_end_of_turn",
+                "predicate": predicate.to_dict(),
+                "power": int(modifier.get("power", 0)),
+                "toughness": int(modifier.get("toughness", 0)),
+                "keywords": list(keywords),
+            },
+        ),
+        mechanics,
     )
 
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "00553e1bef366e010311a040477cc4e10c7a6980c0ee4bcbbb1844260fbd8204",
-  "declaration_source_fingerprint": "d1c8ad9536f58b6ccbd44d68f7237e3d17c59007429a40aa23074afd2390932a",
+  "registry_fingerprint": "62f9cf9966c82937c26ee9b704b3867c5fe59c0466a589c80a06f1186e58508d",
+  "declaration_source_fingerprint": "55c2ecab185da815b19373b688da98980074a869353a35740925f4324c9108ab",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -15846,6 +15846,44 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Select through an existing effective layer-4 type change, then preserve the locked result through source departure and control change but not target reentry."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_resolution_and_static_ability_changes_share_layer_six_ordering",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Order resolved keyword additions and static ability removal through the same layer-6 evaluator and applicability query."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_resolution_set_is_locked_to_logical_objects",
       "official_rule_ids": [
         "611.2a",
@@ -15861,6 +15899,25 @@
         "commander_review"
       ],
       "applicability_note": "Lock a resolution-created characteristic effect to the affected logical objects selected when it was created."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Select only the resolving controller's matching set across a four-player battlefield while excluding opponents and later entrants."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -15922,6 +15979,25 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "negative",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_malformed_fixed_characteristic_keywords_roll_back",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a malformed supported-keyword list before committing any authoritative journal entry."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_malformed_mass_predicate_rolls_back_without_effect",
       "official_rule_ids": [
         "611.2a",
@@ -15960,6 +16036,44 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "negative",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_fixed_controlled_characteristic_query_grammar_is_closed",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject targeted, opponent-relative, combat-state, counter-qualified, dynamic, quoted, protection, type-changing, and variable-duration lookalikes."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_fixed_resolution_keyword_shape_requires_exact_consumers",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject duplicated or unsupported keywords, open controller relations, and keyword nodes missing their exact consumer mechanics."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_malformed_models_fail_closed",
       "official_rule_ids": [
         "611.2a",
@@ -15975,6 +16089,25 @@
         "commander_review"
       ],
       "applicability_note": "Reject malformed operation, duration, applicability, and locked-identity models before use."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply fixed power, toughness, and supported keyword operations to one effective resolution-time battlefield set."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -16016,6 +16149,44 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_fixed_controlled_characteristics_compile_across_contexts",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed controlled keyword and combined characteristic sets across spell, triggered, activated, loyalty, and modal carriers through one typed duration owner."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose public effective characteristics without projecting the authoritative continuous-effect journal or physical object identities."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_targeted_effect_expires_and_round_trips_without_private_projection",
       "official_rule_ids": [
@@ -16032,6 +16203,25 @@
         "commander_review"
       ],
       "applicability_note": "Keep authoritative physical identities out of a seat projection while preserving the public result."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristic_command_replays_exactly",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Serialize and exactly replay one source-bound controlled-set power, toughness, and keyword result from authoritative commands."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -49544,5 +49734,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "ef774d2f791754995dabecbfcb91fb38be24435c7588af35ab10b4cb347c8200"
+  "fingerprint": "4cdd75234b86fbc777095fea16b07bd8bdc5782061f677a2664a31442702ae2d"
 }
