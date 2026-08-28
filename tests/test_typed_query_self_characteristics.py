@@ -199,6 +199,7 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
             ("This creature gets +1/+1 for each creature card in your opponents' graveyards.", "Fixture"),
             ("This creature gets -1/-1 for each other creature on the battlefield.", "Fixture"),
             ("This creature gets +2/+2 as long as you control three or more artifacts.", "Fixture"),
+            ("This creature gets +1/+1 as long as you control a Forest.", "Fixture"),
             ("This creature gets +1/+1 as long as an opponent controls an Island.", "Fixture"),
             ("Threshold — This creature gets +1/+1 and has deathtouch as long as there are seven or more cards in your graveyard.", "Fixture"),
             ("Named Source gets +1/+0 for each other Rat you control.", "Named Source"),

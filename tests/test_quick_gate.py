@@ -67,6 +67,16 @@ class QuickGatePlanTests(unittest.TestCase):
             plan["test_modules"],
         )
 
+    def test_typed_query_change_selects_legacy_owner_overlap(self):
+        plan = build_plan(
+            ("quorune/compiler/query_characteristic_templates.py",)
+        )
+
+        self.assertIn(
+            "test_fixed_public_state_characteristics",
+            plan["test_modules"],
+        )
+
     def test_pre_corpus_plan_runs_identity_sentinels_without_generators(self):
         plan = build_plan(
             ("quorune/compiler/oracle_parser.py",),
