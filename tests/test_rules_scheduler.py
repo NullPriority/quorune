@@ -1488,13 +1488,13 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            "measurement:fixed-public-state-characteristics",
+            "measurement:typed-query-self-characteristics",
             declaration["measurement_id"],
         )
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
         self.assertEqual(
-            "fixed-public-state-characteristic-existing-owner-v1",
+            "typed-query-self-characteristic-existing-owner-v1",
             bundle["measurement_probe_id"],
         )
         self.assertFalse(

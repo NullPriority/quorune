@@ -734,6 +734,16 @@ suffix, nickname, or subtype. Lowered instructions use `$source`; runtime
 handlers do not receive names or reinterpret Oracle text. See
 [ADR 0040](../adr/0040-closed-source-self-references.md).
 
+Fixed self power/toughness and supported-keyword modifiers over one typed
+public quantity lower to `QueryCharacteristicModifierSpec`. Controller,
+opponent, and global object sets use `ObjectQuerySpec`; attachments, source
+counters, and raw controller hand size use closed quantity scopes. Counted
+objects are evaluated only through layer 5 before concrete layer-6 and layer-7c
+effects are added, so represented type and color changes feed the count without
+later-layer recursion. Current compilation uses the source's current controller
+for “your” zones; the earlier enum fragment remains replay-readable only. See
+[ADR 0088](../adr/0088-typed-query-self-characteristics.md).
+
 ## Extending the compiler
 
 Add the smallest reusable grammar production and typed construct. Include

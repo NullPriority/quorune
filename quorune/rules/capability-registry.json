@@ -2763,6 +2763,33 @@
       "status": "trusted"
     },
     {
+      "id": "continuous.characteristics.query_count_modifier",
+      "version": 1,
+      "official_rules": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Apply copied typed self modifiers in layers 6 and 7c from one closed public object, attachment, hand-size, or source-counter quantity evaluated through layer 5.",
+        "inputs": ["active phased-in battlefield source", "copied typed query-characteristic fragment", "controller, opponent, or global public zone relation", "layer-5 object types, subtypes, colors, token state, source attachments, source counters, or raw controller hand size", "per-object or fixed minimum calculation", "fixed power/toughness amount and supported fixed keywords"],
+        "outputs": ["controller-correct and multiplayer-correct live quantity", "cycle-safe layer-5 characteristic predicate", "ordinary layer-6 keyword and layer-7c power/toughness effects", "copiable executable fragment", "hidden-identity-free hand count"],
+        "exclusions": ["Delirium distinct-type, Domain or color cardinality, chosen, named, modified, shared-type, top-library, secret-identity, and ability-presence counts", "dynamic coefficients, base-setting, characteristic-defining, type, color, two-object comparison, modal, triggered, activated, attached-subject, and quoted-rule carriers", "negative, maximum, historical-event, combat-state, life, emblem, dungeon, party, and unsupported keyword conditions", "ability-addition or ability-removal applicability until the shared layer-6 ability-presence query owns those interactions"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.continuous_templates.query_self_characteristics_handler", "quorune.characteristic_fragments.QueryCharacteristicModifierSpec", "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.continuous_effects.evaluate_continuous_effects"],
+      "positive_tests": ["test_query_characteristic_grammar_compiles_closed_fragments", "test_query_quantities_recompute_controller_correct_characteristics"],
+      "negative_tests": ["test_query_characteristic_grammar_keeps_ambiguous_families_residual", "test_query_characteristic_descriptors_fail_closed_without_behavior"],
+      "interaction_tests": ["test_query_counts_use_layer_five_types_and_compose_in_layer_seven_c", "test_query_fragment_copy_uses_current_source_and_controller", "test_query_ability_removal_sibling_withholds_runtime_admission"],
+      "multiplayer_tests": ["test_query_quantities_recompute_controller_correct_characteristics"],
+      "privacy_tests": ["test_query_hand_count_projects_and_replays_without_hidden_identity"],
+      "replay_tests": ["test_query_hand_count_projects_and_replays_without_hidden_identity"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The fragment consumes a closed typed public quantity through the shared layer-5 characteristic boundary and declares each supported keyword consumer independently.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove or redirect the quantity relation, threshold, layer-5 type feed, layer-6 keyword grant, or layer-7c modifier; exact four-player, copy, projection, replay, and ordering assertions reject each survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "continuous.characteristics.devoid",
       "version": 1,
       "official_rules": ["604.3", "613.1e", "702.114", "702.114a"],

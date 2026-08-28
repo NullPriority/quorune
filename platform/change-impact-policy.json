@@ -331,6 +331,41 @@
       ]
     },
     {
+      "id": "typed-query-self-characteristic-contract",
+      "patterns": [
+        "quorune/ability_fragments.py",
+        "quorune/characteristic_evaluation.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/engine.py",
+        "quorune/object_predicate.py",
+        "quorune/semantic_runtime/ability_fragments.py",
+        "tests/test_typed_query_self_characteristics.py"
+      ],
+      "test_modules": [
+        "test_changeling_characteristics",
+        "test_continuous_effect_components",
+        "test_devoid_characteristics",
+        "test_typed_ability_fragments",
+        "test_typed_dynamic_characteristics",
+        "test_typed_query_self_characteristics"
+      ]
+    },
+    {
+      "id": "worktree-environment-ownership",
+      "patterns": [
+        "AGENTS.md",
+        "docs/development/ci-pipeline.md",
+        "scripts/worktree_bootstrap.py",
+        "tests/test_worktree_bootstrap.py"
+      ],
+      "test_modules": [
+        "test_worktree_bootstrap"
+      ]
+    },
+    {
       "id": "continuous-effect-performance-contract",
       "patterns": [
         "platform/continuous-effect-performance-baseline.json",

@@ -30,6 +30,7 @@ from quorune.semantic_runtime.context import SemanticNodeError
 CONDITIONAL_HANDLER = "ability.static.conditional-keyword.v1"
 PUBLIC_STATE_HANDLER = FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
 DYNAMIC_HANDLER = "ability.static.dynamic-power-toughness.v1"
+QUERY_HANDLER = "ability.static.query-characteristic-modifier.v1"
 KEYWORD_GRANT_HANDLER = (
     "continuous.ability.fixed-query-keyword-grant.v1"
 )
@@ -128,27 +129,27 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
             (
                 "Construct",
                 "This creature gets +1/+1 for each artifact you control.",
-                DYNAMIC_HANDLER,
-                "continuous.characteristics.dynamic_power_toughness",
+                QUERY_HANDLER,
+                "continuous.characteristics.query_count_modifier",
             ),
             (
                 "Elvish Reclaimer",
                 "This creature gets +2/+2 as long as there are three or more "
                 "land cards in your graveyard.",
-                DYNAMIC_HANDLER,
-                "continuous.characteristics.dynamic_power_toughness",
+                QUERY_HANDLER,
+                "continuous.characteristics.query_count_modifier",
             ),
             (
                 "Wight of the Reliquary",
                 "This creature gets +1/+1 for each creature card in your graveyard.",
-                DYNAMIC_HANDLER,
-                "continuous.characteristics.dynamic_power_toughness",
+                QUERY_HANDLER,
+                "continuous.characteristics.query_count_modifier",
             ),
             (
                 "Jarad, Golgari Lich Lord",
                 "Jarad gets +1/+1 for each creature card in your graveyard.",
-                DYNAMIC_HANDLER,
-                "continuous.characteristics.dynamic_power_toughness",
+                QUERY_HANDLER,
+                "continuous.characteristics.query_count_modifier",
             ),
         )
         for index, (name, text, handler_id, capability_id) in enumerate(cases):
@@ -175,7 +176,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
             "Attacking creatures you control have flying.",
             "Multicolored creatures you control have vigilance.",
             "This creature has haste as long as you have exactly 10 life.",
-            "This creature gets +1/+1 for each enchantment you control.",
+            "This creature gets +1/+1 for each color among permanents you control.",
             "This creature gets +2/+2 if there are three land cards in your graveyard.",
         )
         for index, text in enumerate(unsupported):
@@ -195,6 +196,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                         in {
                             CONDITIONAL_HANDLER,
                             DYNAMIC_HANDLER,
+                            QUERY_HANDLER,
                             KEYWORD_GRANT_HANDLER,
                             PUBLIC_STATE_HANDLER,
                         }
@@ -270,13 +272,13 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
     def test_characteristic_lowering_mutants_are_killed(self):
         fixtures = (
             (
-                "dynamic_self_power_toughness_handler",
+                "query_self_characteristics_handler",
                 _permanent(
                     "This creature gets +1/+1 for each artifact you control.",
                     suffix=117_002_002,
                     name="Dynamic Fixture",
                 ),
-                DYNAMIC_HANDLER,
+                QUERY_HANDLER,
             ),
             (
                 "fixed_query_keyword_grant_handler",
@@ -545,7 +547,7 @@ class TypedDynamicCharacteristicRuntimeTests(unittest.TestCase):
         self.assertEqual(source_data["toughness"], copied_data["toughness"])
         self.assertTrue(
             any(
-                value.get("kind") == "dynamic_power_toughness"
+                value.get("kind") == "query_characteristic_modifier"
                 for value in copied_data["ability_fragments"]
             )
         )

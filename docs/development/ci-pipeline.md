@@ -32,6 +32,11 @@ py -3.12 -m venv .venv
   --db "C:\path\to\the\pinned\scryfall-current.sqlite3"
 ```
 
+The worktree `.venv` must be a real directory created inside that worktree, not
+a symlink or Windows junction to another checkout. Share only the read-only
+pinned corpus path through `--db` or `MTG_CARD_DB`; readiness rejects a linked
+environment before any cleanup can follow it into the canonical checkout.
+
 The readiness command is read-only except for the explicit hook-install mode,
 which changes only repository-local Git configuration and refuses to overwrite
 a foreign hook policy. Database lookup uses `--db`, `MTG_CARD_DB`, then the

@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping
 
 from .counter_names import CounterStateError, normalized_counter_name
-from .damage_source import REPRESENTED_DAMAGE_SOURCE_ZONES
 
 
 class ObjectQueryError(ValueError):
@@ -397,6 +396,11 @@ def validate_chosen_damage_source_predicate(
         raise ObjectQueryError(
             "Chosen damage sources require a typed object predicate"
         )
+    # Import lazily because damage-source behavior consumes typed ability
+    # fragments, while characteristic fragments embed this shared predicate.
+    # The runtime dependency is needed only for this specialized validator.
+    from .damage_source import REPRESENTED_DAMAGE_SOURCE_ZONES
+
     if not spec.zones or not set(spec.zones).issubset(
         REPRESENTED_DAMAGE_SOURCE_ZONES
     ):

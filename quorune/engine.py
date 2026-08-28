@@ -68,6 +68,7 @@ from . import attack_transition_engine_adapter as attack_transitions
 from .combat_relationship_state import remove_combat_relationships
 from .continuous_effects import (
     ContinuousEffect,
+    Layer,
 )
 from .continuous_effect_state import (
     active_resolution_effects,
@@ -131,7 +132,10 @@ from .damage import (
 from .damage_results import (
     consume_deathtouch_damage_checks,
 )
-from .dynamic_characteristics import apply_dynamic_characteristic_fragments
+from .dynamic_characteristics import (
+    apply_dynamic_characteristic_fragments,
+    query_characteristic_count,
+)
 from .drawing import (
     begin_draw_batch,
     begin_draw_sequence,
@@ -876,6 +880,8 @@ class CommanderEngine(
         *,
         runtime_effects: Sequence[ContinuousEffect] = (),
         ignore_face_down: bool = False,
+        query_count_resolver: Any = None,
+        maximum_layer: Layer | None = None,
     ) -> dict[str, Any]:
         """Delegate CR 613 evaluation to its rules-owned subsystem."""
 
@@ -886,6 +892,8 @@ class CommanderEngine(
                 base,
                 runtime_effects=runtime_effects,
                 ignore_face_down=ignore_face_down,
+                query_count_resolver=query_count_resolver,
+                maximum_layer=maximum_layer,
             ),
         )
 
@@ -895,6 +903,7 @@ class CommanderEngine(
         *,
         printed_entry_characteristics: bool = False,
         ignore_face_down: bool = False,
+        maximum_layer: Layer | None = None,
     ) -> dict[str, Any]:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
         record = self.card_record(card)
@@ -916,8 +925,19 @@ class CommanderEngine(
             base,
             runtime_effects=runtime_effects,
             ignore_face_down=ignore_face_down,
+            query_count_resolver=(
+                (
+                    lambda quantity: query_characteristic_count(
+                        self, card, quantity
+                    )
+                )
+                if maximum_layer is None and card.zone == "battlefield"
+                else None
+            ),
+            maximum_layer=maximum_layer,
         )
-        base = apply_dynamic_characteristic_fragments(self, card, base)
+        if maximum_layer is None:
+            base = apply_dynamic_characteristic_fragments(self, card, base)
         if (
             card.zone == "battlefield"
             and not printed_entry_characteristics

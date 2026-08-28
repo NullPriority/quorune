@@ -4,6 +4,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping
 
+from .counter_names import CounterStateError, normalized_counter_name
+from .object_predicate import ObjectQueryError, ObjectQuerySpec
+
 
 class CharacteristicFragmentError(ValueError):
     """A typed dynamic-characteristic fragment is malformed."""
@@ -20,6 +23,274 @@ class CharacteristicCountKind(str, Enum):
 class PowerToughnessCalculation(str, Enum):
     PER_MATCHING_OBJECT = "per_matching_object"
     FIXED_IF_THRESHOLD = "fixed_if_threshold"
+
+
+class CharacteristicQuantityScope(str, Enum):
+    """Closed seat/object relation for one characteristic quantity."""
+
+    CONTROLLER_ZONE = "controller_zone"
+    OPPONENT_ZONES = "opponent_zones"
+    ALL_ZONES = "all_zones"
+    ATTACHED_TO_SOURCE = "attached_to_source"
+    SOURCE_COUNTER = "source_counter"
+
+
+@dataclass(frozen=True, slots=True)
+class CharacteristicQuantitySpec:
+    """One cycle-safe public quantity used by a later-layer modifier."""
+
+    scope: CharacteristicQuantityScope
+    query: ObjectQuerySpec | None = None
+    counter_name: str | None = None
+    exclude_source: bool = False
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise CharacteristicFragmentError(
+                "Unsupported characteristic quantity schema version"
+            )
+        if not isinstance(self.scope, CharacteristicQuantityScope):
+            raise CharacteristicFragmentError(
+                "Unsupported characteristic quantity scope"
+            )
+        if type(self.exclude_source) is not bool:
+            raise CharacteristicFragmentError(
+                "Characteristic quantity source exclusion must be boolean"
+            )
+        if self.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
+            if (
+                type(self.counter_name) is not str
+                or not self.counter_name.strip()
+                or self.query is not None
+                or self.exclude_source
+            ):
+                raise CharacteristicFragmentError(
+                    "Source-counter quantities require only one counter name"
+                )
+            try:
+                counter_name = normalized_counter_name(self.counter_name)
+            except CounterStateError as exc:
+                raise CharacteristicFragmentError(str(exc)) from exc
+            object.__setattr__(self, "counter_name", counter_name)
+            return
+        if self.counter_name is not None or not isinstance(
+            self.query, ObjectQuerySpec
+        ):
+            raise CharacteristicFragmentError(
+                "Object quantities require one typed object query"
+            )
+        query = self.query
+        if (
+            len(query.zones) != 1
+            or query.zones[0] not in {"battlefield", "graveyard", "hand"}
+            or query.owner is not None
+            or query.controller is not None
+            or query.exclude_ref is not None
+            or query.known_to_actor is not None
+            or query.keywords_all
+            or query.tapped is not None
+            or query.state_predicate is not None
+            or query.include_phased_out
+        ):
+            raise CharacteristicFragmentError(
+                "Characteristic quantities require one closed public zone query"
+            )
+        if query.zones == ("hand",) and any(
+            (
+                query.types_all,
+                query.types_any,
+                query.excluded_types,
+                query.subtypes_all,
+                query.subtypes_any,
+                query.excluded_subtypes,
+                query.supertypes_all,
+                query.colors_all,
+                query.colors_any,
+                query.colorless is not None,
+                query.token is not None,
+            )
+        ):
+            raise CharacteristicFragmentError(
+                "Hand quantities expose only the raw controller hand size"
+            )
+        if (
+            self.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE
+            and query.zones != ("battlefield",)
+        ):
+            raise CharacteristicFragmentError(
+                "Attachment quantities require a battlefield query"
+            )
+        allowed_zones = {
+            CharacteristicQuantityScope.CONTROLLER_ZONE: {
+                "battlefield",
+                "graveyard",
+                "hand",
+            },
+            CharacteristicQuantityScope.OPPONENT_ZONES: {
+                "battlefield",
+                "graveyard",
+            },
+            CharacteristicQuantityScope.ALL_ZONES: {"battlefield"},
+            CharacteristicQuantityScope.ATTACHED_TO_SOURCE: {"battlefield"},
+        }
+        if query.zones[0] not in allowed_zones[self.scope]:
+            raise CharacteristicFragmentError(
+                "Characteristic quantity scope does not support that zone"
+            )
+        if self.exclude_source and query.zones != ("battlefield",):
+            raise CharacteristicFragmentError(
+                "Source exclusion is supported only on the battlefield"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "scope": self.scope.value,
+            "query": self.query.to_dict() if self.query is not None else None,
+            "counter_name": self.counter_name,
+            "exclude_source": self.exclude_source,
+        }
+
+    @classmethod
+    def from_dict(
+        cls, value: Mapping[str, Any]
+    ) -> "CharacteristicQuantitySpec":
+        expected = {
+            "schema_version",
+            "scope",
+            "query",
+            "counter_name",
+            "exclude_source",
+        }
+        if not isinstance(value, Mapping) or set(value) != expected:
+            raise CharacteristicFragmentError(
+                "Characteristic quantities have a closed schema"
+            )
+        try:
+            scope = CharacteristicQuantityScope(value["scope"])
+            query = (
+                ObjectQuerySpec.from_dict(value["query"])
+                if value["query"] is not None
+                else None
+            )
+        except (TypeError, ValueError, ObjectQueryError) as exc:
+            raise CharacteristicFragmentError(
+                "Characteristic quantity vocabulary is unsupported"
+            ) from exc
+        return cls(
+            schema_version=value["schema_version"],
+            scope=scope,
+            query=query,
+            counter_name=value["counter_name"],
+            exclude_source=value["exclude_source"],
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class QueryCharacteristicModifierSpec:
+    """One query-counted layer-6/layer-7c self characteristic modifier."""
+
+    quantity: CharacteristicQuantitySpec
+    calculation: PowerToughnessCalculation
+    power: int
+    toughness: int
+    minimum_count: int = 0
+    add_abilities: tuple[str, ...] = ()
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise CharacteristicFragmentError(
+                "Unsupported query characteristic modifier schema version"
+            )
+        if not isinstance(self.quantity, CharacteristicQuantitySpec):
+            raise CharacteristicFragmentError(
+                "Query characteristic modifiers require a typed quantity"
+            )
+        if not isinstance(self.calculation, PowerToughnessCalculation):
+            raise CharacteristicFragmentError(
+                "Unsupported query characteristic calculation"
+            )
+        if type(self.power) is not int or type(self.toughness) is not int:
+            raise CharacteristicFragmentError(
+                "Query characteristic modifiers require integer amounts"
+            )
+        if self.power == 0 and self.toughness == 0:
+            raise CharacteristicFragmentError(
+                "Query characteristic modifiers must change power or toughness"
+            )
+        if type(self.minimum_count) is not int or self.minimum_count < 0:
+            raise CharacteristicFragmentError(
+                "Query characteristic minimum_count must be nonnegative"
+            )
+        abilities = tuple(self.add_abilities)
+        if (
+            any(type(value) is not str or not value for value in abilities)
+            or len(set(abilities)) != len(abilities)
+        ):
+            raise CharacteristicFragmentError(
+                "Query characteristic abilities must be unique strings"
+            )
+        object.__setattr__(self, "add_abilities", abilities)
+        if self.calculation is PowerToughnessCalculation.PER_MATCHING_OBJECT:
+            if self.minimum_count != 0 or abilities:
+                raise CharacteristicFragmentError(
+                    "Per-object modifiers cannot carry a threshold or abilities"
+                )
+        elif self.minimum_count <= 0:
+            raise CharacteristicFragmentError(
+                "Threshold modifiers require a positive minimum_count"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "quantity": self.quantity.to_dict(),
+            "calculation": self.calculation.value,
+            "power": self.power,
+            "toughness": self.toughness,
+            "minimum_count": self.minimum_count,
+            "add_abilities": list(self.add_abilities),
+        }
+
+    @classmethod
+    def from_dict(
+        cls, value: Mapping[str, Any]
+    ) -> "QueryCharacteristicModifierSpec":
+        expected = {
+            "schema_version",
+            "quantity",
+            "calculation",
+            "power",
+            "toughness",
+            "minimum_count",
+            "add_abilities",
+        }
+        if not isinstance(value, Mapping) or set(value) != expected:
+            raise CharacteristicFragmentError(
+                "Query characteristic modifiers have a closed schema"
+            )
+        try:
+            calculation = PowerToughnessCalculation(value["calculation"])
+            quantity = CharacteristicQuantitySpec.from_dict(value["quantity"])
+            raw_abilities = value["add_abilities"]
+            if not isinstance(raw_abilities, (list, tuple)):
+                raise TypeError("add_abilities must be an array")
+            abilities = tuple(raw_abilities)
+        except (TypeError, ValueError, CharacteristicFragmentError) as exc:
+            raise CharacteristicFragmentError(
+                "Query characteristic modifier vocabulary is unsupported"
+            ) from exc
+        return cls(
+            schema_version=value["schema_version"],
+            quantity=quantity,
+            calculation=calculation,
+            power=value["power"],
+            toughness=value["toughness"],
+            minimum_count=value["minimum_count"],
+            add_abilities=abilities,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -219,8 +490,11 @@ __all__ = [
     "AllCreatureTypesCharacteristicDefinitionSpec",
     "CharacteristicCountKind",
     "CharacteristicFragmentError",
+    "CharacteristicQuantityScope",
+    "CharacteristicQuantitySpec",
     "ColorlessCharacteristicDefinitionSpec",
     "ConditionalKeywordSpec",
     "DynamicPowerToughnessSpec",
     "PowerToughnessCalculation",
+    "QueryCharacteristicModifierSpec",
 ]

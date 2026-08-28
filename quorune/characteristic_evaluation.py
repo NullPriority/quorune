@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 import re
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from .continuous_effects import (
     CharacteristicState,
@@ -25,6 +25,9 @@ from .abilities import ActivatedAbility
 from .characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     ColorlessCharacteristicDefinitionSpec,
+    PowerToughnessCalculation,
+    QueryCharacteristicModifierSpec,
+    CharacteristicQuantitySpec,
 )
 from .creature_subtypes import CREATURE_SUBTYPES
 
@@ -425,6 +428,87 @@ def _object_continuous_effects(
     return effects
 
 
+def _query_characteristic_effects(
+    card: CardInstance,
+    state: CharacteristicState,
+    effects: Sequence[ContinuousEffect],
+    *,
+    context: Mapping[str, Any],
+    count_resolver: Callable[[CharacteristicQuantitySpec], int],
+) -> list[ContinuousEffect]:
+    """Materialize typed live quantities at their CR 613 layer boundary.
+
+    The source fragment is selected after copy/type/color evaluation. Quantity
+    resolution is supplied by the engine through the same layer-5 boundary, so
+    a counted object's later-layer power, toughness, or abilities cannot recurse
+    back into the quantity that is currently being evaluated.
+    """
+
+    if card.zone != "battlefield" or card.phased_out:
+        return []
+    through_color = evaluate_continuous_effects(
+        copy.deepcopy(state),
+        (effect for effect in effects if effect.layer <= Layer.COLOR),
+        context=context,
+    )
+    fragments = canonical_ability_fragments(
+        through_color.characteristics.get("ability_fragments", ())
+    )
+    materialized: list[ContinuousEffect] = []
+    for index, fragment in enumerate(fragments):
+        if not isinstance(fragment, QueryCharacteristicModifierSpec):
+            continue
+        count = count_resolver(fragment.quantity)
+        if type(count) is not int or count < 0:
+            raise ContinuousEffectError(
+                "Characteristic quantity resolvers must return a nonnegative integer"
+            )
+        multiplier = (
+            count
+            if fragment.calculation
+            is PowerToughnessCalculation.PER_MATCHING_OBJECT
+            else int(count >= fragment.minimum_count)
+        )
+        if not multiplier:
+            continue
+        prefix = f"{card.object_id}:query-characteristic:{index}"
+        if fragment.add_abilities:
+            materialized.append(
+                ContinuousEffect(
+                    effect_id=f"{prefix}:abilities",
+                    source_id=card.object_id,
+                    layer=Layer.ABILITY,
+                    sublayer="6",
+                    timestamp=card.zone_timestamp,
+                    operations=tuple(
+                        ContinuousOperation("add_ability", ability)
+                        for ability in fragment.add_abilities
+                    ),
+                    duration=ContinuousEffectDuration.ZONE_OBJECT,
+                )
+            )
+        materialized.append(
+            ContinuousEffect(
+                effect_id=f"{prefix}:power-toughness",
+                source_id=card.object_id,
+                layer=Layer.POWER_TOUGHNESS,
+                sublayer="7c",
+                timestamp=card.zone_timestamp,
+                operations=(
+                    ContinuousOperation(
+                        "modify_power_toughness",
+                        [
+                            fragment.power * multiplier,
+                            fragment.toughness * multiplier,
+                        ],
+                    ),
+                ),
+                duration=ContinuousEffectDuration.ZONE_OBJECT,
+            )
+        )
+    return materialized
+
+
 def _ordered_words(
     values_to_order: Sequence[str], preferred: Sequence[str]
 ) -> list[str]:
@@ -509,6 +593,11 @@ def evaluate_card_characteristics(
     *,
     runtime_effects: Sequence[ContinuousEffect] = (),
     ignore_face_down: bool = False,
+    query_count_resolver: Callable[
+        [CharacteristicQuantitySpec], int
+    ]
+    | None = None,
+    maximum_layer: Layer | None = None,
 ) -> dict[str, Any]:
     """Evaluate one object's declarative CR 613 characteristic state.
 
@@ -546,6 +635,7 @@ def evaluate_card_characteristics(
             and card.annotations.get(MORPH_FACE_DOWN_ANNOTATION) is not None
         )
         or runtime_effects
+        or query_count_resolver is not None
     )
     if not layered:
         result["executable_oracle_text"] = str(
@@ -583,21 +673,38 @@ def evaluate_card_characteristics(
         ignore_face_down=ignore_face_down,
     )
     effects.extend(runtime_effects)
+    context = {
+        "object_id": card.object_id,
+        "logical_object_id": card.logical_object_id,
+        "ref": card.ref,
+        "owner": card.owner,
+        "controller": card.controller,
+        "zone": card.zone,
+        "token": card.is_token,
+        "tapped": card.tapped,
+        "phased_out": card.phased_out,
+        "known_to_actor": True,
+    }
+    if query_count_resolver is not None and (
+        maximum_layer is None or maximum_layer >= Layer.ABILITY
+    ):
+        effects.extend(
+            _query_characteristic_effects(
+                card,
+                state,
+                effects,
+                context=context,
+                count_resolver=query_count_resolver,
+            )
+        )
+    if maximum_layer is not None:
+        effects = [
+            effect for effect in effects if effect.layer <= maximum_layer
+        ]
     evaluated = evaluate_continuous_effects(
         state,
         effects,
-        context={
-            "object_id": card.object_id,
-            "logical_object_id": card.logical_object_id,
-            "ref": card.ref,
-            "owner": card.owner,
-            "controller": card.controller,
-            "zone": card.zone,
-            "token": card.is_token,
-            "tapped": card.tapped,
-            "phased_out": card.phased_out,
-            "known_to_actor": True,
-        },
+        context=context,
     )
     values = evaluated.characteristics
     applied = set(evaluated.applied_effects)
