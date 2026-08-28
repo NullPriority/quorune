@@ -155,11 +155,35 @@ def load_browser_reports(directory: Path | None) -> list[tuple[str, dict]]:
     return reports
 
 
+def _owned_report_paths(
+    directory: Path,
+    *,
+    artifact_prefixes: tuple[str, ...],
+) -> list[Path]:
+    direct_artifact = directory.name.startswith(artifact_prefixes)
+    paths = []
+    for path in sorted(directory.rglob("*.json")):
+        relative = path.relative_to(directory)
+        if (
+            direct_artifact
+            or len(relative.parts) == 1
+            or relative.parts[0].startswith(artifact_prefixes)
+        ):
+            paths.append(path)
+    return paths
+
+
 def load_windows_reports(directory: Path | None) -> list[dict]:
     if directory is None or not directory.exists():
         return []
     reports = []
-    for path in sorted(directory.rglob("*.json")):
+    for path in _owned_report_paths(
+        directory,
+        artifact_prefixes=(
+            "windows-results-",
+            "main-broad-python-windows-",
+        ),
+    ):
         document = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(document, dict):
             raise ValueError(f"Windows report {path} must be an object")
@@ -176,7 +200,13 @@ def load_python_reports(directory: Path | None) -> list[dict]:
     if directory is None or not directory.exists():
         return []
     reports = []
-    for path in sorted(directory.rglob("*.json")):
+    for path in _owned_report_paths(
+        directory,
+        artifact_prefixes=(
+            "python-results-",
+            "main-broad-python-ubuntu-",
+        ),
+    ):
         document = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(document, dict):
             raise ValueError(f"Python report {path} must be an object")

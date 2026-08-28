@@ -5,6 +5,10 @@ from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 
 from ..attachments import attached_object_identity
 from ..continuous_effects import ContinuousEffect
+from ..continuous_conditions import (
+    FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+    FixedPublicStateConditionSnapshot,
+)
 from ..semantic_runtime import (
     ContinuousEffectSourceContext,
     default_continuous_effect_component_registry,
@@ -77,6 +81,45 @@ def collect_card_program_continuous_effects(
                 ):
                     if metrics is not None:
                         metrics.descriptors_inspected += 1
+                    public_state = None
+                    if descriptor.get("handler_id") == (
+                        FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+                    ):
+                        controller = state.players[source.controller]
+                        public_state = FixedPublicStateConditionSnapshot(
+                            source_controller=source.controller,
+                            active_player=getattr(state, "active_player", None),
+                            controller_hand_count=len(controller.zones["hand"]),
+                            controller_graveyard_card_count=len(
+                                controller.zones["graveyard"]
+                            ),
+                            controller_life=int(controller.life),
+                            opponent_life_totals=tuple(
+                                int(state.players[other].life)
+                                for other in state.turn_order
+                                if other != source.controller
+                                and state.players[other].in_game
+                            ),
+                            turn_sequence=max(
+                                0, int(getattr(state, "turn_sequence", 0))
+                            ),
+                            source_entered_battlefield_turn_sequence=max(
+                                0,
+                                int(
+                                    getattr(
+                                        source,
+                                        "entered_battlefield_turn_sequence",
+                                        0,
+                                    )
+                                ),
+                            ),
+                            source_counters=tuple(
+                                sorted(
+                                    (str(name), int(amount))
+                                    for name, amount in source.counters.items()
+                                )
+                            ),
+                        )
                     context = ContinuousEffectSourceContext(
                         source_object_id=source.object_id,
                         source_ref=source.ref,
@@ -87,6 +130,8 @@ def collect_card_program_continuous_effects(
                         component_id=(
                             f"{program.key}:{descriptor_index}"
                         ),
+                        source_logical_object_id=source.logical_object_id,
+                        public_state=public_state,
                         attached_object=(
                             attached_object_identity(state.cards, source)
                             if getattr(source, "attached_to", None)

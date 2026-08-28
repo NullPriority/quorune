@@ -7,7 +7,12 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from tests.common import ROOT
-from scripts.ci_metrics import build_metrics, markdown
+from scripts.ci_metrics import (
+    build_metrics,
+    load_python_reports,
+    load_windows_reports,
+    markdown,
+)
 from scripts.ci_plan import (
     browser_matrix,
     ci_concurrency_budget,
@@ -328,6 +333,39 @@ class CiPipelineTests(unittest.TestCase):
         with TemporaryDirectory() as raw:
             with self.assertRaisesRegex(WindowsCertificationError, "missing_results"):
                 validate_results(Path(raw), full=False)
+
+    def test_metrics_loaders_consume_only_their_artifact_owners(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            windows = self._windows_result("windows-compat")
+            python = self._windows_result("core-domain")
+            python["platform"] = "ubuntu"
+            documents = {
+                "windows-results-42/local/windows.json": windows,
+                "main-broad-python-ubuntu-42/local/python.json": python,
+                "main-broad-browser-lifecycle-42/local/"
+                "main-broad-lifecycle.json": {
+                    "type": "playwright-report",
+                },
+            }
+            for relative, document in documents.items():
+                path = root / relative
+                path.parent.mkdir(parents=True)
+                path.write_text(json.dumps(document), encoding="utf-8")
+
+            self.assertEqual([windows], load_windows_reports(root))
+            self.assertEqual([python], load_python_reports(root))
+
+            malformed = (
+                root / "windows-results-malformed" / "local" / "bad.json"
+            )
+            malformed.parent.mkdir(parents=True)
+            malformed.write_text(
+                json.dumps({"type": "playwright-report"}),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "unknown type"):
+                load_windows_reports(root)
 
     def test_shard_results_bind_exact_collection_backend_and_platform(self):
         valid = self._windows_result("windows-compat")

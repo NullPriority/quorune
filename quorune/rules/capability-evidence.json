@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "62f9cf9966c82937c26ee9b704b3867c5fe59c0466a589c80a06f1186e58508d",
-  "declaration_source_fingerprint": "55c2ecab185da815b19373b688da98980074a869353a35740925f4324c9108ab",
+  "registry_fingerprint": "224f56dfcddb337583bfadf6087b45be171430752cbb98ba9f054e81503f9e43",
+  "declaration_source_fingerprint": "24b896e739abb08e35c5ad36846d03d22cf7d6e74fce262942b88922797609af",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -15361,6 +15361,174 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip a token carrying the typed count fragment in a checkpoint and verify the following concession command exactly."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_state_conditions_recompute_layer_six_and_seven_results",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute the same typed public-state predicate for paired layer-6 ability grants and layer-7c fixed power/toughness modifiers."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_turn_gated_attachment_and_anthem_compose",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Track the source controller, active player, attached object, and controller-scoped target set while control and zone membership change in a four-player game."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_condition_and_target_mutants_change_card_program_fingerprint",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill a controller-turn to other-turn condition mutant by requiring the enclosing CardProgram fingerprint to change."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_state_descriptors_fail_closed_without_effects",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject unknown fields, unsupported predicates, invalid scalar types, widened targets, and untrusted ability grants before lowering any effect."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_unrepresented_conditions_and_bodies_remain_residual",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep type-dependent counts, dynamic amounts, combat and equipment predicates, Ward, and quoted abilities material and residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_closed_public_state_grammar_compiles_capability_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile the closed turn, graveyard-card-count, hand-count, life-total, entry-turn, and named-counter grammar over source, attached, and fixed-query targets."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Consume only the controller's public hand count and exclude hidden card identity from every opposing principal projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pin the typed hand-count predicate and source identity into a checkpoint, then replay the following multiplayer priority commands exactly."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -49734,5 +49902,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "4cdd75234b86fbc777095fea16b07bd8bdc5782061f677a2664a31442702ae2d"
+  "fingerprint": "ab86d47684e4fdc00e2877c80bce711dd65324bc388367b99b32c665992949d3"
 }

@@ -20,6 +20,7 @@ from ..continuous_effects import (
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..mana import BASIC_LAND_MANA
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..continuous_conditions import FixedPublicStateConditionSnapshot
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
     RuntimeComponentRegistry,
@@ -100,6 +101,8 @@ class ContinuousEffectSourceContext:
     source_timestamp: int
     component_id: str
     attached_object: ContinuousObjectIdentity | None = None
+    source_logical_object_id: str | None = None
+    public_state: FixedPublicStateConditionSnapshot | None = None
 
     def __post_init__(self) -> None:
         if not self.source_object_id or not self.source_ref:
@@ -123,6 +126,19 @@ class ContinuousEffectSourceContext:
         ):
             raise SemanticNodeError(
                 "An attached continuous component requires typed object identity"
+            )
+        if self.source_logical_object_id is not None and (
+            type(self.source_logical_object_id) is not str
+            or not self.source_logical_object_id
+        ):
+            raise SemanticNodeError(
+                "A continuous component logical source identity must be nonempty"
+            )
+        if self.public_state is not None and not isinstance(
+            self.public_state, FixedPublicStateConditionSnapshot
+        ):
+            raise SemanticNodeError(
+                "A continuous component public-state snapshot must be typed"
             )
 
 
@@ -956,6 +972,9 @@ class ContinuousEffectComponentRegistry(
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .attached_continuous import AttachedFixedCharacteristicsHandler
+    from .conditional_continuous import (
+        FixedPublicStateCharacteristicsHandler,
+    )
 
     registry = ContinuousEffectComponentRegistry(
         (
@@ -965,6 +984,7 @@ def default_continuous_effect_component_registry(
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),
+            FixedPublicStateCharacteristicsHandler(),
             AttachedFixedCharacteristicsHandler(),
         )
     )

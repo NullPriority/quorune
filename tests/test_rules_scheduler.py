@@ -1488,17 +1488,37 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            "measurement:fixed-controlled-characteristic-effects",
+            "measurement:fixed-public-state-characteristics",
             declaration["measurement_id"],
         )
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
         self.assertEqual(
-            "fixed-controlled-characteristic-effect-existing-owner-v1",
+            "fixed-public-state-characteristic-existing-owner-v1",
             bundle["measurement_probe_id"],
         )
         self.assertFalse(
             any(field.startswith("frontier_") for field in bundle)
+        )
+        transition_measurement = next(
+            row
+            for row in self.work_inputs["cohort_measurements"][
+                "transition_measurements"
+            ]
+            if row["transition_id"] == declaration["transition_id"]
+        )
+        measurement = transition_measurement["measurement"]
+        self.assertEqual(
+            declaration["measurement_id"], measurement["measurement_id"]
+        )
+        coverage = work_selection["coverage_family"]
+        self.assertGreaterEqual(
+            measurement["complete_card_gain"],
+            coverage["minimum_complete_card_gain"],
+        )
+        self.assertGreaterEqual(
+            measurement["exact_ability_gain"],
+            coverage["minimum_exact_ability_gain"],
         )
 
     def test_stale_generated_measurement_fails_before_selection(self):
@@ -1977,6 +1997,27 @@ class RulesSchedulerTests(unittest.TestCase):
             self.assertIn(row["selected_over"], candidate_ids)
             self.assertNotEqual(row["candidate_id"], row["selected_over"])
             self.assertGreaterEqual(len(row["reason"].split()), 12)
+
+    def test_single_family_static_probe_policy_is_closed(self):
+        policy = deepcopy(self.catalog["work_selection"])
+        measured = next(
+            row
+            for row in policy["coverage_family"]["candidate_bundles"]
+            if row["bundle_id"]
+            == "bundle:fixed-public-state-characteristics"
+        )
+        bundles, _weights = validate_bundle_policy(
+            policy["coverage_family"]
+        )
+        self.assertEqual(["static"], measured["source_contexts"])
+        self.assertEqual(1, len(measured["member_family_ids"]))
+        self.assertIn(measured, bundles)
+
+        measured["member_family_ids"] = []
+        with self.assertRaisesRegex(
+            WorkSelectionBundleError, "closed identities"
+        ):
+            validate_bundle_policy(policy["coverage_family"])
 
     def test_work_selection_policy_fails_closed(self):
         policy = deepcopy(self.catalog["work_selection"])

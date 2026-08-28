@@ -22,6 +22,11 @@ from ..keyword_abilities import (
 from .creature_subtypes import canonical_creature_subtype
 from ..rules.source_references import SourceReferenceSpec
 from ..trigger_participation import WardSpec
+from ..continuous_conditions import (
+    FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+    FixedPublicStateConditionKind,
+    FixedPublicStateConditionSpec,
+)
 
 
 _BASIC_LAND_TYPE_ADDITION = re.compile(
@@ -459,6 +464,158 @@ def _self_subject_pattern(source_name: str) -> str:
     return rf"(?:This creature|This token|{source})"
 
 
+_CONDITION_NUMBER_WORDS = {
+    "no": 0,
+    "a": 1,
+    "an": 1,
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+    "ten": 10,
+}
+
+
+def _fixed_condition_amount(value: str) -> int | None:
+    normalized = value.strip().casefold()
+    if normalized.isdigit():
+        return int(normalized)
+    return _CONDITION_NUMBER_WORDS.get(normalized)
+
+
+def _fixed_public_state_condition(
+    text: str,
+    *,
+    source_name: str,
+) -> FixedPublicStateConditionSpec | None:
+    normalized = text.strip().rstrip(".")
+    lower = normalized.casefold()
+    if lower in {"your turn", "it's your turn"}:
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.CONTROLLER_TURN
+        )
+    if lower == "turns other than yours":
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.OTHER_TURN
+        )
+    if lower == "there are seven or more cards in your graveyard":
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
+            amount=7,
+        )
+    hand = re.fullmatch(
+        r"you have (?P<count>no|one|[0-9]+) "
+        r"(?:cards? in hand|or fewer cards in hand)",
+        lower,
+    )
+    if hand is not None:
+        amount = _fixed_condition_amount(hand.group("count"))
+        assert amount is not None
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_MOST,
+            amount=amount,
+        )
+    life = re.fullmatch(
+        r"you have (?P<amount>[0-9]+) or (?P<bound>more|less) life",
+        lower,
+    )
+    if life is not None:
+        return FixedPublicStateConditionSpec(
+            (
+                FixedPublicStateConditionKind.CONTROLLER_LIFE_AT_LEAST
+                if life.group("bound") == "more"
+                else FixedPublicStateConditionKind.CONTROLLER_LIFE_AT_MOST
+            ),
+            amount=int(life.group("amount")),
+        )
+    opponent_life = re.fullmatch(
+        r"an opponent has (?P<amount>[0-9]+) or less life",
+        lower,
+    )
+    if opponent_life is not None:
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.OPPONENT_LIFE_AT_MOST,
+            amount=int(opponent_life.group("amount")),
+        )
+
+    subject = _self_subject_pattern(source_name)
+    if re.fullmatch(
+        rf"(?:it|{subject}) entered this turn",
+        normalized,
+        re.IGNORECASE,
+    ) is not None:
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN
+        )
+    counter = re.fullmatch(
+        rf"(?:it|{subject}) has (?P<count>a|an|one|two|three|four|five|six|"
+        r"seven|eight|nine|ten|[0-9]+)(?: or more)? "
+        r"(?P<counter>[A-Za-z0-9+/-]+) counters? on it",
+        normalized,
+        re.IGNORECASE,
+    )
+    if counter is None:
+        return None
+    amount = _fixed_condition_amount(counter.group("count"))
+    if amount is None or amount <= 0:
+        return None
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
+        amount=amount,
+        counter_name=counter.group("counter"),
+    )
+
+
+def _fixed_public_state_parts(
+    oracle_line: str,
+    *,
+    source_name: str,
+) -> tuple[FixedPublicStateConditionSpec, str] | None:
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    ability_word = re.fullmatch(
+        r"[A-Z][A-Za-z' ]{0,80} — (?P<body>.+)",
+        text,
+    )
+    if ability_word is not None:
+        text = ability_word.group("body").strip()
+    during = re.fullmatch(
+        r"During (?P<condition>your turn|turns other than yours), "
+        r"(?P<body>.+)",
+        text,
+        re.IGNORECASE,
+    )
+    if during is not None:
+        condition = _fixed_public_state_condition(
+            during.group("condition"),
+            source_name=source_name,
+        )
+        return (condition, during.group("body")) if condition else None
+    prefix = re.fullmatch(
+        r"As long as (?P<condition>.+?), (?P<body>.+)",
+        text,
+        re.IGNORECASE,
+    )
+    if prefix is not None:
+        condition = _fixed_public_state_condition(
+            prefix.group("condition"),
+            source_name=source_name,
+        )
+        return (condition, prefix.group("body")) if condition else None
+    marker = text.casefold().rfind(" as long as ")
+    if marker <= 0:
+        return None
+    condition = _fixed_public_state_condition(
+        text[marker + len(" as long as ") :],
+        source_name=source_name,
+    )
+    return (condition, text[:marker]) if condition else None
+
+
 def conditional_self_keyword_handler(
     oracle_line: str,
     *,
@@ -738,6 +895,196 @@ def attached_fixed_characteristics_handler(
                     *_attached_ability_capabilities(
                         (*add_abilities, *remove_abilities)
                     ),
+                }
+            )
+        ),
+    )
+
+
+def _conditional_target(
+    body: str,
+    *,
+    source_name: str,
+) -> tuple[Mapping[str, Any], Mapping[str, Any], tuple[str, ...]] | None:
+    """Compile one fixed characteristic body without its state condition."""
+
+    normalized = _TRAILING_REMINDER.sub("", body.strip()).strip()
+    subject = _self_subject_pattern(source_name)
+    self_pt = re.fullmatch(
+        rf"{subject} gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
+        r"(?: and has (?P<abilities>.+))?\.?",
+        normalized,
+        re.IGNORECASE,
+    )
+    self_keyword = re.fullmatch(
+        rf"{subject} has (?P<abilities>.+?)\.?",
+        normalized,
+        re.IGNORECASE,
+    )
+    if self_pt is not None or self_keyword is not None:
+        abilities_text = (
+            self_pt.group("abilities")
+            if self_pt is not None
+            else self_keyword.group("abilities")
+        )
+        abilities: tuple[str, ...] = ()
+        capabilities: set[str] = set()
+        if abilities_text:
+            normalized_abilities = re.sub(
+                r",?\s+and\s+",
+                ",",
+                abilities_text.strip(),
+                flags=re.IGNORECASE,
+            )
+            abilities = tuple(
+                value.strip().title()
+                for value in normalized_abilities.rstrip(".").split(",")
+                if value.strip()
+            )
+            if (
+                not abilities
+                or len(set(abilities)) != len(abilities)
+                or any(
+                    ability not in FIXED_CHARACTERISTIC_KEYWORDS
+                    for ability in abilities
+                )
+            ):
+                return None
+            capabilities.update(
+                capability
+                for ability in abilities
+                for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[
+                    ability
+                ]
+            )
+            capabilities.add(
+                "continuous.ability.fixed_query_keyword_grant"
+            )
+        power = int(self_pt.group("power")) if self_pt is not None else 0
+        toughness = (
+            int(self_pt.group("toughness")) if self_pt is not None else 0
+        )
+        if power or toughness:
+            capabilities.add("continuous.power_toughness.fixed_anthem")
+        return (
+            {
+                "kind": "source",
+                "target_controller": None,
+                "predicate": None,
+                "exclude_source": False,
+                "types_all": [],
+            },
+            {
+                "add_abilities": list(abilities),
+                "power": power,
+                "toughness": toughness,
+            },
+            tuple(sorted(capabilities)),
+        )
+
+    for compiler in (
+        fixed_query_characteristic_grant_handler,
+        fixed_query_keyword_grant_handler,
+        fixed_power_toughness_anthem_handler,
+    ):
+        compiled = compiler(normalized)
+        if compiled is None:
+            continue
+        descriptor = compiled[1]
+        condition = descriptor["condition"]
+        modifier = descriptor["modifier"]
+        return (
+            {
+                "kind": "fixed_query",
+                "target_controller": condition["target_controller"],
+                "predicate": condition["predicate"],
+                "exclude_source": condition["exclude_source"],
+                "types_all": [],
+            },
+            {
+                "add_abilities": list(
+                    modifier.get("add_abilities", [])
+                ),
+                "power": int(modifier.get("power", 0)),
+                "toughness": int(modifier.get("toughness", 0)),
+            },
+            (
+                (compiled[2],)
+                if isinstance(compiled[2], str)
+                else tuple(compiled[2])
+            ),
+        )
+
+    attached = attached_fixed_characteristics_handler(normalized)
+    if attached is None:
+        return None
+    condition = attached[1]["condition"]
+    modifier = attached[1]["modifier"]
+    if any(
+        modifier[field]
+        for field in (
+            "type_operations",
+            "remove_abilities",
+            "add_rules_text",
+            "add_ability_fragments",
+        )
+    ):
+        return None
+    return (
+        {
+            "kind": "attached",
+            "target_controller": None,
+            "predicate": None,
+            "exclude_source": False,
+            "types_all": list(condition["types_all"]),
+        },
+        {
+            "add_abilities": list(modifier["add_abilities"]),
+            "power": int(modifier["power"]),
+            "toughness": int(modifier["toughness"]),
+        },
+        tuple(attached[2]),
+    )
+
+
+def fixed_public_state_characteristics_handler(
+    oracle_line: str,
+    *,
+    source_name: str,
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    """Lower fixed characteristics gated by closed public non-type state.
+
+    Type-dependent counts, dynamic amounts, quoted abilities, characteristic
+    changes, combat state, and source attachment-state predicates remain
+    residual.  Both represented layers use one target and source condition.
+    """
+
+    parsed = _fixed_public_state_parts(
+        oracle_line,
+        source_name=source_name,
+    )
+    if parsed is None:
+        return None
+    source_condition, body = parsed
+    compiled = _conditional_target(body, source_name=source_name)
+    if compiled is None:
+        return None
+    target, modifier, body_capabilities = compiled
+    return (
+        "continuous-fixed-public-state-characteristics-v1",
+        {
+            "handler_id": FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+            "schema_version": 1,
+            "event": "characteristics.evaluate",
+            "source_condition": source_condition.to_dict(),
+            "target": dict(target),
+            "modifier": dict(modifier),
+        },
+        tuple(
+            sorted(
+                {
+                    "continuous.characteristics.fixed_public_state",
+                    *body_capabilities,
                 }
             )
         ),

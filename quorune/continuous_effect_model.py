@@ -55,6 +55,7 @@ class ContinuousEffectRelation(str, Enum):
     """
 
     NONE = "none"
+    SOURCE_OBJECT = "source_object"
     SOURCE_ATTACHED_TO_OBJECT = "source_attached_to_object"
 
 
@@ -436,15 +437,15 @@ def _validate_continuous_effect_identity_scope(
         return
     if not isinstance(effect.related_object, ContinuousObjectIdentity):
         raise ContinuousEffectError(
-            "Attached continuous effects require a typed related object"
+            "Related continuous effects require a typed related object"
         )
     if effect.origin is not ContinuousEffectOrigin.STATIC_ABILITY:
         raise ContinuousEffectError(
-            "Live attachment relations require a static-ability effect"
+            "Live source relations require a static-ability effect"
         )
     if effect.duration is not ContinuousEffectDuration.WHILE_SOURCE_PRESENT:
         raise ContinuousEffectError(
-            "Live attachment relations require source presence"
+            "Live source relations require source presence"
         )
 
 

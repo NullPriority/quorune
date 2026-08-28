@@ -20,6 +20,7 @@ from .continuous_templates import (
     basic_land_type_addition_handler,
     conditional_self_keyword_handler,
     dynamic_self_power_toughness_handler,
+    fixed_public_state_characteristics_handler,
     fixed_query_characteristic_grant_handler,
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
@@ -307,6 +308,24 @@ def _continuous_static_runtime_template(
             ),
         )
     if source_name is not None:
+        fixed_public_state = (
+            None
+            if source_is_class
+            else fixed_public_state_characteristics_handler(
+                text,
+                source_name=source_name,
+            )
+        )
+        if fixed_public_state is not None:
+            return StaticRuntimeTemplate(
+                compiled=fixed_public_state,
+                kind="static_ability",
+                event="characteristics.evaluate",
+                dependency_reason=(
+                    "fixed public-state characteristics require their closed "
+                    "continuous-effect capability"
+                ),
+            )
         conditional_keyword = conditional_self_keyword_handler(
             text,
             source_name=source_name,

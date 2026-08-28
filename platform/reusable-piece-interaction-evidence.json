@@ -4548,6 +4548,64 @@
       ],
       "interaction_order": 3,
       "assertion": "Static and resolution-created layer-6 ability changes share one timestamp-ordered applicability evaluator, so neither owner can bypass additions or removals produced by the other."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_turn_gated_attachment_and_anthem_compose",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "A targeted simple Aura resolves through the canonical attachment owner, preserves reciprocal identity, and applies its Threshold-gated Shroud grant only while the authoritative public graveyard count satisfies the typed condition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_turn_gated_attachment_and_anthem_compose",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "A fixed-mana Equip activation resolves through the canonical attachment owner and the attached Equipment's turn-gated power and First Strike grant recomputes from authoritative active-player state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_public_state_characteristics_execute_while_replacement_siblings_fail_closed",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Angel of Vitality's life-gated power and toughness modifier executes through the typed public-state owner while its unsupported life-gain replacement applicability remains residual and unavailable to strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_public_state_characteristics_execute_while_replacement_siblings_fail_closed",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Angel of Vitality's exact life-gated characteristic handler can be promoted independently, but its unsupported self-replacement and CR 616 ordering boundary remains outside every trusted replacement program."
     }
   ]
 }

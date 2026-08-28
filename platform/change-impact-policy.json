@@ -308,6 +308,54 @@
       ]
     },
     {
+      "id": "fixed-public-state-characteristic-contract",
+      "patterns": [
+        "quorune/card_programs/runtime.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/continuous_conditions.py",
+        "quorune/continuous_effect_model.py",
+        "quorune/continuous_effects.py",
+        "quorune/semantic_runtime/conditional_continuous.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/fixed-public-state-interaction-cards.json",
+        "tests/fixtures/fixed-public-state-characteristics-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_continuous_effect_components",
+        "test_continuous_effect_duration",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_query_keyword_grants"
+      ]
+    },
+    {
+      "id": "continuous-effect-performance-contract",
+      "patterns": [
+        "platform/continuous-effect-performance-baseline.json",
+        "quorune/card_programs/runtime.py",
+        "quorune/continuous_effects.py",
+        "scripts/benchmark_continuous_effects.py"
+      ],
+      "checks": [
+        "continuous-effect-performance"
+      ],
+      "test_modules": [
+        "test_continuous_effect_performance"
+      ]
+    },
+    {
+      "id": "ci-metrics-artifact-ownership",
+      "patterns": [
+        ".github/workflows/ci-metrics.yml",
+        "scripts/ci_metrics.py"
+      ],
+      "test_modules": [
+        "test_ci_pipeline"
+      ]
+    },
+    {
       "id": "fixed-resolution-characteristic-effect-contract",
       "patterns": [
         "quorune/compiler/continuous_templates.py",

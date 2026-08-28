@@ -161,6 +161,19 @@ both layers. Targeted, opponent-relative, combat-state, counter-qualified,
 dynamic, chosen, conditional, quoted, Protection, type-changing, and variable-duration
 forms remain source-spanned residuals.
 
+The same compiler owner separately lowers fixed static characteristic bodies
+gated by one closed public-state condition. A versioned descriptor combines a
+source-controller turn, raw graveyard or hand count, life-total, current-turn
+entry, or named-counter predicate with the existing source, attached-object, or
+fixed-query target grammar. Runtime derives only those public scalar facts from
+authoritative state, evaluates the condition once, and sends paired ability
+additions and power/toughness modifiers through the same layer applicability.
+Delirium, Metalcraft, type-dependent or dynamic characteristic counts, dynamic
+amounts, top-library, chosen, secret-content, combat-state, source attachment-
+state, quoted-ability, type, color, ability-removal, Class-level, Protection,
+Ward, and unsupported-keyword forms remain source-spanned residuals. See
+[ADR 0087](../adr/0087-typed-fixed-public-state-characteristics.md).
+
 `compiler/closed_effect_programs.py` owns the broader bounded composition
 boundary for two to four mandatory components. It partitions only top-level
 sentence, comma-then, and conjunction boundaries, requires every component to

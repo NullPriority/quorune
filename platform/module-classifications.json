@@ -2715,6 +2715,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/continuous_conditions.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/continuous_effect_model.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -6575,6 +6587,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/conditional_continuous.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/conditional_entry_counters.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -8149,5 +8176,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "12334384718c591fc605112c652f79f611d7dfb37154eedd99a2680917bdcec5"
+  "fingerprint": "b7c2699446e576569d83eaf245b2417d42eafa6f2439e42491db9c33d5b205b2"
 }
