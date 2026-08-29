@@ -457,9 +457,13 @@ class CiPipelineTests(unittest.TestCase):
             windows = self._windows_result("windows-compat")
             python = self._windows_result("core-domain")
             python["platform"] = "ubuntu"
+            generated = self._windows_result("generated-validation")
+            generated["platform"] = "ubuntu"
             documents = {
                 "windows-results-42/local/windows.json": windows,
                 "main-broad-python-ubuntu-42/local/python.json": python,
+                "main-broad-python-ubuntu-generated-validation-42/local/"
+                "generated.json": generated,
                 "main-broad-browser-lifecycle-42/local/"
                 "main-broad-lifecycle.json": {
                     "type": "playwright-report",
@@ -471,7 +475,7 @@ class CiPipelineTests(unittest.TestCase):
                 path.write_text(json.dumps(document), encoding="utf-8")
 
             self.assertEqual([windows], load_windows_reports(root))
-            self.assertEqual([python], load_python_reports(root))
+            self.assertEqual([python, generated], load_python_reports(root))
 
             malformed = (
                 root / "windows-results-malformed" / "local" / "bad.json"
@@ -483,6 +487,20 @@ class CiPipelineTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "unknown type"):
                 load_windows_reports(root)
+
+            malformed_python = (
+                root
+                / "main-broad-python-ubuntu-malformed"
+                / "local"
+                / "bad.json"
+            )
+            malformed_python.parent.mkdir(parents=True)
+            malformed_python.write_text(
+                json.dumps({"type": "playwright-report"}),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "unknown type"):
+                load_python_reports(root)
 
     def test_shard_results_bind_exact_collection_backend_and_platform(self):
         valid = self._windows_result("windows-compat")

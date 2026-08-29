@@ -340,6 +340,7 @@ def _activated_effect_dependency_gate(
             "fixed_self_counter_keyword_action",
             "fixed_bolster",
             "fixed_impulse_access",
+            "fixed_library_selection",
             "life",
             "lose_life",
             "lose_life_each_opponent",

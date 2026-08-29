@@ -81,6 +81,9 @@ from .library_search_capability_shapes import (
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,
 )
+from .library_selection_capability_shapes import (
+    fixed_library_selection_node_capabilities,
+)
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
@@ -110,6 +113,9 @@ from ..compiler.optional_effect_templates import (
 from ..compiler.optional_payment_templates import (
     FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,
     FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
+)
+from ..compiler.fixed_library_selection_templates import (
+    FIXED_LIBRARY_SELECTION_MECHANIC,
 )
 from .closed_effect_program_shapes import (
     CLOSED_EFFECT_PROGRAM_MECHANIC,
@@ -330,6 +336,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "cr-101-the-magic-golden-rules": ("life.change.effect",),
     "cr-119-life": ("life.change.effect",),
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
+    FIXED_LIBRARY_SELECTION_MECHANIC: (
+        "library.select.fixed_controller",
+    ),
     "scry": ("library.scry.fixed_controller",),
     "surveil": ("library.surveil.fixed_controller",),
     "infect": ("damage.result.infect",),
@@ -397,6 +406,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "cr-119-life",
         "scry",
         "surveil",
+        FIXED_LIBRARY_SELECTION_MECHANIC,
         "counter",
         "optional-fixed-counter-event-trigger",
         FIXED_OPTIONAL_EFFECT_MECHANIC,
@@ -1019,6 +1029,7 @@ def _targeted_effect_capabilities(
         fixed_monarch_node_capabilities,
         fixed_library_search_node_capabilities,
         fixed_type_to_hand_search_node_capabilities,
+        fixed_library_selection_node_capabilities,
         fixed_life_node_capabilities,
         fixed_controller_effect_sequence_node_capabilities,
         fixed_counter_controller_effect_sequence_node_capabilities,
@@ -1322,6 +1333,9 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "zone.mill.fixed": "mill",
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         FIXED_LIBRARY_SEARCH_CAPABILITY_ID: FIXED_LIBRARY_SEARCH_MECHANIC_ID,
+        "library.select.fixed_controller": (
+            FIXED_LIBRARY_SELECTION_MECHANIC
+        ),
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
     }

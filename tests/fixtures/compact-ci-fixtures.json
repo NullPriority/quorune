@@ -55,6 +55,17 @@
       "rationale": "The exact 53-card measured cohort is iterated by name from the dedicated pinned fixture."
     },
     {
+      "source": "tests/test_fixed_library_selection.py",
+      "symbol": "FixedLibrarySelectionRuntimeTests.register",
+      "card_names": [
+        "Dauthi Voidwalker"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The helper accepts explicit replacement-source witness names; this module calls it only for Dauthi Voidwalker."
+    },
+    {
       "source": "tests/test_fixed_query_keyword_grants.py",
       "symbol": "FixedQueryKeywordGrantRuntimeTests.add_sources",
       "card_names": [

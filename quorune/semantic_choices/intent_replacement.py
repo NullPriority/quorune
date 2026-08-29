@@ -13,6 +13,7 @@ from ..semantic_runtime import (
     CounterPlacementAmount,
     CreateTokenIntent,
     LifeChangeIntent,
+    LibrarySelectionIntent,
     MoveObjectsSimultaneouslyIntent,
     PlaceCounterBatchIntent,
     PlaceCountersIntent,
@@ -28,6 +29,11 @@ from ..rules.library_surveillance import (
     SurveilArrangement,
     SurveilError,
     SurveilObjectIdentity,
+)
+from ..rules.library_selection import (
+    LibrarySelectionArrangement,
+    LibrarySelectionError,
+    LibrarySelectionObjectIdentity,
 )
 from .model import SemanticChoiceError
 
@@ -145,6 +151,22 @@ _SURVEIL_ARRANGEMENT_FIELDS = {
     "top_top_first",
     "graveyard_refs",
 }
+_LIBRARY_SELECTION_FIELDS = {
+    "actor",
+    "player",
+    "arrangement",
+    _REASON_FIELD,
+    "source_stack_ref",
+    "looked_are_public",
+    "selected_are_public",
+}
+_LIBRARY_SELECTION_ARRANGEMENT_FIELDS = {
+    "looked",
+    "selected_refs",
+    "remainder_refs",
+    "remainder_destination",
+    "remainder_order",
+}
 
 
 def counter_intent_identity(intent: PlaceCountersIntent) -> dict[str, Any]:
@@ -225,6 +247,34 @@ def _surveil_intent_identity(
             },
             "requested_count": intent.requested_count,
             _REASON_FIELD: intent.reason,
+        },
+    )
+
+
+def _library_selection_intent_identity(
+    intent: LibrarySelectionIntent,
+) -> tuple[str, dict[str, Any]]:
+    return (
+        "library_selection",
+        {
+            "actor": intent.actor,
+            "player": intent.player,
+            "arrangement": {
+                "looked": [
+                    identity.to_dict()
+                    for identity in intent.arrangement.looked
+                ],
+                "selected_refs": list(intent.arrangement.selected_refs),
+                "remainder_refs": list(intent.arrangement.remainder_refs),
+                "remainder_destination": (
+                    intent.arrangement.remainder_destination
+                ),
+                "remainder_order": intent.arrangement.remainder_order,
+            },
+            _REASON_FIELD: intent.reason,
+            "source_stack_ref": intent.source_stack_ref,
+            "looked_are_public": intent.looked_are_public,
+            "selected_are_public": intent.selected_are_public,
         },
     )
 
@@ -391,6 +441,8 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
         return _simultaneous_move_intent_identity(intent)
     if isinstance(intent, SurveilLibraryIntent):
         return _surveil_intent_identity(intent)
+    if isinstance(intent, LibrarySelectionIntent):
+        return _library_selection_intent_identity(intent)
     raise SemanticChoiceError(
         "Semantic replacement continuation requires a supported typed intent"
     )
@@ -605,6 +657,51 @@ def _validate_surveil_intent_identity(
     return semantic_intent_identity(intent)[1]
 
 
+def _validate_library_selection_intent_identity(
+    value: Mapping[str, Any],
+) -> dict[str, Any]:
+    if not isinstance(value, Mapping) or set(value) != (
+        _LIBRARY_SELECTION_FIELDS
+    ):
+        raise SemanticChoiceError(
+            "Library selection intent identity fields are malformed"
+        )
+    raw = value["arrangement"]
+    if (
+        not isinstance(raw, Mapping)
+        or set(raw) != _LIBRARY_SELECTION_ARRANGEMENT_FIELDS
+        or not isinstance(raw["looked"], (list, tuple))
+    ):
+        raise SemanticChoiceError(
+            "Library selection intent arrangement is malformed"
+        )
+    try:
+        arrangement = LibrarySelectionArrangement(
+            looked=tuple(
+                LibrarySelectionObjectIdentity.from_dict(identity)
+                for identity in raw["looked"]
+            ),
+            selected_refs=tuple(raw["selected_refs"]),
+            remainder_refs=tuple(raw["remainder_refs"]),
+            remainder_destination=raw["remainder_destination"],
+            remainder_order=raw["remainder_order"],
+        )
+        intent = LibrarySelectionIntent(
+            actor=value["actor"],
+            player=value["player"],
+            arrangement=arrangement,
+            reason=value[_REASON_FIELD],
+            source_stack_ref=value["source_stack_ref"],
+            looked_are_public=value["looked_are_public"],
+            selected_are_public=value["selected_are_public"],
+        )
+    except (LibrarySelectionError, TypeError, ValueError) as exc:
+        raise SemanticChoiceError(
+            "Library selection intent identity is malformed"
+        ) from exc
+    return semantic_intent_identity(intent)[1]
+
+
 def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
@@ -627,6 +724,8 @@ def validate_semantic_intent_identity(
         return _validate_create_token_intent_identity(value)
     if kind == "surveil_library":
         return _validate_surveil_intent_identity(value)
+    if kind == "library_selection":
+        return _validate_library_selection_intent_identity(value)
     if kind == "move_objects_simultaneously":
         return _validate_simultaneous_move_intent_identity(value)
     if kind != "zone_move":
@@ -982,6 +1081,7 @@ def with_replacement_selections(
     | ProliferateIntent
     | CreateTokenIntent
     | SurveilLibraryIntent
+    | LibrarySelectionIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
 ):
@@ -997,6 +1097,7 @@ def with_replacement_selections(
             ProliferateIntent,
             CreateTokenIntent,
             SurveilLibraryIntent,
+            LibrarySelectionIntent,
             ZoneMoveIntent,
             MoveObjectsSimultaneouslyIntent,
         ),

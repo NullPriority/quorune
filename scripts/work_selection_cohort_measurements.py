@@ -29,6 +29,9 @@ from quorune.compiler.fixed_counter_trigger_nodes import (
 from quorune.compiler.fixed_homogeneous_target_sets import (
     FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,
 )
+from quorune.compiler.fixed_library_selection_templates import (
+    fixed_library_selection_effect_template,
+)
 from quorune.compiler.continuous_templates import (
     fixed_power_toughness_anthem_handler,
     fixed_query_characteristic_grant_handler,
@@ -77,6 +80,9 @@ _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE = (
 _PROBE_FIXED_HOMOGENEOUS_TARGET_SET = (
     "fixed-homogeneous-target-set-existing-owner-v1"
 )
+_PROBE_FIXED_LIBRARY_SELECTION = (
+    "fixed-library-selection-existing-owner-v1"
+)
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
 )
@@ -105,6 +111,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER,
     _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
+    _PROBE_FIXED_LIBRARY_SELECTION,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_REGENERATION,
@@ -255,6 +262,18 @@ def _fixed_regeneration_instruction_candidates(line: str) -> tuple[str, ...]:
             ("when ", "whenever ", "at the beginning of ")
         ) and ", " in candidate:
             candidates.append(candidate.split(", ", 1)[1].strip())
+    return tuple(dict.fromkeys(candidates))
+
+
+def _fixed_library_selection_instruction_candidates(
+    line: str,
+) -> tuple[str, ...]:
+    normalized = " ".join(line.strip().split())
+    candidates = [normalized]
+    for marker in ("look at the top ", "reveal the top "):
+        index = normalized.casefold().find(marker)
+        if index >= 0:
+            candidates.append(normalized[index:])
     return tuple(dict.fromkeys(candidates))
 
 
@@ -608,6 +627,13 @@ def _matches_probe(
                 fixed_power_toughness_anthem_handler,
             )
         )
+    if probe_id == _PROBE_FIXED_LIBRARY_SELECTION:
+        return any(
+            fixed_library_selection_effect_template(body) is not None
+            for body in _fixed_library_selection_instruction_candidates(
+                source
+            )
+        )
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
     )
@@ -630,6 +656,16 @@ def _measurement(
     member_ids = {str(value) for value in bundle["member_family_ids"]}
     if probe_id == _PROBE_FIXED_HOMOGENEOUS_TARGET_SET:
         return _fixed_homogeneous_target_set_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_FIXED_LIBRARY_SELECTION:
+        return _fixed_library_selection_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
@@ -1095,6 +1131,112 @@ def _target_group_maximum(node: Any) -> int:
         if type(value) is int:
             return value
     return 0
+
+
+def _contains_fixed_library_selection(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        if value.get("op") == "fixed_library_selection":
+            return True
+        return any(
+            _contains_fixed_library_selection(child)
+            for child in value.values()
+        )
+    if isinstance(value, (list, tuple)):
+        return any(
+            _contains_fixed_library_selection(child) for child in value
+        )
+    return False
+
+
+def _fixed_library_selection_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure complete promotions through the integrated partition owner."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        card_matches = sum(
+            node is not None
+            and node.exact
+            and _contains_fixed_library_selection(node.to_dict())
+            for ability in candidates
+            for node in (nodes.get(str(ability.get("ability_id") or "")),)
+        )
+        if not card_matches:
+            continue
+        matched_abilities += card_matches
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
 
 
 def _fixed_homogeneous_target_set_measurement(

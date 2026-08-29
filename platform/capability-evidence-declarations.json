@@ -14432,6 +14432,62 @@
       "applicability_note": "Replay the identity-pinned selection, replacement-aware hand move, public reveal, and deterministic shuffle to the same authoritative hash."
     },
     {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_graveyard_destination_replacement_resumes_before_partition_commit",
+      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suspend a mixed hand and graveyard transition before either card moves, then resume the identity-pinned partition through the selected destination replacement exactly once."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_private_look_and_public_reveal_are_projected_to_the_correct_seats",
+      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve both private inspection and printed public reveal in four-player state with seat-correct projection."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_library_selection_shape_and_compiler_mutants_are_killed",
+      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the typed compiler production, corrupt its node shape, or block destination replacement and prove exact executable trust is lost."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_unsupported_library_selection_grammar_remains_residual",
+      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject variable, targeted, filtered-numeric, battlefield, and linked-tail variants outside the complete fixed selection grammar."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts",
+      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower one shared fixed library selection through spell, activated, triggered, and modal effect owners without reparsing Oracle prose at runtime."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_private_look_and_public_reveal_are_projected_to_the_correct_seats",
+      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Hide private looked-at references from every opponent while exposing all references only when the printed instruction reveals the top cards."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_selected_cards_and_remainder_commit_in_printed_destinations",
+      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the private complete partition, replacement-aware simultaneous movement, destination order, event record, and final authoritative hash exactly."
+    },
+    {
       "capability_id": "library.surveil.fixed_controller",
       "evidence_class": "interaction",
       "test_id": "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_destination_replacement_resumes_before_public_commit",

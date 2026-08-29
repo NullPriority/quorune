@@ -16,6 +16,7 @@ from ..entry_counter_model import EffectEntryCounter
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..rules.library_scry import ScryArrangement
+from ..rules.library_selection import LibrarySelectionArrangement
 from ..rules.library_surveillance import SurveilArrangement
 from ..zone_object_keyword_model import (
     ZoneObjectKeywordGrantError,
@@ -879,6 +880,51 @@ class SurveilLibraryIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class LibrarySelectionIntent:
+    actor: str
+    player: str
+    arrangement: LibrarySelectionArrangement
+    reason: str
+    source_stack_ref: str
+    looked_are_public: bool
+    selected_are_public: bool
+    replacement_selections: tuple[str | FrozenMap, ...] = ()
+
+    def __post_init__(self) -> None:
+        if any(
+            type(value) is not str or not value
+            for value in (
+                self.actor,
+                self.player,
+                self.reason,
+                self.source_stack_ref,
+            )
+        ):
+            raise ValueError(
+                "Library selection intents require complete metadata"
+            )
+        if not isinstance(self.arrangement, LibrarySelectionArrangement):
+            raise TypeError(
+                "Library selection intents require an immutable arrangement"
+            )
+        if (
+            type(self.looked_are_public) is not bool
+            or type(self.selected_are_public) is not bool
+        ):
+            raise ValueError(
+                "Library selection visibility must be a boolean"
+            )
+        object.__setattr__(
+            self,
+            "replacement_selections",
+            _freeze_replacement_selections(
+                tuple(self.replacement_selections),
+                family="Library selection",
+            ),
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class ReorderLibraryTopIntent:
     actor: str
     player: str
@@ -1555,6 +1601,7 @@ SemanticIntent: TypeAlias = (
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent
     | SurveilLibraryIntent
+    | LibrarySelectionIntent
     | ReorderLibraryTopIntent
     | PayManaCostIntent
     | PlaceCountersIntent

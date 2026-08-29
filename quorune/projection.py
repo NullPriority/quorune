@@ -553,19 +553,6 @@ class StateProjector:
                 or principal in {"analyst", "admin"}
             ):
                 summary["hand"] = self._zone(p.zones["hand"], principal)
-                known_top = []
-                if view_seats:
-                    for object_id in reversed(p.zones["library"]):
-                        card = self.state.cards[object_id]
-                        if not any(
-                            seat in card.known_to
-                            or seat in card.revealed_to
-                            for seat in view_seats
-                        ):
-                            break
-                        known_top.append(card)
-                if known_top:
-                    summary["known_top"] = [self._obj(card, principal) for card in known_top[:5]]
             elif view_seats:
                 known = [
                     self.state.cards[oid] for oid in p.zones["hand"]
@@ -577,6 +564,21 @@ class StateProjector:
                 ]
                 if known:
                     summary["known_hand"] = [self._obj(card, principal) for card in known]
+            known_top = []
+            if view_seats:
+                for object_id in reversed(p.zones["library"]):
+                    card = self.state.cards[object_id]
+                    if not any(
+                        seat in card.known_to
+                        or seat in card.revealed_to
+                        for seat in view_seats
+                    ):
+                        break
+                    known_top.append(card)
+            if known_top:
+                summary["known_top"] = [
+                    self._obj(card, principal) for card in known_top[:5]
+                ]
             players[player_seat] = summary
 
         turn = self._turn_snapshot()

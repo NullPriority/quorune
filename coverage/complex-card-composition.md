@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "1d7e69838af323a70af9b2fe8243d11896220d3305a27fe30931a4020576ba0a"
+verified: "8088a30b56b24581d5835a94e458b78391a2df75bb06591f50040583e07819fe"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -22,7 +22,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Jin-Gitaxias // The Great Synthesis | 195 | 27 | 6 | 7 | 9 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
-| Twists and Turns // Mycoid Maze | 194 | 25 | 6 | 6 | 9 | 7 | `blocked` |
 | Vorinclex // The Grand Evolution | 193 | 23 | 7 | 7 | 10 | 4 | `blocked` |
 | Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
 | Sheoldred // The True Scriptures | 192 | 22 | 7 | 7 | 11 | 4 | `blocked` |
@@ -46,6 +45,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Fiora // Marchesa, Resolute Monarch | 175 | 17 | 5 | 7 | 6 | 17 | `blocked` |
 | Nicol Bolas, the Ravager // Nicol Bolas, the Arisen | 175 | 30 | 5 | 7 | 5 | 11 | `blocked` |
 | Ojer Taq, Deepest Foundation // Temple of Civilization | 175 | 23 | 7 | 6 | 9 | 2 | `blocked` |
+| Twists and Turns // Mycoid Maze | 175 | 25 | 5 | 6 | 6 | 7 | `blocked` |
 | Invasion of Moag // Bloomwielder Dryads | 173 | 20 | 6 | 4 | 5 | 16 | `blocked` |
 | Miles Morales // Ultimate Spider-Man | 172 | 24 | 6 | 5 | 6 | 11 | `blocked` |
 | Overwhelmed Archivist // Archive Haunt | 172 | 29 | 5 | 5 | 4 | 7 | `blocked` |

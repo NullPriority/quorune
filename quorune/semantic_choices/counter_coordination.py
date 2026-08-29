@@ -16,6 +16,7 @@ from ..counter_placement import (
 from ..semantic_runtime import (
     IntentPlan,
     LifeChangeIntent,
+    LibrarySelectionIntent,
     MoveObjectsSimultaneouslyIntent,
     PlaceCounterBatchIntent,
     PlaceCountersIntent,
@@ -258,6 +259,7 @@ def continue_semantic_completion(
                     ProliferateIntent,
                     MoveObjectsSimultaneouslyIntent,
                     SurveilLibraryIntent,
+                    LibrarySelectionIntent,
                     ZoneMoveIntent,
                 ),
             ):
