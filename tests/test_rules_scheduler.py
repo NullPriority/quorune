@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -41,7 +42,9 @@ from scripts.harvest_outcome_history import (
     _receipt,
     _receipt_content_fingerprint,
     _require_landed_harvest_head,
+    _semantic_blob_sha256,
     _semantic_outcome_state,
+    _semantic_report_sha256,
     _validate_content_entry,
     build_harvest_outcome_history,
     HarvestOutcomeHistoryError,
@@ -1011,6 +1014,87 @@ class RulesSchedulerTests(unittest.TestCase):
             declaration["capability_ids"], entry["capability_ids"]
         )
 
+    def test_frontier_semantic_receipt_ignores_database_location_provenance(self):
+        first = {
+            "schema_version": 1,
+            "card_data_snapshot": {
+                "schema_version": "2",
+                "oracle_source_sha256": "a" * 64,
+                "rulings_source_sha256": "b" * 64,
+                "oracle_source": r"C:\\local\\oracle.jsonl.gz",
+                "rulings_source": r"C:\\local\\rulings.jsonl.gz",
+                "bulk_manifest_url": "https://api.scryfall.com/bulk-data",
+            },
+            "cards": [{"oracle_id": "fixture"}],
+            "fingerprint": "c" * 64,
+        }
+        second = deepcopy(first)
+        second["card_data_snapshot"].update(
+            {
+                "oracle_source": "/cloud/oracle.jsonl.gz",
+                "rulings_source": "/cloud/rulings.jsonl.gz",
+                "bulk_manifest_url": "rules/manifest.json",
+            }
+        )
+        second["fingerprint"] = "d" * 64
+
+        def encoded(value):
+            return gzip.compress(stable_json(value).encode("utf-8"), mtime=0)
+
+        first_identity = _semantic_report_sha256(
+            "coverage/card-unlock-frontier.json.gz",
+            encoded(first),
+            first,
+        )
+        second_identity = _semantic_report_sha256(
+            "coverage/card-unlock-frontier.json.gz",
+            encoded(second),
+            second,
+        )
+        changed = deepcopy(second)
+        changed["cards"].append({"oracle_id": "semantic-change"})
+
+        self.assertEqual(first_identity, second_identity)
+        self.assertNotEqual(
+            first_identity,
+            _semantic_report_sha256(
+                "coverage/card-unlock-frontier.json.gz",
+                encoded(changed),
+                changed,
+            ),
+        )
+
+    def test_historical_frontier_blob_upgrades_to_semantic_identity(self):
+        latest = self.work_inputs["harvest_outcome_history"]["entries"][-1][
+            "head_receipt"
+        ]
+        identity = dict(
+            latest["blobs"]["coverage/card-unlock-frontier.json.gz"]
+        )
+        expected = identity.pop("semantic_sha256", None)
+        if expected is None:
+            raw = subprocess.run(
+                ["git", "cat-file", "blob", identity["git_blob_oid"]],
+                cwd=ROOT,
+                check=True,
+                stdout=subprocess.PIPE,
+            ).stdout
+            value = json.loads(gzip.decompress(raw))
+            expected = _semantic_report_sha256(
+                "coverage/card-unlock-frontier.json.gz",
+                raw,
+                value,
+            )
+
+        self.assertEqual(
+            expected,
+            _semantic_blob_sha256(
+                "coverage/card-unlock-frontier.json.gz",
+                identity,
+                repository=ROOT,
+            ),
+        )
+
     def test_measured_content_receipt_preserves_generated_cohort_identity(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]
         latest = provenance[-1]
@@ -1348,15 +1432,23 @@ class RulesSchedulerTests(unittest.TestCase):
             )
         )
 
-    def test_fixed_optional_effect_probe_uses_the_closed_typed_body_boundary(self):
+    def test_fixed_optional_effect_probe_requires_a_closed_event_carrier(self):
         probe_id = "fixed-optional-effect-choice-existing-owner-v1"
+        record = SimpleNamespace(
+            name="Optional Probe",
+            type_line="Enchantment",
+            oracle_text="",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
         accepted = (
-            "You may destroy target artifact.",
-            "{2}, {T}: You may create a Treasure token.",
             "Whenever you cast a noncreature spell, you may gain 2 life.",
-            "Landfall — Whenever a land enters under your control, you may draw a card.",
+            "Whenever a land you control enters, you may draw a card.",
         )
         rejected = (
+            "You may destroy target artifact.",
+            "{2}, {T}: You may create a Treasure token.",
+            "Whenever equipped creature attacks, you may draw a card.",
             "You may pay {1}. If you do, draw a card.",
             "You may choose target creature.",
             "You may destroy target artifact if you control a Wizard.",
@@ -1364,10 +1456,66 @@ class RulesSchedulerTests(unittest.TestCase):
 
         for source in accepted:
             with self.subTest(source=source):
-                self.assertTrue(_matches_probe(probe_id, source))
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
         for source in rejected:
             with self.subTest(source=source):
-                self.assertFalse(_matches_probe(probe_id, source))
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
+    def test_typed_public_event_probe_uses_integrated_carrier_and_body(self):
+        probe_id = "typed-public-event-effect-trigger-existing-owner-v1"
+        record = SimpleNamespace(
+            name="Public Event Probe",
+            type_line="Enchantment",
+            oracle_text="",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        accepted = (
+            "Whenever a creature attacks, you may gain 1 life.",
+            "Whenever an opponent casts a blue spell during your turn, you "
+            "may create a 4/4 green Elemental creature token.",
+        )
+        rejected = (
+            "Whenever an opponent discards a card, you may draw a card.",
+            "Whenever you sacrifice a creature, you may gain 1 life.",
+            "Whenever equipped creature attacks, you may gain 1 life.",
+            "Whenever one or more creatures attack, you may gain 1 life.",
+            "Whenever a creature attacks, you may choose a card name.",
+        )
+        for source in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
 
     def test_fixed_optional_mana_payment_probe_uses_integrated_trigger_boundary(self):
         probe_id = "fixed-optional-mana-payment-trigger-existing-owner-v1"
@@ -1805,13 +1953,23 @@ class RulesSchedulerTests(unittest.TestCase):
             for row in self.work_inputs["cohort_measurements"]["measurements"]
             if row["bundle_id"] == "bundle:fixed-optional-effect-choices"
         )
-        self.assertEqual("bounded_executable", optional_measurement["decision"])
-        self.assertGreaterEqual(
-            optional_measurement["complete_card_gain"],
-            self.catalog["work_selection"]["coverage_family"][
-                "minimum_complete_card_gain"
-            ],
+        self.assertEqual(
+            "retired_below_harvest_floor", optional_measurement["decision"]
         )
+        coverage_policy = self.catalog["work_selection"]["coverage_family"]
+        for metric, threshold in (
+            ("complete_card_gain", "minimum_complete_card_gain"),
+            ("exact_ability_gain", "minimum_exact_ability_gain"),
+            (
+                "material_residual_reduction",
+                "minimum_material_residual_reduction",
+            ),
+        ):
+            with self.subTest(metric=metric):
+                self.assertLess(
+                    optional_measurement[metric],
+                    coverage_policy[threshold],
+                )
         self.assertFalse(optional_measurement["grants_gameplay_trust"])
 
         frontier, policies, weights = _bounded_candidate_bundle_fixture()

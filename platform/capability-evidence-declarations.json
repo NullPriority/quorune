@@ -19802,7 +19802,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose three independent battlefield predicates and one stack-source self predicate with the shared typed life body and ordinary trigger ordering."
@@ -19842,7 +19842,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use the canonical four-player APNAP owner when multiple exact predicate programs match the same cast."
@@ -19970,10 +19970,10 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Evaluate every selected predicate from public committed cast facts and source-relative identities without reading hidden Oracle prose or private zones."
+      "applicability_note": "Evaluate every selected predicate from public committed cast facts and source-relative identities without reading hidden Oracle prose or private zones in the v4 event."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -20192,6 +20192,62 @@
       "applicability_note": "Replay the normalized gain occurrence, trigger resolution, and suspended counter replacement to the identical state hash."
     },
     {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Join semantic action triggers to the same pending stack-item list as intrinsic declaration triggers and place the result once."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve four-player APNAP placement when different controllers observe the same public declaration or action."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_event_dispatch_mutant_is_killed",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suppress the shared semantic dispatch at a completed public declaration and prove no competing path creates the typed action trigger."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_near_misses_remain_material",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Leave attachment-relative, aggregate, chosen, target, tap, counter-placement, combined-event, and reflexive clauses material."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_trigger_bindings_compile_exactly",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile attack, block, becomes-blocked, Cycling, and face-up clauses only from their closed public occurrence grammar."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cycling_trigger_uses_public_hand_snapshot",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose only the publicly cycled card and actor after the discard cost while retaining no unrelated hidden-hand identity."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "702.29", "702.37e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay each sealed action occurrence, trigger placement, optional decision, and typed effect to the identical authoritative hash."
+    },
+    {
       "capability_id": "trigger.event.normalized_self_attack",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
@@ -20266,10 +20322,10 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": ["601.2i", "603.2", "603.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Dispatch ordinal, mana-value, Historic, and the cast spell's own stack-zone trigger from one committed v3 occurrence and one APNAP batch."
+      "applicability_note": "Dispatch ordinal, mana-value, Historic, active-phase, and the cast spell's own stack-zone trigger from one committed v4 occurrence and one APNAP batch."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",
@@ -20290,7 +20346,7 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": ["601.2i", "603.2", "603.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Place three same-controller matches through an explicit trigger-order decision in a four-player game while retaining the stack source as a fourth-zone event observer."
@@ -20394,6 +20450,14 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "positive",
+      "test_id": "tests.test_prowess_rules.ProwessCompilerTests.test_spell_cast_event_v4_seals_active_phase",
+      "official_rule_ids": ["601.2i", "603.2", "603.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Seal the active phase in schema v4 while preserving strict legacy v1 through v3 decoding."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "positive",
       "test_id": "tests.test_prowess_rules.ProwessRuntimeTests.test_noncreature_spell_creates_one_prowess_trigger",
       "official_rule_ids": [
         "601.2i",
@@ -20410,7 +20474,7 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": ["601.2i", "603.2", "603.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Restrict predicate inputs to facts public for a committed stack object; no hidden hand or library characteristic enters the v3 event."

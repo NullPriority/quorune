@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-29T11:08:12Z",
+  "observed_at": "2026-08-29T19:59:54Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -619,6 +619,58 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The shared action-ready driver now submits the legal empty-attacker declaration when that mandatory choice blocks a later action and returns false when no authorized command was submitted, allowing the progress coordinator to apply its own bounded fallback and watchdog. The strict main-red audit now consumes exact-source Playwright reports and permits only report- or stack-named test harness changes with unchanged test bodies, tags, and assertions; recovery-authority repairs use an exact-base complete high-risk fix-forward instead of self-authorizing focused CI. The existing browser-soak inventory selected the failing journey, so no new impact edge is required."
+    },
+    {
+      "id": "ci-20260829-43",
+      "run_id": 33266729920,
+      "head_sha": "2ae025774959b259c667e66399733cd323542a41",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The cloud scheduler rejected the already-materialized public-event transition because the card-unlock frontier fingerprint included workstation-specific database source paths and a download URL, giving identical pinned card content different Windows and Linux identities.",
+      "failed_surfaces": [
+        "Generated cloud / Rules scheduler (job 99141033656)"
+      ],
+      "regressions": [
+        "test_card_unlock_frontier.CardUnlockFrontierTests.test_frontier_snapshot_excludes_environment_specific_database_provenance",
+        "test_rules_scheduler.RulesSchedulerTests.test_frontier_semantic_receipt_ignores_database_location_provenance",
+        "test_rules_scheduler.RulesSchedulerTests.test_historical_frontier_blob_upgrades_to_semantic_identity"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The frontier now retains only immutable card-snapshot fields, and harvest receipts compare a canonical semantic frontier identity that ignores local archive locations while remaining sensitive to every card and blocker row. The generated-owner plan and existing source mappings already select the frontier, scheduler, and both focused regression modules, so no new impact edge is required."
+    },
+    {
+      "id": "ci-20260829-44",
+      "run_id": 33270248897,
+      "head_sha": "172b37045603bcd8d3e6575aa33c849e96473ff4",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The public-event harvest promoted five counter-placement trigger forms, but the first source checkpoint did not run the owning module's adjacent residual inventory, which still classified those exact forms as unsupported.",
+      "failed_surfaces": [
+        "PR / Python / impact-functional-02 (job 99147463100)"
+      ],
+      "regressions": [
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_adjacent_event_and_effect_variants_remain_material",
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_counter_event_effect_variants_compile_exactly"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The five promoted forms now have explicit positive exact-node, event, template, and residual-closure assertions, while the adjacent negative inventory retains only unsupported forms. The existing compiler-family impact edge already selected the owning module; future pre-cloud evidence for a promoted grammar must include its exact adjacent positive/residual boundary method rather than only the newly added runtime tests."
+    },
+    {
+      "id": "ci-20260829-45",
+      "run_id": 33271661291,
+      "head_sha": "60fcd4a7e4b7665ee984664a37ee76b8097de377",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The public-event harvest consumed the overlapping fixed optional-effect cohort down to one card and one ability, but a generated scheduler regression still expected that current cohort to remain above the normal harvest floor.",
+      "failed_surfaces": [
+        "PR / Generated and architecture (job 99151200119)",
+        "PR / Certification (job 99152902551)"
+      ],
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_completed_bundle_retires_and_upper_bound_requires_bounded_cohort"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The scheduler regression now verifies that the post-harvest optional-effect measurement is retired below each complete-card, exact-ability, and residual-reduction floor while remaining non-authoritative for gameplay trust. The generated-governance impact route already selected the failing module; pre-cloud evidence for a materialized harvest must include the exact scheduler expectation whose current cohort changed."
     }
   ],
   "recent_pull_requests": [

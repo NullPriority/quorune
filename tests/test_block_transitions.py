@@ -291,6 +291,35 @@ class BlockTransitionModelTests(unittest.TestCase):
         with self.assertRaises(BlockTransitionError):
             BlockKeywordTriggerOccurrence.from_dict(unknown)
 
+    def test_block_participant_keywords_round_trip_and_fail_closed(self):
+        participant = BlockTransitionParticipant(
+            object_id="blocker-a",
+            logical_object_id="logical:blocker-a",
+            reference="B01",
+            controller="B",
+            keywords=("Flying", "Defender"),
+        )
+
+        self.assertEqual(("defender", "flying"), participant.keywords)
+        self.assertEqual(
+            participant,
+            BlockTransitionParticipant.from_dict(participant.to_dict()),
+        )
+        malformed = participant.to_dict()
+        malformed["keywords"] = "flying"
+        with self.assertRaises(BlockTransitionError):
+            BlockTransitionParticipant.from_dict(malformed)
+        for keywords in ((None,), ("",), ("Flying", "flying"), "flying"):
+            with self.subTest(keywords=keywords):
+                with self.assertRaises(BlockTransitionError):
+                    BlockTransitionParticipant(
+                        object_id="blocker-a",
+                        logical_object_id="logical:blocker-a",
+                        reference="B01",
+                        controller="B",
+                        keywords=keywords,
+                    )
+
     def test_stack_item_round_trips_the_exact_occurrence(self):
         occurrence = derive_block_keyword_trigger_occurrences(self.event())[0]
 

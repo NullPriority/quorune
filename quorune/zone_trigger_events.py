@@ -7,6 +7,7 @@ import hashlib
 import re
 from typing import Any, Literal, Sequence
 
+from .characteristic_evaluation import type_parts
 from .errors import GameRuleError
 from .replacement.immutable import (
     FrozenMap,
@@ -305,27 +306,50 @@ class NormalizedZoneTriggerEvent:
 
 
 def _type_parts(characteristics: Mapping[str, Any]) -> tuple[set[str], set[str]]:
-    type_line = str(characteristics.get("type_line") or "").replace("—", "-")
-    left, _, right = type_line.partition("-")
-    words = {value.casefold() for value in re.findall(r"[A-Za-z]+", left)}
-    types = words.intersection(
+    types, subtypes, _supertypes = type_parts(
+        str(characteristics.get("type_line") or "")
+    )
+    return types, subtypes
+
+
+def _public_numeric_power(characteristics: Mapping[str, Any]) -> int | None:
+    """Read a sealed integer power without re-entering characteristic evaluation."""
+
+    value = characteristics.get("power")
+    if type(value) is int:
+        return value
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, str) and re.fullmatch(r"-?[0-9]+", value.strip()):
+        return int(value.strip())
+    return None
+
+
+def _public_colors(characteristics: Mapping[str, Any]) -> list[str]:
+    values = characteristics.get("colors") or ()
+    if isinstance(values, (str, bytes)):
+        return []
+    return sorted(
         {
-            "artifact",
-            "battle",
-            "creature",
-            "enchantment",
-            "instant",
-            "kindred",
-            "land",
-            "planeswalker",
-            "sorcery",
+            str(value).strip().upper()
+            for value in values
+            if str(value).strip().upper() in {"W", "U", "B", "R", "G"}
         }
     )
-    subtypes = {
-        value.casefold()
-        for value in re.findall(r"[A-Za-z]+", right)
+
+
+def sealed_public_characteristic_facts(
+    characteristics: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Normalize public facts from one already-sealed characteristic view."""
+
+    types, subtypes = _type_parts(characteristics)
+    return {
+        "types": sorted(types),
+        "subtypes": sorted(subtypes),
+        "colors": _public_colors(characteristics),
+        "power": _public_numeric_power(characteristics),
     }
-    return types, subtypes
 
 
 def normalized_zone_trigger_events(
@@ -333,9 +357,10 @@ def normalized_zone_trigger_events(
 ) -> tuple[NormalizedZoneTriggerEvent, ...]:
     """Derive the represented CR 603.6 event vocabulary without state access."""
 
-    previous_types, _previous_subtypes = _type_parts(
+    previous_facts = sealed_public_characteristic_facts(
         occurrence.previous_characteristics
     )
+    previous_types = set(previous_facts["types"])
     common = {
         "card": occurrence.card_ref,
         "card_object_identity": occurrence.previous_logical_object_id,
@@ -349,7 +374,7 @@ def normalized_zone_trigger_events(
         "token": occurrence.token,
         "attachments": list(occurrence.previous_attachments),
         "attached_to": occurrence.previous_attached_to,
-        "types": sorted(previous_types),
+        **previous_facts,
     }
     if occurrence.cast_option is not None:
         common["cast_option"] = occurrence.cast_option
@@ -414,14 +439,14 @@ def normalized_zone_trigger_events(
             )
         )
     if occurrence.destination == "battlefield" and occurrence.origin != "battlefield":
-        current_types, current_subtypes = _type_parts(
+        current_facts = sealed_public_characteristic_facts(
             occurrence.current_characteristics
         )
+        current_types = set(current_facts["types"])
         entered = {
             **common,
             "controller": occurrence.current_controller,
-            "types": sorted(current_types),
-            "subtypes": sorted(current_subtypes),
+            **current_facts,
             "mana_value": float(
                 occurrence.current_characteristics.get("mana_value", 0) or 0
             ),
@@ -450,5 +475,6 @@ __all__ = [
     "normalized_library_position",
     "normalized_transition_kind_map",
     "normalized_zone_trigger_events",
+    "sealed_public_characteristic_facts",
     "validate_zone_transition_request",
 ]

@@ -495,6 +495,33 @@
       ]
     },
     {
+      "id": "typed-public-event-effect-trigger-contract",
+      "patterns": [
+        "quorune/attack_transition_engine_adapter.py",
+        "quorune/attack_transition_model.py",
+        "quorune/block_transition_engine_adapter.py",
+        "quorune/block_transitions.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/spell_cast_predicates.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/morph_actions.py",
+        "quorune/rules/spell_cast_events.py",
+        "quorune/zone_trigger_events.py",
+        "tests/fixtures/fixed-typed-event-trigger-cards.json"
+      ],
+      "test_modules": [
+        "test_attack_transitions",
+        "test_block_transitions",
+        "test_fixed_counter_event_triggers",
+        "test_morph_rules",
+        "test_ordinary_cycling",
+        "test_prowess_rules",
+        "test_rules_scheduler"
+      ]
+    },
+    {
       "id": "compiler-prevention-expectations",
       "patterns": [
         "quorune/compiler/prevention_templates.py"

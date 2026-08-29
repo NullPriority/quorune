@@ -95,6 +95,7 @@ class BlockTransitionParticipant:
     reference: str
     controller: str
     trigger_specs: tuple[CombatKeywordTriggerSpec, ...] = ()
+    keywords: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         _identity(self.object_id, field="Block participant physical identity")
@@ -121,6 +122,27 @@ class BlockTransitionParticipant:
                 )
             ),
         )
+        raw_keywords = self.keywords
+        if not isinstance(raw_keywords, tuple) or any(
+            type(value) is not str or not value.strip()
+            for value in raw_keywords
+        ):
+            raise BlockTransitionError(
+                "Block participant keywords must be a tuple of nonempty strings"
+            )
+        keywords = tuple(
+            sorted(
+                {
+                    value.strip().casefold()
+                    for value in raw_keywords
+                }
+            )
+        )
+        if len(keywords) != len(raw_keywords):
+            raise BlockTransitionError(
+                "Block participant keywords must be distinct nonempty strings"
+            )
+        object.__setattr__(self, "keywords", keywords)
 
     @property
     def identity(self) -> BlockObjectIdentity:
@@ -131,31 +153,43 @@ class BlockTransitionParticipant:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             **self.identity.to_dict(),
             "controller": self.controller,
             "trigger_specs": [spec.to_dict() for spec in self.trigger_specs],
         }
+        if self.keywords:
+            result["keywords"] = list(self.keywords)
+        return result
 
     @classmethod
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "BlockTransitionParticipant":
-        data = _exact_mapping(
-            value,
-            {
-                "object_id",
-                "logical_object_id",
-                "reference",
-                "controller",
-                "trigger_specs",
-            },
-            field="Block transition participant",
-        )
+        expected = {
+            "object_id",
+            "logical_object_id",
+            "reference",
+            "controller",
+            "trigger_specs",
+        }
+        fields = set(value) if isinstance(value, Mapping) else set()
+        if fields not in {frozenset(expected), frozenset({*expected, "keywords"})}:
+            raise BlockTransitionError(
+                "Block transition participant has a closed field set"
+            )
+        data = value
         raw_specs = data["trigger_specs"]
         if not isinstance(raw_specs, (list, tuple)):
             raise BlockTransitionError(
                 "Block participant trigger_specs must be an array"
+            )
+        raw_keywords = data.get("keywords", ())
+        if not isinstance(raw_keywords, (list, tuple)) or isinstance(
+            raw_keywords, (str, bytes)
+        ):
+            raise BlockTransitionError(
+                "Block participant keywords must be an array"
             )
         return cls(
             object_id=data["object_id"],
@@ -166,6 +200,7 @@ class BlockTransitionParticipant:
                 CombatKeywordTriggerSpec.from_dict(spec)
                 for spec in raw_specs
             ),
+            keywords=tuple(raw_keywords),
         )
 
 

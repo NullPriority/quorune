@@ -64,6 +64,7 @@ from .token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
+from .self_return_capability_shapes import fixed_self_return_node_capabilities
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
     FIXED_OPTIONAL_EFFECT_MECHANIC,
@@ -102,6 +103,7 @@ _COMPONENT_RESOLVERS = (
     fixed_life_node_capabilities,
     fixed_scry_node_capabilities,
     fixed_surveil_node_capabilities,
+    fixed_self_return_node_capabilities,
     fixed_mill_node_capabilities,
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,

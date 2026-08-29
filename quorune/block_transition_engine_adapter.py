@@ -26,6 +26,7 @@ from .combat_relationship_state import (
     commit_block_declaration,
 )
 from .trigger_processing import enqueue_trigger_batch
+from .keyword_abilities import normalized_characteristic_keywords
 
 
 class EngineBlockTransitionQuery(BlockTransitionQuery):
@@ -82,6 +83,7 @@ class EngineBlockTransitionQuery(BlockTransitionQuery):
             reference=card.ref,
             controller=card.controller,
             trigger_specs=combat_keyword_trigger_specs(fragments),
+            keywords=tuple(normalized_characteristic_keywords(effective)),
         )
 
 
@@ -129,6 +131,54 @@ def enqueue_block_transition_triggers(engine: Any) -> None:
                     visibility=engine.seats,
                 )
             )
+        participants = {
+            participant.object_id: participant
+            for participant in event.participants
+        }
+        semantic_sources = tuple(
+            engine._semantic_event_sources(zones={"battlefield"})
+        )
+        semantic_trigger_refs: list[str] = []
+        blocked_attackers: set[str] = set()
+        for assignment in event.assignments:
+            blocker = participants[assignment.blocker_object_id]
+            semantic_trigger_refs.extend(
+                engine._dispatch_semantic_event(
+                    "creature.blocks",
+                    {
+                        "event_id": event.transition_id,
+                        "card": blocker.reference,
+                        "controller": blocker.controller,
+                        "types": ["creature"],
+                        "keywords": list(blocker.keywords),
+                        "blocked_attacker": participants[
+                            assignment.attacker_object_id
+                        ].reference,
+                        "block_transition": event.to_dict(),
+                    },
+                    sources=semantic_sources,
+                    trigger_batch=stack_items,
+                )
+            )
+            if assignment.attacker_object_id in blocked_attackers:
+                continue
+            blocked_attackers.add(assignment.attacker_object_id)
+            attacker = participants[assignment.attacker_object_id]
+            semantic_trigger_refs.extend(
+                engine._dispatch_semantic_event(
+                    "creature.becomes_blocked",
+                    {
+                        "event_id": event.transition_id,
+                        "card": attacker.reference,
+                        "controller": attacker.controller,
+                        "types": ["creature"],
+                        "keywords": list(attacker.keywords),
+                        "block_transition": event.to_dict(),
+                    },
+                    sources=semantic_sources,
+                    trigger_batch=stack_items,
+                )
+            )
     except (AbilityFragmentError, BlockTransitionError) as exc:
         raise StateInvariantError(str(exc)) from exc
     engine._log(
@@ -143,6 +193,7 @@ def enqueue_block_transition_triggers(engine: Any) -> None:
             "trigger_occurrences": [
                 occurrence.occurrence_id for occurrence in occurrences
             ],
+            "semantic_trigger_refs": semantic_trigger_refs,
         },
         importance=2,
         changed_objects=[

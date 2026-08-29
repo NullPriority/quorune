@@ -297,6 +297,10 @@ The rules-scheduler owner also maintains
 immutable Git provenance, while new semantic transitions use base and head
 content-receipt fingerprints over the Commander CardProgram corpus, Oracle
 coverage, card-unlock frontier, interaction inventory, and architecture audit.
+The frontier retains only immutable card-snapshot hashes, counts, schema, and
+timestamps; local archive paths and download URLs never participate in its
+fingerprint. Transition receipts likewise compare a canonical frontier payload,
+so identical pinned content has one identity on Windows and Linux.
 The transition declaration carries the bundle, candidate, family, capability,
 generated-measurement, and compiler identities before corpus generation. Once
 the generated head receipts exist, the same feature fixed point appends the

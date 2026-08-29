@@ -19,6 +19,15 @@ from .ir_model import OracleCardIR, OracleNode, OracleResidual
 CARD_UNLOCK_FRONTIER_SCHEMA_VERSION = 1
 CARD_UNLOCK_FRONTIER_ALGORITHM_VERSION = "card-unlock-frontier-v3"
 MAX_BUNDLE_FAMILIES = 48
+CARD_DATA_SNAPSHOT_FIELDS = (
+    "schema_version",
+    "card_count",
+    "ruling_count",
+    "oracle_source_sha256",
+    "rulings_source_sha256",
+    "scryfall_oracle_updated_at",
+    "scryfall_rulings_updated_at",
+)
 BASE_RESIDUAL_FAMILIES = frozenset(
     {
         "capability_dependency",
@@ -71,6 +80,18 @@ _FAMILY_PATTERNS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("unsupported_profile", ("profile", "format unsupported")),
     ("non_rules_governed", ("non-rules", "non rules", "concession policy", "tournament")),
 )
+
+
+def canonical_card_data_snapshot(metadata: Mapping[str, Any]) -> dict[str, Any]:
+    """Return the content identity shared by local and cloud card databases."""
+
+    return {
+        key: metadata[key]
+        for key in CARD_DATA_SNAPSHOT_FIELDS
+        if metadata.get(key) is not None
+    }
+
+
 _RISK_BY_BASE = {
     "capability_dependency": "medium",
     "mechanic_dependency": "high",
@@ -882,7 +903,7 @@ def build_card_unlock_frontier(
         "profile": profile,
         "commander_legal_only": True,
         "limited": limit is not None,
-        "card_data_snapshot": db.metadata(),
+        "card_data_snapshot": canonical_card_data_snapshot(db.metadata()),
         "capability_registry_fingerprint": capabilities.fingerprint,
         "capability_evidence_fingerprint": capabilities.evidence_fingerprint,
         "semantic_registry_fingerprint": _sha(

@@ -9,6 +9,7 @@ from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
+from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
 from .spell_cast_predicates import (
     FixedSpellCastCharacteristicKind,
     FixedSpellCastCharacteristicQuery,
@@ -53,6 +54,13 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-source-combat-damage-opponent-trigger-v1",
         "fixed-counter-source-damage-opponent-trigger-v1",
         "fixed-counter-source-dealt-damage-trigger-v1",
+        "fixed-counter-public-zone-trigger-v1",
+        "fixed-counter-public-damage-trigger-v1",
+        "fixed-counter-public-attack-trigger-v1",
+        "fixed-counter-public-block-trigger-v1",
+        "fixed-counter-public-cycle-trigger-v1",
+        "fixed-counter-public-face-up-trigger-v1",
+        "fixed-counter-opponent-card-draw-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(
@@ -140,8 +148,6 @@ _SOURCE_DAMAGE_TRIGGER = re.compile(
 _ZONE_SUBJECT_TYPES = frozenset(
     {"artifact", "creature", "enchantment", "land", "permanent"}
 )
-
-
 class FixedCounterTriggerEvent(str, Enum):
     """Closed normalized event families accepted by this compiler slice."""
 
@@ -162,6 +168,15 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_GRAVEYARD = "permanent.graveyard.self"
     SOURCE_DEALS_DAMAGE = "damage.dealt.self"
     SOURCE_DEALT_DAMAGE = "damage.dealt"
+    ARTIFACT_GRAVEYARD = "artifact.graveyard"
+    PUBLIC_DEALS_DAMAGE = "damage.dealt"
+    PUBLIC_ATTACKS = "creature.attacks"
+    CREATURE_BLOCKS = "creature.blocks"
+    CREATURE_BECOMES_BLOCKED = "creature.becomes_blocked"
+    CARD_CYCLED = "card.cycled"
+    SOURCE_CYCLED = "card.cycled.self"
+    PERMANENT_TURNED_FACE_UP = "permanent.turned_face_up"
+    OPPONENT_CARD_DRAW = "card.drawn"
 
 
 class FixedCounterZoneController(str, Enum):
@@ -312,6 +327,10 @@ class FixedCounterTriggerBinding:
     body: str
     zone_subject: FixedCounterZoneSubject | None = None
     spell_subject: FixedSpellCastSubject | None = None
+    public_condition: Mapping[str, Any] | None = None
+    public_active_zone: str | None = None
+    public_mechanic: str | None = None
+    public_template_id: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -327,7 +346,10 @@ class FixedCounterTriggerBinding:
             FixedCounterTriggerEvent.ENCHANTMENT_ENTER,
             FixedCounterTriggerEvent.CREATURE_DIES,
         }
-        if (self.event in zone_events) != (self.zone_subject is not None):
+        if (
+            self.public_mechanic is None
+            and (self.event in zone_events) != (self.zone_subject is not None)
+        ):
             raise ValueError(
                 "Fixed counter zone-change events require exactly one typed subject"
             )
@@ -337,9 +359,32 @@ class FixedCounterTriggerBinding:
             raise ValueError(
                 "Fixed spell-cast events require exactly one typed subject"
             )
+        if self.public_mechanic is not None:
+            if not self.public_mechanic or not self.public_template_id:
+                raise ValueError(
+                    "Public event triggers require typed owner identities"
+                )
+            if self.public_active_zone not in {None, "battlefield", "hand"}:
+                raise ValueError(
+                    "Public event triggers require a closed active zone"
+                )
+        elif any(
+            value is not None
+            for value in (
+                self.public_condition,
+                self.public_active_zone,
+                self.public_mechanic,
+                self.public_template_id,
+            )
+        ):
+            raise ValueError(
+                "Only public event triggers accept public predicate metadata"
+            )
 
     @property
     def template_id(self) -> str:
+        if self.public_template_id is not None:
+            return self.public_template_id
         source_template = {
             FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER:
                 "fixed-counter-source-vehicle-entry-trigger-v1",
@@ -417,6 +462,8 @@ class FixedCounterTriggerBinding:
 
     @property
     def active_zone(self) -> str:
+        if self.public_active_zone is not None:
+            return self.public_active_zone
         if self.spell_subject is not None and self.spell_subject.source_spell:
             return "stack"
         return "battlefield"
@@ -437,6 +484,8 @@ class FixedCounterTriggerBinding:
                 "trigger-event-normalized-spell-cast",
                 FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC,
             )
+        if self.public_mechanic is not None:
+            return (self.public_mechanic,)
         return {
             FixedCounterTriggerEvent.STEP_BEGIN: (),
             FixedCounterTriggerEvent.CONTROLLED_LAND_ENTER: (
@@ -491,6 +540,8 @@ class FixedCounterTriggerBinding:
 
     @property
     def event_condition(self) -> Mapping[str, Any] | None:
+        if self.public_mechanic is not None:
+            return self.public_condition
         if self.zone_subject is not None:
             return self.zone_subject.event_condition
         if self.event is FixedCounterTriggerEvent.CONTROLLED_LAND_ENTER:
@@ -735,11 +786,36 @@ def _source_event_trigger_binding(
     return None
 
 
+def _public_trigger_binding(
+    material_line: str,
+    *,
+    card_name: str | None,
+) -> FixedCounterTriggerBinding | None:
+    spec = fixed_public_event_binding_spec(material_line, card_name=card_name)
+    if spec is None:
+        return None
+    return FixedCounterTriggerBinding(
+        event=FixedCounterTriggerEvent(spec.event),
+        variant=spec.variant,
+        body=spec.body,
+        public_condition=spec.condition,
+        public_active_zone=spec.active_zone,
+        public_mechanic=spec.mechanic,
+        public_template_id=spec.template_id,
+    )
+
+
 def fixed_counter_trigger_binding(
     material_line: str,
     *,
     card_name: str | None = None,
 ) -> FixedCounterTriggerBinding | None:
+    public = _public_trigger_binding(
+        material_line,
+        card_name=card_name,
+    )
+    if public is not None:
+        return public
     source_event = _source_event_trigger_binding(material_line)
     if source_event is not None:
         return source_event

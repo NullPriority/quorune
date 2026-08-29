@@ -950,7 +950,7 @@ def _dispatch_cast_events(
         types=cast_types,
     )
     context = SpellCastEvent(
-        schema_version=3,
+        schema_version=4,
         card_ref=card.ref,
         object_id=card.object_id,
         logical_object_id=card.logical_object_id,
@@ -973,6 +973,7 @@ def _dispatch_cast_events(
         has_adventure=getattr(host.card_record(card), "layout", None)
         == "adventure",
         keywords=tuple(effective_spell.get("keywords") or ()),
+        phase=host.state.phase,
     ).to_context()
     event_sources = list(host._semantic_event_sources())
     if all(source.object_id != card.object_id for source in event_sources):

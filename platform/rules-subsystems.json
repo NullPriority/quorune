@@ -822,6 +822,56 @@
           "measurement_probe_id": "fixed-optional-effect-choice-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:typed-public-event-effect-triggers",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_card_draw",
+            "capability:trigger.event.normalized_damage",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.event.normalized_spell_cast",
+            "capability:trigger.event.normalized_zone_change",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+            "component:quorune.trigger_discovery.dispatch_semantic_event"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "completed-attack-block-cycle-or-face-up-action",
+            "fixed-color-turn-or-main-phase-cast-fact",
+            "immutable-public-zone-damage-and-draw-occurrence",
+            "one-independently-exact-typed-effect"
+          ],
+          "shared_dependencies": [
+            "trigger.effect.fixed_event",
+            "trigger.event.normalized_card_draw",
+            "trigger.event.normalized_damage",
+            "trigger.event.normalized_public_action",
+            "trigger.event.normalized_spell_cast",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one closed public zone, damage, draw, attack, block, Cycling, face-up, or fixed cast-fact occurrence composed with one independently exact typed effect body",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing typed event-effect owner across reusable immutable public occurrences while retaining each canonical action, event, APNAP, choice, and effect mutation boundary.",
+          "explicit_exclusions": [
+            "aggregate one-or-more, intervening-if, reflexive, delayed, combined, and and-or event grammar",
+            "attachment-relative and chosen, history-relative, target, tapped, or counter-placement event predicates",
+            "discard and sacrifice bindings until every authoritative producer supplies an explicit typed cause",
+            "objects put onto the battlefield attacking and declaration replacement effects",
+            "secret characteristics, unsupported dynamic comparisons, and bodies without independent capability closure"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-public-event-effect-trigger-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-trigger-mana-payments",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",
@@ -1119,17 +1169,23 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v143-query-gated-self-characteristics",
-      "compiler_version": "oracle-ir-v143",
-      "bundle_id": "bundle:query-gated-self-characteristics",
-      "candidate_ids": ["compiler:query-gated-self-characteristics"],
+      "transition_id": "oracle-ir-v144-typed-public-event-effect-triggers",
+      "compiler_version": "oracle-ir-v144",
+      "bundle_id": "bundle:typed-public-event-effect-triggers",
+      "candidate_ids": ["compiler:typed-public-event-effect-triggers"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "continuous.characteristics.query_count_modifier"
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_card_draw",
+        "trigger.event.normalized_damage",
+        "trigger.event.normalized_public_action",
+        "trigger.event.normalized_spell_cast",
+        "trigger.event.normalized_zone_change"
       ],
-      "measurement_id": "measurement:query-gated-self-characteristics",
+      "measurement_id": "measurement:typed-public-event-effect-triggers",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1603,6 +1659,11 @@
         "candidate_id": "compiler:query-gated-self-characteristics",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader still combines unrelated characteristic, permission, and declaration grammars. A bounded integrated probe isolates fixed self power, toughness, and supported keyword bodies behind closed public battlefield or graveyard query thresholds. The candidate extends the existing typed query quantity, cycle-safe layer-5 boundary, and ordinary layer-6 and layer-7c owners; dynamic, type-changing, removal, non-source-subject, secret, chosen, combat, history, and unsupported-keyword forms remain fail-closed, while current cohort identities and lower bounds are derived into the generated measurement artifact."
+      },
+      {
+        "candidate_id": "compiler:typed-public-event-effect-triggers",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reports no eligible carried candidate while the completed optional-effect probe overstates closure by measuring bodies without their event carriers. The corrected integrated probe isolates a positive capability-closed lower bound through the existing typed event-effect owner across immutable public zone, damage, draw, attack, block, Cycling, face-up, and fixed cast-fact occurrences. Current cohort identities and counts are derived into the generated measurement artifact; discard and sacrifice await explicit typed causes from every authoritative producer, while attachment-relative, aggregate, combined, intervening-if, reflexive, chosen, history-relative, targeted-event, tapped-event, counter-placement-event, secret, dynamic-comparison, declaration-replacement, and independently inexact bodies remain fail-closed."
       }
     ]
   },

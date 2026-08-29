@@ -312,6 +312,37 @@ class AttackTransitionModelTests(unittest.TestCase):
         with self.assertRaises(AttackTransitionError):
             AttackKeywordTriggerOccurrence.from_dict(malformed)
 
+    def test_attack_participant_keywords_round_trip_and_fail_closed(self):
+        participant = AttackTransitionParticipant(
+            object_id="attacker-a",
+            logical_object_id="logical:attacker-a",
+            reference="A01",
+            controller="A",
+            is_creature=True,
+            keywords=("Flying", "Defender"),
+        )
+
+        self.assertEqual(("defender", "flying"), participant.keywords)
+        self.assertEqual(
+            participant,
+            AttackTransitionParticipant.from_dict(participant.to_dict()),
+        )
+        malformed = participant.to_dict()
+        malformed["keywords"] = "flying"
+        with self.assertRaises(AttackTransitionError):
+            AttackTransitionParticipant.from_dict(malformed)
+        for keywords in ((None,), ("",), ("Flying", "flying"), "flying"):
+            with self.subTest(keywords=keywords):
+                with self.assertRaises(AttackTransitionError):
+                    AttackTransitionParticipant(
+                        object_id="attacker-a",
+                        logical_object_id="logical:attacker-a",
+                        reference="A01",
+                        controller="A",
+                        is_creature=True,
+                        keywords=keywords,
+                    )
+
     def test_bounded_multiplicity_grid_preserves_every_instance(self):
         for exalted_count in range(4):
             for battle_cry_count in range(4):

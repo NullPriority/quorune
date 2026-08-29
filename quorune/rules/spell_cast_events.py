@@ -12,6 +12,11 @@ class SpellCastEventError(ValueError):
     """A normalized spell-cast event is malformed or unsupported."""
 
 
+_TURN_PHASES = frozenset(
+    {"beginning", "precombat_main", "combat", "postcombat_main", "ending"}
+)
+
+
 def _identity(value: Any, *, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise SpellCastEventError(f"{field} must be a nonempty string")
@@ -75,12 +80,13 @@ class SpellCastEvent:
     has_x_cost: bool | None = None
     has_adventure: bool | None = None
     keywords: tuple[str, ...] | None = None
+    phase: str | None = None
     schema_version: int = 2
 
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3}
+            or self.schema_version not in {1, 2, 3, 4}
         ):
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
@@ -129,6 +135,7 @@ class SpellCastEvent:
             self.has_x_cost,
             self.has_adventure,
             self.keywords,
+            self.phase,
         )
         if self.schema_version in {1, 2}:
             if any(value is not None for value in extended):
@@ -174,6 +181,18 @@ class SpellCastEvent:
             "keywords",
             _terms(self.keywords, field="keywords"),
         )
+        if self.schema_version in {1, 2, 3}:
+            if self.phase is not None:
+                raise SpellCastEventError(
+                    "Legacy cast events cannot carry a phase"
+                )
+        else:
+            phase = _identity(self.phase, field="phase")
+            if phase not in _TURN_PHASES:
+                raise SpellCastEventError(
+                    "Normalized spell-cast phase is unsupported"
+                )
+            object.__setattr__(self, "phase", phase)
 
     def to_context(self) -> dict[str, Any]:
         context = {
@@ -188,7 +207,7 @@ class SpellCastEvent:
             "types": list(self.types),
             "stack": self.stack_ref,
         }
-        if self.schema_version in {2, 3}:
+        if self.schema_version in {2, 3, 4}:
             context.update(
                 {
                     "subtypes": list(self.subtypes),
@@ -196,7 +215,7 @@ class SpellCastEvent:
                     "colors": list(self.colors),
                 }
             )
-        if self.schema_version == 3:
+        if self.schema_version in {3, 4}:
             context.update(
                 {
                     "mana_value": self.mana_value,
@@ -207,6 +226,11 @@ class SpellCastEvent:
                     "has_x_cost": self.has_x_cost,
                     "has_adventure": self.has_adventure,
                     "keywords": list(self.keywords or ()),
+                    **(
+                        {"phase": self.phase}
+                        if self.schema_version == 4
+                        else {}
+                    ),
                 }
             )
         return context
@@ -230,9 +254,9 @@ class SpellCastEvent:
             "types",
             "stack",
         }
-        if version in {2, 3}:
+        if version in {2, 3, 4}:
             expected.update({"subtypes", "supertypes", "colors"})
-        if version == 3:
+        if version in {3, 4}:
             expected.update(
                 {
                     "mana_value",
@@ -245,6 +269,8 @@ class SpellCastEvent:
                     "keywords",
                 }
             )
+            if version == 4:
+                expected.add("phase")
         elif version not in {1, 2}:
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
@@ -293,9 +319,10 @@ class SpellCastEvent:
             has_adventure=value.get("has_adventure"),
             keywords=(
                 tuple(arrays["keywords"])
-                if version == 3
+                if version in {3, 4}
                 else None
             ),
+            phase=value.get("phase"),
         )
 
     @property
