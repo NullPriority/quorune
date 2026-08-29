@@ -1536,6 +1536,15 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_gated_hexproof_and_selected_tap_draw_compose_and_replay",
+      "piece_ids": ["capability.target.protection.hexproof_permanent", "capability.zone.draw.library_to_hand"],
+      "capability_ids": ["target.protection.hexproof_permanent", "zone.draw.library_to_hand"],
+      "interaction_order": 2,
+      "assertion": "Shimmer Dragon's public artifact threshold grants current Hexproof that excludes an opposing target, then its independent selected-tap activation pays with two legal artifacts, draws privately, preserves the source identity and threshold, and replays to the exact authoritative state."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_shroud_gained_after_selection_is_illegal_at_resolution",
       "piece_ids": ["capability.target.protection.shroud_permanent", "capability.target.revalidate_resolution", "mechanic.shroud"],

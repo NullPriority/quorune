@@ -28,7 +28,12 @@ from quorune.continuous_effects import (
 )
 from quorune.model import CardInstance
 from quorune.object_predicate import ObjectQuerySpec
-from quorune.record import checkpoint_envelope, replay_record
+from quorune.oracle_ir import register_generated_programs
+from quorune.record import (
+    authoritative_state_hash,
+    checkpoint_envelope,
+    replay_record,
+)
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.ability_fragments import (
     default_ability_fragment_registry,
@@ -726,6 +731,154 @@ class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):
             (inactive["power"], inactive["toughness"]),
         )
         self.assertNotIn("Flying", inactive.get("keywords", ()))
+
+    def test_query_gated_hexproof_and_selected_tap_draw_compose_and_replay(self):
+        session = make_session(
+            self.db,
+            self.mishra,
+            self.zimone,
+            players=4,
+            seed=122_003_005,
+            auto_pass_empty=False,
+        )
+        keep_all(session)
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        session.commands.clear()
+        session.decisions.clear()
+
+        record = self.db.lookup("Shimmer Dragon")
+        capabilities = load_default_capability_registry()
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="provisional",
+            capability_registry=capabilities,
+            capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True,
+            promote_exact_effect_programs=True,
+        )
+        source = CardInstance(
+            object_id="fixture:shimmer-dragon",
+            ref="A-shimmer-dragon",
+            oracle_id=record.oracle_id,
+            printed_name=record.name,
+            owner="A",
+            controller="A",
+            zone="battlefield",
+            zone_timestamp=engine.state.event_sequence + 1,
+            acquired_control_turn_count=engine.state.players["A"].turns_begun,
+            known_to=list(engine.seats),
+            revealed_to=list(engine.seats),
+        )
+        engine.state.cards[source.object_id] = source
+        engine.state.players["A"].zones["battlefield"].append(source.object_id)
+        artifacts = tuple(
+            self.token(
+                engine,
+                "A",
+                type_line="Token Artifact — Clue",
+                name=f"Shimmer Artifact {index}",
+            )
+            for index in range(4)
+        )
+        opposing_ref = engine.create_token(
+            "B",
+            name="Opposing Target Source",
+            characteristics={"type_line": "Token Artifact"},
+        )[0]
+
+        self.assertIn("Hexproof", engine._effective_card_data(source)["keywords"])
+        schema = engine._public_target_schema(
+            "B",
+            {
+                "zones": ["battlefield"],
+                "categories": ["permanent"],
+                "count": 1,
+            },
+            source_ref=opposing_ref,
+        )
+        self.assertIsNotNone(schema)
+        self.assertNotIn(source.ref, schema["legal_refs"])
+
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.stack.clear()
+        engine.state.players["A"].turns_begun = 1
+        engine.state.priority_passes = []
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.permissions.invalidate_current()
+        engine._grant_priority("A")
+        engine.pump()
+        ability = next(
+            ability
+            for ability in engine._activated_abilities(source)
+            if any(choice.fixed_tap_cost() is not None for choice in ability.choices)
+        )
+        action_id = f"activate:{source.ref}:{ability.ability_id}"
+        action = next(
+            action
+            for action in session.packet("pilot:A", full=True)["decision"]["ctx"][
+                "legal"
+            ]["actions"]
+            if action["id"] == action_id
+        )
+        self.assertEqual(
+            {artifact.ref for artifact in artifacts},
+            set(action["cost_summary"]["choose_cost"][0]["legal_refs"]),
+        )
+        top = engine.state.players["A"].zones["library"][-1]
+        hand_before = len(engine.state.players["A"].zones["hand"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        result = session.act(
+            "pilot:A",
+            {
+                "action_id": action_id,
+                "cost_cards": [artifacts[0].ref, artifacts[1].ref],
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        for _ in range(48):
+            if not engine.state.stack:
+                break
+            principals = session.pending_principals()
+            self.assertTrue(principals)
+            passed = session.act(principals[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        else:
+            self.fail("Selected-tap draw resolution did not converge")
+
+        self.assertTrue(artifacts[0].tapped)
+        self.assertTrue(artifacts[1].tapped)
+        self.assertFalse(artifacts[2].tapped)
+        self.assertFalse(artifacts[3].tapped)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+        self.assertIn(top, engine.state.players["A"].zones["hand"])
+        self.assertIn("Hexproof", engine._effective_card_data(source)["keywords"])
+        self.assertNotIn(
+            engine.state.cards[top].ref,
+            json.dumps(session.packet("pilot:B", full=True), sort_keys=True),
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as directory:
+            record_dir = Path(directory) / "query-gated-draw-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_query_fragment_copy_uses_current_source_and_controller(self):
         session = self.session(122_003_002)

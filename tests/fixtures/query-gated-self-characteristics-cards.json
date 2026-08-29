@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "de1316f2-1cca-4ac4-aead-0fd8b4036d88",
+      "name": "Shimmer Dragon",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\nAs long as you control four or more artifacts, this creature has hexproof. (It can't be the target of spells or abilities your opponents control.)\nTap two untapped artifacts you control: Draw a card.",
+      "power": "5",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["Flying"],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}
