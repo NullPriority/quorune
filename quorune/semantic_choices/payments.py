@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
-from ..replacement.immutable import FrozenMap
+from ..compiler.optional_payment_templates import (
+    OPTIONAL_MANA_PAYMENT_OPERATION,
+)
+from ..replacement.immutable import FrozenMap, freeze_value
 from ..semantic_runtime.intents import (
     CounterStackIntent,
     EliminatePlayersIntent,
@@ -87,6 +90,12 @@ def _completion_requirements(
     effect: Mapping[str, Any],
 ) -> dict[str, int]:
     value = effect.get("_requirements", FrozenMap())
+    if mode == "effect":
+        return _strict_fixed_mana_requirements(
+            value,
+            label="Optional effect payment continuation",
+            require_positive=True,
+        )
     if mode not in {"cumulative", "echo"}:
         return _requirements(value)
     return _strict_fixed_mana_requirements(
@@ -105,6 +114,82 @@ def _payment_choice(response: Mapping[str, Any]) -> bool:
     if type(value) is not bool:
         raise SemanticChoiceError("Optional payment choice must be boolean")
     return value
+
+
+def _validated_paid_effects(
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    query: SemanticChoiceQuery,
+) -> tuple[str, tuple[FrozenMap, ...]]:
+    player = effect.get("player")
+    if (
+        type(player) is not str
+        or player != actor
+        or player not in query.active_seats
+    ):
+        raise SemanticChoiceError(
+            "Optional effect payment must be issued to its active controller"
+        )
+    values = effect.get("effects")
+    if (
+        not isinstance(values, Sequence)
+        or isinstance(values, (str, bytes))
+        or len(values) != 1
+        or not isinstance(values[0], Mapping)
+    ):
+        raise SemanticChoiceError(
+            "Optional effect payment requires one represented instruction"
+        )
+    nested = values[0]
+    if nested.get("op") in {
+        "offer_optional_effect",
+        OPTIONAL_MANA_PAYMENT_OPERATION,
+    }:
+        raise SemanticChoiceError("Optional effect payments cannot nest")
+    from .optional_effect import _represented_effect
+
+    _represented_effect(nested, actor=player, query=query)
+    frozen = freeze_value(nested)
+    if not isinstance(frozen, FrozenMap):
+        raise SemanticChoiceError(
+            "Optional effect payment continuation is malformed"
+        )
+    return player, (frozen,)
+
+
+def _validate_optional_effect_payment(
+    effect: Mapping[str, Any],
+    context: SemanticChoiceContext,
+    *,
+    operation: str,
+) -> None:
+    allowed = {"op", "player", "cost", "effects"}
+    unknown = sorted(set(effect) - allowed)
+    missing = sorted(allowed - set(effect))
+    if missing or unknown:
+        details = []
+        if missing:
+            details.append("missing " + ", ".join(missing))
+        if unknown:
+            details.append("unknown " + ", ".join(unknown))
+        raise SemanticChoiceError(
+            "Malformed optional effect payment: " + "; ".join(details)
+        )
+    if effect.get("op") != operation:
+        raise SemanticChoiceError(
+            "Optional effect payment operation is malformed"
+        )
+    _strict_fixed_mana_requirements(
+        effect.get("cost"),
+        label="Optional effect payment",
+        require_positive=True,
+    )
+    _validated_paid_effects(
+        effect,
+        actor=context.actor,
+        query=context.query,
+    )
 
 
 def _pay_or_sacrifice_details(
@@ -207,6 +292,12 @@ class OptionalPaymentHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> tuple[dict[str, int], str | None, int | None]:
+        if self.mode == "effect":
+            _validate_optional_effect_payment(
+                effect,
+                context,
+                operation=self.operation,
+            )
         if self.mode not in {"cumulative", "echo"}:
             return (
                 _requirements(
@@ -580,6 +671,7 @@ class OptionalPaymentHandler:
                 "counter": "counter.unless.paid",
                 "cumulative": "cumulative_upkeep.paid",
                 "echo": "echo.paid",
+                "effect": "effect.optional_mana.paid",
                 "remora": "mystic_remora.paid",
                 "pact": "pact.paid",
             }[self.mode]
@@ -590,6 +682,7 @@ class OptionalPaymentHandler:
                 ),
                 "cumulative": f"{actor} paid cumulative upkeep for {source_ref}.",
                 "echo": f"{actor} paid Echo for {source_ref}.",
+                "effect": f"{actor} paid for an optional triggered effect.",
                 "remora": f"{actor} paid for Mystic Remora.",
                 "pact": f"{actor} paid the delayed Pact cost.",
             }[self.mode]
@@ -607,7 +700,7 @@ class OptionalPaymentHandler:
                 )
             else:
                 details["stack"] = continuation.stack_ref
-            return SemanticChoiceCompletion(
+            completion = SemanticChoiceCompletion(
                 intents=(
                     PayManaCostIntent(
                         actor=actor,
@@ -621,6 +714,19 @@ class OptionalPaymentHandler:
                     ),
                 )
             )
+            if self.mode == "effect":
+                _player, paid_effects = _validated_paid_effects(
+                    effect,
+                    actor=actor,
+                    query=query,
+                )
+                return SemanticChoiceCompletion(
+                    intents=completion.intents,
+                    prepend_effects=paid_effects,
+                )
+            return completion
+        if self.mode == "effect":
+            return SemanticChoiceCompletion()
         if self.mode == "counter":
             target = str(effect.get("stack") or "")
             if query.stack_object(target) is None:
@@ -684,6 +790,29 @@ class OptionalPaymentHandler:
 
 
 PAYMENT_CHOICE_HANDLERS = (
+    OptionalPaymentHandler(
+        operation=OPTIONAL_MANA_PAYMENT_OPERATION,
+        handler_id="choice.payment.optional-fixed-effect.v1",
+        mode="effect",
+        prompt="Pay the stated cost to apply the triggered effect?",
+        default_cost=FrozenMap(),
+        capability_dependencies=(
+            "effect.choice.optional_fixed_mana_payment",
+        ),
+        continuation_fields=(
+            "player",
+            "cost",
+            "effects",
+            "_choice_actor",
+            "_requirements",
+            "_source_ref",
+            "_source_logical_object_id",
+            "_stack_label",
+        ),
+        test_modules=(
+            "tests.test_fixed_optional_mana_payment_triggers",
+        ),
+    ),
     OptionalPaymentHandler(
         operation="counter_unless_pay",
         handler_id="choice.payment.counter-unless.v1",

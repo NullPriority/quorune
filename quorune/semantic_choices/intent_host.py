@@ -860,7 +860,7 @@ class SemanticChoiceIntentHostMixin:
             intent.actor,
             intent.event_code,
             intent.message,
-            dict(intent.details),
+            thaw_value(intent.details),
             importance=2,
             changed_objects=changed_objects,
             changed_players=[intent.player],

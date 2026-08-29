@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-08-25"
+verified: "2026-08-28"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -197,6 +197,17 @@ identity. Optional costs, permissions, replacements, pay-or-have wording,
 modal or repeated choices, linked or conditional results, multiple effects in
 one optional body, and bodies without an independently exact typed owner remain
 source-spanned residuals.
+
+`compiler/optional_payment_templates.py` owns the distinct triggered clause
+`you may pay <cost>. If you do, <effect>` when the cost is one positive fixed
+ordinary generic, colored, or colorless mana vector and the body is one
+independently exact atomic effect. It preserves body-owned targets at trigger
+placement and delegates the private resolution decision to the existing
+optional-payment handler. Acceptance rechecks affordability and commits the
+canonical mana-payment intent before resuming the typed body; decline commits
+nothing. Variable, hybrid, Phyrexian, snow, zero, restricted, and nonmana
+costs, reflexive `when you do` forms, nested or repeated choices, linked
+results, and multi-effect or independently inexact bodies remain residual.
 
 `compiler/monarch_templates.py` owns the mandatory controller-becomes-monarch
 instruction. Its strict node shape declares only the existing canonical

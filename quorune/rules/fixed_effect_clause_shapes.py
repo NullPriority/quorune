@@ -46,6 +46,7 @@ from .node_capability_shapes import (
     targeted_exile_node_capabilities,
     targeted_return_to_hand_node_capabilities,
     targeted_tap_state_node_capabilities,
+    temporary_declaration_restriction_node_capabilities,
 )
 from .fixed_homogeneous_target_set_capability_shapes import (
     fixed_homogeneous_target_set_node_capabilities,
@@ -68,6 +69,11 @@ from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_MECHANIC,
     OPTIONAL_EFFECT_OPERATION,
 )
+from ..compiler.optional_payment_templates import (
+    FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,
+    FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
+    OPTIONAL_MANA_PAYMENT_OPERATION,
+)
 
 
 FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC = "fixed-effect-clause-sequence"
@@ -88,6 +94,7 @@ _COMPONENT_RESOLVERS = (
     fixed_counter_removal_node_capabilities,
     fixed_player_counter_placement_node_capabilities,
     fixed_target_characteristics_node_capabilities,
+    temporary_declaration_restriction_node_capabilities,
     fixed_damage_node_capabilities,
     fixed_controlled_characteristic_set_node_capabilities,
     mass_destruction_node_capabilities,
@@ -135,6 +142,13 @@ def closed_effect_component_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> tuple[str, ...]:
+    optional_payment = fixed_optional_mana_payment_node_capabilities(
+        effects=effects,
+        target_schema=target_schema,
+        mechanic_ids=mechanics,
+    )
+    if optional_payment:
+        return optional_payment
     optional = fixed_optional_effect_node_capabilities(
         effects=effects,
         target_schema=target_schema,
@@ -177,6 +191,60 @@ def closed_effect_component_capabilities(
             )
         )
     return tuple(sorted(dependencies))
+
+
+def fixed_optional_mana_payment_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, Any]],
+    target_schema: Mapping[str, Any] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    """Recognize one positive fixed-mana wrapper around one closed effect."""
+
+    mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (
+        FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC not in mechanics
+        or len(effects) != 1
+    ):
+        return ()
+    wrapper = effects[0]
+    if (
+        set(wrapper) != {"op", "player", "cost", "effects"}
+        or wrapper.get("op") != OPTIONAL_MANA_PAYMENT_OPERATION
+        or wrapper.get("player") != "$controller"
+    ):
+        return ()
+    cost = wrapper.get("cost")
+    mana_keys = {"GENERIC", "W", "U", "B", "R", "G", "C"}
+    if (
+        not isinstance(cost, Mapping)
+        or set(cost) != mana_keys
+        or any(type(amount) is not int or amount < 0 for amount in cost.values())
+        or not any(cost.values())
+    ):
+        return ()
+    nested = wrapper.get("effects")
+    if (
+        not isinstance(nested, (list, tuple))
+        or len(nested) != 1
+        or not isinstance(nested[0], Mapping)
+        or nested[0].get("op")
+        in {OPTIONAL_EFFECT_OPERATION, OPTIONAL_MANA_PAYMENT_OPERATION}
+    ):
+        return ()
+    references_target = _contains_target_reference(nested[0])
+    if (target_schema is None) == references_target:
+        return ()
+    dependencies = closed_effect_component_capabilities(
+        (nested[0],),
+        target_schema=target_schema,
+        mechanics=mechanics - {FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC},
+    )
+    if not dependencies:
+        return ()
+    return tuple(
+        sorted({FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY, *dependencies})
+    )
 
 
 def fixed_optional_effect_node_capabilities(
@@ -265,5 +333,6 @@ __all__ = [
     "FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC",
     "closed_effect_component_capabilities",
     "fixed_effect_clause_sequence_node_capabilities",
+    "fixed_optional_mana_payment_node_capabilities",
     "fixed_optional_effect_node_capabilities",
 ]
