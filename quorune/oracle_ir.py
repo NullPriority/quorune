@@ -45,6 +45,7 @@ from .compiler.draw_templates import (
 from .compiler.delayed_draw_templates import (
     fixed_next_turn_upkeep_draw_effect_template,
 )
+from .compiler.damage_templates import source_pronoun_damage_effect_template
 from .compiler.fixed_controller_effect_sequences import (
     fixed_controller_effect_sequence_template,
 )
@@ -130,7 +131,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v139"
+ORACLE_COMPILER_VERSION = "oracle-ir-v140"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -813,6 +814,25 @@ def _keyword_nodes(
     return tuple(nodes)
 
 
+def _source_self_zone_trigger_match(
+    material_line: str,
+    *,
+    card_name: str,
+) -> re.Match[str] | None:
+    """Bind one mandatory source-self public zone-change trigger."""
+
+    source_name = SourceReferenceSpec(card_name).regex_pattern
+    return re.fullmatch(
+        rf"(?:when|whenever) "
+        rf"(?P<subject>this (?:artifact|aura|card|creature|"
+        rf"enchantment|equipment|land|permanent)|{source_name}) "
+        rf"(?P<event>enters|dies|leaves the battlefield), "
+        rf"(?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+
+
 def _trigger_node(
     *,
     node_id: str,
@@ -830,15 +850,9 @@ def _trigger_node(
     material_line = _without_parenthetical_reminder(line)
     if not _TRIGGER_PREFIX.match(material_line):
         return None
-    source_name = SourceReferenceSpec(card_name).regex_pattern
-    trigger = re.fullmatch(
-        rf"(?:when|whenever) "
-        rf"(?P<subject>this (?:artifact|aura|card|creature|"
-        rf"enchantment|equipment|land|permanent)|{source_name}) "
-        rf"(?P<event>enters|dies|leaves the battlefield), "
-        rf"(?P<body>.+)",
+    trigger = _source_self_zone_trigger_match(
         material_line,
-        re.IGNORECASE,
+        card_name=card_name,
     )
     prevention_trigger = prevention_trigger_effect_template(
         material_line,
@@ -862,13 +876,21 @@ def _trigger_node(
         event = "damage.prevented"
         recognized = True
     elif trigger:
+        event_phrase = trigger.group("event").casefold()
         explored = single_explore_effect_template(
             trigger.group("body"),
             allow_source_pronoun=True,
         )
+        source_damage = (
+            source_pronoun_damage_effect_template(trigger.group("body"))
+            if event_phrase in {"enters", "dies"}
+            else None
+        )
         template, effects, target_schema, mechanics = (
             explored.compiled()
             if explored is not None
+            else source_damage.compiled()
+            if source_damage is not None
             else effect_template(
                 trigger.group("body"),
                 card_name=card_name,
@@ -878,7 +900,7 @@ def _trigger_node(
             "enters": "permanent.enter.self",
             "dies": "creature.dies.self",
             "leaves the battlefield": "permanent.leave.self",
-        }[trigger.group("event").casefold()]
+        }[event_phrase]
         recognized = True
     dependencies = (
         "cr-603-handling-triggered-abilities",

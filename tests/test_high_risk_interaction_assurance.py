@@ -9,6 +9,7 @@ from high_risk_interaction_support import (
     DESTROY_DAMAGE_PREVENTION_PAIR,
     DESTROY_REGENERATION_PAIR,
     FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
+    FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
     FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
     IMPULSE_ACCESS_AND_CHOICE_PAIRS,
     PUBLIC_SET_AND_CHOICE_PAIRS,
@@ -34,7 +35,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
     def test_all_declared_residual_pairs_fail_closed_at_runtime_boundary(
         self,
     ) -> None:
-        self.assertEqual(123, len(ALL_HIGH_RISK_BOUNDARY_PAIRS))
+        self.assertEqual(125, len(ALL_HIGH_RISK_BOUNDARY_PAIRS))
         assert_high_risk_boundary_pairs(
             self,
             ALL_HIGH_RISK_BOUNDARY_PAIRS,
@@ -174,6 +175,19 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
+            database=self.db,
+        )
+
+    def test_fixed_set_damage_with_entry_replacement_residuals_fails_closed(
+        self,
+    ) -> None:
+        self.assertEqual(
+            2,
+            len(FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS),
+        )
+        assert_high_risk_boundary_pairs(
+            self,
+            FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
             database=self.db,
         )
 

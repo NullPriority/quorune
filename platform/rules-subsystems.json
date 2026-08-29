@@ -916,6 +916,46 @@
           "measurement_probe_id": null
         },
         {
+          "bundle_id": "bundle:fixed-source-pronoun-damage-triggers",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:damage.amount.positive",
+            "capability:trigger.event.normalized_zone_change",
+            "capability:trigger.placement.apnap",
+            "component:quorune.compiler.damage_templates.source_pronoun_damage_effect_template",
+            "component:quorune.oracle_ir._trigger_node"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-positive-damage-amount",
+            "source-self-entry-or-death-event",
+            "typed-fixed-damage-recipient"
+          ],
+          "shared_dependencies": [
+            "damage.amount.positive",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "fixed source-pronoun damage bodies on mandatory source-self entry or death triggers through the existing zone-event and damage owners",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing fixed-damage owner from spell and activated carriers into reusable source-self zone triggers without introducing another event producer, target contract, or damage resolver.",
+          "explicit_exclusions": [
+            "compound riders, linked results, and enchanted-object references",
+            "conditional, optional, intervening-if, reflexive, delayed, and leaves-the-battlefield triggers",
+            "source damage to its controller and unsupported target-controller or characteristic predicates",
+            "variable, divided, random, multiple, and optional target damage"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-source-pronoun-damage-trigger-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-token-creation-contexts",
           "member_family_ids": [
             "activated_effect:create-token",
@@ -955,19 +995,20 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v139-typed-spell-cast-fact-predicates",
-      "compiler_version": "oracle-ir-v139",
-      "bundle_id": "bundle:typed-spell-cast-fact-predicates",
-      "candidate_ids": ["compiler:typed-spell-cast-fact-predicates"],
+      "transition_id": "oracle-ir-v140-fixed-source-pronoun-damage-triggers",
+      "compiler_version": "oracle-ir-v140",
+      "bundle_id": "bundle:fixed-source-pronoun-damage-triggers",
+      "candidate_ids": ["compiler:fixed-source-pronoun-damage-triggers"],
       "family_ids": [
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
         "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_spell_cast"
+        "damage.amount.positive",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
       ],
-      "measurement_id": "measurement:typed-spell-cast-fact-predicates",
+      "measurement_id": "measurement:fixed-source-pronoun-damage-triggers",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1421,6 +1462,11 @@
         "candidate_id": "compiler:typed-spell-cast-fact-predicates",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired strict source-self lifecycle, exact fixed public-state conditions, and already-supported effect-sequence slices below every harvest floor. The selected spell-cast predicate family instead composes one versioned normalized cast event with the existing typed event-effect owner across source identity, caster history, turn relation, public origin and ownership, fixed payment facts, fixed mana-value lower bounds, Historic, fixed-color permanents, and Adventure. Current cohort identities and conservative complete-card lower bounds are derived into the generated measurement artifact; chosen, target-relative, cast-or-copy, linked-name, mixed-event, unsupported payment-history, and dynamic comparison forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-source-pronoun-damage-triggers",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired fixed cost reductions and direct-return generalization because their coherent typed slices stayed below every harvest floor. The selected source-self trigger family instead composes the existing normalized zone-change and APNAP owners with the already trusted fixed-damage effect and target contracts. Current cohort identities and conservative lower bounds are derived into the generated measurement artifact; conditional, optional, variable, divided, random, multiple-target, compound, attachment-relative, leaves-the-battlefield, and unsupported recipient forms remain fail-closed."
       }
     ]
   },

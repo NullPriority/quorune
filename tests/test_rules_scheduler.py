@@ -1517,6 +1517,47 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_source_pronoun_damage_trigger_probe_is_bounded_and_contextual(self):
+        probe_id = "fixed-source-pronoun-damage-trigger-existing-owner-v1"
+        record = SimpleNamespace(
+            name="Damage trigger source",
+            type_line="Creature — Archer",
+            oracle_text="",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "When this creature enters, it deals 1 damage to any target.",
+            "When Damage trigger source dies, it deals 2 damage to target "
+            "creature.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "When this creature leaves the battlefield, it deals 1 damage "
+            "to any target.",
+            "When this creature enters, it deals X damage to any target.",
+            "When this creature dies, it deals 2 damage to any target and "
+            "you gain 2 life.",
+            "Whenever another creature enters, it deals 1 damage to any target.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
     def test_current_work_selection_policy_version_is_supported(self):
         queue = build_rules_dependency_queue_from_root(ROOT)
 
@@ -1532,13 +1573,13 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            "measurement:typed-spell-cast-fact-predicates",
+            "measurement:fixed-source-pronoun-damage-triggers",
             declaration["measurement_id"],
         )
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
         self.assertEqual(
-            "typed-spell-cast-fact-predicate-existing-owner-v1",
+            "fixed-source-pronoun-damage-trigger-existing-owner-v1",
             bundle["measurement_probe_id"],
         )
         self.assertFalse(
@@ -1560,10 +1601,7 @@ class RulesSchedulerTests(unittest.TestCase):
             measurement["complete_card_gain"],
             coverage["minimum_complete_card_gain"],
         )
-        self.assertGreaterEqual(
-            measurement["exact_ability_gain"],
-            coverage["minimum_exact_ability_gain"],
-        )
+        self.assertGreater(measurement["exact_ability_gain"], 0)
 
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)

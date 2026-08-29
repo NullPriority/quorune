@@ -202,6 +202,11 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         architecture = next(
             spec for spec in specs if spec.id == "architecture-audit"
         )
+        compact_dependencies = next(
+            spec
+            for spec in specs
+            if spec.id == "compact-ci-card-dependencies"
+        )
         compiler_corpus = next(
             spec for spec in specs if spec.id == "compiler-corpus-coverage"
         )
@@ -212,6 +217,8 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         self.assertIn("rules-source", architecture.input_groups)
         self.assertIn("rules-source", compiler_corpus.input_groups)
         self.assertIn("tests-source", architecture.input_groups)
+        self.assertIn("tests/**/*.json", groups.patterns("tests-source"))
+        self.assertIn("tests-source", compact_dependencies.input_groups)
         self.assertIn("web/tests/**/*.ts", architecture.input_paths)
 
     def test_automatic_plan_inherits_unchanged_owner_without_generation(self):
