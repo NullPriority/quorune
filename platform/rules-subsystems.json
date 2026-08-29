@@ -517,6 +517,50 @@
           "measurement_probe_id": "fixed-public-state-characteristic-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-battlefield-query-characteristics",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.ability.fixed_query_keyword_grant",
+            "capability:continuous.power_toughness.fixed_anthem",
+            "component:quorune.compiler.continuous_templates.fixed_power_toughness_anthem_handler",
+            "component:quorune.compiler.continuous_templates.fixed_query_characteristic_grant_handler",
+            "component:quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler",
+            "component:quorune.continuous_effects.evaluate_continuous_effects",
+            "component:quorune.object_predicate.ObjectQuerySpec",
+            "component:quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicGrantHandler",
+            "component:quorune.semantic_runtime.continuous_components.FixedQueryKeywordGrantHandler",
+            "component:quorune.semantic_runtime.continuous_components.FixedQueryPowerToughnessAnthemHandler"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-integer-power-toughness-or-supported-keyword-modifier",
+            "fixed-source-controller-opponent-or-global-relation",
+            "fixed-type-subtype-color-cardinality-token-or-named-counter-query"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_keyword_grant",
+            "continuous.power_toughness.fixed_anthem"
+          ],
+          "shared_grammar": "fixed layer-6 and layer-7c static characteristics over one canonical live battlefield ObjectQuerySpec across source-controller, source-opponent, and global relations",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes a conservative 50-card lower bound through the existing static characteristic owners while adding reusable opponent exclusion, multicolor cardinality, subtype-token, global other-object, and live named-counter query shapes.",
+          "explicit_exclusions": [
+            "ability-presence or ability-removal applicability until one shared layer-6 query owns additions and removals",
+            "base-setting, type-changing, color-changing, ability-removal, quoted-text, Protection, Ward, and unsupported-keyword modifiers",
+            "combat-state, attachment, modified, chosen, conditional, hidden-zone, and historical predicates",
+            "dynamic characteristic counts or amounts outside the cycle-safe layer-5 boundary",
+            "multi-subtype unions, color exclusion, source-relative object pairs, and variable quantities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-battlefield-query-characteristics-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:typed-query-self-characteristics",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies"
@@ -1034,20 +1078,18 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v141-fixed-trigger-mana-payments",
-      "compiler_version": "oracle-ir-v141",
-      "bundle_id": "bundle:fixed-trigger-mana-payments",
-      "candidate_ids": ["compiler:fixed-trigger-mana-payments"],
+      "transition_id": "oracle-ir-v142-fixed-battlefield-query-characteristics",
+      "compiler_version": "oracle-ir-v142",
+      "bundle_id": "bundle:fixed-battlefield-query-characteristics",
+      "candidate_ids": ["compiler:fixed-battlefield-query-characteristics"],
       "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "effect.choice.optional_fixed_mana_payment",
-        "trigger.effect.fixed_event",
-        "trigger.placement.apnap"
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.power_toughness.fixed_anthem"
       ],
-      "measurement_id": "measurement:fixed-trigger-mana-payments",
+      "measurement_id": "measurement:fixed-battlefield-query-characteristics",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1511,6 +1553,11 @@
         "candidate_id": "compiler:fixed-trigger-mana-payments",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A bounded integrated probe isolates one reusable positive fixed ordinary-mana 'you may pay ... if you do' wrapper across normalized scheduled, cast, entry, attack, damage, life, draw, and source-zone triggers and crosses the normal complete-card harvest floor through the existing private choice, canonical mana payment, APNAP placement, target revalidation, and typed effect owners. Variable, hybrid, Phyrexian, snow, nonmana, zero, reflexive, nested, repeated, linked, multi-effect, and independently inexact bodies remain fail-closed; current cohort identities and counts are derived into the generated measurement artifact."
+      },
+      {
+        "candidate_id": "compiler:fixed-battlefield-query-characteristics",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired damage prevention, Saga carriers, top-library permissions, and heterogeneous dynamic cost reductions below the normal harvest floor. The selected integrated static-characteristic probe instead measures a conservative 50 capability-closed Commander-card lower bound across fixed global creature sets, source-controller multicolored and subtype-token sets, source-opponent creature sets, and source-controller creatures with a named +1/+1 counter. Both layer-6 keyword additions and layer-7c integer modifiers use one canonical ObjectQuerySpec and the existing static component owners. Ability-presence, dynamic counts or amounts, combat, attachment, modified, chosen, conditional, hidden-zone, base-setting, type or color changes, ability removal, quoted text, Protection, Ward, unsupported keywords, and other open predicates remain fail-closed; current cohort identities and counts are derived into the generated measurement artifact."
       }
     ]
   },

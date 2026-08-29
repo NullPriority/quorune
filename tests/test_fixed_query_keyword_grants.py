@@ -7,7 +7,12 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import keep_all, load_assets, make_session
+from common import (
+    change_permanent_counter,
+    keep_all,
+    load_assets,
+    make_session,
+)
 from quorune.aerial_blocking import aerial_block_verdict
 from quorune.attachments import attach_objects
 from quorune.card_programs import compile_card_program
@@ -31,10 +36,18 @@ from quorune.defender import defender_prohibits_attack
 from quorune.compiler.continuous_templates import (
     fixed_query_characteristic_grant_handler,
     fixed_query_keyword_grant_handler,
+    fixed_power_toughness_anthem_handler,
 )
 from quorune.continuous_effects import (
     CharacteristicState,
+    ContinuousEffect,
+    ContinuousOperation,
+    Layer,
     evaluate_continuous_effects,
+)
+from quorune.counter_placement import (
+    CounterPlacementRequest,
+    place_counters,
 )
 from quorune.haste import (
     is_summoning_sick,
@@ -63,6 +76,7 @@ CHARACTERISTIC_TEMPLATE_ID = (
     "continuous-fixed-query-characteristic-grant-v1"
 )
 BASE_CAPABILITY = "continuous.ability.fixed_query_keyword_grant"
+ANTHEM_HANDLER_ID = "continuous.anthem.fixed-query.v2"
 SOURCE_NAMES = (
     "Aggressive Mammoth",
     "Cloudshredder Sliver",
@@ -71,6 +85,58 @@ SOURCE_NAMES = (
     "Mass Hysteria",
     "Rage Reflection",
     "Serra's Blessing",
+)
+COMPLETE_CARD_LOWER_BOUND = (
+    "Abzan Battle Priest",
+    "Abzan Falconer",
+    "Ainok Bond-Kin",
+    "Anaba Spirit Crafter",
+    "Aven Brigadier",
+    "Azorius Skyguard",
+    "Bad Moon",
+    "Blade Sliver",
+    "Bonesplitter Sliver",
+    "Bushmaster, Coiled Henchman",
+    "Crowned Ceratok",
+    "Cumber Stone",
+    "Dampening Pulse",
+    "Deranged Hermit",
+    "Dread of Night",
+    "Dreadhorde Twins",
+    "Duskshell Crawler",
+    "Elesh Norn, Grand Cenobite",
+    "Eternal Skylord",
+    "Exava, Rakdos Blood Witch",
+    "Field Marshal",
+    "Glass of the Guildpact",
+    "Gleaming Overseer",
+    "Gnarlid Colony",
+    "Hagra Constrictor",
+    "Haunter of Nightveil",
+    "Kaervek, the Spiteful",
+    "Longshot Squad",
+    "Maze Abomination",
+    "Maze Behemoth",
+    "Maze Glider",
+    "Maze Rusher",
+    "Maze Sentinel",
+    "Mer-Ek Nightblade",
+    "Might Sliver",
+    "Muscle Sliver",
+    "Myr Matrix",
+    "Night of Souls' Betrayal",
+    "Plated Sliver",
+    "Pridemalkin",
+    "Sapphire Drake",
+    "Sinew Sliver",
+    "Skatewing Spy",
+    "Stronghold Taskmaster",
+    "Trollbred Guardian",
+    "Tuskguard Captain",
+    "Urborg Shambler",
+    "Vizier of the Scorpion",
+    "Watcher Sliver",
+    "Zuberi, Golden Feather",
 )
 
 
@@ -385,12 +451,157 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
         registry.validate(descriptor)
         self.assertIsNotNone(fixed_query_characteristic_grant_handler(text))
 
+    def test_fixed_battlefield_query_extensions_share_one_canonical_condition(
+        self,
+    ):
+        cases = (
+            (
+                "All Sliver creatures get +1/+1.",
+                ANTHEM_HANDLER_ID,
+                "any",
+                False,
+                {"subtypes_all": ["sliver"]},
+                {"power": 1, "toughness": 1},
+            ),
+            (
+                "Other Soldier creatures get +1/+1 and have first strike.",
+                CHARACTERISTIC_HANDLER_ID,
+                "any",
+                True,
+                {"subtypes_all": ["soldier"]},
+                {
+                    "add_abilities": ["First Strike"],
+                    "power": 1,
+                    "toughness": 1,
+                },
+            ),
+            (
+                "Creatures your opponents control get -1/-0.",
+                ANTHEM_HANDLER_ID,
+                "source_opponents",
+                False,
+                {},
+                {"power": -1, "toughness": 0},
+            ),
+            (
+                "Multicolored creatures you control have flying.",
+                HANDLER_ID,
+                "source_controller",
+                False,
+                {"minimum_color_count": 2},
+                {"add_abilities": ["Flying"]},
+            ),
+            (
+                "Zombie tokens you control have hexproof and menace.",
+                HANDLER_ID,
+                "source_controller",
+                False,
+                {"subtypes_all": ["zombie"], "token": True},
+                {"add_abilities": ["Hexproof", "Menace"]},
+            ),
+            (
+                (
+                    "Each other creature you control with a +1/+1 counter "
+                    "on it has haste."
+                ),
+                HANDLER_ID,
+                "source_controller",
+                True,
+                {
+                    "state_predicate": {
+                        "entered_this_turn": False,
+                        "tapped": None,
+                        "counter_name": "+1/+1",
+                        "minimum_counter_count": 1,
+                    }
+                },
+                {"add_abilities": ["Haste"]},
+            ),
+        )
+        registry = default_continuous_effect_component_registry()
+        for index, (
+            text,
+            handler_id,
+            relation,
+            exclude_source,
+            predicate_fields,
+            modifier,
+        ) in enumerate(cases):
+            with self.subTest(text=text):
+                program = self.compile(
+                    _permanent(
+                        text,
+                        suffix=119_000_950 + index,
+                        name=f"Fixed Battlefield Query {index}",
+                    )
+                )
+                self.assertEqual((), program.residuals)
+                descriptor = next(
+                    value
+                    for ability in program.abilities
+                    for value in ability.handlers
+                    if value.get("handler_id") == handler_id
+                )
+                registry.validate(descriptor)
+                condition = descriptor["condition"]
+                self.assertEqual(relation, condition["target_controller"])
+                self.assertEqual(exclude_source, condition["exclude_source"])
+                self.assertEqual(modifier, descriptor["modifier"])
+                self.assertEqual(
+                    ["creature"], condition["predicate"]["types_all"]
+                )
+                for field, value in predicate_fields.items():
+                    self.assertEqual(value, condition["predicate"][field])
+
+    def test_multicolor_query_observes_the_cycle_safe_layer_five_boundary(self):
+        compiled = fixed_query_keyword_grant_handler(
+            "Multicolored creatures you control have flying."
+        )
+        self.assertIsNotNone(compiled)
+        query_effects = default_continuous_effect_component_registry().lower(
+            compiled[1],
+            ContinuousEffectSourceContext(
+                source_object_id="multicolor-source",
+                source_ref="MULTICOLOR-SOURCE",
+                source_controller="A",
+                source_timestamp=2,
+                component_id="multicolor:0",
+            ),
+        )
+        add_red = ContinuousEffect(
+            effect_id="add-red-before-query",
+            source_id="color-source",
+            layer=Layer.COLOR,
+            sublayer="5",
+            timestamp=1,
+            operations=(ContinuousOperation("add_colors", ["R"]),),
+        )
+        evaluated = evaluate_continuous_effects(
+            CharacteristicState(
+                name="Layer Five Witness",
+                controller="A",
+                card_types={"Creature"},
+                colors={"U"},
+                power=2,
+                toughness=2,
+            ),
+            (add_red, *query_effects),
+            context={
+                "object_id": "layer-five-witness",
+                "logical_object_id": "layer-five-witness@0",
+                "ref": "LAYER-FIVE-WITNESS",
+                "zone": "battlefield",
+                "owner": "A",
+                "controller": "A",
+            },
+        )
+        self.assertEqual(["R", "U"], evaluated.characteristics["colors"])
+        self.assertIn("Flying", evaluated.characteristics["abilities"])
+
     def test_open_or_unsupported_queries_remain_material_residuals(self):
         unsupported = (
-            "Creatures your opponents control have haste.",
             "Attacking creatures you control have flying.",
-            "Multicolored creatures you control have vigilance.",
-            "Each creature with a +1/+1 counter on it has trample.",
+            "Creatures with a +1/+1 counter on them have trample.",
             "Creatures you control have ward {2}.",
             "Creatures you control have protection from red.",
             "Artifact permanents you control have flying.",
@@ -451,7 +662,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
         for path, value in (
             (("unknown",), True),
             (("schema_version",), True),
-            (("condition", "target_controller"), "source_opponents"),
+            (("condition", "target_controller"), "all_opponents"),
             (("condition", "exclude_source"), 1),
             (("condition", "predicate", "controller"), "A"),
             (("modifier", "add_abilities"), []),
@@ -617,6 +828,7 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
         subtype: str = "Test",
         power: str = "5",
         toughness: str = "5",
+        colors: tuple[str, ...] = (),
     ) -> CardInstance:
         ref = engine.create_token(
             controller,
@@ -626,6 +838,7 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
                 "power": power,
                 "toughness": toughness,
                 "keywords": [],
+                "colors": list(colors),
             },
             reason="fixed-query keyword-grant assurance",
         )[0]
@@ -634,6 +847,208 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
             controller
         ].turns_begun
         return card
+
+    def test_measured_50_card_lower_bound_is_capability_closed(self):
+        self.assertEqual(50, len(COMPLETE_CARD_LOWER_BOUND))
+        expected_handlers = {
+            ANTHEM_HANDLER_ID,
+            CHARACTERISTIC_HANDLER_ID,
+            HANDLER_ID,
+        }
+        capabilities = load_default_capability_registry()
+        for name in COMPLETE_CARD_LOWER_BOUND:
+            with self.subTest(name=name):
+                record = self.db.lookup(name, fuzzy=False)
+                program = compile_card_program(
+                    self.db,
+                    record,
+                    capability_registry=capabilities,
+                    capability_profile="commander_review",
+                    trust_level="provisional",
+                )
+                self.assertEqual((), program.residuals)
+                self.assertTrue(
+                    any(
+                        descriptor.get("handler_id") in expected_handlers
+                        for ability in program.abilities
+                        for descriptor in ability.handlers
+                    )
+                )
+
+    def test_live_fixed_queries_track_relations_source_identity_and_phasing(self):
+        session = self.session(119_100_006)
+        engine = session.engine
+        source, program, registration = self.add_registered_card(
+            engine,
+            name="Elesh Norn, Grand Cenobite",
+            ref="ELESH-NORN",
+        )
+        self.assertEqual((), program.residuals)
+        self.assertEqual(2, registration["runtime_handlers_promoted"])
+        own = self.creature(engine, "A", "Own Anthem Witness")
+        opponent_b = self.creature(engine, "B", "Opponent B Witness")
+        opponent_c = self.creature(engine, "C", "Opponent C Witness")
+
+        def power(card: CardInstance) -> int:
+            return int(engine._effective_card_data(card)["power"])
+
+        self.assertEqual(7, power(own))
+        self.assertEqual(3, power(opponent_b))
+        self.assertEqual(3, power(opponent_c))
+        self.assertEqual(4, power(source))
+
+        source.phased_out = True
+        self.assertEqual(5, power(own))
+        self.assertEqual(5, power(opponent_b))
+        self.assertEqual(5, power(opponent_c))
+        source.phased_out = False
+
+        engine.move_card(
+            source.object_id,
+            "graveyard",
+            reason="fixed battlefield-query source-presence assurance",
+        )
+        self.assertEqual(5, power(own))
+        self.assertEqual(5, power(opponent_b))
+        self.assertEqual(5, power(opponent_c))
+
+    def test_counter_multicolor_and_token_queries_use_live_public_state_and_replay(
+        self,
+    ):
+        session = self.session(119_100_007)
+        engine = session.engine
+        sapphire, sapphire_program, _ = self.add_registered_card(
+            engine,
+            name="Sapphire Drake",
+            ref="SAPPHIRE-DRAKE",
+        )
+        glider, glider_program, _ = self.add_registered_card(
+            engine,
+            name="Maze Glider",
+            ref="MAZE-GLIDER",
+        )
+        overseer, overseer_program, _ = self.add_registered_card(
+            engine,
+            name="Gleaming Overseer",
+            ref="GLEAMING-OVERSEER",
+        )
+        twins, twins_program, _ = self.add_registered_card(
+            engine,
+            name="Dreadhorde Twins",
+            ref="DREADHORDE-TWINS",
+        )
+        for program in (
+            sapphire_program,
+            glider_program,
+            overseer_program,
+            twins_program,
+        ):
+            self.assertEqual((), program.residuals)
+
+        counter_witness = self.creature(engine, "A", "Counter Witness")
+        opposing_counter_witness = self.creature(
+            engine, "B", "Opposing Counter Witness"
+        )
+        multicolor_witness = self.creature(
+            engine,
+            "A",
+            "Multicolor Witness",
+            colors=("R", "U"),
+        )
+        zombie_token = self.creature(
+            engine,
+            "A",
+            "Zombie Token Witness",
+            subtype="Zombie",
+        )
+
+        self.assertNotIn("flying", engine._combat_keywords(counter_witness))
+        place_counters(
+            engine,
+            (
+                CounterPlacementRequest(
+                    subject_kind="permanent",
+                    subject_id=counter_witness.object_id,
+                    counter_name="+1/+1",
+                    amount=1,
+                    placing_player="A",
+                    source_ref=sapphire.ref,
+                ),
+                CounterPlacementRequest(
+                    subject_kind="permanent",
+                    subject_id=opposing_counter_witness.object_id,
+                    counter_name="+1/+1",
+                    amount=1,
+                    placing_player="B",
+                    source_ref=sapphire.ref,
+                ),
+            ),
+            reason="fixed battlefield-query counter assurance",
+        )
+        self.assertIn("flying", engine._combat_keywords(counter_witness))
+        self.assertNotIn(
+            "flying", engine._combat_keywords(opposing_counter_witness)
+        )
+        change_permanent_counter(engine, counter_witness, "+1/+1", -1)
+        self.assertNotIn("flying", engine._combat_keywords(counter_witness))
+
+        self.assertIn("flying", engine._combat_keywords(multicolor_witness))
+
+        self.assertGreaterEqual(
+            engine._combat_keywords(zombie_token),
+            {"hexproof", "menace", "trample"},
+        )
+        self.assertNotIn("trample", engine._combat_keywords(twins))
+
+        glider.phased_out = True
+        self.assertNotIn("flying", engine._combat_keywords(multicolor_witness))
+        glider.phased_out = False
+
+        place_counters(
+            engine,
+            (
+                CounterPlacementRequest(
+                    subject_kind="permanent",
+                    subject_id=counter_witness.object_id,
+                    counter_name="+1/+1",
+                    amount=1,
+                    placing_player="A",
+                    source_ref=sapphire.ref,
+                ),
+            ),
+            reason="fixed battlefield-query replay assurance",
+        )
+        self.assertIn("flying", engine._combat_keywords(counter_witness))
+        self.assertIn("flying", engine._combat_keywords(multicolor_witness))
+        self.assertNotIn("hexproof", engine._combat_keywords(overseer))
+
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.started = True
+        engine._grant_priority("D")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act(
+            "pilot:D",
+            {
+                "action_id": "concede",
+                "choices": {"confirm_concede": True},
+                "plan": "REPLAY_FIXED_BATTLEFIELD_QUERY_CHARACTERISTICS",
+                "reason": "Verify live typed battlefield queries from checkpoint.",
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "fixed-battlefield-query"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
 
     def test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners(
         self,

@@ -124,6 +124,7 @@ def _matches(
         tapped=bool(context.get("tapped", False)),
         phased_out=bool(context.get("phased_out", False)),
         known_to_actor=bool(context.get("known_to_actor", True)),
+        counters=context.get("counters", {}),
     )
     return object_matches_query(row, condition)
 

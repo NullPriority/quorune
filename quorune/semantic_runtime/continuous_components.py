@@ -56,6 +56,7 @@ class FixedPowerToughnessAnthemNode:
 
 @dataclass(frozen=True, slots=True)
 class FixedQueryPowerToughnessAnthemNode:
+    target_controller: str
     predicate: ObjectQuerySpec
     exclude_source: bool
     power: int
@@ -140,6 +141,32 @@ class ContinuousEffectSourceContext:
             raise SemanticNodeError(
                 "A continuous component public-state snapshot must be typed"
             )
+
+
+def _fixed_query_effect_predicate(
+    predicate: ObjectQuerySpec,
+    *,
+    target_controller: str,
+    exclude_source: bool,
+    context: ContinuousEffectSourceContext,
+) -> ObjectQuerySpec:
+    """Bind one validated controller relation to a canonical live query."""
+
+    return replace(
+        predicate,
+        zones=("battlefield",),
+        controller=(
+            context.source_controller
+            if target_controller == "source_controller"
+            else None
+        ),
+        excluded_controllers=(
+            (context.source_controller,)
+            if target_controller == "source_opponents"
+            else ()
+        ),
+        exclude_ref=(context.source_ref if exclude_source else None),
+    )
 
 
 class ContinuousEffectComponentHandler(Protocol):
@@ -339,9 +366,13 @@ class FixedQueryPowerToughnessAnthemHandler:
             {"target_controller", "predicate", "exclude_source"},
             field="runtime handler condition",
         )
-        if condition["target_controller"] != "source_controller":
+        if condition["target_controller"] not in {
+            "any",
+            "source_controller",
+            "source_opponents",
+        }:
             raise SemanticNodeError(
-                "fixed query anthem requires source-controller targets"
+                "fixed query anthem requires a closed controller relation"
             )
         if type(condition["exclude_source"]) is not bool:
             raise SemanticNodeError(
@@ -354,6 +385,7 @@ class FixedQueryPowerToughnessAnthemHandler:
         if (
             predicate.owner is not None
             or predicate.controller is not None
+            or predicate.excluded_controllers
             or predicate.exclude_ref is not None
             or predicate.known_to_actor is not None
         ):
@@ -389,6 +421,7 @@ class FixedQueryPowerToughnessAnthemHandler:
                 "fixed query anthem must modify power or toughness"
             )
         return FixedQueryPowerToughnessAnthemNode(
+            target_controller=condition["target_controller"],
             predicate=predicate,
             exclude_source=condition["exclude_source"],
             power=power,
@@ -401,11 +434,11 @@ class FixedQueryPowerToughnessAnthemHandler:
         context: ContinuousEffectSourceContext,
     ) -> tuple[ContinuousEffect, ...]:
         node = self.validate(descriptor)
-        predicate = replace(
+        predicate = _fixed_query_effect_predicate(
             node.predicate,
-            zones=("battlefield",),
-            controller=context.source_controller,
-            exclude_ref=(context.source_ref if node.exclude_source else None),
+            target_controller=node.target_controller,
+            exclude_source=node.exclude_source,
+            context=context,
         )
         return (
             ContinuousEffect(
@@ -737,6 +770,7 @@ class FixedQueryKeywordGrantHandler:
         if condition["target_controller"] not in {
             "any",
             "source_controller",
+            "source_opponents",
         }:
             raise SemanticNodeError(
                 "fixed query keyword grants require a closed controller relation"
@@ -752,6 +786,7 @@ class FixedQueryKeywordGrantHandler:
         if (
             predicate.owner is not None
             or predicate.controller is not None
+            or predicate.excluded_controllers
             or predicate.exclude_ref is not None
             or predicate.known_to_actor is not None
         ):
@@ -799,15 +834,11 @@ class FixedQueryKeywordGrantHandler:
         context: ContinuousEffectSourceContext,
     ) -> tuple[ContinuousEffect, ...]:
         node = self.validate(descriptor)
-        predicate = replace(
+        predicate = _fixed_query_effect_predicate(
             node.predicate,
-            zones=("battlefield",),
-            controller=(
-                context.source_controller
-                if node.target_controller == "source_controller"
-                else None
-            ),
-            exclude_ref=(context.source_ref if node.exclude_source else None),
+            target_controller=node.target_controller,
+            exclude_source=node.exclude_source,
+            context=context,
         )
         return (
             ContinuousEffect(
@@ -917,11 +948,11 @@ class FixedQueryCharacteristicGrantHandler:
         context: ContinuousEffectSourceContext,
     ) -> tuple[ContinuousEffect, ...]:
         node = self.validate(descriptor)
-        predicate = replace(
+        predicate = _fixed_query_effect_predicate(
             node.predicate,
-            zones=("battlefield",),
-            controller=context.source_controller,
-            exclude_ref=(context.source_ref if node.exclude_source else None),
+            target_controller=node.target_controller,
+            exclude_source=node.exclude_source,
+            context=context,
         )
         common = {
             "source_id": context.source_object_id,

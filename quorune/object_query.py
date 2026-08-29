@@ -149,6 +149,7 @@ def object_matches_query(
         (not spec.zones or row.zone in spec.zones)
         and (spec.owner is None or row.owner == spec.owner)
         and (spec.controller is None or row.controller == spec.controller)
+        and row.controller not in spec.excluded_controllers
         and set(spec.types_all).issubset(types)
         and (not spec.types_any or not types.isdisjoint(spec.types_any))
         and types.isdisjoint(spec.excluded_types)
@@ -159,6 +160,10 @@ def object_matches_query(
         and set(spec.colors_all).issubset(colors)
         and (not spec.colors_any or not set(spec.colors_any).isdisjoint(colors))
         and (spec.colorless is None or (not colors) is spec.colorless)
+        and (
+            spec.minimum_color_count is None
+            or len(colors) >= spec.minimum_color_count
+        )
         and set(spec.keywords_all).issubset(row.keywords)
         and (spec.token is None or row.token is spec.token)
         and (spec.tapped is None or row.tapped is spec.tapped)

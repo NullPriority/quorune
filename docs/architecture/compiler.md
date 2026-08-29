@@ -430,19 +430,19 @@ producer adds no family-specific ability-presence check and performs no dynamic
 characteristic count.
 
 `compiler/continuous_templates.py` owns the fixed-query keyword-grant grammar.
-It accepts only live battlefield sets representable by `ObjectQuerySpec`: a
-source-controller relation over closed type, pinned creature-subtype, color,
-supertype, or token predicates, or an unqualified global type/subtype set. The
-selected keyword set is Haste, Trample, Vigilance, First Strike, Double Strike,
-and Flying; the prior controlled-artifact Hexproof sentence remains a narrow
-compatibility form. Every emitted node declares both the layer-6 grant
-capability and each keyword's existing combat or targeting consumer
-capability. Opponent-relative, attacking or blocking, modified,
-counter-qualified, multicolored, dynamic, conditional, temporary, chosen, and
-other-keyword forms remain source-spanned residuals. Matching Class lines also
-remain residual until level applicability has a typed owner. The grammar
-performs no dynamic characteristic counts and does not claim ability-removal
-composition.
+It accepts only live battlefield sets representable by `ObjectQuerySpec` over
+a source-controller, source-opponent, or global relation. Closed predicates
+cover type, pinned creature subtype, color, multicolor cardinality, supertype,
+token and subtype-token identity, or the presence of a named +1/+1 counter.
+The fixed power/toughness and supported-keyword parsers reuse that same query,
+including combined layer-6 and layer-7c wording. Every emitted keyword node
+declares both the layer-6 grant capability and each keyword's existing combat,
+damage, destruction, or targeting consumer capability. Attacking or blocking,
+modified, ability-qualified, dynamically counted, conditional, temporary,
+chosen, hidden-zone, and unsupported-keyword forms remain source-spanned
+residuals. Matching Class lines also remain residual until level applicability
+has a typed owner. The grammar performs no dynamic characteristic counts and
+does not claim ability-removal composition.
 
 Printed and fixed layer-6 Protection productions share `ProtectionSpec` and
 the existing `protection.typed.debt` capability. The closed v2 source predicate

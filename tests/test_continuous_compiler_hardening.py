@@ -353,9 +353,6 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                 "Secret Plans": (
                     "Face-down creatures you control get +0/+1."
                 ),
-                "Glass of the Guildpact": (
-                    "Multicolored creatures you control get +1/+1."
-                ),
                 "Guardian Augmenter": (
                     "Commander creatures you control get +2/+2."
                 ),
