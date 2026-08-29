@@ -204,6 +204,41 @@ async function advanceOtherSeats(
   return true;
 }
 
+async function submitEmptyAttackDeclaration(
+  pages: readonly Page[],
+): Promise<boolean> {
+  for (const page of pages) {
+    const decisionId = await currentDecisionId(page);
+    if (!decisionId) continue;
+    const panel = page.locator(
+      `[data-testid="decision-panel"][data-decision-id="${decisionId}"]`,
+    );
+    const attack = panel.getByTestId("action-attack");
+    if (!(await attack.isVisible().catch(() => false))) continue;
+    if (!(await attack.isEnabled({ timeout: 250 }).catch(() => false))) continue;
+
+    const revision = await viewRevision(page);
+    try {
+      await attack.click({ timeout: 2_000 });
+      await page.getByTestId("choice-dialog").waitFor({
+        state: "visible",
+        timeout: 2_000,
+      });
+      await submitOpenChoice(page);
+      return true;
+    } catch (error) {
+      if (
+        (await viewRevision(page)) > revision
+        || (await currentDecisionId(page)) !== decisionId
+      ) {
+        return true;
+      }
+      throw error;
+    }
+  }
+  return false;
+}
+
 async function declineSeatOpportunity(
   pages: readonly Page[],
   seatPage: Page,
@@ -316,11 +351,15 @@ async function advanceToActionReady(
       if (holdWindow && await holdWindow()) {
         return advanceOtherSeats(pages, actionPage);
       }
+      // A land search can cross a later active player's declare-attackers
+      // decision. Declaring no attackers is the legal deterministic advance;
+      // ordinary priority passing cannot answer this mandatory choice.
+      if (await submitEmptyAttackDeclaration(pages)) return true;
       for (const page of pages) {
         const result = await submitAuthorizedPass(page);
         if (result !== "unavailable") return true;
       }
-      return true;
+      return false;
     },
   });
 }

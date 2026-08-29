@@ -14,6 +14,7 @@ from scripts.ci_metrics import (
     markdown,
 )
 from scripts.ci_plan import (
+    _write_github_output,
     browser_matrix,
     ci_concurrency_budget,
     python_matrix,
@@ -215,12 +216,13 @@ class CiPipelineTests(unittest.TestCase):
         recovery = recovery_impact_plan(
             classify_changes((path,)),
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "main_run_id": 42,
                 "main_head_sha": "a" * 40,
                 "failed_jobs": [
                     {
                         "id": 700,
+                        "kind": "python",
                         "name": "Main / Broad / Python / ubuntu / functional-04",
                         "suite": "functional-04",
                     }
@@ -229,6 +231,8 @@ class CiPipelineTests(unittest.TestCase):
                     "tests.test_rules_primitives.Case.test_fixture"
                 ],
                 "test_modules": ["test_rules_primitives"],
+                "browser_test_files": [],
+                "browser_focus_patterns": [],
                 "changed_files": [path],
                 "generated_owners": [],
                 "generated_outputs": [],
@@ -239,6 +243,53 @@ class CiPipelineTests(unittest.TestCase):
         self.assertEqual(
             ("test_rules_primitives",), plan["selected_test_modules"]
         )
+
+    def test_verified_browser_recovery_selects_only_the_failed_title(self):
+        path = "web/tests/four-player.spec.ts"
+        pattern = "^@browser-soak exact failed journey$"
+        recovery = recovery_impact_plan(
+            classify_changes((path,)),
+            {
+                "schema_version": 2,
+                "main_run_id": 42,
+                "main_head_sha": "a" * 40,
+                "failed_jobs": [
+                    {
+                        "id": 800,
+                        "kind": "browser",
+                        "name": "Main / Broad / Browser / soak",
+                        "group": "soak",
+                    }
+                ],
+                "failed_test_ids": [f"{path}::exact failed journey"],
+                "test_modules": [],
+                "browser_test_files": [path],
+                "browser_focus_patterns": [pattern],
+                "changed_files": [path],
+                "generated_owners": [],
+                "generated_outputs": [],
+            },
+        )
+        plan = selected_test_plan(recovery)
+        self.assertEqual("recovery_source", recovery.risk_class)
+        self.assertEqual((), plan["selected_test_modules"])
+        self.assertEqual((pattern,), recovery.browser_focus_patterns)
+        output_plan = recovery.to_dict()
+        output_plan.update(plan)
+        with TemporaryDirectory() as raw:
+            output = Path(raw) / "github-output.txt"
+            _write_github_output(output, output_plan)
+            values = dict(
+                line.split("=", 1)
+                for line in output.read_text(encoding="utf-8").splitlines()
+            )
+        self.assertEqual("true", values["browser_required"])
+        self.assertEqual("false", values["python_required"])
+        self.assertEqual(
+            ["browser", "generated", "plan"],
+            json.loads(values["required_jobs"]),
+        )
+        self.assertEqual(pattern, values["browser_focus_grep"])
 
     def test_independent_sentinel_and_main_red_gate_fail_closed(self):
         self.assertTrue(
@@ -268,6 +319,23 @@ class CiPipelineTests(unittest.TestCase):
             verify_main_health(red, allow_recovery=True)["state"],
         )
         self.assertEqual(2, main_broad_concurrency_budget()["headroom"])
+
+    def test_main_red_workflow_proves_browser_artifacts_or_forces_high_risk(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(
+            'main-broad-browser-*-${MTG_MAIN_RUN_ID}',
+            workflow,
+        )
+        self.assertIn(
+            "steps.main_state.outputs.force_high_risk == 'true'",
+            workflow,
+        )
+        self.assertIn(
+            "steps.main_state.outputs.main_state == 'red-recovery-requested'",
+            workflow,
+        )
 
     def test_main_broad_certification_rejects_any_missing_or_failed_family(self):
         valid = {

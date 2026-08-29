@@ -708,6 +708,23 @@
       "resolution": "Shard result schema v3 records canonical failed and errored test IDs. The recovery planner now proves the latest failed main SHA, immutable run and Ubuntu job IDs, matching shard artifact, exact failing test module, affected-owner generated outputs, unchanged nonfailing tests and decorators, and structurally identical assertions before selecting the focused recovery profile.",
       "run_id": 33143128153,
       "summary": "The complete main matrix exposed a deterministic replacement-continuation fixture failure, but schema-v2 shard artifacts did not name the failed test and the main-red recovery path trusted a label without binding the run, job, artifact, or assertion-preserving diff."
+    },
+    {
+      "category": "browser_integration",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Main / Broad / Browser / soak (job 99089350744)",
+        "Main / Broad regression"
+      ],
+      "head_sha": "9d6f1e54b4338b00f95445ebd55f48859b07ca96",
+      "id": "ci-20260829-42",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "four-player.spec.ts: natural commander-damage winner"
+      ],
+      "resolution": "The shared action-ready driver now submits the legal empty-attacker declaration when that mandatory choice blocks a later action and returns false when no authorized command was submitted, allowing the progress coordinator to apply its own bounded fallback and watchdog. The strict main-red audit now consumes exact-source Playwright reports and permits only report- or stack-named test harness changes with unchanged test bodies, tags, and assertions; recovery-authority repairs use an exact-base complete high-risk fix-forward instead of self-authorizing focused CI. The existing browser-soak inventory selected the failing journey, so no new impact edge is required.",
+      "run_id": 33248242309,
+      "summary": "The natural-winner browser soak reached a legal Combat.Attackers decision while searching for the next land offer, but its custom progress callback could submit only priority passes and reported success even when it submitted nothing."
     }
   ],
   "known_flaky_tests": [],
@@ -715,7 +732,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-08-28T18:20:30Z",
+  "observed_at": "2026-08-29T11:08:12Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -760,13 +777,13 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "e222d26f7acdb683a21ad13e49daf52ea770ce1de6c33def35dadae59c018451",
+  "source_fingerprint": "e622245637b5753093c4f1ae683cc50ce87180ad576b435d9a4ceeba10018097",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
     "average_slot_b_inactive_seconds": null,
     "category_counts": {
-      "browser_integration": 2,
+      "browser_integration": 3,
       "flaky_test": 6,
       "generated_artifact_drift": 3,
       "infrastructure": 1,
@@ -774,8 +791,8 @@
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 36,
-    "escape_count": 41,
+    "deterministic_escape_count": 37,
+    "escape_count": 42,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [

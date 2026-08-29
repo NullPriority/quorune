@@ -153,19 +153,32 @@ def recovery_impact_plan(
         "failed_jobs",
         "failed_test_ids",
         "test_modules",
+        "browser_test_files",
+        "browser_focus_patterns",
         "changed_files",
         "generated_owners",
         "generated_outputs",
     }
-    if set(recovery) != required or recovery.get("schema_version") != 1:
+    if set(recovery) != required or recovery.get("schema_version") != 2:
         raise ValueError("recovery plan fields are incomplete or unknown")
     modules = recovery.get("test_modules")
+    browser_files = recovery.get("browser_test_files")
+    browser_patterns = recovery.get("browser_focus_patterns")
     changed = recovery.get("changed_files")
     if (
         not isinstance(modules, list)
-        or not modules
         or any(not isinstance(module, str) or not module for module in modules)
         or len(modules) != len(set(modules))
+        or not isinstance(browser_files, list)
+        or any(not isinstance(path, str) or not path for path in browser_files)
+        or len(browser_files) != len(set(browser_files))
+        or not isinstance(browser_patterns, list)
+        or any(
+            not isinstance(pattern, str) or not pattern
+            for pattern in browser_patterns
+        )
+        or len(browser_patterns) != len(set(browser_patterns))
+        or (not modules and not browser_patterns)
         or not isinstance(changed, list)
         or any(not isinstance(path, str) or not path for path in changed)
         or tuple(sorted(changed)) != impact.changed_files
@@ -177,7 +190,7 @@ def recovery_impact_plan(
         test_suites=(),
         browser_full=False,
         browser_focuses=(),
-        browser_focus_patterns=(),
+        browser_focus_patterns=tuple(sorted(browser_patterns)),
         windows_full=False,
         matched_rule_ids=tuple(
             sorted(set(impact.matched_rule_ids) | {"verified-main-red-recovery"})
@@ -311,11 +324,13 @@ def _write_github_output(path: Path, plan: dict) -> None:
     source_required = plan["risk_class"] != "governance_only"
     recovery = plan["risk_class"] == "recovery_source"
     broad_source_required = source_required and not recovery
+    recovery_browser_required = recovery and bool(plan["browser_focus_patterns"])
+    browser_required = broad_source_required or recovery_browser_required
     budget = ci_concurrency_budget(
         browser_full=bool(plan["browser_full"]),
         windows_full=bool(plan["windows_full"]),
         python_job_count=python_jobs,
-        browser_required=broad_source_required,
+        browser_required=browser_required,
         windows_required=broad_source_required,
     )
     values = {
@@ -334,7 +349,7 @@ def _write_github_output(path: Path, plan: dict) -> None:
             )
         ),
         "browser_full": str(plan["browser_full"]).lower(),
-        "browser_required": str(broad_source_required).lower(),
+        "browser_required": str(browser_required).lower(),
         "browser_focus_grep": "|".join(plan["browser_focus_patterns"]),
         "windows_full": str(plan["windows_full"]).lower(),
         "windows_required": str(broad_source_required).lower(),
@@ -352,7 +367,12 @@ def _write_github_output(path: Path, plan: dict) -> None:
                     "windows_certification",
                 ]
                 if broad_source_required
-                else ["generated", "plan", "python"]
+                else [
+                    *(["browser"] if recovery_browser_required else []),
+                    "generated",
+                    "plan",
+                    *(["python"] if python_jobs else []),
+                ]
                 if recovery
                 else ["generated", "plan"]
             ),
@@ -426,8 +446,14 @@ def main() -> int:
         browser_full=bool(plan["browser_full"]),
         windows_full=bool(plan["windows_full"]),
         python_job_count=len(plan["python_matrix"]["include"]),
-        browser_required=plan["risk_class"] != "governance_only",
-        windows_required=plan["risk_class"] != "governance_only",
+        browser_required=(
+            plan["risk_class"] not in {"governance_only", "recovery_source"}
+            or bool(plan["browser_focus_patterns"])
+        ),
+        windows_required=plan["risk_class"] not in {
+            "governance_only",
+            "recovery_source",
+        },
     )
     output = args.github_output or os.environ.get("GITHUB_OUTPUT")
     if output:

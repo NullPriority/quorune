@@ -648,12 +648,17 @@ the matrix; manual runs always execute it. Runs never cancel one another. Its
 final `Main / Broad regression` result is the main-health authority. A completed
 red run disables auto-merge and blocks later plans. The
 `main-red-recovery` label requests a provenance audit but does not authorize
-focused execution: the audit requires the failed main SHA, run, Ubuntu Python
-job, shard artifact, canonical test IDs, an exact test/derived-output diff, and
-unchanged decorators and assertions. Ambiguous, browser, product, compiler, or
-assertion-changing fixes use the normal high-risk route. A later successful
-exact-main run clears red state. The `CI metrics` observer records both paths
-without participating in certification.
+focused execution: the audit requires the failed main SHA, immutable run and
+job IDs, a matching schema-v3 Ubuntu Python shard result or exact-source
+Playwright report, canonical failed test identities, and an exact
+test/harness/derived-output diff. Python decorators and assertions remain
+unchanged. Browser recovery may change only the reported spec's shared driver
+region or a stack-named test-support harness and must preserve every test body,
+tag, and assertion. Ambiguous, product, protocol, gameplay, compiler,
+assertion-changing, or recovery-authority changes use `main-red-fix-forward`,
+which requires the exact failed base and the complete high-risk gate. A later
+successful exact-main run clears red state. The `CI metrics` observer records
+both paths without participating in certification.
 
 `.github/workflows/nightly.yml` owns expensive breadth:
 
