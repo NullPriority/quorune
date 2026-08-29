@@ -737,6 +737,45 @@
           "measurement_probe_id": "fixed-optional-effect-choice-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-trigger-mana-payments",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:effect.choice.optional_fixed_mana_payment",
+            "capability:trigger.effect.fixed_event",
+            "component:quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate",
+            "component:quorune.semantic_choices.payments.OptionalPaymentHandler"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "controller-pay-or-decline",
+            "one-independently-exact-atomic-effect",
+            "positive-fixed-ordinary-mana-cost"
+          ],
+          "shared_dependencies": [
+            "trigger.effect.fixed_event",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one fixed ordinary-mana 'you may pay ... if you do' wrapper around one independently exact atomic effect across normalized triggered contexts",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Establishes one reusable private payment-before-effect continuation over the existing normalized trigger, mana-payment, and typed effect owners without duplicating any body mutation path.",
+          "explicit_exclusions": [
+            "bodies without one independently exact capability-closed owner",
+            "nested optional choices and bodies with more than one atomic effect",
+            "reflexive when-you-do triggers, linked results, delayed continuations, and repeated choices",
+            "variable, hybrid, Phyrexian, snow, alternative, restricted, and nonmana costs",
+            "zero costs and cost modification beyond canonical ordinary payment"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-optional-mana-payment-trigger-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-regeneration-effects",
           "member_family_ids": [
             "activated_effect:destroy-mass",
@@ -995,20 +1034,20 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v140-fixed-source-pronoun-damage-triggers",
-      "compiler_version": "oracle-ir-v140",
-      "bundle_id": "bundle:fixed-source-pronoun-damage-triggers",
-      "candidate_ids": ["compiler:fixed-source-pronoun-damage-triggers"],
+      "transition_id": "oracle-ir-v141-fixed-trigger-mana-payments",
+      "compiler_version": "oracle-ir-v141",
+      "bundle_id": "bundle:fixed-trigger-mana-payments",
+      "candidate_ids": ["compiler:fixed-trigger-mana-payments"],
       "family_ids": [
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
         "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "damage.amount.positive",
-        "trigger.event.normalized_zone_change",
+        "effect.choice.optional_fixed_mana_payment",
+        "trigger.effect.fixed_event",
         "trigger.placement.apnap"
       ],
-      "measurement_id": "measurement:fixed-source-pronoun-damage-triggers",
+      "measurement_id": "measurement:fixed-trigger-mana-payments",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1467,6 +1506,11 @@
         "candidate_id": "compiler:fixed-source-pronoun-damage-triggers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired fixed cost reductions and direct-return generalization because their coherent typed slices stayed below every harvest floor. The selected source-self trigger family instead composes the existing normalized zone-change and APNAP owners with the already trusted fixed-damage effect and target contracts. Current cohort identities and conservative lower bounds are derived into the generated measurement artifact; conditional, optional, variable, divided, random, multiple-target, compound, attachment-relative, leaves-the-battlefield, and unsupported recipient forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-trigger-mana-payments",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A bounded integrated probe isolates one reusable positive fixed ordinary-mana 'you may pay ... if you do' wrapper across normalized scheduled, cast, entry, attack, damage, life, draw, and source-zone triggers and crosses the normal complete-card harvest floor through the existing private choice, canonical mana payment, APNAP placement, target revalidation, and typed effect owners. Variable, hybrid, Phyrexian, snow, nonmana, zero, reflexive, nested, repeated, linked, multi-effect, and independently inexact bodies remain fail-closed; current cohort identities and counts are derived into the generated measurement artifact."
       }
     ]
   },

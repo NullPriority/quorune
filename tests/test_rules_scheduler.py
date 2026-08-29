@@ -1366,6 +1366,53 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_fixed_optional_mana_payment_probe_uses_integrated_trigger_boundary(self):
+        probe_id = "fixed-optional-mana-payment-trigger-existing-owner-v1"
+        record = SimpleNamespace(
+            name="Payment Probe",
+            type_line="Creature — Fixture",
+            oracle_text="",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        accepted = (
+            "Whenever you cast a creature spell, you may pay {G}. If you do, "
+            "draw a card.",
+            "At the beginning of your upkeep, you may pay {2}. If you do, "
+            "gain 2 life.",
+            "When this creature enters, you may pay {1}. If you do, create a "
+            "Treasure token.",
+        )
+        rejected = (
+            "Whenever you cast a creature spell, you may pay {X}. If you do, "
+            "draw a card.",
+            "Whenever you cast a creature spell, you may pay {G}. When you do, "
+            "draw a card.",
+            "Whenever you cast a creature spell, you may pay {G}. If you do, "
+            "you may draw a card.",
+        )
+
+        for source in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
     def test_fixed_regeneration_probe_uses_closed_contextual_owners(self):
         probe_id = "fixed-regeneration-existing-owner-v1"
         spell = SimpleNamespace(
@@ -1572,16 +1619,9 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["bundle_id"] == declaration["bundle_id"]
         )
 
-        self.assertEqual(
-            "measurement:fixed-source-pronoun-damage-triggers",
-            declaration["measurement_id"],
-        )
+        self.assertRegex(declaration["measurement_id"], r"^measurement:")
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
-        self.assertEqual(
-            "fixed-source-pronoun-damage-trigger-existing-owner-v1",
-            bundle["measurement_probe_id"],
-        )
         self.assertFalse(
             any(field.startswith("frontier_") for field in bundle)
         )
@@ -1595,6 +1635,10 @@ class RulesSchedulerTests(unittest.TestCase):
         measurement = transition_measurement["measurement"]
         self.assertEqual(
             declaration["measurement_id"], measurement["measurement_id"]
+        )
+        self.assertEqual(bundle["bundle_id"], measurement["bundle_id"])
+        self.assertEqual(
+            bundle["measurement_probe_id"], measurement["probe_id"]
         )
         coverage = work_selection["coverage_family"]
         self.assertGreaterEqual(

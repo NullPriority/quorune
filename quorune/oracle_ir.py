@@ -108,6 +108,9 @@ from .compiler.resolution_effect_templates import (
     typed_resolution_effect_template,
 )
 from .compiler.optional_effect_templates import fixed_optional_effect_template
+from .compiler.optional_payment_templates import (
+    reviewed_fixed_optional_mana_payment_trigger_template,
+)
 from .compiler.scry_templates import fixed_scry_effect_template
 from .compiler.self_return_templates import fixed_self_return_effect_template
 from .compiler.storm_nodes import STORM_MECHANIC_ID
@@ -131,7 +134,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v140"
+ORACLE_COMPILER_VERSION = "oracle-ir-v141"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -498,6 +501,25 @@ def _reviewed_effect_template(
         ),
     )
     return program.compiled() if program is not None else atomic
+
+
+def _contextual_effect_templates(
+    source_is_permanent: bool | None,
+    source_card_types: Sequence[str],
+    source_attachment_relation: AttachmentReferenceKind | None,
+) -> tuple[Any, Any]:
+    context = {
+        "source_is_permanent": source_is_permanent,
+        "source_card_types": source_card_types,
+        "source_attachment_relation": source_attachment_relation,
+    }
+    contextual_effect = partial(_reviewed_effect_template, **context)
+    contextual_trigger_effect = partial(
+        reviewed_fixed_optional_mana_payment_trigger_template,
+        compile_trigger_effect=contextual_effect,
+        compile_effect=partial(_effect_template, **context),
+    )
+    return contextual_effect, contextual_trigger_effect
 
 
 def _keyword_node_for_mechanics(
@@ -1026,6 +1048,7 @@ def _activated_or_fixed_event_trigger_node(
     capability_profile: str,
     residuals: list[OracleResidual],
     effect_template: Any,
+    trigger_effect_template: Any | None = None,
 ) -> OracleNode | None:
     activated = activated_oracle_node(
         node_id=node_id, line=line, span=span,
@@ -1042,7 +1065,7 @@ def _activated_or_fixed_event_trigger_node(
         card_name=card_name, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
-        effect_template=effect_template,
+        effect_template=trigger_effect_template or effect_template,
     )
 
 
@@ -1180,9 +1203,9 @@ def _compile_face(
     residuals: list[OracleResidual] = []
     (card_types, permanent, spell, support_source_is_permanent,
      source_attachment_relation) = _face_type_context(type_line)
-    contextual_effect_template = partial(_reviewed_effect_template, source_is_permanent=support_source_is_permanent,
-        source_card_types=tuple(sorted(card_types)), source_attachment_relation=source_attachment_relation)
-    contextual_trigger_node = partial(_trigger_node, effect_template=contextual_effect_template)
+    contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
+        support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
+    contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
     material_rows = tuple(_material_source_lines(type_line, oracle_text))
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
     if spell:
@@ -1225,7 +1248,7 @@ def _compile_face(
             keywords=keywords, trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
-            effect_template=contextual_effect_template,
+            effect_template=contextual_effect_template, trigger_effect_template=contextual_trigger_effect_template,
         )
         if ability_node is not None:
             nodes.append(ability_node)

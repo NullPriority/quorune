@@ -9,6 +9,10 @@ from quorune.compiler.destruction_templates import destruction_effect_template
 from quorune.compiler.optional_effect_templates import (
     fixed_optional_effect_template,
 )
+from quorune.compiler.optional_payment_templates import (
+    FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
+    fixed_optional_mana_payment_template,
+)
 from quorune.compiler.modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
@@ -34,6 +38,7 @@ from quorune.compiler.ir_model import SourceSpan
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.oracle_ir import (
     _face_type_context,
+    _effect_template,
     _reviewed_atomic_effect_template,
     _reviewed_effect_template,
     _source_self_zone_trigger_match,
@@ -52,6 +57,9 @@ from quorune.work_selection_common import stable_hash
 _PROBE_TOKEN = "fixed-token-creation-existing-owner-v1"
 _PROBE_EXILE = "fixed-exile-existing-owner-v1"
 _PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
+_PROBE_OPTIONAL_MANA_PAYMENT = (
+    "fixed-optional-mana-payment-trigger-existing-owner-v1"
+)
 _PROBE_REGENERATION = "fixed-regeneration-existing-owner-v1"
 _PROBE_SPELL_CAST_CHARACTERISTIC = (
     "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
@@ -82,6 +90,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_OPTIONAL_EFFECT,
+    _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
     _PROBE_TOKEN,
@@ -355,6 +364,43 @@ def _matches_probe(
             is not None
             for body in _optional_effect_instruction_candidates(source)
         )
+    if probe_id == _PROBE_OPTIONAL_MANA_PAYMENT:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Fixed optional mana-payment measurement requires card context"
+            )
+        card_name, source_is_permanent, attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        material = _without_parenthetical_reminder(source)
+        binding = fixed_counter_trigger_binding(
+            material,
+            card_name=card_name,
+        )
+        source_self = _source_self_zone_trigger_match(
+            material,
+            card_name=card_name,
+        )
+        body = (
+            binding.body
+            if binding is not None
+            else source_self.group("body")
+            if source_self is not None
+            else ""
+        )
+        return bool(
+            body
+            and fixed_optional_mana_payment_template(
+                body,
+                compile_effect=partial(
+                    _effect_template,
+                    card_name=card_name,
+                    source_is_permanent=source_is_permanent,
+                    source_attachment_relation=attachment_relation,
+                ),
+            )
+            is not None
+        )
     if probe_id == _PROBE_REGENERATION:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(
@@ -478,6 +524,16 @@ def _measurement(
         )
     if probe_id == _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER:
         return _fixed_source_pronoun_damage_trigger_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_OPTIONAL_MANA_PAYMENT:
+        return _fixed_optional_mana_payment_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
@@ -621,6 +677,108 @@ def _fixed_source_pronoun_damage_trigger_measurement(
             ):
                 continue
             card_matches += 1
+        if not card_matches:
+            continue
+        matched_abilities += card_matches
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _fixed_optional_mana_payment_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure fixed payment triggers through the integrated typed owners."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = []
+        for ability in card.get("abilities", []):
+            family_ids = {
+                str(value)
+                for value in ability.get("blockers", {}).get(
+                    "canonical_family_ids", []
+                )
+            }
+            if (
+                ability.get("status") == "exact"
+                or not family_ids
+                or not family_ids.intersection(member_ids)
+                or not family_ids <= member_ids
+                or not _matches_probe(
+                    probe_id,
+                    _source_line(record, ability),
+                    card_record=record,
+                    ability=ability,
+                )
+            ):
+                continue
+            candidates.append(ability)
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        card_matches = sum(
+            node is not None
+            and node.exact
+            and FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC in node.mechanics
+            for ability in candidates
+            for node in (nodes.get(str(ability.get("ability_id") or "")),)
+        )
         if not card_matches:
             continue
         matched_abilities += card_matches

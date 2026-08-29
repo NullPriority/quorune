@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "921b9b424ce679b04c7fe3b57dd0183466d8cc6f457262a64b5dee41b0b1ba82",
-  "declaration_source_fingerprint": "cdb8031c6bb9435167b03e76bc7b121534b78bbf23cc6e89b506d643aa01a1cd",
+  "registry_fingerprint": "2a9266baa5d45b0d4aceec7d4dc6c60964165b93599bbb1bbe79e05bc27d46aa",
+  "declaration_source_fingerprint": "9d24e340f7e8837c37f924327c45c8ef330b7d974dc75a10d895c0ada60a822f",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -31357,6 +31357,215 @@
       "applicability_note": "Replay the controller-scoped choice, resumed typed effect, private draw, and final authoritative state exactly."
     },
     {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose a real Lifecrafter's Bestiary trigger with canonical mana payment and the private draw transaction, retaining zero mutation before the choice and committing payment before the draw."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the optional payment under a nonactive controller in four-player state without granting another seat authority over the decision."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_compiler_shape_and_handler_mutants_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the compiler production and mutate cost, chooser, field, nesting, and nested-effect boundaries so exact trust disappears."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a wrong decision actor, unknown continuation fields, and nested optional payment before any runtime mutation."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_compiler_shape_and_handler_mutants_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject incomplete, nonpositive, extra-field, wrong-controller, nested-choice, and unrepresented wrapper shapes before capability closure."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_nonfixed_nested_and_nonexact_forms_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep variable, hybrid, Phyrexian, snow, zero, nonmana, reflexive, nested, and multi-instruction forms source-spanned and inexact."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_pay_decline_unpayable_and_stale_affordability_are_atomic",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer pay only when affordable, recheck at completion, commit payment with the nested effect only on acceptance, and leave decline mutation-free."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_composes_across_normalized_trigger_families",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower the same fixed payment grammar through scheduled, cast, entry, attack, damage, and source-zone normalized trigger bindings."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_lifecrafters_bestiary_is_an_exact_real_card_witness",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile Lifecrafter's Bestiary as one complete exact real card by composing its existing upkeep scry with the new cast-trigger payment wrapper."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the pay-or-decline request only to the resolving controller without exposing private mana or draw state to other principals."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the controller choice, canonical mana payment, resumed private draw, and final authoritative state exactly."
+    },
+    {
       "capability_id": "format.commander.damage.physical_identity",
       "evidence_class": "interaction",
       "test_id": "tests.test_commander_damage_identity.CommanderDamageIdentityTests.test_designation_survives_zone_and_control_changes",
@@ -50270,5 +50479,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "67c878b6afd91e591afdd45f59e300f9ba06a4296831e0a2a8e144c9bda49712"
+  "fingerprint": "bd2babe4b345f1405a735f7cf6f19024a353bdd696516f02af293c88bd5d0925"
 }

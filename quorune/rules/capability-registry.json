@@ -6327,6 +6327,33 @@
       "status": "trusted"
     },
     {
+      "id": "effect.choice.optional_fixed_mana_payment",
+      "version": 1,
+      "official_rules": ["109.5", "118.12", "603.5", "608.2c", "608.2d", "609.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and resolve one positive fixed ordinary mana payment in an exact 'you may pay ... if you do' trigger body, committing payment before one independently represented atomic effect resumes.",
+        "inputs": ["one normalized source-spanned trigger", "one positive fixed ordinary generic, colored, or colorless mana cost", "one independently exact typed effect body", "the resolving trigger controller", "body-owned targets chosen when the trigger is placed"],
+        "outputs": ["one private controller pay-or-decline choice", "resolution-time affordability revalidation", "canonical mana payment committed before the body", "zero mutation after decline", "ordinary body-specific typed resolution after payment", "exact continuation replay"],
+        "exclusions": ["variable, hybrid, Phyrexian, snow, alternate, restricted, or nonmana payments", "zero costs and cost modification beyond canonical ordinary payment", "reflexive when-you-do triggers, repeated choices, and linked or delayed continuations", "nested optional choices and bodies with more than one atomic effect", "bodies without an independently exact capability-closed owner"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate", "quorune.rules.fixed_effect_clause_shapes.fixed_optional_mana_payment_node_capabilities", "quorune.semantic_choices.payments.OptionalPaymentHandler", "quorune.semantic_choices.counter_coordination.continue_semantic_completion", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent", "quorune.semantic_runtime.intents.PayManaCostIntent", "CommanderEngine._continue_resolution"],
+      "positive_tests": ["test_fixed_payment_composes_across_normalized_trigger_families", "test_lifecrafters_bestiary_is_an_exact_real_card_witness", "test_pay_decline_unpayable_and_stale_affordability_are_atomic"],
+      "negative_tests": ["test_nonfixed_nested_and_nonexact_forms_remain_residual", "test_compiler_shape_and_handler_mutants_fail_closed", "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting"],
+      "interaction_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays"],
+      "multiplayer_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays"],
+      "privacy_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays"],
+      "replay_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The wrapper receives no trust unless the payment shape is positive and ordinary and its nested body independently resolves to an existing capability-closed effect with its exact target schema.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler, capability-shape, and payment-handler mutations remove the wrapper, weaken cost or chooser validation, alter payment-before-body ordering, or admit an unrepresented nested instruction and are rejected before trusted promotion or mutation.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "zone.self_move.activated",
       "version": 1,
       "official_rules": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],

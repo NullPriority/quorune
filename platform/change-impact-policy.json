@@ -443,6 +443,22 @@
       ]
     },
     {
+      "id": "fixed-optional-mana-payment-trigger-contract",
+      "patterns": [
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/optional_payment_templates.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_choices/payments.py",
+        "tests/test_fixed_optional_mana_payment_triggers.py"
+      ],
+      "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_semantic_choice_characterization"
+      ]
+    },
+    {
       "id": "spell-cast-characteristic-trigger-contract",
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",
