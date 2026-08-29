@@ -68,6 +68,10 @@ class MorphActionHost(Protocol):
         **kwargs: Any,
     ) -> list[str]: ...
 
+    def _semantic_event_sources(
+        self, *, zones: set[str] | None = None
+    ) -> Sequence[Any]: ...
+
 def _eligible_spec(host: MorphActionHost, seat: str, card: Any) -> Any | None:
     if (
         card.zone != "battlefield"
@@ -185,11 +189,13 @@ def commit_turn_face_up(
     host._dispatch_semantic_event(
         "permanent.turned_face_up",
         {
+            "card": card.ref,
             "object_ref": card.ref,
             "object_id": card.object_id,
             "logical_object_id": card.logical_object_id,
             "controller": card.controller,
         },
+        sources=host._semantic_event_sources(zones={"battlefield"}),
     )
     host.turn_priority.complete_special_action(seat)
 

@@ -205,6 +205,7 @@ class FixedSpellCastSubject:
     requires_kicked: bool = False
     requires_x_cost: bool = False
     requires_adventure: bool = False
+    requires_main_phase: bool = False
     not_owned_by_controller: bool = False
 
     def __post_init__(self) -> None:
@@ -229,6 +230,7 @@ class FixedSpellCastSubject:
             "requires_kicked",
             "requires_x_cost",
             "requires_adventure",
+            "requires_main_phase",
             "not_owned_by_controller",
         ):
             if type(getattr(self, name)) is not bool:
@@ -299,6 +301,8 @@ class FixedSpellCastSubject:
             predicates.append("x_cost")
         if self.requires_adventure:
             predicates.append("adventure")
+        if self.requires_main_phase:
+            predicates.append("main_phase")
         if self.not_owned_by_controller:
             predicates.append("not_owned")
         return f"{self.controller.value}:" + ":and:".join(predicates)
@@ -316,6 +320,7 @@ class FixedSpellCastSubject:
                 self.requires_kicked,
                 self.requires_x_cost,
                 self.requires_adventure,
+                self.requires_main_phase,
                 self.not_owned_by_controller,
                 self.quality is FixedSpellCastQuality.PERMANENT,
                 self.quality is not None
@@ -431,6 +436,14 @@ class FixedSpellCastSubject:
                 conditions.append(
                     {"field": field, "op": "truthy", "value": True}
                 )
+        if self.requires_main_phase:
+            conditions.append(
+                {
+                    "field": "phase",
+                    "op": "in",
+                    "value": ["precombat_main", "postcombat_main"],
+                }
+            )
         if self.not_owned_by_controller:
             conditions.append(
                 {"field": "owner", "op": "ne", "value": "$source.controller"}
@@ -712,6 +725,41 @@ def _history_spell_cast_binding(
 def _turn_spell_cast_binding(
     material_line: str,
 ) -> FixedSpellCastBindingSpec | None:
+    colored_opponent_turn = re.fullmatch(
+        r"Whenever an opponent casts a (?P<color>white|blue|black|red|green) "
+        r"spell during your turn, (?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+    if colored_opponent_turn is not None:
+        color = _spell_cast_characteristic_term(
+            colored_opponent_turn.group("color")
+        )
+        assert color is not None
+        return FixedSpellCastBindingSpec(
+            subject=FixedSpellCastSubject(
+                controller=FixedSpellCastController.OPPONENT,
+                characteristic_query=FixedSpellCastCharacteristicQuery((color,)),
+                turn_relation=FixedSpellCastTurnRelation.SOURCE,
+            ),
+            body=colored_opponent_turn.group("body"),
+        )
+    controller_main_phase = re.fullmatch(
+        r"Whenever you cast an instant spell during your main phase, "
+        r"(?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+    if controller_main_phase is not None:
+        return FixedSpellCastBindingSpec(
+            subject=FixedSpellCastSubject(
+                controller=FixedSpellCastController.SOURCE,
+                quality=FixedSpellCastQuality.INSTANT,
+                turn_relation=FixedSpellCastTurnRelation.SOURCE,
+                requires_main_phase=True,
+            ),
+            body=controller_main_phase.group("body"),
+        )
     turn_relative = re.fullmatch(
         r"Whenever you cast (?:a )?(?P<descriptor>spell|creature spell) "
         r"during (?P<turn>an opponent's|your) turn, (?P<body>.+)",

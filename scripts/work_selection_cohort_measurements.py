@@ -61,6 +61,9 @@ from quorune.work_selection_common import stable_hash
 _PROBE_TOKEN = "fixed-token-creation-existing-owner-v1"
 _PROBE_EXILE = "fixed-exile-existing-owner-v1"
 _PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
+_PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER = (
+    "typed-public-event-effect-trigger-existing-owner-v1"
+)
 _PROBE_OPTIONAL_MANA_PAYMENT = (
     "fixed-optional-mana-payment-trigger-existing-owner-v1"
 )
@@ -99,6 +102,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER,
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
+    _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER,
     _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_OPTIONAL_EFFECT,
@@ -348,6 +352,66 @@ def _matches_typed_spell_cast_fact_probe(
     )
 
 
+def _matches_typed_public_event_effect_trigger_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    """Require both the selected event carrier and its integrated typed body."""
+
+    material = _without_parenthetical_reminder(source)
+    card_name, source_is_permanent, attachment_relation = (
+        _source_face_context(card_record, ability)
+    )
+    binding = fixed_counter_trigger_binding(material, card_name=card_name)
+    if binding is None or not (
+        binding.public_template_id is not None
+        or re.fullmatch(
+            r"Whenever (?:an opponent casts a (?:white|blue|black|red|green) "
+            r"spell during your turn|you cast an instant spell during your "
+            r"main phase), .+",
+            material,
+            re.IGNORECASE,
+        )
+    ):
+        return False
+    face_id = str(ability.get("face_id") or "front")
+    face = next(
+        (
+            value
+            for value in card_record.faces
+            if str(value.get("name") or "") == face_id
+        ),
+        None,
+    )
+    type_line = str(
+        (face or {}).get("type_line") or card_record.type_line
+    )
+    card_types, _permanent, _spell, _support, _attachment = (
+        _face_type_context(type_line)
+    )
+    residuals = []
+    node = fixed_typed_event_effect_trigger_node(
+        node_id="probe:n1",
+        line=source,
+        material_line=material,
+        span=SourceSpan(start=0, end=len(source), line=1),
+        card_name=card_name,
+        trusted_mechanics=frozenset(),
+        capability_registry=_spell_cast_probe_capability_registry(),
+        capability_profile="commander_review",
+        residuals=residuals,
+        effect_template=partial(
+            _reviewed_effect_template,
+            source_is_permanent=source_is_permanent,
+            source_card_types=tuple(sorted(card_types)),
+            source_attachment_relation=attachment_relation,
+        ),
+    )
+    return bool(node is not None and node.exact and not residuals)
+
+
 @lru_cache(maxsize=1)
 def _spell_cast_probe_capability_registry():
     return load_default_capability_registry()
@@ -401,10 +465,23 @@ def _matches_probe(
             for body in _exile_instruction_candidates(source)
         )
     if probe_id == _PROBE_OPTIONAL_EFFECT:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Fixed optional-effect measurement requires card context"
+            )
+        card_name, source_is_permanent, _attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        binding = fixed_counter_trigger_binding(
+            _without_parenthetical_reminder(source),
+            card_name=card_name,
+        )
+        if binding is None:
+            return False
         compile_effect = partial(
             _reviewed_atomic_effect_template,
-            card_name="Cohort source",
-            source_is_permanent=True,
+            card_name=card_name,
+            source_is_permanent=source_is_permanent,
         )
         return any(
             fixed_optional_effect_template(
@@ -412,7 +489,17 @@ def _matches_probe(
                 compile_effect=compile_effect,
             )
             is not None
-            for body in _optional_effect_instruction_candidates(source)
+            for body in _optional_effect_instruction_candidates(binding.body)
+        )
+    if probe_id == _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Typed public-event measurement requires card context"
+            )
+        return _matches_typed_public_event_effect_trigger_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
         )
     if probe_id == _PROBE_OPTIONAL_MANA_PAYMENT:
         if card_record is None or ability is None:

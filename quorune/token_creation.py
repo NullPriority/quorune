@@ -39,6 +39,7 @@ from .semantic_runtime import (
 )
 from .trigger_processing import enqueue_trigger_batch
 from .standard_token_abilities import standard_token_characteristics
+from .zone_trigger_events import sealed_public_characteristic_facts
 
 
 class TokenCreationError(ValueError):
@@ -786,14 +787,15 @@ def _record_and_dispatch_token_creation(
     for object_id in created:
         card = host.state.cards[object_id]
         data = host._effective_card_data(card)
-        types, _, _ = host._type_parts(str(data.get("type_line") or ""))
+        characteristic_facts = sealed_public_characteristic_facts(data)
+        types = set(characteristic_facts["types"])
         context = {
             "card": card.ref,
             "controller": controller,
             "owner": controller,
             "from": "outside",
             "to": "battlefield",
-            "types": sorted(types),
+            **characteristic_facts,
             "mana_value": float(data.get("mana_value", 0) or 0),
             "token": True,
             "tapped": card.tapped,

@@ -101,6 +101,7 @@ class AttackTransitionParticipant:
     is_creature: bool
     trigger_specs: tuple[CombatKeywordTriggerSpec, ...] = ()
     power: int | None = None
+    keywords: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         _identity(self.object_id, field="Attack participant physical identity")
@@ -118,6 +119,27 @@ class AttackTransitionParticipant:
             raise AttackTransitionError(
                 "Attack participant power must be an exact integer or null"
             )
+        raw_keywords = self.keywords
+        if not isinstance(raw_keywords, tuple) or any(
+            type(value) is not str or not value.strip()
+            for value in raw_keywords
+        ):
+            raise AttackTransitionError(
+                "Attack participant keywords must be a tuple of nonempty strings"
+            )
+        keywords = tuple(
+            sorted(
+                {
+                    value.strip().casefold()
+                    for value in raw_keywords
+                }
+            )
+        )
+        if len(keywords) != len(raw_keywords):
+            raise AttackTransitionError(
+                "Attack participant keywords must be distinct nonempty strings"
+            )
+        object.__setattr__(self, "keywords", keywords)
         specs = tuple(self.trigger_specs)
         if any(
             not isinstance(spec, CombatKeywordTriggerSpec)
@@ -152,6 +174,8 @@ class AttackTransitionParticipant:
         }
         if self.power is not None:
             result["power"] = self.power
+        if self.keywords:
+            result["keywords"] = list(self.keywords)
         return result
 
     @classmethod
@@ -167,7 +191,13 @@ class AttackTransitionParticipant:
             "is_creature",
             "trigger_specs",
         }
-        if fields not in {frozenset(expected), frozenset({*expected, "power"})}:
+        allowed = {
+            frozenset(expected),
+            frozenset({*expected, "power"}),
+            frozenset({*expected, "keywords"}),
+            frozenset({*expected, "power", "keywords"}),
+        }
+        if fields not in allowed:
             raise AttackTransitionError(
                 "Attack transition participant has a closed field set"
             )
@@ -176,6 +206,13 @@ class AttackTransitionParticipant:
         if not isinstance(raw_specs, (list, tuple)):
             raise AttackTransitionError(
                 "Attack participant trigger_specs must be an array"
+            )
+        raw_keywords = data.get("keywords", ())
+        if not isinstance(raw_keywords, (list, tuple)) or isinstance(
+            raw_keywords, (str, bytes)
+        ):
+            raise AttackTransitionError(
+                "Attack participant keywords must be an array"
             )
         return cls(
             object_id=data["object_id"],
@@ -188,6 +225,7 @@ class AttackTransitionParticipant:
                 for spec in raw_specs
             ),
             power=data.get("power"),
+            keywords=tuple(raw_keywords),
         )
 
 

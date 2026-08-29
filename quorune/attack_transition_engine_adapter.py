@@ -47,6 +47,7 @@ from .mentor import (
     mentor_counter_effect,
     mentor_trigger_stack_item,
 )
+from .keyword_abilities import normalized_characteristic_keywords
 
 
 class EngineAttackTransitionQuery(AttackTransitionQuery):
@@ -163,6 +164,7 @@ class EngineAttackTransitionQuery(AttackTransitionQuery):
             controller=card.controller,
             is_creature="creature" in card_types and "battle" not in card_types,
             trigger_specs=trigger_specs,
+            keywords=tuple(normalized_characteristic_keywords(effective)),
             power=(
                 self._engine._numeric_stat(card.object_id, "power")
                 if card.object_id in self.attacker_object_ids()
@@ -281,6 +283,13 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                 )
             )
         semantic_trigger_refs: list[str] = []
+        participants = {
+            participant.object_id: participant
+            for participant in event.participants
+        }
+        semantic_sources = tuple(
+            engine._semantic_event_sources(zones={"battlefield"})
+        )
         for assignment in event.assignments:
             source = engine.state.cards.get(
                 assignment.attacker_object_id
@@ -299,9 +308,19 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                         "defending_player": (
                             assignment.recipient.defending_player
                         ),
+                        "controller": participants[
+                            assignment.attacker_object_id
+                        ].controller,
+                        "types": ["creature"],
+                        "keywords": list(
+                            participants[
+                                assignment.attacker_object_id
+                            ].keywords
+                        ),
+                        "attacking_alone": len(event.assignments) == 1,
                         "attack_transition": event.to_dict(),
                     },
-                    sources=(source,),
+                    sources=semantic_sources,
                     trigger_batch=stack_items,
                 )
             )

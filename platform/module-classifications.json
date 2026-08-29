@@ -2054,6 +2054,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/fixed_public_event_trigger_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/fixed_self_entry_counter_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8235,5 +8250,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "c2098f4b51622f94901f722de045d788353ed624702ca9a3c248f69cb4937f52"
+  "fingerprint": "f193f58365b63f925a00b3d448deb0a2bd825f7e077ac6d96da87142093c037c"
 }

@@ -105,6 +105,7 @@ def focused_database(directory: str) -> CardDatabase:
             / "tests"
             / "fixtures"
             / "fixed-typed-event-trigger-cards.json",
+            ROOT / "tests" / "fixtures" / "typecycling-cards.json",
             ROOT / "tests" / "fixtures" / "kicker-rules-cards.json",
         ],
         database,
@@ -1866,9 +1867,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever you cast or copy a noncreature spell, put a +1/+1 counter on this creature.",
             "Whenever an opponent casts or copies a noncreature spell, put a +1/+1 counter on this creature.",
             "Whenever this creature attacks alone, put a +1/+1 counter on this creature.",
-            "Whenever a land enters, put a +1/+1 counter on this creature.",
             "Whenever an opponent gains life, put a +1/+1 counter on this creature.",
-            "Whenever an opponent draws a card, put a +1/+1 counter on this creature.",
             "Whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
             "At the beginning of your upkeep, if you control a creature, put a charge counter on this artifact.",
             "At the beginning of your upkeep, put X charge counters on this artifact.",
@@ -1878,17 +1877,14 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "You may put a charge counter on this artifact.",
             "At the beginning of your upkeep, move a charge counter from this artifact onto target creature.",
             "At the beginning of your upkeep, remove a charge counter from this artifact.",
-            "Whenever another Zombie you control dies, put a +1/+1 counter on this creature.",
             "Whenever one or more creatures die, put a +1/+1 counter on this creature.",
             "Whenever another creature you control enters or dies, put a +1/+1 counter on this creature.",
             "Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.",
             "Whenever another creature with a counter on it dies, put a +1/+1 counter on this creature.",
-            "Whenever another Zombie you control dies, you may put a +1/+1 counter on this creature.",
             "Whenever another artifact dies, put a charge counter on this artifact.",
             "Whenever this artifact or another creature enters, put a charge counter on this artifact.",
             "Whenever another Human or Zombie you control enters, put a +1/+1 counter on this creature.",
             "Whenever another legendary Human you control enters, put a +1/+1 counter on this creature.",
-            "Whenever another Human you control dies, put a +1/+1 counter on this creature.",
             "Whenever another human you control enters, put a +1/+1 counter on this creature.",
         )
         for text in variants:
@@ -2094,6 +2090,222 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertFalse(node.exact)
         self.assertTrue(node.residual_ids)
         self.assertNotEqual("exact", mutated.status)
+
+
+    def test_public_action_trigger_bindings_compile_exactly(self):
+        cases = (
+            (
+                "Whenever a creature you control attacks alone, you may tap "
+                "target creature.",
+                "Enchantment",
+                "creature.attacks",
+                "fixed-typed-effect-public-attack-trigger-v1",
+            ),
+            (
+                "Whenever a creature with flying attacks, you may draw a card.",
+                "Creature — Sphinx",
+                "creature.attacks",
+                "fixed-typed-effect-public-attack-trigger-v1",
+            ),
+            (
+                "Whenever a creature you control with defender blocks, you may "
+                "gain 2 life.",
+                "Creature — Soldier",
+                "creature.blocks",
+                "fixed-typed-effect-public-block-trigger-v1",
+            ),
+            (
+                "Whenever this creature becomes blocked, you may draw a card.",
+                "Creature — Nautilus",
+                "creature.becomes_blocked",
+                "fixed-typed-effect-public-block-trigger-v1",
+            ),
+            (
+                "When you cycle this card, you may gain 2 life.",
+                "Instant",
+                "card.cycled.self",
+                "fixed-typed-effect-public-cycle-trigger-v1",
+            ),
+            (
+                "Whenever a player cycles a card, you may put a +1/+1 counter "
+                "on target creature.",
+                "Enchantment",
+                "card.cycled",
+                "fixed-counter-public-cycle-trigger-optional-v1",
+            ),
+            (
+                "Whenever a permanent is turned face up, you may draw a card.",
+                "Creature — Human Wizard",
+                "permanent.turned_face_up",
+                "fixed-typed-effect-public-face-up-trigger-v1",
+            ),
+        )
+        for text, type_line, event, template_id in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(text)
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                self.assertEqual(event, binding.event.value)
+                ir = self.compile(text, type_line=type_line)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertTrue(node.exact)
+                self.assertEqual(event, node.event)
+                self.assertIn(
+                    "trigger.event.normalized_public_action",
+                    node.capability_dependencies,
+                )
+
+    def test_public_zone_damage_and_cast_predicates_compile_exactly(self):
+        cases = (
+            (
+                "Whenever another creature you control with power 3 or greater "
+                "enters, you may draw a card.",
+                "Creature — Beast",
+                "creature.enter",
+                "fixed-typed-effect-public-zone-trigger-v1",
+            ),
+            (
+                "Whenever this creature or another artifact creature dies, you "
+                "may untap target artifact.",
+                "Artifact Creature — Scorpion",
+                "creature.dies",
+                "fixed-typed-effect-public-zone-trigger-v1",
+            ),
+            (
+                "Whenever a creature you control deals combat damage to an "
+                "opponent, you may draw a card.",
+                "Enchantment",
+                "damage.dealt",
+                "fixed-typed-effect-public-damage-trigger-v1",
+            ),
+            (
+                "Whenever an opponent draws a card, you may draw two cards.",
+                "Creature — Sphinx",
+                "card.drawn",
+                "fixed-typed-effect-opponent-card-draw-trigger-v1",
+            ),
+            (
+                "Whenever an opponent casts a blue spell during your turn, you "
+                "may create a 4/4 green Elemental creature token.",
+                "Enchantment",
+                "spell.cast",
+                "fixed-typed-effect-spell-cast-characteristic-trigger-v1",
+            ),
+            (
+                "Whenever you cast an instant spell during your main phase, you "
+                "may return this enchantment to its owner's hand.",
+                "Enchantment",
+                "spell.cast",
+                "fixed-typed-effect-spell-cast-trigger-v1",
+            ),
+        )
+        for text, type_line, event, template_id in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertTrue(node.exact)
+                self.assertEqual(event, node.event)
+
+    def test_public_counter_event_effect_variants_compile_exactly(self):
+        cases = (
+            (
+                "Whenever a land enters, put a +1/+1 counter on this creature.",
+                "land.enter",
+                "fixed-counter-public-zone-trigger-v1",
+            ),
+            (
+                "Whenever an opponent draws a card, put a +1/+1 counter on this creature.",
+                "card.drawn",
+                "fixed-counter-opponent-card-draw-trigger-v1",
+            ),
+            (
+                "Whenever another Zombie you control dies, put a +1/+1 counter on this creature.",
+                "creature.dies",
+                "fixed-counter-public-zone-trigger-v1",
+            ),
+            (
+                "Whenever another Zombie you control dies, you may put a +1/+1 counter on this creature.",
+                "creature.dies",
+                "fixed-counter-public-zone-trigger-optional-v1",
+            ),
+            (
+                "Whenever another Human you control dies, put a +1/+1 counter on this creature.",
+                "creature.dies",
+                "fixed-counter-public-zone-trigger-v1",
+            ),
+        )
+        for text, event, template_id in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature — Fixture")
+                self.assertEqual("exact", ir.status)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id == template_id
+                )
+                self.assertTrue(node.exact)
+                self.assertEqual(event, node.event)
+                self.assertFalse(ir.material_residuals)
+
+    def test_public_event_near_misses_remain_material(self):
+        cases = (
+            "Whenever an opponent discards a card, you may draw a card.",
+            "Whenever you sacrifice a green creature, you may gain 2 life.",
+            "Whenever equipped creature attacks, you may draw a card.",
+            "Whenever one or more creatures you control attack, you may draw a card.",
+            "Whenever a creature you control becomes the target of a spell, you "
+            "may draw a card.",
+            "Whenever a creature you control becomes tapped, you may gain 1 life.",
+            "Whenever one or more +1/+1 counters are put on this creature, you "
+            "may create a 1/1 green Squirrel creature token.",
+            "When you cycle this card and when this creature dies, you may draw "
+            "a card.",
+            "When you do, you may draw a card.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature — Fixture")
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_public_action_event_capability_fails_closed(self):
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        dependency = next(
+            row
+            for row in registry["capabilities"]
+            if row["id"] == "trigger.event.normalized_public_action"
+        )
+        dependency["status"] = "blocked"
+        dependency["blockers"] = ["focused public action mutation"]
+        text = "Whenever a creature you control attacks, you may gain 1 life."
+        ir = compile_oracle_card(
+            replace(
+                self.db.lookup("Scheduled Counter Trigger Fixture"),
+                name="Compiler Fixture",
+                oracle_text=text,
+                type_line="Enchantment",
+                keywords=(),
+                faces=(),
+            ),
+            capability_registry=CapabilityRegistry(registry),
+            capability_profile="commander_review",
+        )
+        node = next(
+            value
+            for value in ir.faces[0].nodes
+            if value.template_id
+            == "fixed-typed-effect-public-attack-trigger-v1"
+        )
+        self.assertFalse(node.exact)
+        self.assertNotEqual("exact", ir.status)
 
 
 class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
@@ -2845,7 +3057,7 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
             self.assertEqual([], item.context["supertypes"])
             self.assertEqual([], item.context["colors"])
 
-    def test_spell_cast_predicates_share_v3_event_and_stack_source(self):
+    def test_spell_cast_predicates_share_v4_event_and_stack_source(self):
         def cast_fixture(
             current_session,
             name: str,
@@ -2948,7 +3160,8 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(programs, {item.semantic_key for item in items})
         self.assertEqual(3, len(items))
         for item in items:
-            self.assertEqual(3, item.context["schema_version"])
+            self.assertEqual(4, item.context["schema_version"])
+            self.assertEqual("precombat_main", item.context["phase"])
             self.assertEqual(2.0, item.context["mana_value"])
             self.assertEqual(2, item.context["caster_spell_number"])
             self.assertEqual("A", item.context["owner"])
@@ -3048,6 +3261,103 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         for field, context in positive_contexts.items():
             self.assertTrue(context[field])
         self.assertEqual(3.0, positive_contexts["has_x_cost"]["mana_value"])
+
+    def test_main_phase_cast_trigger_optionally_returns_source(self):
+        def setup(
+            seed: int,
+            *,
+            phase: str,
+            step: str,
+            active_player: str = "A",
+        ):
+            session = self.session(seed, players=4)
+            engine = session.engine
+            source = self.add_card(
+                engine,
+                seat="A",
+                name="Typed Main Phase Self Return Trigger Fixture",
+                ref=f"main-phase-return-{seed}",
+                zone="battlefield",
+            )
+            program = self.register_typed_event_trigger(engine, source)
+            spell = self.add_card(
+                engine,
+                seat="A",
+                name="Typed Main Phase Instant Fixture",
+                ref=f"main-phase-instant-{seed}",
+                zone="hand",
+            )
+            engine.state.active_player = active_player
+            engine.state.phase = phase
+            engine.state.step = step
+            engine.state.priority_player = "A"
+            engine.state.priority_passes = []
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            engine.state.players["A"].mana_pool["U"] += 1
+            engine._cast("A", {"card": spell.ref, "pay": "auto"})
+            return session, source, program
+
+        off_phase, off_source, off_program = setup(
+            121044,
+            phase="ending",
+            step="end",
+        )
+        self.assertFalse(
+            any(
+                item.semantic_key == off_program.key
+                for item in off_phase.engine.state.stack
+            )
+        )
+        self.assertEqual("battlefield", off_source.zone)
+
+        opponent_main, opponent_source, opponent_program = setup(
+            121046,
+            phase="precombat_main",
+            step="main",
+            active_player="B",
+        )
+        self.assertFalse(
+            any(
+                item.semantic_key == opponent_program.key
+                for item in opponent_main.engine.state.stack
+            )
+        )
+        self.assertEqual("battlefield", opponent_source.zone)
+
+        session, source, program = setup(
+            121045,
+            phase="precombat_main",
+            step="main",
+        )
+        engine = session.engine
+        trigger = next(
+            item
+            for item in engine.state.stack
+            if item.semantic_key == program.key
+        )
+        self.assertEqual("precombat_main", trigger.context["phase"])
+        previous_identity = source.logical_object_id
+
+        self.resolve_top(engine)
+        self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        self.assertEqual("battlefield", source.zone)
+        applied = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choice": "apply",
+                "reason": "Apply the represented source-return choice.",
+            },
+        )
+
+        self.assertTrue(applied.ok, applied.summary)
+        self.assertEqual("hand", source.zone)
+        self.assertNotEqual(previous_identity, source.logical_object_id)
+        self.assertIn(
+            source.object_id,
+            engine.state.players["A"].zones["hand"],
+        )
 
     def test_shroud_and_enchantment_cast_draw_compose(self):
         session = self.session(121007, players=4)
@@ -3178,6 +3488,568 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         expected_hash = authoritative_state_hash(engine.state)
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "typed-self-attack-trigger"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_public_action_occurrences_share_typed_batch_owners(self):
+        attack_session = self.session(121040, players=4)
+        attack_engine = attack_session.engine
+        attack_engine.state.active_player = "A"
+        attack_engine.state.phase_index = 5
+        attack_engine.state.phase = "combat"
+        attack_engine.state.step = "declare_attackers"
+        attack_engine.state.combat = CombatState()
+        observer_a = self.add_card(
+            attack_engine,
+            seat="A",
+            name="Typed Public Attack Trigger Fixture",
+            ref="public-attack-observer-a",
+            zone="battlefield",
+        )
+        observer_c = self.add_card(
+            attack_engine,
+            seat="C",
+            name="Typed Public Attack Trigger Fixture",
+            ref="public-attack-observer-c",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(attack_engine, observer_a)
+        self.register_typed_event_trigger(attack_engine, observer_c)
+        attacker = self.add_card(
+            attack_engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="public-attacker",
+            zone="battlefield",
+        )
+        attack_engine._issue_attackers()
+        declared = attack_session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {attacker.ref: "B"}},
+        )
+        self.assertTrue(declared.ok, declared.summary)
+        attack_items = [
+            item
+            for item in attack_engine.state.stack
+            if item.semantic_key == program.key
+        ]
+        self.assertEqual(
+            ["A", "C"],
+            [item.controller for item in attack_items],
+        )
+        self.assertEqual(
+            {observer_a.object_id, observer_c.object_id},
+            {item.source_object_id for item in attack_items},
+        )
+        attack_item = attack_items[0]
+        self.assertEqual("creature.attacks", attack_item.context["event"])
+        self.assertEqual(attacker.ref, attack_item.context["card"])
+        self.assertEqual("A", attack_item.context["controller"])
+        self.assertTrue(attack_item.context["attacking_alone"])
+
+        block_session = self.session(121041, players=2)
+        block_engine = block_session.engine
+        block_engine.state.active_player = "A"
+        block_engine.state.phase_index = 6
+        block_engine.state.phase = "combat"
+        block_engine.state.step = "declare_blockers"
+        block_observer = self.add_card(
+            block_engine,
+            seat="B",
+            name="Typed Public Block Trigger Fixture",
+            ref="public-block-observer",
+            zone="battlefield",
+        )
+        block_program = self.register_typed_event_trigger(
+            block_engine, block_observer
+        )
+        attacker_ref = block_engine.create_token(
+            "A",
+            name="Public block attacker",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "2",
+                "toughness": "2",
+            },
+        )[0]
+        blocker_ref = block_engine.create_token(
+            "B",
+            name="Public defender blocker",
+            characteristics={
+                "type_line": "Token Creature — Wall",
+                "power": "0",
+                "toughness": "4",
+                "keywords": ["Defender"],
+            },
+        )[0]
+        block_attacker = block_engine._resolve_object("A", attacker_ref)
+        blocker = block_engine._resolve_object("B", blocker_ref)
+        block_attacker.attacking = "B"
+        block_engine.state.combat = CombatState(
+            attackers_declared=True,
+            had_attacking_creature=True,
+            attackers={block_attacker.object_id: "B"},
+            defending_players=["B"],
+        )
+        block_engine._begin_blocker_decisions()
+        blocked = block_session.act(
+            "pilot:B",
+            {"a": "block", "blk": {blocker.ref: block_attacker.ref}},
+        )
+        self.assertTrue(blocked.ok, blocked.summary)
+        block_item = next(
+            item
+            for item in block_engine.state.stack
+            if item.semantic_key == block_program.key
+        )
+        self.assertEqual("creature.blocks", block_item.context["event"])
+        self.assertEqual(blocker.ref, block_item.context["card"])
+        self.assertIn("defender", block_item.context["keywords"])
+        transition_log = next(
+            event
+            for event in reversed(block_engine.state.events)
+            if event.code == "combat.block_transition"
+        )
+        self.assertIn(
+            block_item.ref,
+            transition_log.details["semantic_trigger_refs"],
+        )
+
+        becomes_session = self.session(121044, players=2)
+        becomes_engine = becomes_session.engine
+        becomes_engine.state.active_player = "A"
+        becomes_engine.state.phase_index = 6
+        becomes_engine.state.phase = "combat"
+        becomes_engine.state.step = "declare_blockers"
+        becomes_attacker = self.add_card(
+            becomes_engine,
+            seat="A",
+            name="Typed Becomes Blocked Trigger Fixture",
+            ref="becomes-blocked-attacker",
+            zone="battlefield",
+        )
+        becomes_program = self.register_typed_event_trigger(
+            becomes_engine, becomes_attacker
+        )
+        blocker_refs = [
+            becomes_engine.create_token(
+                "B",
+                name=f"Becomes blocked witness {index}",
+                characteristics={
+                    "type_line": "Token Creature — Soldier",
+                    "power": "1",
+                    "toughness": "3",
+                },
+            )[0]
+            for index in (1, 2)
+        ]
+        becomes_attacker.attacking = "B"
+        becomes_engine.state.combat = CombatState(
+            attackers_declared=True,
+            had_attacking_creature=True,
+            attackers={becomes_attacker.object_id: "B"},
+            defending_players=["B"],
+        )
+        becomes_engine._begin_blocker_decisions()
+        blockers = [
+            becomes_engine._resolve_object("B", ref)
+            for ref in blocker_refs
+        ]
+        becomes_result = becomes_session.act(
+            "pilot:B",
+            {
+                "a": "block",
+                "blk": {
+                    blocker.ref: becomes_attacker.ref
+                    for blocker in blockers
+                },
+            },
+        )
+        self.assertTrue(becomes_result.ok, becomes_result.summary)
+        becomes_items = [
+            item
+            for item in becomes_engine.state.stack
+            if item.semantic_key == becomes_program.key
+        ]
+        self.assertEqual(1, len(becomes_items))
+        self.assertEqual(
+            "creature.becomes_blocked",
+            becomes_items[0].context["event"],
+        )
+        self.assertEqual(
+            becomes_attacker.ref,
+            becomes_items[0].context["card"],
+        )
+
+    def test_public_action_event_dispatch_mutant_is_killed(self):
+        session = self.session(121048, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        observer = self.add_card(
+            engine,
+            seat="C",
+            name="Typed Public Attack Trigger Fixture",
+            ref="public-action-mutation-observer",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, observer)
+        attacker = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="public-action-mutation-attacker",
+            zone="battlefield",
+        )
+        engine._issue_attackers()
+
+        with patch.object(
+            engine,
+            "_dispatch_semantic_event",
+            return_value=[],
+        ):
+            result = session.act(
+                "pilot:A",
+                {"a": "attack", "atk": {attacker.ref: "B"}},
+            )
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+    def test_cycling_trigger_uses_public_hand_snapshot(self):
+        session = self.session(121042, players=4)
+        engine = session.engine
+        observer = self.add_card(
+            engine,
+            seat="B",
+            name="Typed Public Cycling Trigger Fixture",
+            ref="public-cycle-observer",
+            zone="battlefield",
+        )
+        observer_program = self.register_typed_event_trigger(engine, observer)
+        source = self.deck_card(engine, "A", "Xander's Lounge")
+        engine.move_card(source.object_id, "hand", log=False)
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (self.db.lookup(source.printed_name),),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+        )
+        engine.state.players["A"].mana_pool["C"] = 3
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.pending_decision = None
+        engine.permissions.invalidate_current()
+        engine._grant_priority("A")
+        engine.pump()
+        action_id = f"activate:{source.ref}:ab3"
+        result = session.act("pilot:A", {"action_id": action_id})
+        self.assertTrue(result.ok, result.summary)
+        engine._stabilize()
+        self.assertEqual("graveyard", source.zone)
+        cycle_item = next(
+            item
+            for item in engine.state.stack
+            if item.semantic_key == observer_program.key
+        )
+        self.assertEqual("card.cycled", cycle_item.context["event"])
+        self.assertEqual(source.ref, cycle_item.context["card"])
+        self.assertEqual("A", cycle_item.context["player"])
+        self.assertEqual("cycling", cycle_item.context["cycling_kind"])
+        serialized = json.dumps(cycle_item.context, sort_keys=True)
+        self.assertNotIn(source.object_id, serialized)
+        self.assertNotIn(source.logical_object_id, serialized)
+        self.assertLess(
+            next(
+                index
+                for index, item in enumerate(engine.state.stack)
+                if item.kind == "activated_ability"
+                and item.source_object_id == source.object_id
+            ),
+            engine.state.stack.index(cycle_item),
+        )
+
+    def test_typecycling_trigger_uses_public_hand_snapshot(self):
+        session = self.session(121043, players=4)
+        engine = session.engine
+        observer = self.add_card(
+            engine,
+            seat="B",
+            name="Typed Public Cycling Trigger Fixture",
+            ref="public-typecycle-observer",
+            zone="battlefield",
+        )
+        observer_program = self.register_typed_event_trigger(engine, observer)
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Ash Barrens",
+            ref="public-typecycle-source",
+            zone="hand",
+        )
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (self.db.by_oracle_id(source.oracle_id),),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+        )
+        engine.state.players["A"].mana_pool["C"] = 1
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.pending_decision = None
+        engine.permissions.invalidate_current()
+        engine._grant_priority("A")
+        engine.pump()
+
+        result = session.act(
+            "pilot:A",
+            {"action_id": f"activate:{source.ref}:ab2"},
+        )
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", source.zone)
+        cycle_item = next(
+            item
+            for item in engine.state.stack
+            if item.semantic_key == observer_program.key
+        )
+        self.assertEqual("card.cycled", cycle_item.context["event"])
+        self.assertEqual(source.ref, cycle_item.context["card"])
+        self.assertEqual("typecycling", cycle_item.context["cycling_kind"])
+
+    def test_face_up_trigger_notifies_public_battlefield_sources(self):
+        session = self.session(121045, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="B",
+            name="Typed Public Face Up Trigger Fixture",
+            ref="public-face-up-source",
+            zone="hand",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (self.db.by_oracle_id(source.oracle_id),),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+            promote_exact_effect_programs=True,
+        )
+        engine.state.players["B"].mana_pool["C"] = 4
+        engine.state.active_player = "B"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.pending_decision = None
+        engine.permissions.invalidate_current()
+        engine._grant_priority("B")
+        engine.pump()
+        cast_action = next(
+            value
+            for value in engine._priority_action_hints("B")["actions"]
+            if value["id"] == f"cast-morph:{source.ref}"
+        )
+        result = session.act("pilot:B", {"action_id": cast_action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        for _ in range(12):
+            if source.zone != "stack":
+                break
+            principal = session.pending_principals()[0]
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", source.zone)
+        self.assertTrue(source.face_down)
+        action = next(
+            value
+            for value in engine._priority_action_hints("B")["actions"]
+            if value["id"] == f"turn-face-up:{source.ref}"
+        )
+
+        result = session.act("pilot:B", {"action_id": action["id"]})
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(source.face_down)
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("permanent.turned_face_up", item.context["event"])
+        self.assertEqual(source.ref, item.context["card"])
+        self.assertEqual("B", item.context["controller"])
+
+    def test_public_zone_trigger_uses_sealed_entry_power(self):
+        session = self.session(121046, players=4)
+        engine = session.engine
+        observer = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Public Power Entry Trigger Fixture",
+            ref="public-power-observer",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, observer)
+
+        engine.create_token(
+            "A",
+            name="Low-power entry witness",
+            characteristics={
+                "type_line": "Token Creature — Beast",
+                "power": "2",
+                "toughness": "2",
+            },
+        )
+        engine._stabilize()
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+        high_ref = engine.create_token(
+            "A",
+            name="High-power entry witness",
+            characteristics={
+                "type_line": "Token Creature — Beast",
+                "power": "3",
+                "toughness": "3",
+            },
+        )[0]
+        engine._stabilize()
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("creature.enter", item.context["event"])
+        self.assertEqual(high_ref, item.context["card"])
+        self.assertEqual(3, item.context["power"])
+
+    def test_public_damage_trigger_uses_committed_damage_occurrence(self):
+        session = self.session(121047, players=4)
+        engine = session.engine
+        observer = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Public Damage Trigger Fixture",
+            ref="public-damage-observer",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, observer)
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="public-damage-source",
+            zone="battlefield",
+        )
+
+        resolve_damage_batch(
+            engine,
+            (
+                damage_proposal(
+                    engine,
+                    proposal_id="public-damage:noncombat",
+                    actor="A",
+                    source_ref=source.ref,
+                    target="B",
+                    amount=1,
+                    combat=False,
+                    reason="public damage negative witness",
+                ),
+            ),
+        )
+        engine._stabilize()
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+        resolve_damage_batch(
+            engine,
+            (
+                damage_proposal(
+                    engine,
+                    proposal_id="public-damage:combat",
+                    actor="A",
+                    source_ref=source.ref,
+                    target="B",
+                    amount=1,
+                    combat=True,
+                    reason="public damage positive witness",
+                ),
+            ),
+        )
+        engine._stabilize()
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("damage.dealt", item.context["event"])
+        self.assertEqual(source.ref, item.context["card"])
+        self.assertEqual("A", item.context["source_controller"])
+        self.assertEqual("B", item.context["target"])
+        self.assertTrue(item.context["combat"])
+
+    def test_public_action_occurrences_replay_exactly(self):
+        session = self.session(121043, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        observer = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Public Attack Trigger Fixture",
+            ref="public-replay-observer",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, observer)
+        attacker = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="public-replay-attacker",
+            zone="battlefield",
+        )
+        engine._issue_attackers()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {attacker.ref: "B"}},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "typed-public-action-trigger"
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)

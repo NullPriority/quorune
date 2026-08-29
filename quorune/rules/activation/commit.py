@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+import copy
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility
@@ -43,6 +44,12 @@ from ..activation_costs import (
     pay_fixed_tap_cost,
 )
 from ...trigger_processing import collect_ward_occurrences
+from ...trigger_processing import enqueue_trigger_batch
+from ...cycling_abilities import (
+    CYCLING_HANDLER_ID,
+    CYCLING_MECHANIC_ID,
+    TYPECYCLING_HANDLER_ID,
+)
 from ..action_proposals import ActivationProposal, thaw_json
 from .model import ActivationProposalError
 
@@ -93,6 +100,17 @@ class ActivationCommitHost(Protocol):
     def _log(self, actor: str | None, code: str, summary: str, details: Any = None, **kwargs: Any) -> None: ...
 
     def _stabilize(self) -> bool: ...
+
+    def _semantic_event_sources(
+        self, *, zones: set[str] | None = None
+    ) -> Sequence[Any]: ...
+
+    def _dispatch_semantic_event(
+        self,
+        event: str,
+        context: Mapping[str, Any],
+        **kwargs: Any,
+    ) -> list[str]: ...
 
 
 def _revalidate_activation(
@@ -491,6 +509,77 @@ def _activation_stack_item(
     )
 
 
+def _cycling_event_snapshot(
+    host: ActivationCommitHost,
+    proposal: ActivationProposal,
+    source: Any,
+    program: Any,
+) -> tuple[Any, Mapping[str, Any], str] | None:
+    handler_ids = {
+        str(descriptor.get("handler_id") or "")
+        for descriptor in (program.handlers if program is not None else ())
+        if isinstance(descriptor, Mapping)
+        and isinstance(descriptor.get("ability"), Mapping)
+        and descriptor["ability"].get("ability_id") == proposal.ability_id
+    }.intersection({CYCLING_HANDLER_ID, TYPECYCLING_HANDLER_ID})
+    if program is not None and not handler_ids:
+        coverage = {
+            str(value).casefold()
+            for value in getattr(program, "coverage", ())
+        }
+        if CYCLING_MECHANIC_ID in coverage:
+            # Reviewed legacy Cycling programs can retain their exact typed
+            # mechanic coverage while the executable handler is shadowed by
+            # the source-pinned activation catalog.  The coverage marker is
+            # compiler-authored semantic identity, not an Oracle-text read.
+            handler_ids.add(CYCLING_HANDLER_ID)
+    if len(handler_ids) > 1:
+        raise GameRuleError(
+            "An activated ability cannot be both Cycling and Typecycling"
+        )
+    if not handler_ids:
+        return None
+    kind = (
+        "typecycling" if TYPECYCLING_HANDLER_ID in handler_ids else "cycling"
+    )
+    return (
+        copy.deepcopy(source),
+        copy.deepcopy(host._effective_card_data(source)),
+        kind,
+    )
+
+
+def _dispatch_cycling_event(
+    host: ActivationCommitHost,
+    proposal: ActivationProposal,
+    item: StackItem,
+    snapshot: tuple[Any, Mapping[str, Any], str] | None,
+) -> None:
+    if snapshot is None:
+        return
+    source, characteristics, cycling_kind = snapshot
+    event_sources = tuple(
+        host._semantic_event_sources(zones={"battlefield"})
+    ) + (source,)
+    trigger_batch: list[StackItem] = []
+    host._dispatch_semantic_event(
+        "card.cycled",
+        {
+            "event_id": item.stack_id,
+            "card": source.ref,
+            "player": proposal.seat,
+            "controller": proposal.seat,
+            "owner": source.owner,
+            "cycling_kind": cycling_kind,
+        },
+        sources=event_sources,
+        source_zones={source.object_id: "hand"},
+        source_characteristics={source.object_id: characteristics},
+        trigger_batch=trigger_batch,
+    )
+    enqueue_trigger_batch(host, trigger_batch)
+
+
 def commit_activation(
     host: ActivationCommitHost,
     proposal: ActivationProposal,
@@ -501,6 +590,12 @@ def commit_activation(
     source, ability = _revalidate_activation(host, proposal)
     source_logical_object_id = source.logical_object_id
     program = host.semantics.get(proposal.semantic_key)
+    cycling_snapshot = _cycling_event_snapshot(
+        host,
+        proposal,
+        source,
+        program,
+    )
     attachment_relation = (
         required_attachment_relation(program.effects)
         if program is not None
@@ -598,6 +693,7 @@ def commit_activation(
         changed_objects=[source.object_id, *paid_objects],
         changed_players=[proposal.seat],
     )
+    _dispatch_cycling_event(host, proposal, item, cycling_snapshot)
     if host._stabilize():
         return
     host.state.priority_player = proposal.seat

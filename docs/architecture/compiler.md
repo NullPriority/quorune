@@ -761,6 +761,21 @@ family-specific layer-6 applicability check. The earlier enum fragment remains
 replay-readable only. See
 [ADR 0088](../adr/0088-typed-query-self-characteristics.md).
 
+Public event-effect triggers compile only when one closed normalized carrier
+and one independently exact typed body compose through the shared event-effect
+owner. Zone events consume transaction-sealed controller, type, subtype, color,
+token, and integer-power facts; damage and draw use committed result events;
+spell-cast schema v4 adds the active phase. Completed attack, block, Cycling,
+and face-up actions share one public-action occurrence capability and the
+ordinary APNAP batch. Block declarations emit one blocks occurrence per
+assignment but only one becomes-blocked occurrence per attacker. Attachment-
+relative, aggregate, combined, chosen, history-relative, targeted-event,
+tapped-event, counter-placement-event, secret, dynamic-comparison, and
+declaration-replacement grammar remains residual. Discard and sacrifice event
+bindings remain residual until all authoritative producers carry their typed
+causes rather than requiring inference from a zone pair. See
+[ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
+
 ## Extending the compiler
 
 Add the smallest reusable grammar production and typed construct. Include

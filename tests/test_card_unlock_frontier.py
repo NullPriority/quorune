@@ -11,6 +11,7 @@ from quorune.carddb import CardDatabase
 from quorune.compiler.unlock_frontier import (
     BASE_RESIDUAL_FAMILIES,
     build_card_unlock_frontier,
+    canonical_card_data_snapshot,
     canonical_residual_families,
     render_card_unlock_frontier_markdown,
     validate_card_unlock_frontier,
@@ -294,6 +295,21 @@ class CardUnlockFrontierTests(unittest.TestCase):
                 self.assertNotEqual(False, ability.get("lowerable"))
                 if "template_id" in ability:
                     self.assertIsNotNone(ability["template_id"])
+
+    def test_frontier_snapshot_excludes_environment_specific_database_provenance(self):
+        metadata = {
+            **self.db.metadata(),
+            "bulk_manifest_url": "https://example.invalid/bulk-data",
+            "oracle_source": r"C:\\local\\oracle.jsonl.gz",
+            "rulings_source": "/cloud/rulings.jsonl.gz",
+        }
+
+        snapshot = canonical_card_data_snapshot(metadata)
+
+        self.assertEqual(self.report["card_data_snapshot"], snapshot)
+        self.assertNotIn("bulk_manifest_url", snapshot)
+        self.assertNotIn("oracle_source", snapshot)
+        self.assertNotIn("rulings_source", snapshot)
 
     def test_frontier_fingerprint_and_markdown_fail_closed(self):
         markdown = render_card_unlock_frontier_markdown(self.report)

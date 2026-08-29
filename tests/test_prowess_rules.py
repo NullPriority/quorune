@@ -164,6 +164,39 @@ class ProwessCompilerTests(unittest.TestCase):
         with self.assertRaises(SpellCastEventError):
             SpellCastEvent.from_context(malformed)
 
+    def test_spell_cast_event_v4_seals_active_phase(self):
+        event = SpellCastEvent(
+            schema_version=4,
+            card_ref="A17",
+            object_id="object:A17",
+            logical_object_id="logical:A17:4",
+            controller="A",
+            origin="hand",
+            stack_ref="S9",
+            types=("instant",),
+            mana_value=2,
+            owner="A",
+            active_player="A",
+            caster_spell_number=1,
+            kicked=False,
+            has_x_cost=False,
+            has_adventure=False,
+            keywords=(),
+            phase="precombat_main",
+        )
+
+        context = event.to_context()
+
+        self.assertEqual("precombat_main", context["phase"])
+        self.assertEqual(event, SpellCastEvent.from_context(context))
+        malformed = deepcopy(context)
+        malformed["phase"] = ""
+        with self.assertRaises(SpellCastEventError):
+            SpellCastEvent.from_context(malformed)
+        malformed["phase"] = "main"
+        with self.assertRaises(SpellCastEventError):
+            SpellCastEvent.from_context(malformed)
+
     def test_spell_cast_event_rejects_malformed_context_without_mutation(self):
         context = SpellCastEvent(
             card_ref="A17",
@@ -510,7 +543,7 @@ class ProwessRuntimeTests(unittest.TestCase):
             self.prepare_noncreature_cast(engine)
             engine._stabilize()
             context = engine.state.stack[-1].context
-            self.assertEqual(3, context["schema_version"])
+            self.assertEqual(4, context["schema_version"])
             self.assertTrue(context["object_id"])
             self.assertTrue(context["logical_object_id"])
 

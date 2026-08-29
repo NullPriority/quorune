@@ -12,7 +12,7 @@ from quorune.util import stable_json
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
-HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v6"
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v7"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
@@ -22,6 +22,15 @@ _ARCHITECTURE_PATH = "coverage/architecture-audit.json"
 _COHORT_MEASUREMENTS_PATH = (
     "coverage/work-selection-cohort-measurements.json"
 )
+_CARD_DATA_SNAPSHOT_FIELDS = (
+    "schema_version",
+    "card_count",
+    "ruling_count",
+    "oracle_source_sha256",
+    "rulings_source_sha256",
+    "scryfall_oracle_updated_at",
+    "scryfall_rulings_updated_at",
+)
 
 
 class HarvestOutcomeHistoryError(ValueError):
@@ -30,6 +39,32 @@ class HarvestOutcomeHistoryError(ValueError):
 
 def _hash(value: Any) -> str:
     return hashlib.sha256(stable_json(value).encode("utf-8")).hexdigest()
+
+
+def _semantic_report_sha256(
+    path: str, raw: bytes, value: Mapping[str, Any]
+) -> str:
+    del raw
+    canonical = dict(value)
+    if path == _FRONTIER_PATH:
+        canonical.pop("fingerprint", None)
+        snapshot = value.get("card_data_snapshot")
+        if not isinstance(snapshot, Mapping):
+            raise HarvestOutcomeHistoryError(
+                "Card-unlock frontier lacks a content-bound card snapshot"
+            )
+        canonical["card_data_snapshot"] = {
+            key: snapshot[key]
+            for key in _CARD_DATA_SNAPSHOT_FIELDS
+            if snapshot.get(key) is not None
+        }
+    return _hash(
+        {
+            "schema_version": 1,
+            "report": path,
+            "semantic_content": canonical,
+        }
+    )
 
 
 def _git(
@@ -332,8 +367,11 @@ def _receipt_from_reports(
             path: {
                 "git_blob_oid": oid,
                 "raw_sha256": hashlib.sha256(raw).hexdigest(),
+                "semantic_sha256": _semantic_report_sha256(
+                    path, raw, value
+                ),
             }
-            for path, (oid, raw, _value) in sorted(reports.items())
+            for path, (oid, raw, value) in sorted(reports.items())
         },
         "frontier_fingerprint": str(frontier["fingerprint"]),
         "compiler_version": str(program["compiler_version"]),
@@ -581,7 +619,7 @@ def _worktree_semantic_state(root: Path) -> dict[str, Any]:
         "compiler_version": receipt["compiler_version"],
         "card_program_schema_version": receipt["card_program_schema_version"],
         "semantic_receipt_sha256": {
-            path: receipt["blobs"][path]["raw_sha256"]
+            path: receipt["blobs"][path]["semantic_sha256"]
             for path in (_PROGRAM_PATH, _ORACLE_PATH, _FRONTIER_PATH)
         },
         "support_counts": {
@@ -755,7 +793,9 @@ def _semantic_outcome_state(
             raise HarvestOutcomeHistoryError(
                 "Latest semantic outcome lacks a receipt identity"
             )
-        latest_hashes[path] = str(identity["raw_sha256"])
+        latest_hashes[path] = str(
+            identity.get("semantic_sha256") or identity["raw_sha256"]
+        )
     semantic_current = latest_hashes == dict(current_hashes)
     if semantic_current:
         if transition_declaration is not None:
@@ -907,7 +947,10 @@ def _receipt_content_fingerprint(receipt: Mapping[str, Any]) -> str:
         raise HarvestOutcomeHistoryError("Harvest content receipt lacks blobs")
     try:
         identities = {
-            path: str(blobs[path]["raw_sha256"])
+            path: str(
+                blobs[path].get("semantic_sha256")
+                or blobs[path]["raw_sha256"]
+            )
             for path, _compressed in _report_specs()
         }
     except (KeyError, TypeError) as exc:
@@ -1005,13 +1048,50 @@ def _transition_measurement_receipt(
     return receipt
 
 
+def _semantic_blob_sha256(
+    path: str,
+    identity: Mapping[str, Any],
+    *,
+    repository: Path | None,
+) -> str:
+    semantic = str(identity.get("semantic_sha256") or "")
+    if semantic:
+        return semantic
+    raw_sha256 = str(identity.get("raw_sha256") or "")
+    if repository is None:
+        return raw_sha256
+    oid = str(identity.get("git_blob_oid") or "")
+    if not _COMMIT.fullmatch(oid):
+        raise HarvestOutcomeHistoryError(
+            "Historical frontier receipt lacks a canonical Git blob identity"
+        )
+    raw = _git(repository, "cat-file", "blob", oid)
+    value = _json_object(
+        raw,
+        path,
+        compressed=path in {_FRONTIER_PATH, _INTERACTIONS_PATH},
+    )
+    return _semantic_report_sha256(path, raw, value)
+
+
 def _semantic_receipts_match(
-    left: Mapping[str, Any], right: Mapping[str, Any]
+    left: Mapping[str, Any],
+    right: Mapping[str, Any],
+    *,
+    repository: Path | None = None,
 ) -> bool:
     try:
         return all(
-            left["blobs"][path]["raw_sha256"]
-            == right["blobs"][path]["raw_sha256"]
+            _semantic_blob_sha256(
+                path,
+                left["blobs"][path],
+                repository=repository,
+            )
+            == _semantic_blob_sha256(
+                path,
+                right["blobs"][path],
+                repository=repository,
+            )
             for path in (_PROGRAM_PATH, _ORACLE_PATH, _FRONTIER_PATH)
         )
     except (KeyError, TypeError):
@@ -1188,13 +1268,19 @@ def _refresh_content_entry(
     *,
     declaration: Mapping[str, Any],
     head: Mapping[str, Any],
+    repository: Path | None = None,
+    measurement_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     validated = _validate_content_entry(entry)
     if not _declaration_matches_content_entry(declaration, validated):
         raise HarvestOutcomeHistoryError(
             "Only the matching content-bound transition can be refreshed"
         )
-    if not _semantic_receipts_match(validated["head_receipt"], head):
+    if not _semantic_receipts_match(
+        validated["head_receipt"],
+        head,
+        repository=repository,
+    ):
         raise HarvestOutcomeHistoryError(
             "A semantic content change requires a new harvest outcome"
         )
@@ -1209,6 +1295,23 @@ def _refresh_content_entry(
             base["architecture"], head["architecture"]
         ),
     }
+    if "measurement_id" in declaration and measurement_receipt is not None:
+        measurement = measurement_receipt["measurement"]
+        refreshed.update(
+            {
+                "expected_complete_card_gain": measurement[
+                    "complete_card_gain"
+                ],
+                "measurement_id": declaration["measurement_id"],
+                "measurement_probe_id": measurement["probe_id"],
+                "measurement_receipt_fingerprint": measurement_receipt[
+                    "receipt_fingerprint"
+                ],
+                "measurement_frontier_fingerprint": measurement_receipt[
+                    "frontier_fingerprint"
+                ],
+            }
+        )
     refreshed.pop("entry_fingerprint", None)
     refreshed["entry_fingerprint"] = _hash(refreshed)
     return refreshed
@@ -1405,7 +1508,11 @@ def build_harvest_outcome_history(
         if transition_declaration is not None
         else None
     )
-    if _semantic_receipts_match(latest, current_receipt):
+    if _semantic_receipts_match(
+        latest,
+        current_receipt,
+        repository=repository,
+    ):
         if validated_declaration is not None:
             matching_content_entry = (
                 entries[-1].get("receipt_identity_kind") == "semantic_content"
@@ -1426,6 +1533,11 @@ def build_harvest_outcome_history(
                     entries[-1],
                     declaration=validated_declaration,
                     head=current_receipt,
+                    repository=repository,
+                    measurement_receipt=_transition_measurement_receipt(
+                        repository,
+                        validated_declaration,
+                    ),
                 )
                 latest = entries[-1]["head_receipt"]
             elif (
