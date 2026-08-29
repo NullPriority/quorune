@@ -47,7 +47,10 @@ from scripts.harvest_outcome_history import (
     HarvestOutcomeHistoryError,
 )
 from scripts.update_rules_scheduler import _compact_markdown
-from scripts.work_selection_cohort_measurements import _matches_probe
+from scripts.work_selection_cohort_measurements import (
+    _matches_probe,
+    _matches_query_self_characteristic_probe,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1584,6 +1587,52 @@ class RulesSchedulerTests(unittest.TestCase):
                         source,
                         card_record=record,
                         ability=ability,
+                    )
+                )
+
+    def test_query_characteristic_probes_preserve_completed_grammar_identity(self):
+        old_probe = "typed-query-self-characteristic-existing-owner-v1"
+        gated_probe = "query-gated-self-characteristic-existing-owner-v1"
+        old_sources = (
+            "This creature gets +1/+1 for each artifact you control.",
+            "This creature gets +2/+2 as long as you control three or more "
+            "artifacts.",
+        )
+        gated_sources = (
+            "As long as you control an artifact, this creature gets +2/+0 "
+            "and has flying.",
+            "This creature has flying as long as you control an artifact.",
+        )
+        for source in old_sources:
+            with self.subTest(source=source, probe=old_probe):
+                self.assertTrue(
+                    _matches_query_self_characteristic_probe(
+                        old_probe,
+                        source,
+                        source_name="Probe Source",
+                    )
+                )
+                self.assertFalse(
+                    _matches_query_self_characteristic_probe(
+                        gated_probe,
+                        source,
+                        source_name="Probe Source",
+                    )
+                )
+        for source in gated_sources:
+            with self.subTest(source=source, probe=gated_probe):
+                self.assertFalse(
+                    _matches_query_self_characteristic_probe(
+                        old_probe,
+                        source,
+                        source_name="Probe Source",
+                    )
+                )
+                self.assertTrue(
+                    _matches_query_self_characteristic_probe(
+                        gated_probe,
+                        source,
+                        source_name="Probe Source",
                     )
                 )
 

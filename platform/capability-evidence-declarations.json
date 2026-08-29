@@ -6395,6 +6395,14 @@
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_gate_recomputes_layer_six_and_seven_characteristics",
+      "official_rule_ids": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute one public layer-5 query threshold and apply or remove its supported layer-6 keyword and layer-7c stat results together."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
       "official_rule_ids": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
@@ -6427,11 +6435,27 @@
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_gated_grammar_rejects_nonquery_and_open_modifiers",
+      "official_rule_ids": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject counter, combat, inverted-existence, unsupported-keyword, quoted, attached-subject, and ability-removal gates from the query grammar."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "positive",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_grammar_compiles_closed_fragments",
       "official_rule_ids": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile closed controller, opponent, global, graveyard, hand, attachment, and counter quantities into one typed self-characteristic fragment."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_gated_prefix_and_keyword_only_grammar_is_closed",
+      "official_rule_ids": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile prefix and suffix public-query thresholds carrying fixed stats, supported keywords, or both through the existing typed descriptor."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",

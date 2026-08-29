@@ -753,7 +753,12 @@ counters, and raw controller hand size use closed quantity scopes. Counted
 objects are evaluated only through layer 5 before concrete layer-6 and layer-7c
 effects are added, so represented type and color changes feed the count without
 later-layer recursion. Current compilation uses the source's current controller
-for “your” zones; the earlier enum fragment remains replay-readable only. See
+for “your” zones. Fixed public battlefield and graveyard thresholds accept
+prefix or suffix self wording and may add only power/toughness, only supported
+keywords, or both through that same descriptor. Inverted existence wording,
+non-source subjects, and ability removal remain residual; this grammar adds no
+family-specific layer-6 applicability check. The earlier enum fragment remains
+replay-readable only. See
 [ADR 0088](../adr/0088-typed-query-self-characteristics.md).
 
 ## Extending the compiler

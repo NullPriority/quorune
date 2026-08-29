@@ -216,10 +216,6 @@ class QueryCharacteristicModifierSpec:
             raise CharacteristicFragmentError(
                 "Query characteristic modifiers require integer amounts"
             )
-        if self.power == 0 and self.toughness == 0:
-            raise CharacteristicFragmentError(
-                "Query characteristic modifiers must change power or toughness"
-            )
         if type(self.minimum_count) is not int or self.minimum_count < 0:
             raise CharacteristicFragmentError(
                 "Query characteristic minimum_count must be nonnegative"
@@ -233,6 +229,10 @@ class QueryCharacteristicModifierSpec:
                 "Query characteristic abilities must be unique strings"
             )
         object.__setattr__(self, "add_abilities", abilities)
+        if self.power == 0 and self.toughness == 0 and not abilities:
+            raise CharacteristicFragmentError(
+                "Query characteristic modifiers must change characteristics"
+            )
         if self.calculation is PowerToughnessCalculation.PER_MATCHING_OBJECT:
             if self.minimum_count != 0 or abilities:
                 raise CharacteristicFragmentError(

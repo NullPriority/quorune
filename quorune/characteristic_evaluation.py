@@ -487,25 +487,26 @@ def _query_characteristic_effects(
                     duration=ContinuousEffectDuration.ZONE_OBJECT,
                 )
             )
-        materialized.append(
-            ContinuousEffect(
-                effect_id=f"{prefix}:power-toughness",
-                source_id=card.object_id,
-                layer=Layer.POWER_TOUGHNESS,
-                sublayer="7c",
-                timestamp=card.zone_timestamp,
-                operations=(
-                    ContinuousOperation(
-                        "modify_power_toughness",
-                        [
-                            fragment.power * multiplier,
-                            fragment.toughness * multiplier,
-                        ],
+        if fragment.power or fragment.toughness:
+            materialized.append(
+                ContinuousEffect(
+                    effect_id=f"{prefix}:power-toughness",
+                    source_id=card.object_id,
+                    layer=Layer.POWER_TOUGHNESS,
+                    sublayer="7c",
+                    timestamp=card.zone_timestamp,
+                    operations=(
+                        ContinuousOperation(
+                            "modify_power_toughness",
+                            [
+                                fragment.power * multiplier,
+                                fragment.toughness * multiplier,
+                            ],
+                        ),
                     ),
-                ),
-                duration=ContinuousEffectDuration.ZONE_OBJECT,
+                    duration=ContinuousEffectDuration.ZONE_OBJECT,
+                )
             )
-        )
     return materialized
 
 

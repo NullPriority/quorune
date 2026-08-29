@@ -260,6 +260,75 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
                     )
                 )
 
+    def test_query_gated_prefix_and_keyword_only_grammar_is_closed(self):
+        cases = (
+            (
+                "As long as you control an artifact, this creature gets "
+                "+2/+0 and has flying.",
+                2,
+                0,
+                ["Flying"],
+            ),
+            (
+                "This creature has first strike and trample as long as "
+                "there are seven or more cards in your graveyard.",
+                0,
+                0,
+                ["First Strike", "Trample"],
+            ),
+            (
+                "As long as an opponent controls an Island, Named Source "
+                "gets +1/+1.",
+                1,
+                1,
+                [],
+            ),
+        )
+        for index, (text, power, toughness, abilities) in enumerate(cases):
+            with self.subTest(text=text):
+                program = self.compile(
+                    permanent(
+                        text,
+                        suffix=122_000_100 + index,
+                        name="Named Source",
+                    )
+                )
+                descriptor = next(
+                    descriptor
+                    for ability in program.abilities
+                    for descriptor in ability.handlers
+                    if descriptor.get("handler_id") == QUERY_HANDLER
+                )
+                value = descriptor["fragment"]["value"]
+                self.assertEqual("fixed_if_threshold", value["calculation"])
+                self.assertEqual(power, value["power"])
+                self.assertEqual(toughness, value["toughness"])
+                self.assertEqual(abilities, value["add_abilities"])
+                self.assertEqual((), program.residuals)
+
+    def test_query_gated_grammar_rejects_nonquery_and_open_modifiers(self):
+        excluded = (
+            "As long as this creature has three or more +1/+1 counters on "
+            "it, it has flying.",
+            "This creature has flying as long as it's attacking.",
+            "This creature has flying as long as an artifact card is in your "
+            "graveyard.",
+            "As long as you control an artifact, this creature has ward {2}.",
+            "As long as you control an artifact, this creature has "
+            '"{T}: Draw a card."',
+            "As long as you control an artifact, equipped creature has flying.",
+            "As long as you control an artifact, this creature loses all "
+            "abilities.",
+        )
+        for text in excluded:
+            with self.subTest(text=text):
+                self.assertIsNone(
+                    query_self_characteristics_handler(
+                        text,
+                        source_name="Query Source",
+                    )
+                )
+
     def test_query_characteristic_descriptors_fail_closed_without_behavior(self):
         descriptor = query_self_characteristics_handler(
             "This creature gets +1/+1 for each artifact you control.",
@@ -300,7 +369,7 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
 
     def test_query_characteristic_compiler_mutant_is_killed(self):
         record = permanent(
-            "This creature gets +1/+1 for each artifact you control.",
+            "As long as you control an artifact, this creature has flying.",
             suffix=122_002_000,
         )
 
@@ -325,7 +394,7 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
     def test_query_ability_removal_sibling_withholds_runtime_admission(self):
         program = self.compile(
             permanent(
-                "This creature gets +1/+1 for each artifact you control.\n"
+                "As long as you control an artifact, this creature has flying.\n"
                 "This creature loses all abilities.",
                 suffix=122_002_001,
             ),
@@ -611,6 +680,52 @@ class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):
         )
         self.assertEqual("5", current["power"])
         self.assertEqual("4", current["toughness"])
+
+    def test_query_gate_recomputes_layer_six_and_seven_characteristics(self):
+        session = self.session(122_003_004)
+        engine = session.engine
+        source = self.source(
+            engine,
+            seat="A",
+            fragments=(
+                query_fragment(
+                    scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+                    types=("artifact",),
+                    power=2,
+                    toughness=1,
+                    minimum_count=2,
+                    abilities=("Flying",),
+                ),
+            ),
+        )
+        first = self.token(
+            engine,
+            "A",
+            type_line="Token Artifact — Clue",
+            name="First Artifact",
+        )
+        below = engine._effective_card_data(source)
+        self.assertEqual(("1", "1"), (below["power"], below["toughness"]))
+        self.assertNotIn("Flying", below.get("keywords", ()))
+
+        second = self.token(
+            engine,
+            "A",
+            type_line="Token Creature — Citizen",
+            name="Layer Four Artifact",
+        )
+        second.annotations["continuous_add_types"] = ["Artifact"]
+        active = engine._effective_card_data(source)
+        self.assertEqual(("3", "2"), (active["power"], active["toughness"]))
+        self.assertIn("Flying", active["keywords"])
+
+        engine.move_card(first.object_id, "graveyard", log=False)
+        inactive = engine._effective_card_data(source)
+        self.assertEqual(
+            ("1", "1"),
+            (inactive["power"], inactive["toughness"]),
+        )
+        self.assertNotIn("Flying", inactive.get("keywords", ()))
 
     def test_query_fragment_copy_uses_current_source_and_controller(self):
         session = self.session(122_003_002)
