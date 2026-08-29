@@ -452,7 +452,10 @@ the merge-specific receipt/fingerprint check and compact deterministic
 replay/server integration. `Main / Broad regression` preserves the complete
 Ubuntu, Windows, package, generated, interaction and browser inventory for
 every exact main SHA. A completed red broad run blocks later automatic merges;
-only a labeled high-risk fix-forward PR may bypass that red-state query. A
+`main-red-recovery` may narrow only a provenance-verified nonsemantic Python
+fixture or browser test-driver repair, while `main-red-fix-forward` admits an
+exact-failed-base PR only through the complete high-risk gate. Neither label
+changes gameplay or compiler risk classification. A
 broader local behavioral gate is exceptional: use it only when the
 user asks or when diagnosing a specific CI-only or release-critical failure
 that cannot be isolated from the Actions evidence. The required exact new and
@@ -518,13 +521,17 @@ derive, validate, or centralize the obligation. Do not weaken or bypass a real
 check merely because the immediate implementation appears correct.
 
 The `main-red-recovery` label requests a machine recovery audit; it does not
-authorize focused CI by itself. The audit must bind the latest failed main
-source tree, exact run and Ubuntu Python job IDs, the failed shard artifact and
-named test IDs, and a diff confined to those failing test modules plus
-affected-owner generated outputs. It rejects assertion or decorator changes,
-nonfailing test changes, product or compiler source, browser failures, missing
-artifacts, and ambiguous provenance. A rejected recovery uses the normal
-high-risk gate.
+authorize focused CI by itself. The audit binds the latest failed main source
+tree, exact run and failed job IDs, and either schema-v3 Ubuntu Python shard
+results or exact-source Playwright JSON. Python recovery remains confined to
+reported failing modules with unchanged decorators and assertions. Browser
+recovery remains confined to the reported spec or a stack-named test-support
+harness, preserves every test body, tag, and assertion, and may append only the
+matching immutable CI-escape record plus affected-owner outputs. Missing,
+ambiguous, gameplay, compiler, protocol, product-browser, assertion-changing,
+or recovery-authority changes are rejected. `main-red-fix-forward` separately
+binds the PR base to the failed main SHA and forces the complete high-risk gate;
+it never produces a focused recovery profile.
 
 Selection-authority changes remain high risk except when the base revision's
 sentinel proves a structural monotonic addition to

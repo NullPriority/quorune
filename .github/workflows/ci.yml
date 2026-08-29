@@ -68,7 +68,8 @@ jobs:
         run: |
           set -o pipefail
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${MTG_MAIN_RUN_ID}/jobs?filter=latest&per_page=100" > local/main-red-jobs.json
-          gh run download "${MTG_MAIN_RUN_ID}" --pattern "main-broad-python-ubuntu-*-${MTG_MAIN_RUN_ID}" --dir local/main-red-results
+          gh run download "${MTG_MAIN_RUN_ID}" --pattern "main-broad-python-ubuntu-*-${MTG_MAIN_RUN_ID}" --dir local/main-red-results || :
+          gh run download "${MTG_MAIN_RUN_ID}" --pattern "main-broad-browser-*-${MTG_MAIN_RUN_ID}" --dir local/main-red-results || :
           python scripts/main_health.py --runs-json local/main-runs.json --jobs-json local/main-red-jobs.json --results-dir local/main-red-results --event "${GITHUB_EVENT_PATH}" --base-sha "${MTG_BASE_SHA}" --head-sha "${MTG_HEAD_SHA}" --github-output "${GITHUB_OUTPUT}" | tee local/main-red-recovery.json
           echo '### Verified main-red recovery' >> "${GITHUB_STEP_SUMMARY}"
           cat local/main-red-recovery.json >> "${GITHUB_STEP_SUMMARY}"
@@ -88,7 +89,7 @@ jobs:
         name: Classify exact changed-file impact
         run: >-
           python scripts/ci_plan.py
-          --force-high-risk "${{ steps.risk_sentinel.outputs.force_high_risk }}"
+          --force-high-risk "${{ steps.risk_sentinel.outputs.force_high_risk == 'true' || steps.main_state.outputs.force_high_risk == 'true' }}"
           --additive-selection-paths-json '${{ steps.risk_sentinel.outputs.additive_selection_paths_json }}'
           --recovery-plan-json '${{ steps.recovery.outputs.recovery_plan_json || 'null' }}'
       - name: Publish generated exact-head evidence

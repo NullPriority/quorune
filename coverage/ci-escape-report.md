@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "e222d26f7acdb683a21ad13e49daf52ea770ce1de6c33def35dadae59c018451"
+verified: "e622245637b5753093c4f1ae683cc50ce87180ad576b435d9a4ceeba10018097"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 41
-- Deterministic escapes: 36
+- Escapes: 42
+- Deterministic escapes: 37
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -67,6 +67,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260825-39` | [32827593705](https://github.com/NullPriority/quorune/actions/runs/32827593705) | `missing_affected_test` | `added` | The exact expectations now include the typed source-cost capability, Tourach's Gate is a positive activated case, and the four residual pairs use Etchings of the Chosen as a real fail-closed witness. The family-indexed policy links activated-cost compiler owners to these neighboring capability, exact/residual, mutation, and interaction modules before the next push. |
 | `ci-20260825-40` | [32827593705](https://github.com/NullPriority/quorune/actions/runs/32827593705) | `source_correctness` | `added` | Modal closure now derives and validates activation descriptors and their capabilities, while the promoted Knight-Captain path has positive Soldier-cost, prevention, damage, and replay evidence beside a separate real residual prevention witness. Activated-cost, prevention, and central program-registration owners now select those focused expectation modules through the family-indexed policy. |
 | `ci-20260828-41` | [33143128153](https://github.com/NullPriority/quorune/actions/runs/33143128153) | `source_correctness` | `added` | Shard result schema v3 records canonical failed and errored test IDs. The recovery planner now proves the latest failed main SHA, immutable run and Ubuntu job IDs, matching shard artifact, exact failing test module, affected-owner generated outputs, unchanged nonfailing tests and decorators, and structurally identical assertions before selecting the focused recovery profile. |
+| `ci-20260829-42` | [33248242309](https://github.com/NullPriority/quorune/actions/runs/33248242309) | `browser_integration` | `not_applicable` | The shared action-ready driver now submits the legal empty-attacker declaration when that mandatory choice blocks a later action and returns false when no authorized command was submitted, allowing the progress coordinator to apply its own bounded fallback and watchdog. The strict main-red audit now consumes exact-source Playwright reports and permits only report- or stack-named test harness changes with unchanged test bodies, tags, and assertions; recovery-authority repairs use an exact-base complete high-risk fix-forward instead of self-authorizing focused CI. The existing browser-soak inventory selected the failing journey, so no new impact edge is required. |
 
 ## Measurement limitations
 

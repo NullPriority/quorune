@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-28T18:20:30Z",
+  "observed_at": "2026-08-29T11:08:12Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -602,6 +602,23 @@
       ],
       "impact_edge_status": "added",
       "resolution": "Shard result schema v3 records canonical failed and errored test IDs. The recovery planner now proves the latest failed main SHA, immutable run and Ubuntu job IDs, matching shard artifact, exact failing test module, affected-owner generated outputs, unchanged nonfailing tests and decorators, and structurally identical assertions before selecting the focused recovery profile."
+    },
+    {
+      "id": "ci-20260829-42",
+      "run_id": 33248242309,
+      "head_sha": "9d6f1e54b4338b00f95445ebd55f48859b07ca96",
+      "category": "browser_integration",
+      "deterministic": true,
+      "summary": "The natural-winner browser soak reached a legal Combat.Attackers decision while searching for the next land offer, but its custom progress callback could submit only priority passes and reported success even when it submitted nothing.",
+      "failed_surfaces": [
+        "Main / Broad / Browser / soak (job 99089350744)",
+        "Main / Broad regression"
+      ],
+      "regressions": [
+        "four-player.spec.ts: natural commander-damage winner"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The shared action-ready driver now submits the legal empty-attacker declaration when that mandatory choice blocks a later action and returns false when no authorized command was submitted, allowing the progress coordinator to apply its own bounded fallback and watchdog. The strict main-red audit now consumes exact-source Playwright reports and permits only report- or stack-named test harness changes with unchanged test bodies, tags, and assertions; recovery-authority repairs use an exact-base complete high-risk fix-forward instead of self-authorizing focused CI. The existing browser-soak inventory selected the failing journey, so no new impact edge is required."
     }
   ],
   "recent_pull_requests": [
