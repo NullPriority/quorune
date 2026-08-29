@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "5cd7bc6218e42b7f09b26bc1c81557d89b912ca1003c4dd7a3a34043c80c2bb6"
+verified: "00a63af189ee4e789bf40dbb7268f677f586200179e3d1a962839ac65cf23873"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,15 +14,17 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Card | Score | Pieces | Systems | Abilities | Blockers | Rulings | Status |
 |---|---:|---:|---:|---:|---:|---:|---|
 | Valki, God of Lies // Tibalt, Cosmic Impostor | 240 | 27 | 6 | 6 | 14 | 22 | `blocked` |
-| Ugin, Eye of the Storms | 218 | 40 | 6 | 5 | 13 | 3 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
 | Terra, Magical Adept // Esper Terra | 203 | 21 | 7 | 6 | 10 | 14 | `blocked` |
 | Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 201 | 23 | 7 | 6 | 10 | 10 | `blocked` |
+| Ugin, Eye of the Storms | 199 | 39 | 5 | 5 | 11 | 3 | `blocked` |
 | Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 196 | 17 | 6 | 5 | 10 | 21 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
+| Jin-Gitaxias // The Great Synthesis | 195 | 27 | 6 | 7 | 9 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | Twists and Turns // Mycoid Maze | 194 | 25 | 6 | 6 | 9 | 7 | `blocked` |
 | Vorinclex // The Grand Evolution | 193 | 23 | 7 | 7 | 10 | 4 | `blocked` |
+| Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
 | Sheoldred // The True Scriptures | 192 | 22 | 7 | 7 | 11 | 4 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 190 | 23 | 4 | 7 | 10 | 19 | `blocked` |
 | Dion, Bahamut's Dominant // Bahamut, Warden of Light | 189 | 23 | 6 | 7 | 8 | 10 | `blocked` |
@@ -30,7 +32,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Conqueror's Galleon // Conqueror's Foothold | 187 | 28 | 5 | 7 | 3 | 14 | `blocked` |
 | Elesh Norn // The Argent Etchings | 187 | 21 | 7 | 7 | 12 | 2 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
-| Jin-Gitaxias // The Great Synthesis | 185 | 20 | 6 | 7 | 11 | 6 | `blocked` |
 | Cleric Class | 183 | 22 | 6 | 6 | 7 | 12 | `blocked` |
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
 | Ojer Axonil, Deepest Might // Temple of Power | 183 | 23 | 7 | 6 | 9 | 6 | `blocked` |
@@ -45,7 +46,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Fiora // Marchesa, Resolute Monarch | 175 | 17 | 5 | 7 | 6 | 17 | `blocked` |
 | Nicol Bolas, the Ravager // Nicol Bolas, the Arisen | 175 | 30 | 5 | 7 | 5 | 11 | `blocked` |
 | Ojer Taq, Deepest Foundation // Temple of Civilization | 175 | 23 | 7 | 6 | 9 | 2 | `blocked` |
-| Devoted Grafkeeper // Departed Soulkeeper | 174 | 23 | 6 | 6 | 6 | 7 | `blocked` |
 | Invasion of Moag // Bloomwielder Dryads | 173 | 20 | 6 | 4 | 5 | 16 | `blocked` |
 | Miles Morales // Ultimate Spider-Man | 172 | 24 | 6 | 5 | 6 | 11 | `blocked` |
 | Overwhelmed Archivist // Archive Haunt | 172 | 29 | 5 | 5 | 4 | 7 | `blocked` |

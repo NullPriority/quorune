@@ -173,6 +173,25 @@
       "layout": "normal",
       "released_at": "2022-03-03",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "5f694f2d-9349-4988-b2b4-788136d4293e",
+      "name": "Kraum, Ludevic's Opus",
+      "mana_cost": "{3}{U}{R}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature \u2014 Zombie Horror",
+      "oracle_text": "Flying, haste\nWhenever an opponent casts their second spell each turn, draw a card.\nPartner (You can have two commanders if both have partner.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": ["R", "U"],
+      "color_identity": ["R", "U"],
+      "keywords": ["Flying", "Haste", "Partner"],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-11",
+      "legalities": {"commander": "legal"}
     }
   ],
   "rulings": []

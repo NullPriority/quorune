@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a8dd9300dbe5f5a2a6d91d86f3d00bd356ed7af5df534a8230eab658df8a9753",
-  "declaration_source_fingerprint": "83f5c81e7bd615f4ff791c7b2049a7eb4abc29c85689bbef2c6a68613b1d287e",
+  "registry_fingerprint": "921b9b424ce679b04c7fe3b57dd0183466d8cc6f457262a64b5dee41b0b1ba82",
+  "declaration_source_fingerprint": "cdb8031c6bb9435167b03e76bc7b121534b78bbf23cc6e89b506d643aa01a1cd",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -44312,6 +44312,27 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose three independent battlefield predicates and one stack-source self predicate with the shared typed life body and ordinary trigger ordering."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": [
@@ -44396,6 +44417,27 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the canonical four-player APNAP owner when multiple exact predicate programs match the same cast."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed",
       "official_rule_ids": [
@@ -44434,7 +44476,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Keep mana-value, origin, cast-history, targeted-spell, historic, cast-or-copy, and conditional variants outside the closed static characteristic grammar."
+      "applicability_note": "Keep chosen-value, targeted-spell, cast-or-copy, conditional, dynamic-counter, and mixed land-or-cast variants outside the closed fact grammar."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -44627,6 +44669,27 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_typed_spell_cast_fact_predicates_compile_exactly",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower the bounded source-self, ordinal, mana-value, origin, turn, Kicker, Historic, fixed-color permanent, and Adventure grammar to immutable typed event predicates."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
       "official_rule_ids": [
@@ -44687,6 +44750,27 @@
         "commander_review"
       ],
       "applicability_note": "Project public damage-trigger facts to every seat without source physical or logical object identities."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate every selected predicate from public committed cast facts and source-relative identities without reading hidden Oracle prose or private zones."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -45338,6 +45422,22 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Dispatch ordinal, mana-value, Historic, and the cast spell's own stack-zone trigger from one committed v3 occurrence and one APNAP batch."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "interaction",
       "test_id": "tests.test_prowess_rules.ProwessRuntimeTests.test_prowess_and_opponent_cast_trigger_share_one_apnap_batch",
       "official_rule_ids": [
         "601.2i",
@@ -45350,6 +45450,22 @@
         "commander_review"
       ],
       "applicability_note": "Dispatch every represented trigger from one immutable committed spell-cast event and one ordinary APNAP batch."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Place three same-controller matches through an explicit trigger-order decision in a four-player game while retaining the stack source as a fourth-zone event observer."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",
@@ -45445,7 +45561,23 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Read and re-emit the immutable legacy v1 event shape byte-for-shape while new casts use the closed v2 characteristic schema."
+      "applicability_note": "Read and re-emit the immutable legacy v1 event shape byte-for-byte while new casts use the closed v3 fact schema."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "positive",
+      "test_id": "tests.test_prowess_rules.ProwessCompilerTests.test_spell_cast_event_v3_seals_public_predicate_facts",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Round-trip the closed v3 event with public mana value, ownership, active-player, caster-ordinal, Kicker, X-cost, and keyword facts while retaining legacy schemas."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",
@@ -45462,6 +45594,22 @@
         "commander_review"
       ],
       "applicability_note": "Construct the normalized event only after a physical spell reaches the stack and dispatch its represented trigger."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v3_event_and_stack_source",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restrict predicate inputs to facts public for a committed stack object; no hidden hand or library characteristic enters the v3 event."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",
@@ -50122,5 +50270,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "d9262d009caf3a8bb77d0ba90d7f8001f13d5026326261daf1346df243723eaf"
+  "fingerprint": "67c878b6afd91e591afdd45f59e300f9ba06a4296831e0a2a8e144c9bda49712"
 }

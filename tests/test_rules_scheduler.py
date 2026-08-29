@@ -1473,6 +1473,50 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_typed_spell_cast_fact_probe_uses_extended_event_and_body(self):
+        probe_id = "typed-spell-cast-fact-predicate-existing-owner-v1"
+        record = SimpleNamespace(
+            name="Extended cast trigger source",
+            type_line="Artifact",
+            oracle_text="",
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "When you cast this spell, draw a card.",
+            "Whenever you cast your second spell each turn, you gain 1 life.",
+            "Whenever you cast a historic spell, scry 1.",
+            (
+                "Whenever you cast a historic spell, draw a card. "
+                "(Artifacts, legendaries, and Sagas are historic.)"
+            ),
+            "Whenever you cast a green permanent spell, draw a card.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "Whenever you cast a white spell, draw a card.",
+            "Whenever you cast a spell with mana value X, draw a card.",
+            "Whenever you cast your second spell each turn, do the impossible.",
+            "Whenever you cast or copy a spell, draw a card.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
     def test_current_work_selection_policy_version_is_supported(self):
         queue = build_rules_dependency_queue_from_root(ROOT)
 
@@ -1488,13 +1532,13 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            "measurement:typed-query-self-characteristics",
+            "measurement:typed-spell-cast-fact-predicates",
             declaration["measurement_id"],
         )
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
         self.assertEqual(
-            "typed-query-self-characteristic-existing-owner-v1",
+            "typed-spell-cast-fact-predicate-existing-owner-v1",
             bundle["measurement_probe_id"],
         )
         self.assertFalse(

@@ -22,7 +22,7 @@ from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from ...flashback import FLASHBACK_CAST_OPTION_ID
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
-from ...kicker import KICKER_MECHANIC_ID
+from ...kicker import KICKER_ANNOTATION, KICKER_MECHANIC_ID
 from ...life_state import LifeStateError, pay_life_cost
 from ...model import StackItem, YieldPolicy
 from ...morph import (
@@ -32,6 +32,7 @@ from ...morph import (
     MorphError,
 )
 from ..spell_cast_events import SpellCastEvent
+from ...selection.exile_cast import mana_value_of_cost
 from ...zone_object_state import (
     mark_card_face_down_for_morph,
     mark_card_flashed_back,
@@ -869,6 +870,25 @@ def _record_cast(
     )
 
 
+def _prior_controller_spell_count(
+    host: CastCommitHost,
+    controller: str,
+) -> int:
+    """Snapshot the current caster's public spell count before this cast."""
+
+    if host.state.turn_history is not None:
+        return sum(
+            event.actor == controller
+            for event in host._current_turn_history("spell_cast")
+        )
+    return sum(
+        event.code == "stack.cast"
+        and event.actor == controller
+        and event.turn_sequence == host.state.turn_sequence
+        for event in host.state.events
+    )
+
+
 def _dispatch_cast_events(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -878,6 +898,7 @@ def _dispatch_cast_events(
     costs: _AdditionalCostCommit,
     *,
     prior_spell_count: int,
+    prior_controller_spell_count: int,
 ) -> None:
     trigger_batch = list(
         cascade_trigger_items(host, spell=item, card=card)
@@ -921,6 +942,7 @@ def _dispatch_cast_events(
     )
     effective_spell = host._effective_card_data(card)
     cast_colors = tuple(effective_spell.get("colors") or ())
+    mana_cost = str(effective_spell.get("mana_cost") or "")
     host._record_turn_history(
         "spell_cast",
         actor=proposal.seat,
@@ -928,6 +950,7 @@ def _dispatch_cast_events(
         types=cast_types,
     )
     context = SpellCastEvent(
+        schema_version=3,
         card_ref=card.ref,
         object_id=card.object_id,
         logical_object_id=card.logical_object_id,
@@ -938,11 +961,34 @@ def _dispatch_cast_events(
         subtypes=tuple(cast_subtypes),
         supertypes=tuple(cast_supertypes),
         colors=cast_colors,
+        mana_value=mana_value_of_cost(
+            mana_cost,
+            x_value=int(item.x_value or 0),
+        ),
+        owner=card.owner,
+        active_player=host.state.active_player,
+        caster_spell_number=prior_controller_spell_count + 1,
+        kicked=card.annotations.get(KICKER_ANNOTATION) is True,
+        has_x_cost="{X}" in mana_cost.upper(),
+        has_adventure=getattr(host.card_record(card), "layout", None)
+        == "adventure",
+        keywords=tuple(effective_spell.get("keywords") or ()),
     ).to_context()
-    host._dispatch_semantic_event("spell.cast", context, trigger_batch=trigger_batch)
+    event_sources = list(host._semantic_event_sources())
+    if all(source.object_id != card.object_id for source in event_sources):
+        event_sources.append(card)
+    host._dispatch_semantic_event(
+        "spell.cast",
+        context,
+        sources=event_sources,
+        trigger_batch=trigger_batch,
+    )
     if "artifact" in cast_types:
         host._dispatch_semantic_event(
-            "artifact.cast", context, trigger_batch=trigger_batch
+            "artifact.cast",
+            context,
+            sources=event_sources,
+            trigger_batch=trigger_batch,
         )
     enqueue_trigger_batch(host, trigger_batch)
 
@@ -1098,6 +1144,10 @@ def commit_cast(
     item.x_value = response.get("x")
     item.notes = str(response.get("note") or "")
     prior_spell_count = prior_storm_spell_count(host)
+    prior_controller_spell_count = _prior_controller_spell_count(
+        host,
+        proposal.seat,
+    )
     host.state.stack.append(item)
     if proposal.origin == "command" and card.is_commander:
         player = host.state.players[proposal.seat]
@@ -1115,6 +1165,7 @@ def commit_cast(
         program,
         costs,
         prior_spell_count=prior_spell_count,
+        prior_controller_spell_count=prior_controller_spell_count,
     )
     collect_ward_occurrences(host, item)
     host.state.players[proposal.seat].yield_policy = YieldPolicy()

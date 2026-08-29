@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import math
 from typing import Any, Iterable, Mapping
 
 from ..util import stable_json
@@ -66,10 +67,21 @@ class SpellCastEvent:
     subtypes: tuple[str, ...] = ()
     supertypes: tuple[str, ...] = ()
     colors: tuple[str, ...] = ()
+    mana_value: float | None = None
+    owner: str | None = None
+    active_player: str | None = None
+    caster_spell_number: int | None = None
+    kicked: bool | None = None
+    has_x_cost: bool | None = None
+    has_adventure: bool | None = None
+    keywords: tuple[str, ...] | None = None
     schema_version: int = 2
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if (
+            type(self.schema_version) is not int
+            or self.schema_version not in {1, 2, 3}
+        ):
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
             )
@@ -108,6 +120,60 @@ class SpellCastEvent:
             raise SpellCastEventError(
                 "Legacy spell-cast events cannot carry v2 characteristics"
             )
+        extended = (
+            self.mana_value,
+            self.owner,
+            self.active_player,
+            self.caster_spell_number,
+            self.kicked,
+            self.has_x_cost,
+            self.has_adventure,
+            self.keywords,
+        )
+        if self.schema_version in {1, 2}:
+            if any(value is not None for value in extended):
+                raise SpellCastEventError(
+                    "Legacy spell-cast events cannot carry v3 cast facts"
+                )
+            return
+        if (
+            type(self.mana_value) not in {int, float}
+            or not math.isfinite(float(self.mana_value))
+            or float(self.mana_value) < 0
+        ):
+            raise SpellCastEventError(
+                "Spell mana value must be a finite nonnegative number"
+            )
+        object.__setattr__(self, "mana_value", float(self.mana_value))
+        object.__setattr__(self, "owner", _identity(self.owner, field="owner"))
+        object.__setattr__(
+            self,
+            "active_player",
+            _identity(self.active_player, field="active_player"),
+        )
+        if (
+            type(self.caster_spell_number) is not int
+            or self.caster_spell_number <= 0
+        ):
+            raise SpellCastEventError(
+                "Caster spell number must be a positive integer"
+            )
+        if any(
+            type(value) is not bool
+            for value in (self.kicked, self.has_x_cost, self.has_adventure)
+        ):
+            raise SpellCastEventError(
+                "Kicked, X-cost, and Adventure cast facts must be booleans"
+            )
+        if self.keywords is None:
+            raise SpellCastEventError(
+                "Spell keywords must be present in v3 cast facts"
+            )
+        object.__setattr__(
+            self,
+            "keywords",
+            _terms(self.keywords, field="keywords"),
+        )
 
     def to_context(self) -> dict[str, Any]:
         context = {
@@ -122,12 +188,25 @@ class SpellCastEvent:
             "types": list(self.types),
             "stack": self.stack_ref,
         }
-        if self.schema_version == 2:
+        if self.schema_version in {2, 3}:
             context.update(
                 {
                     "subtypes": list(self.subtypes),
                     "supertypes": list(self.supertypes),
                     "colors": list(self.colors),
+                }
+            )
+        if self.schema_version == 3:
+            context.update(
+                {
+                    "mana_value": self.mana_value,
+                    "owner": self.owner,
+                    "active_player": self.active_player,
+                    "caster_spell_number": self.caster_spell_number,
+                    "kicked": self.kicked,
+                    "has_x_cost": self.has_x_cost,
+                    "has_adventure": self.has_adventure,
+                    "keywords": list(self.keywords or ()),
                 }
             )
         return context
@@ -151,9 +230,22 @@ class SpellCastEvent:
             "types",
             "stack",
         }
-        if version == 2:
+        if version in {2, 3}:
             expected.update({"subtypes", "supertypes", "colors"})
-        elif version != 1:
+        if version == 3:
+            expected.update(
+                {
+                    "mana_value",
+                    "owner",
+                    "active_player",
+                    "caster_spell_number",
+                    "kicked",
+                    "has_x_cost",
+                    "has_adventure",
+                    "keywords",
+                }
+            )
+        elif version not in {1, 2}:
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
             )
@@ -174,6 +266,7 @@ class SpellCastEvent:
             "subtypes": value.get("subtypes", ()),
             "supertypes": value.get("supertypes", ()),
             "colors": value.get("colors", ()),
+            "keywords": value.get("keywords", ()),
         }
         if any(not isinstance(item, (list, tuple)) for item in arrays.values()):
             raise SpellCastEventError(
@@ -191,6 +284,18 @@ class SpellCastEvent:
             subtypes=tuple(arrays["subtypes"]),
             supertypes=tuple(arrays["supertypes"]),
             colors=tuple(arrays["colors"]),
+            mana_value=value.get("mana_value"),
+            owner=value.get("owner"),
+            active_player=value.get("active_player"),
+            caster_spell_number=value.get("caster_spell_number"),
+            kicked=value.get("kicked"),
+            has_x_cost=value.get("has_x_cost"),
+            has_adventure=value.get("has_adventure"),
+            keywords=(
+                tuple(arrays["keywords"])
+                if version == 3
+                else None
+            ),
         )
 
     @property

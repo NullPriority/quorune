@@ -5,11 +5,21 @@ from enum import Enum
 import re
 from typing import Any, Callable, Mapping, Sequence
 
-from ..creature_subtypes import canonical_creature_subtype
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
+from .spell_cast_predicates import (
+    FixedSpellCastCharacteristicKind,
+    FixedSpellCastCharacteristicQuery,
+    FixedSpellCastCharacteristicTerm,
+    FixedSpellCastController,
+    FixedSpellCastOrigin,
+    FixedSpellCastQuality,
+    FixedSpellCastSubject,
+    FixedSpellCastTurnRelation,
+    fixed_spell_cast_binding_spec,
+)
 
 
 FIXED_COUNTER_EVENT_TRIGGER_MECHANIC = "fixed-counter-event-trigger"
@@ -75,25 +85,6 @@ _SCHEDULED_TRIGGER = re.compile(
 )
 _CONTROLLED_LAND_ENTRY_TRIGGER = re.compile(
     r"^(?:Landfall\s+[—-]\s+)?Whenever a land you control enters, "
-    r"(?P<body>.+)$",
-    re.IGNORECASE,
-)
-_CONTROLLER_SPELL_CAST_TRIGGER = re.compile(
-    r"^Whenever you cast (?P<quality>a noncreature|an instant or sorcery) "
-    r"spell, (?P<body>.+)$",
-    re.IGNORECASE,
-)
-_SPELL_CAST_TRIGGER = re.compile(
-    r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
-    r"(?P<quality>a spell|a creature spell|an artifact spell|"
-    r"an enchantment spell|an instant spell|a sorcery spell|"
-    r"an instant or sorcery spell|a noncreature spell), "
-    r"(?P<body>.+)$",
-    re.IGNORECASE,
-)
-_CHARACTERISTIC_SPELL_CAST_TRIGGER = re.compile(
-    r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
-    r"(?P<article>a|an) (?P<quality>[A-Za-z][A-Za-z' -]*?) spell, "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -179,298 +170,6 @@ class FixedCounterZoneController(str, Enum):
     ANY = "any"
     SOURCE = "source_controller"
     OPPONENT = "opponent"
-
-
-class FixedSpellCastController(str, Enum):
-    """Closed caster relations over one normalized spell-cast event."""
-
-    SOURCE = "source_controller"
-    OPPONENT = "opponent"
-    ANY = "any"
-
-
-class FixedSpellCastQuality(str, Enum):
-    """Closed card-type predicates already present in cast-event facts."""
-
-    ANY = "any_spell"
-    NONCREATURE = "noncreature"
-    INSTANT_OR_SORCERY = "instant_or_sorcery"
-    CREATURE = "creature"
-    ARTIFACT = "artifact"
-    ENCHANTMENT = "enchantment"
-    INSTANT = "instant"
-    SORCERY = "sorcery"
-
-
-class FixedSpellCastCharacteristicKind(str, Enum):
-    """Closed immutable characteristic fields accepted by cast predicates."""
-
-    TYPE = "types"
-    SUBTYPE = "subtypes"
-    SUPERTYPE = "supertypes"
-    COLOR = "colors"
-    COLORLESS = "colorless"
-    MULTICOLORED = "multicolored"
-
-
-@dataclass(frozen=True, slots=True)
-class FixedSpellCastCharacteristicTerm:
-    """One closed leaf in a static spell-characteristic disjunction."""
-
-    kind: FixedSpellCastCharacteristicKind
-    value: str | None = None
-
-    def __post_init__(self) -> None:
-        if not isinstance(self.kind, FixedSpellCastCharacteristicKind):
-            raise ValueError("Spell-cast characteristic terms require a closed kind")
-        cardinality = self.kind in {
-            FixedSpellCastCharacteristicKind.COLORLESS,
-            FixedSpellCastCharacteristicKind.MULTICOLORED,
-        }
-        if cardinality != (self.value is None):
-            raise ValueError(
-                "Spell-cast characteristic terms require exactly one typed value"
-            )
-        if self.value is not None:
-            if type(self.value) is not str or not self.value.strip():
-                raise ValueError(
-                    "Spell-cast characteristic values must be nonempty strings"
-                )
-            normalized = (
-                self.value.strip().upper()
-                if self.kind is FixedSpellCastCharacteristicKind.COLOR
-                else self.value.strip().casefold()
-            )
-            object.__setattr__(self, "value", normalized)
-
-    @property
-    def variant(self) -> str:
-        return (
-            self.kind.value
-            if self.value is None
-            else f"{self.kind.value}-{self.value.casefold()}"
-        )
-
-    @property
-    def event_condition(self) -> Mapping[str, Any]:
-        if self.kind is FixedSpellCastCharacteristicKind.COLORLESS:
-            return {"field": "colors", "op": "falsy", "value": True}
-        if self.kind is FixedSpellCastCharacteristicKind.MULTICOLORED:
-            return {"field": "colors", "op": "count_gte", "value": 2}
-        assert self.value is not None
-        return {
-            "field": self.kind.value,
-            "op": "contains_any",
-            "value": [self.value],
-        }
-
-
-@dataclass(frozen=True, slots=True)
-class FixedSpellCastCharacteristicQuery:
-    """One or two static spell-characteristic alternatives."""
-
-    terms_any: tuple[FixedSpellCastCharacteristicTerm, ...]
-
-    def __post_init__(self) -> None:
-        if (
-            not isinstance(self.terms_any, tuple)
-            or not 1 <= len(self.terms_any) <= 2
-            or any(
-                not isinstance(term, FixedSpellCastCharacteristicTerm)
-                for term in self.terms_any
-            )
-        ):
-            raise ValueError(
-                "Spell-cast characteristic queries require one or two typed terms"
-            )
-        canonical = tuple(sorted(set(self.terms_any), key=lambda term: term.variant))
-        if len(canonical) != len(self.terms_any):
-            raise ValueError("Spell-cast characteristic terms must be distinct")
-        object.__setattr__(self, "terms_any", canonical)
-
-    @property
-    def variant(self) -> str:
-        return "characteristic:" + ":or:".join(
-            term.variant for term in self.terms_any
-        )
-
-    @property
-    def event_condition(self) -> Mapping[str, Any]:
-        conditions = [term.event_condition for term in self.terms_any]
-        return conditions[0] if len(conditions) == 1 else {"any": conditions}
-
-
-@dataclass(frozen=True, slots=True)
-class FixedSpellCastSubject:
-    """Immutable public caster and type predicate for one committed cast."""
-
-    controller: FixedSpellCastController
-    quality: FixedSpellCastQuality | None = None
-    characteristic_query: FixedSpellCastCharacteristicQuery | None = None
-
-    def __post_init__(self) -> None:
-        if not isinstance(self.controller, FixedSpellCastController):
-            raise ValueError("Spell-cast subjects require a closed caster relation")
-        if (self.quality is None) == (self.characteristic_query is None):
-            raise ValueError(
-                "Spell-cast subjects require exactly one closed predicate"
-            )
-        if self.quality is not None and not isinstance(
-            self.quality, FixedSpellCastQuality
-        ):
-            raise ValueError("Spell-cast subjects require a closed type predicate")
-        if self.characteristic_query is not None and not isinstance(
-            self.characteristic_query, FixedSpellCastCharacteristicQuery
-        ):
-            raise ValueError(
-                "Spell-cast subjects require a typed characteristic query"
-            )
-
-    @property
-    def variant(self) -> str:
-        predicate = (
-            self.quality.value
-            if self.quality is not None
-            else self.characteristic_query.variant
-        )
-        return f"{self.controller.value}:{predicate}"
-
-    @property
-    def event_condition(self) -> Mapping[str, Any] | None:
-        conditions: list[Mapping[str, Any]] = []
-        if self.controller is FixedSpellCastController.SOURCE:
-            conditions.append(
-                {
-                    "field": "controller",
-                    "op": "eq",
-                    "value": "$source.controller",
-                }
-            )
-        elif self.controller is FixedSpellCastController.OPPONENT:
-            conditions.append(
-                {
-                    "field": "controller",
-                    "op": "ne",
-                    "value": "$source.controller",
-                }
-            )
-        if self.characteristic_query is not None:
-            conditions.append(self.characteristic_query.event_condition)
-        elif self.quality is FixedSpellCastQuality.NONCREATURE:
-            conditions.append(
-                {
-                    "not": {
-                        "field": "types",
-                        "op": "contains_any",
-                        "value": ["creature"],
-                    }
-                }
-            )
-        elif self.quality is FixedSpellCastQuality.INSTANT_OR_SORCERY:
-            conditions.append(
-                {
-                    "field": "types",
-                    "op": "contains_any",
-                    "value": ["instant", "sorcery"],
-                }
-            )
-        elif self.quality is not FixedSpellCastQuality.ANY:
-            conditions.append(
-                {
-                    "field": "types",
-                    "op": "contains_any",
-                    "value": [self.quality.value],
-                }
-            )
-        if not conditions:
-            return None
-        if len(conditions) == 1:
-            return conditions[0]
-        return {"all": conditions}
-
-
-_SPELL_CAST_CARD_TYPES = frozenset(
-    {
-        "artifact",
-        "battle",
-        "creature",
-        "enchantment",
-        "instant",
-        "kindred",
-        "planeswalker",
-        "sorcery",
-    }
-)
-_SPELL_CAST_COLORS = {
-    "white": "W",
-    "blue": "U",
-    "black": "B",
-    "red": "R",
-    "green": "G",
-}
-_SPELL_CAST_SUPERTYPES = frozenset({"legendary", "snow"})
-_SPELL_CAST_NONCREATURE_SUBTYPES = frozenset(
-    {"adventure", "arcane", "aura", "equipment", "lesson", "saga", "vehicle"}
-)
-
-
-def _spell_cast_characteristic_term(
-    value: str,
-) -> FixedSpellCastCharacteristicTerm | None:
-    normalized = " ".join(value.casefold().split())
-    if normalized == "colorless":
-        return FixedSpellCastCharacteristicTerm(
-            FixedSpellCastCharacteristicKind.COLORLESS
-        )
-    if normalized == "multicolored":
-        return FixedSpellCastCharacteristicTerm(
-            FixedSpellCastCharacteristicKind.MULTICOLORED
-        )
-    if normalized in _SPELL_CAST_COLORS:
-        return FixedSpellCastCharacteristicTerm(
-            FixedSpellCastCharacteristicKind.COLOR,
-            _SPELL_CAST_COLORS[normalized],
-        )
-    if normalized in _SPELL_CAST_CARD_TYPES:
-        return FixedSpellCastCharacteristicTerm(
-            FixedSpellCastCharacteristicKind.TYPE,
-            normalized,
-        )
-    if normalized in _SPELL_CAST_SUPERTYPES:
-        return FixedSpellCastCharacteristicTerm(
-            FixedSpellCastCharacteristicKind.SUPERTYPE,
-            normalized,
-        )
-    subtype = (
-        normalized
-        if normalized in _SPELL_CAST_NONCREATURE_SUBTYPES
-        else canonical_creature_subtype(normalized)
-    )
-    if subtype is None:
-        return None
-    return FixedSpellCastCharacteristicTerm(
-        FixedSpellCastCharacteristicKind.SUBTYPE,
-        subtype,
-    )
-
-
-def _spell_cast_characteristic_query(
-    quality: str,
-) -> FixedSpellCastCharacteristicQuery | None:
-    parts = tuple(
-        " ".join(value.split()) for value in quality.casefold().split(" or ")
-    )
-    if not 1 <= len(parts) <= 2:
-        return None
-    terms = tuple(_spell_cast_characteristic_term(value) for value in parts)
-    if any(term is None for term in terms):
-        return None
-    try:
-        return FixedSpellCastCharacteristicQuery(
-            tuple(term for term in terms if term is not None)
-        )
-    except ValueError:
-        return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -717,13 +416,22 @@ class FixedCounterTriggerBinding:
         )
 
     @property
+    def active_zone(self) -> str:
+        if self.spell_subject is not None and self.spell_subject.source_spell:
+            return "stack"
+        return "battlefield"
+
+    @property
     def event_mechanics(self) -> tuple[str, ...]:
         """Return only the normalized-event owners this binding consumes."""
 
         if (
             self.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST
             and self.spell_subject is not None
-            and self.spell_subject.characteristic_query is not None
+            and (
+                self.spell_subject.characteristic_query is not None
+                or self.spell_subject.extended
+            )
         ):
             return (
                 "trigger-event-normalized-spell-cast",
@@ -1049,75 +757,14 @@ def fixed_counter_trigger_binding(
             variant="controlled_land",
             body=land_entry.group("body"),
         )
-    spell_cast = _CONTROLLER_SPELL_CAST_TRIGGER.fullmatch(material_line)
+    spell_cast = fixed_spell_cast_binding_spec(material_line)
     if spell_cast is not None:
-        quality = spell_cast.group("quality").casefold()
-        spell_subject = FixedSpellCastSubject(
-            controller=FixedSpellCastController.SOURCE,
-            quality=(
-                FixedSpellCastQuality.NONCREATURE
-                if quality == "a noncreature"
-                else FixedSpellCastQuality.INSTANT_OR_SORCERY
-            ),
-        )
         return FixedCounterTriggerBinding(
             event=FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST,
-            variant=(
-                "noncreature"
-                if quality == "a noncreature"
-                else "instant_or_sorcery"
-            ),
-            body=spell_cast.group("body"),
-            spell_subject=spell_subject,
+            variant=spell_cast.binding_variant,
+            body=spell_cast.body,
+            spell_subject=spell_cast.subject,
         )
-    spell_cast = _SPELL_CAST_TRIGGER.fullmatch(material_line)
-    if spell_cast is not None:
-        spell_subject = FixedSpellCastSubject(
-            controller={
-                "you cast": FixedSpellCastController.SOURCE,
-                "an opponent casts": FixedSpellCastController.OPPONENT,
-                "a player casts": FixedSpellCastController.ANY,
-            }[spell_cast.group("relation").casefold()],
-            quality={
-                "a spell": FixedSpellCastQuality.ANY,
-                "a noncreature spell": FixedSpellCastQuality.NONCREATURE,
-                "an instant or sorcery spell": (
-                    FixedSpellCastQuality.INSTANT_OR_SORCERY
-                ),
-                "a creature spell": FixedSpellCastQuality.CREATURE,
-                "an artifact spell": FixedSpellCastQuality.ARTIFACT,
-                "an enchantment spell": FixedSpellCastQuality.ENCHANTMENT,
-                "an instant spell": FixedSpellCastQuality.INSTANT,
-                "a sorcery spell": FixedSpellCastQuality.SORCERY,
-            }[spell_cast.group("quality").casefold()],
-        )
-        return FixedCounterTriggerBinding(
-            event=FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST,
-            variant=spell_subject.variant,
-            body=spell_cast.group("body"),
-            spell_subject=spell_subject,
-        )
-    spell_cast = _CHARACTERISTIC_SPELL_CAST_TRIGGER.fullmatch(material_line)
-    if spell_cast is not None:
-        quality = spell_cast.group("quality")
-        article = spell_cast.group("article").casefold()
-        expected_article = "an" if quality[0].casefold() in "aeiou" else "a"
-        query = _spell_cast_characteristic_query(quality)
-        if query is not None and article == expected_article:
-            spell_subject = FixedSpellCastSubject(
-                controller={
-                    "you cast": FixedSpellCastController.SOURCE,
-                    "an opponent casts": FixedSpellCastController.OPPONENT,
-                    "a player casts": FixedSpellCastController.ANY,
-                }[spell_cast.group("relation").casefold()],
-                characteristic_query=query,
-            )
-            return FixedCounterTriggerBinding(
-                event=FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST,
-                variant=spell_subject.variant,
-                body=spell_cast.group("body"),
-                spell_subject=spell_subject,
-            )
     source_attack = _SOURCE_ATTACK_TRIGGER.fullmatch(material_line)
     if source_attack is not None:
         return FixedCounterTriggerBinding(
@@ -1268,7 +915,7 @@ def fixed_counter_event_trigger_node(
         kind="triggered_ability",
         text=line,
         span=span,
-        active_zone="battlefield",
+        active_zone=binding.active_zone,
         event=binding.event.value,
         event_condition=binding.event_condition,
         lowerable=True,
@@ -1382,7 +1029,7 @@ def fixed_typed_event_effect_trigger_node(
         kind="triggered_ability",
         text=line,
         span=span,
-        active_zone="battlefield",
+        active_zone=binding.active_zone,
         event=binding.event.value,
         event_condition=binding.event_condition,
         lowerable=True,
@@ -1420,7 +1067,9 @@ __all__ = [
     "FixedSpellCastCharacteristicQuery",
     "FixedSpellCastCharacteristicTerm",
     "FixedSpellCastQuality",
+    "FixedSpellCastOrigin",
     "FixedSpellCastSubject",
+    "FixedSpellCastTurnRelation",
     "fixed_counter_event_trigger_node",
     "fixed_counter_trigger_binding",
     "fixed_typed_event_effect_trigger_node",

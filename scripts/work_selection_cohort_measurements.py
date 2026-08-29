@@ -54,6 +54,9 @@ _PROBE_REGENERATION = "fixed-regeneration-existing-owner-v1"
 _PROBE_SPELL_CAST_CHARACTERISTIC = (
     "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
 )
+_PROBE_TYPED_SPELL_CAST_FACT_PREDICATE = (
+    "typed-spell-cast-fact-predicate-existing-owner-v1"
+)
 _PROBE_FIXED_HOMOGENEOUS_TARGET_SET = (
     "fixed-homogeneous-target-set-existing-owner-v1"
 )
@@ -76,6 +79,7 @@ _PROBE_IDS = {
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
     _PROBE_TOKEN,
+    _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -185,22 +189,33 @@ def _fixed_regeneration_instruction_candidates(line: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(candidates))
 
 
-def _matches_spell_cast_characteristic_probe(
+def _matches_integrated_spell_cast_probe(
     source: str,
     *,
     card_record: Any,
     ability: Mapping[str, Any],
+    extended_only: bool,
 ) -> bool:
     card_name, source_is_permanent, attachment_relation = (
         _source_face_context(card_record, ability)
     )
     binding = fixed_counter_trigger_binding(source, card_name=card_name)
+    subject = binding.spell_subject if binding is not None else None
     if (
-        binding is None
-        or binding.spell_subject is None
-        or not isinstance(
-            binding.spell_subject.characteristic_query,
-            FixedSpellCastCharacteristicQuery,
+        subject is None
+        or (
+            extended_only
+            and not subject.extended
+        )
+        or (
+            not extended_only
+            and (
+                subject.extended
+                or not isinstance(
+                    subject.characteristic_query,
+                    FixedSpellCastCharacteristicQuery,
+                )
+            )
         )
     ):
         return False
@@ -238,6 +253,34 @@ def _matches_spell_cast_characteristic_probe(
         ),
     )
     return bool(node is not None and node.exact and not residuals)
+
+
+def _matches_spell_cast_characteristic_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    return _matches_integrated_spell_cast_probe(
+        source,
+        card_record=card_record,
+        ability=ability,
+        extended_only=False,
+    )
+
+
+def _matches_typed_spell_cast_fact_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    return _matches_integrated_spell_cast_probe(
+        _without_parenthetical_reminder(source),
+        card_record=card_record,
+        ability=ability,
+        extended_only=True,
+    )
 
 
 @lru_cache(maxsize=1)
@@ -338,6 +381,16 @@ def _matches_probe(
             card_record=card_record,
             ability=ability,
         )
+    if probe_id == _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Typed spell-cast fact measurement requires card context"
+            )
+        return _matches_typed_spell_cast_fact_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
+        )
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
     )
@@ -415,7 +468,10 @@ def _measurement(
                     "canonical_family_ids", []
                 )
             }
-            if not family_ids.intersection(member_ids) or not family_ids <= member_ids:
+            if (
+                not family_ids.intersection(member_ids)
+                or not family_ids <= member_ids
+            ):
                 continue
             if not _matches_probe(
                 probe_id,

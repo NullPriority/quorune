@@ -65,6 +65,7 @@ class ChangeImpactTests(unittest.TestCase):
     def test_spell_cast_characteristic_contract_selects_both_owner_modules(self):
         for owner in (
             "quorune/compiler/fixed_counter_trigger_nodes.py",
+            "quorune/compiler/spell_cast_predicates.py",
             "quorune/rules/casting/commit.py",
             "quorune/rules/spell_cast_events.py",
             "quorune/trigger_discovery.py",
