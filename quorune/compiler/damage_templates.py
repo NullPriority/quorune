@@ -528,10 +528,10 @@ def fixed_damage_effect_template(
     )
 
 
-def activated_source_damage_effect_template(
+def source_pronoun_damage_effect_template(
     text: str,
 ) -> FixedDamageEffectTemplate | FixedMassDamageEffectTemplate | None:
-    """Recognize ``It deals`` only after an activated source is established."""
+    """Recognize ``It deals`` only after a source identity is established."""
 
     source = re.fullmatch(
         r"it deals (?P<amount>[1-9][0-9]*) damage to "
@@ -546,6 +546,14 @@ def activated_source_damage_effect_template(
         recipient_text=source.group("recipient"),
         source_kind=None,
     )
+
+
+def activated_source_damage_effect_template(
+    text: str,
+) -> FixedDamageEffectTemplate | FixedMassDamageEffectTemplate | None:
+    """Compatibility entry point for source-bound activated abilities."""
+
+    return source_pronoun_damage_effect_template(text)
 
 
 def _source_condition(phrase: str) -> tuple[str, list[str]] | None:

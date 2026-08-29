@@ -14,6 +14,7 @@ from quorune.compiler.damage_templates import (
     FixedDamageRecipient,
     activated_source_damage_effect_template,
     fixed_damage_effect_template,
+    source_pronoun_damage_effect_template,
 )
 from quorune.compiler.direct_target import DirectPermanentTargetSpec
 from quorune.compiler import damage_templates
@@ -122,14 +123,20 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
             "attacking_or_blocking", template.target_schema["combat_state"]
         )
 
-    def test_activated_source_pronoun_has_one_closed_contextual_parser(self):
-        template = activated_source_damage_effect_template(
+    def test_source_pronoun_has_one_closed_contextual_parser(self):
+        template = source_pronoun_damage_effect_template(
             "It deals 2 damage to any target."
         )
 
         self.assertIsNotNone(template)
         self.assertEqual(FixedDamageRecipient.ANY_TARGET, template.recipient)
         self.assertEqual("damage-any-target-v1", template.template_id)
+        self.assertEqual(
+            template,
+            activated_source_damage_effect_template(
+                "It deals 2 damage to any target."
+            ),
+        )
         self.assertIsNone(
             fixed_damage_effect_template(
                 "It deals 2 damage to any target.",
@@ -146,7 +153,7 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
         ):
             with self.subTest(text=text):
                 self.assertIsNone(
-                    activated_source_damage_effect_template(text)
+                    source_pronoun_damage_effect_template(text)
                 )
 
     def test_recipient_and_positive_amount_mutants_are_killed(self):
@@ -398,39 +405,90 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
                     },
                 )
 
-    def test_activated_source_pronoun_reuses_damage_lowering_only_after_colon(self):
-        ir = self.compile(
-            "Sacrifice this creature: It deals 1 damage to any target.",
-            type_line="Creature — Goblin",
-        )
-        node = ir.faces[0].nodes[0]
-
-        self.assertEqual("exact", ir.status)
-        self.assertEqual("activated_ability", node.kind)
-        self.assertEqual("damage-any-target-v1", node.template_id)
-        self.assertTrue(node.cost["sacrifice_source"])
-        self.assertEqual(
+    def test_source_pronoun_reuses_damage_lowering_in_bound_source_contexts(self):
+        cases = (
             (
-                {
-                    "op": "damage",
-                    "source": "$source",
-                    "target": "$target.0",
-                    "amount": 1,
-                },
+                "Sacrifice this creature: It deals 1 damage to any target.",
+                "Creature — Goblin",
+                "activated_ability",
+                None,
             ),
-            node.effects,
-        )
-        for text, type_line in (
-            ("It deals 1 damage to any target.", "Instant"),
             (
                 "When this creature enters, it deals 1 damage to any target.",
-                "Creature — Goblin",
+                "Creature — Archer",
+                "triggered_ability",
+                "permanent.enter.self",
             ),
-        ):
+            (
+                "When this creature dies, it deals 1 damage to any target.",
+                "Creature — Construct",
+                "triggered_ability",
+                "creature.dies.self",
+            ),
+        )
+        for text, type_line, kind, event in cases:
+            with self.subTest(kind=kind, event=event):
+                ir = self.compile(text, type_line=type_line)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("exact", ir.status)
+                self.assertEqual(kind, node.kind)
+                self.assertEqual(event or "activate", node.event)
+                self.assertEqual("damage-any-target-v1", node.template_id)
+                self.assertEqual(
+                    (
+                        {
+                            "op": "damage",
+                            "source": "$source",
+                            "target": "$target.0",
+                            "amount": 1,
+                        },
+                    ),
+                    node.effects,
+                )
+                if kind == "activated_ability":
+                    self.assertTrue(node.cost["sacrifice_source"])
+
+        unsupported = self.compile(
+            "It deals 1 damage to any target.",
+            type_line="Instant",
+        )
+        self.assertNotEqual("exact", unsupported.status)
+        self.assertIsNone(unsupported.faces[0].nodes[0].template_id)
+
+    def test_source_trigger_pronoun_rejects_unbounded_contexts_and_grammar(self):
+        variants = (
+            "When this creature leaves the battlefield, it deals 1 damage "
+            "to any target.",
+            "When this creature enters, it deals X damage to any target.",
+            "When this creature dies, it deals 2 damage divided as you choose "
+            "among two targets.",
+            "When this creature enters, it deals 2 damage to any target and "
+            "you gain 2 life.",
+            "When another creature enters, it deals 1 damage to any target.",
+        )
+        for text in variants:
             with self.subTest(text=text):
-                unsupported = self.compile(text, type_line=type_line)
-                self.assertNotEqual("exact", unsupported.status)
-                self.assertIsNone(unsupported.faces[0].nodes[0].template_id)
+                ir = self.compile(text, type_line="Creature — Goblin")
+                self.assertNotEqual("exact", ir.status)
+                self.assertIsNone(ir.faces[0].nodes[0].template_id)
+                self.assertTrue(ir.material_residuals)
+
+    def test_source_trigger_damage_handoff_mutant_is_killed(self):
+        text = "When this creature dies, it deals 2 damage to any target."
+
+        self.assertEqual(
+            "exact",
+            self.compile(text, type_line="Creature — Construct").status,
+        )
+        with patch(
+            "quorune.oracle_ir.source_pronoun_damage_effect_template",
+            return_value=None,
+        ):
+            mutated = self.compile(text, type_line="Creature — Construct")
+
+        self.assertNotEqual("exact", mutated.status)
+        self.assertIsNone(mutated.faces[0].nodes[0].template_id)
+        self.assertTrue(mutated.material_residuals)
 
     def test_activated_source_pronoun_rejects_open_damage_grammar(self):
         for effect in (
@@ -1140,6 +1198,81 @@ class FixedDamageEffectRuntimeTests(unittest.TestCase):
         self.pass_stack(session)
 
         self.assertEqual(1, target.marked_damage)
+        self.assert_replays(session)
+
+    def test_source_death_damage_trigger_uses_last_known_source_and_replays(self):
+        session = self.session_with_card(
+            "Perilous Myr",
+            players=2,
+            seed=12011507,
+        )
+        engine = session.engine
+        source = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A" and card.printed_name == "Perilous Myr"
+        )
+        target = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B"
+            and (record := engine.card_record(card)) is not None
+            and "creature" in record.type_line.casefold()
+        )
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            semantic_events=False,
+            log=False,
+        )
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="B",
+            semantic_events=False,
+            log=False,
+        )
+        target.counters["+1/+1"] = 10
+        program = next(
+            candidate
+            for candidate in engine.semantics.programs_for_oracle(
+                source.oracle_id
+            )
+            if candidate.event == "creature.dies.self"
+        )
+        self.assertEqual("trusted", program.trust_level)
+        previous_identity = source.logical_object_id
+        engine.move_card(
+            source.object_id,
+            "graveyard",
+            reason="fixed source-pronoun damage trigger witness",
+            semantic_events=True,
+        )
+        engine._stabilize()
+
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual(source.object_id, item.source_object_id)
+        self.assertEqual(previous_identity, item.context["card_object_identity"])
+        self.assertEqual("semantic.target", engine.state.pending_decision.kind)
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        selected = session.act(
+            "pilot:A",
+            {"action_id": "choose", "targets": [target.ref]},
+        )
+        self.assertTrue(selected.ok, selected.summary)
+
+        self.pass_stack(session)
+
+        self.assertEqual("graveyard", source.zone)
+        self.assertEqual(2, target.marked_damage)
         self.assert_replays(session)
 
     def test_sacrificed_source_target_fizzles_after_revalidation(self):
