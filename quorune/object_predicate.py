@@ -35,6 +35,10 @@ _EXTENDED_QUERY_FIELDS = _QUERY_FIELDS | {
     "colorless",
     "state_predicate",
 }
+_RELATIONAL_QUERY_FIELDS = _EXTENDED_QUERY_FIELDS | {
+    "excluded_controllers",
+    "minimum_color_count",
+}
 _PERMANENT_STATE_FIELDS = frozenset(
     {
         "entered_this_turn",
@@ -183,6 +187,7 @@ class ObjectQuerySpec:
     zones: tuple[str, ...] = ()
     owner: str | None = None
     controller: str | None = None
+    excluded_controllers: tuple[str, ...] = ()
     types_all: tuple[str, ...] = ()
     types_any: tuple[str, ...] = ()
     excluded_types: tuple[str, ...] = ()
@@ -193,6 +198,7 @@ class ObjectQuerySpec:
     colors_all: tuple[str, ...] = ()
     colors_any: tuple[str, ...] = ()
     colorless: bool | None = None
+    minimum_color_count: int | None = None
     keywords_all: tuple[str, ...] = ()
     token: bool | None = None
     tapped: bool | None = None
@@ -243,6 +249,25 @@ class ObjectQuerySpec:
                     raise ObjectQueryError(
                         f"Object query {field_name} must be a nonempty string or null"
                     )
+        excluded_controllers: list[str] = []
+        if not isinstance(self.excluded_controllers, (list, tuple)):
+            raise ObjectQueryError(
+                "Object query excluded_controllers must be an array"
+            )
+        for value in self.excluded_controllers:
+            if type(value) is not str or not value:
+                raise ObjectQueryError(
+                    "Object query excluded_controllers requires nonempty strings"
+                )
+            excluded_controllers.append(value)
+        excluded_controllers.sort()
+        if len(set(excluded_controllers)) != len(excluded_controllers):
+            raise ObjectQueryError(
+                "Object query excluded_controllers requires unique strings"
+            )
+        object.__setattr__(
+            self, "excluded_controllers", tuple(excluded_controllers)
+        )
         for field_name in (
             "token",
             "tapped",
@@ -258,25 +283,39 @@ class ObjectQuerySpec:
             raise ObjectQueryError(
                 "Object query include_phased_out must be boolean"
             )
+        if self.minimum_color_count is not None and (
+            type(self.minimum_color_count) is not int
+            or self.minimum_color_count <= 0
+            or self.minimum_color_count > 5
+        ):
+            raise ObjectQueryError(
+                "Object query minimum_color_count must be an integer from 1 through 5 or null"
+            )
         if self.state_predicate is not None and not isinstance(
             self.state_predicate, PermanentStatePredicateSpec
         ):
             raise ObjectQueryError(
                 "Object query state predicate must be typed or null"
             )
+        relational = bool(
+            self.excluded_controllers
+            or self.minimum_color_count is not None
+        )
         extended = bool(
             self.subtypes_any
             or self.excluded_subtypes
             or self.colorless is not None
             or self.state_predicate is not None
         )
-        if extended and self._serialization_version == 2:
+        if relational and self._serialization_version in {1, 2, 3}:
+            object.__setattr__(self, "_serialization_version", 4)
+        elif extended and self._serialization_version == 2:
             object.__setattr__(self, "_serialization_version", 3)
-        if self._serialization_version not in {1, 2, 3}:
+        if self._serialization_version not in {1, 2, 3, 4}:
             raise ObjectQueryError(
                 "Object query serialization version is unsupported"
             )
-        if extended and self._serialization_version != 3:
+        if extended and self._serialization_version not in {3, 4}:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
@@ -315,6 +354,23 @@ class ObjectQuerySpec:
                     ),
                 }
             )
+        elif self._serialization_version == 4:
+            value.update(
+                {
+                    "subtypes_any": list(self.subtypes_any),
+                    "excluded_subtypes": list(self.excluded_subtypes),
+                    "colorless": self.colorless,
+                    "state_predicate": (
+                        self.state_predicate.to_dict()
+                        if self.state_predicate is not None
+                        else None
+                    ),
+                    "excluded_controllers": list(
+                        self.excluded_controllers
+                    ),
+                    "minimum_color_count": self.minimum_color_count,
+                }
+            )
         return value
 
     def to_dict(self) -> dict[str, Any]:
@@ -334,14 +390,19 @@ class ObjectQuerySpec:
             _QUERY_FIELDS,
             _LEGACY_QUERY_FIELDS,
             _EXTENDED_QUERY_FIELDS,
+            _RELATIONAL_QUERY_FIELDS,
         }:
             expected = (
-                _EXTENDED_QUERY_FIELDS
+                _RELATIONAL_QUERY_FIELDS
+                if actual.intersection(
+                    _RELATIONAL_QUERY_FIELDS - _EXTENDED_QUERY_FIELDS
+                )
+                else _EXTENDED_QUERY_FIELDS
                 if actual.intersection(_EXTENDED_QUERY_FIELDS - _QUERY_FIELDS)
                 else _QUERY_FIELDS
             )
             missing = sorted(expected - actual)
-            unknown = sorted(actual - _EXTENDED_QUERY_FIELDS)
+            unknown = sorted(actual - _RELATIONAL_QUERY_FIELDS)
             details = []
             if missing:
                 details.append("missing " + ", ".join(missing))
@@ -360,6 +421,7 @@ class ObjectQuerySpec:
             zones=value["zones"],
             owner=value["owner"],
             controller=value["controller"],
+            excluded_controllers=value.get("excluded_controllers", ()),
             types_all=value["types_all"],
             types_any=value.get("types_any", ()),
             excluded_types=value["excluded_types"],
@@ -370,6 +432,7 @@ class ObjectQuerySpec:
             colors_all=value["colors_all"],
             colors_any=value["colors_any"],
             colorless=value.get("colorless"),
+            minimum_color_count=value.get("minimum_color_count"),
             keywords_all=value["keywords_all"],
             token=value["token"],
             tapped=value["tapped"],
@@ -378,7 +441,9 @@ class ObjectQuerySpec:
             exclude_ref=value["exclude_ref"],
             state_predicate=state_predicate,
             _serialization_version=(
-                3
+                4
+                if actual == _RELATIONAL_QUERY_FIELDS
+                else 3
                 if actual == _EXTENDED_QUERY_FIELDS
                 else 2
                 if "types_any" in value

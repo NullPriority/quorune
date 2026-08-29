@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2a9266baa5d45b0d4aceec7d4dc6c60964165b93599bbb1bbe79e05bc27d46aa",
-  "declaration_source_fingerprint": "9d24e340f7e8837c37f924327c45c8ef330b7d974dc75a10d895c0ada60a822f",
+  "registry_fingerprint": "cb1aa9d7b772fa0b6c0454306579a9e6d36e383b83c2e7171db1119ab1556281",
+  "declaration_source_fingerprint": "1a9dd538d16a00fda2856ad55d3246300c052f340cf632b30fa5997ee9eb16cc",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -13938,6 +13938,25 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_multicolor_query_observes_the_cycle_safe_layer_five_boundary",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate multicolor cardinality after a represented layer-5 color addition and before the layer-6 keyword grant without consulting later characteristics."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_aura_attachment_and_query_grant_execute_from_one_exact_card",
       "official_rule_ids": [
         "604.1",
@@ -13976,6 +13995,25 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute controller-scoped named-counter, multicolor, and subtype-token sets from current public state while preserving token qualification and source phasing."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_exact_grant_executes_while_replacement_siblings_fail_closed",
       "official_rule_ids": [
         "604.1",
@@ -14010,6 +14048,25 @@
         "commander_review"
       ],
       "applicability_note": "Grant Hexproof only to controlled artifacts and Haste only to controlled creature tokens, then remove both when their independent sources phase out."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep named-counter grants scoped to the source controller in a four-player game even when an opponent controls an otherwise matching permanent."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -14142,7 +14199,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Keep opponent-relative, combat-state, counter-qualified, multicolored, temporary, unsupported-keyword, and widened-Hexproof sentences material and residual."
+      "applicability_note": "Keep combat-state, unscoped counter-qualified, temporary, unsupported-keyword, and widened-Hexproof sentences material and residual."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -14161,7 +14218,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Reject unknown fields, noninteger schema versions, unsupported keywords, and attempts to bypass the source-controller relation."
+      "applicability_note": "Reject unknown fields, noninteger schema versions, unsupported keywords, and controller relations outside the closed source-controller, source-opponent, or global vocabulary."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -14204,6 +14261,44 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_fixed_battlefield_query_extensions_share_one_canonical_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile source-controller, source-opponent, and global fixed battlefield sets into one canonical ObjectQuerySpec shared by layer-6 and layer-7c components."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_measured_50_card_lower_bound_is_capability_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile every card in the conservative pinned 50-card lower bound without material residuals and require a fixed-query characteristic handler on each card."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests.test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual",
       "official_rule_ids": [
         "604.1",
@@ -14238,6 +14333,25 @@
         "commander_review"
       ],
       "applicability_note": "Project public effective keywords to an opponent without exposing physical object identities or internal continuous-effect state."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay exactly from a checkpoint containing live named-counter, multicolor, subtype-token, and phased-source query state."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -15828,6 +15942,25 @@
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_live_fixed_queries_track_relations_source_identity_and_phasing",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply source-controller and source-opponent modifiers to distinct live sets, exclude the source from its own Other set, and expire both when it phases or leaves."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_static_anthem_is_controller_scoped_in_four_player_evaluation",
       "official_rule_ids": [
@@ -15844,6 +15977,25 @@
         "commander_review"
       ],
       "applicability_note": "Keep a fixed static anthem scoped to its source controller across a four-player battlefield."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_live_fixed_queries_track_relations_source_identity_and_phasing",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply the opponent-relative modifier to creatures controlled by each of two distinct opponents while preserving the source controller's separate Other-creature modifier."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -15901,6 +16053,44 @@
         "commander_review"
       ],
       "applicability_note": "Apply a reviewed battlefield static ability that gives same-controller permanents with declared subtypes a fixed power/toughness modifier in layer 7c."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_fixed_battlefield_query_extensions_share_one_canonical_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile global subtype, source-opponent, multicolor, and shared combined layer-6/layer-7c fixed queries into the existing anthem owner."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_measured_50_card_lower_bound_is_capability_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Require every card in the conservative pinned 50-card lower bound to close exactly through a fixed-query characteristic component."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -50479,5 +50669,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "bd2babe4b345f1405a735f7cf6f19024a353bdd696516f02af293c88bd5d0925"
+  "fingerprint": "b5232f8fb64f924d71323b6db1e6c135d09c238e71b5a7614b01cfa6ee3222b3"
 }

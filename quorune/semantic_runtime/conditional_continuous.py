@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..continuous_conditions import (
@@ -20,7 +20,10 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from .component_registry import exact_fields, nonempty_strings
 from .context import SemanticNodeError
-from .continuous_components import ContinuousEffectSourceContext
+from .continuous_components import (
+    ContinuousEffectSourceContext,
+    _fixed_query_effect_predicate,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,7 +86,11 @@ def _validate_target(
     predicate = None
     target_controller = value["target_controller"]
     if target_kind == "fixed_query":
-        if target_controller not in {"any", "source_controller"}:
+        if target_controller not in {
+            "any",
+            "source_controller",
+            "source_opponents",
+        }:
             raise SemanticNodeError(
                 "fixed queries require a closed controller relation"
             )
@@ -98,6 +105,7 @@ def _validate_target(
         if (
             predicate.owner is not None
             or predicate.controller is not None
+            or predicate.excluded_controllers
             or predicate.exclude_ref is not None
             or predicate.known_to_actor is not None
         ):
@@ -285,17 +293,11 @@ class FixedPublicStateCharacteristicsHandler:
             )
         else:
             assert node.predicate is not None
-            predicate = replace(
+            predicate = _fixed_query_effect_predicate(
                 node.predicate,
-                zones=("battlefield",),
-                controller=(
-                    context.source_controller
-                    if node.target_controller == "source_controller"
-                    else None
-                ),
-                exclude_ref=(
-                    context.source_ref if node.exclude_source else None
-                ),
+                target_controller=str(node.target_controller),
+                exclude_source=node.exclude_source,
+                context=context,
             )
 
         common = {

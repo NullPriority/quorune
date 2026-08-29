@@ -684,6 +684,7 @@ def evaluate_card_characteristics(
         "tapped": card.tapped,
         "phased_out": card.phased_out,
         "known_to_actor": True,
+        "counters": card.counters,
     }
     if query_count_resolver is not None and (
         maximum_layer is None or maximum_layer >= Layer.ABILITY

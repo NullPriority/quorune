@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
-from ..object_predicate import ObjectQuerySpec
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..ability_fragments import (
     ConditionalKeywordSpec,
     DynamicPowerToughnessSpec,
@@ -124,6 +124,10 @@ _CONTROLLED_CREATURE_TOKEN_KEYWORD_GRANT = re.compile(
     r"(?P<abilities>.+?)\.?$",
     re.IGNORECASE,
 )
+_CONTROLLED_CREATURE_TOKENS = re.compile(
+    r"^(?P<other>Other )?Creature tokens you control$",
+    re.IGNORECASE,
+)
 _CONTROLLED_SUBTYPE_KEYWORD_GRANT = re.compile(
     r"^(?P<other>Other )?(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) "
     r"creatures you control have (?P<abilities>.+?)\.?$"
@@ -146,10 +150,58 @@ _GLOBAL_PLURAL_KEYWORD_GRANT = re.compile(
 )
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
 _FIXED_QUERY_CHARACTERISTIC_GRANT = re.compile(
-    r"^(?P<subject>.+ you control) get "
+    r"^(?P<subject>.+?) get "
     r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and have "
     r"(?P<abilities>.+?)\.?$",
     re.IGNORECASE,
+)
+_FIXED_QUERY_POWER_TOUGHNESS = re.compile(
+    r"^(?P<subject>.+?) get (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)\.?$",
+    re.IGNORECASE,
+)
+_COUNTER_QUALIFIED_CONTROLLED_CREATURES = re.compile(
+    r"^Each (?P<other>other )?creature you control with a \+1/\+1 "
+    r"counter on it$",
+    re.IGNORECASE,
+)
+_CONTROLLED_MULTICOLORED_CREATURES = re.compile(
+    r"^(?P<other>Other )?Multicolored creatures you control$",
+    re.IGNORECASE,
+)
+_OPPONENT_CONTROLLED_CREATURES = re.compile(
+    r"^Creatures your opponents control$",
+    re.IGNORECASE,
+)
+_CONTROLLED_SUBTYPE_TOKENS = re.compile(
+    r"^(?P<other>Other )?(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) "
+    r"tokens you control$"
+)
+_CONTROLLED_SUBJECT = re.compile(
+    r"^(?P<other>Other )?"
+    r"(?:(?P<quality>Artifact|Black|Blue|Colorless|Green|Land|Legendary|"
+    r"Nontoken|Red|Token|White) )?"
+    r"(?P<subject>creatures|permanents|artifacts|lands) you control$",
+    re.IGNORECASE,
+)
+_CONTROLLED_SUBTYPE_CREATURES = re.compile(
+    r"^(?P<other>Other )?(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) "
+    r"creatures you control$"
+)
+_CONTROLLED_PLURAL_SUBJECT = re.compile(
+    r"^(?P<other>Other )?(?P<plural>[A-Z][A-Za-z'-]*) you control$"
+)
+_GLOBAL_SUBJECT = re.compile(
+    r"^(?P<other>Other )?(?:All )?"
+    r"(?:(?P<quality>Black|Blue|Green|Red|White) )?"
+    r"(?P<subject>creatures|artifacts|lands)$",
+    re.IGNORECASE,
+)
+_GLOBAL_SUBTYPE_CREATURES = re.compile(
+    r"^(?P<other>Other )?(?:All )?"
+    r"(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) creatures$"
+)
+_GLOBAL_PLURAL_SUBJECT = re.compile(
+    r"^(?P<other>Other )?All (?P<plural>[A-Z][A-Za-z'-]*)$"
 )
 _COLOR_SYMBOLS = {
     "black": "B",
@@ -168,6 +220,134 @@ def _singular_creature_subtype(plural: str) -> str | None:
     if value.endswith("s") and not value.endswith("ss") and len(value) > 2:
         return canonical_creature_subtype(value[:-1])
     return None
+
+
+def _fixed_battlefield_query_subject(
+    subject: str,
+) -> tuple[str, ObjectQuerySpec, bool] | None:
+    """Parse one fixed public battlefield set shared by layers 6 and 7c."""
+
+    text = subject.strip()
+    fields: dict[str, Any] = {"zones": ("battlefield",)}
+    relation = "source_controller"
+    exclude_source = False
+
+    if (match := _COUNTER_QUALIFIED_CONTROLLED_CREATURES.fullmatch(text)):
+        exclude_source = bool(match.group("other"))
+        fields.update(
+            types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(
+                counter_name="+1/+1",
+                minimum_counter_count=1,
+            ),
+        )
+    elif (match := _CONTROLLED_MULTICOLORED_CREATURES.fullmatch(text)):
+        exclude_source = bool(match.group("other"))
+        fields.update(types_all=("creature",), minimum_color_count=2)
+    elif _OPPONENT_CONTROLLED_CREATURES.fullmatch(text):
+        relation = "source_opponents"
+        fields["types_all"] = ("creature",)
+    elif (match := _CONTROLLED_CREATURE_TOKENS.fullmatch(text)):
+        exclude_source = bool(match.group("other"))
+        fields.update(types_all=("creature",), token=True)
+    elif (match := _CONTROLLED_SUBTYPE_TOKENS.fullmatch(text)):
+        subtype = canonical_creature_subtype(match.group("subtype"))
+        if subtype is None:
+            return None
+        exclude_source = bool(match.group("other"))
+        fields.update(
+            types_all=("creature",),
+            subtypes_all=(subtype,),
+            token=True,
+        )
+    elif (match := _CONTROLLED_SUBJECT.fullmatch(text)):
+        exclude_source = bool(match.group("other"))
+        subject_kind = match.group("subject").casefold()
+        quality = (match.group("quality") or "").casefold()
+        if quality and subject_kind != "creatures":
+            return None
+        if subject_kind == "creatures":
+            fields["types_all"] = ("creature",)
+        elif subject_kind == "artifacts":
+            fields["types_all"] = ("artifact",)
+        elif subject_kind == "lands":
+            fields["types_all"] = ("land",)
+        if quality in {"artifact", "land"}:
+            fields["types_all"] = (quality, "creature")
+        elif quality in _COLOR_SYMBOLS:
+            fields["types_all"] = ("creature",)
+            fields["colors_all"] = (_COLOR_SYMBOLS[quality],)
+        elif quality == "colorless":
+            fields["types_all"] = ("creature",)
+            fields["colorless"] = True
+        elif quality == "legendary":
+            fields["types_all"] = ("creature",)
+            fields["supertypes_all"] = ("legendary",)
+        elif quality in {"nontoken", "token"}:
+            fields["types_all"] = ("creature",)
+            fields["token"] = quality == "token"
+    elif (match := _CONTROLLED_SUBTYPE_CREATURES.fullmatch(text)):
+        subtype = canonical_creature_subtype(match.group("subtype"))
+        if subtype is None:
+            return None
+        exclude_source = bool(match.group("other"))
+        fields.update(
+            types_all=("creature",),
+            subtypes_all=(subtype,),
+        )
+    elif (match := _CONTROLLED_PLURAL_SUBJECT.fullmatch(text)):
+        exclude_source = bool(match.group("other"))
+        plural = match.group("plural")
+        if plural.casefold() == "vehicles":
+            fields.update(
+                types_all=("artifact",),
+                subtypes_all=("vehicle",),
+            )
+        else:
+            subtype = _singular_creature_subtype(plural)
+            if subtype is None:
+                return None
+            fields.update(
+                types_all=("creature",),
+                subtypes_all=(subtype,),
+            )
+    elif (match := _GLOBAL_SUBJECT.fullmatch(text)):
+        relation = "any"
+        exclude_source = bool(match.group("other"))
+        subject_kind = match.group("subject").casefold()
+        quality = (match.group("quality") or "").casefold()
+        if quality and subject_kind != "creatures":
+            return None
+        fields["types_all"] = (
+            ("creature",)
+            if subject_kind == "creatures"
+            else (subject_kind.removesuffix("s"),)
+        )
+        if quality:
+            fields["colors_all"] = (_COLOR_SYMBOLS[quality],)
+    elif (match := _GLOBAL_SUBTYPE_CREATURES.fullmatch(text)):
+        subtype = canonical_creature_subtype(match.group("subtype"))
+        if subtype is None:
+            return None
+        relation = "any"
+        exclude_source = bool(match.group("other"))
+        fields.update(
+            types_all=("creature",),
+            subtypes_all=(subtype,),
+        )
+    elif (match := _GLOBAL_PLURAL_SUBJECT.fullmatch(text)):
+        subtype = _singular_creature_subtype(match.group("plural"))
+        if subtype is None:
+            return None
+        relation = "any"
+        exclude_source = bool(match.group("other"))
+        fields.update(
+            types_all=("creature",),
+            subtypes_all=(subtype,),
+        )
+    else:
+        return None
+    return relation, ObjectQuerySpec(**fields), exclude_source
 
 
 def controlled_creature_fixed_modifier(
@@ -236,12 +416,34 @@ def controlled_creature_fixed_modifier(
 def fixed_power_toughness_anthem_handler(
     oracle_line: str,
 ) -> tuple[str, Mapping[str, Any], str] | None:
-    parsed = controlled_creature_fixed_modifier(
-        oracle_line, until_end_of_turn=False
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    match = _FIXED_QUERY_POWER_TOUGHNESS.fullmatch(text)
+    if match is None:
+        return None
+    subject = match.group("subject")
+    existing_controlled = controlled_creature_fixed_modifier(
+        text, until_end_of_turn=False
     )
+    global_subject = _GLOBAL_SUBJECT.fullmatch(subject)
+    if existing_controlled is None and not (
+        _CONTROLLED_MULTICOLORED_CREATURES.fullmatch(subject)
+        or _OPPONENT_CONTROLLED_CREATURES.fullmatch(subject)
+        or (
+            global_subject is not None
+            and global_subject.group("subject").casefold() == "creatures"
+        )
+        or _GLOBAL_SUBTYPE_CREATURES.fullmatch(subject)
+        or _GLOBAL_PLURAL_SUBJECT.fullmatch(subject)
+    ):
+        return None
+    parsed = _fixed_battlefield_query_subject(subject)
     if parsed is None:
         return None
-    predicate, power, toughness, exclude_source = parsed
+    relation, predicate, exclude_source = parsed
+    power = int(match.group("power"))
+    toughness = int(match.group("toughness"))
+    if power == 0 and toughness == 0:
+        return None
     return (
         "continuous-fixed-query-anthem-v2",
         {
@@ -249,7 +451,7 @@ def fixed_power_toughness_anthem_handler(
             "schema_version": 2,
             "event": "characteristics.evaluate",
             "condition": {
-                "target_controller": "source_controller",
+                "target_controller": relation,
                 "predicate": predicate.to_dict(),
                 "exclude_source": exclude_source,
             },
@@ -264,112 +466,26 @@ def fixed_query_keyword_grant_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower one closed live-set combat-keyword grant.
 
-    The grammar represents only fixed battlefield sets whose controller,
-    card type, color, supertype, token status, or pinned creature subtype can
-    be evaluated through ``ObjectQuerySpec``.  Conditional, opponent-relative,
-    attacking/blocking, modified, counter-qualified, multicolored, and chosen
-    sets remain residual.  Every accepted keyword declares its exact trusted
-    combat, damage, destruction, or targeting consumer capability.
+    The grammar represents fixed battlefield sets through one canonical
+    ``ObjectQuerySpec`` shared with layer-7c modifiers.  Dynamic counts,
+    combat-state, ability-presence, chosen, hidden-zone, and conditional sets
+    remain residual.  Every accepted keyword declares its exact trusted combat,
+    damage, destruction, or targeting consumer capability.
     """
 
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
-    relation = "source_controller"
-    exclude_source = False
-    fields: dict[str, Any] = {"zones": ("battlefield",)}
-    match = _CONTROLLED_CREATURE_TOKEN_KEYWORD_GRANT.fullmatch(text)
-    if match is not None:
-        exclude_source = bool(match.group("other"))
-        fields.update(types_all=("creature",), token=True)
-        abilities_text = match.group("abilities")
-    elif (match := _CONTROLLED_KEYWORD_GRANT.fullmatch(text)) is not None:
-        exclude_source = bool(match.group("other"))
-        subject = match.group("subject").casefold()
-        quality = (match.group("quality") or "").casefold()
-        if quality and subject != "creatures":
-            return None
-        if subject == "creatures":
-            fields["types_all"] = ("creature",)
-        elif subject == "artifacts":
-            fields["types_all"] = ("artifact",)
-        elif subject == "lands":
-            fields["types_all"] = ("land",)
-        if quality in {"artifact", "land"}:
-            fields["types_all"] = (quality, "creature")
-        elif quality in _COLOR_SYMBOLS:
-            fields["types_all"] = ("creature",)
-            fields["colors_all"] = (_COLOR_SYMBOLS[quality],)
-        elif quality == "colorless":
-            fields["types_all"] = ("creature",)
-            fields["colorless"] = True
-        elif quality == "legendary":
-            fields["types_all"] = ("creature",)
-            fields["supertypes_all"] = ("legendary",)
-        elif quality in {"nontoken", "token"}:
-            fields["types_all"] = ("creature",)
-            fields["token"] = quality == "token"
-        abilities_text = match.group("abilities")
-    else:
-        match = _CONTROLLED_SUBTYPE_KEYWORD_GRANT.fullmatch(text)
-        if match is not None:
-            subtype = canonical_creature_subtype(match.group("subtype"))
-            if subtype is None:
-                return None
-            exclude_source = bool(match.group("other"))
-            fields.update(
-                types_all=("creature",),
-                subtypes_all=(subtype,),
-            )
-            abilities_text = match.group("abilities")
-        else:
-            match = _CONTROLLED_PLURAL_KEYWORD_GRANT.fullmatch(text)
-            if match is not None:
-                plural = match.group("plural")
-                exclude_source = bool(match.group("other"))
-                if plural.casefold() == "vehicles":
-                    fields.update(
-                        types_all=("artifact",),
-                        subtypes_all=("vehicle",),
-                    )
-                else:
-                    subtype = _singular_creature_subtype(plural)
-                    if subtype is None:
-                        return None
-                    fields.update(
-                        types_all=("creature",),
-                        subtypes_all=(subtype,),
-                    )
-                abilities_text = match.group("abilities")
-            else:
-                relation = "any"
-                match = _GLOBAL_KEYWORD_GRANT.fullmatch(text)
-                if match is not None:
-                    subject = match.group("subject").casefold()
-                    fields["types_all"] = (
-                        ("creature",)
-                        if subject == "creatures"
-                        else (subject.removesuffix("s"),)
-                    )
-                    abilities_text = match.group("abilities")
-                else:
-                    match = _GLOBAL_SUBTYPE_KEYWORD_GRANT.fullmatch(text)
-                    if match is not None:
-                        subtype = canonical_creature_subtype(
-                            match.group("subtype")
-                        )
-                    else:
-                        match = _GLOBAL_PLURAL_KEYWORD_GRANT.fullmatch(text)
-                        subtype = (
-                            _singular_creature_subtype(match.group("plural"))
-                            if match is not None
-                            else None
-                        )
-                    if match is None or subtype is None:
-                        return None
-                    fields.update(
-                        types_all=("creature",),
-                        subtypes_all=(subtype,),
-                    )
-                    abilities_text = match.group("abilities")
+    match = re.fullmatch(
+        r"(?P<subject>.+?) ha(?:ve|s) (?P<abilities>.+?)\.?",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    parsed = _fixed_battlefield_query_subject(match.group("subject"))
+    if parsed is None:
+        return None
+    relation, predicate, exclude_source = parsed
+    abilities_text = match.group("abilities")
 
     normalized = re.sub(
         r",?\s+and\s+", ",", abilities_text.strip(), flags=re.IGNORECASE
@@ -381,7 +497,6 @@ def fixed_query_keyword_grant_handler(
     )
     if not abilities or len(set(abilities)) != len(abilities):
         return None
-    predicate = ObjectQuerySpec(**fields)
     if any(
         ability not in FIXED_CHARACTERISTIC_KEYWORDS for ability in abilities
     ):

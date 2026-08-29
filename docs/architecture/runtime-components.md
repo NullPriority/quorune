@@ -81,13 +81,16 @@ fails closed rather than falling back to current Oracle text.
 
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
-source-controller or global battlefield queries for Haste, Trample,
-Vigilance, First Strike, Double Strike, and Flying into immutable layer-6
-effects, while retaining only the prior controlled-artifact Hexproof form.
-Each compiled node also declares the exact combat or targeting capability that
-consumes the granted keyword. Opponent-relative, combat-state, counter,
-multicolored, conditional, temporary, and other-keyword predicates remain
-residual. Level-gated Class abilities remain residual until their
+source-controller, source-opponent, or global battlefield queries into
+immutable layer-6 effects. The same canonical query scopes fixed layer-7c
+power/toughness modifiers and combined characteristic grants. It evaluates
+type, subtype, color cardinality, token identity, and named +1/+1 counter state
+from the current public characteristic boundary; opponent relations exclude
+the source controller without enumerating seats in the descriptor. Each
+compiled node also declares the exact combat, damage, destruction, or targeting
+capability that consumes the granted keyword. Combat-state, ability-qualified,
+dynamically counted, conditional, temporary, and unsupported-keyword predicates
+remain residual. Level-gated Class abilities remain residual until their
 applicability has a typed owner. Ability-removal interactions remain explicitly
 outside trust until static components share one ability-presence/applicability
 query. The

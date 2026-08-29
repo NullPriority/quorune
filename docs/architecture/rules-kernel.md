@@ -307,9 +307,10 @@ broader attack/block transition triggers remain explicit residuals.
 and other represented rules families. Its current schema distinguishes
 all-required from any-required card types and preserves colors, subtypes,
 supertypes, keywords, token/tap/phasing state, public relations, visibility,
-and source exclusion. Historical schema-v1 payloads round-trip without the
-additive `types_any` field so Game Record v3 replay does not silently rewrite
-old descriptors.
+source exclusion, excluded controllers, minimum color cardinality, and closed
+public permanent-state predicates such as a named counter minimum. Historical
+schema-v1 through schema-v3 payloads retain their original field sets so Game
+Record v3 replay does not silently rewrite old descriptors.
 
 ## Visibility and replay
 

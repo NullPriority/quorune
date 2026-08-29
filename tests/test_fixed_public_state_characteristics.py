@@ -189,6 +189,38 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
         self.assertIn(QUERY_HANDLER_ID, handlers)
         self.assertNotIn(FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID, handlers)
 
+    def test_threshold_opponent_anthem_preserves_the_query_relation(self):
+        base = self.db.lookup("Fresh-Faced Recruit")
+        record = replace(
+            base,
+            oracle_id="00000000-0000-4000-8000-000011820004",
+            oracle_text=(
+                "Threshold — As long as there are seven or more cards in "
+                "your graveyard, creatures your opponents control get -1/-0."
+            ),
+            keywords=(),
+        )
+        program = compile_card_program(
+            self.db,
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+
+        self.assertEqual((), program.residuals)
+        descriptor = next(
+            descriptor
+            for ability in program.abilities
+            for descriptor in ability.handlers
+            if descriptor.get("handler_id")
+            == FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+        )
+        self.assertEqual(
+            "source_opponents", descriptor["target"]["target_controller"]
+        )
+        default_continuous_effect_component_registry().validate(descriptor)
+
     def test_unrepresented_conditions_and_bodies_remain_residual(self):
         base = self.db.lookup("Fresh-Faced Recruit")
         unsupported = (
@@ -527,6 +559,42 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
                 )
             ),
         )
+
+        opponent_anthem = fixed_public_state_characteristics_handler(
+            "Threshold — As long as there are seven or more cards in your "
+            "graveyard, creatures your opponents control get -1/-0.",
+            source_name="Threshold Opponent Anthem",
+        )[1]
+        opponent_effects = registry.lower(
+            opponent_anthem,
+            source_context(graveyard_count=7),
+        )
+
+        def opponent_power(controller: str) -> int:
+            return int(
+                evaluate_continuous_effects(
+                    CharacteristicState(
+                        name=f"{controller} relation witness",
+                        controller=controller,
+                        card_types={"Creature"},
+                        power=3,
+                        toughness=3,
+                    ),
+                    opponent_effects,
+                    context={
+                        "object_id": f"{controller}-witness",
+                        "logical_object_id": f"{controller}-witness@1",
+                        "ref": f"{controller}-WITNESS",
+                        "owner": controller,
+                        "controller": controller,
+                        "zone": "battlefield",
+                    },
+                ).characteristics["power"]
+            )
+
+        self.assertEqual(3, opponent_power("A"))
+        self.assertEqual(2, opponent_power("B"))
+        self.assertEqual(2, opponent_power("C"))
 
     def test_turn_gated_attachment_and_anthem_compose(self):
         session = self.session(118_220_001)

@@ -187,6 +187,39 @@ class ObjectQueryTests(unittest.TestCase):
         with self.assertRaisesRegex(ObjectQueryError, "unknown surprise"):
             ObjectQuerySpec.from_dict(malformed)
 
+    def test_opponent_exclusion_and_color_cardinality_are_canonical(self):
+        rows = (
+            ObjectQueryResult(
+                "own", "OWN", "Own", "A", "A", "battlefield",
+                colors=("R", "U"),
+            ),
+            ObjectQueryResult(
+                "mono", "MONO", "Mono", "B", "B", "battlefield",
+                colors=("U",),
+            ),
+            ObjectQueryResult(
+                "multi", "MULTI", "Multi", "C", "C", "battlefield",
+                colors=("G", "W"),
+            ),
+        )
+        spec = ObjectQuerySpec(
+            zones=("battlefield",),
+            excluded_controllers=("A",),
+            minimum_color_count=2,
+        )
+        self.assertEqual(
+            ("MULTI",),
+            tuple(row.ref for row in query_objects(rows, spec)),
+        )
+        serialized = spec.to_dict()
+        self.assertEqual(["A"], serialized["excluded_controllers"])
+        self.assertEqual(2, serialized["minimum_color_count"])
+        self.assertEqual(spec, ObjectQuerySpec.from_dict(serialized))
+        with self.assertRaisesRegex(ObjectQueryError, "minimum_color_count"):
+            ObjectQuerySpec(minimum_color_count=True)
+        with self.assertRaisesRegex(ObjectQueryError, "unique strings"):
+            ObjectQuerySpec(excluded_controllers=("A", "A"))
+
     def test_legacy_query_shape_round_trips_without_changing_record_bytes(self):
         serialized = ObjectQuerySpec(types_all=("creature",)).to_dict()
         serialized.pop("types_any")

@@ -1413,6 +1413,29 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_fixed_battlefield_query_probe_uses_integrated_characteristic_owner(self):
+        probe_id = "fixed-battlefield-query-characteristics-existing-owner-v1"
+        accepted = (
+            "All Sliver creatures get +1/+1.",
+            "Creatures your opponents control get -1/-0.",
+            "Multicolored creatures you control have flying.",
+            "Zombie tokens you control have hexproof and menace.",
+            "Each creature you control with a +1/+1 counter on it has trample.",
+        )
+        rejected = (
+            "Attacking creatures get +1/+1.",
+            "Creatures you control get +1/+1 for each artifact you control.",
+            "Creatures you control lose flying.",
+            "Creatures you control have ward {2}.",
+            "Creatures you control are blue in addition to their other colors.",
+        )
+        for source in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_fixed_regeneration_probe_uses_closed_contextual_owners(self):
         probe_id = "fixed-regeneration-existing-owner-v1"
         spell = SimpleNamespace(
