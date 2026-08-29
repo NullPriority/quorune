@@ -172,9 +172,9 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 self.assertEqual((), program.residuals)
 
         unsupported = (
-            "Creatures your opponents control have haste.",
+            "Creatures your opponents control have ward {1}.",
             "Attacking creatures you control have flying.",
-            "Multicolored creatures you control have vigilance.",
+            "Multicolored creatures you control have protection from red.",
             "This creature has haste as long as you have exactly 10 life.",
             "This creature gets +1/+1 for each color among permanents you control.",
             "This creature gets +2/+2 if there are three land cards in your graveyard.",
@@ -222,7 +222,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 **keyword,
                 "condition": {
                     **keyword["condition"],
-                    "target_controller": "source_opponents",
+                    "target_controller": "source_allies",
                 },
             },
         )
