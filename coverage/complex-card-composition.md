@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "00a63af189ee4e789bf40dbb7268f677f586200179e3d1a962839ac65cf23873"
+verified: "3356f3af63f50a38ec31b0cbaf2d20459f7032a4f5d1cef0de8d218d72cf0419"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -57,10 +57,10 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Vryn // Overloaded Mage-Ring | 170 | 13 | 6 | 3 | 8 | 24 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 170 | 17 | 6 | 5 | 10 | 8 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 169 | 19 | 6 | 6 | 11 | 10 | `blocked` |
+| Idol of the Deep King // Sovereign's Macuahuitl | 168 | 25 | 6 | 6 | 3 | 4 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 168 | 18 | 5 | 4 | 6 | 18 | `blocked` |
 | Optimus Prime, Hero // Optimus Prime, Autobot Leader | 168 | 21 | 5 | 6 | 4 | 16 | `blocked` |
 | Dr. Madison Li | 167 | 28 | 6 | 4 | 4 | 10 | `blocked` |
 | Invasion of Karsus // Refraction Elemental | 167 | 19 | 5 | 4 | 6 | 16 | `blocked` |
 | Lunarch Veteran // Luminous Phantom | 167 | 22 | 6 | 5 | 6 | 7 | `blocked` |
-| Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
