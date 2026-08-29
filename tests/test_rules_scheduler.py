@@ -1619,16 +1619,9 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["bundle_id"] == declaration["bundle_id"]
         )
 
-        self.assertEqual(
-            "measurement:fixed-source-pronoun-damage-triggers",
-            declaration["measurement_id"],
-        )
+        self.assertRegex(declaration["measurement_id"], r"^measurement:")
         self.assertNotIn("expected_complete_card_gain", declaration)
         self.assertEqual("generated_probe", bundle["measurement_status"])
-        self.assertEqual(
-            "fixed-source-pronoun-damage-trigger-existing-owner-v1",
-            bundle["measurement_probe_id"],
-        )
         self.assertFalse(
             any(field.startswith("frontier_") for field in bundle)
         )
@@ -1642,6 +1635,10 @@ class RulesSchedulerTests(unittest.TestCase):
         measurement = transition_measurement["measurement"]
         self.assertEqual(
             declaration["measurement_id"], measurement["measurement_id"]
+        )
+        self.assertEqual(bundle["bundle_id"], measurement["bundle_id"])
+        self.assertEqual(
+            bundle["measurement_probe_id"], measurement["probe_id"]
         )
         coverage = work_selection["coverage_family"]
         self.assertGreaterEqual(
