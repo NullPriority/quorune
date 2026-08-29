@@ -240,6 +240,17 @@ _WITNESSES = {
         power="2",
         toughness="2",
     ),
+    "caldera-hellion": _Witness(
+        "Caldera Hellion",
+        "Creature — Hellion",
+        "Devour 1 (As this creature enters, you may sacrifice any number "
+        "of creatures. It enters with that many +1/+1 counters on it.)\n"
+        "When this creature enters, it deals 3 damage to each creature.",
+        "{3}{R}{R}",
+        ("Devour",),
+        power="3",
+        toughness="3",
+    ),
     "decode-transmissions": _Witness(
         "Decode Transmissions",
         "Sorcery",
@@ -846,6 +857,14 @@ FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS = tuple(
     )
 )
 
+FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS = tuple(
+    _pair("capability.damage.batch.fixed_set", residual)
+    for residual in (
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    )
+)
+
 ZONE_AND_CHOICE_PAIRS = (
     _pair("capability.zone.change.destination_replacement", "residual.target_or_choice.target-predicate"),
     _pair("capability.zone.draw.library_to_hand", "residual.target_or_choice.conditional-effect"),
@@ -957,6 +976,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
             *EFFECT_AND_REPLACEMENT_PAIRS,
             *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
+            *FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
             *ZONE_AND_CHOICE_PAIRS,
             *COST_AND_REPLACEMENT_PAIRS,
             *CONTINUOUS_AND_REPLACEMENT_PAIRS,
@@ -1023,6 +1043,10 @@ _bind("jaya-task-mage", DESTROY_REGENERATION_PAIR)
 _bind(
     "jaya-task-mage",
     *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
+)
+_bind(
+    "caldera-hellion",
+    *FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
 )
 _bind("dauthi-voidwalker", ZONE_AND_CHOICE_PAIRS[0])
 _bind("sphinxs-insight", ZONE_AND_CHOICE_PAIRS[1])
@@ -1254,6 +1278,7 @@ __all__ = [
     "DESTROY_REGENERATION_PAIR",
     "EFFECT_AND_REPLACEMENT_PAIRS",
     "FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS",
+    "FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS",
     "FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS",
     "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",

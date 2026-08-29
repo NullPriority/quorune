@@ -4488,6 +4488,34 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_set_damage_with_entry_replacement_residuals_fails_closed",
+      "piece_ids": [
+        "capability.damage.batch.fixed_set",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "damage.batch.fixed_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Caldera Hellion compiles its fixed simultaneous-set damage trigger while Devour's unsupported entry replacement applicability remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_set_damage_with_entry_replacement_residuals_fails_closed",
+      "piece_ids": [
+        "capability.damage.batch.fixed_set",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "damage.batch.fixed_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Caldera Hellion's exact fixed-set damage trigger cannot lower or bypass Devour's unsupported self-replacement and CR 616 ordering boundary, so the complete CardProgram remains unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_draw_then_controller_discard_is_private_and_replays_exactly",
       "piece_ids": [
