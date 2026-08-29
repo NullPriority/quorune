@@ -327,6 +327,25 @@
       "legalities": {"commander": "legal", "duel": "legal"}
     },
     {
+      "oracle_id": "f1e8f746-1837-4ea8-9a07-e57946883353",
+      "name": "Perilous Myr",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact Creature — Phyrexian Myr",
+      "oracle_text": "When this creature dies, it deals 2 damage to any target.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {"commander": "legal", "duel": "legal"}
+    },
+    {
       "oracle_id": "b3b58231-d532-423b-91d0-78d9c0f66f0f",
       "name": "Burning Fields",
       "mana_cost": "{4}{R}",
