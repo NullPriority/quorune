@@ -29,7 +29,9 @@ Compile one closed `CharacteristicQuantitySpec` and one
 opponent, or global public zone through `ObjectQuerySpec`, the source's current
 attachments or counters, or the controller's raw hand size. The modifier is
 either a fixed power/toughness coefficient per matching object or a fixed
-minimum gate for fixed power/toughness and supported keywords.
+minimum gate for fixed power/toughness, supported keywords, or both. The
+minimum-gate grammar accepts source-self prefix and suffix forms over closed
+public battlefield and graveyard queries.
 
 Before materializing the modifier, evaluate source and counted-object
 characteristics only through layer 5: copy, control, text, type, and color.
@@ -64,7 +66,8 @@ replays exactly.
 Delirium distinct-type counts, Domain or color cardinality, chosen, named,
 modified, shared-type, top-library, secret-identity, ability-presence, dynamic-
 coefficient, comparison, attached-subject, modal, triggered, activated, and
-quoted carriers remain residual. Cards with an ability-removal sibling remain
+quoted carriers remain residual. Inverted existence wording is also excluded
+from this minimum-gate grammar. Cards with an ability-removal sibling remain
 withheld by complete-card admission until the shared layer-6 ability-presence
 owner exists.
 

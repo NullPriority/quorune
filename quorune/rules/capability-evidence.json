@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "cb1aa9d7b772fa0b6c0454306579a9e6d36e383b83c2e7171db1119ab1556281",
-  "declaration_source_fingerprint": "1a9dd538d16a00fda2856ad55d3246300c052f340cf632b30fa5997ee9eb16cc",
+  "registry_fingerprint": "bfaa296c836ec999096b57b745362f0993f70aea59cabb12aff95be2388f5df4",
+  "declaration_source_fingerprint": "c4b097d7093832029d1e5ed2c90170436c576cd4dc51f59693d8574be8cca697",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -15706,6 +15706,26 @@
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_gate_recomputes_layer_six_and_seven_characteristics",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute one public layer-5 query threshold and apply or remove its supported layer-6 keyword and layer-7c stat results together."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
       "official_rule_ids": [
@@ -15786,6 +15806,26 @@
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_gated_grammar_rejects_nonquery_and_open_modifiers",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject counter, combat, inverted-existence, unsupported-keyword, quoted, attached-subject, and ability-removal gates from the query grammar."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "positive",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_grammar_compiles_closed_fragments",
       "official_rule_ids": [
@@ -15803,6 +15843,26 @@
         "commander_review"
       ],
       "applicability_note": "Compile closed controller, opponent, global, graveyard, hand, attachment, and counter quantities into one typed self-characteristic fragment."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_gated_prefix_and_keyword_only_grammar_is_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile prefix and suffix public-query thresholds carrying fixed stats, supported keywords, or both through the existing typed descriptor."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -50669,5 +50729,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "b5232f8fb64f924d71323b6db1e6c135d09c238e71b5a7614b01cfa6ee3222b3"
+  "fingerprint": "e66e399b08882f3461ba2f6223cc182448b2f28f8eba096c35d51332a2421ab0"
 }

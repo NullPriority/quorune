@@ -336,7 +336,105 @@ def _query_characteristic_condition(
             query=ObjectQuerySpec(zones=("graveyard",)),
         )
         return (quantity, count) if count else None
+
     return None
+
+
+def _query_gate_is_cycle_safe(quantity: CharacteristicQuantitySpec) -> bool:
+    """Return whether a new threshold grammar stays on the public layer-5 path."""
+
+    return bool(
+        quantity.scope
+        in {
+            CharacteristicQuantityScope.CONTROLLER_ZONE,
+            CharacteristicQuantityScope.OPPONENT_ZONES,
+            CharacteristicQuantityScope.ALL_ZONES,
+        }
+        and quantity.query is not None
+        and quantity.query.zones in {("battlefield",), ("graveyard",)}
+    )
+
+
+def _fixed_characteristic_abilities(value: str | None) -> tuple[str, ...] | None:
+    if value is None:
+        return ()
+    normalized = re.sub(r",?\s+and\s+", ",", value, flags=re.IGNORECASE)
+    abilities = tuple(
+        ability.strip().title()
+        for ability in normalized.split(",")
+        if ability.strip()
+    )
+    if (
+        not abilities
+        or len(set(abilities)) != len(abilities)
+        or any(
+            ability not in FIXED_CHARACTERISTIC_KEYWORDS
+            for ability in abilities
+        )
+    ):
+        return None
+    return abilities
+
+
+def _query_gated_self_characteristics(
+    text: str,
+    *,
+    source_name: str,
+) -> tuple[CharacteristicQuantitySpec, int, int, int, tuple[str, ...]] | None:
+    """Parse new prefix or keyword-only query gates over public objects."""
+
+    prefix = re.fullmatch(
+        r"As long as (?P<condition>.+?), (?P<body>.+?)\.?$",
+        text,
+        re.IGNORECASE,
+    )
+    if prefix is not None:
+        condition_text = prefix.group("condition")
+        body = prefix.group("body")
+    else:
+        marker = text.casefold().rfind(" as long as ")
+        if marker <= 0:
+            return None
+        condition_text = text[marker + len(" as long as ") :].rstrip(".")
+        body = text[:marker]
+    parsed = _query_characteristic_condition(
+        condition_text,
+        source_name=source_name,
+    )
+    if parsed is None or not _query_gate_is_cycle_safe(parsed[0]):
+        return None
+    quantity, minimum = parsed
+    subject = _self_subject_pattern(source_name)
+    power_toughness = re.fullmatch(
+        rf"{subject} gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
+        r"(?: and has (?P<abilities>.+))?",
+        body,
+        re.IGNORECASE,
+    )
+    if power_toughness is not None:
+        abilities = _fixed_characteristic_abilities(
+            power_toughness.group("abilities")
+        )
+        if abilities is None:
+            return None
+        return (
+            quantity,
+            minimum,
+            int(power_toughness.group("power")),
+            int(power_toughness.group("toughness")),
+            abilities,
+        )
+    keyword_only = re.fullmatch(
+        rf"{subject} has (?P<abilities>.+)",
+        body,
+        re.IGNORECASE,
+    )
+    if keyword_only is None:
+        return None
+    abilities = _fixed_characteristic_abilities(keyword_only.group("abilities"))
+    if abilities is None:
+        return None
+    return (quantity, minimum, 0, 0, abilities)
 
 
 def query_self_characteristics_handler(
@@ -382,40 +480,39 @@ def query_self_characteristics_handler(
             text,
             re.IGNORECASE,
         )
-        if threshold is None:
-            return None
-        parsed = _query_characteristic_condition(
-            threshold.group("condition"), source_name=source_name
-        )
-        if parsed is None:
-            return None
-        quantity, minimum = parsed
-        raw_abilities = threshold.group("abilities")
-        abilities = ()
-        if raw_abilities:
-            normalized = re.sub(
-                r",?\s+and\s+", ",", raw_abilities, flags=re.IGNORECASE
+        if threshold is not None:
+            parsed = _query_characteristic_condition(
+                threshold.group("condition"), source_name=source_name
             )
-            abilities = tuple(
-                value.strip().title()
-                for value in normalized.split(",")
-                if value.strip()
-            )
-            if (
-                not abilities
-                or len(set(abilities)) != len(abilities)
-                or any(
-                    value not in FIXED_CHARACTERISTIC_KEYWORDS
-                    for value in abilities
-                )
-            ):
+            if parsed is None:
                 return None
+            quantity, minimum = parsed
+            abilities = _fixed_characteristic_abilities(
+                threshold.group("abilities")
+            )
+            if abilities is None:
+                return None
+            fixed = (
+                quantity,
+                minimum,
+                int(threshold.group("power")),
+                int(threshold.group("toughness")),
+                abilities,
+            )
+        else:
+            fixed = _query_gated_self_characteristics(
+                text,
+                source_name=source_name,
+            )
+        if fixed is None:
+            return None
+        abilities = fixed[4]
         fragment = QueryCharacteristicModifierSpec(
-            quantity=quantity,
+            quantity=fixed[0],
             calculation=PowerToughnessCalculation.FIXED_IF_THRESHOLD,
-            power=int(threshold.group("power")),
-            toughness=int(threshold.group("toughness")),
-            minimum_count=minimum,
+            power=fixed[2],
+            toughness=fixed[3],
+            minimum_count=fixed[1],
             add_abilities=abilities,
         )
     capabilities = {

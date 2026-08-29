@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache, partial
+import re
 from typing import Any, Mapping, Sequence
 
 from quorune.compiler.exile_templates import targeted_exile_effect_template
@@ -85,6 +86,9 @@ _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC = (
 _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC = (
     "typed-query-self-characteristic-existing-owner-v1"
 )
+_PROBE_QUERY_GATED_SELF_CHARACTERISTIC = (
+    "query-gated-self-characteristic-existing-owner-v1"
+)
 _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER = (
     "fixed-source-pronoun-damage-trigger-existing-owner-v1"
 )
@@ -95,6 +99,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER,
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
+    _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
@@ -125,6 +130,44 @@ def _source_line(card_record: Any, ability: Mapping[str, Any]) -> str:
     lines = text.splitlines()
     line_index = int(ability.get("source_line") or 0) - 1
     return lines[line_index] if 0 <= line_index < len(lines) else text
+
+
+def _matches_query_self_characteristic_probe(
+    probe_id: str,
+    source: str,
+    *,
+    source_name: str,
+) -> bool:
+    """Keep the completed count grammar distinct from its gated extension."""
+
+    if probe_id not in {
+        _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
+        _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
+    }:
+        raise WorkSelectionCohortMeasurementError(
+            f"Unsupported query-characteristic probe: {probe_id}"
+        )
+    if query_self_characteristics_handler(
+        source,
+        source_name=source_name,
+    ) is None:
+        return False
+    normalized = re.sub(
+        r"\s+\([^()]*\)\.?$", "", source.strip()
+    ).strip()
+    ability_word = re.fullmatch(
+        r"[A-Z][A-Za-z0-9' ]{0,80} — (?P<body>.+)",
+        normalized,
+    )
+    if ability_word is not None:
+        normalized = ability_word.group("body").strip()
+    marker = normalized.casefold().rfind(" as long as ")
+    query_gated = normalized.casefold().startswith("as long as ") or (
+        marker > 0 and " gets " not in normalized[:marker].casefold()
+    )
+    return query_gated == (
+        probe_id == _PROBE_QUERY_GATED_SELF_CHARACTERISTIC
+    )
 
 
 def _token_instruction_candidates(line: str) -> tuple[str, ...]:
@@ -538,7 +581,10 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
-    if probe_id == _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC:
+    if probe_id in {
+        _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
+        _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
+    }:
         return _typed_query_self_characteristic_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
@@ -1314,10 +1360,11 @@ def _typed_query_self_characteristic_measurement(
             source_name, _source_is_permanent, _attachment = (
                 _source_face_context(record, ability)
             )
-            if query_self_characteristics_handler(
+            if _matches_query_self_characteristic_probe(
+                probe_id,
                 _source_line(record, ability),
                 source_name=source_name,
-            ) is not None:
+            ):
                 candidates.append(ability)
         if not candidates:
             continue
