@@ -441,15 +441,15 @@ _WITNESSES = {
         "{1}{W}{U}",
         ("Enchant",),
     ),
-    "mourners-shield": _Witness(
-        "Mourner's Shield",
-        "Artifact",
-        "Imprint — When this artifact enters, you may exile target card "
-        "from a graveyard.\n"
-        "{2}, {T}: Prevent all damage that would be dealt this turn by a "
-        "source of your choice that shares a color with the exiled card.",
-        "{4}",
-        ("Imprint",),
+    "dovin-hand-of-control": _Witness(
+        "Dovin, Hand of Control",
+        "Legendary Planeswalker — Dovin",
+        "Artifact, instant, and sorcery spells your opponents cast cost {1} "
+        "more to cast.\n"
+        "−1: Until your next turn, prevent all damage that would be dealt to "
+        "and dealt by target permanent an opponent controls.",
+        "{2}{W/U}",
+        loyalty="5",
     ),
     "ovinomancer": _Witness(
         "Ovinomancer",
@@ -1075,7 +1075,7 @@ _bind("etchings-of-the-chosen", *COST_AND_REPLACEMENT_PAIRS[6:8])
 _bind("prismatic-circle", CONTINUOUS_AND_REPLACEMENT_PAIRS[0])
 _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
-_bind("mourners-shield", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
+_bind("dovin-hand-of-control", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
 _bind("avatar-of-woe", CONTINUOUS_AND_REPLACEMENT_PAIRS[5])
 _bind(
     "knight-of-the-holy-nimbus",
