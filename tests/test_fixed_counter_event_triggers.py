@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session, pass_current
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.damage import damage_proposal, resolve_damage_batch
 from quorune.damage_modifier_state import (
     DamageModifierDuration,
@@ -127,13 +127,26 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def compile(self, text: str, *, type_line: str = "Artifact"):
         return compile_oracle_card(
-            replace(
-                self.db.lookup("Scheduled Counter Trigger Fixture"),
+            CardRecord(
+                oracle_id="00000000-0000-4000-8000-000000000001",
                 name="Compiler Fixture",
-                oracle_text=text,
+                mana_cost="{2}",
+                mana_value=2.0,
                 type_line=type_line,
+                oracle_text=text,
+                power="2" if "Creature" in type_line else None,
+                toughness="2" if "Creature" in type_line else None,
+                loyalty=None,
+                defense=None,
+                colors=(),
+                color_identity=(),
                 keywords=(),
+                produced_mana=(),
+                layout="normal",
+                released_at="2026-08-30",
+                legalities={"commander": "legal"},
                 faces=(),
+                raw={},
             ),
             capability_registry=self.capabilities,
             capability_profile="commander_review",
@@ -2214,6 +2227,46 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertTrue(node.exact)
                 self.assertEqual(event, node.event)
 
+    def test_subtype_death_and_graveyard_wordings_keep_distinct_events(self):
+        cases = (
+            (
+                "Whenever another Goblin dies, draw a card.",
+                FixedCounterTriggerEvent.CREATURE_DIES,
+                "subtype_goblin_dies",
+            ),
+            (
+                "Whenever another Goblin is put into a graveyard from the "
+                "battlefield, draw a card.",
+                FixedCounterTriggerEvent.PERMANENT_GRAVEYARD,
+                "subtype_goblin_graveyard",
+            ),
+        )
+        conditions = []
+        for text, event, variant in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(text)
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                self.assertEqual(event, binding.event)
+                self.assertEqual(variant, binding.variant)
+                conditions.append(binding.event_condition)
+
+                ir = self.compile(text, type_line="Creature — Goblin")
+                self.assertEqual("exact", ir.status)
+                node = next(
+                    value
+                    for value in ir.faces[0].nodes
+                    if value.template_id
+                    == "fixed-typed-effect-public-zone-trigger-v1"
+                )
+                self.assertEqual(event.value, node.event)
+                self.assertEqual(binding.event_condition, node.event_condition)
+                self.assertIn(
+                    "trigger.event.normalized_zone_change",
+                    node.capability_dependencies,
+                )
+        self.assertEqual(conditions[0], conditions[1])
+
     def test_public_counter_event_effect_variants_compile_exactly(self):
         cases = (
             (
@@ -2423,6 +2476,56 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
             )
             if program.provenance.get("template_id")
             in FIXED_TYPED_EVENT_TEMPLATE_IDS
+        ]
+        self.assertEqual(1, len(programs))
+        engine.semantics.put(programs[0])
+        return programs[0]
+
+    @staticmethod
+    def _event_condition_fields(condition: Mapping | None) -> set[str]:
+        if not isinstance(condition, Mapping):
+            return set()
+        field = condition.get("field")
+        fields = {field} if isinstance(field, str) else set()
+        for key in ("all", "any"):
+            values = condition.get(key)
+            if isinstance(values, list):
+                for value in values:
+                    fields.update(
+                        FixedCounterEventTriggerRuntimeTests._event_condition_fields(
+                            value if isinstance(value, Mapping) else None
+                        )
+                    )
+        nested = condition.get("not")
+        fields.update(
+            FixedCounterEventTriggerRuntimeTests._event_condition_fields(
+                nested if isinstance(nested, Mapping) else None
+            )
+        )
+        return fields
+
+    def register_subtype_graveyard_trigger(
+        self,
+        engine,
+        source: CardInstance,
+        *,
+        event: str,
+        qualifier_field: str,
+    ):
+        programs = [
+            program
+            for program in generated_programs(
+                self.db,
+                self.db.by_oracle_id(source.oracle_id),
+                trust_level="trusted",
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            )
+            if program.provenance.get("template_id")
+            in FIXED_TYPED_EVENT_TEMPLATE_IDS
+            and program.event == event
+            and qualifier_field
+            in self._event_condition_fields(program.event_condition)
         ]
         self.assertEqual(1, len(programs))
         engine.semantics.put(programs[0])
@@ -4907,6 +5010,356 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         expected_hash = authoritative_state_hash(engine.state)
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "fixed-typed-event-trigger-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_creature_subtype_dispatches_death_and_graveyard_wordings(self):
+        session = self.session(121013)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Subtype Graveyard Trigger Fixture",
+            ref="subtype-wording-source",
+            zone="battlefield",
+        )
+        dies = self.register_subtype_graveyard_trigger(
+            engine,
+            source,
+            event="creature.dies",
+            qualifier_field="card",
+        )
+        graveyard = self.register_subtype_graveyard_trigger(
+            engine,
+            source,
+            event="permanent.graveyard",
+            qualifier_field="card",
+        )
+        departed = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Creature Goblin Fixture",
+            ref="creature-goblin-departure",
+            zone="battlefield",
+        )
+
+        engine.move_card(
+            departed.object_id,
+            "graveyard",
+            reason="creature Goblin departure",
+            semantic_events=True,
+        )
+
+        self.assertEqual(1, len(engine.state.pending_trigger_batches))
+        pending = engine.state.pending_trigger_batches[0].items
+        self.assertEqual(2, len(pending))
+        self.assertEqual(
+            {dies.key, graveyard.key},
+            {item.source_ability_id for item in pending},
+        )
+        self.assertEqual(
+            {"creature.dies", "permanent.graveyard"},
+            {item.normalized_event_id for item in pending},
+        )
+        engine._stabilize()
+        self.assertEqual("trigger.order", engine.state.pending_decision.kind)
+        ordered = session.act(
+            "pilot:A",
+            {
+                "action_id": "order",
+                "triggers": [item.ref for item in pending],
+            },
+        )
+        self.assertTrue(ordered.ok, ordered.summary)
+
+        items = [
+            item
+            for item in engine.state.stack
+            if item.semantic_key in {dies.key, graveyard.key}
+        ]
+        self.assertEqual(2, len(items))
+        self.assertEqual(
+            {"creature.dies", "permanent.graveyard"},
+            {item.context["event"] for item in items},
+        )
+        self.assertTrue(
+            all("goblin" in item.context["subtypes"] for item in items)
+        )
+
+    def test_noncreature_kindred_subtype_only_dispatches_graveyard_wording(self):
+        session = self.session(121014)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Subtype Graveyard Trigger Fixture",
+            ref="kindred-wording-source",
+            zone="battlefield",
+        )
+        dies = self.register_subtype_graveyard_trigger(
+            engine,
+            source,
+            event="creature.dies",
+            qualifier_field="card",
+        )
+        graveyard = self.register_subtype_graveyard_trigger(
+            engine,
+            source,
+            event="permanent.graveyard",
+            qualifier_field="card",
+        )
+        departed = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Kindred Goblin Fixture",
+            ref="kindred-goblin-departure",
+            zone="battlefield",
+        )
+
+        engine.move_card(
+            departed.object_id,
+            "graveyard",
+            reason="noncreature Kindred Goblin departure",
+            semantic_events=True,
+        )
+        engine._stabilize()
+
+        items = [
+            item
+            for item in engine.state.stack
+            if item.semantic_key in {dies.key, graveyard.key}
+        ]
+        self.assertEqual(1, len(items))
+        self.assertEqual(graveyard.key, items[0].semantic_key)
+        self.assertEqual("permanent.graveyard", items[0].context["event"])
+        self.assertIn("kindred", items[0].context["types"])
+        self.assertNotIn("creature", items[0].context["types"])
+
+    def test_subtype_graveyard_another_and_nontoken_filters_use_lki(self):
+        for qualifier, is_token, depart_source, expected in (
+            ("card", False, True, False),
+            ("token", True, False, False),
+            ("token", False, False, True),
+        ):
+            with self.subTest(
+                qualifier=qualifier,
+                is_token=is_token,
+                depart_source=depart_source,
+            ):
+                session = self.session(
+                    121015 + int(is_token) + int(depart_source)
+                )
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Typed Subtype Graveyard Trigger Fixture",
+                    ref="subtype-filter-source",
+                    zone="battlefield",
+                )
+                program = self.register_subtype_graveyard_trigger(
+                    engine,
+                    source,
+                    event="permanent.graveyard",
+                    qualifier_field=qualifier,
+                )
+                departed = source
+                if not depart_source:
+                    departed = self.add_card(
+                        engine,
+                        seat="B",
+                        name="Generic Creature Goblin Fixture",
+                        ref="subtype-filter-departure",
+                        zone="battlefield",
+                        is_token=is_token,
+                    )
+
+                engine.move_card(
+                    departed.object_id,
+                    "graveyard",
+                    reason="subtype predicate departure",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+
+                matched = any(
+                    item.semantic_key == program.key
+                    for item in engine.state.stack
+                )
+                self.assertEqual(expected, matched)
+
+    def test_subtype_graveyard_control_and_owner_filters_use_lki(self):
+        session = self.session(121018)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Subtype Graveyard Trigger Fixture",
+            ref="subtype-control-source",
+            zone="battlefield",
+        )
+        controlled = self.register_subtype_graveyard_trigger(
+            engine,
+            source,
+            event="permanent.graveyard",
+            qualifier_field="previous_controller",
+        )
+        departed = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Creature Goblin Fixture",
+            ref="control-changed-goblin",
+            zone="battlefield",
+        )
+        engine.change_control(
+            departed.object_id,
+            "A",
+            reason="focused control-change witness",
+        )
+
+        engine.move_card(
+            departed.object_id,
+            "graveyard",
+            reason="controlled Goblin departure",
+            semantic_events=True,
+        )
+        engine._stabilize()
+
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == controlled.key
+        )
+        self.assertEqual("A", item.context["previous_controller"])
+        self.assertEqual("B", item.context["owner"])
+        self.assertEqual("B", departed.controller)
+
+        for owner, controller, expected in (
+            ("A", "B", True),
+            ("B", "A", False),
+        ):
+            with self.subTest(owner=owner, controller=controller):
+                session = self.session(121019 + (owner == "B"))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Typed Subtype Graveyard Trigger Fixture",
+                    ref="subtype-owner-source",
+                    zone="battlefield",
+                )
+                owned = self.register_subtype_graveyard_trigger(
+                    engine,
+                    source,
+                    event="permanent.graveyard",
+                    qualifier_field="owner",
+                )
+                departed = self.add_card(
+                    engine,
+                    seat=owner,
+                    name="Generic Creature Goblin Fixture",
+                    ref="owner-filter-goblin",
+                    zone="battlefield",
+                )
+                if controller != owner:
+                    engine.change_control(
+                        departed.object_id,
+                        controller,
+                        reason="focused ownership witness",
+                    )
+
+                engine.move_card(
+                    departed.object_id,
+                    "graveyard",
+                    reason="owner-filtered Goblin departure",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+
+                matched = any(
+                    value.semantic_key == owned.key
+                    for value in engine.state.stack
+                )
+                self.assertIn(
+                    departed.object_id,
+                    engine.state.players[owner].zones["graveyard"],
+                )
+                self.assertEqual(expected, matched)
+
+    def test_subtype_graveyard_triggers_preserve_apnap_and_exact_replay(self):
+        session = self.session(121021, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        source_a = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Subtype Graveyard Trigger Fixture",
+            ref="subtype-apnap-source-a",
+            zone="battlefield",
+        )
+        self.add_card(
+            engine,
+            seat="C",
+            name="Typed Subtype Graveyard Trigger Fixture",
+            ref="subtype-apnap-source-c",
+            zone="battlefield",
+        )
+        program = self.register_subtype_graveyard_trigger(
+            engine,
+            source_a,
+            event="permanent.graveyard",
+            qualifier_field="card",
+        )
+        departed = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Creature Goblin Fixture",
+            ref="subtype-apnap-departure",
+            zone="battlefield",
+        )
+
+        engine.move_card(
+            departed.object_id,
+            "graveyard",
+            reason="APNAP subtype graveyard occurrence",
+            semantic_events=True,
+        )
+
+        self.assertEqual(1, len(engine.state.pending_trigger_batches))
+        batch = engine.state.pending_trigger_batches[0]
+        self.assertEqual(("A", "B", "C", "D"), batch.apnap_order)
+        self.assertEqual(
+            ["A", "C"],
+            [item.controller for item in batch.items],
+        )
+        self.assertTrue(
+            all(
+                item.source_ability_id == program.key
+                and item.normalized_event_id == "permanent.graveyard"
+                for item in batch.items
+            )
+        )
+
+        engine._stabilize()
+        self.assertEqual(
+            ["A", "C"],
+            [item.controller for item in engine.state.stack[-2:]],
+        )
+        self.assertTrue(
+            all(
+                item.context["event"] == "permanent.graveyard"
+                for item in engine.state.stack[-2:]
+            )
+        )
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "subtype-graveyard-apnap-replay"
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)

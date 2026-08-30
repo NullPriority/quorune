@@ -1218,26 +1218,14 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v145-fixed-library-selection",
-      "compiler_version": "oracle-ir-v145",
-      "bundle_id": "bundle:fixed-library-selection",
-      "candidate_ids": ["compiler:fixed-library-selection"],
-      "family_ids": [
-        "activated_effect:look-reveal",
-        "activated_effect:ordered-effect-composition",
-        "effect_clause:look-reveal",
-        "effect_clause:ordered-effect-composition",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
-      ],
-      "capability_ids": [
-        "library.select.fixed_controller",
-        "trigger.event.normalized_zone_change",
-        "trigger.placement.apnap",
-        "zone.change.destination_replacement"
-      ],
-      "measurement_id": "measurement:fixed-library-selection",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v146-subtype-graveyard-event-binding",
+      "compiler_version": "oracle-ir-v146",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Correct an admitted subtype graveyard trigger whose Oracle event was bound to creature death instead of permanent graveyard movement."
     },
     "forecast_corrections": [
       {
