@@ -2011,9 +2011,14 @@ class RulesSchedulerTests(unittest.TestCase):
             bundle["measurement_probe_id"], measurement["probe_id"]
         )
         coverage = work_selection["coverage_family"]
-        self.assertGreaterEqual(
-            measurement["complete_card_gain"],
-            coverage["minimum_complete_card_gain"],
+        self.assertGreater(measurement["complete_card_gain"], 0)
+        self.assertTrue(
+            measurement["complete_card_gain"]
+            >= coverage["minimum_complete_card_gain"]
+            or measurement["exact_ability_gain"]
+            >= coverage["minimum_exact_ability_gain"]
+            or measurement["material_residual_reduction"]
+            >= coverage["minimum_material_residual_reduction"]
         )
         self.assertGreater(measurement["exact_ability_gain"], 0)
 

@@ -194,7 +194,11 @@ async function advanceOtherSeats(
 ): Promise<boolean> {
   for (const page of pages) {
     if (page === heldPage) continue;
-    const result = await submitAuthorizedPass(page);
+    // Bind the pass to the decision observed before the click. A projection
+    // transition must not turn this response into a pass from the held window.
+    const decisionId = await currentDecisionId(page);
+    if (!decisionId) continue;
+    const result = await submitAuthorizedPass(page, decisionId);
     if (result !== "unavailable") return true;
   }
   // Returning true tells driveUntil not to fall back to an all-seat pass. The
@@ -343,6 +347,11 @@ async function advanceToActionReady(
     noProgressMs: durabilityTimeout,
     advance: async () => {
       await new Promise((resolve) => setTimeout(resolve, 200));
+      // Snapshot before the window checks below. If a new strategic decision
+      // arrives while those checks run, the old capability races closed.
+      const observedDecisions = await Promise.all(
+        pages.map((page) => currentDecisionId(page)),
+      );
       // Auto-pass cannot answer the mandatory cleanup discard that follows a
       // turn where this durability witness retained eight cards. Resolve that
       // scripted single-card choice before searching for the next land offer.
@@ -355,8 +364,10 @@ async function advanceToActionReady(
       // decision. Declaring no attackers is the legal deterministic advance;
       // ordinary priority passing cannot answer this mandatory choice.
       if (await submitEmptyAttackDeclaration(pages)) return true;
-      for (const page of pages) {
-        const result = await submitAuthorizedPass(page);
+      for (let index = 0; index < pages.length; index += 1) {
+        const decisionId = observedDecisions[index];
+        if (!decisionId) continue;
+        const result = await submitAuthorizedPass(pages[index], decisionId);
         if (result !== "unavailable") return true;
       }
       return false;
