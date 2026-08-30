@@ -232,11 +232,6 @@ class CharacteristicEvaluationHostMixin:
                     or getattr(source, "face_down", False)
                 ):
                     continue
-                base = self._compiled_base_characteristics(
-                    source,
-                    self.card_record(source),
-                    error_type=GameRuleError,
-                )
                 resolution_effects = _static_component_presence_effects(
                     active_resolution_effects(self.state, source)
                 )
@@ -248,6 +243,28 @@ class CharacteristicEvaluationHostMixin:
                         isinstance(copy_overrides, Mapping)
                         and "ability_fragments" in copy_overrides
                     )
+                )
+                has_registered_static_component = any(
+                    program.ability_id.startswith("static:")
+                    and bool(program.handlers)
+                    for program in self.semantics.runtime_handler_programs_for_oracle(
+                        source.oracle_id,
+                        active_zone="battlefield",
+                        event="characteristics.evaluate",
+                    )
+                )
+                if (
+                    not component_effects
+                    and not resolution_effects
+                    and not has_local_component_changes
+                    and not has_registered_static_component
+                ):
+                    result[object_id] = ()
+                    continue
+                base = self._compiled_base_characteristics(
+                    source,
+                    self.card_record(source),
+                    error_type=GameRuleError,
                 )
                 if (
                     not component_effects

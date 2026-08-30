@@ -1122,6 +1122,18 @@
         },
         {
           "classification": "rules_value",
+          "file": "quorune/characteristic_evaluation_host.py",
+          "flow_id": "card-identity-flow:3d1209d78e8ef832e322",
+          "line": 251,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "oracle_id",
+          "source_kind": "attribute",
+          "source_line": 251,
+          "symbol": "CharacteristicEvaluationHostMixin._effective_static_component_key_map"
+        },
+        {
+          "classification": "rules_value",
           "file": "quorune/cli.py",
           "flow_id": "card-identity-flow:bd1d952d7c4223b734e8",
           "line": 156,
@@ -5316,9 +5328,9 @@
           "generated_provenance": 12,
           "reviewed_historical_compatibility": 1,
           "reviewed_override": 3,
-          "rules_value": 227
+          "rules_value": 228
         },
-        "classified_flow_count": 438,
+        "classified_flow_count": 439,
         "prohibited_identity_dispatch_count": 0
       },
       "external_dependencies": {
@@ -11664,7 +11676,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 192119,
+      "logical_lines": 192136,
       "methods": {
         "dunder": 526,
         "private": 842,
@@ -12730,6 +12742,13 @@
           "physical_lines": 419
         },
         {
+          "file": "quorune/characteristic_evaluation_host.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 394,
+          "physical_lines": 421
+        },
+        {
           "file": "quorune/compiler/fixed_target_effect_sequences.py",
           "functions_and_methods": 13,
           "language": "python",
@@ -12749,13 +12768,6 @@
           "language": "python",
           "logical_lines": 378,
           "physical_lines": 453
-        },
-        {
-          "file": "quorune/characteristic_evaluation_host.py",
-          "functions_and_methods": 8,
-          "language": "python",
-          "logical_lines": 377,
-          "physical_lines": 404
         },
         {
           "file": "web/src/choices.ts",
@@ -16155,7 +16167,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 210436,
+      "physical_lines": 210453,
       "python_file_count": 576,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -28677,7 +28689,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "bce79ebda592126ff747d792d910e367d148af03ad7296a093531fed390ccd74",
+      "fingerprint": "a8c7a64672ac3b9fc033966c5da1c825455d0cb6477b65ba8637a5acede42a25",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
