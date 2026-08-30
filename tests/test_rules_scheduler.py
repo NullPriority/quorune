@@ -883,6 +883,19 @@ class RulesSchedulerTests(unittest.TestCase):
         declaration = self.catalog["work_selection"][
             "semantic_transition_declaration"
         ]
+        if declaration["bundle_id"] is None:
+            pending = derived["pending_transition"]
+            self.assertEqual("pending", derived["semantic_outcome_status"])
+            self.assertIsNotNone(pending)
+            self.assertEqual("non_harvest", pending["outcome_kind"])
+            self.assertEqual(
+                declaration["transition_id"], pending["transition_id"]
+            )
+            self.assertEqual(
+                declaration["non_harvest_reason"],
+                pending["non_harvest_reason"],
+            )
+            return
         current = by_bundle[declaration["bundle_id"]]
         self.assertEqual(
             declaration["transition_id"], current["transition_id"]
@@ -1866,6 +1879,23 @@ class RulesSchedulerTests(unittest.TestCase):
     def test_current_transition_measurement_is_generated_not_policy_counted(self):
         work_selection = self.catalog["work_selection"]
         declaration = work_selection["semantic_transition_declaration"]
+        if declaration["bundle_id"] is None:
+            self.assertIsNone(declaration["expected_complete_card_gain"])
+            self.assertTrue(declaration["non_harvest_reason"])
+            self.assertEqual(
+                [],
+                self.work_inputs["cohort_measurements"][
+                    "transition_measurements"
+                ],
+            )
+            pending = self.work_inputs["harvest_outcome_history"][
+                "pending_transition"
+            ]
+            self.assertEqual("non_harvest", pending["outcome_kind"])
+            self.assertEqual(
+                declaration["transition_id"], pending["transition_id"]
+            )
+            return
         bundle = next(
             row
             for row in work_selection["coverage_family"]["candidate_bundles"]
