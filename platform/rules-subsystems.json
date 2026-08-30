@@ -817,41 +817,54 @@
           "measurement_probe_id": "fixed-exile-existing-owner-v1"
         },
         {
-          "bundle_id": "bundle:fixed-face-down-methods",
+          "bundle_id": "bundle:fixed-face-down-lifecycle",
           "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
             "keyword_dependency:disguise",
             "keyword_dependency:megamorph"
           ],
           "canonical_owner_ids": [
+            "capability:casting.disguise.fixed_mana",
+            "capability:casting.megamorph.fixed_mana",
             "capability:casting.morph.fixed_mana",
-            "component:quorune.morph"
+            "capability:trigger.event.normalized_public_action",
+            "component:quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+            "component:quorune.morph",
+            "component:quorune.rules.morph_actions.commit_turn_face_up"
           ],
           "source_contexts": [
-            "activated",
             "spell",
             "triggered"
           ],
           "normalized_literal_parameters": [
             "fixed-face-down-cast-cost",
             "fixed-face-up-special-action-cost",
-            "method-specific-face-up-result"
+            "method-specific-face-up-result",
+            "source-self-face-up-event"
           ],
           "shared_dependencies": [
-            "casting.morph.fixed_mana"
+            "casting.morph.fixed_mana",
+            "counter.placement.quantity_replacement",
+            "trigger.event.normalized_public_action",
+            "trigger.keyword.ward.fixed_generic",
+            "trigger.placement.apnap"
           ],
-          "shared_grammar": "fixed Disguise and Megamorph face-down cast methods, face-up special-action costs, and method-specific face-up results",
-          "estimated_implementation_hours": 6,
+          "shared_grammar": "fixed ordinary-mana Disguise and Megamorph cast and turn-up methods, their Ward or counter result, and mandatory source-self turned-face-up triggers with independently exact bodies",
+          "estimated_implementation_hours": 8,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Preserves the measured method-specific extension for a future coherent face-down bundle without treating its local draft as gameplay trust or landed support.",
+          "expected_downstream_closure": "Extends the existing Morph lifecycle and public-action trigger owners across two related face-down methods while retaining exact source-reference, replacement, privacy, APNAP, and replay boundaries.",
           "explicit_exclusions": [
             "Manifest, Cloak, Morph variants, and nonmethod face-down creation",
+            "aggregate, non-source, intervening-if, reflexive, optional, conditional, and independently inexact face-up trigger bodies",
             "copied, granted, removed, and text-changed face-down methods",
             "dynamic or nonmana face-up costs and linked face-up results",
             "unrelated residual abilities on affected cards"
           ],
-          "measurement_status": "upper_bound_only",
-          "measurement_probe_id": null
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-face-down-lifecycle-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:fixed-homogeneous-target-sets",
@@ -1398,17 +1411,23 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v150-attached-characteristic-closure",
-      "compiler_version": "oracle-ir-v150",
-      "bundle_id": "bundle:attached-characteristic-closure",
-      "candidate_ids": ["compiler:attached-characteristic-closure"],
+      "transition_id": "oracle-ir-v151-fixed-face-down-lifecycle",
+      "compiler_version": "oracle-ir-v151",
+      "bundle_id": "bundle:fixed-face-down-lifecycle",
+      "candidate_ids": ["compiler:fixed-face-down-lifecycle"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "keyword_dependency:disguise",
+        "keyword_dependency:megamorph"
       ],
       "capability_ids": [
-        "continuous.attached.fixed_characteristics"
+        "casting.disguise.fixed_mana",
+        "casting.megamorph.fixed_mana",
+        "trigger.event.normalized_public_action"
       ],
-      "measurement_id": "measurement:attached-characteristic-closure",
+      "measurement_id": "measurement:fixed-face-down-lifecycle",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1902,6 +1921,11 @@
         "candidate_id": "compiler:attached-characteristic-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A bounded integrated probe expands the existing attached-characteristic owner into one coherent 69-card, 125-ability capability-closed family across fixed and typed public-query power/toughness, base-setting, type, subtype, color, and supported keyword transformations. Printed, removed, and typed-granted static programs share one layer-6 component-presence query; dynamic counts stay at the cycle-safe layer-5 characteristic boundary. Name changes, declaration restrictions, quoted or untrusted granted rules, conditions, target-relative attachment counts, target-controller state, and arbitrary dependency cycles remain fail-closed, including explicit Witness Protection and Retro-Mutation exclusions. Current cohort identities and conservative lower bounds are derived into the generated measurement artifact."
+      },
+      {
+        "candidate_id": "compiler:fixed-face-down-lifecycle",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A preserved implementation-backed probe had already measured 29 complete cards and 76 exact Disguise or Megamorph method abilities, below every normal harvest floor. The current frontier adds 39 capability-closed mandatory source-self turned-face-up triggers through the existing public-action event and typed body owners, producing a conservative 115-ability and residual lower bound for one face-down lifecycle. Variable or nonmana methods, Manifest, Cloak, copied or granted methods, aggregate or non-source events, and optional, conditional, reflexive, linked, or independently inexact bodies remain fail-closed; current cohort identities and lower bounds are derived into the generated measurement artifact."
       }
     ]
   },

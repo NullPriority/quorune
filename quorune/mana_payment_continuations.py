@@ -53,7 +53,11 @@ def issue_mana_payment_replacement_choice(
     event_kinds = tuple(event.kind for event in required.batch.events)
     if event_kinds and all(kind == "damage" for kind in event_kinds):
         resume_kind = "mana_payment"
-    elif event_kinds == ("counter.place",) and action in {"cast", "activate"}:
+    elif event_kinds == ("counter.place",) and action in {
+        "cast",
+        "activate",
+        "turn_face_up",
+    }:
         resume_kind = "priority_action_cost"
     elif event_kinds == ("zone.change",) and action == "cast":
         resume_kind = "priority_action_cost"

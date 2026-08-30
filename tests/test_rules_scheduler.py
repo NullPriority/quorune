@@ -1920,6 +1920,28 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertEqual(11, queue["work_selection"]["policy_version"])
 
+    def test_fixed_face_down_lifecycle_probe_is_closed(self):
+        probe_id = "fixed-face-down-lifecycle-existing-owner-v1"
+        for source in (
+            "Disguise {4}{W} (You may cast this card face down for {3}.)",
+            "Megamorph {5}{G}",
+            "When this creature is turned face up, draw a card.",
+            "Whenever this Equipment is turned face up, attach it to target "
+            "creature you control.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "Morph {3}",
+            "Disguise {W/U}",
+            "Megamorph {X}{G}",
+            "Whenever a permanent is turned face up, draw a card.",
+            "When another creature is turned face up, draw a card.",
+            "When this creature turns face up, draw a card.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_trigger_ability_word_carrier_probe_is_closed(self):
         probe_id = "trigger-ability-word-carrier-existing-owner-v1"
         for source in (
@@ -1989,9 +2011,14 @@ class RulesSchedulerTests(unittest.TestCase):
             bundle["measurement_probe_id"], measurement["probe_id"]
         )
         coverage = work_selection["coverage_family"]
-        self.assertGreaterEqual(
-            measurement["complete_card_gain"],
-            coverage["minimum_complete_card_gain"],
+        self.assertGreater(measurement["complete_card_gain"], 0)
+        self.assertTrue(
+            measurement["complete_card_gain"]
+            >= coverage["minimum_complete_card_gain"]
+            or measurement["exact_ability_gain"]
+            >= coverage["minimum_exact_ability_gain"]
+            or measurement["material_residual_reduction"]
+            >= coverage["minimum_material_residual_reduction"]
         )
         self.assertGreater(measurement["exact_ability_gain"], 0)
 

@@ -722,7 +722,9 @@ def _priority_action_cost_event_ids(
     response: Mapping[str, Any],
     seat: str,
 ) -> set[str]:
-    if action not in {"cast", "activate"} or len(batch.events) != 1:
+    if action not in {"cast", "activate", "turn_face_up"} or len(
+        batch.events
+    ) != 1:
         raise ReplacementEffectError(
             "Priority-action cost continuation is malformed"
         )
@@ -732,17 +734,38 @@ def _priority_action_cost_event_ids(
     action_valid = False
     if event.kind == "counter.place":
         common_valid = (
-            payload.get("effect_generated") is False
-            and payload.get("placing_player") == seat
+            payload.get("placing_player") == seat
             and payload.get("target_kind") == "permanent"
             and type(payload.get("counter_name")) is str
             and bool(payload.get("counter_name"))
             and type(payload.get("amount")) is int
             and payload.get("amount", 0) > 0
         )
-        if action == "activate":
+        if action == "turn_face_up":
+            payment_id = response.get("_mana_payment_id")
+            card_ref = response.get("card")
+            action_valid = bool(
+                payload.get("effect_generated") is True
+                and payload.get("counter_name") == "+1/+1"
+                and payload.get("amount") == 1
+                and payload.get("target_zone") == "battlefield"
+                and type(payment_id) is str
+                and payment_id
+                and type(card_ref) is str
+                and card_ref
+                and event.event_id
+                == f"counter.place:{payment_id}:{card_ref}:megamorph"
+                and payload.get("source") == card_ref
+            )
+        elif action == "activate":
+            common_valid = common_valid and (
+                payload.get("effect_generated") is False
+            )
             action_valid = payload.get("counter_name") == "loyalty"
         else:
+            common_valid = common_valid and (
+                payload.get("effect_generated") is False
+            )
             payment_id = response.get("_mana_payment_id")
             card_ref = response.get("card")
             prefix = f"counter.cost:{payment_id}:{card_ref}:additional:"

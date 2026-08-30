@@ -45,16 +45,28 @@ class EffectiveKeywordError(ValueError):
 class EffectiveKeywordHost(Protocol):
     """Read-only characteristic port shared by keyword rule owners."""
 
-    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+    def _effective_card_data(
+        self,
+        card: Any,
+        *,
+        ignore_face_down: bool = False,
+    ) -> Mapping[str, Any]: ...
 
 
 def normalized_effective_keywords(
     host: EffectiveKeywordHost,
     card: Any,
+    *,
+    ignore_face_down: bool = False,
 ) -> frozenset[str]:
     """Return current represented keywords case-insensitively and redundantly."""
 
-    return normalized_characteristic_keywords(host._effective_card_data(card))
+    return normalized_characteristic_keywords(
+        host._effective_card_data(
+            card,
+            ignore_face_down=ignore_face_down,
+        )
+    )
 
 
 def normalized_characteristic_keywords(

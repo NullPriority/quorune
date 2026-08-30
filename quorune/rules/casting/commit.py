@@ -17,7 +17,7 @@ from ...counter_placement import (
     commit_prepared_counter_placements,
     prepare_counter_placements,
 )
-from ...compiled_morph import compiled_fixed_mana_morph_spec
+from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from ...flashback import FLASHBACK_CAST_OPTION_ID
@@ -26,9 +26,10 @@ from ...kicker import KICKER_ANNOTATION, KICKER_MECHANIC_ID
 from ...life_state import LifeStateError, pay_life_cost
 from ...model import StackItem, YieldPolicy
 from ...morph import (
+    FACE_DOWN_CAST_METHODS,
     FixedManaMorphSpec,
-    MORPH_CAST_METHOD,
     MORPH_FACE_DOWN_LABEL,
+    MORPH_CAST_METHOD,
     MorphError,
 )
 from ..spell_cast_events import SpellCastEvent
@@ -680,6 +681,34 @@ def _commit_additional_costs(
     return result
 
 
+def _face_down_method_spec_from_details(
+    details: Mapping[str, Any],
+) -> FixedManaMorphSpec | None:
+    cast_method = details.get("cast_method")
+    if cast_method not in FACE_DOWN_CAST_METHODS:
+        return None
+    descriptor_field = (
+        "morph" if cast_method == MORPH_CAST_METHOD else "face_down_method"
+    )
+    reason = (
+        "morph_contract_malformed"
+        if cast_method == MORPH_CAST_METHOD
+        else "face_down_method_contract_malformed"
+    )
+    try:
+        method_spec = FixedManaMorphSpec.from_dict(
+            details.get(descriptor_field) or {}
+        )
+    except MorphError as exc:
+        raise CastProposalError(str(exc), reason=reason) from exc
+    if method_spec.method != cast_method:
+        raise CastProposalError(
+            "Face-down method descriptor changed before commit",
+            reason=reason,
+        )
+    return method_spec
+
+
 def _create_spell_item(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -700,18 +729,12 @@ def _create_spell_item(
         mark_card_kicked(card)
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
         mark_card_flashed_back(card)
-    morph_spec = None
-    if details.get("cast_method") == MORPH_CAST_METHOD:
-        try:
-            morph_spec = FixedManaMorphSpec.from_dict(details.get("morph") or {})
-        except MorphError as exc:
-            raise CastProposalError(
-                str(exc), reason="morph_contract_malformed"
-            ) from exc
+    method_spec = _face_down_method_spec_from_details(details)
+    if method_spec is not None:
         mark_card_face_down_for_morph(
             card,
             controller=proposal.seat,
-            spec=morph_spec,
+            spec=method_spec,
         )
     destination = (
         "battlefield"
@@ -748,7 +771,7 @@ def _create_spell_item(
         controller=proposal.seat,
         label=(
             MORPH_FACE_DOWN_LABEL
-            if morph_spec is not None
+            if method_spec is not None
             else card.active_face or record.name
         ),
         card_object_id=card.object_id,
@@ -796,10 +819,14 @@ def _create_spell_item(
             ),
             **(
                 {
-                    "cast_method": MORPH_CAST_METHOD,
-                    "morph_spec_fingerprint": morph_spec.fingerprint,
+                    "cast_method": method_spec.method,
+                    (
+                        "morph_spec_fingerprint"
+                        if method_spec.method == MORPH_CAST_METHOD
+                        else "face_down_method_spec_fingerprint"
+                    ): method_spec.fingerprint,
                 }
-                if morph_spec is not None
+                if method_spec is not None
                 else {}
             ),
             **(
@@ -1004,19 +1031,24 @@ def _revalidate_cast_contracts(
 ) -> dict[str, Any]:
     """Revalidate compiled casting contracts without mutating state."""
 
-    if details.get("cast_method") == MORPH_CAST_METHOD:
-        try:
-            proposed_morph = FixedManaMorphSpec.from_dict(
-                details.get("morph") or {}
+    cast_method = details.get("cast_method")
+    proposed_method = _face_down_method_spec_from_details(details)
+    if proposed_method is not None:
+        if (
+            compiled_fixed_mana_face_down_method_spec(
+                host,
+                card,
+                method=cast_method,
             )
-        except MorphError as exc:
+            != proposed_method
+        ):
             raise CastProposalError(
-                str(exc), reason="morph_contract_malformed"
-            ) from exc
-        if compiled_fixed_mana_morph_spec(host, card) != proposed_morph:
-            raise CastProposalError(
-                "The fixed-mana Morph contract changed before commit",
-                reason="stale_morph_contract",
+                "The fixed-mana face-down contract changed before commit",
+                reason=(
+                    "stale_morph_contract"
+                    if cast_method == MORPH_CAST_METHOD
+                    else "stale_face_down_method_contract"
+                ),
             )
     selected_option = dict(details["selected_cost_option"])
     if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:

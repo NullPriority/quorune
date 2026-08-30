@@ -39,6 +39,12 @@ _PUBLIC_FACE_UP_TRIGGER = re.compile(
     r"^Whenever a permanent is turned face up, (?P<body>.+)$",
     re.IGNORECASE,
 )
+_SOURCE_FACE_UP_TRIGGER = re.compile(
+    r"^(?:When|Whenever) this "
+    r"(?:artifact|creature|enchantment|Equipment|land|permanent) "
+    r"is turned face up, (?P<body>.+)$",
+    re.IGNORECASE,
+)
 _OPPONENT_CARD_DRAW_TRIGGER = re.compile(
     r"^Whenever an opponent draws a card, (?P<body>.+)$",
     re.IGNORECASE,
@@ -439,6 +445,20 @@ def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
             "fixed-counter-public-cycle-trigger-v1",
             "trigger-event-normalized-public-action",
             active_zone="hand" if source_self else "battlefield",
+        )
+    source_face_up = _SOURCE_FACE_UP_TRIGGER.fullmatch(material_line)
+    if source_face_up is not None:
+        return _spec(
+            "permanent.turned_face_up",
+            "source_turned_face_up",
+            source_face_up.group("body"),
+            "fixed-counter-public-face-up-trigger-v1",
+            "trigger-event-normalized-public-action",
+            condition={
+                "field": "card",
+                "op": "eq",
+                "value": "$source.ref",
+            },
         )
     face_up = _PUBLIC_FACE_UP_TRIGGER.fullmatch(material_line)
     if face_up is not None:

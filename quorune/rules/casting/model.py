@@ -4,6 +4,8 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
+from ...morph import FACE_DOWN_CAST_METHODS
+
 from ..action_proposals import (
     ActionOffer,
     CastCostOption,
@@ -69,7 +71,7 @@ class CastProposalRequest:
             raise CastProposalError(
                 "Cast requests require an actor, card, and source zone"
             )
-        if self.cast_method not in {None, "morph"}:
+        if self.cast_method is not None and self.cast_method not in FACE_DOWN_CAST_METHODS:
             raise CastProposalError("Unsupported cast method")
         if not isinstance(self.targets, (FrozenObject, FrozenArray)):
             object.__setattr__(self, "targets", freeze_json(self.targets))

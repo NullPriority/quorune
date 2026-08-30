@@ -277,7 +277,12 @@ def _apply_face_down(
     state.abilities = [
         str(item) for item in values.get("abilities", [])
     ]
-    state.ability_fragments = []
+    state.ability_fragments = list(
+        canonical_ability_fragments(
+            ability_fragment_from_dict(item)
+            for item in values.get("ability_fragments", [])
+        )
+    )
     state.activated_abilities = []
     state.power = int(values.get("power", 2))
     state.toughness = int(values.get("toughness", 2))
