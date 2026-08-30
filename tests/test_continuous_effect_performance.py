@@ -15,6 +15,7 @@ from quorune.continuous_effects import (
     evaluate_continuous_effects,
 )
 from quorune.object_predicate import ObjectQuerySpec
+from scripts.benchmark_continuous_effects import _source_hash_bytes
 
 
 def _descriptor() -> dict:
@@ -77,6 +78,12 @@ def _fixture(*, players: int, permanents_per_player: int, descriptors: int = 1):
 
 
 class ContinuousEffectPerformanceTests(unittest.TestCase):
+    def test_runtime_source_fingerprint_is_line_ending_stable(self):
+        self.assertEqual(
+            _source_hash_bytes(b"first\nsecond\n"),
+            _source_hash_bytes(b"first\r\nsecond\r\n"),
+        )
+
     def test_empty_battlefield_has_zero_scan_work(self):
         state, semantics = _fixture(players=4, permanents_per_player=0)
         metrics = ContinuousEffectCollectionMetrics()

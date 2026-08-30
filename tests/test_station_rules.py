@@ -734,8 +734,8 @@ class StationRuntimeTests(unittest.TestCase):
         source, _creature, _ability, _action_id = self.prepare(session, power=2)
         original_data = engine._effective_card_data
 
-        def removed(card):
-            data = dict(original_data(card))
+        def removed(card, **kwargs):
+            data = dict(original_data(card, **kwargs))
             if getattr(card, "object_id", card) == source.object_id:
                 data["activated_abilities"] = []
             return data

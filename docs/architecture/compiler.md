@@ -174,6 +174,18 @@ both layers. Targeted, opponent-relative, combat-state, counter-qualified,
 dynamic, chosen, conditional, quoted, Protection, type-changing, and variable-duration
 forms remain source-spanned residuals.
 
+The existing attached-characteristic handler in
+`compiler/continuous_templates.py` lowers closed enchanted, equipped, and
+fortified subject wording into one versioned live-relation descriptor. The
+grammar covers fixed and typed public-query power/toughness, base-setting,
+type, subtype, color, and supported keyword addition or removal; compound
+forms remain one descriptor so canonical layer ordering is preserved. Typed
+quantities reuse `query_characteristic_quantity()` and the cycle-safe layer-5
+object query. Name and rules-text changes, conditions, declaration
+restrictions, target-relative attachment or controller facts, chosen values,
+and untrusted granted abilities remain source-spanned residuals. Witness
+Protection and Retro-Mutation are explicit examples of those exclusions.
+
 The same compiler owner separately lowers fixed static characteristic bodies
 gated by one closed public-state condition. A versioned descriptor combines a
 source-controller turn, raw graveyard or hand count, life-total, current-turn

@@ -4,6 +4,7 @@
   "fixtures": [
     "tests/fixtures/affinity-rules-cards.json",
     "tests/fixtures/amass-rules-cards.json",
+    "tests/fixtures/attached-characteristic-closure-cards.json",
     "tests/fixtures/bestow-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
@@ -44,6 +45,17 @@
     "tests/fixtures/typed-land-entry-cards.json"
   ],
   "dynamic_requirements": [
+    {
+      "source": "tests/test_attached_static_characteristics.py",
+      "symbol": "AttachedContinuousCompilerTests.test_measured_attached_characteristic_cohort_is_capability_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/attached-characteristic-closure-cards.json"
+      ],
+      "rationale": "The exact 69-card measured attached-characteristic cohort is iterated by name from the dedicated pinned fixture."
+    },
     {
       "source": "tests/test_closed_effect_programs.py",
       "symbol": "ClosedEffectProgramCompilerTests.test_measured_corpus_lower_bound_is_capability_closed",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import re
 from typing import Any, Mapping
 
@@ -19,13 +20,14 @@ from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
     FIXED_CHARACTERISTIC_KEYWORDS,
 )
-from .creature_subtypes import canonical_creature_subtype
+from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .public_state_queries import (
     controlled_creature_fixed_modifier,
     fixed_battlefield_query_subject,
     fixed_power_toughness_battlefield_query,
     fixed_public_state_parts,
 )
+from .query_characteristic_templates import query_characteristic_quantity
 from ..rules.source_references import SourceReferenceSpec
 from ..trigger_participation import WardSpec
 from ..continuous_conditions import (
@@ -65,11 +67,13 @@ _ATTACHED_SUPPORTED_ABILITIES = frozenset(
         "double strike",
         "first strike",
         "flash",
+        "fear",
         "flying",
         "haste",
         "hexproof",
         "indestructible",
         "infect",
+        "intimidate",
         "lifelink",
         "menace",
         "reach",
@@ -453,13 +457,396 @@ def _attached_ability_capabilities(
     return capabilities
 
 
+_ATTACHED_COLOR_SYMBOLS = {
+    "white": "W",
+    "blue": "U",
+    "black": "B",
+    "red": "R",
+    "green": "G",
+}
+
+
+def _attached_modifier() -> dict[str, Any]:
+    return {
+        "type_operations": [],
+        "color_operations": [],
+        "add_abilities": [],
+        "remove_abilities": [],
+        "remove_all_abilities": False,
+        "add_rules_text": [],
+        "add_ability_fragments": [],
+        "power": 0,
+        "toughness": 0,
+        "base_power": None,
+        "base_toughness": None,
+        "quantity": None,
+        "quantity_power": 0,
+        "quantity_toughness": 0,
+    }
+
+
+def _grant_attached_abilities(
+    modifier: dict[str, Any], value: str
+) -> bool:
+    granted = _attached_granted_abilities(value)
+    if granted is None:
+        return False
+    abilities, fragments = granted
+    if set(modifier["add_abilities"]).intersection(abilities):
+        return False
+    modifier["add_abilities"].extend(abilities)
+    modifier["add_ability_fragments"].extend(fragments)
+    return True
+
+
+def _attached_type_values(value: str) -> tuple[str, ...] | None:
+    phrase = re.sub(r"^(?:a|an)\s+", "", value.strip(), flags=re.IGNORECASE)
+    whole = canonical_creature_subtype(phrase)
+    if whole is not None:
+        return (whole.title(),)
+    values = tuple(part for part in phrase.split() if part)
+    canonical = tuple(canonical_creature_subtype(part) for part in values)
+    if not values or any(value is None for value in canonical):
+        return None
+    return tuple(str(value).title() for value in canonical)
+
+
+def _add_attached_type_phrase(
+    modifier: dict[str, Any],
+    value: str,
+    *,
+    addition: bool,
+) -> bool:
+    phrase = re.sub(r"^(?:a|an)\s+", "", value.strip(), flags=re.IGNORECASE)
+    if phrase.casefold() in {"all creature types", "every creature type"}:
+        modifier["type_operations"].append(
+            {
+                "op": "add_types",
+                "field": "subtypes",
+                "values": sorted(value.title() for value in CREATURE_SUBTYPES),
+            }
+        )
+        return True
+    if phrase.casefold() == "legendary":
+        modifier["type_operations"].append(
+            {
+                "op": "add_types",
+                "field": "supertypes",
+                "values": ["Legendary"],
+            }
+        )
+        return True
+    if phrase.casefold() in _CARD_TYPE_WORDS:
+        modifier["type_operations"].append(
+            {
+                "op": "add_types" if addition else "set_types",
+                "field": "card_types",
+                "values": [phrase.title()],
+            }
+        )
+        return True
+    subtypes = _attached_type_values(phrase)
+    if subtypes is None:
+        return False
+    modifier["type_operations"].append(
+        {
+            "op": "add_types" if addition else "set_types",
+            "field": "subtypes",
+            "values": list(subtypes),
+        }
+    )
+    return True
+
+
+def _attached_definition(
+    modifier: dict[str, Any],
+    value: str,
+    *,
+    addition: bool,
+) -> bool:
+    phrase = re.sub(r"^(?:a|an)\s+", "", value.strip(), flags=re.IGNORECASE)
+    if re.search(r"\bnamed\b", phrase, re.IGNORECASE):
+        return False
+    colors: list[str] = []
+    if phrase.casefold().startswith("colorless "):
+        modifier["color_operations"].append({"op": "remove_all_colors"})
+        phrase = phrase[len("colorless ") :]
+    else:
+        while True:
+            match = re.match(
+                r"^(white|blue|black|red|green)(?: and )?\s+",
+                phrase,
+                re.IGNORECASE,
+            )
+            if match is None:
+                break
+            colors.append(_ATTACHED_COLOR_SYMBOLS[match.group(1).casefold()])
+            phrase = phrase[match.end() :]
+        if colors:
+            modifier["color_operations"].append(
+                {
+                    "op": "add_colors" if addition else "set_colors",
+                    "values": colors,
+                }
+            )
+    words = phrase.split()
+    card_types = [
+        word.title()
+        for word in words
+        if word.casefold() in _CARD_TYPE_WORDS
+    ]
+    subtype_words = [
+        word for word in words if word.casefold() not in _CARD_TYPE_WORDS
+    ]
+    if card_types:
+        modifier["type_operations"].append(
+            {
+                "op": "add_types" if addition else "set_types",
+                "field": "card_types",
+                "values": card_types,
+            }
+        )
+    if subtype_words and not _add_attached_type_phrase(
+        modifier,
+        " ".join(subtype_words),
+        addition=addition,
+    ):
+        return False
+    return bool(card_types or subtype_words)
+
+
+def _attached_dynamic_modifier(
+    body: str,
+    *,
+    source_name: str,
+) -> dict[str, Any] | None:
+    modifier = _attached_modifier()
+    leading = re.fullmatch(
+        r"has (?P<abilities>.+?) and (?P<remainder>gets .+)",
+        body,
+        re.IGNORECASE,
+    )
+    if leading is not None:
+        if not _grant_attached_abilities(modifier, leading.group("abilities")):
+            return None
+        body = leading.group("remainder")
+
+    fixed = re.fullmatch(
+        r"gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) for each "
+        r"(?P<quantity>.+?)(?:(?: and has (?P<abilities>.+))|"
+        r"(?: and is (?P<type>.+?) in addition to its other types))?",
+        body,
+        re.IGNORECASE,
+    )
+    variable = re.fullmatch(
+        r"gets (?P<power>[+-](?:X|\d+))/(?P<toughness>[+-](?:X|\d+)), "
+        r"where X is the number of (?P<quantity>.+)",
+        body,
+        re.IGNORECASE,
+    )
+    match = fixed or variable
+    if match is None:
+        return None
+    quantity_text = match.group("quantity")
+    if re.search(
+        r"(?:attached to (?:it|this creature)|\bits controller's\b|"
+        r"\bof its\b|\bon it\b)",
+        quantity_text,
+        re.IGNORECASE,
+    ):
+        return None
+    quantity = query_characteristic_quantity(
+        quantity_text,
+        source_name=source_name,
+        definition_extensions=True,
+    )
+    if quantity is None:
+        return None
+    if (
+        quantity.exclude_source
+        and re.match(r"other creatures?\b", quantity_text, re.IGNORECASE)
+    ):
+        quantity = replace(
+            quantity,
+            exclude_source=False,
+            exclude_attached_object=True,
+        )
+
+    for field in ("power", "toughness"):
+        raw = match.group(field).upper()
+        if raw in {"+X", "-X"}:
+            modifier[f"quantity_{field}"] = 1 if raw == "+X" else -1
+        else:
+            value = int(raw)
+            if fixed is not None:
+                modifier[f"quantity_{field}"] = value
+            else:
+                modifier[field] = value
+    modifier["quantity"] = quantity.to_dict()
+    abilities = match.groupdict().get("abilities")
+    if abilities and not _grant_attached_abilities(modifier, abilities):
+        return None
+    added_type = match.groupdict().get("type")
+    if added_type and not _add_attached_type_phrase(
+        modifier,
+        added_type,
+        addition=True,
+    ):
+        return None
+    return modifier
+
+
+def _attached_compound_modifier(body: str) -> dict[str, Any] | None:
+    modifier = _attached_modifier()
+    pt_type = re.fullmatch(
+        r"gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)(?:, has "
+        r"(?P<abilities>.+?),)? and is (?P<type>.+?)(?: in addition to "
+        r"its other types)?",
+        body,
+        re.IGNORECASE,
+    )
+    legendary = re.fullmatch(
+        r"is legendary, gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+), "
+        r"and has (?P<abilities>.+)",
+        body,
+        re.IGNORECASE,
+    )
+    ability_removal = re.fullmatch(
+        r"(?:gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and )?"
+        r"(?:(?:has (?P<abilities>.+?) and loses (?P<removed>.+))|"
+        r"(?:loses (?P<all>all abilities)))",
+        body,
+        re.IGNORECASE,
+    )
+    match = pt_type or legendary or ability_removal
+    if match is None:
+        return None
+    values = match.groupdict()
+    if values.get("power") is not None:
+        modifier["power"] = int(values["power"])
+        modifier["toughness"] = int(values["toughness"])
+    if match is legendary:
+        if not _add_attached_type_phrase(
+            modifier, "legendary", addition=True
+        ):
+            return None
+    added_type = values.get("type")
+    if added_type and not _add_attached_type_phrase(
+        modifier,
+        added_type,
+        addition=True,
+    ):
+        return None
+    abilities = values.get("abilities")
+    if abilities and not _grant_attached_abilities(modifier, abilities):
+        return None
+    removed = values.get("removed")
+    if removed:
+        parsed = _attached_abilities(removed)
+        if parsed is None or _toxic_ability_fragments(parsed):
+            return None
+        modifier["remove_abilities"].extend(parsed)
+    if values.get("all"):
+        modifier["remove_all_abilities"] = True
+    return modifier
+
+
+def _attached_transformation_modifier(body: str) -> dict[str, Any] | None:
+    modifier = _attached_modifier()
+    simple_base = re.fullmatch(
+        r"has base power and toughness (?P<power>-?\d+)/(?P<toughness>-?\d+)"
+        r"(?:,? (?:and )?has (?P<abilities>.+?))?"
+        r"(?P<remove_all>,? and loses all other abilities)?",
+        body,
+        re.IGNORECASE,
+    )
+    loses_then_definition = re.fullmatch(
+        r"loses all abilities and is (?P<definition>.+?) with base power and "
+        r"toughness (?P<power>-?\d+)/(?P<toughness>-?\d+)"
+        r"(?P<addition> in addition to its other types)?",
+        body,
+        re.IGNORECASE,
+    )
+    definition_then_loses = re.fullmatch(
+        r"is (?P<definition>.+?) with base power and toughness "
+        r"(?P<power>-?\d+)/(?P<toughness>-?\d+) and loses all abilities",
+        body,
+        re.IGNORECASE,
+    )
+    loses_then_base = re.fullmatch(
+        r"loses all abilities and has base power and toughness "
+        r"(?P<power>-?\d+)/(?P<toughness>-?\d+)",
+        body,
+        re.IGNORECASE,
+    )
+    modifier_then_loses = re.fullmatch(
+        r"gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and loses all "
+        r"abilities",
+        body,
+        re.IGNORECASE,
+    )
+    darksteel = re.fullmatch(
+        r"is (?P<definition>.+?) with base power and toughness "
+        r"(?P<power>-?\d+)/(?P<toughness>-?\d+) and has "
+        r"(?P<abilities>.+?), and it loses all other abilities, card types, "
+        r"and creature types",
+        body,
+        re.IGNORECASE,
+    )
+    spider = re.fullmatch(
+        r"is a (?P<definition>.+?) with base power and toughness "
+        r"(?P<power>-?\d+)/(?P<toughness>-?\d+)\. It has "
+        r"(?P<abilities>.+?) and loses all other abilities",
+        body,
+        re.IGNORECASE,
+    )
+    match = (
+        darksteel
+        or spider
+        or loses_then_definition
+        or definition_then_loses
+        or loses_then_base
+        or modifier_then_loses
+        or simple_base
+    )
+    if match is None:
+        return None
+    values = match.groupdict()
+    if match is modifier_then_loses:
+        modifier["power"] = int(values["power"])
+        modifier["toughness"] = int(values["toughness"])
+    else:
+        modifier["base_power"] = int(values["power"])
+        modifier["base_toughness"] = int(values["toughness"])
+    if match in {
+        darksteel,
+        spider,
+        loses_then_definition,
+        definition_then_loses,
+    }:
+        if not _attached_definition(
+            modifier,
+            values["definition"],
+            addition=bool(values.get("addition")),
+        ):
+            return None
+    if match is not simple_base or values.get("remove_all"):
+        modifier["remove_all_abilities"] = True
+    abilities = values.get("abilities")
+    if abilities and not _grant_attached_abilities(modifier, abilities):
+        return None
+    return modifier
+
+
 def attached_fixed_characteristics_handler(
     oracle_line: str,
+    *,
+    source_name: str = "source",
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
-    """Lower one closed attached-object fixed-characteristic sentence.
+    """Lower one closed attached-object characteristic sentence.
 
-    Dynamic values, conditions, combat restrictions, quoted rules text, and
-    mechanics outside the reviewed keyword vocabulary remain residual.
+    Conditions, target-relative attachment counts, names, declaration rules,
+    quoted rules text, and unrepresented mechanics remain residual.
     """
 
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
@@ -472,35 +859,46 @@ def attached_fixed_characteristics_handler(
         else ["creature"]
     )
     body = match.group("body")
-    type_operations: list[dict[str, Any]] = []
-    add_abilities: tuple[str, ...] = ()
-    remove_abilities: tuple[str, ...] = ()
-    add_ability_fragments: tuple[Mapping[str, Any], ...] = ()
-    power = 0
-    toughness = 0
+    modifier = (
+        _attached_dynamic_modifier(body, source_name=source_name)
+        or _attached_transformation_modifier(body)
+        or _attached_compound_modifier(body)
+    )
+    if modifier is None:
+        modifier = _attached_modifier()
 
     pt_match = _ATTACHED_FIXED_PT.fullmatch(body)
     ability_match = _ATTACHED_HAS_OR_LOSES.fullmatch(body)
     type_match = _ATTACHED_ADDED_TYPE.fullmatch(body)
-    if pt_match is not None:
-        power = int(pt_match.group("power"))
-        toughness = int(pt_match.group("toughness"))
+    if any(
+        (
+            modifier["type_operations"],
+            modifier["color_operations"],
+            modifier["add_abilities"],
+            modifier["remove_abilities"],
+            modifier["remove_all_abilities"],
+            modifier["power"],
+            modifier["toughness"],
+            modifier["base_power"] is not None,
+            modifier["quantity"] is not None,
+        )
+    ):
+        pass
+    elif pt_match is not None:
+        modifier["power"] = int(pt_match.group("power"))
+        modifier["toughness"] = int(pt_match.group("toughness"))
         if pt_match.group("abilities"):
-            granted = _attached_granted_abilities(
-                pt_match.group("abilities")
-            )
-            if granted is None:
+            if not _grant_attached_abilities(
+                modifier, pt_match.group("abilities")
+            ):
                 return None
-            add_abilities, add_ability_fragments = granted
     elif ability_match is not None:
         parsed = _attached_abilities(ability_match.group("abilities"))
         if ability_match.group("verb").casefold() == "has":
-            granted = _attached_granted_abilities(
-                ability_match.group("abilities")
-            )
-            if granted is None:
+            if not _grant_attached_abilities(
+                modifier, ability_match.group("abilities")
+            ):
                 return None
-            add_abilities, add_ability_fragments = granted
         else:
             if parsed is None:
                 return None
@@ -509,30 +907,28 @@ def attached_fixed_characteristics_handler(
                 # fragment-removal descriptor, which this handler does not yet
                 # own. Do not leave the executable fragment behind.
                 return None
-            remove_abilities = parsed
+            modifier["remove_abilities"].extend(parsed)
     elif type_match is not None:
-        type_word = type_match.group("type")
-        type_operations.append(
-            {
-                "op": "add_types",
-                "field": (
-                    "card_types"
-                    if type_word.casefold() in _CARD_TYPE_WORDS
-                    else "subtypes"
-                ),
-                "values": [type_word],
-            }
-        )
+        if not _add_attached_type_phrase(
+            modifier,
+            type_match.group("type"),
+            addition=True,
+        ):
+            return None
     else:
         return None
 
     if not (
-        type_operations
-        or add_abilities
-        or remove_abilities
-        or add_ability_fragments
-        or power
-        or toughness
+        modifier["type_operations"]
+        or modifier["color_operations"]
+        or modifier["add_abilities"]
+        or modifier["remove_abilities"]
+        or modifier["remove_all_abilities"]
+        or modifier["add_ability_fragments"]
+        or modifier["power"]
+        or modifier["toughness"]
+        or modifier["base_power"] is not None
+        or modifier["quantity"] is not None
     ):
         return None
     return (
@@ -546,15 +942,7 @@ def attached_fixed_characteristics_handler(
                 "types_all": subject_types_all,
             },
             "modifier": {
-                "type_operations": type_operations,
-                "add_abilities": list(add_abilities),
-                "remove_abilities": list(remove_abilities),
-                "add_rules_text": [],
-                "add_ability_fragments": list(
-                    add_ability_fragments
-                ),
-                "power": power,
-                "toughness": toughness,
+                **modifier,
             },
         },
         tuple(
@@ -562,7 +950,10 @@ def attached_fixed_characteristics_handler(
                 {
                     "continuous.attached.fixed_characteristics",
                     *_attached_ability_capabilities(
-                        (*add_abilities, *remove_abilities)
+                        (
+                            *modifier["add_abilities"],
+                            *modifier["remove_abilities"],
+                        )
                     ),
                 }
             )
@@ -693,9 +1084,16 @@ def _conditional_target(
         modifier[field]
         for field in (
             "type_operations",
+            "color_operations",
             "remove_abilities",
+            "remove_all_abilities",
             "add_rules_text",
             "add_ability_fragments",
+            "base_power",
+            "base_toughness",
+            "quantity",
+            "quantity_power",
+            "quantity_toughness",
         )
     ):
         return None

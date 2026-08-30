@@ -287,7 +287,10 @@ def _continuous_static_runtime_template(
 ) -> StaticRuntimeTemplate | None:
     """Select one closed continuous-characteristic production."""
 
-    attached_characteristics = attached_fixed_characteristics_handler(text)
+    attached_characteristics = attached_fixed_characteristics_handler(
+        text,
+        source_name=source_name or "source",
+    )
     if attached_characteristics is not None:
         return StaticRuntimeTemplate(
             compiled=attached_characteristics,

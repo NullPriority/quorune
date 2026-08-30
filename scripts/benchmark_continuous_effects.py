@@ -222,8 +222,13 @@ def run_benchmark() -> list[dict[str, Any]]:
     ]
 
 
+def _source_hash_bytes(value: bytes) -> str:
+    canonical = value.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(canonical).hexdigest()
+
+
 def _source_hash() -> str:
-    return hashlib.sha256(RUNTIME_SOURCE.read_bytes()).hexdigest()
+    return _source_hash_bytes(RUNTIME_SOURCE.read_bytes())
 
 
 def _baseline_from(results: list[dict[str, Any]]) -> dict[str, Any]:

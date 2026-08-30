@@ -15,6 +15,7 @@ from ..continuous_effects import Layer
 from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..object_query import ObjectQueryResult, object_matches_query
 from ..semantic_runtime import (
+    ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,
     ContinuousEffectSourceContext,
     default_continuous_effect_component_registry,
 )
@@ -159,6 +160,37 @@ class _FixedPublicStateSnapshotResolver:
         )
 
 
+def _applicable_static_programs(
+    semantics: "SemanticRegistry",
+    source: Any,
+    semantic_keys: Sequence[str],
+) -> tuple["SemanticProgram", ...]:
+    compatibility_programs = {
+        program.key: program
+        for program in semantics.runtime_handler_programs_for_oracle(
+            source.oracle_id,
+            active_zone="battlefield",
+            event="characteristics.evaluate",
+        )
+    }
+    programs = []
+    for semantic_key in sorted(
+        {value for value in semantic_keys if type(value) is str and value}
+    ):
+        candidate = semantics.get(semantic_key) or compatibility_programs.get(
+            semantic_key
+        )
+        if (
+            candidate is not None
+            and candidate.handlers
+            and candidate.active_zone == "battlefield"
+            and candidate.event == "characteristics.evaluate"
+            and candidate.ability_id.startswith("static:")
+        ):
+            programs.append(candidate)
+    return tuple(programs)
+
+
 def collect_card_program_continuous_effects(
     state: ContinuousRuntimeState,
     semantics: "SemanticRegistry",
@@ -169,6 +201,7 @@ def collect_card_program_continuous_effects(
     public_object_resolver: Callable[[Any], ObjectQueryResult] | None = None,
     quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int]
     | None = None,
+    static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
     if metrics is not None:
@@ -192,11 +225,18 @@ def collect_card_program_continuous_effects(
                 or getattr(source, "face_down", False)
             ):
                 continue
-            programs = semantics.runtime_handler_programs_for_oracle(
-                source.oracle_id,
-                active_zone="battlefield",
-                event="characteristics.evaluate",
-            )
+            if static_component_resolver is None:
+                programs = semantics.runtime_handler_programs_for_oracle(
+                    source.oracle_id,
+                    active_zone="battlefield",
+                    event="characteristics.evaluate",
+                )
+            else:
+                programs = _applicable_static_programs(
+                    semantics,
+                    source,
+                    static_component_resolver(source),
+                )
             if metrics is not None:
                 metrics.card_program_lookups += 1
             for program in programs:
@@ -229,6 +269,29 @@ def collect_card_program_continuous_effects(
                             source,
                             condition,
                         )
+                    resolved_quantity = None
+                    modifier = descriptor.get("modifier")
+                    raw_quantity = (
+                        modifier.get("quantity")
+                        if isinstance(modifier, Mapping)
+                        else None
+                    )
+                    if (
+                        descriptor.get("handler_id")
+                        == ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID
+                        and isinstance(raw_quantity, Mapping)
+                        and quantity_resolver is not None
+                        and (
+                            maximum_layer is None
+                            or maximum_layer >= Layer.POWER_TOUGHNESS
+                        )
+                    ):
+                        resolved_quantity = quantity_resolver(
+                            source,
+                            CharacteristicQuantitySpec.from_dict(
+                                raw_quantity
+                            ),
+                        )
                     context = ContinuousEffectSourceContext(
                         source_object_id=source.object_id,
                         source_ref=source.ref,
@@ -241,6 +304,7 @@ def collect_card_program_continuous_effects(
                         ),
                         source_logical_object_id=source.logical_object_id,
                         public_state=public_state,
+                        resolved_quantity=resolved_quantity,
                         attached_object=(
                             attached_object_identity(state.cards, source)
                             if getattr(source, "attached_to", None)

@@ -694,6 +694,48 @@
           "measurement_probe_id": "query-power-toughness-definition-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:attached-characteristic-closure",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.attached.fixed_characteristics",
+            "component:quorune.ability_fragments.StaticComponentSpec",
+            "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+            "component:quorune.compiler.continuous_templates.attached_fixed_characteristics_handler",
+            "component:quorune.compiler.query_characteristic_templates.query_characteristic_quantity",
+            "component:quorune.continuous_effects.evaluate_continuous_effects",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "base-power-toughness-type-subtype-or-color-transformation",
+            "fixed-or-typed-public-query-power-toughness",
+            "ordered-layer-six-ability-removal-and-grant",
+            "source-attached-object-relation"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.query_count_modifier"
+          ],
+          "shared_grammar": "enchanted, equipped, or fortified object characteristic effects over one live attachment relation, including closed fixed or typed public-query power and toughness, base-setting, type, subtype, color, and supported keyword changes through the shared layer-6 static-component applicability boundary",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Broadens the existing attached-characteristic owner across layers 4, 5, 6, 7b, and 7c while making printed, granted, and removed static programs use one typed layer-6 component-presence query.",
+          "explicit_exclusions": [
+            "attack, block, declaration, participation, and attachment-legality restrictions",
+            "chosen values and arbitrary characteristic or ability dependency cycles",
+            "conditional effects and target-relative life, mana, color, counter, or attachment counts",
+            "explicit Witness Protection name changing and Retro-Mutation declaration restriction wording",
+            "name changes, text changes, quoted rules text, and granted triggered or activated abilities without a separately trusted typed owner"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "attached-characteristic-closure-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:query-gated-self-characteristics",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies"
@@ -1356,17 +1398,17 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v149-query-power-toughness-definitions",
-      "compiler_version": "oracle-ir-v149",
-      "bundle_id": "bundle:query-power-toughness-definitions",
-      "candidate_ids": ["compiler:query-power-toughness-definitions"],
+      "transition_id": "oracle-ir-v150-attached-characteristic-closure",
+      "compiler_version": "oracle-ir-v150",
+      "bundle_id": "bundle:attached-characteristic-closure",
+      "candidate_ids": ["compiler:attached-characteristic-closure"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "continuous.characteristics.query_power_toughness_definition"
+        "continuous.attached.fixed_characteristics"
       ],
-      "measurement_id": "measurement:query-power-toughness-definitions",
+      "measurement_id": "measurement:attached-characteristic-closure",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1855,6 +1897,11 @@
         "candidate_id": "compiler:query-power-toughness-definitions",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired attached-object scaling at 22 complete cards and untap-step participation at one complete card. The selected integrated definition probe measures 69 conservative capability-closed Commander cards, 128 exact abilities, and 128 removable material residuals through the existing typed quantity, cycle-safe layer-5 query, copied static-fragment, and CR 613 continuous-effect owners. Power-only, toughness-only, and paired source-possessive definitions remain active in every zone and preserve later layer ordering. Chosen, distinct-type, Domain, Chroma, Vivid, party, sticker, tapped, face-down, history, linked-exile, aggregate-counter, summed, offset, conditional, combat-state, quoted, granted, and layer-6 ability-removal interactions remain fail-closed; current cohort identities and counts are derived into the generated measurement artifact."
+      },
+      {
+        "candidate_id": "compiler:attached-characteristic-closure",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A bounded integrated probe expands the existing attached-characteristic owner into one coherent 69-card, 125-ability capability-closed family across fixed and typed public-query power/toughness, base-setting, type, subtype, color, and supported keyword transformations. Printed, removed, and typed-granted static programs share one layer-6 component-presence query; dynamic counts stay at the cycle-safe layer-5 characteristic boundary. Name changes, declaration restrictions, quoted or untrusted granted rules, conditions, target-relative attachment counts, target-controller state, and arbitrary dependency cycles remain fail-closed, including explicit Witness Protection and Retro-Mutation exclusions. Current cohort identities and conservative lower bounds are derived into the generated measurement artifact."
       }
     ]
   },

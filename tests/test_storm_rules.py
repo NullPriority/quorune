@@ -121,6 +121,7 @@ class StormCompilerTests(unittest.TestCase):
         self.assertEqual(33, program_count)
         self.assertEqual(
             {
+                "Amphibian Downpour",
                 "Astral Steel",
                 "Brain Freeze",
                 "Chatterstorm",
@@ -133,6 +134,7 @@ class StormCompilerTests(unittest.TestCase):
                 "Scattershot",
                 "Stormscale Scion",
                 "Tendrils of Agony",
+                "Tempest Technique",
                 "Temporal Fissure",
                 "Volcanic Awakening",
                 "Weather the Storm",

@@ -44655,8 +44655,8 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "complete type-setting, dependency, copy, face-down, and characteristic-defining interactions are not implemented",
-        "the generic attached compiler currently accepts only one fixed additive type or subtype operation"
+        "arbitrary type-changing dependency cycles, text changes, chosen or named values, and face-down interactions are not implemented",
+        "conditional, declaration-restriction, and target-relative attached wording remains unsupported"
       ],
       "case_id": "cr-613.1d",
       "case_version": 1,
@@ -44674,7 +44674,7 @@
       "executable_test_ids": [
         "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_type_and_ability_removal_use_their_canonical_layers",
         "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
-        "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_rejects_dynamic_conditional_and_unrepresented_text",
+        "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_rejects_conditional_and_unrepresented_text",
         "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_target_departure_and_source_departure_end_effect_without_stale_identity"
       ],
       "implementation_components": [
@@ -44683,8 +44683,8 @@
         "semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler"
       ],
       "notes": [
-        "Represented attached fixed type additions use the typed layer-4 operation and expire immediately when the exact source-object relation ends.",
-        "Dynamic, conditional, and unrepresented type wording remains residual and cannot mutate state."
+        "Represented attached type and subtype additions or settings use typed layer-4 operations, while color changes use layer 5; both expire immediately when the exact source-object relation ends.",
+        "Closed compound transformations preserve canonical layer ordering, and excluded wording remains residual and cannot mutate state."
       ],
       "required_scenarios": [
         "positive",
@@ -44734,7 +44734,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "complete ability-removal dependencies, text-changing effects, copy interactions, and granted-ability semantic coverage are not implemented",
+        "arbitrary ability dependency cycles, text-changing effects, and untyped granted-ability semantic coverage are not implemented",
         "generic rules-text grants remain unsupported unless a separate reviewed semantic component owns the granted behavior"
       ],
       "case_id": "cr-613.1f",
@@ -44756,6 +44756,7 @@
         "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_fixed_modifier_and_keyword_apply_only_to_exact_logical_object",
         "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_type_and_ability_removal_use_their_canonical_layers",
         "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
+        "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_shared_static_component_query_owns_removal_and_typed_grant",
         "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact"
       ],
       "implementation_components": [
@@ -44764,7 +44765,7 @@
         "semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler"
       ],
       "notes": [
-        "Represented fixed keyword additions and removals use layer 6 over the exact current attached logical object.",
+        "Represented keyword additions and removals use layer 6 over the exact current attached logical object and share one static-component presence query.",
         "The relation and public result replay exactly without projecting authoritative object-incarnation identities."
       ],
       "required_scenarios": [
@@ -44789,8 +44790,8 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "complete characteristic-defining, base-setting, switching, dependency, and later-sublayer interactions are not implemented",
-        "dynamic and state-derived attached power and toughness quantities remain residual"
+        "characteristic-defining, switching, conditional, chosen-value, and arbitrary dependency interactions are not implemented",
+        "target-relative life, mana, color, counter, and attachment quantities remain residual"
       ],
       "case_id": "cr-613.1g",
       "case_version": 1,
@@ -44808,8 +44809,10 @@
       "effective_date": "2026-08-07",
       "executable_test_ids": [
         "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_fixed_modifier_and_keyword_apply_only_to_exact_logical_object",
+        "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_dynamic_transform_and_remove_then_grant_use_canonical_layers",
         "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_relation_round_trip_is_canonical_and_legacy_shape_stays_stable",
         "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_animate_dead_and_bestow_modifiers_use_generic_attached_handler",
+        "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_dynamic_quantities_use_source_controller_and_attached_exclusion",
         "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_multiple_sources_apply_independently_in_four_player_game"
       ],
       "implementation_components": [
@@ -44818,7 +44821,7 @@
         "semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler"
       ],
       "notes": [
-        "Represented fixed attached modifiers use layer 7c, stack across independent sources, and stop applying on detach, phasing, departure, or logical-object replacement.",
+        "Represented attached base settings use layer 7b; fixed and typed public-query modifiers use layer 7c, stack across independent sources, and stop applying on detach, phasing, departure, or logical-object replacement.",
         "This review does not claim complete CR 613 power/toughness sublayer coverage."
       ],
       "required_scenarios": [

@@ -30,6 +30,7 @@ class DynamicCharacteristicHost(Protocol):
         card: Any,
         *,
         maximum_layer: Layer | None = None,
+        _enforce_static_component_applicability: bool = True,
     ) -> Mapping[str, Any]: ...
 
 
@@ -37,6 +38,8 @@ def query_characteristic_count(
     host: DynamicCharacteristicHost,
     source: Any,
     quantity: CharacteristicQuantitySpec,
+    *,
+    _enforce_static_component_applicability: bool = True,
 ) -> int:
     """Resolve one closed public quantity through layer 5 only."""
 
@@ -82,9 +85,17 @@ def query_characteristic_count(
         candidate = host.state.cards[object_id]
         if quantity.exclude_source and candidate.ref == source.ref:
             continue
+        if (
+            quantity.exclude_attached_object
+            and candidate.object_id == getattr(source, "attached_to", None)
+        ):
+            continue
         effective = host._effective_card_data(
             candidate,
             maximum_layer=Layer.COLOR,
+            _enforce_static_component_applicability=(
+                _enforce_static_component_applicability
+            ),
         )
         attached = (
             host.state.cards.get(candidate.attached_to)

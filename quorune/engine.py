@@ -413,6 +413,9 @@ class CommanderEngine(
         self.turn_priority = TurnPriorityDecisionOwner(self)
         self.turn_steps = TurnStepOwner(self)
         self._semantic_trust_cache: dict[tuple[str, str, str], bool] = {}
+        self._current_semantic_trust_cache: dict[
+            tuple[int, tuple[tuple[str, int], ...], str], bool
+        ] = {}
         self._assert_invariants()
 
     def semantic_program_is_current_trusted(
@@ -421,6 +424,32 @@ class CommanderEngine(
     ) -> bool:
         if program is None or program.trust_level != "trusted":
             return False
+        current_programs = self.semantics.programs_for_oracle(
+            program.oracle_id or ""
+        )
+        current_signature = tuple(
+            sorted(
+                (candidate.key, id(candidate))
+                for candidate in current_programs
+            )
+        )
+        current_cache_key = (
+            id(self.semantics),
+            current_signature,
+            program.key,
+        )
+        current_program = next(
+            (
+                candidate
+                for candidate in current_programs
+                if candidate.key == program.key
+            ),
+            None,
+        )
+        if current_program is program:
+            cached = self._current_semantic_trust_cache.get(current_cache_key)
+            if cached is not None:
+                return cached
         program_hash = hashlib.sha256(
             stable_json(program.to_dict()).encode("utf-8")
         ).hexdigest()
@@ -436,9 +465,13 @@ class CommanderEngine(
         cache_key = (program.key, program_hash, card_fingerprint)
         cached = self._semantic_trust_cache.get(cache_key)
         if cached is not None:
+            if current_program is program:
+                self._current_semantic_trust_cache[current_cache_key] = cached
             return cached
         result = program_source_is_current(self.card_db, program)
         self._semantic_trust_cache[cache_key] = result
+        if current_program is program:
+            self._current_semantic_trust_cache[current_cache_key] = result
         return result
 
     # ------------------------------------------------------------------

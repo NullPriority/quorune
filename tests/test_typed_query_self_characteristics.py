@@ -242,7 +242,6 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
             "This creature gets +1/+1 for each creature you control with flying.",
             "This creature gets +1/+1 for each color among permanents you control.",
             "This creature gets +1/+1 for each artifact you control and has flying.",
-            "Equipped creature gets +1/+1 for each artifact you control.",
             "{2}: This creature gets +1/+1 for each artifact you control.",
         )
         for index, text in enumerate(excluded):

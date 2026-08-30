@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "d850e01001f1369f048b2d2efac85402d8fdbe8e6fc13192bccf63e5947f702d"
+verified: "c568a1a5c8ba2e46e67546d85933bd4e2afe6c36a5b1e14c1db4dd47161d261d"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -22,7 +22,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 - Material abilities classified: 59,299
 - Unclassified material spans: 0
 - Mapped pinned rules: 925 / 3,309
-- Applicable piece pairs: 61,822
+- Applicable piece pairs: 61,938
 - Covered piece pairs: 802
 
 ## Ontology classes
@@ -67,11 +67,11 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 6,582 | 2,757 | 2,757 | `absent` | `untested` |
-| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,469 | 226 | 226 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 6,452 | 2,685 | 2,685 | `absent` | `untested` |
+| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,467 | 226 | 226 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,873 | 134 | 134 | `absent` | `untested` |
+| `residual.activated_effect.create-token` | `one_shot_effects` | 314 | 24 | 24 | `absent` | `untested` |
 | `residual.replacement.damage-prevention` | `replacement_prevention` | 167 | 24 | 24 | `absent` | `untested` |
-| `residual.activated_effect.create-token` | `one_shot_effects` | 314 | 23 | 23 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
 | `residual.effect_clause.create-token` | `one_shot_effects` | 560 | 18 | 18 | `absent` | `untested` |
 | `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 106 | 18 | 18 | `absent` | `untested` |
@@ -82,21 +82,21 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `residual.effect_clause.return` | `one_shot_effects` | 568 | 11 | 11 | `absent` | `untested` |
 | `residual.effect_clause.sacrifice` | `one_shot_effects` | 110 | 11 | 11 | `absent` | `untested` |
 | `residual.keyword_dependency.rebound` | `keyword_mechanics` | 34 | 11 | 11 | `absent` | `untested` |
+| `residual.keyword_dependency.equip` | `keyword_mechanics` | 25 | 11 | 11 | `absent` | `untested` |
 | `residual.keyword_dependency.myriad` | `keyword_mechanics` | 23 | 11 | 11 | `absent` | `untested` |
+| `residual.keyword_dependency.living-weapon` | `keyword_mechanics` | 19 | 11 | 11 | `absent` | `untested` |
 | `residual.keyword_dependency.retrace` | `keyword_mechanics` | 17 | 10 | 10 | `absent` | `untested` |
 | `residual.activated_effect.life-change` | `one_shot_effects` | 203 | 9 | 9 | `absent` | `untested` |
-| `residual.keyword_dependency.equip` | `keyword_mechanics` | 25 | 9 | 9 | `absent` | `untested` |
 | `residual.effect_clause.add-mana` | `one_shot_effects` | 57 | 8 | 8 | `absent` | `untested` |
 | `residual.keyword_dependency.split-second` | `keyword_mechanics` | 21 | 8 | 8 | `absent` | `untested` |
-| `residual.keyword_dependency.living-weapon` | `keyword_mechanics` | 19 | 8 | 8 | `absent` | `untested` |
 | `residual.keyword_dependency.extort` | `keyword_mechanics` | 18 | 8 | 8 | `absent` | `untested` |
 | `residual.keyword_dependency.umbra-armor` | `keyword_mechanics` | 15 | 8 | 8 | `absent` | `untested` |
+| `residual.keyword_dependency.for-mirrodin` | `keyword_mechanics` | 13 | 8 | 8 | `absent` | `untested` |
 | `residual.keyword_dependency.enlist` | `keyword_mechanics` | 12 | 8 | 8 | `absent` | `untested` |
 | `residual.effect_clause.destroy-mass` | `one_shot_effects` | 141 | 7 | 7 | `absent` | `untested` |
-| `residual.keyword_dependency.for-mirrodin` | `keyword_mechanics` | 13 | 7 | 7 | `absent` | `untested` |
 | `residual.keyword_dependency.learn` | `keyword_mechanics` | 13 | 7 | 7 | `absent` | `untested` |
+| `residual.activated_effect.exile` | `one_shot_effects` | 292 | 6 | 6 | `absent` | `untested` |
 | `residual.effect_clause.counter` | `one_shot_effects` | 223 | 6 | 6 | `absent` | `untested` |
-| `residual.activated_effect.destroy-target` | `one_shot_effects` | 72 | 6 | 6 | `absent` | `untested` |
 
 ## Boundary
 

@@ -5892,10 +5892,26 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_dynamic_quantities_use_source_controller_and_attached_exclusion",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve attached dynamic modifiers through the cycle-safe layer-5 public query using the source's current controller and excluding the attached subject for other-object wording."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_live_generic_equipment_effect_moves_detaches_and_tracks_control",
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute the affected object across reattachment, detachment, and control changes."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_shared_static_component_query_owns_removal_and_typed_grant",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use one typed layer-6 component-presence query for printed static programs, removal, and explicit semantic grants; stale component identities fail closed."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -5932,10 +5948,10 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
-      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_rejects_dynamic_conditional_and_unrepresented_text",
+      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_rejects_conditional_and_unrepresented_text",
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Reject dynamic, conditional, quoted, and unsupported attached-object wording."
+      "applicability_note": "Reject conditional, named, target-relative, quoted, declaration-restriction, and unsupported attached-object wording."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -5952,6 +5968,22 @@
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject one-sided authoritative attachment state without mutation."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_lowers_closed_dynamic_compound_and_transform_forms",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile only the closed attached dynamic, compound, base-setting, type, color, and supported-keyword grammar into the existing typed owner."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_dynamic_transform_and_remove_then_grant_use_canonical_layers",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Apply dynamic scaling, type and color transformation, base power/toughness, and ordered remove-then-grant operations in their canonical layers."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",

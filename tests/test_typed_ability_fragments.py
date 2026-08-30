@@ -14,6 +14,7 @@ from quorune.ability_fragments import (
     ProtectionQualityKind,
     ProtectionSourcePredicateSpec,
     ProtectionSpec,
+    StaticComponentSpec,
     ToxicSpec,
     ability_fragment_from_dict,
     ability_fragment_to_dict,
@@ -162,6 +163,9 @@ class AbilityFragmentModelTests(unittest.TestCase):
                 amount=2,
             ),
             ToxicSpec(value=2),
+            StaticComponentSpec(
+                "fixture:static:characteristics.evaluate"
+            ),
         )
         for value in values:
             with self.subTest(value=type(value).__name__):

@@ -13,6 +13,7 @@ FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[
     ),
     "Defender": ("combat.attack.defender",),
     "Double Strike": ("combat.damage.participation.strike_steps",),
+    "Fear": ("combat.block.fear",),
     "First Strike": ("combat.damage.participation.strike_steps",),
     "Flying": ("combat.block.flying",),
     "Haste": (
@@ -22,6 +23,7 @@ FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[
     "Hexproof": ("target.protection.hexproof_permanent",),
     "Indestructible": ("permanent.indestructible.ordinary",),
     "Infect": ("damage.result.infect",),
+    "Intimidate": ("combat.block.intimidate",),
     "Lifelink": ("damage.result.lifelink",),
     "Menace": ("combat.block.menace",),
     "Reach": ("combat.block.reach",),
