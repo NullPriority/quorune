@@ -306,6 +306,8 @@
       ],
       "test_modules": [
         "test_fixed_query_keyword_grants",
+        "test_indestructible_rules",
+        "test_rules_scheduler",
         "test_typed_dynamic_characteristics"
       ]
     },

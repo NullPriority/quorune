@@ -325,6 +325,7 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
     def test_state_qualified_queries_share_one_typed_applicability_owner(self):
         for text in (
             "Modified creatures you control get +1/+1.",
+            "Attacking creatures get +1/+1.",
             "Attacking creatures you control get +1/+1.",
             "Blocking creatures you control get +1/+1.",
             "Equipped creatures you control get +1/+1.",

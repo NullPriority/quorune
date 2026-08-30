@@ -237,6 +237,45 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
         self.assertEqual([], kindred_predicate["types_all"])
         self.assertEqual(["goblin"], kindred_predicate["subtypes_any"])
 
+        base = self.db.lookup("Fresh-Faced Recruit")
+        conditional_indestructible = replace(
+            base,
+            oracle_id="00000000-0000-4000-8000-000011820005",
+            name="Conditional Indestructible Standard",
+            oracle_text=(
+                "This creature has indestructible as long as it is tapped."
+            ),
+            keywords=(),
+        )
+        program = compile_card_program(
+            self.db,
+            conditional_indestructible,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+        self.assertEqual((), program.residuals)
+        descriptor = next(
+            descriptor
+            for ability in program.abilities
+            for descriptor in ability.handlers
+            if descriptor.get("handler_id")
+            == FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+        )
+        self.assertIs(
+            descriptor["source_condition"]["predicate"]["state_predicate"][
+                "tapped"
+            ],
+            True,
+        )
+        self.assertEqual(
+            ["Indestructible"], descriptor["modifier"]["add_abilities"]
+        )
+        self.assertIn(
+            "permanent.indestructible.ordinary",
+            program.capability_dependencies,
+        )
+
         direct = {
             "Public State Attack Standard": (
                 "continuous.characteristics.fixed-query-grant.v1",

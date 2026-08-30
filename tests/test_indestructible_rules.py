@@ -139,7 +139,6 @@ class IndestructibleCompilerTests(unittest.TestCase):
             (
                 "Indestructible from black",
                 "You have indestructible.",
-                "This creature has indestructible as long as it is tapped.",
             ),
             start=702_012_100,
         ):
