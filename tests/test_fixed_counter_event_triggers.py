@@ -293,6 +293,75 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             counter_node.mechanics,
         )
 
+    def test_trigger_ability_words_reuse_existing_typed_owners(self):
+        cases = (
+            (
+                "Keen Senses — When this creature enters, draw a card.",
+                "Creature — Bear",
+                "permanent.enter.self",
+                "draw-controller-v1",
+            ),
+            (
+                "Combat Inspiration — At the beginning of combat on your "
+                "turn, target creature you control gets +1/+0 until end of "
+                "turn.",
+                "Creature — Human Bard",
+                "step.begin",
+                "fixed-typed-effect-step-trigger-v1",
+            ),
+            (
+                "Flurry of Blows — Whenever you cast your second spell each "
+                "turn, put a +1/+1 counter on this creature.",
+                "Creature — Human Monk",
+                "spell.cast",
+                "fixed-counter-spell-cast-trigger-v1",
+            ),
+            (
+                "Constellation — Whenever an enchantment you control enters, "
+                "tap target creature an opponent controls.",
+                "Creature — Unicorn",
+                "enchantment.enter",
+                "fixed-typed-effect-enchantment-entry-trigger-v1",
+            ),
+        )
+        for text, type_line, event, template_id in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status)
+                node = ir.faces[0].nodes[0]
+                self.assertTrue(node.exact)
+                self.assertEqual("triggered_ability", node.kind)
+                self.assertEqual(event, node.event)
+                self.assertEqual(template_id, node.template_id)
+                self.assertEqual(text, node.text)
+                self.assertEqual(text, text[node.span.start : node.span.end])
+
+    def test_trigger_ability_word_boundary_fails_closed(self):
+        text = "Keen Senses — When this creature enters, draw a card."
+        self.assertEqual("exact", self.compile(text).status)
+        with patch(
+            "quorune.oracle_ir.trigger_ability_word_material_line",
+            side_effect=lambda value: value,
+        ):
+            self.assertNotEqual("exact", self.compile(text).status)
+
+        exclusions = (
+            "Threshold — As long as seven cards are in your graveyard, this "
+            "creature gets +1/+1.",
+            "Heroic — Whenever you cast a spell of the chosen color, draw a "
+            "card.",
+            "I — Draw a card.",
+        )
+        for excluded in exclusions:
+            with self.subTest(text=excluded):
+                self.assertNotEqual(
+                    "exact",
+                    self.compile(
+                        excluded,
+                        type_line="Creature — Wizard",
+                    ).status,
+                )
+
     def test_closed_cast_and_source_attack_bindings_compile_exactly(self):
         cases = (
             (

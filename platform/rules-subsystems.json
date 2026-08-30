@@ -872,6 +872,53 @@
           "measurement_probe_id": "typed-public-event-effect-trigger-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:trigger-ability-word-carriers",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_card_draw",
+            "capability:trigger.event.normalized_damage",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.event.normalized_spell_cast",
+            "capability:trigger.event.normalized_zone_change",
+            "capability:trigger.placement.apnap",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.oracle_ir._trigger_node"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "leading-ability-word-label",
+            "mandatory-trigger-prefix",
+            "original-source-span-preservation"
+          ],
+          "shared_dependencies": [
+            "trigger.effect.fixed_event",
+            "trigger.event.normalized_card_draw",
+            "trigger.event.normalized_damage",
+            "trigger.event.normalized_public_action",
+            "trigger.event.normalized_spell_cast",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one leading ability-word label carrying a mandatory trigger already closed by an existing typed event and effect owner",
+          "estimated_implementation_hours": 2,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Makes ability-word labels transparent at the shared Oracle-IR trigger carrier boundary without duplicating event bindings, typed effects, choices, or runtime mutation owners.",
+          "explicit_exclusions": [
+            "ability-word bodies that do not begin with a mandatory trigger prefix",
+            "chapter markers, quoted abilities, and labels nested below the leading source boundary",
+            "intervening-if, reflexive, delayed, aggregate, combined, and unsupported event grammar",
+            "trigger bodies without an independently exact capability-closed effect owner"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "trigger-ability-word-carrier-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-trigger-mana-payments",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",
@@ -1218,14 +1265,24 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v146-subtype-graveyard-event-binding",
-      "compiler_version": "oracle-ir-v146",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct an admitted subtype graveyard trigger whose Oracle event was bound to creature death instead of permanent graveyard movement."
+      "transition_id": "oracle-ir-v147-trigger-ability-word-carriers",
+      "compiler_version": "oracle-ir-v147",
+      "bundle_id": "bundle:trigger-ability-word-carriers",
+      "candidate_ids": ["compiler:trigger-ability-word-carriers"],
+      "family_ids": [
+        "continuous_layer:continuous-effect-layers-and-dependencies"
+      ],
+      "capability_ids": [
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_card_draw",
+        "trigger.event.normalized_damage",
+        "trigger.event.normalized_public_action",
+        "trigger.event.normalized_spell_cast",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "measurement_id": "measurement:trigger-ability-word-carriers",
+      "non_harvest_reason": null
     },
     "forecast_corrections": [
       {

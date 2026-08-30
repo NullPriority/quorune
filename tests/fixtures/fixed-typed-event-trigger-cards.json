@@ -9,7 +9,7 @@
       "mana_cost": "{2}",
       "cmc": 2.0,
       "type_line": "Artifact",
-      "oracle_text": "At the beginning of combat on your turn, target creature you control gets +2/+0 until end of turn.",
+      "oracle_text": "Combat Inspiration — At the beginning of combat on your turn, target creature you control gets +2/+0 until end of turn.",
       "power": null,
       "toughness": null,
       "loyalty": null,
