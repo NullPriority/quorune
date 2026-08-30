@@ -3535,6 +3535,24 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_query_definition_executes_while_replacement_siblings_fail_closed",
+      "piece_ids": ["capability.continuous.characteristics.query_power_toughness_definition", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["continuous.characteristics.query_power_toughness_definition"],
+      "interaction_order": 2,
+      "assertion": "Queen Allenal's exact query-derived characteristic definition executes while strict CardProgram admission rejects its unsupported token-replacement applicability sibling before authoritative mutation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_query_definition_executes_while_replacement_siblings_fail_closed",
+      "piece_ids": ["capability.continuous.characteristics.query_power_toughness_definition", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["continuous.characteristics.query_power_toughness_definition"],
+      "interaction_order": 2,
+      "assertion": "Queen Allenal's exact query-derived characteristic definition executes without admitting its unsupported self-replacement and prevention-ordering boundary."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
       "test_id": "test_devoid_and_compiled_aura_attachment_compose",
       "piece_ids": ["capability.attachment.aura.simple_object", "capability.continuous.characteristics.devoid"],

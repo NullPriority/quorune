@@ -33,6 +33,7 @@
     "tests/fixtures/prowess-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",
     "tests/fixtures/query-gated-self-characteristics-cards.json",
+    "tests/fixtures/query-power-toughness-definition-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/static-action-permission-cards.json",

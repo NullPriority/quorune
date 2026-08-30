@@ -31,6 +31,7 @@ from quorune.continuous_effects import (
 )
 from quorune.model import CardInstance
 from quorune.object_predicate import ObjectQuerySpec
+from quorune.oracle_ir import register_generated_programs
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.ability_fragments import fragments_from_descriptors
@@ -472,6 +473,93 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
                 for fragment in copied_data["ability_fragments"]
             )
         )
+
+    def test_query_definition_executes_while_replacement_siblings_fail_closed(self):
+        session = self.session(129_003_006)
+        engine = session.engine
+        record = self.db.lookup("Queen Allenal of Ruadach")
+        capabilities = load_default_capability_registry()
+        program = compile_card_program(
+            self.db,
+            record,
+            capability_registry=capabilities,
+            capability_profile="commander_review",
+            trust_level="provisional",
+        )
+        blockers = {
+            blocker
+            for residual in program.residuals
+            for blocker in residual["blockers"]
+        }
+        self.assertGreaterEqual(
+            blockers,
+            {
+                "replacement applicability",
+                "self-replacement and prevention ordering",
+            },
+        )
+        before = authoritative_state_hash(engine.state)
+        binding = bind_card_program_runtime(
+            program,
+            capability_registry=capabilities,
+            profile="commander_review",
+        )
+        self.assertFalse(binding["strict_capability_ready"])
+        self.assertFalse(binding["compatible_ready"])
+        self.assertIn("trust_basis:unresolved", binding["blockers"])
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+
+        registration = register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            capability_registry=capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+        )
+        self.assertEqual(1, registration["runtime_handlers_promoted"])
+        runtime_programs = tuple(
+            engine.semantics.runtime_handler_programs_for_oracle(
+                record.oracle_id,
+                active_zone="all",
+                event="continuous",
+            )
+        )
+        self.assertTrue(
+            any(
+                descriptor.get("handler_id") == HANDLER_ID
+                for runtime_program in runtime_programs
+                if engine.semantic_program_is_current_trusted(runtime_program)
+                for descriptor in runtime_program.handlers
+            )
+        )
+        self.assertFalse(
+            any(
+                "replacement" in runtime_program.event
+                and engine.semantic_program_is_current_trusted(runtime_program)
+                for runtime_program in engine.semantics.programs_for_oracle(
+                    record.oracle_id
+                )
+            )
+        )
+
+        source = CardInstance(
+            object_id="query-definition-queen-allenal",
+            ref="QUERY-DEFINITION-QUEEN-ALLENAL",
+            oracle_id=record.oracle_id,
+            printed_name=record.name,
+            owner="A",
+            controller="A",
+            zone="battlefield",
+            known_to=list(engine.seats),
+            revealed_to=list(engine.seats),
+        )
+        engine.state.cards[source.object_id] = source
+        engine.state.players["A"].zones["battlefield"].append(source.object_id)
+        self.token(engine, "A", type_line="Token Creature", name="First Witness")
+        self.token(engine, "A", type_line="Token Creature", name="Second Witness")
+        current = engine._effective_card_data(source)
+        self.assertEqual(("3", "3"), (current["power"], current["toughness"]))
 
     def test_query_definition_hand_count_projects_without_hidden_identity(self):
         session = self.session(129_003_003)
