@@ -17,6 +17,25 @@ from .model import CardInstance
 from .object_query import ObjectQueryResult, object_query_result
 
 
+def _carries_query_power_toughness_definition(
+    card: CardInstance,
+    base: Mapping[str, Any],
+) -> bool:
+    """Detect the all-zone fragment without forcing every zone object layered."""
+
+    raw_fragments = [
+        *base.get("ability_fragments", ()),
+        *dict(card.annotations.get("copy_overrides") or {}).get(
+            "ability_fragments", ()
+        ),
+    ]
+    return any(
+        isinstance(fragment, Mapping)
+        and fragment.get("kind") == "query_power_toughness_definition"
+        for fragment in raw_fragments
+    )
+
+
 class CharacteristicEvaluationHostMixin:
     """Keep authoritative effective-characteristic integration out of the kernel."""
 
@@ -34,9 +53,16 @@ class CharacteristicEvaluationHostMixin:
     ) -> dict[str, Any]:
         """Delegate CR 613 evaluation to its rules-owned subsystem."""
 
+        query_layer_reached = (
+            maximum_layer is None or maximum_layer >= Layer.ABILITY
+        )
         resolver = (
             partial(query_characteristic_count, self, card)
-            if maximum_layer is None and card.zone == "battlefield"
+            if query_layer_reached
+            and (
+                card.zone == "battlefield"
+                or _carries_query_power_toughness_definition(card, base)
+            )
             else None
         )
         return separate_custom_display_text(

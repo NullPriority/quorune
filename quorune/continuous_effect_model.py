@@ -77,6 +77,8 @@ _OPERATION_LAYERS = {
     "add_rules_text": Layer.ABILITY,
     "add_ability_fragment": Layer.ABILITY,
     "remove_ability_fragment": Layer.ABILITY,
+    "set_power": Layer.POWER_TOUGHNESS,
+    "set_toughness": Layer.POWER_TOUGHNESS,
     "set_power_toughness": Layer.POWER_TOUGHNESS,
     "modify_power_toughness": Layer.POWER_TOUGHNESS,
     "switch_power_toughness": Layer.POWER_TOUGHNESS,
@@ -285,6 +287,9 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     }:
         if field is not None or value is not None:
             raise ContinuousEffectError(f"{op} accepts no value or field")
+    elif op in {"set_power", "set_toughness"}:
+        if field is not None or type(value) is not int:
+            raise ContinuousEffectError(f"{op} requires one integer")
     elif op in {"set_power_toughness", "modify_power_toughness"}:
         if field is not None or not isinstance(value, (list, tuple)) or len(value) != 2:
             raise ContinuousEffectError(f"{op} requires an integer pair")

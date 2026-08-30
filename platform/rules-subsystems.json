@@ -652,6 +652,48 @@
           "measurement_probe_id": "typed-query-self-characteristic-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:query-power-toughness-definitions",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.query_power_toughness_definition",
+            "component:quorune.characteristic_evaluation.evaluate_card_characteristics",
+            "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+            "component:quorune.characteristic_fragments.QueryPowerToughnessDefinitionSpec",
+            "component:quorune.compiler.query_characteristic_templates.query_power_toughness_definition_handler",
+            "component:quorune.continuous_effects.evaluate_continuous_effects",
+            "component:quorune.dynamic_characteristics.query_characteristic_count"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "controller-opponent-or-global-public-object-query",
+            "cycle-safe-characteristics-through-layer-five",
+            "power-toughness-or-both-layer-seven-a-definition",
+            "source-counter-or-raw-hand-size"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.changeling",
+            "continuous.characteristics.devoid",
+            "continuous.characteristics.query_count_modifier"
+          ],
+          "shared_grammar": "source-possessive power, toughness, or paired characteristic definitions over one closed typed public quantity through the cycle-safe layer-5 boundary and all-zone layer 7a",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing typed query quantity into all-zone characteristic-defining layer-7a effects while preserving partial definitions, copy, controller relations, public privacy, and later power/toughness layers.",
+          "explicit_exclusions": [
+            "ability-addition or ability-removal applicability until the shared layer-6 ability-presence query owns those interactions",
+            "chosen players, types, colors, names, and private object identities",
+            "distinct-type, Domain, Chroma, Vivid, party, sticker, history, tapped, face-down, linked-exile, and aggregate-counter quantities",
+            "summed quantities, arithmetic offsets, comparisons, conditional or combat-state definitions, and quoted or granted definitions"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "query-power-toughness-definition-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:query-gated-self-characteristics",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies"
@@ -1314,20 +1356,17 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v148-typed-public-state-characteristic-queries",
-      "compiler_version": "oracle-ir-v148",
-      "bundle_id": "bundle:typed-public-state-characteristic-queries",
-      "candidate_ids": ["compiler:typed-public-state-characteristic-queries"],
+      "transition_id": "oracle-ir-v149-query-power-toughness-definitions",
+      "compiler_version": "oracle-ir-v149",
+      "bundle_id": "bundle:query-power-toughness-definitions",
+      "candidate_ids": ["compiler:query-power-toughness-definitions"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "continuous.ability.fixed_query_keyword_grant",
-        "continuous.attached.fixed_characteristics",
-        "continuous.characteristics.fixed_public_state",
-        "continuous.power_toughness.fixed_anthem"
+        "continuous.characteristics.query_power_toughness_definition"
       ],
-      "measurement_id": "measurement:typed-public-state-characteristic-queries",
+      "measurement_id": "measurement:query-power-toughness-definitions",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1811,6 +1850,11 @@
         "candidate_id": "compiler:fixed-library-selection",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired fixed controlled-player card selection and top-library permission slices below the normal harvest floor. The selected integrated library-partition family instead composes a complete fixed positive controller-library inspection or reveal across spell, triggered, activated, and modal contexts through the existing typed predicate, private choice, semantic replacement continuation, simultaneous zone-transition, and ordered-partition owners. Current cohort identities and conservative complete-card lower bounds are derived into the generated measurement artifact; variable counts, other-player libraries, conditional, payment, opponent-choice, chosen, numeric, name, state, linked-result, additional-effect, and other-destination forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:query-power-toughness-definitions",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired attached-object scaling at 22 complete cards and untap-step participation at one complete card. The selected integrated definition probe measures 69 conservative capability-closed Commander cards, 128 exact abilities, and 128 removable material residuals through the existing typed quantity, cycle-safe layer-5 query, copied static-fragment, and CR 613 continuous-effect owners. Power-only, toughness-only, and paired source-possessive definitions remain active in every zone and preserve later layer ordering. Chosen, distinct-type, Domain, Chroma, Vivid, party, sticker, tapped, face-down, history, linked-exile, aggregate-counter, summed, offset, conditional, combat-state, quoted, granted, and layer-6 ability-removal interactions remain fail-closed; current cohort identities and counts are derived into the generated measurement artifact."
       }
     ]
   },

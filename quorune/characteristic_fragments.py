@@ -131,16 +131,19 @@ class CharacteristicQuantitySpec:
                 "battlefield",
                 "graveyard",
             },
-            CharacteristicQuantityScope.ALL_ZONES: {"battlefield"},
+            CharacteristicQuantityScope.ALL_ZONES: {
+                "battlefield",
+                "graveyard",
+            },
             CharacteristicQuantityScope.ATTACHED_TO_SOURCE: {"battlefield"},
         }
         if query.zones[0] not in allowed_zones[self.scope]:
             raise CharacteristicFragmentError(
                 "Characteristic quantity scope does not support that zone"
             )
-        if self.exclude_source and query.zones != ("battlefield",):
+        if self.exclude_source and query.zones == ("hand",):
             raise CharacteristicFragmentError(
-                "Source exclusion is supported only on the battlefield"
+                "Source exclusion is unsupported for hidden hand quantities"
             )
 
     def to_dict(self) -> dict[str, Any]:
@@ -290,6 +293,73 @@ class QueryCharacteristicModifierSpec:
             toughness=value["toughness"],
             minimum_count=value["minimum_count"],
             add_abilities=abilities,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class QueryPowerToughnessDefinitionSpec:
+    """One all-zone query-derived layer-7a power/toughness definition."""
+
+    quantity: CharacteristicQuantitySpec
+    define_power: bool
+    define_toughness: bool
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise CharacteristicFragmentError(
+                "Unsupported query power/toughness definition schema version"
+            )
+        if not isinstance(self.quantity, CharacteristicQuantitySpec):
+            raise CharacteristicFragmentError(
+                "Query power/toughness definitions require a typed quantity"
+            )
+        if (
+            type(self.define_power) is not bool
+            or type(self.define_toughness) is not bool
+        ):
+            raise CharacteristicFragmentError(
+                "Query power/toughness definition fields must be boolean"
+            )
+        if not self.define_power and not self.define_toughness:
+            raise CharacteristicFragmentError(
+                "Query power/toughness definitions require at least one field"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "quantity": self.quantity.to_dict(),
+            "define_power": self.define_power,
+            "define_toughness": self.define_toughness,
+        }
+
+    @classmethod
+    def from_dict(
+        cls,
+        value: Mapping[str, Any],
+    ) -> "QueryPowerToughnessDefinitionSpec":
+        expected = {
+            "schema_version",
+            "quantity",
+            "define_power",
+            "define_toughness",
+        }
+        if not isinstance(value, Mapping) or set(value) != expected:
+            raise CharacteristicFragmentError(
+                "Query power/toughness definitions have a closed schema"
+            )
+        try:
+            quantity = CharacteristicQuantitySpec.from_dict(value["quantity"])
+        except (TypeError, ValueError, CharacteristicFragmentError) as exc:
+            raise CharacteristicFragmentError(
+                "Query power/toughness definition vocabulary is unsupported"
+            ) from exc
+        return cls(
+            schema_version=value["schema_version"],
+            quantity=quantity,
+            define_power=value["define_power"],
+            define_toughness=value["define_toughness"],
         )
 
 
@@ -497,4 +567,5 @@ __all__ = [
     "DynamicPowerToughnessSpec",
     "PowerToughnessCalculation",
     "QueryCharacteristicModifierSpec",
+    "QueryPowerToughnessDefinitionSpec",
 ]

@@ -19,6 +19,7 @@ from ..ability_fragments import (
     DamageKeywordTriggerSpec,
     DynamicPowerToughnessSpec,
     QueryCharacteristicModifierSpec,
+    QueryPowerToughnessDefinitionSpec,
     ProtectionSpec,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
@@ -67,6 +68,9 @@ DYNAMIC_POWER_TOUGHNESS_FRAGMENT_HANDLER_ID = (
 )
 QUERY_CHARACTERISTIC_MODIFIER_FRAGMENT_HANDLER_ID = (
     "ability.static.query-characteristic-modifier.v1"
+)
+QUERY_POWER_TOUGHNESS_DEFINITION_FRAGMENT_HANDLER_ID = (
+    "ability.static.query-power-toughness-definition.v1"
 )
 COLORLESS_CHARACTERISTIC_DEFINITION_FRAGMENT_HANDLER_ID = (
     "ability.static.colorless-characteristic-definition.v1"
@@ -985,6 +989,41 @@ class QueryCharacteristicModifierAbilityFragmentHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class QueryPowerToughnessDefinitionAbilityFragmentHandler:
+    handler_id: str = QUERY_POWER_TOUGHNESS_DEFINITION_FRAGMENT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "ability.static.query_power_toughness_definition"
+    event: str = "continuous"
+    rule_references: tuple[str, ...] = (
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        "continuous.characteristics.query_power_toughness_definition",
+    )
+
+    def validate(
+        self, descriptor: Mapping[str, Any]
+    ) -> QueryPowerToughnessDefinitionSpec:
+        return _fragment(
+            descriptor,
+            handler_id=self.handler_id,
+            event=self.event,
+            expected_type=QueryPowerToughnessDefinitionSpec,
+        )
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
 class AllCreatureTypesCharacteristicDefinitionAbilityFragmentHandler:
     handler_id: str = (
         ALL_CREATURE_TYPES_CHARACTERISTIC_DEFINITION_FRAGMENT_HANDLER_ID
@@ -1083,6 +1122,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DethroneAbilityFragmentHandler(),
             DynamicPowerToughnessAbilityFragmentHandler(),
             QueryCharacteristicModifierAbilityFragmentHandler(),
+            QueryPowerToughnessDefinitionAbilityFragmentHandler(),
             EnchantAbilityFragmentHandler(),
             TypedEnchantAbilityFragmentHandler(),
             ExaltedAbilityFragmentHandler(),
@@ -1134,6 +1174,7 @@ __all__ = [
     "EXALTED_FRAGMENT_HANDLER_ID",
     "DYNAMIC_POWER_TOUGHNESS_FRAGMENT_HANDLER_ID",
     "QUERY_CHARACTERISTIC_MODIFIER_FRAGMENT_HANDLER_ID",
+    "QUERY_POWER_TOUGHNESS_DEFINITION_FRAGMENT_HANDLER_ID",
     "FLANKING_FRAGMENT_HANDLER_ID",
     "LINKED_GRAVEYARD_ENCHANT_HANDLER_ID",
     "PROTECTION_FRAGMENT_HANDLER_ID",
@@ -1167,6 +1208,7 @@ __all__ = [
     "DethroneAbilityFragmentHandler",
     "DynamicPowerToughnessAbilityFragmentHandler",
     "QueryCharacteristicModifierAbilityFragmentHandler",
+    "QueryPowerToughnessDefinitionAbilityFragmentHandler",
     "TrainingAbilityFragmentHandler",
     "RenownAbilityFragmentHandler",
     "ProwessAbilityFragmentHandler",

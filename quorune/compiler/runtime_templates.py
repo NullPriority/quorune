@@ -25,7 +25,10 @@ from .continuous_templates import (
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
-from .query_characteristic_templates import query_self_characteristics_handler
+from .query_characteristic_templates import (
+    query_power_toughness_definition_handler,
+    query_self_characteristics_handler,
+)
 from .counter_replacement_templates import (
     static_counter_quantity_replacement_handler,
 )
@@ -250,6 +253,32 @@ def _source_permanent_participation_template(
     )
 
 
+def _query_definition_static_runtime_template(
+    text: str,
+    *,
+    source_name: str | None,
+    source_is_class: bool,
+) -> StaticRuntimeTemplate | None:
+    if source_name is None or source_is_class:
+        return None
+    compiled = query_power_toughness_definition_handler(
+        text,
+        source_name=source_name,
+    )
+    if compiled is None:
+        return None
+    return StaticRuntimeTemplate(
+        compiled=compiled,
+        kind="static_ability",
+        event="continuous",
+        active_zone="all",
+        dependency_reason=(
+            "query-derived characteristic definitions require their "
+            "cycle-safe all-zone capability"
+        ),
+    )
+
+
 def _continuous_static_runtime_template(
     text: str,
     *,
@@ -308,6 +337,13 @@ def _continuous_static_runtime_template(
                 "continuous-effect capability"
             ),
         )
+    query_definition = _query_definition_static_runtime_template(
+        text,
+        source_name=source_name,
+        source_is_class=source_is_class,
+    )
+    if query_definition is not None:
+        return query_definition
     if source_name is not None:
         query_characteristics = (
             None

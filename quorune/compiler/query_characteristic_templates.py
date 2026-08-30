@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from ..ability_fragments import (
     QueryCharacteristicModifierSpec,
+    QueryPowerToughnessDefinitionSpec,
     ability_fragment_to_dict,
 )
 from ..characteristic_fragments import (
@@ -100,6 +101,7 @@ def _query_quantity_descriptor(
     value: str,
     *,
     zone: str,
+    definition_extensions: bool = False,
 ) -> tuple[ObjectQuerySpec, bool] | None:
     """Parse one intentionally small public object-description vocabulary."""
 
@@ -116,7 +118,50 @@ def _query_quantity_descriptor(
     if normalized in {"", "card"}:
         return (ObjectQuerySpec(**fields), exclude_source)
 
-    singular = {
+    type_unions = {
+        "artifacts and/or creatures": ("artifact", "creature"),
+        "artifacts and/or enchantments": ("artifact", "enchantment"),
+        "instant and sorcery": ("instant", "sorcery"),
+    }
+    if definition_extensions and normalized in type_unions:
+        fields["types_any"] = type_unions[normalized]
+        return (ObjectQuerySpec(**fields), exclude_source)
+    if definition_extensions and normalized in {
+        "noncreature, nonland",
+        "noncreature nonland",
+    }:
+        fields["excluded_types"] = ("creature", "land")
+        return (ObjectQuerySpec(**fields), exclude_source)
+    if definition_extensions and normalized in {
+        "nonland permanent",
+        "nonland permanents",
+    }:
+        fields["types_any"] = _PERMANENT_CARD_TYPES
+        fields["excluded_types"] = ("land",)
+        return (ObjectQuerySpec(**fields), exclude_source)
+
+    union_parts = re.split(
+        r",\s*(?:and/or\s+)?|\s+and/or\s+",
+        normalized,
+    )
+    if definition_extensions and len(union_parts) >= 2 and all(union_parts):
+        subtypes = tuple(
+            subtype
+            for part in union_parts
+            if (
+                (subtype := canonical_creature_subtype(part)) is not None
+                or (
+                    subtype := _singular_creature_subtype(part)
+                )
+                is not None
+            )
+        )
+        if len(subtypes) == len(union_parts):
+            fields["types_all"] = ("creature",)
+            fields["subtypes_any"] = subtypes
+            return (ObjectQuerySpec(**fields), exclude_source)
+
+    singulars = {
         "artifacts": "artifact",
         "battles": "battle",
         "creatures": "creature",
@@ -129,13 +174,28 @@ def _query_quantity_descriptor(
         "equipment": "equipment",
         "gates": "gate",
         "deserts": "desert",
-    }.get(normalized, normalized)
+    }
+    if definition_extensions:
+        singulars.update(
+            {
+                "plains": "plains",
+                "islands": "island",
+                "swamps": "swamp",
+                "mountains": "mountain",
+                "forests": "forest",
+                "artifact creatures": "artifact creature",
+            }
+        )
+    singular = singulars.get(normalized, normalized)
     words = singular.split()
     if words and words[0] in {"basic", "legendary", "snow"}:
         supertype = words.pop(0)
         fields["supertypes_all"] = (supertype,)
     if words and words[0] in _COLOR_SYMBOLS:
         fields["colors_all"] = (_COLOR_SYMBOLS[words.pop(0)],)
+    elif definition_extensions and words and words[0] == "colorless":
+        fields["colorless"] = True
+        words.pop(0)
     if words and words[0] in {"token", "nontoken"}:
         fields["token"] = words.pop(0) == "token"
     elif words and words[-1] == "token":
@@ -181,6 +241,7 @@ def _query_characteristic_quantity(
     value: str,
     *,
     source_name: str,
+    definition_extensions: bool = False,
 ) -> CharacteristicQuantitySpec | None:
     text = " ".join(value.strip().rstrip(".").split())
     source = SourceReferenceSpec(source_name).regex_pattern
@@ -207,7 +268,9 @@ def _query_characteristic_quantity(
     )
     if attachment is not None:
         parsed = _query_quantity_descriptor(
-            attachment.group("object"), zone="battlefield"
+            attachment.group("object"),
+            zone="battlefield",
+            definition_extensions=definition_extensions,
         )
         if parsed is None:
             return None
@@ -254,11 +317,24 @@ def _query_characteristic_quantity(
             "battlefield",
         ),
     )
+    if definition_extensions:
+        relations = (
+            *relations,
+            (
+                r"(?P<object>.+?) in all graveyards",
+                CharacteristicQuantityScope.ALL_ZONES,
+                "graveyard",
+            ),
+        )
     for pattern, scope, zone in relations:
         match = re.fullmatch(pattern, text, re.IGNORECASE)
         if match is None:
             continue
-        parsed = _query_quantity_descriptor(match.group("object"), zone=zone)
+        parsed = _query_quantity_descriptor(
+            match.group("object"),
+            zone=zone,
+            definition_extensions=definition_extensions,
+        )
         if parsed is None:
             return None
         query, exclude_source = parsed
@@ -268,6 +344,57 @@ def _query_characteristic_quantity(
             exclude_source=exclude_source,
         )
     return None
+
+
+def query_power_toughness_definition_handler(
+    oracle_line: str,
+    *,
+    source_name: str,
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    """Compile one closed all-zone query-derived characteristic definition."""
+
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    ability_word = re.fullmatch(
+        r"[A-Z][A-Za-z0-9' ]{0,80} — (?P<body>.+)", text
+    )
+    if ability_word is not None:
+        text = ability_word.group("body").strip()
+    subject = _self_subject_pattern(source_name)
+    match = re.fullmatch(
+        rf"{subject}'s (?:(?P<both>power and toughness are each)|"
+        r"(?P<power>power is)|(?P<toughness>toughness is)) equal to the "
+        r"number of (?P<quantity>.+?)\.?$",
+        text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    quantity = _query_characteristic_quantity(
+        match.group("quantity"),
+        source_name=source_name,
+        definition_extensions=True,
+    )
+    if quantity is None:
+        return None
+    fragment = QueryPowerToughnessDefinitionSpec(
+        quantity=quantity,
+        define_power=match.group("both") is not None
+        or match.group("power") is not None,
+        define_toughness=match.group("both") is not None
+        or match.group("toughness") is not None,
+    )
+    return (
+        "continuous-query-power-toughness-definition-v1",
+        {
+            "handler_id": (
+                "ability.static.query-power-toughness-definition.v1"
+            ),
+            "schema_version": 1,
+            "event": "continuous",
+            "fragment": ability_fragment_to_dict(fragment),
+        },
+        ("continuous.characteristics.query_power_toughness_definition",),
+    )
 
 
 def _query_characteristic_condition(
