@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b1b8eaf083440b41e41e07bf3f65c5a6bbf12bd0ad196f9911cd356ae28328f0",
-  "declaration_source_fingerprint": "5f95ab2456fd77bc341ea0efc871ee8551bcba7401fc6362ec3bf0cc6790d468",
+  "registry_fingerprint": "300a585596de912ec7f6ae0ce0a2ac1bce87aabbf4618f033b13ace19de8d0b9",
+  "declaration_source_fingerprint": "e9c5b24ebedc2634ffdda07190bdd4ad74ced128d07bc4e2a11596aff54ded60",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -16043,6 +16043,193 @@
         "commander_review"
       ],
       "applicability_note": "Pin the typed hand-size fragment and hidden zone membership into a checkpoint, then replay the following multiplayer priority commands exactly."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_definition_ability_removal_sibling_withholds_runtime_admission",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Withhold complete-card admission when an ability-removal sibling requires the future shared layer-6 ability-presence owner."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_copy_and_control_change_use_current_source",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Copy the typed definition while recomputing the quantity from each physical source's current controller."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Count a layer-4 type result through layer 5, set the definition in layer 7a, and compose with an ordinary layer-7c modifier."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_copy_and_control_change_use_current_source",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute controller-relative quantities after a four-player control change and on an independently controlled copy."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the all-zone typed definition compiler production at its exact source span."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_descriptors_fail_closed",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject malformed typed definitions that define neither field before runtime lowering."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_grammar_keeps_open_families_residual",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep summed, distinct, chosen, tapped, linked, arithmetic, and color-cardinality quantities residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_grammar_compiles_closed_fragments",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile power-only, toughness-only, and paired definitions over closed controller, global, and public-graveyard quantities."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definitions_apply_in_every_zone_and_preserve_undefined_field",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply one copied definition in every represented zone while preserving a printed sibling field the definition does not set."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_hand_count_projects_without_hidden_identity",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Consume only raw controller hand size and keep every hidden card identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_save_load_and_replay_exactly",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reload the typed all-zone definition and replay subsequent priority commands to the exact authoritative hash."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -51216,5 +51403,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "1ef4a288cdef26a5282c50691d9c75451add44b387ae6c8efb3c19025f4c6180"
+  "fingerprint": "5f6ee75aeacdd68d59673d3dec8edc83f6582e665039444d86ce34f130615658"
 }

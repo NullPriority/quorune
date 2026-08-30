@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 137,
+  "registry_version": 138,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2813,6 +2813,33 @@
       "dependency_fail_closed_rationale": "The fragment consumes a closed typed public quantity through the shared layer-5 characteristic boundary and declares each supported keyword consumer independently.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused compiler and runtime mutations remove or redirect the quantity relation, threshold, layer-5 type feed, layer-6 keyword grant, or layer-7c modifier; exact four-player, copy, projection, replay, and ordering assertions reject each survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.characteristics.query_power_toughness_definition",
+      "version": 1,
+      "official_rules": ["604.3", "611.3a", "613.1g", "613.4a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Define one or both printed power/toughness fields in all zones from one closed public quantity evaluated through the cycle-safe layer-5 boundary.",
+        "inputs": ["one source-spanned source-possessive power, toughness, or paired definition", "copied typed all-zone definition fragment", "controller, opponent, global, public-graveyard, raw hand-size, or source-counter quantity", "layer-5 object types, subtypes, supertypes, colors, token state, and source exclusion"],
+        "outputs": ["controller-correct and multiplayer-correct live quantity", "cycle-safe layer-5 characteristic predicate", "all-zone characteristic-defining layer-7a power and/or toughness setting", "copiable executable fragment", "hidden-identity-free hand count"],
+        "exclusions": ["chosen players, types, colors, names, and private object identities", "distinct-type, Domain, Chroma, Vivid, party, sticker, history, tapped, face-down, linked-exile, and aggregate-counter quantities", "summed quantities, arithmetic offsets, comparisons, conditional or combat-state definitions, and quoted or granted definitions", "ability-addition or ability-removal applicability until the shared layer-6 ability-presence query owns those interactions"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.query_characteristic_templates.query_power_toughness_definition_handler", "quorune.characteristic_fragments.QueryPowerToughnessDefinitionSpec", "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin", "quorune.continuous_effects.evaluate_continuous_effects"],
+      "positive_tests": ["test_query_power_toughness_definition_grammar_compiles_closed_fragments", "test_query_definitions_apply_in_every_zone_and_preserve_undefined_field"],
+      "negative_tests": ["test_query_power_toughness_definition_grammar_keeps_open_families_residual", "test_query_power_toughness_definition_descriptors_fail_closed"],
+      "interaction_tests": ["test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a", "test_query_definition_copy_and_control_change_use_current_source", "test_query_definition_ability_removal_sibling_withholds_runtime_admission"],
+      "multiplayer_tests": ["test_query_definition_copy_and_control_change_use_current_source"],
+      "privacy_tests": ["test_query_definition_hand_count_projects_without_hidden_identity"],
+      "replay_tests": ["test_query_definition_save_load_and_replay_exactly"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The definition consumes one closed typed quantity through the shared cycle-safe layer-5 characteristic boundary and has no capability dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove a defined field, redirect the quantity relation or layer, or expose hidden identity; exact all-zone, controller, copy, layer-ordering, projection, and replay assertions reject each survivor.",
       "blockers": [],
       "status": "trusted"
     },

@@ -39,6 +39,7 @@ from quorune.compiler.continuous_templates import (
     fixed_public_state_characteristics_handler,
 )
 from quorune.compiler.query_characteristic_templates import (
+    query_power_toughness_definition_handler,
     query_self_characteristics_handler,
 )
 from quorune.compiler.ir_model import SourceSpan
@@ -101,6 +102,9 @@ _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC = (
 _PROBE_QUERY_GATED_SELF_CHARACTERISTIC = (
     "query-gated-self-characteristic-existing-owner-v1"
 )
+_PROBE_QUERY_POWER_TOUGHNESS_DEFINITION = (
+    "query-power-toughness-definition-existing-owner-v1"
+)
 _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER = (
     "fixed-source-pronoun-damage-trigger-existing-owner-v1"
 )
@@ -117,6 +121,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER,
     _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
+    _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_FIXED_LIBRARY_SELECTION,
     _PROBE_OPTIONAL_EFFECT,
@@ -162,14 +167,20 @@ def _matches_query_self_characteristic_probe(
     if probe_id not in {
         _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
         _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
+        _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     }:
         raise WorkSelectionCohortMeasurementError(
             f"Unsupported query-characteristic probe: {probe_id}"
         )
-    if query_self_characteristics_handler(
-        source,
-        source_name=source_name,
-    ) is None:
+    if probe_id == _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION:
+        return (
+            query_power_toughness_definition_handler(
+                source,
+                source_name=source_name,
+            )
+            is not None
+        )
+    if query_self_characteristics_handler(source, source_name=source_name) is None:
         return False
     normalized = re.sub(
         r"\s+\([^()]*\)\.?$", "", source.strip()
@@ -922,6 +933,7 @@ def _measurement(
     if probe_id in {
         _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
         _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
+        _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     }:
         return _typed_query_self_characteristic_measurement(
             frontier=frontier,
@@ -1919,11 +1931,15 @@ def _typed_query_self_characteristic_measurement(
             for face in compiled.faces
             for node in face.nodes
         }
+        expected_template_id = (
+            "continuous-query-power-toughness-definition-v1"
+            if probe_id == _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION
+            else "continuous-self-query-characteristics-v1"
+        )
         card_matches = sum(
             node is not None
             and node.exact
-            and node.template_id
-            == "continuous-self-query-characteristics-v1"
+            and node.template_id == expected_template_id
             for ability in candidates
             for node in (nodes.get(str(ability.get("ability_id") or "")),)
         )

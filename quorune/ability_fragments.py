@@ -24,6 +24,7 @@ from .characteristic_fragments import (
     ConditionalKeywordSpec,
     DynamicPowerToughnessSpec,
     QueryCharacteristicModifierSpec,
+    QueryPowerToughnessDefinitionSpec,
 )
 from .declaration_fragments import (
     DeclarationCostTemplate,
@@ -820,6 +821,7 @@ StaticAbilityFragment: TypeAlias = (
     | ConditionalKeywordSpec
     | DynamicPowerToughnessSpec
     | QueryCharacteristicModifierSpec
+    | QueryPowerToughnessDefinitionSpec
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
@@ -865,6 +867,8 @@ def ability_fragment_to_dict(
         kind = "dynamic_power_toughness"
     elif isinstance(fragment, QueryCharacteristicModifierSpec):
         kind = "query_characteristic_modifier"
+    elif isinstance(fragment, QueryPowerToughnessDefinitionSpec):
+        kind = "query_power_toughness_definition"
     elif isinstance(fragment, DeclarationCostTemplate):
         kind = "declaration_cost"
     elif isinstance(fragment, DeclarationRequirementTemplate):
@@ -950,6 +954,11 @@ def ability_fragment_from_dict(
             return QueryCharacteristicModifierSpec.from_dict(value["value"])
         except CharacteristicFragmentError as exc:
             raise AbilityFragmentError(str(exc)) from exc
+    if value["kind"] == "query_power_toughness_definition":
+        try:
+            return QueryPowerToughnessDefinitionSpec.from_dict(value["value"])
+        except CharacteristicFragmentError as exc:
+            raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "declaration_cost":
         try:
             return DeclarationCostTemplate.from_dict(value["value"])
@@ -996,6 +1005,7 @@ def canonical_ability_fragments(
                 ConditionalKeywordSpec,
                 DynamicPowerToughnessSpec,
                 QueryCharacteristicModifierSpec,
+                QueryPowerToughnessDefinitionSpec,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,
                 DeclarationRestrictionTemplate,
@@ -1296,6 +1306,7 @@ __all__ = [
     "DamageKeywordTriggerSpec",
     "DynamicPowerToughnessSpec",
     "QueryCharacteristicModifierSpec",
+    "QueryPowerToughnessDefinitionSpec",
     "DeclarationCostTemplate",
     "DeclarationRequirementTemplate",
     "DeclarationRestrictionTemplate",

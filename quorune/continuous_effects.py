@@ -397,6 +397,12 @@ def _apply_operation(
         return
     if _apply_ability_operation(state, operation):
         return
+    if op == "set_power":
+        state.power = int(value)
+        return
+    if op == "set_toughness":
+        state.toughness = int(value)
+        return
     if op == "set_power_toughness":
         if not isinstance(value, Sequence) or len(value) != 2:
             raise ContinuousEffectError(

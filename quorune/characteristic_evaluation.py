@@ -27,6 +27,7 @@ from .characteristic_fragments import (
     ColorlessCharacteristicDefinitionSpec,
     PowerToughnessCalculation,
     QueryCharacteristicModifierSpec,
+    QueryPowerToughnessDefinitionSpec,
     CharacteristicQuantitySpec,
 )
 from .creature_subtypes import CREATURE_SUBTYPES
@@ -444,7 +445,7 @@ def _query_characteristic_effects(
     back into the quantity that is currently being evaluated.
     """
 
-    if card.zone != "battlefield" or card.phased_out:
+    if card.zone == "battlefield" and card.phased_out:
         return []
     through_color = evaluate_continuous_effects(
         copy.deepcopy(state),
@@ -456,7 +457,39 @@ def _query_characteristic_effects(
     )
     materialized: list[ContinuousEffect] = []
     for index, fragment in enumerate(fragments):
-        if not isinstance(fragment, QueryCharacteristicModifierSpec):
+        if isinstance(fragment, QueryPowerToughnessDefinitionSpec):
+            count = count_resolver(fragment.quantity)
+            if type(count) is not int or count < 0:
+                raise ContinuousEffectError(
+                    "Characteristic quantity resolvers must return a nonnegative integer"
+                )
+            operations = tuple(
+                ContinuousOperation(operation, count)
+                for enabled, operation in (
+                    (fragment.define_power, "set_power"),
+                    (fragment.define_toughness, "set_toughness"),
+                )
+                if enabled
+            )
+            materialized.append(
+                ContinuousEffect(
+                    effect_id=(
+                        f"{card.object_id}:query-characteristic-definition:{index}"
+                    ),
+                    source_id=card.object_id,
+                    layer=Layer.POWER_TOUGHNESS,
+                    sublayer="7a",
+                    timestamp=card.zone_timestamp,
+                    operations=operations,
+                    characteristic_defining=True,
+                    duration=ContinuousEffectDuration.ZONE_OBJECT,
+                )
+            )
+            continue
+        if (
+            not isinstance(fragment, QueryCharacteristicModifierSpec)
+            or card.zone != "battlefield"
+        ):
             continue
         count = count_resolver(fragment.quantity)
         if type(count) is not int or count < 0:

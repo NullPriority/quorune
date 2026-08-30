@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "57174cdd075a02edb68694efc072d17767ac8aba3a41cbb32f16709e5fb1b8e1"
+verified: "46a752d1d427f15b64b90ed9f0385e85c291c56c585aaf6a3ce01b185fa5cbc0"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -49,11 +49,11 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Moag // Bloomwielder Dryads | 173 | 20 | 6 | 4 | 5 | 16 | `blocked` |
 | Miles Morales // Ultimate Spider-Man | 172 | 24 | 6 | 5 | 6 | 11 | `blocked` |
 | Overwhelmed Archivist // Archive Haunt | 172 | 29 | 5 | 5 | 4 | 7 | `blocked` |
+| Invasion of Kaladesh // Aetherwing, Golden-Scale Flagship | 171 | 19 | 5 | 5 | 5 | 17 | `blocked` |
 | Invasion of Mercadia // Kyren Flamewright | 171 | 20 | 6 | 3 | 5 | 17 | `blocked` |
 | Invasion of Tolvada // The Broken Sky | 171 | 18 | 6 | 4 | 6 | 17 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 171 | 14 | 5 | 5 | 11 | 18 | `blocked` |
 | Invasion of Gobakhan // Lightshield Array | 170 | 17 | 6 | 4 | 5 | 19 | `blocked` |
-| Invasion of Kaladesh // Aetherwing, Golden-Scale Flagship | 170 | 18 | 5 | 5 | 6 | 17 | `blocked` |
 | Invasion of Vryn // Overloaded Mage-Ring | 170 | 13 | 6 | 3 | 8 | 24 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 170 | 17 | 6 | 5 | 10 | 8 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 169 | 19 | 6 | 6 | 11 | 10 | `blocked` |

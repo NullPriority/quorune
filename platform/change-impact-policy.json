@@ -372,11 +372,13 @@
         "quorune/compiler/continuous_templates.py",
         "quorune/compiler/query_characteristic_templates.py",
         "quorune/compiler/runtime_templates.py",
+        "quorune/continuous_effect_model.py",
         "quorune/dynamic_characteristics.py",
         "quorune/engine.py",
         "quorune/object_predicate.py",
         "quorune/semantic_runtime/ability_fragments.py",
         "tests/test_fixed_public_state_characteristics.py",
+        "tests/test_query_power_toughness_definitions.py",
         "tests/test_typed_query_self_characteristics.py"
       ],
       "test_modules": [
@@ -384,6 +386,7 @@
         "test_continuous_effect_components",
         "test_devoid_characteristics",
         "test_fixed_public_state_characteristics",
+        "test_query_power_toughness_definitions",
         "test_typed_ability_fragments",
         "test_typed_dynamic_characteristics",
         "test_typed_query_self_characteristics"
