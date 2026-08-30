@@ -206,7 +206,9 @@ def _source_or_artifact_death_spec(
     )
 
 
-def _subtype_death_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+def _subtype_graveyard_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
     match = re.fullmatch(
         r"Whenever (?P<article>another|a) (?P<token>nontoken )?"
         r"(?P<subtype>[A-Z][A-Za-z'-]*) "
@@ -220,9 +222,10 @@ def _subtype_death_spec(material_line: str) -> FixedPublicEventBindingSpec | Non
     subtype = canonical_creature_subtype(match.group("subtype"))
     if subtype is None:
         return None
+    dies = match.group("verb").casefold() == "dies"
     return _spec(
-        "creature.dies",
-        f"subtype_{subtype}_dies",
+        "creature.dies" if dies else "permanent.graveyard",
+        f"subtype_{subtype}_{'dies' if dies else 'graveyard'}",
         match.group("body"),
         "fixed-counter-public-zone-trigger-v1",
         "trigger-event-normalized-zone-change",
@@ -282,7 +285,7 @@ def _public_zone_spec(
         _land_entry_spec,
         _power_entry_spec,
         _source_or_artifact_death_spec,
-        _subtype_death_spec,
+        _subtype_graveyard_spec,
     )
     for parser in parsers:
         spec = parser(material_line)

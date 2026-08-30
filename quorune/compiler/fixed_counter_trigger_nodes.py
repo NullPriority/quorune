@@ -163,6 +163,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CREATURE_ENTER = "creature.enter"
     ENCHANTMENT_ENTER = "enchantment.enter"
     CREATURE_DIES = "creature.dies"
+    PERMANENT_GRAVEYARD = "permanent.graveyard"
     SOURCE_VEHICLE_ENTER = "permanent.enter.self"
     SOURCE_VEHICLE_DIES = "creature.dies.self"
     SOURCE_GRAVEYARD = "permanent.graveyard.self"

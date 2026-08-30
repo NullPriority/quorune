@@ -605,8 +605,11 @@ normalized owner's current entry facts or predeparture last-known facts and
 does not perform a characteristic query of its own. The binding emits only an
 immutable event predicate and ordinary triggered node; APNAP placement, target
 selection and revalidation, replacement suspension, and effect mutation stay
-with their existing owners. Cast-or-copy, cast history and origin, payment and
-kicked state, targeted-spell relations, mana-value thresholds, dynamic
+with their existing owners. Subtype “dies” clauses consume `creature.dies`,
+while subtype “is put into a graveyard from the battlefield” clauses consume
+`permanent.graveyard`; the latter therefore includes noncreature Kindred
+permanents with that creature subtype. Cast-or-copy, cast history and origin,
+payment and kicked state, targeted-spell relations, mana-value thresholds, dynamic
 characteristic counts, characteristic conjunctions, broader land-entry relations, attack-recipient or
 aggregate attack forms, characteristic-qualified zone changes, one-or-more
 aggregation, combined events, intervening-if, reflexive, optional noncounter,

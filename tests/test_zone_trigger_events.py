@@ -91,6 +91,26 @@ class ZoneTriggerEventModelTests(unittest.TestCase):
             list(died[0].context["types"]),
         )
 
+    def test_noncreature_kindred_subtype_has_graveyard_but_not_death_event(self):
+        departed = normalized_zone_trigger_events(
+            occurrence(
+                origin="battlefield",
+                destination="graveyard",
+                previous_characteristics={
+                    "type_line": "Kindred Enchantment — Goblin",
+                    "mana_value": 2,
+                },
+            )
+        )
+
+        self.assertEqual(
+            ["permanent.leave", "permanent.graveyard"],
+            [event.kind for event in departed],
+        )
+        self.assertEqual(["goblin"], list(departed[-1].context["subtypes"]))
+        self.assertIn("kindred", departed[-1].context["types"])
+        self.assertNotIn("creature", departed[-1].context["types"])
+
     def test_occurrence_rejects_malformed_and_non_event_moves_are_empty(self):
         with self.assertRaisesRegex(
             ZoneTriggerEventError, "zone_change_counter"
