@@ -211,6 +211,18 @@ compatibility-only field migration without parsing or trust promotion. Optional
 choices, quantity multipliers, state-derived token
 definitions, and modified entry instructions remain unsupported.
 
+`continuous.characteristics.fixed-public-state.v1` accepts both its historical
+scalar condition payload and the additive typed object-query condition schema.
+Source and attached-object queries are evaluated in the runtime domain against
+effective layer-5 characteristics; the rules snapshot receives only their
+boolean results. Fixed public object counts reuse the characteristic quantity
+resolver and skip this layer-6/7c component while resolving that boundary, so a
+type-changing effect can change the count without creating a characteristic
+evaluation cycle. Direct attacking, blocking, tapped, untapped, enchanted,
+equipped, and modified affected sets use the same `ObjectQuerySpec` permanent-
+state predicate. No runtime Oracle parser or parallel applicability registry is
+involved.
+
 ## Ownership boundaries
 
 Components receive immutable source-authorized facts, never

@@ -77,6 +77,18 @@ class QuickGatePlanTests(unittest.TestCase):
             plan["test_modules"],
         )
 
+        public_state_plan = build_plan(
+            ("quorune/compiler/public_state_queries.py",)
+        )
+        self.assertIn(
+            "test_indestructible_rules",
+            public_state_plan["test_modules"],
+        )
+        self.assertIn(
+            "test_rules_scheduler",
+            public_state_plan["test_modules"],
+        )
+
     def test_pre_corpus_plan_runs_identity_sentinels_without_generators(self):
         plan = build_plan(
             ("quorune/compiler/oracle_parser.py",),

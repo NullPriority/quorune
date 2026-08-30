@@ -301,10 +301,13 @@
       "id": "compiler-static-characteristic-expectations",
       "patterns": [
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/public_state_queries.py",
         "quorune/compiler/runtime_templates.py"
       ],
       "test_modules": [
         "test_fixed_query_keyword_grants",
+        "test_indestructible_rules",
+        "test_rules_scheduler",
         "test_typed_dynamic_characteristics"
       ]
     },
@@ -312,11 +315,17 @@
       "id": "fixed-public-state-characteristic-contract",
       "patterns": [
         "quorune/card_programs/runtime.py",
+        "quorune/characteristic_evaluation.py",
+        "quorune/characteristic_evaluation_host.py",
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/public_state_queries.py",
         "quorune/compiler/runtime_templates.py",
         "quorune/continuous_conditions.py",
         "quorune/continuous_effect_model.py",
         "quorune/continuous_effects.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/object_predicate.py",
+        "quorune/object_query.py",
         "quorune/semantic_runtime/conditional_continuous.py",
         "quorune/semantic_runtime/continuous_components.py",
         "tests/fixtures/fixed-public-state-interaction-cards.json",
@@ -336,6 +345,7 @@
       "patterns": [
         "quorune/characteristic_evaluation.py",
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/public_state_queries.py",
         "quorune/continuous_effects.py",
         "quorune/object_predicate.py",
         "quorune/object_query.py",

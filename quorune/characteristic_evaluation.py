@@ -599,6 +599,9 @@ def evaluate_card_characteristics(
     ]
     | None = None,
     maximum_layer: Layer | None = None,
+    enchanted: bool = False,
+    equipped: bool = False,
+    modified: bool = False,
 ) -> dict[str, Any]:
     """Evaluate one object's declarative CR 613 characteristic state.
 
@@ -686,6 +689,12 @@ def evaluate_card_characteristics(
         "phased_out": card.phased_out,
         "known_to_actor": True,
         "counters": card.counters,
+        "attacking": card.attacking is not None,
+        "blocking": card.blocking is not None,
+        "enchanted": enchanted,
+        "equipped": equipped,
+        "modified": modified,
+        "monstrous": card.monstrous_value is not None,
     }
     if query_count_resolver is not None and (
         maximum_layer is None or maximum_layer >= Layer.ABILITY

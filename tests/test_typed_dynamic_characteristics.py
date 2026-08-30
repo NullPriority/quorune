@@ -173,7 +173,6 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
 
         unsupported = (
             "Creatures your opponents control have ward {1}.",
-            "Attacking creatures you control have flying.",
             "Multicolored creatures you control have protection from red.",
             "This creature has haste as long as you have exactly 10 life.",
             "This creature gets +1/+1 for each color among permanents you control.",

@@ -5652,6 +5652,14 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute layer-6 grants from shared combat, controller-relative modified, equipment, attachment, and cycle-safe layer-5 query facts, then replay the normalized descriptors exactly."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_multicolor_query_observes_the_cycle_safe_layer_five_boundary",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -5780,6 +5788,14 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile closed combat, tap, attachment, and modified affected sets into the existing fixed-query keyword owner without admitting dynamic or ability-qualified predicates."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_closed_query_grammar_compiles_exact_with_consumer_capabilities",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -5816,6 +5832,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project public effective keywords to an opponent without exposing physical object identities or internal continuous-effect state."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Round-trip the extended permanent-state predicate and schema-v2 condition descriptors, then replay the resulting layer-6 grants exactly."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -6308,6 +6332,14 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute combat, controller-relative modified, equipped-source, attached-object color, and layer-5 type-count gates through one live typed boundary."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_state_conditions_recompute_layer_six_and_seven_results",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6343,7 +6375,7 @@
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_unrepresented_conditions_and_bodies_remain_residual",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Keep type-dependent counts, dynamic amounts, combat and equipment predicates, Ward, and quoted abilities material and residual."
+      "applicability_note": "Keep distinct-type and ability-presence counts, dynamic amounts, unmarked exact counts, per-opponent thresholds above existence, compound or unsupported state comparisons, Ward, and quoted abilities material and residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -6352,6 +6384,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile the closed turn, graveyard-card-count, hand-count, life-total, entry-turn, and named-counter grammar over source, attached, and fixed-query targets."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile direct public-state affected sets plus source, attached-object, and cycle-safe fixed object-count conditions through the existing typed characteristic owners."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -6368,6 +6408,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Pin the typed hand-count predicate and source identity into a checkpoint, then replay the following multiplayer priority commands exactly."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Pin schema-v2 source, attached-object, and layer-5 count conditions into a checkpoint and replay the following authoritative command exactly."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -6538,6 +6586,14 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute fixed layer-7c modifiers from shared combat, controller-relative modified, equipment, attachment, and cycle-safe layer-5 query facts, then replay the normalized descriptors exactly."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_live_fixed_queries_track_relations_source_identity_and_phasing",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6630,6 +6686,14 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed power and toughness modifiers over closed combat, tap, attachment, and modified affected sets into the existing anthem owner."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_fixed_battlefield_query_extensions_share_one_canonical_condition",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6661,6 +6725,14 @@
         "commander_review"
       ],
       "applicability_note": "Apply a reviewed battlefield static ability that gives same-controller permanents with declared subtypes a fixed power/toughness modifier in layer 7c."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Round-trip extended affected-set and schema-v2 conditional descriptors, then replay their resulting layer-7c modifiers exactly."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",

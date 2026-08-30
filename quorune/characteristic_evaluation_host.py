@@ -14,6 +14,7 @@ from .dynamic_characteristics import (
 )
 from .errors import GameRuleError
 from .model import CardInstance
+from .object_query import ObjectQueryResult, object_query_result
 
 
 class CharacteristicEvaluationHostMixin:
@@ -27,6 +28,9 @@ class CharacteristicEvaluationHostMixin:
         runtime_effects: Sequence[ContinuousEffect] = (),
         ignore_face_down: bool = False,
         maximum_layer: Layer | None = None,
+        enchanted: bool = False,
+        equipped: bool = False,
+        modified: bool = False,
     ) -> dict[str, Any]:
         """Delegate CR 613 evaluation to its rules-owned subsystem."""
 
@@ -44,7 +48,81 @@ class CharacteristicEvaluationHostMixin:
                 ignore_face_down=ignore_face_down,
                 query_count_resolver=resolver,
                 maximum_layer=maximum_layer,
+                enchanted=enchanted,
+                equipped=equipped,
+                modified=modified,
             ),
+        )
+
+    def _attachment_public_state(
+        self,
+        card: CardInstance,
+    ) -> tuple[bool, bool, bool]:
+        """Return enchanted, equipped, and controller-relative modified."""
+
+        enchanted = False
+        equipped = False
+        modified = any(
+            type(amount) is int and amount > 0
+            for amount in card.counters.values()
+        )
+        for attachment_id in tuple(card.attachments):
+            attachment = self.state.cards.get(attachment_id)
+            if (
+                attachment is None
+                or attachment.zone != "battlefield"
+                or attachment.phased_out
+                or attachment.attached_to != card.object_id
+            ):
+                continue
+            effective = self._effective_card_data(
+                attachment,
+                maximum_layer=Layer.COLOR,
+            )
+            types, subtypes, _supertypes = self._type_parts(
+                str(effective.get("type_line") or "")
+            )
+            is_aura = "enchantment" in types and "aura" in subtypes
+            is_equipment = "artifact" in types and "equipment" in subtypes
+            enchanted = enchanted or is_aura
+            equipped = equipped or is_equipment
+            modified = modified or is_equipment or (
+                is_aura and attachment.controller == card.controller
+            )
+        return enchanted, equipped, modified
+
+    def _public_object_query_result(
+        self,
+        card: CardInstance,
+    ) -> ObjectQueryResult:
+        """Project one permanent through the shared cycle-safe layer-5 edge."""
+
+        effective = self._effective_card_data(
+            card,
+            maximum_layer=Layer.COLOR,
+        )
+        attached = (
+            self.state.cards.get(card.attached_to)
+            if card.attached_to is not None
+            else None
+        )
+        enchanted, equipped, modified = self._attachment_public_state(card)
+        return object_query_result(
+            card,
+            effective,
+            type_parts=self._type_parts(
+                str(effective.get("type_line") or "")
+            ),
+            known_to_actor=True,
+            attached_to_ref=attached.ref if attached is not None else None,
+            entered_this_turn=(
+                self.state.turn_sequence > 0
+                and card.entered_battlefield_turn_sequence
+                == self.state.turn_sequence
+            ),
+            enchanted=enchanted,
+            equipped=equipped,
+            modified=modified,
         )
 
     def _effective_card_data(
@@ -69,10 +147,32 @@ class CharacteristicEvaluationHostMixin:
                     self.state,
                     self.semantics,
                     self.semantic_program_is_current_trusted,
+                    maximum_layer=maximum_layer,
+                    public_object_resolver=(
+                        self._public_object_query_result
+                        if maximum_layer is None
+                        or maximum_layer >= Layer.ABILITY
+                        else None
+                    ),
+                    quantity_resolver=(
+                        partial(query_characteristic_count, self)
+                        if maximum_layer is None
+                        or maximum_layer >= Layer.ABILITY
+                        else None
+                    ),
                 ),
             )
             if card.zone == "battlefield"
             else ()
+        )
+        enchanted, equipped, modified = (
+            self._attachment_public_state(card)
+            if card.zone == "battlefield"
+            and (
+                maximum_layer is None
+                or maximum_layer >= Layer.ABILITY
+            )
+            else (False, False, False)
         )
         base = self._apply_layered_characteristic_annotations(
             card,
@@ -80,6 +180,9 @@ class CharacteristicEvaluationHostMixin:
             runtime_effects=runtime_effects,
             ignore_face_down=ignore_face_down,
             maximum_layer=maximum_layer,
+            enchanted=enchanted,
+            equipped=equipped,
+            modified=modified,
         )
         if maximum_layer is None:
             base = apply_dynamic_characteristic_fragments(self, card, base)

@@ -19,7 +19,10 @@ from quorune.compiler.continuous_templates import (
 )
 from quorune.continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+    FixedPublicStateConditionError,
+    FixedPublicStateConditionKind,
     FixedPublicStateConditionSnapshot,
+    FixedPublicStateConditionSpec,
 )
 from quorune.continuous_effects import (
     CharacteristicState,
@@ -28,6 +31,10 @@ from quorune.continuous_effects import (
 )
 from quorune.deck import DeckLoader
 from quorune.model import CardInstance
+from quorune.object_predicate import (
+    ObjectQuerySpec,
+    PermanentStatePredicateSpec,
+)
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import checkpoint_envelope, replay_record
 from quorune.rules.capabilities import load_default_capability_registry
@@ -189,6 +196,146 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
         self.assertIn(QUERY_HANDLER_ID, handlers)
         self.assertNotIn(FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID, handlers)
 
+    def test_public_object_state_and_query_conditions_compile_closed(self):
+        cases = {
+            "Public State Equipment Standard": "source_matches_query",
+            "Public State Attachment Standard": "attached_matches_query",
+            "Public State Metalcraft Standard": "query_count_at_least",
+        }
+        for name, condition_kind in cases.items():
+            with self.subTest(name=name):
+                program = compile_card_program(
+                    self.db,
+                    self.db.lookup(name),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                    trust_level="trusted",
+                )
+                self.assertEqual((), program.residuals)
+                descriptor = next(
+                    descriptor
+                    for ability in program.abilities
+                    for descriptor in ability.handlers
+                    if descriptor.get("handler_id")
+                    == FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+                )
+                self.assertEqual(
+                    condition_kind,
+                    descriptor["source_condition"]["kind"],
+                )
+                self.assertEqual(2, descriptor["source_condition"]["schema_version"])
+                default_continuous_effect_component_registry().validate(
+                    descriptor
+                )
+
+        kindred_condition = fixed_public_state_characteristics_handler(
+            "As long as enchanted permanent is a Goblin, it gets +1/+1.",
+            source_name="Kindred Condition Fixture",
+        )
+        self.assertIsNotNone(kindred_condition)
+        kindred_predicate = kindred_condition[1]["source_condition"]["predicate"]
+        self.assertEqual([], kindred_predicate["types_all"])
+        self.assertEqual(["goblin"], kindred_predicate["subtypes_any"])
+
+        base = self.db.lookup("Fresh-Faced Recruit")
+        conditional_indestructible = replace(
+            base,
+            oracle_id="00000000-0000-4000-8000-000011820005",
+            name="Conditional Indestructible Standard",
+            oracle_text=(
+                "This creature has indestructible as long as it is tapped."
+            ),
+            keywords=(),
+        )
+        program = compile_card_program(
+            self.db,
+            conditional_indestructible,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+        self.assertEqual((), program.residuals)
+        descriptor = next(
+            descriptor
+            for ability in program.abilities
+            for descriptor in ability.handlers
+            if descriptor.get("handler_id")
+            == FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+        )
+        self.assertIs(
+            descriptor["source_condition"]["predicate"]["state_predicate"][
+                "tapped"
+            ],
+            True,
+        )
+        self.assertEqual(
+            ["Indestructible"], descriptor["modifier"]["add_abilities"]
+        )
+        self.assertIn(
+            "permanent.indestructible.ordinary",
+            program.capability_dependencies,
+        )
+
+        direct = {
+            "Public State Attack Standard": (
+                "continuous.characteristics.fixed-query-grant.v1",
+                "attacking",
+            ),
+            "Public State Modification Standard": (
+                "continuous.ability.fixed-query-keyword-grant.v1",
+                "modified",
+            ),
+        }
+        for name, (handler_id, state_field) in direct.items():
+            with self.subTest(name=name):
+                program = compile_card_program(
+                    self.db,
+                    self.db.lookup(name),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                    trust_level="trusted",
+                )
+                self.assertEqual((), program.residuals)
+                descriptor = next(
+                    descriptor
+                    for ability in program.abilities
+                    for descriptor in ability.handlers
+                    if descriptor.get("handler_id") == handler_id
+                )
+                state = descriptor["condition"]["predicate"]["state_predicate"]
+                self.assertIs(state[state_field], True)
+                default_continuous_effect_component_registry().validate(
+                    descriptor
+                )
+
+    def test_extended_state_predicates_preserve_legacy_serialization(self):
+        legacy = PermanentStatePredicateSpec(
+            counter_name="+1/+1",
+            minimum_counter_count=1,
+        )
+        self.assertEqual(
+            {
+                "entered_this_turn",
+                "tapped",
+                "counter_name",
+                "minimum_counter_count",
+            },
+            set(legacy.to_dict()),
+        )
+        current = ObjectQuerySpec(
+            zones=("battlefield",),
+            state_predicate=PermanentStatePredicateSpec(attacking=True),
+        )
+        restored = ObjectQuerySpec.from_dict(current.to_dict())
+        self.assertEqual(current, restored)
+        self.assertIs(restored.state_predicate.attacking, True)
+        with self.assertRaises(FixedPublicStateConditionError):
+            FixedPublicStateConditionSpec(
+                FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+                predicate=current,
+                schema_version=1,
+            )
+
     def test_threshold_opponent_anthem_preserves_the_query_relation(self):
         base = self.db.lookup("Fresh-Faced Recruit")
         record = replace(
@@ -230,7 +377,13 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "During your turn, this creature has ward {2}.",
             "During your turn, this creature has \"{T}: Draw a card.\"",
             "This creature gets +2/+0 as long as it's attacking.",
-            "As long as this creature is equipped, it has flying.",
+            "As long as this creature is equipped, it has ward {2}.",
+            "Creatures you control have flying as long as you control an "
+            "artifact with flying.",
+            "Artifacts you control have shroud as long as you control three "
+            "artifacts.",
+            "Artifacts you control have shroud as long as an opponent "
+            "controls two or more artifacts.",
         )
         for index, text in enumerate(unsupported):
             with self.subTest(text=text):
@@ -437,6 +590,7 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         seat: str,
         name: str,
         subtype: str = "Minotaur",
+        colors: tuple[str, ...] = (),
     ) -> CardInstance:
         ref = engine.create_token(
             seat,
@@ -446,10 +600,202 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
                 "power": "3",
                 "toughness": "3",
                 "keywords": [],
+                "colors": list(colors),
             },
             reason="fixed public-state characteristic assurance",
         )[0]
         return engine._resolve_object(seat, ref, zones={"battlefield"})
+
+    @staticmethod
+    def attach(source: CardInstance, target: CardInstance) -> None:
+        source.attached_to = target.object_id
+        if source.object_id not in target.attachments:
+            target.attachments.append(source.object_id)
+
+    def test_live_public_object_state_and_layer_five_queries_recompute(self):
+        session = self.session(118_220_004)
+        engine = session.engine
+        self.add_source(
+            session,
+            name="Public State Attack Standard",
+            ref="ATTACK-STANDARD",
+        )
+        self.add_source(
+            session,
+            name="Public State Modification Standard",
+            ref="MODIFIED-STANDARD",
+        )
+        metalcraft = self.add_source(
+            session,
+            name="Public State Metalcraft Standard",
+            ref="METALCRAFT-STANDARD",
+        )
+        target = self.creature(
+            engine,
+            seat="A",
+            name="Public State Target",
+        )
+
+        baseline = engine._effective_card_data(target)
+        self.assertEqual("3", baseline["power"])
+        self.assertNotIn("Lifelink", baseline["keywords"])
+        self.assertNotIn("Trample", baseline["keywords"])
+
+        target.attacking = "B"
+        attacking = engine._effective_card_data(target)
+        self.assertEqual("4", attacking["power"])
+        self.assertIn("Lifelink", attacking["keywords"])
+        target.attacking = None
+
+        target.counters["stun"] = 1
+        self.assertIn(
+            "Trample",
+            engine._effective_card_data(target)["keywords"],
+        )
+        target.counters.clear()
+
+        opposing_aura = self.add_source(
+            session,
+            name="Aboshan's Desire",
+            ref="OPPOSING-AURA",
+            seat="B",
+        )
+        self.attach(opposing_aura, target)
+        aura_state = engine._public_object_query_result(target)
+        self.assertTrue(aura_state.enchanted)
+        self.assertFalse(aura_state.modified)
+        self.assertNotIn(
+            "Trample",
+            engine._effective_card_data(target)["keywords"],
+        )
+        engine.change_control(
+            opposing_aura.object_id,
+            "A",
+            reason="modified-state controller witness",
+        )
+        controlled_aura_state = engine._public_object_query_result(target)
+        self.assertTrue(controlled_aura_state.enchanted)
+        self.assertTrue(controlled_aura_state.modified)
+        self.assertIn(
+            "Trample",
+            engine._effective_card_data(target)["keywords"],
+        )
+
+        conditioned = self.add_source(
+            session,
+            name="Public State Equipment Standard",
+            ref="EQUIPPED-STANDARD",
+        )
+        equipment = self.add_source(
+            session,
+            name="Javelin of Lightning",
+            ref="STATE-EQUIPMENT",
+            seat="B",
+        )
+        self.attach(equipment, conditioned)
+        equipment_state = engine._public_object_query_result(conditioned)
+        self.assertTrue(equipment_state.equipped)
+        self.assertTrue(equipment_state.modified)
+        equipped = engine._effective_card_data(conditioned)
+        self.assertEqual("3", equipped["power"])
+        self.assertEqual("3", equipped["toughness"])
+        self.assertIn("Flying", equipped["keywords"])
+        equipment.attached_to = None
+        conditioned.attachments.remove(equipment.object_id)
+        unequipped = engine._effective_card_data(conditioned)
+        self.assertEqual("2", unequipped["power"])
+        self.assertNotIn("Flying", unequipped["keywords"])
+
+        attachment = self.add_source(
+            session,
+            name="Public State Attachment Standard",
+            ref="ATTACHMENT-STANDARD",
+        )
+        black_target = self.creature(
+            engine,
+            seat="A",
+            name="Black Attachment Target",
+            colors=("B",),
+        )
+        self.attach(attachment, black_target)
+        black = engine._effective_card_data(black_target)
+        self.assertEqual("4", black["power"])
+        self.assertIn("Wither", black["keywords"])
+        black_target.annotations["copy_overrides"]["colors"] = ["U"]
+        blue = engine._effective_card_data(black_target)
+        self.assertEqual("3", blue["power"])
+        self.assertNotIn("Wither", blue["keywords"])
+
+        artifact_refs = engine.create_token(
+            "A",
+            name="Public Artifact",
+            quantity=2,
+            characteristics={
+                "type_line": "Token Artifact",
+                "keywords": [],
+            },
+            reason="public-state count witness",
+        )
+        artifact = engine._resolve_object(
+            "A",
+            artifact_refs[0],
+            zones={"battlefield"},
+        )
+        type_changed = self.creature(
+            engine,
+            seat="A",
+            name="Layer Five Type Witness",
+        )
+        self.assertNotIn(
+            "Shroud",
+            engine._effective_card_data(artifact)["keywords"],
+        )
+        type_changed.annotations["continuous_add_types"] = ["Artifact"]
+        self.assertIn(
+            "Shroud",
+            engine._effective_card_data(artifact)["keywords"],
+        )
+        type_changed.annotations["continuous_add_types"] = []
+        self.assertNotIn(
+            "Shroud",
+            engine._effective_card_data(artifact)["keywords"],
+        )
+
+        type_changed.annotations["continuous_add_types"] = ["Artifact"]
+        engine.move_card(metalcraft.object_id, "graveyard", log=False)
+        self.assertNotIn(
+            "Shroud",
+            engine._effective_card_data(artifact)["keywords"],
+        )
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.started = True
+        engine._grant_priority("D")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act(
+            "pilot:D",
+            {
+                "action_id": "concede",
+                "choices": {"confirm_concede": True},
+                "plan": "REPLAY_TYPED_PUBLIC_STATE_CHARACTERISTICS",
+                "reason": "Verify typed public-state queries from checkpoint.",
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        with tempfile.TemporaryDirectory() as directory:
+            record_dir = Path(directory) / "public-state-query-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
 
     def test_public_state_conditions_recompute_layer_six_and_seven_results(self):
         registry = default_continuous_effect_component_registry()
@@ -688,6 +1034,59 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         departed = engine._effective_card_data(target)
         self.assertEqual("3", departed["power"])
         self.assertNotIn("Trample", departed["keywords"])
+
+    def test_typed_aura_and_public_state_characteristics_compose(self):
+        session = self.session(118_220_006)
+        engine = session.engine
+        aura = self.add_source(
+            session,
+            name="Public State Attachment Standard",
+            ref="TYPED-PUBLIC-STATE-AURA",
+            zone="hand",
+        )
+        target = self.creature(
+            engine,
+            seat="A",
+            name="Typed Aura Public-State Target",
+            colors=("B",),
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.priority_passes = []
+        engine.state.players["A"].mana_pool.update({"B": 1, "C": 1})
+
+        engine._cast(
+            "A",
+            {
+                "card": aura.ref,
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"B": 1, "C": 1},
+            },
+        )
+        self.resolve_top(engine)
+
+        self.assertEqual(target.object_id, aura.attached_to)
+        self.assertTrue(engine._attachment_is_legal(aura, subtypes={"aura"}))
+        enhanced = engine._effective_card_data(target)
+        self.assertEqual("4", enhanced["power"])
+        self.assertEqual("4", enhanced["toughness"])
+        self.assertIn("Wither", enhanced["keywords"])
+
+        target.annotations["copy_overrides"] = {
+            "type_line": "Token Creature — Wall"
+        }
+        self.assertFalse(
+            engine._attachment_is_legal(aura, subtypes={"aura"})
+        )
+        self.assertFalse(engine._stabilize())
+        self.assertEqual("graveyard", aura.zone)
+        self.assertNotIn(
+            "Wither",
+            engine._effective_card_data(target)["keywords"],
+        )
 
     def test_public_state_characteristics_execute_while_replacement_siblings_fail_closed(self):
         session = self.session(118_220_003)

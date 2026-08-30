@@ -160,7 +160,8 @@ quantities, linked results, compound or conditional tails, hidden zones,
 battlefield returns, and unsupported characteristic dependencies remain
 source-spanned residuals.
 
-`compiler/continuous_templates.py` also lowers fixed controlled permanent sets
+`compiler/public_state_queries.py`, consumed by
+`compiler/continuous_templates.py`, also lowers fixed controlled permanent sets
 that gain supported keywords, or gain fixed power/toughness and supported
 keywords, until end of turn. It reuses the static fixed-query grammar only to
 derive one closed `ObjectQuerySpec`; resolution evaluates current effective
@@ -176,14 +177,18 @@ forms remain source-spanned residuals.
 The same compiler owner separately lowers fixed static characteristic bodies
 gated by one closed public-state condition. A versioned descriptor combines a
 source-controller turn, raw graveyard or hand count, life-total, current-turn
-entry, or named-counter predicate with the existing source, attached-object, or
-fixed-query target grammar. Runtime derives only those public scalar facts from
-authoritative state, evaluates the condition once, and sends paired ability
-additions and power/toughness modifiers through the same layer applicability.
-Delirium, Metalcraft, type-dependent or dynamic characteristic counts, dynamic
-amounts, top-library, chosen, secret-content, combat-state, source attachment-
-state, quoted-ability, type, color, ability-removal, Class-level, Protection,
-Ward, and unsupported-keyword forms remain source-spanned residuals. See
+entry, named-counter predicate, source public state, attached-object layer-5
+characteristic query, or fixed layer-5 public object-count query with the
+existing source, attached-object, or fixed-query target grammar. Runtime
+evaluates the typed condition once and sends paired ability additions and
+power/toughness modifiers through the same layer applicability. The fixed-query
+owners use that shared permanent-state predicate for attacking, blocking,
+tapped, untapped, enchanted, equipped, and modified affected sets. Delirium,
+distinct-type or dynamic quantities, dynamic amounts, top-library, chosen,
+secret-content, historical, exact-attachment-count, unmarked exact-count,
+multi-opponent-threshold, compound-state, quoted-ability, type, color, ability-
+removal, Class-level, Protection, Ward, and unsupported-keyword forms remain
+source-spanned residuals. See
 [ADR 0087](../adr/0087-typed-fixed-public-state-characteristics.md).
 
 `compiler/closed_effect_programs.py` owns the broader bounded composition
@@ -441,16 +446,18 @@ face-down semantics, and player or game-rule effects remain residual. This
 producer adds no family-specific ability-presence check and performs no dynamic
 characteristic count.
 
-`compiler/continuous_templates.py` owns the fixed-query keyword-grant grammar.
+`compiler/public_state_queries.py` owns the shared fixed battlefield-query and
+public-state condition grammar consumed by `compiler/continuous_templates.py`.
 It accepts only live battlefield sets representable by `ObjectQuerySpec` over
 a source-controller, source-opponent, or global relation. Closed predicates
 cover type, pinned creature subtype, color, multicolor cardinality, supertype,
-token and subtype-token identity, or the presence of a named +1/+1 counter.
+token and subtype-token identity, the presence of a named +1/+1 counter, or
+attacking, blocking, tapped, untapped, enchanted, equipped, and modified state.
 The fixed power/toughness and supported-keyword parsers reuse that same query,
 including combined layer-6 and layer-7c wording. Every emitted keyword node
 declares both the layer-6 grant capability and each keyword's existing combat,
-damage, destruction, or targeting consumer capability. Attacking or blocking,
-modified, ability-qualified, dynamically counted, conditional, temporary,
+damage, destruction, or targeting consumer capability. Ability-qualified,
+compound state-and-counter, dynamically counted, open conditional, temporary,
 chosen, hidden-zone, and unsupported-keyword forms remain source-spanned
 residuals. Matching Class lines also remain residual until level applicability
 has a typed owner. The grammar performs no dynamic characteristic counts and

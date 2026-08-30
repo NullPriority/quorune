@@ -590,8 +590,8 @@ class OracleIRTests(unittest.TestCase):
         stateful_ir = compile_oracle_card(
             stateful, capability_registry=registry
         )
-        self.assertNotEqual("exact", stateful_ir.status)
-        self.assertNotEqual(
+        self.assertEqual("exact", stateful_ir.status)
+        self.assertEqual(
             "continuous-fixed-query-anthem-v2",
             stateful_ir.faces[0].nodes[0].template_id,
         )
