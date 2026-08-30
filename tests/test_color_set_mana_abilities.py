@@ -413,8 +413,8 @@ class ColorSetManaRuntimeTests(unittest.TestCase):
         )
         original = engine._effective_card_data
 
-        def colorless_legendary(card):
-            value = original(card)
+        def colorless_legendary(card, *, ignore_face_down=False):
+            value = original(card, ignore_face_down=ignore_face_down)
             if getattr(card, "object_id", card) == legend.object_id:
                 value = dict(value)
                 value["type_line"] = "Legendary Artifact Creature — Construct"
