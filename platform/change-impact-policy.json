@@ -363,6 +363,35 @@
       ]
     },
     {
+      "id": "attached-characteristic-closure-contract",
+      "patterns": [
+        "quorune/ability_fragments.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/compiled_ability_fragments.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/keyword_abilities.py",
+        "quorune/semantic_runtime/attached_continuous.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/attached-characteristic-closure-cards.json",
+        "tests/test_attached_static_characteristics.py"
+      ],
+      "test_modules": [
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_combat_evasion_restrictions",
+        "test_continuous_effect_components",
+        "test_query_power_toughness_definitions",
+        "test_typed_ability_fragments",
+        "test_typed_dynamic_characteristics",
+        "test_typed_query_self_characteristics"
+      ]
+    },
+    {
       "id": "typed-query-self-characteristic-contract",
       "patterns": [
         "quorune/ability_fragments.py",

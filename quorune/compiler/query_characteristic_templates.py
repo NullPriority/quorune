@@ -119,8 +119,12 @@ def _query_quantity_descriptor(
         return (ObjectQuerySpec(**fields), exclude_source)
 
     type_unions = {
+        "artifact and/or creature": ("artifact", "creature"),
+        "artifact and/or enchantment": ("artifact", "enchantment"),
         "artifacts and/or creatures": ("artifact", "creature"),
         "artifacts and/or enchantments": ("artifact", "enchantment"),
+        "creature and/or enchantment": ("creature", "enchantment"),
+        "creatures and/or enchantments": ("creature", "enchantment"),
         "instant and sorcery": ("instant", "sorcery"),
     }
     if definition_extensions and normalized in type_unions:
@@ -237,7 +241,7 @@ def _query_quantity_descriptor(
     return (ObjectQuerySpec(**fields), exclude_source)
 
 
-def _query_characteristic_quantity(
+def query_characteristic_quantity(
     value: str,
     *,
     source_name: str,
@@ -247,7 +251,7 @@ def _query_characteristic_quantity(
     source = SourceReferenceSpec(source_name).regex_pattern
     counter = re.fullmatch(
         rf"(?P<counter>[A-Za-z0-9+/-]+) counters? on "
-        rf"(?:it|him|her|this (?:creature|permanent|token)|{source})",
+        rf"(?:it|him|her|this (?:Aura|creature|Equipment|permanent|token)|{source})",
         text,
         re.IGNORECASE,
     )
@@ -369,7 +373,7 @@ def query_power_toughness_definition_handler(
     )
     if match is None:
         return None
-    quantity = _query_characteristic_quantity(
+    quantity = query_characteristic_quantity(
         match.group("quantity"),
         source_name=source_name,
         definition_extensions=True,
@@ -411,7 +415,7 @@ def _query_characteristic_condition(
     )
     if threshold is not None:
         count = _fixed_condition_amount(threshold.group("count"))
-        quantity = _query_characteristic_quantity(
+        quantity = query_characteristic_quantity(
             threshold.group("quantity"), source_name=source_name
         )
         return (quantity, count) if quantity is not None and count else None
@@ -424,7 +428,7 @@ def _query_characteristic_condition(
     )
     if controlled is not None:
         count = _fixed_condition_amount(controlled.group("count"))
-        quantity = _query_characteristic_quantity(
+        quantity = query_characteristic_quantity(
             f"{controlled.group('object')} you control",
             source_name=source_name,
         )
@@ -433,7 +437,7 @@ def _query_characteristic_condition(
         r"you control another (?P<object>.+)", text, re.IGNORECASE
     )
     if another is not None:
-        quantity = _query_characteristic_quantity(
+        quantity = query_characteristic_quantity(
             f"other {another.group('object')} you control",
             source_name=source_name,
         )
@@ -445,7 +449,7 @@ def _query_characteristic_condition(
         re.IGNORECASE,
     )
     if opponent is not None:
-        quantity = _query_characteristic_quantity(
+        quantity = query_characteristic_quantity(
             f"{opponent.group('object')} an opponent control",
             source_name=source_name,
         )
@@ -585,7 +589,7 @@ def query_self_characteristics_handler(
         re.IGNORECASE,
     )
     if per_object is not None:
-        quantity = _query_characteristic_quantity(
+        quantity = query_characteristic_quantity(
             per_object.group("quantity"), source_name=source_name
         )
         # Keyword grants combined with a per-object modifier are grammatically
@@ -664,4 +668,8 @@ def query_self_characteristics_handler(
     )
 
 
-__all__ = ["query_self_characteristics_handler"]
+__all__ = [
+    "query_characteristic_quantity",
+    "query_power_toughness_definition_handler",
+    "query_self_characteristics_handler",
+]

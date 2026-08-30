@@ -43,6 +43,7 @@ class CharacteristicQuantitySpec:
     query: ObjectQuerySpec | None = None
     counter_name: str | None = None
     exclude_source: bool = False
+    exclude_attached_object: bool = False
     schema_version: int = 1
 
     def __post_init__(self) -> None:
@@ -58,12 +59,21 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError(
                 "Characteristic quantity source exclusion must be boolean"
             )
+        if type(self.exclude_attached_object) is not bool:
+            raise CharacteristicFragmentError(
+                "Characteristic quantity attached-object exclusion must be boolean"
+            )
+        if self.exclude_source and self.exclude_attached_object:
+            raise CharacteristicFragmentError(
+                "Characteristic quantities cannot exclude two relative objects"
+            )
         if self.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
             if (
                 type(self.counter_name) is not str
                 or not self.counter_name.strip()
                 or self.query is not None
                 or self.exclude_source
+                or self.exclude_attached_object
             ):
                 raise CharacteristicFragmentError(
                     "Source-counter quantities require only one counter name"
@@ -145,6 +155,10 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError(
                 "Source exclusion is unsupported for hidden hand quantities"
             )
+        if self.exclude_attached_object and query.zones != ("battlefield",):
+            raise CharacteristicFragmentError(
+                "Attached-object exclusion requires a battlefield quantity"
+            )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -153,6 +167,7 @@ class CharacteristicQuantitySpec:
             "query": self.query.to_dict() if self.query is not None else None,
             "counter_name": self.counter_name,
             "exclude_source": self.exclude_source,
+            "exclude_attached_object": self.exclude_attached_object,
         }
 
     @classmethod
@@ -166,7 +181,11 @@ class CharacteristicQuantitySpec:
             "counter_name",
             "exclude_source",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        extended = {*expected, "exclude_attached_object"}
+        if not isinstance(value, Mapping) or frozenset(value) not in {
+            frozenset(expected),
+            frozenset(extended),
+        }:
             raise CharacteristicFragmentError(
                 "Characteristic quantities have a closed schema"
             )
@@ -187,6 +206,9 @@ class CharacteristicQuantitySpec:
             query=query,
             counter_name=value["counter_name"],
             exclude_source=value["exclude_source"],
+            exclude_attached_object=value.get(
+                "exclude_attached_object", False
+            ),
         )
 
 

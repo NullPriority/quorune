@@ -104,6 +104,7 @@ class ContinuousEffectSourceContext:
     attached_object: ContinuousObjectIdentity | None = None
     source_logical_object_id: str | None = None
     public_state: FixedPublicStateConditionSnapshot | None = None
+    resolved_quantity: int | None = None
 
     def __post_init__(self) -> None:
         if not self.source_object_id or not self.source_ref:
@@ -140,6 +141,13 @@ class ContinuousEffectSourceContext:
         ):
             raise SemanticNodeError(
                 "A continuous component public-state snapshot must be typed"
+            )
+        if self.resolved_quantity is not None and (
+            type(self.resolved_quantity) is not int
+            or self.resolved_quantity < 0
+        ):
+            raise SemanticNodeError(
+                "A continuous component quantity must be a nonnegative integer"
             )
 
 

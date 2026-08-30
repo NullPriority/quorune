@@ -4,6 +4,7 @@ from typing import Any, Protocol
 
 from .ability_fragments import (
     AbilityFragmentError,
+    StaticComponentSpec,
     StaticAbilityFragment,
     ability_fragment_to_dict,
     canonical_ability_fragments,
@@ -103,8 +104,21 @@ def compiled_static_ability_fragments(
     ):
         if not host.semantic_program_is_current_trusted(program):
             continue
-        if str(program.provenance.get("face_id") or "") != expected_face:
+        program_face = str(program.provenance.get("face_id") or "")
+        if (
+            program_face
+            and program_face != expected_face
+        ) or (
+            not program_face
+            and expected_face != "front"
+        ):
             continue
+        if (
+            program.active_zone == "battlefield"
+            and program.event == "characteristics.evaluate"
+            and program.ability_id.startswith("static:")
+        ):
+            fragments.append(StaticComponentSpec(program.key))
         fragments.extend(fragments_from_descriptors(program.handlers))
     return canonical_ability_fragments(fragments)
 

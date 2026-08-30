@@ -5,6 +5,7 @@ from typing import Any, Mapping, Sequence
 
 from .carddb_characteristics import separate_custom_display_text
 from .card_programs.runtime import collect_card_program_continuous_effects
+from .ability_fragments import static_component_keys
 from .characteristic_evaluation import evaluate_card_characteristics
 from .continuous_effects import ContinuousEffect, Layer
 from .continuous_effect_state import active_resolution_effects
@@ -50,6 +51,7 @@ class CharacteristicEvaluationHostMixin:
         enchanted: bool = False,
         equipped: bool = False,
         modified: bool = False,
+        _enforce_static_component_applicability: bool = True,
     ) -> dict[str, Any]:
         """Delegate CR 613 evaluation to its rules-owned subsystem."""
 
@@ -57,7 +59,14 @@ class CharacteristicEvaluationHostMixin:
             maximum_layer is None or maximum_layer >= Layer.ABILITY
         )
         resolver = (
-            partial(query_characteristic_count, self, card)
+            partial(
+                query_characteristic_count,
+                self,
+                card,
+                _enforce_static_component_applicability=(
+                    _enforce_static_component_applicability
+                ),
+            )
             if query_layer_reached
             and (
                 card.zone == "battlefield"
@@ -83,6 +92,8 @@ class CharacteristicEvaluationHostMixin:
     def _attachment_public_state(
         self,
         card: CardInstance,
+        *,
+        _enforce_static_component_applicability: bool = True,
     ) -> tuple[bool, bool, bool]:
         """Return enchanted, equipped, and controller-relative modified."""
 
@@ -104,6 +115,9 @@ class CharacteristicEvaluationHostMixin:
             effective = self._effective_card_data(
                 attachment,
                 maximum_layer=Layer.COLOR,
+                _enforce_static_component_applicability=(
+                    _enforce_static_component_applicability
+                ),
             )
             types, subtypes, _supertypes = self._type_parts(
                 str(effective.get("type_line") or "")
@@ -120,19 +134,29 @@ class CharacteristicEvaluationHostMixin:
     def _public_object_query_result(
         self,
         card: CardInstance,
+        *,
+        _enforce_static_component_applicability: bool = True,
     ) -> ObjectQueryResult:
         """Project one permanent through the shared cycle-safe layer-5 edge."""
 
         effective = self._effective_card_data(
             card,
             maximum_layer=Layer.COLOR,
+            _enforce_static_component_applicability=(
+                _enforce_static_component_applicability
+            ),
         )
         attached = (
             self.state.cards.get(card.attached_to)
             if card.attached_to is not None
             else None
         )
-        enchanted, equipped, modified = self._attachment_public_state(card)
+        enchanted, equipped, modified = self._attachment_public_state(
+            card,
+            _enforce_static_component_applicability=(
+                _enforce_static_component_applicability
+            ),
+        )
         return object_query_result(
             card,
             effective,
@@ -151,6 +175,19 @@ class CharacteristicEvaluationHostMixin:
             modified=modified,
         )
 
+    def _effective_static_component_keys(
+        self,
+        card: CardInstance,
+    ) -> tuple[str, ...]:
+        """Resolve one source's shared layer-6 static-component snapshot."""
+
+        effective = self._effective_card_data(
+            card,
+            maximum_layer=Layer.ABILITY,
+            _enforce_static_component_applicability=False,
+        )
+        return static_component_keys(effective.get("ability_fragments", ()))
+
     def _effective_card_data(
         self,
         value: str | CardInstance,
@@ -158,6 +195,7 @@ class CharacteristicEvaluationHostMixin:
         printed_entry_characteristics: bool = False,
         ignore_face_down: bool = False,
         maximum_layer: Layer | None = None,
+        _enforce_static_component_applicability: bool = True,
     ) -> dict[str, Any]:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
         record = self.card_record(card)
@@ -175,15 +213,31 @@ class CharacteristicEvaluationHostMixin:
                     self.semantic_program_is_current_trusted,
                     maximum_layer=maximum_layer,
                     public_object_resolver=(
-                        self._public_object_query_result
+                        partial(
+                            self._public_object_query_result,
+                            _enforce_static_component_applicability=(
+                                _enforce_static_component_applicability
+                            ),
+                        )
                         if maximum_layer is None
                         or maximum_layer >= Layer.ABILITY
                         else None
                     ),
                     quantity_resolver=(
-                        partial(query_characteristic_count, self)
+                        partial(
+                            query_characteristic_count,
+                            self,
+                            _enforce_static_component_applicability=(
+                                _enforce_static_component_applicability
+                            ),
+                        )
                         if maximum_layer is None
                         or maximum_layer >= Layer.ABILITY
+                        else None
+                    ),
+                    static_component_resolver=(
+                        self._effective_static_component_keys
+                        if _enforce_static_component_applicability
                         else None
                     ),
                 ),
@@ -192,7 +246,12 @@ class CharacteristicEvaluationHostMixin:
             else ()
         )
         enchanted, equipped, modified = (
-            self._attachment_public_state(card)
+            self._attachment_public_state(
+                card,
+                _enforce_static_component_applicability=(
+                    _enforce_static_component_applicability
+                ),
+            )
             if card.zone == "battlefield"
             and (
                 maximum_layer is None
@@ -209,6 +268,9 @@ class CharacteristicEvaluationHostMixin:
             enchanted=enchanted,
             equipped=equipped,
             modified=modified,
+            _enforce_static_component_applicability=(
+                _enforce_static_component_applicability
+            ),
         )
         if maximum_layer is None:
             base = apply_dynamic_characteristic_fragments(self, card, base)

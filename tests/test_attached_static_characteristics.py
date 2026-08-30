@@ -8,6 +8,10 @@ import tempfile
 import unittest
 
 from common import keep_all, load_assets, make_session
+from quorune.ability_fragments import (
+    StaticComponentSpec,
+    ability_fragment_to_dict,
+)
 from quorune.abilities import parse_activated_abilities
 from quorune.attachments import (
     AttachmentRelationError,
@@ -20,10 +24,15 @@ from quorune.compiler.continuous_templates import (
 )
 from quorune.continuous_effect_model import (
     ContinuousEffect,
+    ContinuousEffectDuration,
     ContinuousEffectError,
+    ContinuousEffectOrigin,
     ContinuousEffectRelation,
     ContinuousObjectIdentity,
+    ContinuousOperation,
+    Layer,
 )
+from quorune.continuous_effect_state import commit_continuous_effect
 from quorune.continuous_effects import (
     CharacteristicState,
     evaluate_continuous_effects,
@@ -301,6 +310,96 @@ class AttachedContinuousModelTests(unittest.TestCase):
         })
         self.assertNotIn("Flying", result.characteristics["abilities"])
 
+    def test_dynamic_transform_and_remove_then_grant_use_canonical_layers(self):
+        dynamic = AttachedFixedCharacteristicsHandler().lower(
+            descriptor(
+                "Enchanted creature gets +1/+1 for each artifact you control."
+            ),
+            replace(self.context(), resolved_quantity=3),
+        )
+        scaled = evaluate_continuous_effects(
+            self.base(),
+            dynamic,
+            context={
+                "object_id": "target",
+                "logical_object_id": "target@0",
+                "zone": "battlefield",
+                "owner": "B",
+            },
+        )
+        self.assertEqual(4, scaled.characteristics["power"])
+        self.assertEqual(4, scaled.characteristics["toughness"])
+
+        transformed = AttachedFixedCharacteristicsHandler().lower(
+            descriptor(
+                "Enchanted creature loses all abilities and is a blue Frog "
+                "creature with base power and toughness 1/1."
+            ),
+            self.context(),
+        )
+        base = self.base()
+        base.card_types.add("Artifact")
+        base.colors.add("R")
+        base.abilities.append("Flying")
+        frog = evaluate_continuous_effects(
+            base,
+            transformed,
+            context={
+                "object_id": "target",
+                "logical_object_id": "target@0",
+                "zone": "battlefield",
+                "owner": "B",
+            },
+        ).characteristics
+        self.assertEqual(["Creature"], frog["card_types"])
+        self.assertEqual(["Frog"], frog["subtypes"])
+        self.assertEqual(["U"], frog["colors"])
+        self.assertEqual([], frog["abilities"])
+        self.assertEqual((1, 1), (frog["power"], frog["toughness"]))
+
+        darksteel = AttachedFixedCharacteristicsHandler().lower(
+            descriptor(
+                "Enchanted creature is an Insect artifact creature with base "
+                "power and toughness 0/1 and has indestructible, and it loses "
+                "all other abilities, card types, and creature types."
+            ),
+            self.context(),
+        )
+        mutation = evaluate_continuous_effects(
+            self.base(),
+            darksteel,
+            context={
+                "object_id": "target",
+                "logical_object_id": "target@0",
+                "zone": "battlefield",
+                "owner": "B",
+            },
+        ).characteristics
+        self.assertEqual({"Artifact", "Creature"}, set(mutation["card_types"]))
+        self.assertEqual(["Insect"], mutation["subtypes"])
+        self.assertEqual(["Indestructible"], mutation["abilities"])
+        self.assertEqual((0, 1), (mutation["power"], mutation["toughness"]))
+
+        all_types_base = self.base()
+        all_types_base.subtypes.add("Equipment")
+        all_types = evaluate_continuous_effects(
+            all_types_base,
+            AttachedFixedCharacteristicsHandler().lower(
+                descriptor(
+                    "Equipped creature gets +1/+1 and is every creature type."
+                ),
+                self.context(),
+            ),
+            context={
+                "object_id": "target",
+                "logical_object_id": "target@0",
+                "zone": "battlefield",
+                "owner": "B",
+            },
+        ).characteristics["subtypes"]
+        self.assertIn("Equipment", all_types)
+        self.assertIn("Goblin", all_types)
+
     def test_attached_fixed_ward_uses_current_fragment(self):
         effects = AttachedFixedCharacteristicsHandler().lower(
             descriptor(
@@ -418,17 +517,88 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
                 self.assertEqual(expected[2], value["add_abilities"])
                 self.assertEqual(expected[3], value["remove_abilities"])
 
-    def test_compiler_rejects_dynamic_conditional_and_unrepresented_text(self):
+    def test_compiler_rejects_conditional_and_unrepresented_text(self):
         for line in (
             "Equipped creature gets +X/+X.",
-            "Equipped creature gets +1/+1 for each artifact you control.",
             "Enchanted creature can't attack.",
             'Equipped creature has "{T}: Draw a card."',
             "As long as enchanted creature is red, it gets +1/+1.",
+            (
+                "Enchanted creature loses all abilities and is a green and "
+                "white Citizen creature with base power and toughness 1/1 "
+                "named Legitimate Businessperson."
+            ),
+            (
+                "Enchanted creature is a Turtle with base power and toughness "
+                "0/1. It can't attack and loses all abilities."
+            ),
+            (
+                "Equipped creature gets +1/+0 for each Equipment attached to it."
+            ),
         ):
             with self.subTest(line=line):
                 self.assertIsNone(
                     attached_fixed_characteristics_handler(line)
+                )
+
+    def test_compiler_lowers_closed_dynamic_compound_and_transform_forms(self):
+        fixtures = {
+            "Equipped creature gets +1/+0 for each Gate you control and has vigilance and menace.": (
+                1,
+                0,
+                ["Vigilance", "Menace"],
+            ),
+            "Enchanted creature gets +2/+2, has first strike, and is a Knight in addition to its other types.": (
+                0,
+                0,
+                ["First Strike"],
+            ),
+            "Equipped creature has base power and toughness 10/10.": (
+                0,
+                0,
+                [],
+            ),
+        }
+        for line, expected in fixtures.items():
+            with self.subTest(line=line):
+                modifier = descriptor(line)["modifier"]
+                self.assertEqual(expected[0], modifier["quantity_power"])
+                self.assertEqual(expected[1], modifier["quantity_toughness"])
+                self.assertEqual(expected[2], modifier["add_abilities"])
+
+        other = descriptor(
+            "Enchanted creature gets +1/+1 for each other creature you control."
+        )["modifier"]["quantity"]
+        self.assertFalse(other["exclude_source"])
+        self.assertTrue(other["exclude_attached_object"])
+
+    def test_measured_attached_characteristic_cohort_is_capability_closed(self):
+        fixture = json.loads(
+            (
+                Path(__file__).parent
+                / "fixtures"
+                / "attached-characteristic-closure-cards.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(69, len(fixture["cards"]))
+        capabilities = load_default_capability_registry()
+        for card_data in fixture["cards"]:
+            name = card_data["name"]
+            with self.subTest(name=name):
+                ir = compile_oracle_card(
+                    self.db.lookup(name),
+                    capability_registry=capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status)
+                self.assertTrue(
+                    any(
+                        descriptor.get("handler_id")
+                        == "continuous.attached.fixed-characteristics.v1"
+                        for face in ir.faces
+                        for node in face.nodes
+                        for descriptor in node.handlers
+                    )
                 )
 
     def test_compiler_lowers_granted_protection_to_a_typed_fragment(self):
@@ -762,6 +932,170 @@ class AttachedStaticEngineTests(unittest.TestCase):
         detach_object(engine.state.cards, greaves)
         self.assertNotIn(
             "Shroud", engine._effective_card_data(engineer)["keywords"]
+        )
+
+    def test_shared_static_component_query_owns_removal_and_typed_grant(self):
+        session = self.session(6131007)
+        engine = session.engine
+        greaves = self.find(engine, "A", "Lightning Greaves")
+        first = self.find(engine, "A", "Mishra, Eminent One")
+        second = self.find(engine, "A", "Goblin Engineer")
+        self.put_on_battlefield(engine, greaves, first, second)
+        attach_objects(
+            engine.state.cards,
+            greaves,
+            first,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        program = next(
+            value
+            for value in engine.semantics.runtime_handler_programs_for_oracle(
+                greaves.oracle_id,
+                active_zone="battlefield",
+                event="characteristics.evaluate",
+            )
+            if value.ability_id.startswith("static:")
+        )
+        self.assertIn(
+            program.key,
+            engine._effective_static_component_keys(greaves),
+        )
+        self.assertIn("Haste", engine._effective_card_data(first)["keywords"])
+
+        removal = ContinuousEffect(
+            effect_id="test:remove-static-component",
+            source_id="test:removal",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=engine._next_zone_timestamp(),
+            operations=(ContinuousOperation("remove_all_abilities"),),
+            origin=ContinuousEffectOrigin.RESOLUTION,
+            duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+            locked_objects=(
+                ContinuousObjectIdentity(
+                    object_id=greaves.object_id,
+                    logical_object_id=greaves.logical_object_id,
+                ),
+            ),
+        )
+        commit_continuous_effect(engine.state, removal)
+        self.assertNotIn(
+            program.key,
+            engine._effective_static_component_keys(greaves),
+        )
+        self.assertNotIn(
+            "Haste", engine._effective_card_data(first)["keywords"]
+        )
+
+        granted = card("granted-equipment", zone_timestamp=99)
+        granted.oracle_id = second.oracle_id
+        granted.annotations["object_characteristics"] = {
+            "name": "Granted Equipment",
+            "type_line": "Artifact — Equipment",
+            "oracle_text": "",
+            "display_text": "",
+            "keywords": [],
+            "colors": [],
+            "ability_fragments": [],
+        }
+        granted.annotations["granted_ability_fragments"] = [
+            ability_fragment_to_dict(StaticComponentSpec(program.key))
+        ]
+        engine.state.cards[granted.object_id] = granted
+        engine.state.players["A"].zones["battlefield"].append(
+            granted.object_id
+        )
+        attach_objects(
+            engine.state.cards,
+            granted,
+            second,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        self.assertEqual(
+            {"Haste", "Shroud"},
+            {"Haste", "Shroud"}.intersection(
+                engine._effective_card_data(second)["keywords"]
+            ),
+        )
+        granted.annotations["granted_ability_fragments"] = [
+            ability_fragment_to_dict(
+                StaticComponentSpec("missing:static:component")
+            )
+        ]
+        self.assertNotIn(
+            "Haste", engine._effective_card_data(second)["keywords"]
+        )
+
+    def test_dynamic_quantities_use_source_controller_and_attached_exclusion(self):
+        session = self.session(6131008)
+        engine = session.engine
+        target = self.find(engine, "A", "Mishra, Eminent One")
+        other = self.find(engine, "A", "Goblin Engineer")
+        self.put_on_battlefield(engine, target)
+        base_power = engine._numeric_stat(target.object_id, "power")
+
+        glitter = self.add_card(
+            engine,
+            seat="A",
+            name="All That Glitters",
+            ref="DYNAMIC-GLITTER",
+            zone="battlefield",
+        )
+        attach_objects(
+            engine.state.cards,
+            glitter,
+            target,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        self.assertEqual(
+            base_power + 1,
+            engine._numeric_stat(target.object_id, "power"),
+        )
+        engine.create_token(
+            "A",
+            name="Counted Clue",
+            characteristics={
+                "type_line": "Token Artifact — Clue",
+                "colors": [],
+                "keywords": [],
+            },
+        )
+        self.assertEqual(
+            base_power + 2,
+            engine._numeric_stat(target.object_id, "power"),
+        )
+        engine.change_control(
+            glitter.object_id,
+            "B",
+            reason="dynamic attached source-controller witness",
+        )
+        self.assertEqual(
+            base_power + 1,
+            engine._numeric_stat(target.object_id, "power"),
+        )
+
+        engine.move_card(glitter.object_id, "graveyard", log=False)
+        bravado = self.add_card(
+            engine,
+            seat="A",
+            name="Bravado",
+            ref="DYNAMIC-VAMPIRISM",
+            zone="battlefield",
+        )
+        attach_objects(
+            engine.state.cards,
+            bravado,
+            target,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        self.assertEqual(
+            base_power,
+            engine._numeric_stat(target.object_id, "power"),
+        )
+        self.put_on_battlefield(engine, other)
+        self.assertEqual(
+            base_power + 1,
+            engine._numeric_stat(target.object_id, "power"),
         )
 
     def test_animate_dead_and_bestow_modifiers_use_generic_attached_handler(self):

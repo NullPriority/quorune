@@ -802,6 +802,43 @@ class ToxicSpec:
         return cls(**dict(value))
 
 
+@dataclass(frozen=True, slots=True)
+class StaticComponentSpec:
+    """One trusted static CardProgram component present in layer 6."""
+
+    semantic_key: str
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise AbilityFragmentError(
+                "Unsupported static-component fragment schema version"
+            )
+        if (
+            type(self.semantic_key) is not str
+            or not self.semantic_key.strip()
+            or self.semantic_key != self.semantic_key.strip()
+        ):
+            raise AbilityFragmentError(
+                "Static-component semantic keys must be nonempty canonical strings"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "semantic_key": self.semantic_key,
+        }
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> "StaticComponentSpec":
+        expected = {"schema_version", "semantic_key"}
+        if not isinstance(value, Mapping) or set(value) != expected:
+            raise AbilityFragmentError(
+                "Static-component fragments have a closed schema"
+            )
+        return cls(**dict(value))
+
+
 StaticAbilityFragment: TypeAlias = (
     SimpleEnchantSpec
     | TypedEnchantSpec
@@ -813,6 +850,7 @@ StaticAbilityFragment: TypeAlias = (
     | DamageKeywordTriggerSpec
     | SpellCastKeywordTriggerSpec
     | ToxicSpec
+    | StaticComponentSpec
     | CounterMaximumSpec
     | TriggerMultiplierSpec
     | WardSpec
@@ -851,6 +889,8 @@ def ability_fragment_to_dict(
         kind = "spell_cast_keyword_trigger"
     elif isinstance(fragment, ToxicSpec):
         kind = TOXIC_ABILITY_FRAGMENT_KIND
+    elif isinstance(fragment, StaticComponentSpec):
+        kind = "static_component"
     elif isinstance(fragment, CounterMaximumSpec):
         kind = "counter_maximum"
     elif isinstance(fragment, TriggerMultiplierSpec):
@@ -916,6 +956,8 @@ def ability_fragment_from_dict(
         return SpellCastKeywordTriggerSpec.from_dict(value["value"])
     if value["kind"] == TOXIC_ABILITY_FRAGMENT_KIND:
         return ToxicSpec.from_dict(value["value"])
+    if value["kind"] == "static_component":
+        return StaticComponentSpec.from_dict(value["value"])
     if value["kind"] == "counter_maximum":
         try:
             return CounterMaximumSpec.from_dict(value["value"])
@@ -997,6 +1039,7 @@ def canonical_ability_fragments(
                 DamageKeywordTriggerSpec,
                 SpellCastKeywordTriggerSpec,
                 ToxicSpec,
+                StaticComponentSpec,
                 CounterMaximumSpec,
                 TriggerMultiplierSpec,
                 WardSpec,
@@ -1022,6 +1065,22 @@ def canonical_ability_fragments(
     # abilities. Sorting makes construction order canonical without merging
     # two physical grants into one ability.
     return tuple(fragment for _, fragment in sorted(keyed, key=lambda row: row[0]))
+
+
+def static_component_keys(
+    values: Iterable[StaticAbilityFragment | Mapping[str, Any]],
+) -> tuple[str, ...]:
+    """Return the unique effective static CardProgram identities."""
+
+    return tuple(
+        sorted(
+            {
+                fragment.semantic_key
+                for fragment in canonical_ability_fragments(values)
+                if isinstance(fragment, StaticComponentSpec)
+            }
+        )
+    )
 
 
 def _singular_protection_subtype(value: str) -> str | None:
@@ -1318,6 +1377,7 @@ __all__ = [
     "SpellCastKeywordTriggerKind",
     "SpellCastKeywordTriggerSpec",
     "StaticAbilityFragment",
+    "StaticComponentSpec",
     "TOXIC_ABILITY_FRAGMENT_KIND",
     "ToxicSpec",
     "TriggerMultiplierSpec",
@@ -1338,5 +1398,6 @@ __all__ = [
     "parse_protection_line",
     "protection_specs",
     "spell_cast_keyword_trigger_specs",
+    "static_component_keys",
     "toxic_specs",
 ]

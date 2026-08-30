@@ -91,9 +91,14 @@ compiled node also declares the exact combat, damage, destruction, or targeting
 capability that consumes the granted keyword. Combat-state, ability-qualified,
 dynamically counted, conditional, temporary, and unsupported-keyword predicates
 remain residual. Level-gated Class abilities remain residual until their
-applicability has a typed owner. Ability-removal interactions remain explicitly
-outside trust until static components share one ability-presence/applicability
-query. The
+applicability has a typed owner. Every trusted battlefield
+`characteristics.evaluate` program contributes one `StaticComponentSpec` to
+the source's effective ability fragments. Continuous-component collection uses
+that single layer-6 component-presence query for printed programs, explicit
+typed grants, individual removals, and remove-all effects; missing or stale
+semantic keys fail closed. The applicability snapshot is evaluated through
+layer 6 with component filtering disabled only for that bounded recursive read,
+so family-specific ability-presence checks are unnecessary. The
 `ability.static.conditional-keyword.v1` and
 `ability.static.dynamic-power-toughness.v1` fragment handlers preserve closed
 self conditions and count-derived modifiers on the effective ability set, then
@@ -222,6 +227,18 @@ evaluation cycle. Direct attacking, blocking, tapped, untapped, enchanted,
 equipped, and modified affected sets use the same `ObjectQuerySpec` permanent-
 state predicate. No runtime Oracle parser or parallel applicability registry is
 involved.
+
+`continuous.attached.fixed-characteristics.v1` keeps one reciprocal live
+attachment relation while lowering its closed operations into layers 4, 5, 6,
+7b, and 7c. It supports fixed or typed public-query power/toughness, base
+power/toughness, type, subtype, color, and separately trusted keyword changes.
+Dynamic quantities resolve through the shared cycle-safe layer-5 boundary; an
+"other" attached-object quantity excludes the attached subject rather than the
+Aura or Equipment source. Ability removal is ordered before additions from the
+same effect, and the shared static-component query determines whether the
+source still contributes any component. Conditions, names, text changes,
+declaration restrictions, target-relative state, and untrusted granted rules
+remain outside this owner.
 
 ## Ownership boundaries
 
