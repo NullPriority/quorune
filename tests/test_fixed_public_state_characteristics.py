@@ -996,6 +996,59 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         self.assertEqual("3", departed["power"])
         self.assertNotIn("Trample", departed["keywords"])
 
+    def test_typed_aura_and_public_state_characteristics_compose(self):
+        session = self.session(118_220_006)
+        engine = session.engine
+        aura = self.add_source(
+            session,
+            name="Public State Attachment Standard",
+            ref="TYPED-PUBLIC-STATE-AURA",
+            zone="hand",
+        )
+        target = self.creature(
+            engine,
+            seat="A",
+            name="Typed Aura Public-State Target",
+            colors=("B",),
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.priority_passes = []
+        engine.state.players["A"].mana_pool.update({"B": 1, "C": 1})
+
+        engine._cast(
+            "A",
+            {
+                "card": aura.ref,
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"B": 1, "C": 1},
+            },
+        )
+        self.resolve_top(engine)
+
+        self.assertEqual(target.object_id, aura.attached_to)
+        self.assertTrue(engine._attachment_is_legal(aura, subtypes={"aura"}))
+        enhanced = engine._effective_card_data(target)
+        self.assertEqual("4", enhanced["power"])
+        self.assertEqual("4", enhanced["toughness"])
+        self.assertIn("Wither", enhanced["keywords"])
+
+        target.annotations["copy_overrides"] = {
+            "type_line": "Token Creature — Wall"
+        }
+        self.assertFalse(
+            engine._attachment_is_legal(aura, subtypes={"aura"})
+        )
+        self.assertFalse(engine._stabilize())
+        self.assertEqual("graveyard", aura.zone)
+        self.assertNotIn(
+            "Wither",
+            engine._effective_card_data(target)["keywords"],
+        )
+
     def test_public_state_characteristics_execute_while_replacement_siblings_fail_closed(self):
         session = self.session(118_220_003)
         engine = session.engine

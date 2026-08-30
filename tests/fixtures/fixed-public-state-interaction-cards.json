@@ -107,7 +107,7 @@
       "mana_cost": "{1}{B}",
       "name": "Public State Attachment Standard",
       "oracle_id": "00000000-0000-4000-8000-000011822104",
-      "oracle_text": "Enchant creature\nAs long as enchanted creature is black, it gets +1/+1 and has wither.",
+      "oracle_text": "Enchant non-Wall creature\nAs long as enchanted creature is black, it gets +1/+1 and has wither.",
       "power": null,
       "produced_mana": [],
       "released_at": "2026-08-30",
