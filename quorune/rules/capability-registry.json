@@ -1143,6 +1143,33 @@
       "status": "trusted"
     },
     {
+      "id": "library.select.fixed_controller",
+      "version": 1,
+      "official_rules": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Resolve one fixed-count controller library inspection that selects a bounded characteristic-matching set into hand and sends the complete remainder to the graveyard or the library bottom.",
+        "inputs": ["one capability-shaped fixed controller selection effect", "one positive fixed look count", "closed immutable type, subtype, supertype, color, colorless, or historic predicates", "one complete actor-private selection or ordered partition", "current destination replacements", "stable looked-at physical and logical identities"],
+        "outputs": ["one private or public looked-at set according to the printed instruction", "one predicate- and cardinality-validated hand selection", "one complete graveyard or bottom remainder", "one replacement-aware simultaneous public-zone transition", "one chosen or deterministic-random remainder order", "exact replay without hidden-order disclosure"],
+        "exclusions": ["dynamic or variable look counts", "target, opponent, or noncontroller libraries", "battlefield, exile, cast, play, or linked-result destinations", "conditional, payment, opponent-choice, and chosen-characteristic selections", "power, toughness, mana-value, name, and state predicates", "effects before or after the complete selection instruction", "selection or library-order replacement effects beyond represented destination replacements" ]
+      },
+      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.compiler.fixed_library_selection_templates.fixed_library_selection_effect_template", "quorune.rules.library_selection_capability_shapes.fixed_library_selection_node_capabilities", "quorune.semantic_choices.fixed_library_selection.FixedLibrarySelectionChoiceHandler", "quorune.rules.library_selection.LibrarySelectionArrangement", "quorune.rules.library_selection.commit_library_selection", "quorune.semantic_runtime.intents.LibrarySelectionIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
+      "positive_tests": ["test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts", "test_selected_cards_and_remainder_commit_in_printed_destinations"],
+      "negative_tests": ["test_unsupported_library_selection_grammar_remains_residual", "test_malformed_stale_and_predicate_invalid_responses_fail_before_mutation"],
+      "interaction_tests": ["test_graveyard_destination_replacement_resumes_before_partition_commit"],
+      "multiplayer_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats"],
+      "privacy_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats"],
+      "replay_tests": ["test_selected_cards_and_remainder_commit_in_printed_destinations", "test_graveyard_destination_replacement_resumes_before_partition_commit"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Removing destination-replacement closure prevents the compiler node from becoming trusted, while malformed, stale, predicate-invalid, and incomplete partitions fail before any card moves or hidden order changes.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_library_selection_shape_and_compiler_mutants_are_killed removes either the typed grammar producer or closed node-shape mapping, and the exact CardProgram assertions reject the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "library.scry.fixed_controller",
       "version": 1,
       "official_rules": ["401.4", "701.22", "701.22a", "701.22b"],

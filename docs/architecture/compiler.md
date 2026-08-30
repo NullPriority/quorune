@@ -111,6 +111,18 @@ runtime never reparses the printed instruction. Zero, dynamic, optional, cost,
 targeted, repeated, copied, granted, additional-look, linked-result, and
 unsupported Surveil-event trigger forms remain source-spanned residuals.
 
+`compiler/fixed_library_selection_templates.py` owns complete fixed positive
+top-of-controller-library instructions that select cards into hand and send
+the complete remainder to the graveyard or library bottom. The same leaf
+composes through spell, triggered, activated, and modal contexts. It emits
+only closed fixed, up-to, all-matching, or optional-slot cardinality plus typed
+characteristic predicates; the private choice handler and immutable partition
+owner retain selection, revalidation, replacement, ordering, visibility, and
+replay authority. Variable counts, another player's library, numeric or named
+predicates, conditional or payment grammar, other destinations, and sibling
+effects remain source-spanned residuals. See
+[ADR 0091](../adr/0091-typed-fixed-library-selection.md).
+
 `compiler/entry_state_templates.py` also owns one closed family of fixed public
 conditions that determine whether a land enters tapped. `FixedEntryCondition`
 uses a typed metric, integral bound, and tap polarity for controller land and

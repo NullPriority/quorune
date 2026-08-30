@@ -64,6 +64,31 @@ library order stay private. The owner emits `player.surveilled` after the whole
 process, including when a positive instruction finds an empty library, and
 replacement choices resume through the ordinary semantic-intent continuation.
 
+## Fixed library selection
+
+`library.select.fixed_controller` owns one complete fixed positive inspection
+or reveal of the resolving controller's library top. The compiler supplies a
+closed choice policy, typed characteristic predicates, hand cardinality, and a
+graveyard or library-bottom remainder destination. It may request one complete
+`LibraryPartitionChoice`, or a bounded object choice when the printed remainder
+uses random order.
+
+`LibrarySelectionArrangement` pins every looked-at physical and logical object
+identity and requires an exhaustive `selected_refs` and `remainder_refs`
+partition. Commit revalidates the unchanged library top before mutation,
+moves the selected hand cards and any graveyard remainder through the canonical
+simultaneous destination-replacement transaction, and delegates bottom order
+to the shared ordered-partition mutation owner. A replacement choice suspends
+before any member of the partition moves. Public reveals project the known top
+to every seat; private looks and hidden resulting order remain seat-scoped.
+Exact replay carries the immutable arrangement and any replacement selections.
+
+The family excludes variable counts, another player's library, conditional or
+payment instructions, numeric, chosen, and name predicates, battlefield,
+exile, cast, or play destinations, and any unowned preceding or trailing
+effect. These exclusions remain material compiler residuals rather than
+runtime prose interpretation.
+
 ## Deliberate boundary
 
 The current family excludes simultaneous instructions for multiple players,

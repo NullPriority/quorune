@@ -83,6 +83,9 @@ from ..rules.library_search_capability_shapes import (
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,
 )
+from ..rules.library_selection_capability_shapes import (
+    fixed_library_selection_node_capabilities,
+)
 from ..rules.surveil_capability_shapes import fixed_surveil_node_capabilities
 from ..rules.fixed_controller_effect_shapes import (
     fixed_counter_controller_effect_sequence_node_capabilities,
@@ -572,11 +575,12 @@ def _is_closed_fixed_type_to_hand_search_program(
     )
 
 
-def _is_closed_fixed_life_program(program: SemanticProgram) -> bool:
-    """Recognize only reviewed fixed controller or opponent life effects."""
-
+def _node_capabilities_close_program(
+    program: SemanticProgram,
+    resolver: Any,
+) -> bool:
     required = set(
-        fixed_life_node_capabilities(
+        resolver(
             effects=program.effects,
             target_schema=program.target_schema,
             mechanic_ids=program.coverage,
@@ -584,36 +588,44 @@ def _is_closed_fixed_life_program(program: SemanticProgram) -> bool:
     )
     return bool(required) and required.issubset(
         program.capability_dependencies
+    )
+
+
+def _is_closed_fixed_life_program(program: SemanticProgram) -> bool:
+    """Recognize only reviewed fixed controller or opponent life effects."""
+
+    return _node_capabilities_close_program(
+        program,
+        fixed_life_node_capabilities,
     )
 
 
 def _is_closed_fixed_scry_program(program: SemanticProgram) -> bool:
     """Recognize only one reviewed fixed controller Scry instruction."""
 
-    required = set(
-        fixed_scry_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=program.coverage,
-        )
+    return _node_capabilities_close_program(
+        program,
+        fixed_scry_node_capabilities,
     )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
+
+
+def _is_closed_fixed_library_selection_program(
+    program: SemanticProgram,
+) -> bool:
+    """Recognize one fixed controller library selection partition."""
+
+    return _node_capabilities_close_program(
+        program,
+        fixed_library_selection_node_capabilities,
     )
 
 
 def _is_closed_fixed_surveil_program(program: SemanticProgram) -> bool:
     """Recognize one fixed positive controller Surveil instruction."""
 
-    required = set(
-        fixed_surveil_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=program.coverage,
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
+    return _node_capabilities_close_program(
+        program,
+        fixed_surveil_node_capabilities,
     )
 
 
@@ -622,15 +634,9 @@ def _is_closed_fixed_token_creation_program(
 ) -> bool:
     """Recognize one compiler-owned fixed token-definition instruction."""
 
-    required = set(
-        fixed_token_creation_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=set(program.coverage),
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
+    return _node_capabilities_close_program(
+        program,
+        fixed_token_creation_node_capabilities,
     )
 
 
@@ -1313,6 +1319,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_library_search_program,
         _is_closed_fixed_type_to_hand_search_program,
         _is_closed_fixed_life_program,
+        _is_closed_fixed_library_selection_program,
         _is_closed_fixed_scry_program,
         _is_closed_fixed_surveil_program,
         _is_closed_fixed_token_creation_program,

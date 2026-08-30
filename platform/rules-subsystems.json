@@ -1164,28 +1164,79 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-token-creation-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-library-selection",
+          "member_family_ids": [
+            "activated_effect:look-reveal",
+            "activated_effect:ordered-effect-composition",
+            "effect_clause:look-reveal",
+            "effect_clause:ordered-effect-composition",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:library.select.fixed_controller",
+            "component:quorune.compiler.fixed_library_selection_templates.fixed_library_selection_effect_template",
+            "component:quorune.rules.library_selection.commit_library_selection",
+            "component:quorune.semantic_choices.fixed_library_selection.FixedLibrarySelectionChoiceHandler"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "chosen-or-seeded-random-remainder-order",
+            "fixed-or-bounded-characteristic-selection",
+            "fixed-positive-top-count",
+            "graveyard-or-library-bottom-remainder",
+            "private-look-or-public-reveal"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "complete fixed positive controller-library inspection or reveal with one bounded typed hand selection and one exhaustive graveyard or bottom remainder partition",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing private ordered-partition, semantic replacement continuation, and simultaneous zone-transition owners across spell, triggered, activated, and modal library-selection bodies without adding a second choice or library mutation authority.",
+          "explicit_exclusions": [
+            "battlefield, exile, cast, play, and additional destinations",
+            "conditional, payment, opponent-choice, chosen-characteristic, and linked-result grammar",
+            "effects before or after the complete selection instruction",
+            "power, toughness, mana-value, name, state, and secret predicates",
+            "variable counts and target, opponent, or other-player libraries"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-library-selection-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v144-typed-public-event-effect-triggers",
-      "compiler_version": "oracle-ir-v144",
-      "bundle_id": "bundle:typed-public-event-effect-triggers",
-      "candidate_ids": ["compiler:typed-public-event-effect-triggers"],
+      "transition_id": "oracle-ir-v145-fixed-library-selection",
+      "compiler_version": "oracle-ir-v145",
+      "bundle_id": "bundle:fixed-library-selection",
+      "candidate_ids": ["compiler:fixed-library-selection"],
       "family_ids": [
+        "activated_effect:look-reveal",
+        "activated_effect:ordered-effect-composition",
+        "effect_clause:look-reveal",
+        "effect_clause:ordered-effect-composition",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
         "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_card_draw",
-        "trigger.event.normalized_damage",
-        "trigger.event.normalized_public_action",
-        "trigger.event.normalized_spell_cast",
-        "trigger.event.normalized_zone_change"
+        "library.select.fixed_controller",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
       ],
-      "measurement_id": "measurement:typed-public-event-effect-triggers",
+      "measurement_id": "measurement:fixed-library-selection",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1664,6 +1715,11 @@
         "candidate_id": "compiler:typed-public-event-effect-triggers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current generated selector reports no eligible carried candidate while the completed optional-effect probe overstates closure by measuring bodies without their event carriers. The corrected integrated probe isolates a positive capability-closed lower bound through the existing typed event-effect owner across immutable public zone, damage, draw, attack, block, Cycling, face-up, and fixed cast-fact occurrences. Current cohort identities and counts are derived into the generated measurement artifact; discard and sacrifice await explicit typed causes from every authoritative producer, while attachment-relative, aggregate, combined, intervening-if, reflexive, chosen, history-relative, targeted-event, tapped-event, counter-placement-event, secret, dynamic-comparison, declaration-replacement, and independently inexact bodies remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-library-selection",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. Bounded probes retired fixed controlled-player card selection and top-library permission slices below the normal harvest floor. The selected integrated library-partition family instead composes a complete fixed positive controller-library inspection or reveal across spell, triggered, activated, and modal contexts through the existing typed predicate, private choice, semantic replacement continuation, simultaneous zone-transition, and ordered-partition owners. Current cohort identities and conservative complete-card lower bounds are derived into the generated measurement artifact; variable counts, other-player libraries, conditional, payment, opponent-choice, chosen, numeric, name, state, linked-result, additional-effect, and other-destination forms remain fail-closed."
       }
     ]
   },

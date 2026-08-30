@@ -57,6 +57,10 @@ from ..permanent_designations import (
     become_renowned,
 )
 from ..rules.library_scry import ScryError, commit_scry_arrangement
+from ..rules.library_selection import (
+    LibrarySelectionError,
+    commit_library_selection,
+)
 from ..rules.library_surveillance import (
     SurveilError,
     commit_surveil_arrangement,
@@ -80,6 +84,7 @@ from ..semantic_runtime import (
     ExploreCompletedIntent,
     GrantZoneObjectKeywordIntent,
     LifeChangeIntent,
+    LibrarySelectionIntent,
     MoveLibraryCardsToBottomIntent,
     ScryLibraryIntent,
     SurveilLibraryIntent,
@@ -801,6 +806,49 @@ class SemanticChoiceIntentHostMixin:
             )
         except SurveilError as exc:
             raise GameRuleError(str(exc)) from exc
+
+    def library_selection_intent(
+        self,
+        intent: LibrarySelectionIntent,
+    ) -> tuple[str, ...]:
+        try:
+            looked = commit_library_selection(
+                self,
+                actor=intent.actor,
+                player=intent.player,
+                arrangement=intent.arrangement,
+                reason=intent.reason,
+                source_stack_ref=intent.source_stack_ref,
+                looked_are_public=intent.looked_are_public,
+                selected_are_public=intent.selected_are_public,
+                replacement_selections=intent.replacement_selections,
+            )
+        except LibrarySelectionError as exc:
+            raise GameRuleError(str(exc)) from exc
+        if (
+            intent.arrangement.remainder_destination == "library_bottom"
+            and not intent.looked_are_public
+        ):
+            for ref in intent.arrangement.remainder_refs:
+                card = self._resolve_object(
+                    intent.actor,
+                    ref,
+                    zones={"library"},
+                    owned_only=True,
+                )
+                card.known_to = [intent.player]
+                card.revealed_to = []
+        if intent.looked_are_public or intent.selected_are_public:
+            viewers = sorted(set(self.seats))
+            for ref in intent.arrangement.selected_refs:
+                card = self._resolve_object(intent.actor, ref)
+                card.known_to = sorted(
+                    set(card.known_to).union(viewers)
+                )
+                card.revealed_to = sorted(
+                    set(card.revealed_to).union(viewers)
+                )
+        return looked
 
     def reorder_library_top_intent(
         self,

@@ -480,6 +480,23 @@
       ]
     },
     {
+      "id": "fixed-library-selection-contract",
+      "patterns": [
+        "quorune/compiler/fixed_library_selection_templates.py",
+        "quorune/rules/library_selection.py",
+        "quorune/rules/library_selection_capability_shapes.py",
+        "quorune/semantic_choices/fixed_library_selection.py",
+        "tests/test_fixed_library_selection.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_library_selection",
+        "test_library_rules",
+        "test_semantic_choice_characterization",
+        "test_surveil_rules"
+      ]
+    },
+    {
       "id": "spell-cast-characteristic-trigger-contract",
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",

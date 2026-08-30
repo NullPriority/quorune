@@ -962,6 +962,7 @@ def _decode_semantic_intent_continuation(
         or intent_kind not in {
             "create_token",
             "life_change",
+            "library_selection",
             "place_counter_batch",
             "place_counters",
             "place_counters_on_set",

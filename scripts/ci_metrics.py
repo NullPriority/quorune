@@ -250,7 +250,10 @@ def load_python_reports(directory: Path | None) -> list[dict]:
         document = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(document, dict):
             raise ValueError(f"Python report {path} must be an object")
-        if document.get("type") != "pytest-xdist-shard-result":
+        if document.get("type") not in {
+            "unittest-shard-result",
+            "pytest-xdist-shard-result",
+        }:
             raise ValueError(f"Python report {path} has an unknown type")
         reports.append(document)
     return reports

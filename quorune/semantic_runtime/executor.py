@@ -44,6 +44,7 @@ from .intents import (
     ExilePublicGraveyardCardIntent,
     GrantZoneObjectKeywordIntent,
     LifeChangeIntent,
+    LibrarySelectionIntent,
     MoveObjectsSimultaneouslyIntent,
     MovePublicZoneSetIntent,
     MoveLibraryCardsToBottomIntent,
@@ -167,6 +168,11 @@ class SemanticIntentSink(
         self,
         intent: SurveilLibraryIntent,
     ) -> object: ...
+
+    def library_selection_intent(
+        self,
+        intent: LibrarySelectionIntent,
+    ) -> tuple[str, ...]: ...
 
     def reorder_library_top_intent(
         self,
@@ -453,6 +459,7 @@ LibraryIntent = (
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent
     | SurveilLibraryIntent
+    | LibrarySelectionIntent
     | ReorderLibraryTopIntent
 )
 LIBRARY_INTENT_TYPES = (
@@ -463,6 +470,7 @@ LIBRARY_INTENT_TYPES = (
     MoveLibraryCardsToBottomIntent,
     ScryLibraryIntent,
     SurveilLibraryIntent,
+    LibrarySelectionIntent,
     ReorderLibraryTopIntent,
 )
 
@@ -486,6 +494,8 @@ def _execute_library_intent(
         return intent.player, sink.scry_library_intent(intent)
     if isinstance(intent, SurveilLibraryIntent):
         return intent.player, sink.surveil_library_intent(intent)
+    if isinstance(intent, LibrarySelectionIntent):
+        return intent.player, sink.library_selection_intent(intent)
     return intent.player, sink.reorder_library_top_intent(intent)
 
 

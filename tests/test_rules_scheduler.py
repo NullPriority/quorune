@@ -1646,6 +1646,39 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_fixed_library_selection_probe_uses_complete_partition_grammar(self):
+        probe_id = "fixed-library-selection-existing-owner-v1"
+        accepted = (
+            "Look at the top three cards of your library. Put one of them "
+            "into your hand and the rest into your graveyard.",
+            "{2}, {T}: Look at the top three cards of your library. You may "
+            "reveal a creature card from among them and put it into your hand. "
+            "Put the rest on the bottom of your library in any order.",
+            "When this artifact enters, reveal the top two cards of your "
+            "library. Put all land cards revealed this way into your hand and "
+            "the rest into your graveyard.",
+            "• Look at the top four cards of your library. Put up to two "
+            "instant and/or sorcery cards from among them into your hand and "
+            "the rest into your graveyard.",
+        )
+        rejected = (
+            "Look at the top X cards of your library. Put one into your hand "
+            "and the rest into your graveyard.",
+            "Look at the top three cards of target player's library. Put one "
+            "into your hand and the rest into their graveyard.",
+            "Look at the top three cards of your library. Put a creature card "
+            "with mana value 2 or less into your hand and the rest into your "
+            "graveyard.",
+            "Look at the top three cards of your library. Put one into your "
+            "hand and the rest into your graveyard. You gain 3 life.",
+        )
+        for source in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_spell_cast_characteristic_probe_uses_closed_event_and_body(self):
         probe_id = (
             "fixed-spell-cast-characteristic-trigger-existing-owner-v2"
