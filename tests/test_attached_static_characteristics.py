@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 
 from common import keep_all, load_assets, make_session
 from quorune.ability_fragments import (
@@ -19,6 +20,10 @@ from quorune.attachments import (
     attached_object_identity,
     detach_object,
 )
+from quorune.card_programs.runtime import (
+    collect_card_program_continuous_effects,
+)
+from quorune.card_programs.validation import canonical_program_fingerprint
 from quorune.compiler.continuous_templates import (
     attached_fixed_characteristics_handler,
 )
@@ -790,6 +795,70 @@ class AttachedStaticEngineTests(unittest.TestCase):
                 controller=value.controller,
                 log=False,
             )
+
+    def test_static_component_applicability_batches_battlefield_scan(self):
+        session = self.session(6131008)
+        engine = session.engine
+        for index in range(12):
+            engine.create_token(
+                "A",
+                name=f"Component Presence Witness {index}",
+                characteristics={
+                    "type_line": "Token Artifact Creature — Thopter",
+                    "power": "1",
+                    "toughness": "1",
+                    "keywords": [],
+                },
+                reason="static-component batching assurance",
+            )
+
+        with mock.patch(
+            "quorune.characteristic_evaluation_host."
+            "collect_card_program_continuous_effects",
+            wraps=collect_card_program_continuous_effects,
+        ) as collector:
+            component_keys = engine._effective_static_component_key_map()
+
+        self.assertEqual(1, collector.call_count)
+        self.assertEqual(12, len(component_keys))
+        self.assertTrue(all(not keys for keys in component_keys.values()))
+
+    def test_current_semantic_trust_cache_tracks_registry_identity(self):
+        session = self.session(6131009)
+        engine = session.engine
+        record = self.db.lookup("Lightning Greaves")
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+        )
+        program = next(
+            value
+            for value in engine.semantics.programs_for_oracle(
+                record.oracle_id
+            )
+            if value.ability_id.startswith("static:")
+        )
+        engine._semantic_trust_cache.clear()
+        engine._current_semantic_trust_cache.clear()
+
+        with mock.patch(
+            "quorune.engine.canonical_program_fingerprint",
+            wraps=canonical_program_fingerprint,
+        ) as fingerprint:
+            self.assertTrue(engine.semantic_program_is_current_trusted(program))
+            self.assertTrue(engine.semantic_program_is_current_trusted(program))
+            self.assertEqual(1, fingerprint.call_count)
+
+            replacement = replace(program, label=f"{program.label} updated")
+            engine.semantics.put(replacement)
+            self.assertTrue(
+                engine.semantic_program_is_current_trusted(replacement)
+            )
+            self.assertEqual(2, fingerprint.call_count)
 
     def add_card(
         self,

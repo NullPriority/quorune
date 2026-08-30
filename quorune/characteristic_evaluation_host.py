@@ -18,6 +18,28 @@ from .model import CardInstance
 from .object_query import ObjectQueryResult, object_query_result
 
 
+_STATIC_COMPONENT_PRESENCE_OPERATIONS = frozenset(
+    {
+        "add_ability_fragment",
+        "remove_ability_fragment",
+        "remove_all_abilities",
+    }
+)
+
+
+def _static_component_presence_effects(
+    effects: Sequence[ContinuousEffect],
+) -> tuple[ContinuousEffect, ...]:
+    return tuple(
+        effect
+        for effect in effects
+        if any(
+            operation.op in _STATIC_COMPONENT_PRESENCE_OPERATIONS
+            for operation in effect.operations
+        )
+    )
+
+
 def _carries_query_power_toughness_definition(
     card: CardInstance,
     base: Mapping[str, Any],
@@ -175,18 +197,98 @@ class CharacteristicEvaluationHostMixin:
             modified=modified,
         )
 
+    def _effective_static_component_key_map(
+        self,
+    ) -> dict[str, tuple[str, ...]]:
+        """Resolve every source's shared layer-6 component snapshot once."""
+
+        candidate_effects = collect_card_program_continuous_effects(
+            self.state,
+            self.semantics,
+            self.semantic_program_is_current_trusted,
+            maximum_layer=Layer.ABILITY,
+            public_object_resolver=partial(
+                self._public_object_query_result,
+                _enforce_static_component_applicability=False,
+            ),
+            quantity_resolver=partial(
+                query_characteristic_count,
+                self,
+                _enforce_static_component_applicability=False,
+            ),
+        )
+        component_effects = _static_component_presence_effects(
+            candidate_effects
+        )
+        result: dict[str, tuple[str, ...]] = {}
+        for seat in self.state.turn_order:
+            for object_id in tuple(
+                self.state.players[seat].zones["battlefield"]
+            ):
+                source = self.state.cards[object_id]
+                if (
+                    source.controller != seat
+                    or source.phased_out
+                    or getattr(source, "face_down", False)
+                ):
+                    continue
+                base = self._compiled_base_characteristics(
+                    source,
+                    self.card_record(source),
+                    error_type=GameRuleError,
+                )
+                resolution_effects = _static_component_presence_effects(
+                    active_resolution_effects(self.state, source)
+                )
+                copy_overrides = source.annotations.get("copy_overrides")
+                has_local_component_changes = bool(
+                    source.annotations.get("granted_ability_fragments")
+                    or source.face_down
+                    or (
+                        isinstance(copy_overrides, Mapping)
+                        and "ability_fragments" in copy_overrides
+                    )
+                )
+                if (
+                    not component_effects
+                    and not resolution_effects
+                    and not has_local_component_changes
+                ):
+                    result[object_id] = static_component_keys(
+                        base.get("ability_fragments", ())
+                    )
+                    continue
+                enchanted, equipped, modified = self._attachment_public_state(
+                    source,
+                    _enforce_static_component_applicability=False,
+                )
+                effective = self._apply_layered_characteristic_annotations(
+                    source,
+                    base,
+                    runtime_effects=(
+                        *resolution_effects,
+                        *component_effects,
+                    ),
+                    maximum_layer=Layer.ABILITY,
+                    enchanted=enchanted,
+                    equipped=equipped,
+                    modified=modified,
+                    _enforce_static_component_applicability=False,
+                )
+                result[object_id] = static_component_keys(
+                    effective.get("ability_fragments", ())
+                )
+        return result
+
     def _effective_static_component_keys(
         self,
         card: CardInstance,
     ) -> tuple[str, ...]:
-        """Resolve one source's shared layer-6 static-component snapshot."""
+        """Resolve one source through the shared layer-6 batch owner."""
 
-        effective = self._effective_card_data(
-            card,
-            maximum_layer=Layer.ABILITY,
-            _enforce_static_component_applicability=False,
+        return self._effective_static_component_key_map().get(
+            card.object_id, ()
         )
-        return static_component_keys(effective.get("ability_fragments", ()))
 
     def _effective_card_data(
         self,
@@ -203,6 +305,12 @@ class CharacteristicEvaluationHostMixin:
             card,
             record,
             error_type=GameRuleError,
+        )
+        static_component_key_map = (
+            self._effective_static_component_key_map()
+            if card.zone == "battlefield"
+            and _enforce_static_component_applicability
+            else None
         )
         runtime_effects = (
             (
@@ -236,8 +344,12 @@ class CharacteristicEvaluationHostMixin:
                         else None
                     ),
                     static_component_resolver=(
-                        self._effective_static_component_keys
-                        if _enforce_static_component_applicability
+                        (
+                            lambda source: static_component_key_map.get(
+                                source.object_id, ()
+                            )
+                        )
+                        if static_component_key_map is not None
                         else None
                     ),
                 ),
