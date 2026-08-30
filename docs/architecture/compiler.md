@@ -578,6 +578,13 @@ revalidation as a single direct target. Variable limits, subtype or other
 combat-state predicates, and compound instructions remain
 source-spanned residuals.
 
+Before event binding, the Oracle IR carrier boundary removes a leading ability-
+word label only when the remaining material begins with `When`, `Whenever`, or
+`At the beginning of`. The node retains the complete original source text and
+span. Nontrigger ability words, chapter markers, quoted text, and unsupported
+event or effect grammar remain material and fail closed through their existing
+owners.
+
 `compiler/fixed_counter_trigger_nodes.py` owns one shared closed normalized-
 event binding for represented beginnings of steps; a land entering under the
 source controller's control; a noncreature or instant-or-sorcery spell cast by

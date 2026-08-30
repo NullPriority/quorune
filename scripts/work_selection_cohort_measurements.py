@@ -101,6 +101,9 @@ _PROBE_QUERY_GATED_SELF_CHARACTERISTIC = (
 _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER = (
     "fixed-source-pronoun-damage-trigger-existing-owner-v1"
 )
+_PROBE_TRIGGER_ABILITY_WORD_CARRIER = (
+    "trigger-ability-word-carrier-existing-owner-v1"
+)
 _PROBE_IDS = {
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
@@ -118,6 +121,7 @@ _PROBE_IDS = {
     _PROBE_SPELL_CAST_CHARACTERISTIC,
     _PROBE_TOKEN,
     _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE,
+    _PROBE_TRIGGER_ABILITY_WORD_CARRIER,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -634,9 +638,114 @@ def _matches_probe(
                 source
             )
         )
+    if probe_id == _PROBE_TRIGGER_ABILITY_WORD_CARRIER:
+        material = _without_parenthetical_reminder(source)
+        match = re.fullmatch(
+            r"[A-Za-z][A-Za-z ']+\s+[—-]\s+(?P<body>.+)",
+            material,
+        )
+        return bool(
+            match is not None
+            and re.match(
+                r"^(?:when|whenever|at the beginning of)\b",
+                match.group("body"),
+                re.IGNORECASE,
+            )
+        )
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
     )
+
+
+def _trigger_ability_word_carrier_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure trigger carriers that become exact through existing owners."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        card_matches = sum(
+            node is not None
+            and node.exact
+            and node.kind == "triggered_ability"
+            for ability in candidates
+            for node in (nodes.get(str(ability.get("ability_id") or "")),)
+        )
+        if not card_matches:
+            continue
+        matched_abilities += card_matches
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
 
 
 def _measurement(
@@ -666,6 +775,16 @@ def _measurement(
         )
     if probe_id == _PROBE_FIXED_LIBRARY_SELECTION:
         return _fixed_library_selection_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_TRIGGER_ABILITY_WORD_CARRIER:
+        return _trigger_ability_word_carrier_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,

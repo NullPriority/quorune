@@ -1876,6 +1876,27 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertEqual(11, queue["work_selection"]["policy_version"])
 
+    def test_trigger_ability_word_carrier_probe_is_closed(self):
+        probe_id = "trigger-ability-word-carrier-existing-owner-v1"
+        for source in (
+            "Keen Senses — When this creature enters, draw a card.",
+            "Alliance — Whenever another creature you control enters, scry 1.",
+            "Combat Inspiration — At the beginning of combat on your turn, "
+            "target creature gets +1/+0 until end of turn.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "Threshold — As long as seven cards are in your graveyard, this "
+            "creature gets +1/+1.",
+            "I — Draw a card.",
+            'This creature has "Heroic — Whenever you cast a spell, draw a '
+            'card."',
+            "Whenever another creature you control enters, scry 1.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_current_transition_measurement_is_generated_not_policy_counted(self):
         work_selection = self.catalog["work_selection"]
         declaration = work_selection["semantic_transition_declaration"]

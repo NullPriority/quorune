@@ -40,6 +40,18 @@ _DRAW_REVEAL_LINKED_DRAW = re.compile(
     r"this way, draw a card\.?$",
     re.IGNORECASE,
 )
+_TRIGGER_ABILITY_WORD = re.compile(
+    r"^[A-Za-z][A-Za-z ']+\s+[—-]\s+"
+    r"(?P<body>(?:when|whenever|at the beginning of)\b.+)$",
+    re.IGNORECASE,
+)
+
+
+def trigger_ability_word_material_line(material_line: str) -> str:
+    """Remove only a leading ability word that carries a triggered ability."""
+
+    match = _TRIGGER_ABILITY_WORD.fullmatch(material_line)
+    return match.group("body") if match is not None else material_line
 
 
 def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
@@ -601,4 +613,5 @@ __all__ = [
     "static_draw_reveal_handler",
     "static_draw_result_handler",
     "static_draw_restriction_handler",
+    "trigger_ability_word_material_line",
 ]

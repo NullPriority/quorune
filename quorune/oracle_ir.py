@@ -40,7 +40,7 @@ from .compiler.dependency_gate import (
 )
 from .compiler.draw_templates import (
     draw_reveal_or_trigger_nodes,
-    fixed_draw_effect_template,
+    fixed_draw_effect_template, trigger_ability_word_material_line,
 )
 from .compiler.delayed_draw_templates import (
     fixed_next_turn_upkeep_draw_effect_template,
@@ -137,7 +137,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v146"
+ORACLE_COMPILER_VERSION = "oracle-ir-v147"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -864,7 +864,7 @@ def _source_self_zone_trigger_match(
 def _trigger_node(
     *,
     node_id: str,
-    line: str,
+    line: str, material_line: str | None = None,
     span: SourceSpan,
     card_name: str,
     trusted_mechanics: frozenset[str],
@@ -875,7 +875,7 @@ def _trigger_node(
 ) -> OracleNode | None:
     """Compile one closed ordinary or CR 615.13 triggered ability."""
 
-    material_line = _without_parenthetical_reminder(line)
+    material_line = trigger_ability_word_material_line(material_line or _without_parenthetical_reminder(line))
     if not _TRIGGER_PREFIX.match(material_line):
         return None
     trigger = _source_self_zone_trigger_match(
@@ -1067,7 +1067,7 @@ def _activated_or_fixed_event_trigger_node(
     if activated is not None:
         return activated
     return fixed_typed_event_effect_trigger_node(
-        node_id=node_id, line=line, material_line=material_line, span=span,
+        node_id=node_id, line=line, material_line=trigger_ability_word_material_line(material_line), span=span,
         card_name=card_name, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
