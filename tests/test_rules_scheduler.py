@@ -53,6 +53,7 @@ from scripts.update_rules_scheduler import _compact_markdown
 from scripts.work_selection_cohort_measurements import (
     _matches_probe,
     _matches_query_self_characteristic_probe,
+    _matches_typed_public_state_characteristic_query,
 )
 
 
@@ -1599,6 +1600,48 @@ class RulesSchedulerTests(unittest.TestCase):
         for source in rejected:
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
+
+    def test_public_state_characteristic_probe_selects_only_new_typed_grammar(self):
+        accepted = (
+            "Attacking creatures you control get +1/+1.",
+            "Untapped creatures you control get +1/+1.",
+            "Modified creatures you control have trample.",
+            "As long as this creature is equipped, it gets +2/+2 and has flying.",
+            "As long as enchanted creature is black, it gets +1/+1.",
+            "Artifacts you control have shroud as long as you control "
+            "three or more artifacts.",
+        )
+        rejected = (
+            "Creatures you control get +1/+1.",
+            "Creatures you control get +1/+1 for each artifact you control.",
+            "Creatures you control have flying as long as you control "
+            "an artifact with flying.",
+            "Artifacts you control have shroud as long as you control "
+            "three artifacts.",
+            "Artifacts you control have shroud as long as an opponent "
+            "controls two or more artifacts.",
+            "Attacking tapped creatures you control have flying.",
+            "Attacking creatures you control with a +1/+1 counter on them "
+            "have trample.",
+            "Creatures you control are blue in addition to their other colors.",
+            'During your turn, this creature has "{T}: Draw a card."',
+        )
+        for source in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_typed_public_state_characteristic_query(
+                        source,
+                        source_name="Selector Fixture",
+                    )
+                )
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_typed_public_state_characteristic_query(
+                        source,
+                        source_name="Selector Fixture",
+                    )
+                )
 
     def test_fixed_regeneration_probe_uses_closed_contextual_owners(self):
         probe_id = "fixed-regeneration-existing-owner-v1"

@@ -4,7 +4,12 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any, Mapping
 
+from .characteristic_fragments import (
+    CharacteristicFragmentError,
+    CharacteristicQuantitySpec,
+)
 from .counter_names import CounterStateError, normalized_counter_name
+from .object_predicate import ObjectQueryError, ObjectQuerySpec
 
 
 class FixedPublicStateConditionError(ValueError):
@@ -28,6 +33,9 @@ class FixedPublicStateConditionKind(StrEnum):
     OPPONENT_LIFE_AT_MOST = "opponent_life_at_most"
     SOURCE_ENTERED_THIS_TURN = "source_entered_this_turn"
     SOURCE_COUNTER_AT_LEAST = "source_counter_at_least"
+    SOURCE_MATCHES_QUERY = "source_matches_query"
+    ATTACHED_MATCHES_QUERY = "attached_matches_query"
+    QUERY_COUNT_AT_LEAST = "query_count_at_least"
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,6 +51,9 @@ class FixedPublicStateConditionSnapshot:
     turn_sequence: int
     source_entered_battlefield_turn_sequence: int
     source_counters: tuple[tuple[str, int], ...]
+    source_query_matches: bool | None = None
+    attached_query_matches: bool | None = None
+    condition_quantity: int | None = None
 
     def __post_init__(self) -> None:
         if type(self.source_controller) is not str or not self.source_controller:
@@ -95,6 +106,19 @@ class FixedPublicStateConditionSnapshot:
                 "Source counter names must be unique"
             )
         object.__setattr__(self, "source_counters", canonical)
+        for field_name in ("source_query_matches", "attached_query_matches"):
+            value = getattr(self, field_name)
+            if value is not None and type(value) is not bool:
+                raise FixedPublicStateConditionError(
+                    f"{field_name} must be a boolean or null"
+                )
+        if self.condition_quantity is not None and (
+            type(self.condition_quantity) is not int
+            or self.condition_quantity < 0
+        ):
+            raise FixedPublicStateConditionError(
+                "condition_quantity must be a nonnegative integer or null"
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,16 +128,26 @@ class FixedPublicStateConditionSpec:
     kind: FixedPublicStateConditionKind
     amount: int | None = None
     counter_name: str | None = None
+    predicate: ObjectQuerySpec | None = None
+    quantity: CharacteristicQuantitySpec | None = None
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
-            raise FixedPublicStateConditionError(
-                "Unsupported fixed public-state condition schema version"
-            )
         if not isinstance(self.kind, FixedPublicStateConditionKind):
             raise FixedPublicStateConditionError(
                 "Unsupported fixed public-state condition kind"
+            )
+        extended_kinds = {
+            FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+            FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+            FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+        }
+        if type(self.schema_version) is not int or self.schema_version not in {
+            1,
+            2,
+        }:
+            raise FixedPublicStateConditionError(
+                "Unsupported fixed public-state condition schema version"
             )
         amount_kinds = {
             FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
@@ -122,6 +156,7 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.CONTROLLER_LIFE_AT_MOST,
             FixedPublicStateConditionKind.OPPONENT_LIFE_AT_MOST,
             FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
+            FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
         }
         if self.kind in amount_kinds:
             if type(self.amount) is not int or self.amount < 0:
@@ -150,24 +185,83 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Only source-counter conditions may carry a counter name"
             )
+        object_query_kinds = {
+            FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+            FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+        }
+        if self.kind in object_query_kinds:
+            if not isinstance(self.predicate, ObjectQuerySpec):
+                raise FixedPublicStateConditionError(
+                    "Object-state conditions require one typed predicate"
+                )
+            if self.quantity is not None:
+                raise FixedPublicStateConditionError(
+                    "Object-state conditions cannot carry a quantity"
+                )
+        elif self.predicate is not None:
+            raise FixedPublicStateConditionError(
+                "Only object-state conditions may carry a predicate"
+            )
+        if self.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST:
+            if not isinstance(self.quantity, CharacteristicQuantitySpec):
+                raise FixedPublicStateConditionError(
+                    "Query-count conditions require one typed quantity"
+                )
+            if self.amount == 0:
+                raise FixedPublicStateConditionError(
+                    "Query-count conditions require a positive threshold"
+                )
+        elif self.quantity is not None:
+            raise FixedPublicStateConditionError(
+                "Only query-count conditions may carry a quantity"
+            )
+        if self.kind in extended_kinds and self.schema_version != 2:
+            raise FixedPublicStateConditionError(
+                "Extended fixed public-state conditions require schema version 2"
+            )
+        if self.kind not in extended_kinds and self.schema_version != 1:
+            raise FixedPublicStateConditionError(
+                "Legacy fixed public-state conditions require schema version 1"
+            )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "kind": self.kind.value,
             "amount": self.amount,
             "counter_name": self.counter_name,
         }
+        if self.schema_version == 2:
+            value.update(
+                {
+                    "predicate": (
+                        self.predicate.to_dict()
+                        if self.predicate is not None
+                        else None
+                    ),
+                    "quantity": (
+                        self.quantity.to_dict()
+                        if self.quantity is not None
+                        else None
+                    ),
+                }
+            )
+        return value
 
     @classmethod
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "FixedPublicStateConditionSpec":
-        if not isinstance(value, Mapping) or set(value) != {
+        legacy_fields = {
             "schema_version",
             "kind",
             "amount",
             "counter_name",
+        }
+        current_fields = legacy_fields | {"predicate", "quantity"}
+        if not isinstance(value, Mapping) or frozenset(value) not in {
+            frozenset(legacy_fields),
+            frozenset(current_fields),
         }:
             raise FixedPublicStateConditionError(
                 "Fixed public-state conditions have a closed schema"
@@ -178,12 +272,32 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Unsupported fixed public-state condition kind"
             ) from exc
-        return cls(
-            schema_version=value["schema_version"],
-            kind=kind,
-            amount=value["amount"],
-            counter_name=value["counter_name"],
-        )
+        try:
+            predicate = (
+                ObjectQuerySpec.from_dict(value["predicate"])
+                if value.get("predicate") is not None
+                else None
+            )
+            quantity = (
+                CharacteristicQuantitySpec.from_dict(value["quantity"])
+                if value.get("quantity") is not None
+                else None
+            )
+            return cls(
+                schema_version=value["schema_version"],
+                kind=kind,
+                amount=value["amount"],
+                counter_name=value["counter_name"],
+                predicate=predicate,
+                quantity=quantity,
+            )
+        except (
+            CharacteristicFragmentError,
+            ObjectQueryError,
+            TypeError,
+            ValueError,
+        ) as exc:
+            raise FixedPublicStateConditionError(str(exc)) from exc
 
     def matches(self, snapshot: FixedPublicStateConditionSnapshot) -> bool:
         if not isinstance(snapshot, FixedPublicStateConditionSnapshot):
@@ -199,6 +313,8 @@ class FixedPublicStateConditionSpec:
             )
         assert self.amount is not None or self.kind in {
             FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
+            FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+            FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
         }
         if (
             self.kind
@@ -225,6 +341,15 @@ class FixedPublicStateConditionSpec:
         if self.kind is FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST:
             counters = dict(snapshot.source_counters)
             return counters.get(str(self.counter_name), 0) >= int(self.amount)
+        if self.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY:
+            return snapshot.source_query_matches is True
+        if self.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY:
+            return snapshot.attached_query_matches is True
+        if self.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST:
+            return (
+                snapshot.condition_quantity is not None
+                and snapshot.condition_quantity >= int(self.amount)
+            )
         raise FixedPublicStateConditionError(
             "Unsupported fixed public-state condition kind"
         )

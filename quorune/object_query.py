@@ -38,16 +38,30 @@ class ObjectQueryResult:
     monstrous_value: int | None = None
     renowned: bool = False
     entered_this_turn: bool = False
+    attacking: bool = False
+    blocking: bool = False
+    enchanted: bool = False
+    equipped: bool = False
+    modified: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.counters, FrozenMap):
             object.__setattr__(self, "counters", FrozenMap(self.counters))
         if type(self.renowned) is not bool:
             raise ValueError("Object query renowned state must be a boolean")
-        if type(self.entered_this_turn) is not bool:
-            raise ValueError(
-                "Object query entered-this-turn state must be a boolean"
-            )
+        for field_name in (
+            "entered_this_turn",
+            "attacking",
+            "blocking",
+            "enchanted",
+            "equipped",
+            "modified",
+        ):
+            if type(getattr(self, field_name)) is not bool:
+                raise ValueError(
+                    "Object query "
+                    f"{field_name.replace('_', '-')} state must be a boolean"
+                )
 
 
 def exact_numeric_characteristic(
@@ -98,6 +112,11 @@ def object_query_result(
     known_to_actor: bool,
     attached_to_ref: str | None,
     entered_this_turn: bool = False,
+    attacking: bool | None = None,
+    blocking: bool | None = None,
+    enchanted: bool = False,
+    equipped: bool = False,
+    modified: bool | None = None,
 ) -> ObjectQueryResult:
     types, subtypes, supertypes = type_parts
     return ObjectQueryResult(
@@ -135,6 +154,19 @@ def object_query_result(
         monstrous_value=card.monstrous_value,
         renowned=card.renowned,
         entered_this_turn=entered_this_turn,
+        attacking=(card.attacking is not None if attacking is None else attacking),
+        blocking=(card.blocking is not None if blocking is None else blocking),
+        enchanted=enchanted,
+        equipped=equipped,
+        modified=(
+            any(
+                type(amount) is int and amount > 0
+                for amount in card.counters.values()
+            )
+            or equipped
+            if modified is None
+            else modified
+        ),
     )
 
 
@@ -180,6 +212,12 @@ def object_matches_query(
                 counters=row.counters,
                 entered_this_turn=row.entered_this_turn,
                 tapped=row.tapped,
+                attacking=row.attacking,
+                blocking=row.blocking,
+                enchanted=row.enchanted,
+                equipped=row.equipped,
+                modified=row.modified,
+                monstrous=row.monstrous_value is not None,
             )
         )
     )

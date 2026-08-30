@@ -89,6 +89,9 @@ _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
 _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC = (
     "fixed-public-state-characteristic-existing-owner-v1"
 )
+_PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY = (
+    "typed-public-state-characteristic-query-existing-owner-v1"
+)
 _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC = (
     "fixed-battlefield-query-characteristics-existing-owner-v1"
 )
@@ -109,6 +112,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
+    _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY,
     _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER,
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER,
@@ -182,6 +186,76 @@ def _matches_query_self_characteristic_probe(
     )
     return query_gated == (
         probe_id == _PROBE_QUERY_GATED_SELF_CHARACTERISTIC
+    )
+
+
+def _is_typed_public_state_characteristic_compilation(
+    compiled: tuple[str, Mapping[str, Any], Any] | None,
+) -> bool:
+    if compiled is None:
+        return False
+    template_id, descriptor, _capabilities = compiled
+    if template_id == "continuous-fixed-public-state-characteristics-v1":
+        condition = descriptor.get("source_condition")
+        return bool(
+            isinstance(condition, Mapping)
+            and condition.get("schema_version") == 2
+            and condition.get("kind")
+            in {
+                "attached_matches_query",
+                "query_count_at_least",
+                "source_matches_query",
+            }
+        )
+    if template_id not in {
+        "continuous-fixed-query-anthem-v2",
+        "continuous-fixed-query-characteristic-grant-v1",
+        "continuous-fixed-query-keyword-grant-v2",
+    }:
+        return False
+    condition = descriptor.get("condition")
+    predicate = (
+        condition.get("predicate")
+        if isinstance(condition, Mapping)
+        else None
+    )
+    state = (
+        predicate.get("state_predicate")
+        if isinstance(predicate, Mapping)
+        else None
+    )
+    return bool(
+        isinstance(state, Mapping)
+        and any(
+            state.get(field) is not None
+            for field in (
+                "attacking",
+                "blocking",
+                "enchanted",
+                "equipped",
+                "modified",
+                "tapped",
+            )
+        )
+    )
+
+
+def _matches_typed_public_state_characteristic_query(
+    source: str,
+    *,
+    source_name: str,
+) -> bool:
+    return any(
+        _is_typed_public_state_characteristic_compilation(compiled)
+        for compiled in (
+            fixed_public_state_characteristics_handler(
+                source,
+                source_name=source_name,
+            ),
+            fixed_query_characteristic_grant_handler(source),
+            fixed_query_keyword_grant_handler(source),
+            fixed_power_toughness_anthem_handler(source),
+        )
     )
 
 
@@ -631,6 +705,18 @@ def _matches_probe(
                 fixed_power_toughness_anthem_handler,
             )
         )
+    if probe_id == _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Typed public-state characteristic measurement requires card context"
+            )
+        source_name, _source_is_permanent, _attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        return _matches_typed_public_state_characteristic_query(
+            source,
+            source_name=source_name,
+        )
     if probe_id == _PROBE_FIXED_LIBRARY_SELECTION:
         return any(
             fixed_library_selection_effect_template(body) is not None
@@ -815,6 +901,16 @@ def _measurement(
         )
     if probe_id == _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC:
         return _fixed_public_state_characteristic_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY:
+        return _typed_public_state_characteristic_query_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
@@ -1637,6 +1733,103 @@ def _fixed_public_state_characteristic_measurement(
             and node.exact
             and node.template_id
             == "continuous-fixed-public-state-characteristics-v1"
+            for ability in candidates
+            for node in (nodes.get(str(ability.get("ability_id") or "")),)
+        )
+        if not card_matches:
+            continue
+        matched_abilities += card_matches
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _typed_public_state_characteristic_query_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure one shared public-state/query characteristic boundary."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        card_matches = sum(
+            node is not None
+            and node.exact
+            and node.template_id
+            in {
+                "continuous-fixed-public-state-characteristics-v1",
+                "continuous-fixed-query-anthem-v2",
+                "continuous-fixed-query-characteristic-grant-v1",
+                "continuous-fixed-query-keyword-grant-v2",
+            }
             for ability in candidates
             for node in (nodes.get(str(ability.get("ability_id") or "")),)
         )

@@ -39,7 +39,7 @@ _RELATIONAL_QUERY_FIELDS = _EXTENDED_QUERY_FIELDS | {
     "excluded_controllers",
     "minimum_color_count",
 }
-_PERMANENT_STATE_FIELDS = frozenset(
+_LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
         "entered_this_turn",
         "tapped",
@@ -47,6 +47,14 @@ _PERMANENT_STATE_FIELDS = frozenset(
         "minimum_counter_count",
     }
 )
+_PERMANENT_STATE_FIELDS = _LEGACY_PERMANENT_STATE_FIELDS | {
+    "attacking",
+    "blocking",
+    "enchanted",
+    "equipped",
+    "modified",
+    "monstrous",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,18 +63,40 @@ class PermanentStatePredicateSpec:
 
     entered_this_turn: bool = False
     tapped: bool | None = None
+    attacking: bool | None = None
+    blocking: bool | None = None
+    enchanted: bool | None = None
+    equipped: bool | None = None
+    modified: bool | None = None
+    monstrous: bool | None = None
     counter_name: str | None = None
     minimum_counter_count: int | None = None
+    _serialization_version: int = field(
+        default=1,
+        repr=False,
+        compare=False,
+        hash=False,
+    )
 
     def __post_init__(self) -> None:
         if type(self.entered_this_turn) is not bool:
             raise ObjectQueryError(
                 "Permanent-state entered-this-turn must be a boolean"
             )
-        if self.tapped is not None and type(self.tapped) is not bool:
-            raise ObjectQueryError(
-                "Permanent-state tapped value must be boolean or null"
-            )
+        for field_name in (
+            "tapped",
+            "attacking",
+            "blocking",
+            "enchanted",
+            "equipped",
+            "modified",
+            "monstrous",
+        ):
+            value = getattr(self, field_name)
+            if value is not None and type(value) is not bool:
+                raise ObjectQueryError(
+                    f"Permanent-state {field_name} value must be boolean or null"
+                )
         counter_name = self.counter_name
         minimum = self.minimum_counter_count
         if counter_name is None:
@@ -91,36 +121,87 @@ class PermanentStatePredicateSpec:
         if (
             not self.entered_this_turn
             and self.tapped is None
+            and self.attacking is None
+            and self.blocking is None
+            and self.enchanted is None
+            and self.equipped is None
+            and self.modified is None
+            and self.monstrous is None
             and counter_name is None
         ):
             raise ObjectQueryError(
                 "Permanent-state predicate must constrain public state"
             )
+        extended = any(
+            getattr(self, field_name) is not None
+            for field_name in (
+                "attacking",
+                "blocking",
+                "enchanted",
+                "equipped",
+                "modified",
+                "monstrous",
+            )
+        )
+        if extended and self._serialization_version == 1:
+            object.__setattr__(self, "_serialization_version", 2)
+        if (
+            type(self._serialization_version) is not int
+            or self._serialization_version not in {1, 2}
+        ):
+            raise ObjectQueryError(
+                "Permanent-state predicate serialization version is unsupported"
+            )
+        if extended and self._serialization_version != 2:
+            raise ObjectQueryError(
+                "Extended permanent-state predicates require serialization version 2"
+            )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "entered_this_turn": self.entered_this_turn,
             "tapped": self.tapped,
             "counter_name": self.counter_name,
             "minimum_counter_count": self.minimum_counter_count,
         }
+        if self._serialization_version == 2:
+            value.update(
+                {
+                    "attacking": self.attacking,
+                    "blocking": self.blocking,
+                    "enchanted": self.enchanted,
+                    "equipped": self.equipped,
+                    "modified": self.modified,
+                    "monstrous": self.monstrous,
+                }
+            )
+        return value
 
     @classmethod
     def from_dict(
         cls,
         value: Mapping[str, Any],
     ) -> "PermanentStatePredicateSpec":
-        if not isinstance(value, Mapping) or frozenset(value) != (
-            _PERMANENT_STATE_FIELDS
-        ):
+        if not isinstance(value, Mapping) or frozenset(value) not in {
+            _LEGACY_PERMANENT_STATE_FIELDS,
+            _PERMANENT_STATE_FIELDS,
+        }:
             raise ObjectQueryError(
                 "Permanent-state predicate fields are incomplete or unknown"
             )
+        extended = frozenset(value) == _PERMANENT_STATE_FIELDS
         return cls(
             entered_this_turn=value["entered_this_turn"],
             tapped=value["tapped"],
+            attacking=value.get("attacking"),
+            blocking=value.get("blocking"),
+            enchanted=value.get("enchanted"),
+            equipped=value.get("equipped"),
+            modified=value.get("modified"),
+            monstrous=value.get("monstrous"),
             counter_name=value["counter_name"],
             minimum_counter_count=value["minimum_counter_count"],
+            _serialization_version=2 if extended else 1,
         )
 
 
@@ -130,6 +211,12 @@ def permanent_state_predicate_matches(
     counters: Mapping[str, Any],
     entered_this_turn: bool,
     tapped: bool,
+    attacking: bool = False,
+    blocking: bool = False,
+    enchanted: bool = False,
+    equipped: bool = False,
+    modified: bool = False,
+    monstrous: bool = False,
 ) -> bool:
     """Evaluate one typed predicate over current public permanent state."""
 
@@ -143,12 +230,34 @@ def permanent_state_predicate_matches(
         raise ObjectQueryError(
             "Permanent-state turn history must be a boolean"
         )
-    if type(tapped) is not bool:
-        raise ObjectQueryError("Permanent-state tapped state must be a boolean")
+    for field_name, value in (
+        ("tapped", tapped),
+        ("attacking", attacking),
+        ("blocking", blocking),
+        ("enchanted", enchanted),
+        ("equipped", equipped),
+        ("modified", modified),
+        ("monstrous", monstrous),
+    ):
+        if type(value) is not bool:
+            raise ObjectQueryError(
+                f"Permanent-state {field_name} state must be a boolean"
+            )
     if spec.entered_this_turn and not entered_this_turn:
         return False
     if spec.tapped is not None and tapped is not spec.tapped:
         return False
+    for field_name, value in (
+        ("attacking", attacking),
+        ("blocking", blocking),
+        ("enchanted", enchanted),
+        ("equipped", equipped),
+        ("modified", modified),
+        ("monstrous", monstrous),
+    ):
+        expected = getattr(spec, field_name)
+        if expected is not None and value is not expected:
+            return False
     if spec.counter_name is not None:
         raw = counters.get(spec.counter_name, 0)
         if type(raw) is not int or raw < 0:

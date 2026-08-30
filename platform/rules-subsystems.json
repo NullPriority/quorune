@@ -527,6 +527,7 @@
             "component:quorune.compiler.continuous_templates.fixed_power_toughness_anthem_handler",
             "component:quorune.compiler.continuous_templates.fixed_query_characteristic_grant_handler",
             "component:quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler",
+            "component:quorune.compiler.public_state_queries.fixed_battlefield_query_subject",
             "component:quorune.continuous_effects.evaluate_continuous_effects",
             "component:quorune.object_predicate.ObjectQuerySpec",
             "component:quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicGrantHandler",
@@ -559,6 +560,54 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-battlefield-query-characteristics-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:typed-public-state-characteristic-queries",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.ability.fixed_query_keyword_grant",
+            "capability:continuous.characteristics.fixed_public_state",
+            "capability:continuous.power_toughness.fixed_anthem",
+            "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+            "component:quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler",
+            "component:quorune.compiler.continuous_templates.fixed_query_characteristic_grant_handler",
+            "component:quorune.compiler.public_state_queries.fixed_battlefield_query_subject",
+            "component:quorune.compiler.public_state_queries.fixed_public_state_parts",
+            "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.object_predicate.ObjectQuerySpec"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "cycle-safe-layer-five-object-or-count-condition",
+            "fixed-combat-attachment-modified-or-tap-state-query",
+            "fixed-layer-six-or-layer-seven-characteristic-output"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_keyword_grant",
+            "continuous.attached.fixed_characteristics",
+            "continuous.characteristics.fixed_public_state",
+            "continuous.power_toughness.fixed_anthem"
+          ],
+          "shared_grammar": "fixed layer-6 and layer-7c static characteristics over one shared typed public-state and cycle-safe layer-5 object-query boundary",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes the measured direct combat, tap, attachment, and modified affected sets together with source, attached-object, and fixed public object-count conditions without adding a parallel applicability owner.",
+          "explicit_exclusions": [
+            "Protection, Ward, unsupported keywords, and unsupported keyword consumers",
+            "ability-presence applicability until one shared layer-6 query owns both additions and removals",
+            "chosen, hidden, historical-event, exact-attachment-count, negative, and open comparison predicates",
+            "compound state-and-counter predicates, unmarked exact counts, and per-opponent thresholds above existence",
+            "dynamic quantities, dynamic modifiers, base-setting, characteristic-defining, type, color, ability-removal, and quoted-rule outputs",
+            "type-dependent counts outside the existing cycle-safe layer-5 boundary"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-public-state-characteristic-query-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:typed-query-self-characteristics",
@@ -1265,23 +1314,20 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v147-trigger-ability-word-carriers",
-      "compiler_version": "oracle-ir-v147",
-      "bundle_id": "bundle:trigger-ability-word-carriers",
-      "candidate_ids": ["compiler:trigger-ability-word-carriers"],
+      "transition_id": "oracle-ir-v148-typed-public-state-characteristic-queries",
+      "compiler_version": "oracle-ir-v148",
+      "bundle_id": "bundle:typed-public-state-characteristic-queries",
+      "candidate_ids": ["compiler:typed-public-state-characteristic-queries"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_card_draw",
-        "trigger.event.normalized_damage",
-        "trigger.event.normalized_public_action",
-        "trigger.event.normalized_spell_cast",
-        "trigger.event.normalized_zone_change",
-        "trigger.placement.apnap"
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.attached.fixed_characteristics",
+        "continuous.characteristics.fixed_public_state",
+        "continuous.power_toughness.fixed_anthem"
       ],
-      "measurement_id": "measurement:trigger-ability-word-carriers",
+      "measurement_id": "measurement:typed-public-state-characteristic-queries",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

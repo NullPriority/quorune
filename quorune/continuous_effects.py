@@ -125,6 +125,12 @@ def _matches(
         phased_out=bool(context.get("phased_out", False)),
         known_to_actor=bool(context.get("known_to_actor", True)),
         counters=context.get("counters", {}),
+        attacking=bool(context.get("attacking", False)),
+        blocking=bool(context.get("blocking", False)),
+        enchanted=bool(context.get("enchanted", False)),
+        equipped=bool(context.get("equipped", False)),
+        modified=bool(context.get("modified", False)),
+        monstrous_value=(0 if context.get("monstrous", False) else None),
     )
     return object_matches_query(row, condition)
 

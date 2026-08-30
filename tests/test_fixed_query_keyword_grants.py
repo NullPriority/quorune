@@ -600,8 +600,10 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
 
     def test_open_or_unsupported_queries_remain_material_residuals(self):
         unsupported = (
-            "Attacking creatures you control have flying.",
             "Creatures with a +1/+1 counter on them have trample.",
+            "Attacking tapped creatures you control have flying.",
+            "Attacking creatures you control with a +1/+1 counter on them "
+            "have trample.",
             "Creatures you control have ward {2}.",
             "Creatures you control have protection from red.",
             "Artifact permanents you control have flying.",

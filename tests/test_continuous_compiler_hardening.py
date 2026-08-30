@@ -267,17 +267,11 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
 
     def test_unsupported_qualities_remain_residual(self):
         unsupported = (
-            "Modified creatures you control get +1/+1.",
             "Token creatures you control get +1/+1.",
             "Nontoken creatures you control get +1/+1.",
             "Snow creatures you control get +1/+1.",
             "Commander creatures you control get +1/+1.",
-            "Attacking creatures you control get +1/+1.",
-            "Blocking creatures you control get +1/+1.",
-            "Equipped creatures you control get +1/+1.",
-            "Enchanted creatures you control get +1/+1.",
-            "Tapped creatures you control get +1/+1.",
-            "Untapped creatures you control get +1/+1.",
+            "Attacking token creatures you control get +1/+1.",
             "Nonwhite creatures you control get +1/+1.",
             "Artifact token creatures you control get +1/+1.",
         )
@@ -297,11 +291,10 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
             capabilities = load_default_capability_registry()
             for index, text in enumerate(
                 (
-                    "Modified creatures you control get +1/+1.",
                     "Token creatures you control get +1/+1.",
                     "Snow creatures you control get +1/+1.",
                     "Commander creatures you control get +1/+1.",
-                    "Attacking creatures you control get +1/+1.",
+                    "Attacking token creatures you control get +1/+1.",
                     "Nonwhite creatures you control get +1/+1.",
                     "Artifact token creatures you control get +1/+1.",
                 )
@@ -328,6 +321,22 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                     )
         finally:
             db.close()
+
+    def test_state_qualified_queries_share_one_typed_applicability_owner(self):
+        for text in (
+            "Modified creatures you control get +1/+1.",
+            "Attacking creatures you control get +1/+1.",
+            "Blocking creatures you control get +1/+1.",
+            "Equipped creatures you control get +1/+1.",
+            "Enchanted creatures you control get +1/+1.",
+            "Tapped creatures you control get +1/+1.",
+            "Untapped creatures you control get +1/+1.",
+        ):
+            with self.subTest(text=text):
+                compiled = fixed_power_toughness_anthem_handler(text)
+                self.assertIsNotNone(compiled)
+                predicate = compiled[1]["condition"]["predicate"]
+                self.assertIsNotNone(predicate["state_predicate"])
 
     def test_previously_false_anthem_promotions_are_demoted(self):
         db, _, _ = load_assets()
