@@ -160,6 +160,37 @@ class _FixedPublicStateSnapshotResolver:
         )
 
 
+def _applicable_static_programs(
+    semantics: "SemanticRegistry",
+    source: Any,
+    semantic_keys: Sequence[str],
+) -> tuple["SemanticProgram", ...]:
+    compatibility_programs = {
+        program.key: program
+        for program in semantics.runtime_handler_programs_for_oracle(
+            source.oracle_id,
+            active_zone="battlefield",
+            event="characteristics.evaluate",
+        )
+    }
+    programs = []
+    for semantic_key in sorted(
+        {value for value in semantic_keys if type(value) is str and value}
+    ):
+        candidate = semantics.get(semantic_key) or compatibility_programs.get(
+            semantic_key
+        )
+        if (
+            candidate is not None
+            and candidate.handlers
+            and candidate.active_zone == "battlefield"
+            and candidate.event == "characteristics.evaluate"
+            and candidate.ability_id.startswith("static:")
+        ):
+            programs.append(candidate)
+    return tuple(programs)
+
+
 def collect_card_program_continuous_effects(
     state: ContinuousRuntimeState,
     semantics: "SemanticRegistry",
@@ -201,23 +232,11 @@ def collect_card_program_continuous_effects(
                     event="characteristics.evaluate",
                 )
             else:
-                programs = []
-                for semantic_key in sorted(
-                    {
-                        value
-                        for value in static_component_resolver(source)
-                        if type(value) is str and value
-                    }
-                ):
-                    candidate = semantics.get(semantic_key)
-                    if (
-                        candidate is not None
-                        and candidate.handlers
-                        and candidate.active_zone == "battlefield"
-                        and candidate.event == "characteristics.evaluate"
-                        and candidate.ability_id.startswith("static:")
-                    ):
-                        programs.append(candidate)
+                programs = _applicable_static_programs(
+                    semantics,
+                    source,
+                    static_component_resolver(source),
+                )
             if metrics is not None:
                 metrics.card_program_lookups += 1
             for program in programs:

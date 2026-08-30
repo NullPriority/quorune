@@ -82,6 +82,17 @@ def compiled_static_ability_fragments(
     programs_by_key.update(
         {
             program.key: program
+            for program in host.semantics.runtime_handler_programs_for_oracle(
+                record.oracle_id,
+                active_zone="battlefield",
+                event="characteristics.evaluate",
+            )
+            if program.handlers
+        }
+    )
+    programs_by_key.update(
+        {
+            program.key: program
             for program in host.semantics.programs_for_oracle(
                 record.oracle_id,
                 active_zone="battlefield",
