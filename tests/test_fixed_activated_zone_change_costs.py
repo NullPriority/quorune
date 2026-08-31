@@ -673,8 +673,10 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
             ref="A-font",
             zone="battlefield",
         )
+        self.prepare_priority(session)
         ability = self.ability(session, source)
         action_id = f"activate:{source.ref}:{ability.ability_id}"
+        self.action(session, action_id)
         hand_before = len(engine.state.players["A"].zones["hand"])
         source_logical_object_id = source.logical_object_id
         session.initial_checkpoint = checkpoint_envelope(engine.state)
@@ -977,6 +979,7 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         self.prepare_priority(session)
         ability = self.ability(session, source)
         action_id = f"activate:{source.ref}:{ability.ability_id}"
+        self.action(session, action_id)
         mana_before = dict(engine.state.players["A"].mana_pool)
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()
