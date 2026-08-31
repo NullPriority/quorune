@@ -11676,7 +11676,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 192750,
+      "logical_lines": 192778,
       "methods": {
         "dunder": 527,
         "private": 842,
@@ -12203,6 +12203,13 @@
           "physical_lines": 805
         },
         {
+          "file": "quorune/work_selection_evidence.py",
+          "functions_and_methods": 14,
+          "language": "python",
+          "logical_lines": 716,
+          "physical_lines": 750
+        },
+        {
           "file": "quorune/trigger_processing.py",
           "functions_and_methods": 42,
           "language": "python",
@@ -12236,13 +12243,6 @@
           "language": "python",
           "logical_lines": 688,
           "physical_lines": 756
-        },
-        {
-          "file": "quorune/work_selection_evidence.py",
-          "functions_and_methods": 13,
-          "language": "python",
-          "logical_lines": 688,
-          "physical_lines": 720
         },
         {
           "file": "quorune/continuous_effect_model.py",
@@ -16167,7 +16167,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 211092,
+      "physical_lines": 211122,
       "python_file_count": 576,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -16185,7 +16185,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 2763,
+      "top_level_functions": 2764,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -28743,7 +28743,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "19a83cd3aef2e4b1b1bdae6a372621a1b9a1a7efe7bbcb0b8b8568c46be0f9e9",
+      "fingerprint": "aba419c1460a1e3079ea211a8cce2a4405491a6a08b16583e470b1c49d18b649",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -29601,8 +29601,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 3696,
-      "discovered_total": 7005,
+      "conventional_ast_cases": 3698,
+      "discovered_total": 7007,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 198,
