@@ -20,7 +20,7 @@ class _Host:
         )
 
     @staticmethod
-    def _effective_card_data(card):
+    def _effective_card_data(card, *, ignore_face_down=False):
         return card.effective
 
     @staticmethod

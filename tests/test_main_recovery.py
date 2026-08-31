@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import subprocess
+import sys
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
@@ -62,6 +64,69 @@ def _git(root: Path, *arguments: str) -> str:
 
 
 class MainRecoveryTests(unittest.TestCase):
+    def test_direct_script_recovery_imports_result_validation_owner(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            base = "a" * 40
+            paths = {
+                "runs": root / "runs.json",
+                "event": root / "event.json",
+                "jobs": root / "jobs.json",
+            }
+            documents = {
+                "runs": {
+                    "workflow_runs": [
+                        {
+                            "id": 42,
+                            "path": ".github/workflows/main-broad.yml",
+                            "event": "push",
+                            "status": "completed",
+                            "conclusion": "failure",
+                            "head_branch": "main",
+                            "head_sha": base,
+                        }
+                    ]
+                },
+                "event": {
+                    "pull_request": {"labels": [{"name": "main-red-recovery"}]}
+                },
+                "jobs": {"jobs": []},
+            }
+            for name, path in paths.items():
+                path.write_text(json.dumps(documents[name]), encoding="utf-8")
+
+            repository = Path(__file__).resolve().parents[1]
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/main_health.py",
+                    "--runs-json",
+                    str(paths["runs"]),
+                    "--event",
+                    str(paths["event"]),
+                    "--jobs-json",
+                    str(paths["jobs"]),
+                    "--results-dir",
+                    str(root),
+                    "--base-sha",
+                    base,
+                    "--head-sha",
+                    "b" * 40,
+                ],
+                cwd=repository,
+                text=True,
+                encoding="utf-8",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+
+            self.assertEqual(1, result.returncode)
+            self.assertEqual("", result.stderr)
+            self.assertEqual(
+                "main-red recovery has no provenance-bearing failure",
+                json.loads(result.stdout)["error"],
+            )
+
     def test_label_requests_but_does_not_authorize_recovery(self):
         red = {
             "workflow_runs": [

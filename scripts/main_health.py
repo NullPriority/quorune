@@ -7,10 +7,13 @@ import json
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
+import sys
 from typing import Any, Mapping, Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 MAIN_BROAD_WORKFLOW = ".github/workflows/main-broad.yml"
 RECOVERY_LABEL = "main-red-recovery"
 FIX_FORWARD_LABEL = "main-red-fix-forward"
