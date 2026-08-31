@@ -247,7 +247,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
     ):
         expected = {
             "Archery Training": ("triggered_ability", True),
-            "Dreadmobile": ("activated_ability", False),
+            "Dreadmobile": ("activated_ability", True),
             "Festering Wound": ("triggered_ability", True),
             "Fylgja": ("activated_ability", True),
             "Gavel of the Righteous": ("triggered_ability", True),

@@ -45,6 +45,14 @@ class ChangeImpactTests(unittest.TestCase):
                 "test_fixed_target_effect_sequences",
                 "test_high_risk_interaction_assurance",
             },
+            "quorune/compiler/activated_zone_change_costs.py": {
+                "test_activated_draw_abilities",
+                "test_capability_implementation_mutations",
+                "test_fixed_counter_placement_effects",
+                "test_fixed_nonrepeating_modal_programs",
+                "test_fixed_target_effect_sequences",
+                "test_high_risk_interaction_assurance",
+            },
             "quorune/compiler/prevention_templates.py": {
                 "test_fixed_token_creation_effects",
                 "test_high_risk_interaction_assurance",
