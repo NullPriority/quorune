@@ -2534,6 +2534,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/saga_chapter_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/scry_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8323,5 +8338,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "1c00790d1249e6e60288414c1a137457251f8ae26afbd1e656256714fafe6c7a"
+  "fingerprint": "37965987e3acd77fe128b4e27118424374a53ecde9a612958be495e2643de982"
 }

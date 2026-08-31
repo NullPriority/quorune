@@ -32,6 +32,45 @@ class _Witness:
 
 
 _WITNESSES = {
+    "saga-chapter-boundary": _Witness(
+        "Generic Saga Chapter Boundary Fixture",
+        "Enchantment — Saga",
+        "I — Draw a card.\n"
+        "II — Exile the top card of your library. You may play that card this turn.\n"
+        "III — Mill three cards.\n"
+        "IV — Each opponent sacrifices a creature of their choice.\n"
+        "V — Creatures you control get +1/+1 and gain flying until end of turn.\n"
+        "VI — Exile all graveyards.\n"
+        "VII — Put a +1/+1 counter on each of up to two target creatures.\n"
+        "VIII — Choose a card name.\n"
+        "IX — Exile target permanent.\n"
+        "X — Return target creature to its owner's hand.\n"
+        "Creatures you control have flying.\n"
+        "Creatures you control with no abilities get +1/+1.\n"
+        "If one or more tokens would be created under your control, twice "
+        "that many of those tokens are created instead.",
+        "{2}",
+    ),
+    "saga-attached-boundary": _Witness(
+        "Generic Attached Saga Boundary Fixture",
+        "Enchantment — Aura Saga",
+        "Enchant creature\n"
+        "I — Draw a card.\n"
+        "II — Choose a card name.\n"
+        "Enchanted creature gets +1/+1.",
+        "{2}",
+        ("Enchant",),
+    ),
+    "saga-query-boundary": _Witness(
+        "Generic Query Saga Boundary Fixture",
+        "Enchantment Creature — Saga Spirit",
+        "I — Draw a card.\n"
+        "II — Choose a card name.\n"
+        "This creature gets +1/+1 for each creature you control.",
+        "{2}",
+        power="1",
+        toughness="1",
+    ),
     "floating-shield": _Witness(
         "Floating Shield",
         "Enchantment — Aura",
@@ -783,6 +822,86 @@ IMPULSE_ACCESS_AND_CHOICE_PAIRS = (
 )
 
 
+SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS = (
+    _pair(
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.continuous.attached.fixed_characteristics",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.continuous.characteristics.query_count_modifier",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.counter.producer.fixed_permanent_target_set_effect",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "capability.counter.producer.fixed_permanent_target_set_effect",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+    _pair(
+        "capability.counter.producer.saga_lore",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "capability.counter.producer.saga_lore",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+    _pair(
+        "capability.permanent.return.owner_hand",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "capability.permanent.return.owner_hand",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+    _pair(
+        "capability.zone.change.destination_replacement",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.zone.draw.library_to_hand",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.zone.impulse_access.fixed",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.zone.mill.fixed",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.zone.move.fixed_public_set",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.continuous_layer.affected-player-ordering",
+    ),
+    _pair(
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+    ),
+    _pair(
+        "residual.event_binding.ordinary-saga-chapter-event-binding",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "residual.event_binding.ordinary-saga-chapter-event-binding",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+)
+
+
 ATTACHMENT_AND_CONTINUOUS_PAIRS = (
     _pair("capability.attachment.aura.simple_object", "residual.continuous_layer.affected-player-ordering"),
     _pair("capability.attachment.aura.simple_object", "residual.continuous_layer.continuous-effect-layers-and-dependencies"),
@@ -989,6 +1108,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
             *IMPULSE_ACCESS_AND_CHOICE_PAIRS,
             *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
+            *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS,
         }
     )
 )
@@ -1017,6 +1137,19 @@ _bind(
 _bind("starforged-sword", *ATTACHMENT_AND_CONTINUOUS_PAIRS[6:8])
 _bind("junk-jet", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
 _bind("soratami-cloud-chariot", ATTACHMENT_AND_CONTINUOUS_PAIRS[9])
+_bind(
+    "saga-chapter-boundary",
+    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[0],
+    *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[3:],
+)
+_bind(
+    "saga-attached-boundary",
+    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[1],
+)
+_bind(
+    "saga-query-boundary",
+    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[2],
+)
 _bind("prismatic-circle", *EFFECT_AND_REPLACEMENT_PAIRS[:3])
 _bind("serras-hymn", EFFECT_AND_REPLACEMENT_PAIRS[3])
 _bind("tekuthal", *EFFECT_AND_REPLACEMENT_PAIRS[4:6])

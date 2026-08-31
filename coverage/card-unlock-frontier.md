@@ -2,7 +2,7 @@
 title: "Commander card-unlock frontier"
 status: "generated"
 authoritative_source: "coverage/card-unlock-frontier.json.gz"
-verified: "1416877b8958d566092e552662fa85fafa4f1261321672c9e839967dcf68e2e8"
+verified: "1e57807a058ecae6adbdf6e49198591d3135f61d4bc24113be410e8dfbe62871"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,16 +14,16 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 ## Snapshot
 
 - Cards considered: 31,623
-- Oracle states: `{"exact":8325,"partial":11502,"unresolved":11796}`
-- CardProgram states: `{"residual":23298,"trusted":8325}`
+- Oracle states: `{"exact":8329,"partial":11588,"unresolved":11706}`
+- CardProgram states: `{"residual":23294,"trusted":8329}`
 - Hard construction failures: 0
-- Frontier fingerprint: `1416877b8958d566092e552662fa85fafa4f1261321672c9e839967dcf68e2e8`
+- Frontier fingerprint: `1e57807a058ecae6adbdf6e49198591d3135f61d4bc24113be410e8dfbe62871`
 
 ## Highest-leverage single families
 
 | Family | Occurrences | Cards | Sole-blocker cards | Exact abilities | Readiness | Risk |
 |---|---:|---:|---:|---:|---|---|
-| `continuous_layer:continuous-effect-layers-and-dependencies` | 6,378 | 5,063 | 2,674 | 6,378 | missing_lowering | very_high |
+| `continuous_layer:continuous-effect-layers-and-dependencies` | 5,836 | 4,858 | 2,520 | 5,836 | missing_lowering | very_high |
 | `activated_effect:create-token` | 314 | 307 | 26 | 68 | missing_lowering | high |
 | `replacement:damage-prevention` | 167 | 164 | 24 | 43 | missing_lowering | very_high |
 | `keyword_dependency:banding` | 24 | 24 | 19 | 24 | missing_contract | medium |
@@ -53,26 +53,26 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 
 | Families | Exact cards | Exact abilities | Residuals |
 |---|---:|---:|---:|
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, replacement:damage-prevention` | 2,730 | 6,489 | 6,503 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:start-your-engines` | 2,728 | 6,486 | 6,498 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:banding` | 2,726 | 6,470 | 6,482 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:create-token` | 2,724 | 6,529 | 6,541 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:equip` | 2,724 | 6,471 | 6,483 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:typed-spell-additional-cost-clause` | 2,724 | 6,464 | 6,564 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:life-change` | 2,722 | 6,490 | 6,502 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, activated_effect:put-onto-battlefield` | 2,722 | 6,478 | 6,491 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:myriad` | 2,722 | 6,469 | 6,481 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:living-weapon` | 2,720 | 6,465 | 6,477 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, replacement:damage-prevention, keyword_dependency:start-your-engines` | 2,720 | 6,461 | 6,463 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:exile` | 2,719 | 6,520 | 6,532 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:umbra-armor` | 2,719 | 6,461 | 6,473 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, activated_effect:unparsed-investigate` | 2,718 | 6,459 | 6,471 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, replacement:damage-prevention, keyword_dependency:banding` | 2,718 | 6,445 | 6,447 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:sacrifice` | 2,717 | 6,480 | 6,492 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:rebound` | 2,717 | 6,480 | 6,492 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:return` | 2,717 | 6,469 | 6,481 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:unparsed-splice-onto-arcane` | 2,717 | 6,468 | 6,480 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:unparsed-buyback-3` | 2,717 | 6,463 | 6,475 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, replacement:damage-prevention` | 2,576 | 5,947 | 5,961 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:start-your-engines` | 2,574 | 5,944 | 5,956 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:banding` | 2,572 | 5,928 | 5,940 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:create-token` | 2,570 | 5,987 | 5,999 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:equip` | 2,570 | 5,929 | 5,941 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:typed-spell-additional-cost-clause` | 2,570 | 5,922 | 6,022 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:life-change` | 2,568 | 5,948 | 5,960 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, activated_effect:put-onto-battlefield` | 2,568 | 5,936 | 5,949 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:myriad` | 2,568 | 5,927 | 5,939 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:living-weapon` | 2,566 | 5,923 | 5,935 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, replacement:damage-prevention, keyword_dependency:start-your-engines` | 2,566 | 5,919 | 5,921 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:exile` | 2,565 | 5,978 | 5,990 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:umbra-armor` | 2,565 | 5,919 | 5,931 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, activated_effect:unparsed-investigate` | 2,564 | 5,917 | 5,929 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, replacement:damage-prevention, keyword_dependency:banding` | 2,564 | 5,903 | 5,905 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:sacrifice` | 2,563 | 5,938 | 5,950 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:rebound` | 2,563 | 5,938 | 5,950 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:return` | 2,563 | 5,927 | 5,939 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:unparsed-splice-onto-arcane` | 2,563 | 5,926 | 5,938 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:unparsed-buyback-3` | 2,563 | 5,921 | 5,933 |
 
 ## Hard construction failures
 

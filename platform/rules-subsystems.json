@@ -867,6 +867,48 @@
           "measurement_probe_id": "fixed-face-down-lifecycle-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:ordinary-saga-chapter-programs",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:counter.producer.saga_lore",
+            "component:quorune.compiler.saga_chapter_nodes.ordinary_saga_chapter_nodes",
+            "component:quorune.read_ahead.saga_chapter_line",
+            "component:quorune.saga_progression.dispatch_saga_chapters",
+            "component:quorune.trigger_discovery.dispatch_semantic_event"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "contiguous-roman-chapter-inventory",
+            "independently-exact-typed-body",
+            "multi-threshold-program-identity",
+            "printed-saga-source"
+          ],
+          "shared_dependencies": [
+            "counter.placement.quantity_replacement",
+            "state_based.saga_final_chapter",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "ordinary printed Saga Roman-numeral chapter carriers with independently exact typed effect bodies lowered into the existing lore progression and APNAP event owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Turns the existing replacement-aware Saga lore, Read Ahead, final-chapter, replay, and trigger-placement foundation into executable chapter programs while making independently exact future effect-body harvests close additional Sagas automatically.",
+          "explicit_exclusions": [
+            "chapter abilities whose exact body requires an untrusted capability",
+            "copied, granted, removed, or layer-modified chapter abilities outside typed ability propagation",
+            "independently inexact, optional, conditional, linked, reflexive, dynamic, random, or choice-bearing chapter bodies",
+            "non-Saga Roman-numeral text and malformed, duplicate, descending, noncontiguous, or unsupported chapter symbols",
+            "rooms, Classes, Battles, level abilities, and unrelated structural carriers"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "ordinary-saga-chapter-programs-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-activation-zone-change-predicates",
           "member_family_ids": [
             "activated_cost:complete-alternate-additional-cost-grammar",
@@ -1457,18 +1499,17 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v152-fixed-activation-zone-change-predicates",
-      "compiler_version": "oracle-ir-v152",
-      "bundle_id": "bundle:fixed-activation-zone-change-predicates",
-      "candidate_ids": ["compiler:fixed-activation-zone-change-predicates"],
+      "transition_id": "oracle-ir-v153-ordinary-saga-chapter-programs",
+      "compiler_version": "oracle-ir-v153",
+      "bundle_id": "bundle:ordinary-saga-chapter-programs",
+      "candidate_ids": ["compiler:ordinary-saga-chapter-programs"],
       "family_ids": [
-        "activated_cost:complete-alternate-additional-cost-grammar",
-        "activated_cost:restricted-payment-predicates"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "activation.selected_zone_change.fixed"
+        "counter.producer.saga_lore"
       ],
-      "measurement_id": "measurement:fixed-activation-zone-change-predicates",
+      "measurement_id": "measurement:ordinary-saga-chapter-programs",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

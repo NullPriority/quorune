@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 import re
 from typing import Any
 
@@ -30,19 +31,65 @@ _ROMAN_CHAPTERS = {
 }
 
 
+@dataclass(frozen=True, slots=True)
+class SagaChapterLine:
+    """One printed ordinary Saga chapter carrier and its effect body."""
+
+    chapters: tuple[int, ...]
+    body: str
+
+    def __post_init__(self) -> None:
+        chapters = tuple(self.chapters)
+        if (
+            not chapters
+            or chapters != tuple(sorted(set(chapters)))
+            or any(type(value) is not int or value < 1 for value in chapters)
+            or not isinstance(self.body, str)
+            or not self.body.strip()
+        ):
+            raise ValueError("Saga chapter line is malformed")
+        object.__setattr__(self, "chapters", chapters)
+        object.__setattr__(self, "body", self.body.strip())
+
+
+def saga_chapter_line(value: str) -> SagaChapterLine | None:
+    """Parse one closed Roman-numeral Saga chapter prefix."""
+
+    if not isinstance(value, str):
+        return None
+    match = _CHAPTER_PREFIX.match(value.strip())
+    if match is None:
+        return None
+    body = value.strip()[match.end() :].strip()
+    chapters = tuple(
+        _ROMAN_CHAPTERS.get(symbol.strip().upper())
+        for symbol in match.group("symbols").split(",")
+    )
+    if (
+        not body
+        or any(value is None for value in chapters)
+        or tuple(value for value in chapters if value is not None)
+        != tuple(sorted(set(value for value in chapters if value is not None)))
+    ):
+        return None
+    return SagaChapterLine(
+        chapters=tuple(value for value in chapters if value is not None),
+        body=body,
+    )
+
+
 def saga_chapter_numbers(lines: Iterable[str]) -> tuple[int, ...]:
     """Parse one closed contiguous printed chapter-symbol vocabulary."""
 
     chapters: set[int] = set()
     for line in lines:
-        match = _CHAPTER_PREFIX.match(str(line).strip())
-        if match is None:
-            continue
-        for symbol in match.group("symbols").split(","):
-            number = _ROMAN_CHAPTERS.get(symbol.strip().upper())
-            if number is None:
+        normalized = str(line).strip()
+        parsed = saga_chapter_line(normalized)
+        if parsed is None:
+            if _CHAPTER_PREFIX.match(normalized) is not None:
                 return ()
-            chapters.add(number)
+            continue
+        chapters.update(parsed.chapters)
     if not chapters:
         return ()
     ordered = tuple(sorted(chapters))
@@ -77,6 +124,8 @@ __all__ = [
     "READ_AHEAD_CAPABILITIES",
     "READ_AHEAD_ENTRY_HANDLER_ID",
     "READ_AHEAD_MECHANIC_ID",
+    "SagaChapterLine",
     "read_ahead_entry_handler_descriptor",
+    "saga_chapter_line",
     "saga_chapter_numbers",
 ]

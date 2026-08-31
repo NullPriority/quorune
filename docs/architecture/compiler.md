@@ -600,9 +600,16 @@ source-spanned residuals.
 Before event binding, the Oracle IR carrier boundary removes a leading ability-
 word label only when the remaining material begins with `When`, `Whenever`, or
 `At the beginning of`. The node retains the complete original source text and
-span. Nontrigger ability words, chapter markers, quoted text, and unsupported
-event or effect grammar remain material and fail closed through their existing
-owners.
+span. An ordinary Roman-numeral chapter marker lowers only on a printed Saga
+with one contiguous face-level chapter inventory and an independently exact
+typed body. One source line shared by multiple chapter numbers receives a
+stable program identity per threshold; the resulting `saga.chapter.N` events
+remain in the existing replacement-aware lore progression, APNAP trigger, Read
+Ahead, final-chapter, replay, and state-based-action owners. Malformed,
+non-Saga, copied, granted, conditional, linked, dynamic, or independently
+inexact chapter material remains residual. Other nontrigger ability words,
+quoted text, and unsupported event or effect grammar also remain material and
+fail closed through their existing owners.
 
 `compiler/fixed_counter_trigger_nodes.py` owns one shared closed normalized-
 event binding for represented beginnings of steps; a land entering under the

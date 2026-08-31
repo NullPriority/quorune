@@ -369,6 +369,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-normalized-life-gain": (
         "trigger.event.normalized_life_gain",
     ),
+    "trigger-event-saga-chapter": (
+        "counter.producer.saga_lore",
+    ),
     "fixed-counter-event-trigger": (
         "counter.producer.fixed_event_trigger",
     ),

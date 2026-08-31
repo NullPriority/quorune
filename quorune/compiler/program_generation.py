@@ -282,7 +282,7 @@ def _generated_ability_id(
             in {
                 _EVOLVE_MECHANIC,
                 _CASCADE_MECHANIC,
-                _PROWESS_MECHANIC,
+                _PROWESS_MECHANIC, "chapter",
                 PERSIST_KEYWORD,
                 RENOWN_MECHANIC_ID,
                 UNDYING_KEYWORD,

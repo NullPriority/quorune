@@ -2066,6 +2066,56 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
+    def test_ordinary_saga_chapter_program_probe_is_closed(self):
+        probe_id = "ordinary-saga-chapter-programs-existing-owner-v1"
+        saga = SimpleNamespace(
+            name="Ordinary Saga Probe",
+            type_line="Enchantment — Saga",
+            oracle_text="I — Draw a card.",
+            keywords=(),
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "I — Draw a card.",
+            "II, III — You gain 2 life.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=saga,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "III, II — Draw a card.",
+            "I, I — Draw a card.",
+            "XI — Draw a card.",
+            "I —",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=saga,
+                        ability=ability,
+                    )
+                )
+        non_saga = SimpleNamespace(
+            **{**saga.__dict__, "type_line": "Enchantment"}
+        )
+        self.assertFalse(
+            _matches_probe(
+                probe_id,
+                "I — Draw a card.",
+                card_record=non_saga,
+                ability=ability,
+            )
+        )
+
     def test_fixed_activation_measurement_counts_only_exact_compiled_nodes(self):
         member_ids = {"activated_cost:fixed-zone-change"}
         frontier = {

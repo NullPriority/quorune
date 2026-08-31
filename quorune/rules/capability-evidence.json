@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "dcfd7811167a62d555d0cb5b7ec91a41f6f08d38364ba3cb541b6cefba5ccf65",
-  "declaration_source_fingerprint": "66d77da0566cb71556899840836fd8596113322fea1e560916a02fd173a75bdc",
+  "registry_fingerprint": "103b37a406b359d3a04bc271e4d4b95600bf70dd759b1eba336c9c148cfa852d",
+  "declaration_source_fingerprint": "b57be49d5a1feb74bdb66fcbe891b57d65759c447df19d90762eae54c57f6012",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -26106,6 +26106,38 @@
     {
       "capability_id": "counter.producer.saga_lore",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_compiled_saga_chapters_batch_in_apnap_order_and_round_trip",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Batch compiler-generated chapter occurrences from different controllers in deterministic four-player APNAP order and preserve their normalized event kinds through checkpoint round-trip."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_four_player_precombat_lore_only_advances_active_players_sagas",
       "official_rule_ids": [
         "101.4",
@@ -26266,6 +26298,38 @@
     {
       "capability_id": "counter.producer.saga_lore",
       "evidence_class": "negative",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_ordinary_saga_chapter_grammar_fails_closed",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject malformed, duplicate, out-of-order, non-Saga, and independently inexact chapter carriers without producing a trusted chapter event."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "negative",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_read_ahead_and_untrusted_chapters_fail_closed",
       "official_rule_ids": [
         "101.4",
@@ -26394,6 +26458,38 @@
     {
       "capability_id": "counter.producer.saga_lore",
       "evidence_class": "positive",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_compiled_ordinary_saga_chapter_dispatches_and_resolves",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Advance an ordinary Saga to chapter I, discover the compiler-generated trusted event program, place it through the existing trigger batch, and resolve its typed life effect."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "positive",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_entry_and_precombat_lore_use_distinct_counter_paths",
       "official_rule_ids": [
         "101.4",
@@ -26486,6 +26582,38 @@
         "commander_review"
       ],
       "applicability_note": "Lower the ordinary Saga card form to one source-spanned lore-progression capability and treat its exact rules reminder as nonmaterial provenance."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "positive",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_ordinary_saga_chapter_programs_compile_exact",
+      "official_rule_ids": [
+        "101.4",
+        "122.1",
+        "122.6",
+        "603.2",
+        "603.3",
+        "614.1c",
+        "614.16",
+        "616.1",
+        "616.1f",
+        "702.155",
+        "702.155a",
+        "702.155b",
+        "702.155c",
+        "714.2b",
+        "714.2d",
+        "714.3",
+        "714.3a",
+        "714.3b",
+        "714.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile single- and multi-threshold Roman chapter carriers into unique source-spanned trusted programs with lore, APNAP, and independently exact effect dependencies."
     },
     {
       "capability_id": "counter.producer.saga_lore",
@@ -52158,5 +52286,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "62a03945bb92daed2592299fce26b73c7fd728487e8ef65c73b36f8c34bcafd9"
+  "fingerprint": "1ed1db07e6f352c1e18461a6f23f7d2f12e98059a3e3c14edb5883d43a608546"
 }

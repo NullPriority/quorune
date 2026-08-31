@@ -312,6 +312,19 @@
       ]
     },
     {
+      "id": "compiler-saga-chapter-expectations",
+      "patterns": [
+        "quorune/compiler/saga_chapter_nodes.py",
+        "quorune/read_ahead.py",
+        "quorune/saga_progression.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_rules_scheduler",
+        "test_saga_counter_progression"
+      ]
+    },
+    {
       "id": "fixed-public-state-characteristic-contract",
       "patterns": [
         "quorune/card_programs/runtime.py",

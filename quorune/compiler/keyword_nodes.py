@@ -43,6 +43,7 @@ from .cumulative_upkeep_nodes import (
     fixed_life_cumulative_upkeep_node,
     fixed_mana_cumulative_upkeep_node,
 )
+from .saga_chapter_nodes import ordinary_saga_chapter_nodes
 from .commander_pairing_nodes import commander_pairing_keyword_node
 from .cascade_nodes import CASCADE_MECHANIC_ID, cascade_keyword_node
 from .storm_nodes import STORM_MECHANIC_ID, storm_keyword_node

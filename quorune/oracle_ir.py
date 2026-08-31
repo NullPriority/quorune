@@ -87,7 +87,7 @@ from .compiler.keyword_nodes import (
     keyword_node_plans,
     modular_keyword_nodes,
     prowess_keyword_node,
-    read_ahead_keyword_node,
+    read_ahead_keyword_node, ordinary_saga_chapter_nodes,
     riot_keyword_node,
     sunburst_keyword_node,
     unleash_keyword_nodes,
@@ -137,7 +137,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v152"
+ORACLE_COMPILER_VERSION = "oracle-ir-v153"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -706,8 +706,7 @@ def _fallback_keyword_mechanics(
 def _keyword_nodes(
     *,
     node_id: str,
-    line: str,
-    material_line: str,
+    line: str, material_line: str, card_name: str, effect_template: Any,
     span: SourceSpan,
     keywords: Sequence[str],
     printed_card_types: tuple[str, ...],
@@ -719,7 +718,8 @@ def _keyword_nodes(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> tuple[OracleNode, ...]:
-    """Compile one keyword line without conflating Flash's active zone."""
+    chapter_nodes = ordinary_saga_chapter_nodes(node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name, printed_subtypes=printed_subtypes, declared_chapters=saga_chapters, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals, effect_template=effect_template)
+    if chapter_nodes is not None: return chapter_nodes
 
     mechanics = keyword_mechanics(
         material_line,
@@ -1235,7 +1235,7 @@ def _compile_face(
         line, material_line, span = row
         node_id = f"{face_id}:n{index}"
         keyword_nodes = _keyword_nodes(
-            node_id=node_id, line=line, material_line=material_line, span=span,
+            node_id=node_id, line=line, material_line=material_line, card_name=face_name or record.name, effect_template=contextual_effect_template, span=span,
             keywords=keywords, printed_card_types=tuple(sorted(card_types)),
             printed_subtypes=printed_subtypes, saga_chapters=saga_chapters,
             printed_power=None if record.faces else record.power,
