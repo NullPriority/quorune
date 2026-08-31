@@ -4748,6 +4748,177 @@
       ],
       "interaction_order": 2,
       "assertion": "The typed query-characteristic ability does not lower or bypass either transforming Saga's unsupported self-replacement and CR 616 ordering boundary, so the residual interaction remains fail closed at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.continuous.ability.fixed_query_keyword_grant", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["continuous.ability.fixed_query_keyword_grant"],
+      "interaction_order": 2,
+      "assertion": "A generic Saga may carry an exact fixed-query keyword grant beside an independently inexact chapter, but strict and compatible runtime admission reject the residual CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.continuous.attached.fixed_characteristics", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["continuous.attached.fixed_characteristics"],
+      "interaction_order": 2,
+      "assertion": "The constructed Aura-Saga retains its exact attached-characteristic owner while the unsupported chapter keeps the complete CardProgram unavailable at runtime."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.continuous.characteristics.query_count_modifier", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["continuous.characteristics.query_count_modifier"],
+      "interaction_order": 2,
+      "assertion": "The constructed creature-Saga compiles its query-count characteristic independently, but its unsupported chapter prevents strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["continuous.resolution.fixed_characteristics_until_end_of_turn"],
+      "interaction_order": 2,
+      "assertion": "An exact temporary-characteristic chapter cannot authorize a sibling inexact chapter or the residual complete Saga program at runtime."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.counter.producer.fixed_permanent_target_set_effect", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["counter.producer.fixed_permanent_target_set_effect"],
+      "interaction_order": 2,
+      "assertion": "The exact chapter counter-target set remains typed while a separate replacement-applicability residual keeps the constructed Saga unavailable at runtime."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.counter.producer.fixed_permanent_target_set_effect", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["counter.producer.fixed_permanent_target_set_effect"],
+      "interaction_order": 2,
+      "assertion": "The exact chapter counter-target set does not bypass its sibling self-replacement and CR 616 ordering residual at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.counter.producer.saga_lore", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["counter.producer.saga_lore"],
+      "interaction_order": 2,
+      "assertion": "Trusted lore progression and exact chapter dispatch remain represented, but unresolved replacement applicability keeps the complete Saga fail closed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.counter.producer.saga_lore", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["counter.producer.saga_lore"],
+      "interaction_order": 2,
+      "assertion": "Trusted lore progression cannot authorize an unresolved self-replacement and prevention-ordering sibling during strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.permanent.return.owner_hand", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["permanent.return.owner_hand"],
+      "interaction_order": 2,
+      "assertion": "The exact return-to-owner-hand chapter stays typed while the constructed Saga's separate replacement applicability remains residual and blocks admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.permanent.return.owner_hand", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["permanent.return.owner_hand"],
+      "interaction_order": 2,
+      "assertion": "The exact return chapter cannot lower or bypass the separate self-replacement and prevention-ordering residual at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.change.destination_replacement", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["zone.change.destination_replacement"],
+      "interaction_order": 2,
+      "assertion": "An exact sacrifice chapter preserves destination replacement, but a sibling inexact chapter keeps the complete constructed Saga unavailable at runtime."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.draw.library_to_hand", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["zone.draw.library_to_hand"],
+      "interaction_order": 2,
+      "assertion": "The exact draw chapter remains capability-bound while the unsupported chapter prevents complete CardProgram admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.impulse_access.fixed", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["zone.impulse_access.fixed"],
+      "interaction_order": 2,
+      "assertion": "The exact impulse-access chapter cannot make a sibling inexact chapter or the residual Saga program runtime-ready."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.mill.fixed", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["zone.mill.fixed"],
+      "interaction_order": 2,
+      "assertion": "The exact mill chapter remains represented, but strict and compatible runtime admission reject the Saga containing an unsupported chapter."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.move.fixed_public_set", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["zone.move.fixed_public_set"],
+      "interaction_order": 2,
+      "assertion": "The exact public-zone move chapter does not authorize a sibling unsupported chapter or the incomplete Saga CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["residual.card_form.ordinary-saga-chapter-event-binding", "residual.continuous_layer.affected-player-ordering"],
+      "capability_ids": [],
+      "interaction_order": 2,
+      "assertion": "The constructed Saga's inexact chapter and affected-player continuous ordering both remain material and unavailable at runtime."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["residual.card_form.ordinary-saga-chapter-event-binding", "residual.continuous_layer.continuous-effect-layers-and-dependencies"],
+      "capability_ids": [],
+      "interaction_order": 2,
+      "assertion": "Neither the unsupported chapter nor the unsupported continuous-layer sibling is admitted to runtime authority."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["residual.event_binding.ordinary-saga-chapter-event-binding", "residual.replacement.replacement-applicability"],
+      "capability_ids": [],
+      "interaction_order": 2,
+      "assertion": "The inexact chapter event binding and replacement applicability remain residual and produce no runtime program or handler."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["residual.event_binding.ordinary-saga-chapter-event-binding", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": [],
+      "interaction_order": 2,
+      "assertion": "The inexact chapter event binding cannot bypass the separate self-replacement and CR 616 ordering residual at runtime admission."
     }
   ]
 }
