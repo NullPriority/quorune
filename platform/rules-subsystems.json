@@ -910,7 +910,7 @@
             "zero, multiple, optional, random, variable, or repeated selected objects"
           ],
           "measurement_status": "generated_probe",
-          "measurement_probe_id": "fixed-activation-zone-change-predicates-existing-owner-v1"
+          "measurement_probe_id": "fixed-activation-zone-change-predicates-existing-owner-v2"
         },
         {
           "bundle_id": "bundle:fixed-homogeneous-target-sets",
@@ -1480,6 +1480,15 @@
         "certified_material_residual_reduction_lower_bound": 109,
         "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v2",
         "reason": "Exact-source certification found that the v1 probe admitted seven dependency-inexact regeneration or optional self-return bodies. The v2 integrated-owner probe removes those false positives and remains conservative against the realized 66-card, 111-ability outcome."
+      },
+      {
+        "transition_id": "oracle-ir-v152-fixed-activation-zone-change-predicates",
+        "original_expected_complete_card_gain": 53,
+        "certified_complete_card_lower_bound": 53,
+        "certified_exact_ability_lower_bound": 84,
+        "certified_material_residual_reduction_lower_bound": 84,
+        "measurement_probe_id": "fixed-activation-zone-change-predicates-existing-owner-v2",
+        "reason": "Exact-source certification found that the v1 carrier probe counted one syntactically matched residual that did not become an exact activated-ability node. The v2 integrated-node probe excludes that false positive while retaining the certified 53-card gain."
       }
     ],
     "harvest_provenance": [

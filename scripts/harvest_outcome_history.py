@@ -860,7 +860,7 @@ def _validated_forecast_correction(value: Any) -> dict[str, Any]:
             for field in integer_fields
         )
         or correction["certified_complete_card_lower_bound"]
-        >= correction["original_expected_complete_card_gain"]
+        > correction["original_expected_complete_card_gain"]
     ):
         raise HarvestOutcomeHistoryError(
             "Harvest forecast correction is incomplete or unbounded"
@@ -922,7 +922,6 @@ def _apply_forecast_corrections(
             expected
             != correction["original_expected_complete_card_gain"]
             or type(actual_cards) is not int
-            or actual_cards >= correction["original_expected_complete_card_gain"]
             or actual_cards < correction["certified_complete_card_lower_bound"]
             or type(actual_abilities) is not int
             or actual_abilities < correction["certified_exact_ability_lower_bound"]
@@ -934,6 +933,14 @@ def _apply_forecast_corrections(
         ):
             raise HarvestOutcomeHistoryError(
                 "Harvest forecast correction contradicts its realized outcome"
+            )
+        if (
+            correction["certified_complete_card_lower_bound"] == expected
+            and correction["measurement_probe_id"]
+            == entry.get("measurement_probe_id")
+        ):
+            raise HarvestOutcomeHistoryError(
+                "Secondary-metric harvest correction requires a new probe identity"
             )
         if entry.get("forecast_correction") is None:
             entry["forecast_correction"] = correction

@@ -38,6 +38,7 @@ from quorune.work_selection_bundles import (
 )
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
+    _apply_forecast_corrections,
     _content_entry,
     _refresh_content_entry,
     _receipt,
@@ -923,14 +924,28 @@ class RulesSchedulerTests(unittest.TestCase):
             measurement["complete_card_gain"],
             current["expected_complete_card_gain"],
         )
-        self.assertGreaterEqual(
-            current["actual_complete_card_gain"],
-            measurement["complete_card_gain"],
+        current_correction = current.get("forecast_correction")
+        complete_lower_bound = (
+            current_correction["certified_complete_card_lower_bound"]
+            if current_correction is not None
+            else measurement["complete_card_gain"]
+        )
+        exact_ability_lower_bound = (
+            current_correction["certified_exact_ability_lower_bound"]
+            if current_correction is not None
+            else measurement["exact_ability_gain"]
         )
         self.assertGreaterEqual(
-            current["actual_exact_ability_gain"],
-            measurement["exact_ability_gain"],
+            current["actual_complete_card_gain"], complete_lower_bound
         )
+        self.assertGreaterEqual(
+            current["actual_exact_ability_gain"], exact_ability_lower_bound
+        )
+        if current_correction is not None:
+            self.assertEqual(
+                measurement["complete_card_gain"],
+                current_correction["original_expected_complete_card_gain"],
+            )
         self.assertEqual("semantic_content", current["receipt_identity_kind"])
 
         corrected = by_bundle[
@@ -964,6 +979,49 @@ class RulesSchedulerTests(unittest.TestCase):
             HarvestOutcomeHistoryError, "invalid shape"
         ):
             build_harvest_outcome_history(ROOT, malformed)
+
+    def test_forecast_correction_can_preserve_the_complete_card_bound(self):
+        entry = {
+            "transition_id": "oracle-ir-v999-secondary-metric-correction",
+            "receipt_identity_kind": "semantic_content",
+            "expected_complete_card_gain": 53,
+            "actual_complete_card_gain": 53,
+            "actual_exact_ability_gain": 84,
+            "actual_material_residual_reduction": 116,
+            "measurement_probe_id": "secondary-metric-probe-v1",
+        }
+        correction = {
+            "transition_id": entry["transition_id"],
+            "original_expected_complete_card_gain": 53,
+            "certified_complete_card_lower_bound": 53,
+            "certified_exact_ability_lower_bound": 84,
+            "certified_material_residual_reduction_lower_bound": 84,
+            "measurement_probe_id": "secondary-metric-probe-v2",
+            "reason": (
+                "The integrated v2 probe removes one structural ability-node "
+                "false positive while preserving the complete-card bound."
+            ),
+        }
+
+        _apply_forecast_corrections([entry], [correction])
+
+        self.assertEqual(correction, entry["forecast_correction"])
+        self.assertIn("entry_fingerprint", entry)
+        same_probe = dict(correction)
+        same_probe["measurement_probe_id"] = "secondary-metric-probe-v1"
+        with self.assertRaisesRegex(
+            HarvestOutcomeHistoryError, "requires a new probe identity"
+        ):
+            _apply_forecast_corrections(
+                [
+                    {
+                        key: value
+                        for key, value in entry.items()
+                        if key not in {"forecast_correction", "entry_fingerprint"}
+                    }
+                ],
+                [same_probe],
+            )
 
     def test_harvest_provenance_rejects_squash_discardable_feature_heads(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -1946,7 +2004,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
     def test_fixed_activation_zone_change_predicate_probe_is_closed(self):
         probe_id = (
-            "fixed-activation-zone-change-predicates-existing-owner-v1"
+            "fixed-activation-zone-change-predicates-existing-owner-v2"
         )
         record = SimpleNamespace(
             name="Fixed Cost Probe",
@@ -2084,7 +2142,7 @@ class RulesSchedulerTests(unittest.TestCase):
                 frontier=frontier,
                 bundle_id="bundle:fixed-activation-zone-change-predicates",
                 probe_id=(
-                    "fixed-activation-zone-change-predicates-existing-owner-v1"
+                    "fixed-activation-zone-change-predicates-existing-owner-v2"
                 ),
                 member_ids=member_ids,
                 cards_by_oracle_id=records,
@@ -2166,9 +2224,16 @@ class RulesSchedulerTests(unittest.TestCase):
             declaration["measurement_id"], measurement["measurement_id"]
         )
         self.assertEqual(bundle["bundle_id"], measurement["bundle_id"])
-        self.assertEqual(
-            bundle["measurement_probe_id"], measurement["probe_id"]
-        )
+        if bundle["measurement_probe_id"] != measurement["probe_id"]:
+            current = next(
+                row
+                for row in self.work_inputs["harvest_outcome_history"]["entries"]
+                if row.get("transition_id") == declaration["transition_id"]
+            )
+            self.assertEqual(
+                bundle["measurement_probe_id"],
+                current["forecast_correction"]["measurement_probe_id"],
+            )
         coverage = work_selection["coverage_family"]
         self.assertGreater(measurement["complete_card_gain"], 0)
         self.assertTrue(

@@ -179,8 +179,7 @@ def _validate_transition_measurements(
             or measurement.get("decision") != "bounded_executable"
             or measurement.get("grants_gameplay_trust") is not False
             or measurement.get("bundle_id") not in expected_bundles
-            or expected_bundles.get(str(measurement.get("bundle_id") or ""))
-            != measurement.get("probe_id")
+            or not str(measurement.get("probe_id") or "")
             or measurement.get("measurement_id")
             != "measurement:"
             + str(measurement.get("bundle_id") or "").split(":", 1)[-1]

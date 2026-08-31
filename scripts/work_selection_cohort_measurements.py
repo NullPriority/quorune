@@ -122,7 +122,7 @@ _PROBE_FIXED_FACE_DOWN_LIFECYCLE = (
     "fixed-face-down-lifecycle-existing-owner-v1"
 )
 _PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES = (
-    "fixed-activation-zone-change-predicates-existing-owner-v1"
+    "fixed-activation-zone-change-predicates-existing-owner-v2"
 )
 _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER = (
     "fixed-source-pronoun-damage-trigger-existing-owner-v1"
