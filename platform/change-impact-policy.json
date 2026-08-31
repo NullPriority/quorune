@@ -477,9 +477,13 @@
     {
       "id": "compiler-activated-cost-expectations",
       "patterns": [
+        "quorune/abilities.py",
         "quorune/compiler/activated_costs.py",
         "quorune/compiler/activated_mana_nodes.py",
-        "quorune/compiler/modal_program_closure.py"
+        "quorune/compiler/activated_zone_change_costs.py",
+        "quorune/compiler/modal_program_closure.py",
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/rules/casting_additional_costs.py"
       ],
       "test_modules": [
         "test_activated_draw_abilities",
