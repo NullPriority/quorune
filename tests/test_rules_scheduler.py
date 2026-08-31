@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 from quorune.rules_corpus import (
     CORPUS_OPERATIONS,
@@ -51,6 +52,7 @@ from scripts.harvest_outcome_history import (
 )
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.work_selection_cohort_measurements import (
+    _fixed_activation_zone_change_predicate_measurement,
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
@@ -1998,6 +2000,88 @@ class RulesSchedulerTests(unittest.TestCase):
                         ability=ability,
                     )
                 )
+
+    def test_fixed_activation_measurement_counts_only_exact_compiled_nodes(self):
+        member_ids = {"activated_cost:fixed-zone-change"}
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": oracle_id,
+                    "minimum_known_blocker_set": list(member_ids),
+                    "abilities": [
+                        {
+                            "ability_id": "n1",
+                            "source_line": 1,
+                            "blockers": {
+                                "canonical_family_ids": list(member_ids)
+                            },
+                        }
+                    ],
+                }
+                for oracle_id in ("exact", "residual")
+            ]
+        }
+        records = {
+            oracle_id: SimpleNamespace(
+                name=oracle_id,
+                oracle_text="Sacrifice another creature: Draw a card.",
+                faces=(),
+            )
+            for oracle_id in ("exact", "residual")
+        }
+
+        def compiled(record, **_kwargs):
+            exact = record.name == "exact"
+            return SimpleNamespace(
+                status="exact" if exact else "partial",
+                faces=(
+                    SimpleNamespace(
+                        nodes=(
+                            SimpleNamespace(
+                                node_id="n1",
+                                exact=exact,
+                                kind="activated_ability",
+                            ),
+                        )
+                    ),
+                ),
+            )
+
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements._matches_probe",
+                return_value=True,
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                side_effect=compiled,
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+        ):
+            measured = _fixed_activation_zone_change_predicate_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-activation-zone-change-predicates",
+                probe_id=(
+                    "fixed-activation-zone-change-predicates-existing-owner-v1"
+                ),
+                member_ids=member_ids,
+                cards_by_oracle_id=records,
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+
+        self.assertEqual(1, measured["affected_commander_cards"])
+        self.assertEqual(1, measured["complete_card_gain"])
+        self.assertEqual(1, measured["exact_ability_gain"])
+        self.assertEqual(1, measured["material_residual_reduction"])
 
     def test_trigger_ability_word_carrier_probe_is_closed(self):
         probe_id = "trigger-ability-word-carrier-existing-owner-v1"

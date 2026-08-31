@@ -917,6 +917,117 @@ def _trigger_ability_word_carrier_measurement(
     }
 
 
+def _fixed_activation_zone_change_predicate_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure only matched activation costs whose compiled node is exact."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    cards_with_unmatched_member_ability: set[str] = set()
+    compiled_exact_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = []
+        for ability in card.get("abilities", []):
+            family_ids = {
+                str(value)
+                for value in ability.get("blockers", {}).get(
+                    "canonical_family_ids", []
+                )
+            }
+            if (
+                not family_ids.intersection(member_ids)
+                or not family_ids <= member_ids
+            ):
+                continue
+            if not _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            ):
+                cards_with_unmatched_member_ability.add(oracle_id)
+                continue
+            candidates.append(ability)
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        card_matches = 0
+        for ability in candidates:
+            node = nodes.get(str(ability.get("ability_id") or ""))
+            if (
+                node is not None
+                and node.exact
+                and node.kind == "activated_ability"
+            ):
+                card_matches += 1
+            else:
+                cards_with_unmatched_member_ability.add(oracle_id)
+        if not card_matches:
+            continue
+        matched_abilities += card_matches
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        if compiled.status == "exact":
+            compiled_exact_cards.add(oracle_id)
+    complete_cards = sum(
+        count == 0
+        and oracle_id not in cards_with_unmatched_member_ability
+        and oracle_id in compiled_exact_cards
+        for oracle_id, count in matched_cards.items()
+    )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable" if reaches_floor else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
 def _measurement(
     *,
     frontier: Mapping[str, Any],
@@ -1048,6 +1159,16 @@ def _measurement(
         )
     if probe_id == _PROBE_OPTIONAL_MANA_PAYMENT:
         return _fixed_optional_mana_payment_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES:
+        return _fixed_activation_zone_change_predicate_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
