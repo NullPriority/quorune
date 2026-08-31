@@ -2012,6 +2012,11 @@ class RulesSchedulerTests(unittest.TestCase):
                         {
                             "ability_id": "n1",
                             "source_line": 1,
+                            "status": (
+                                "exact"
+                                if oracle_id == "already-exact"
+                                else "residual"
+                            ),
                             "blockers": {
                                 "canonical_family_ids": list(member_ids)
                             },
@@ -2031,7 +2036,7 @@ class RulesSchedulerTests(unittest.TestCase):
                         ),
                     ],
                 }
-                for oracle_id in ("exact", "residual")
+                for oracle_id in ("exact", "residual", "already-exact")
             ]
         }
         records = {
@@ -2040,11 +2045,11 @@ class RulesSchedulerTests(unittest.TestCase):
                 oracle_text="Sacrifice another creature: Draw a card.",
                 faces=(),
             )
-            for oracle_id in ("exact", "residual")
+            for oracle_id in ("exact", "residual", "already-exact")
         }
 
         def compiled(record, **_kwargs):
-            exact = record.name == "exact"
+            exact = record.name != "residual"
             return SimpleNamespace(
                 status="exact" if exact else "partial",
                 faces=(

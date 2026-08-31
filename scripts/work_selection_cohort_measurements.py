@@ -943,6 +943,8 @@ def _fixed_activation_zone_change_predicate_measurement(
             )
         candidates = []
         for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
             family_ids = {
                 str(value)
                 for value in ability.get("blockers", {}).get(
