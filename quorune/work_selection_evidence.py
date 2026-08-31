@@ -146,6 +146,69 @@ class WorkSelectionCohortMeasurementError(ValueError):
     pass
 
 
+def validate_harvest_forecast_correction(
+    value: Any,
+    *,
+    outcome: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    if not isinstance(value, Mapping) or set(value) != _FORECAST_CORRECTION_FIELDS:
+        raise WorkSelectionError(
+            "Content-bound harvest forecast correction is invalid"
+        )
+    correction = dict(value)
+    transition_id = str(correction.get("transition_id") or "")
+    measurement_probe_id = str(correction.get("measurement_probe_id") or "")
+    reason = str(correction.get("reason") or "").strip()
+    integer_fields = (
+        "original_expected_complete_card_gain",
+        "certified_complete_card_lower_bound",
+        "certified_exact_ability_lower_bound",
+        "certified_material_residual_reduction_lower_bound",
+    )
+    if (
+        not transition_id
+        or not measurement_probe_id
+        or len(reason) < 40
+        or any(
+            type(correction.get(field)) is not int or correction[field] < 0
+            for field in integer_fields
+        )
+        or correction["certified_complete_card_lower_bound"]
+        > correction["original_expected_complete_card_gain"]
+    ):
+        raise WorkSelectionError(
+            "Content-bound harvest forecast correction is invalid"
+        )
+    correction["transition_id"] = transition_id
+    correction["measurement_probe_id"] = measurement_probe_id
+    correction["reason"] = reason
+    if outcome is None:
+        return correction
+    if (
+        transition_id != outcome.get("transition_id")
+        or correction["original_expected_complete_card_gain"]
+        != outcome.get("expected_complete_card_gain")
+        or type(outcome.get("actual_complete_card_gain")) is not int
+        or outcome["actual_complete_card_gain"]
+        < correction["certified_complete_card_lower_bound"]
+        or type(outcome.get("actual_exact_ability_gain")) is not int
+        or outcome["actual_exact_ability_gain"]
+        < correction["certified_exact_ability_lower_bound"]
+        or type(outcome.get("actual_material_residual_reduction")) is not int
+        or outcome["actual_material_residual_reduction"]
+        < correction["certified_material_residual_reduction_lower_bound"]
+        or (
+            correction["certified_complete_card_lower_bound"]
+            == correction["original_expected_complete_card_gain"]
+            and measurement_probe_id == outcome.get("measurement_probe_id")
+        )
+    ):
+        raise WorkSelectionError(
+            "Content-bound harvest forecast correction is invalid"
+        )
+    return correction
+
+
 def _validate_transition_measurements(
     rows: Sequence[Any],
     *,
@@ -489,41 +552,9 @@ def _validate_content_history_entry(
         _CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS,
     ):
         return
-    correction = mapping(row.get("forecast_correction"), "forecast_correction")
-    integer_fields = (
-        "original_expected_complete_card_gain",
-        "certified_complete_card_lower_bound",
-        "certified_exact_ability_lower_bound",
-        "certified_material_residual_reduction_lower_bound",
+    validate_harvest_forecast_correction(
+        row.get("forecast_correction"), outcome=row
     )
-    if (
-        set(correction) != _FORECAST_CORRECTION_FIELDS
-        or correction.get("transition_id") != row.get("transition_id")
-        or not str(correction.get("measurement_probe_id") or "")
-        or len(str(correction.get("reason") or "").strip()) < 40
-        or any(
-            type(correction.get(field)) is not int or correction[field] < 0
-            for field in integer_fields
-        )
-        or correction["original_expected_complete_card_gain"]
-        != row.get("expected_complete_card_gain")
-        or correction["certified_complete_card_lower_bound"]
-        >= correction["original_expected_complete_card_gain"]
-        or type(row.get("actual_complete_card_gain")) is not int
-        or row["actual_complete_card_gain"]
-        >= correction["original_expected_complete_card_gain"]
-        or row["actual_complete_card_gain"]
-        < correction["certified_complete_card_lower_bound"]
-        or type(row.get("actual_exact_ability_gain")) is not int
-        or row["actual_exact_ability_gain"]
-        < correction["certified_exact_ability_lower_bound"]
-        or type(row.get("actual_material_residual_reduction")) is not int
-        or row["actual_material_residual_reduction"]
-        < correction["certified_material_residual_reduction_lower_bound"]
-    ):
-        raise WorkSelectionError(
-            "Content-bound harvest forecast correction is invalid"
-        )
 
 
 def _validate_history_entries(history: list[Any]) -> None:

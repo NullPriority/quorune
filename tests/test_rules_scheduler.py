@@ -36,6 +36,9 @@ from quorune.work_selection_bundles import (
     validate_bundle_policy,
     WorkSelectionBundleError,
 )
+from quorune.work_selection_evidence import (
+    validate_harvest_forecast_correction,
+)
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
@@ -1007,10 +1010,14 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertEqual(correction, entry["forecast_correction"])
         self.assertIn("entry_fingerprint", entry)
+        self.assertEqual(
+            correction,
+            validate_harvest_forecast_correction(correction, outcome=entry),
+        )
         same_probe = dict(correction)
         same_probe["measurement_probe_id"] = "secondary-metric-probe-v1"
         with self.assertRaisesRegex(
-            HarvestOutcomeHistoryError, "requires a new probe identity"
+            HarvestOutcomeHistoryError, "contradicts its realized outcome"
         ):
             _apply_forecast_corrections(
                 [
