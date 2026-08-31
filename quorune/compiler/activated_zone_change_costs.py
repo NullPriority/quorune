@@ -50,17 +50,17 @@ def _zone_change_descriptor(cost_text: str) -> dict[str, object] | None:
         + cost_clause
         + "."
     )
+    sacrifice = fixed_sacrifice_additional_cost_template(clause)
+    if sacrifice is not None:
+        return {
+            "operation": SACRIFICE_ONE_COST,
+            "predicate": dict(sacrifice.descriptor["predicate"]),
+            "another": another,
+        }
     template = fixed_zone_change_additional_cost_template(clause)
     if template is not None:
         return {**dict(template.descriptor), "another": another}
-    sacrifice = fixed_sacrifice_additional_cost_template(clause)
-    if sacrifice is None:
-        return None
-    return {
-        "operation": SACRIFICE_ONE_COST,
-        "predicate": dict(sacrifice.descriptor["predicate"]),
-        "another": another,
-    }
+    return None
 
 
 def fixed_activated_zone_change_cost(

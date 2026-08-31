@@ -145,6 +145,16 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
             ),
             (
                 fixture_card(
+                    "Single Type Sacrifice Fixture",
+                    "{2}, Sacrifice a land: Draw a card.",
+                ),
+                "sacrifice_one",
+                "battlefield",
+                "types_any",
+                ["land"],
+            ),
+            (
+                fixture_card(
                     "Graveyard Exile Fixture",
                     "{1}{G}, Exile a creature card from your graveyard: "
                     "Create a 1/1 green Saproling creature token.",
