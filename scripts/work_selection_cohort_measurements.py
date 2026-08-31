@@ -4,6 +4,10 @@ from functools import lru_cache, partial
 import re
 from typing import Any, Mapping, Sequence
 
+from quorune.abilities import parse_activated_abilities
+from quorune.compiler.activated_zone_change_costs import (
+    fixed_activated_zone_change_cost,
+)
 from quorune.compiler.exile_templates import targeted_exile_effect_template
 from quorune.compiler.damage_templates import source_pronoun_damage_effect_template
 from quorune.compiler.destruction_templates import destruction_effect_template
@@ -117,6 +121,9 @@ _PROBE_ATTACHED_CHARACTERISTIC_CLOSURE = (
 _PROBE_FIXED_FACE_DOWN_LIFECYCLE = (
     "fixed-face-down-lifecycle-existing-owner-v1"
 )
+_PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES = (
+    "fixed-activation-zone-change-predicates-existing-owner-v1"
+)
 _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER = (
     "fixed-source-pronoun-damage-trigger-existing-owner-v1"
 )
@@ -135,6 +142,7 @@ _PROBE_IDS = {
     _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
     _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     _PROBE_ATTACHED_CHARACTERISTIC_CLOSURE,
+    _PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES,
     _PROBE_FIXED_FACE_DOWN_LIFECYCLE,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_FIXED_LIBRARY_SELECTION,
@@ -575,6 +583,27 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Fixed activation zone-change measurement requires card context"
+            )
+        source_name, _source_is_permanent, _attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        parsed = parse_activated_abilities(
+            card_name=source_name,
+            oracle_text=source,
+            keywords=getattr(card_record, "keywords", ()),
+        )
+        if len(parsed) != 1:
+            return False
+        lowered = fixed_activated_zone_change_cost(parsed[0])
+        return bool(
+            lowered.compiled_cost
+            and len(lowered.choices) == 1
+            and lowered.choices[0].fixed_zone_change_cost() is not None
+        )
     if probe_id == _PROBE_TOKEN:
         return any(
             fixed_token_creation_effect_template(body) is not None

@@ -29,6 +29,7 @@ from quorune.rules.activation.commit import (
     ActivationProposalError,
     _commit_source_cost,
 )
+from quorune.rules.activation_costs import activation_choice_candidates
 from quorune.rules.capabilities import CapabilityRegistry
 from quorune.session import CommanderSession
 from scripts.build_test_database import build_fixture_database
@@ -37,6 +38,12 @@ from scripts.build_test_database import build_fixture_database
 REGISTRY_PATH = ROOT / "quorune" / "rules" / "capability-registry.json"
 FIXTURE_PATH = (
     ROOT / "tests" / "fixtures" / "fixed-activated-zone-change-costs.json"
+)
+PREDICATE_FIXTURE_PATH = (
+    ROOT
+    / "tests"
+    / "fixtures"
+    / "fixed-activated-zone-change-predicate-fixtures.json"
 )
 SELECTED_COST_CAPABILITY = "activation.selected_zone_change.fixed"
 SOURCE_COST_CAPABILITY = "activation.source_zone_change.fixed"
@@ -88,6 +95,7 @@ def focused_card_database(directory: str) -> CardDatabase:
             / "fixtures"
             / "fixed-counter-keyword-activations.json",
             FIXTURE_PATH,
+            PREDICATE_FIXTURE_PATH,
         ],
         database,
     )
@@ -220,12 +228,110 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
         self.assertTrue(node.cost["sacrifice_source"])
         self.assertIn(SOURCE_COST_CAPABILITY, node.capability_dependencies)
 
+    def test_fixed_selected_sacrifice_predicates_compile_closed_queries(self):
+        examples = (
+            (
+                "{1}, Sacrifice another creature or artifact",
+                {"types_any": ["artifact", "creature"]},
+                True,
+            ),
+            (
+                "Sacrifice an Eldrazi Scion",
+                {"subtypes_all": ["eldrazi", "scion"]},
+                False,
+            ),
+            (
+                "Sacrifice a Caribou token",
+                {"subtypes_all": ["caribou"], "token": True},
+                False,
+            ),
+            (
+                "Sacrifice another black creature",
+                {"colors_all": ["B"], "types_all": ["creature"]},
+                True,
+            ),
+            (
+                "Sacrifice another Vampire or Zombie",
+                {"subtypes_any": ["vampire", "zombie"]},
+                True,
+            ),
+            (
+                "Sacrifice a Forest or Plains",
+                {"subtypes_any": ["forest", "plains"]},
+                False,
+            ),
+            (
+                "Sacrifice a snow Mountain",
+                {
+                    "subtypes_all": ["mountain"],
+                    "supertypes_all": ["snow"],
+                },
+                False,
+            ),
+            (
+                "Sacrifice a nonland permanent",
+                {"excluded_types": ["land"]},
+                False,
+            ),
+            (
+                "Sacrifice a noncreature artifact",
+                {
+                    "types_all": ["artifact"],
+                    "excluded_types": ["creature"],
+                },
+                False,
+            ),
+            (
+                "Sacrifice an artifact creature",
+                {"types_all": ["artifact", "creature"]},
+                False,
+            ),
+            (
+                "Sacrifice a Goblin you control",
+                {"subtypes_all": ["goblin"]},
+                False,
+            ),
+            (
+                "Exile a card from your graveyard",
+                {"owner": "$actor", "types_all": [], "types_any": []},
+                False,
+            ),
+        )
+        for index, (cost, expected, another) in enumerate(examples):
+            with self.subTest(cost=cost):
+                record = fixture_card(
+                    f"Fixed Predicate Cost {index}",
+                    f"{cost}: Draw a card.",
+                )
+                ir = self.compile(record)
+                node = ir.faces[0].nodes[0]
+                self.assertTrue(node.exact, ir.to_dict())
+                choice = node.cost["choices"][0]
+                self.assertEqual(another, choice.get("other") == 1)
+                for field, value in expected.items():
+                    self.assertEqual(value, choice["q"][field])
+
+                catalog_choice = compile_activated_ability_catalog(record)[
+                    "front"
+                ][0].choices[0]
+                self.assertEqual(
+                    catalog_choice,
+                    CostChoice.from_dict(catalog_choice.to_dict()),
+                )
+                self.assertEqual(another, catalog_choice.another)
+
     def test_zone_change_cost_grammar_rejects_unbounded_variants(self):
         unsupported = (
             "Sacrifice any number of Goblins",
             "Sacrifice two Goblins",
             "Exile a card from each graveyard",
             "Sacrifice a Goblin and an artifact",
+            "Sacrifice another creature or a Treasure",
+            "Sacrifice an artifact or another creature",
+            "Sacrifice another creature or token",
+            "Sacrifice another creature or Vehicle",
+            "Sacrifice a creature with defender",
+            "Sacrifice a modified creature",
         )
         for index, cost in enumerate(unsupported):
             with self.subTest(cost=cost):
@@ -270,6 +376,24 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
                 kind="sacrifice_one",
                 count=2,
                 predicate=predicate,
+            )
+        graveyard_predicate = FrozenMap(
+            {
+                **dict(predicate),
+                "zones": ["graveyard"],
+                "owner": "$actor",
+                "controller": None,
+                "types_all": [],
+            }
+        )
+        with self.assertRaisesRegex(
+            ValueError, "another is supported only for typed sacrifice costs"
+        ):
+            CostChoice(
+                kind="exile_one_from_graveyard",
+                zone="graveyard",
+                another=True,
+                predicate=graveyard_predicate,
             )
         legacy = CostChoice(kind="sacrifice", card_type="creature")
         with self.assertRaisesRegex(ValueError, "nonnull objects"):
@@ -549,7 +673,6 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
             ref="A-font",
             zone="battlefield",
         )
-        self.prepare_priority(session)
         ability = self.ability(session, source)
         action_id = f"activate:{source.ref}:{ability.ability_id}"
         hand_before = len(engine.state.players["A"].zones["hand"])
@@ -637,14 +760,14 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         source = self.add_card(
             session,
             seat="A",
-            name="Goblin Turncoat",
-            ref="A-turncoat",
+            name="Fixed Another Sacrifice Source",
+            ref="A-another-source",
             zone="battlefield",
         )
         fodder = self.add_card(
             session,
             seat="A",
-            name="Goblin Turncoat",
+            name="Fixed Goblin Cost Fodder",
             ref="A-goblin-fodder",
             zone="battlefield",
             register=False,
@@ -652,7 +775,7 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         phased = self.add_card(
             session,
             seat="A",
-            name="Goblin Turncoat",
+            name="Fixed Goblin Cost Fodder",
             ref="A-phased-goblin",
             zone="battlefield",
             register=False,
@@ -661,7 +784,7 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         opposing = self.add_card(
             session,
             seat="B",
-            name="Goblin Turncoat",
+            name="Fixed Goblin Cost Fodder",
             ref="B-goblin",
             zone="battlefield",
             controller="B",
@@ -672,37 +795,173 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         action_id = f"activate:{source.ref}:{ability.ability_id}"
         action = self.action(session, action_id)
         self.assertEqual(
-            {source.ref, fodder.ref},
-            set(action["cost_summary"]["choose_cost"][0]["legal_refs"]),
+            [fodder.ref],
+            action["cost_summary"]["choose_cost"][0]["legal_refs"],
         )
-        source_logical_object_id = source.logical_object_id
         before = authoritative_state_hash(engine.state)
 
         rejected = session.act(
             "pilot:A",
-            {"action_id": action_id, "cost_cards": [opposing.ref]},
+            {"action_id": action_id, "cost_cards": [source.ref]},
         )
 
         self.assertFalse(rejected.ok)
         self.assertEqual(before, authoritative_state_hash(engine.state))
+        rejected = session.act(
+            "pilot:A",
+            {"action_id": action_id, "cost_cards": [opposing.ref]},
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
         accepted = session.act(
             "pilot:A",
-            {"action_id": action_id, "cost_cards": [source.ref]},
+            {"action_id": action_id, "cost_cards": [fodder.ref]},
         )
         self.assertTrue(accepted.ok, accepted.summary)
         self.assertEqual(
             "graveyard",
-            engine.state.cards[source.object_id].zone,
+            engine.state.cards[fodder.object_id].zone,
         )
-        self.assertEqual(
-            source_logical_object_id,
-            engine.state.stack[-1].context["source_logical_object_id"],
-        )
-        self.assertNotEqual(
-            source_logical_object_id,
-            engine.state.cards[source.object_id].logical_object_id,
-        )
+        self.assertEqual("battlefield", source.zone)
         self.assertTrue(engine.state.stack)
+
+    def test_selected_zone_cost_uses_current_effective_characteristics(self):
+        session = self.session(7031306)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            seat="A",
+            name="Fixed Another Sacrifice Source",
+            ref="A-effective-source",
+            zone="battlefield",
+        )
+        fodder = self.add_card(
+            session,
+            seat="A",
+            name="Fixed Artifact Cost Fodder",
+            ref="A-effective-fodder",
+            zone="battlefield",
+            register=False,
+        )
+        ability = self.ability(session, source)
+        original = engine._effective_card_data
+
+        self.assertEqual(
+            (),
+            activation_choice_candidates(
+                engine, "A", source, ability.choices[0]
+            ),
+        )
+
+        def effective(card, *args, **kwargs):
+            result = dict(original(card, *args, **kwargs))
+            object_id = card if isinstance(card, str) else card.object_id
+            if object_id == fodder.object_id:
+                result["type_line"] = "Creature — Goblin"
+            return result
+
+        with mock.patch.object(
+            engine, "_effective_card_data", side_effect=effective
+        ):
+            self.assertEqual(
+                (fodder.ref,),
+                activation_choice_candidates(
+                    engine, "A", source, ability.choices[0]
+                ),
+            )
+
+    def test_nontoken_cost_excludes_matching_token(self):
+        session = self.session(7031307)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            seat="A",
+            name="Fixed Nontoken Sacrifice Source",
+            ref="A-nontoken-source",
+            zone="battlefield",
+        )
+        fodder = self.add_card(
+            session,
+            seat="A",
+            name="Fixed Artifact Cost Fodder",
+            ref="A-nontoken-fodder",
+            zone="battlefield",
+            register=False,
+        )
+        token_ref = engine.create_token(
+            "A",
+            name="Fixed Artifact Token",
+            characteristics={"type_line": "Artifact"},
+            reason="fixed nontoken activation-cost witness",
+        )[0]
+        self.prepare_priority(session)
+        ability = self.ability(session, source)
+        action_id = f"activate:{source.ref}:{ability.ability_id}"
+        action = self.action(session, action_id)
+
+        self.assertEqual(
+            {source.ref, fodder.ref},
+            set(action["cost_summary"]["choose_cost"][0]["legal_refs"]),
+        )
+        self.assertNotIn(
+            token_ref,
+            action["cost_summary"]["choose_cost"][0]["legal_refs"],
+        )
+        result = session.act(
+            "pilot:A",
+            {"action_id": action_id, "cost_cards": [fodder.ref]},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", fodder.zone)
+
+    def test_unqualified_graveyard_exile_uses_owner(self):
+        session = self.session(7031308)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            seat="A",
+            name="Fixed Graveyard Exile Source",
+            ref="A-graveyard-source",
+            zone="battlefield",
+        )
+        owned = self.add_card(
+            session,
+            seat="A",
+            name="Fixed Graveyard Cost Fodder",
+            ref="A-owned-graveyard-card",
+            zone="graveyard",
+            controller="B",
+            register=False,
+        )
+        opposing = self.add_card(
+            session,
+            seat="B",
+            name="Fixed Graveyard Cost Fodder",
+            ref="B-owned-graveyard-card",
+            zone="graveyard",
+            controller="A",
+            register=False,
+        )
+        self.prepare_priority(session)
+        ability = self.ability(session, source)
+        action_id = f"activate:{source.ref}:{ability.ability_id}"
+        action = self.action(session, action_id)
+
+        self.assertEqual(
+            [owned.ref],
+            action["cost_summary"]["choose_cost"][0]["legal_refs"],
+        )
+        self.assertNotIn(
+            opposing.ref,
+            action["cost_summary"]["choose_cost"][0]["legal_refs"],
+        )
+        result = session.act(
+            "pilot:A",
+            {"action_id": action_id, "cost_cards": [owned.ref]},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("exile", owned.zone)
+        self.assertEqual("graveyard", opposing.zone)
 
     def test_source_sacrifice_replacement_is_private_and_replays(self):
         session = self.session(7031304, players=4)
@@ -750,14 +1009,14 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         source = self.add_card(
             session,
             seat="A",
-            name="Goblin Turncoat",
-            ref="A-turncoat-replacement",
+            name="Fixed Another Sacrifice Source",
+            ref="A-another-replacement",
             zone="battlefield",
         )
         fodder = self.add_card(
             session,
             seat="A",
-            name="Goblin Turncoat",
+            name="Fixed Goblin Cost Fodder",
             ref="A-goblin-replacement",
             zone="battlefield",
             register=False,

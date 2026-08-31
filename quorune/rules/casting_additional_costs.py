@@ -324,7 +324,15 @@ class FixedZoneChangeAdditionalCost:
             or self.predicate.known_to_actor is not True
             or self.predicate.include_phased_out
             or self.predicate.keywords_all
-            or self.predicate.token is not None
+            or self.predicate.excluded_controllers
+            or self.predicate.excluded_subtypes
+            or self.predicate.colorless is not None
+            or self.predicate.minimum_color_count is not None
+            or self.predicate.state_predicate is not None
+            or (
+                self.predicate.token is not None
+                and origin != "battlefield"
+            )
             or self.predicate.tapped is not None
             or self.predicate.exclude_ref is not None
         ):
@@ -347,9 +355,19 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change costs cannot combine type conjunction and union"
             )
+        if self.predicate.subtypes_all and self.predicate.subtypes_any:
+            raise AdditionalCostError(
+                "Zone-change costs cannot combine subtype conjunction and union"
+            )
         if self.predicate.colors_all and self.predicate.colors_any:
             raise AdditionalCostError(
                 "Zone-change costs cannot combine color conjunction and union"
+            )
+        if not set(self.predicate.supertypes_all).issubset(
+            {"basic", "legendary", "snow"}
+        ):
+            raise AdditionalCostError(
+                "Zone-change additional-cost supertypes are unsupported"
             )
         if not set(
             self.predicate.colors_all + self.predicate.colors_any

@@ -57,7 +57,7 @@ _FIXED_DISCARD_COST = re.compile(
 )
 _FIXED_GRAVEYARD_EXILE_COST = re.compile(
     r"As an additional cost to cast this spell, exile "
-    r"(?P<article>a|an) (?P<quality>[A-Za-z]+(?: or [A-Za-z]+)?) card "
+    r"(?P<article>a|an) (?:(?P<quality>[A-Za-z]+(?: or [A-Za-z]+)?) )?card "
     r"from your graveyard\.?",
     re.IGNORECASE,
 )
@@ -93,6 +93,24 @@ _COLOR_WORDS = {
     "green": "G",
     "colorless": "C",
 }
+_PERMANENT_TYPES = frozenset(
+    {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
+)
+_FIXED_NONCREATURE_SUBTYPES = frozenset(
+    {
+        "aura",
+        "clue",
+        "desert",
+        "food",
+        "forest",
+        "island",
+        "mountain",
+        "plains",
+        "room",
+        "swamp",
+        "treasure",
+    }
+)
 
 
 def _creature_you_control_query() -> ObjectQuerySpec:
@@ -224,6 +242,7 @@ class FixedZoneChangeAdditionalCostTemplate:
             "types_any",
             "excluded_types",
             "subtypes_all",
+            "subtypes_any",
             "supertypes_all",
             "colors_all",
             "colors_any",
@@ -232,6 +251,8 @@ class FixedZoneChangeAdditionalCostTemplate:
             if values:
                 terms.append(field_name.replace("_", "-"))
                 terms.extend(str(value).casefold() for value in values)
+        if self.predicate.token is not None:
+            terms.append("token" if self.predicate.token else "nontoken")
         if len(terms) == 1:
             terms.append("card")
         return "spell-additional-cost-fixed-" + "-".join(terms) + "-v1"
@@ -398,8 +419,11 @@ def _controlled_permanent_query(
     types_any: tuple[str, ...] = (),
     excluded_types: tuple[str, ...] = (),
     subtypes_all: tuple[str, ...] = (),
+    subtypes_any: tuple[str, ...] = (),
     supertypes_all: tuple[str, ...] = (),
     colors_all: tuple[str, ...] = (),
+    colors_any: tuple[str, ...] = (),
+    token: bool | None = None,
 ) -> ObjectQuerySpec:
     return ObjectQuerySpec(
         zones=("battlefield",),
@@ -408,32 +432,129 @@ def _controlled_permanent_query(
         types_any=types_any,
         excluded_types=excluded_types,
         subtypes_all=subtypes_all,
+        subtypes_any=subtypes_any,
         supertypes_all=supertypes_all,
         colors_all=colors_all,
+        colors_any=colors_any,
+        token=token,
         known_to_actor=True,
+    )
+
+
+def _fixed_sacrifice_subtype(value: str) -> str | None:
+    return canonical_creature_subtype(value) or (
+        value if value in _FIXED_NONCREATURE_SUBTYPES else None
     )
 
 
 def _qualified_sacrifice_query(quality: str) -> ObjectQuerySpec | None:
     normalized = " ".join(quality.casefold().split())
+    token: bool | None = None
+    if normalized == "token":
+        return _controlled_permanent_query(token=True)
+    if normalized.startswith("nontoken "):
+        normalized = normalized.removeprefix("nontoken ")
+        token = False
+    elif normalized.endswith(" token"):
+        normalized = normalized.removesuffix(" token")
+        token = True
+    if token is not None and " or " in normalized:
+        return None
     if normalized == "nonland permanent":
-        return _controlled_permanent_query(excluded_types=("land",))
-    if normalized == "legendary creature":
         return _controlled_permanent_query(
-            types_all=("creature",), supertypes_all=("legendary",)
+            excluded_types=("land",), token=token
         )
-    words = normalized.split()
-    if len(words) == 2 and words[0] in _COLOR_WORDS and words[1] in {
-        "creature",
-        "permanent",
-    }:
+    if normalized == "noncreature artifact":
         return _controlled_permanent_query(
-            types_all=(() if words[1] == "permanent" else (words[1],)),
-            colors_all=(_COLOR_WORDS[words[0]],),
+            types_all=("artifact",),
+            excluded_types=("creature",),
+            token=token,
         )
-    subtype = canonical_creature_subtype(normalized)
+    if normalized == "artifact creature":
+        return _controlled_permanent_query(
+            types_all=("artifact", "creature"), token=token
+        )
+    supertype = next(
+        (
+            value
+            for value in ("basic", "legendary", "snow")
+            if normalized.startswith(value + " ")
+        ),
+        None,
+    )
+    if supertype is not None:
+        subject = normalized.removeprefix(supertype + " ")
+        if subject == "permanent":
+            return _controlled_permanent_query(
+                supertypes_all=(supertype,), token=token
+            )
+        if subject in _PERMANENT_TYPES:
+            return _controlled_permanent_query(
+                types_all=(subject,),
+                supertypes_all=(supertype,),
+                token=token,
+            )
+        subtype = _fixed_sacrifice_subtype(subject)
+        if subtype is not None:
+            return _controlled_permanent_query(
+                subtypes_all=(subtype,),
+                supertypes_all=(supertype,),
+                token=token,
+            )
+        return None
+    color_subject = re.fullmatch(
+        r"(?P<colors>white|blue|black|red|green"
+        r"(?: or (?:white|blue|black|red|green))?) "
+        r"(?P<subject>creature|permanent)",
+        normalized,
+    )
+    if color_subject is not None:
+        colors = tuple(
+            _COLOR_WORDS[value]
+            for value in color_subject.group("colors").split(" or ")
+        )
+        return _controlled_permanent_query(
+            types_all=(
+                ()
+                if color_subject.group("subject") == "permanent"
+                else ("creature",)
+            ),
+            colors_all=colors if len(colors) == 1 else (),
+            colors_any=colors if len(colors) == 2 else (),
+            token=token,
+        )
+    terms = tuple(normalized.split(" or "))
+    if len(terms) == 2 and all(term in _PERMANENT_TYPES for term in terms):
+        return _controlled_permanent_query(types_any=terms, token=token)
+    if len(terms) == 2:
+        subtypes = tuple(_fixed_sacrifice_subtype(term) for term in terms)
+        if all(subtype is not None for subtype in subtypes):
+            return _controlled_permanent_query(
+                subtypes_any=tuple(str(subtype) for subtype in subtypes),
+                token=token,
+            )
+        return None
+    if normalized == "permanent":
+        return _controlled_permanent_query(token=token)
+    if normalized in _PERMANENT_TYPES:
+        return _controlled_permanent_query(
+            types_all=(normalized,), token=token
+        )
+    subtype = _fixed_sacrifice_subtype(normalized)
     if subtype is not None:
-        return _controlled_permanent_query(subtypes_all=(subtype,))
+        return _controlled_permanent_query(
+            subtypes_all=(subtype,), token=token
+        )
+    adjacent_subtypes = tuple(
+        canonical_creature_subtype(word) for word in normalized.split()
+    )
+    if len(adjacent_subtypes) == 2 and all(
+        subtype is not None for subtype in adjacent_subtypes
+    ):
+        return _controlled_permanent_query(
+            subtypes_all=tuple(str(subtype) for subtype in adjacent_subtypes),
+            token=token,
+        )
     return None
 
 
@@ -469,9 +590,15 @@ def fixed_zone_change_additional_cost_template(
 
     match = _FIXED_GRAVEYARD_EXILE_COST.fullmatch(stripped)
     if match is not None:
-        quality = match.group("quality").casefold()
-        if not _article_matches(match.group("article"), quality):
+        raw_quality = match.group("quality")
+        quality = raw_quality.casefold() if raw_quality else ""
+        if not _article_matches(match.group("article"), quality or "card"):
             return None
+        if not quality:
+            predicate = _owned_zone_query("graveyard")
+            return FixedZoneChangeAdditionalCostTemplate(
+                EXILE_ONE_FROM_GRAVEYARD_COST, predicate
+            )
         card_types = tuple(quality.split(" or "))
         if not set(card_types).issubset({"creature", "instant", "sorcery"}):
             return None

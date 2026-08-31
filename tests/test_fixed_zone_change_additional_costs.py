@@ -360,8 +360,37 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
                     "include_phased_out": True,
                 },
             },
+            {
+                **descriptor,
+                "predicate": {
+                    **descriptor["predicate"],
+                    "supertypes_all": ["world"],
+                },
+            },
         ):
             with self.subTest(mutation=mutation):
+                with self.assertRaises(AdditionalCostError):
+                    FixedZoneChangeAdditionalCost.from_descriptor(mutation)
+
+        extended = zone_change_cost(
+            "As an additional cost to cast this spell, sacrifice a Vampire or Zombie."
+        )["additional_costs"][0]
+        for predicate_update in (
+            {"excluded_subtypes": ["human"]},
+            {"colorless": True},
+            {
+                "subtypes_all": ["vampire"],
+                "subtypes_any": ["vampire", "zombie"],
+            },
+        ):
+            mutation = {
+                **extended,
+                "predicate": {
+                    **extended["predicate"],
+                    **predicate_update,
+                },
+            }
+            with self.subTest(predicate_update=predicate_update):
                 with self.assertRaises(AdditionalCostError):
                     FixedZoneChangeAdditionalCost.from_descriptor(mutation)
 
@@ -431,6 +460,32 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         assert first is not None
         self.assertEqual(("G", "R"), first.predicate.colors_any)
         self.assertEqual(first.template_id, second.template_id)  # type: ignore[union-attr]
+
+        subtype_union = fixed_zone_change_additional_cost_template(
+            "As an additional cost to cast this spell, sacrifice a Vampire or Zombie."
+        )
+        token = fixed_zone_change_additional_cost_template(
+            "As an additional cost to cast this spell, sacrifice a Caribou token."
+        )
+        nontoken = fixed_zone_change_additional_cost_template(
+            "As an additional cost to cast this spell, sacrifice a nontoken Caribou."
+        )
+        self.assertIsNotNone(subtype_union)
+        self.assertIsNotNone(token)
+        self.assertIsNotNone(nontoken)
+        identities = {
+            template.template_id
+            for template in (subtype_union, token, nontoken)
+            if template is not None
+        }
+        self.assertEqual(3, len(identities))
+        self.assertTrue(
+            any("subtypes-any-vampire-zombie" in value for value in identities)
+        )
+        self.assertTrue(any(value.endswith("-token-v1") for value in identities))
+        self.assertTrue(
+            any(value.endswith("-nontoken-v1") for value in identities)
+        )
 
 
 class FixedZoneChangeAdditionalCostRuntimeTests(unittest.TestCase):

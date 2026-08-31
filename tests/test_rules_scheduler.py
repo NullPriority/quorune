@@ -1942,6 +1942,63 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_fixed_activation_zone_change_predicate_probe_is_closed(self):
+        probe_id = (
+            "fixed-activation-zone-change-predicates-existing-owner-v1"
+        )
+        record = SimpleNamespace(
+            name="Fixed Cost Probe",
+            type_line="Creature — Goblin",
+            oracle_text="",
+            keywords=(),
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "{1}, {T}, Sacrifice another creature or artifact: Draw a card.",
+            "Sacrifice an Eldrazi Scion: Draw a card.",
+            "Sacrifice a Caribou token: Draw a card.",
+            "Sacrifice another black creature: Draw a card.",
+            "Sacrifice another Vampire or Zombie: Draw a card.",
+            "Sacrifice an artifact token: Draw a card.",
+            "Sacrifice a snow Mountain: Draw a card.",
+            "Sacrifice a nonland permanent: Draw a card.",
+            "Sacrifice a noncreature artifact: Draw a card.",
+            "Sacrifice an artifact creature: Draw a card.",
+            "Sacrifice a Forest or Plains: Draw a card.",
+            "Exile a card from your graveyard: Draw a card.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "Sacrifice two Goblins: Draw a card.",
+            "Sacrifice another creature or a Treasure: Draw a card.",
+            "Sacrifice an artifact or another creature: Draw a card.",
+            "Sacrifice another creature or token: Draw a card.",
+            "Sacrifice another creature or Vehicle: Draw a card.",
+            "Sacrifice a creature with defender: Draw a card.",
+            "Sacrifice a modified creature: Draw a card.",
+            "Sacrifice this creature, Sacrifice another creature: Draw a card.",
+            "{W/U}, Sacrifice another creature: Draw a card.",
+            "Sacrifice another creature: Add {B}.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
     def test_trigger_ability_word_carrier_probe_is_closed(self):
         probe_id = "trigger-ability-word-carrier-existing-owner-v1"
         for source in (
