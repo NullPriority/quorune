@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "67d5ca9f5341163b25e174581acae998e598a37008a95e80426bf5eb440100ae",
-  "declaration_source_fingerprint": "421b6cb5f6a596ef730c7b7e2349458c6ad3793902d57508e7fe1f3742a0dba4",
+  "registry_fingerprint": "dcfd7811167a62d555d0cb5b7ec91a41f6f08d38364ba3cb541b6cefba5ccf65",
+  "declaration_source_fingerprint": "66d77da0566cb71556899840836fd8596113322fea1e560916a02fd173a75bdc",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -1781,6 +1781,28 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_offer_and_command_share_candidates",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude the exact physical source for another and reject both that source and an opponent-controlled match through the same object set advertised by the offer."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_replacement_is_private_and_replays",
       "official_rule_ids": [
         "400.2",
@@ -1799,6 +1821,28 @@
         "commander_review"
       ],
       "applicability_note": "Compose a typed selected sacrifice cost with competing destination replacements and resume the exact rolled-back activation before stack placement."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_selected_zone_cost_uses_current_effective_characteristics",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the shared subtype query against current effective characteristics rather than the selected permanent's printed type line."
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
@@ -1935,6 +1979,28 @@
     {
       "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_fixed_selected_sacrifice_predicates_compile_closed_queries",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile source-spanned one-object type, subtype, color, supertype, token, nontoken, another, and unqualified owned-graveyard costs into the shared typed query without widening mixed or dynamic grammar."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostCompilerTests.test_fixed_selected_zone_change_costs_compile_source_spanned",
       "official_rule_ids": [
         "400.2",
@@ -1975,6 +2041,50 @@
         "commander_review"
       ],
       "applicability_note": "Advertise only the matching owned creature card, exile it before stack placement, and resolve the compiled activation result."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_nontoken_cost_excludes_matching_token",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Advertise a current nontoken artifact while excluding an otherwise matching artifact token through the same query used by payment."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_activated_zone_change_costs.FixedActivatedZoneChangeCostRuntimeTests.test_unqualified_graveyard_exile_uses_owner",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer an unqualified card in the activator's graveyard by ownership even when its stale controller differs, while excluding an opponent-owned card whose controller matches."
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
@@ -52048,5 +52158,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "98243edc480b35e83fbc43c5dea312216a724d5ef96da6750369a87e190d8f0c"
+  "fingerprint": "62a03945bb92daed2592299fce26b73c7fd728487e8ef65c73b36f8c34bcafd9"
 }

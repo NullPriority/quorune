@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "8da7f74f78ecefe6f879debdf5a5eccb6155ad9ebb8dac2c3758a79731181482"
+verified: "5f5e909bab64b03991e01b1275c35b57c9c2f5924b4c93f15304a288c056db4f"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -22,7 +22,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 - Material abilities classified: 59,299
 - Unclassified material spans: 0
 - Mapped pinned rules: 927 / 3,309
-- Applicable piece pairs: 62,671
+- Applicable piece pairs: 62,687
 - Covered piece pairs: 802
 
 ## Ontology classes
@@ -67,10 +67,10 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 6,378 | 2,670 | 2,670 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 6,378 | 2,674 | 2,674 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,467 | 226 | 226 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,873 | 134 | 134 | `absent` | `untested` |
-| `residual.activated_effect.create-token` | `one_shot_effects` | 314 | 24 | 24 | `absent` | `untested` |
+| `residual.activated_effect.create-token` | `one_shot_effects` | 314 | 26 | 26 | `absent` | `untested` |
 | `residual.replacement.damage-prevention` | `replacement_prevention` | 167 | 24 | 24 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
 | `residual.effect_clause.create-token` | `one_shot_effects` | 560 | 18 | 18 | `absent` | `untested` |
@@ -95,8 +95,8 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `residual.keyword_dependency.enlist` | `keyword_mechanics` | 12 | 8 | 8 | `absent` | `untested` |
 | `residual.effect_clause.destroy-mass` | `one_shot_effects` | 141 | 7 | 7 | `absent` | `untested` |
 | `residual.keyword_dependency.learn` | `keyword_mechanics` | 13 | 7 | 7 | `absent` | `untested` |
+| `residual.activated_effect.return` | `one_shot_effects` | 333 | 6 | 6 | `absent` | `untested` |
 | `residual.activated_effect.exile` | `one_shot_effects` | 292 | 6 | 6 | `absent` | `untested` |
-| `residual.effect_clause.counter` | `one_shot_effects` | 223 | 6 | 6 | `absent` | `untested` |
 
 ## Boundary
 

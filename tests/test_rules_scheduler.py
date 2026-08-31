@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 from quorune.rules_corpus import (
     CORPUS_OPERATIONS,
@@ -35,8 +36,12 @@ from quorune.work_selection_bundles import (
     validate_bundle_policy,
     WorkSelectionBundleError,
 )
+from quorune.work_selection_evidence import (
+    validate_harvest_forecast_correction,
+)
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
+    _apply_forecast_corrections,
     _content_entry,
     _refresh_content_entry,
     _receipt,
@@ -51,6 +56,7 @@ from scripts.harvest_outcome_history import (
 )
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.work_selection_cohort_measurements import (
+    _fixed_activation_zone_change_predicate_measurement,
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
@@ -921,14 +927,28 @@ class RulesSchedulerTests(unittest.TestCase):
             measurement["complete_card_gain"],
             current["expected_complete_card_gain"],
         )
-        self.assertGreaterEqual(
-            current["actual_complete_card_gain"],
-            measurement["complete_card_gain"],
+        current_correction = current.get("forecast_correction")
+        complete_lower_bound = (
+            current_correction["certified_complete_card_lower_bound"]
+            if current_correction is not None
+            else measurement["complete_card_gain"]
+        )
+        exact_ability_lower_bound = (
+            current_correction["certified_exact_ability_lower_bound"]
+            if current_correction is not None
+            else measurement["exact_ability_gain"]
         )
         self.assertGreaterEqual(
-            current["actual_exact_ability_gain"],
-            measurement["exact_ability_gain"],
+            current["actual_complete_card_gain"], complete_lower_bound
         )
+        self.assertGreaterEqual(
+            current["actual_exact_ability_gain"], exact_ability_lower_bound
+        )
+        if current_correction is not None:
+            self.assertEqual(
+                measurement["complete_card_gain"],
+                current_correction["original_expected_complete_card_gain"],
+            )
         self.assertEqual("semantic_content", current["receipt_identity_kind"])
 
         corrected = by_bundle[
@@ -962,6 +982,53 @@ class RulesSchedulerTests(unittest.TestCase):
             HarvestOutcomeHistoryError, "invalid shape"
         ):
             build_harvest_outcome_history(ROOT, malformed)
+
+    def test_forecast_correction_can_preserve_the_complete_card_bound(self):
+        entry = {
+            "transition_id": "oracle-ir-v999-secondary-metric-correction",
+            "receipt_identity_kind": "semantic_content",
+            "expected_complete_card_gain": 53,
+            "actual_complete_card_gain": 53,
+            "actual_exact_ability_gain": 84,
+            "actual_material_residual_reduction": 116,
+            "measurement_probe_id": "secondary-metric-probe-v1",
+        }
+        correction = {
+            "transition_id": entry["transition_id"],
+            "original_expected_complete_card_gain": 53,
+            "certified_complete_card_lower_bound": 53,
+            "certified_exact_ability_lower_bound": 84,
+            "certified_material_residual_reduction_lower_bound": 84,
+            "measurement_probe_id": "secondary-metric-probe-v2",
+            "reason": (
+                "The integrated v2 probe removes one structural ability-node "
+                "false positive while preserving the complete-card bound."
+            ),
+        }
+
+        _apply_forecast_corrections([entry], [correction])
+
+        self.assertEqual(correction, entry["forecast_correction"])
+        self.assertIn("entry_fingerprint", entry)
+        self.assertEqual(
+            correction,
+            validate_harvest_forecast_correction(correction, outcome=entry),
+        )
+        same_probe = dict(correction)
+        same_probe["measurement_probe_id"] = "secondary-metric-probe-v1"
+        with self.assertRaisesRegex(
+            HarvestOutcomeHistoryError, "contradicts its realized outcome"
+        ):
+            _apply_forecast_corrections(
+                [
+                    {
+                        key: value
+                        for key, value in entry.items()
+                        if key not in {"forecast_correction", "entry_fingerprint"}
+                    }
+                ],
+                [same_probe],
+            )
 
     def test_harvest_provenance_rejects_squash_discardable_feature_heads(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -1942,6 +2009,163 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_fixed_activation_zone_change_predicate_probe_is_closed(self):
+        probe_id = (
+            "fixed-activation-zone-change-predicates-existing-owner-v2"
+        )
+        record = SimpleNamespace(
+            name="Fixed Cost Probe",
+            type_line="Creature — Goblin",
+            oracle_text="",
+            keywords=(),
+            faces=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "{1}, {T}, Sacrifice another creature or artifact: Draw a card.",
+            "Sacrifice an Eldrazi Scion: Draw a card.",
+            "Sacrifice a Caribou token: Draw a card.",
+            "Sacrifice another black creature: Draw a card.",
+            "Sacrifice another Vampire or Zombie: Draw a card.",
+            "Sacrifice an artifact token: Draw a card.",
+            "Sacrifice a snow Mountain: Draw a card.",
+            "Sacrifice a nonland permanent: Draw a card.",
+            "Sacrifice a noncreature artifact: Draw a card.",
+            "Sacrifice an artifact creature: Draw a card.",
+            "Sacrifice a Forest or Plains: Draw a card.",
+            "Exile a card from your graveyard: Draw a card.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "Sacrifice two Goblins: Draw a card.",
+            "Sacrifice another creature or a Treasure: Draw a card.",
+            "Sacrifice an artifact or another creature: Draw a card.",
+            "Sacrifice another creature or token: Draw a card.",
+            "Sacrifice another creature or Vehicle: Draw a card.",
+            "Sacrifice a creature with defender: Draw a card.",
+            "Sacrifice a modified creature: Draw a card.",
+            "Sacrifice this creature, Sacrifice another creature: Draw a card.",
+            "{W/U}, Sacrifice another creature: Draw a card.",
+            "Sacrifice another creature: Add {B}.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=record,
+                        ability=ability,
+                    )
+                )
+
+    def test_fixed_activation_measurement_counts_only_exact_compiled_nodes(self):
+        member_ids = {"activated_cost:fixed-zone-change"}
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": oracle_id,
+                    "minimum_known_blocker_set": list(member_ids),
+                    "abilities": [
+                        {
+                            "ability_id": "n1",
+                            "source_line": 1,
+                            "status": (
+                                "exact"
+                                if oracle_id == "already-exact"
+                                else "residual"
+                            ),
+                            "blockers": {
+                                "canonical_family_ids": list(member_ids)
+                            },
+                        },
+                        *(
+                            [
+                                {
+                                    "ability_id": "n1",
+                                    "source_line": 1,
+                                    "blockers": {
+                                        "canonical_family_ids": list(member_ids)
+                                    },
+                                }
+                            ]
+                            if oracle_id == "exact"
+                            else []
+                        ),
+                    ],
+                }
+                for oracle_id in ("exact", "residual", "already-exact")
+            ]
+        }
+        records = {
+            oracle_id: SimpleNamespace(
+                name=oracle_id,
+                oracle_text="Sacrifice another creature: Draw a card.",
+                faces=(),
+            )
+            for oracle_id in ("exact", "residual", "already-exact")
+        }
+
+        def compiled(record, **_kwargs):
+            exact = record.name != "residual"
+            return SimpleNamespace(
+                status="exact" if exact else "partial",
+                faces=(
+                    SimpleNamespace(
+                        nodes=(
+                            SimpleNamespace(
+                                node_id="n1",
+                                exact=exact,
+                                kind="activated_ability",
+                            ),
+                        )
+                    ),
+                ),
+            )
+
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements._matches_probe",
+                return_value=True,
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                side_effect=compiled,
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+        ):
+            measured = _fixed_activation_zone_change_predicate_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-activation-zone-change-predicates",
+                probe_id=(
+                    "fixed-activation-zone-change-predicates-existing-owner-v2"
+                ),
+                member_ids=member_ids,
+                cards_by_oracle_id=records,
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+
+        self.assertEqual(1, measured["affected_commander_cards"])
+        self.assertEqual(1, measured["complete_card_gain"])
+        self.assertEqual(1, measured["exact_ability_gain"])
+        self.assertEqual(1, measured["material_residual_reduction"])
+
     def test_trigger_ability_word_carrier_probe_is_closed(self):
         probe_id = "trigger-ability-word-carrier-existing-owner-v1"
         for source in (
@@ -2007,9 +2231,16 @@ class RulesSchedulerTests(unittest.TestCase):
             declaration["measurement_id"], measurement["measurement_id"]
         )
         self.assertEqual(bundle["bundle_id"], measurement["bundle_id"])
-        self.assertEqual(
-            bundle["measurement_probe_id"], measurement["probe_id"]
-        )
+        if bundle["measurement_probe_id"] != measurement["probe_id"]:
+            current = next(
+                row
+                for row in self.work_inputs["harvest_outcome_history"]["entries"]
+                if row.get("transition_id") == declaration["transition_id"]
+            )
+            self.assertEqual(
+                bundle["measurement_probe_id"],
+                current["forecast_correction"]["measurement_probe_id"],
+            )
         coverage = work_selection["coverage_family"]
         self.assertGreater(measurement["complete_card_gain"], 0)
         self.assertTrue(

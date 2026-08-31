@@ -9,6 +9,10 @@ import subprocess
 from typing import Any, Mapping, Sequence
 
 from quorune.util import stable_json
+from quorune.work_selection_common import WorkSelectionError
+from quorune.work_selection_evidence import (
+    validate_harvest_forecast_correction,
+)
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
@@ -825,50 +829,13 @@ _MEASURED_CONTENT_ENTRY_FIELDS = {
     "measurement_receipt_fingerprint",
     "measurement_frontier_fingerprint",
 }
-_FORECAST_CORRECTION_FIELDS = {
-    "transition_id",
-    "original_expected_complete_card_gain",
-    "certified_complete_card_lower_bound",
-    "certified_exact_ability_lower_bound",
-    "certified_material_residual_reduction_lower_bound",
-    "measurement_probe_id",
-    "reason",
-}
-
-
 def _validated_forecast_correction(value: Any) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) != _FORECAST_CORRECTION_FIELDS:
-        raise HarvestOutcomeHistoryError(
-            "Harvest forecast correction has an invalid shape"
-        )
-    correction = dict(value)
-    transition_id = str(correction.get("transition_id") or "")
-    measurement_probe_id = str(correction.get("measurement_probe_id") or "")
-    reason = str(correction.get("reason") or "").strip()
-    integer_fields = (
-        "original_expected_complete_card_gain",
-        "certified_complete_card_lower_bound",
-        "certified_exact_ability_lower_bound",
-        "certified_material_residual_reduction_lower_bound",
-    )
-    if (
-        not transition_id
-        or not measurement_probe_id
-        or len(reason) < 40
-        or any(
-            type(correction.get(field)) is not int or correction[field] < 0
-            for field in integer_fields
-        )
-        or correction["certified_complete_card_lower_bound"]
-        >= correction["original_expected_complete_card_gain"]
-    ):
+    try:
+        return validate_harvest_forecast_correction(value)
+    except WorkSelectionError as exc:
         raise HarvestOutcomeHistoryError(
             "Harvest forecast correction is incomplete or unbounded"
-        )
-    correction["transition_id"] = transition_id
-    correction["measurement_probe_id"] = measurement_probe_id
-    correction["reason"] = reason
-    return correction
+        ) from exc
 
 
 def _validated_forecast_corrections(value: Any) -> list[dict[str, Any]]:
@@ -914,27 +881,12 @@ def _apply_forecast_corrections(
             raise HarvestOutcomeHistoryError(
                 "Harvest forecast correction must identify a content-bound outcome"
             )
-        expected = entry.get("expected_complete_card_gain")
-        actual_cards = entry.get("actual_complete_card_gain")
-        actual_abilities = entry.get("actual_exact_ability_gain")
-        actual_residuals = entry.get("actual_material_residual_reduction")
-        if (
-            expected
-            != correction["original_expected_complete_card_gain"]
-            or type(actual_cards) is not int
-            or actual_cards >= correction["original_expected_complete_card_gain"]
-            or actual_cards < correction["certified_complete_card_lower_bound"]
-            or type(actual_abilities) is not int
-            or actual_abilities < correction["certified_exact_ability_lower_bound"]
-            or type(actual_residuals) is not int
-            or actual_residuals
-            < correction[
-                "certified_material_residual_reduction_lower_bound"
-            ]
-        ):
+        try:
+            validate_harvest_forecast_correction(correction, outcome=entry)
+        except WorkSelectionError as exc:
             raise HarvestOutcomeHistoryError(
                 "Harvest forecast correction contradicts its realized outcome"
-            )
+            ) from exc
         if entry.get("forecast_correction") is None:
             entry["forecast_correction"] = correction
             entry.pop("entry_fingerprint", None)

@@ -867,6 +867,52 @@
           "measurement_probe_id": "fixed-face-down-lifecycle-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-activation-zone-change-predicates",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.selected_zone_change.fixed",
+            "component:quorune.compiler.activated_zone_change_costs.fixed_activated_zone_change_cost",
+            "component:quorune.compiler.spell_additional_cost_templates.fixed_zone_change_additional_cost_template",
+            "component:quorune.rules.activation_costs.activation_choice_candidates",
+            "component:quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost"
+          ],
+          "source_contexts": [
+            "activated"
+          ],
+          "normalized_literal_parameters": [
+            "current-effective-characteristics",
+            "fixed-color-or-color-union",
+            "fixed-permanent-type-or-type-union",
+            "fixed-subtype-conjunction-or-union",
+            "fixed-supertype",
+            "fixed-token-identity",
+            "owned-graveyard-card",
+            "source-wide-another-exclusion"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_zone_change",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "exactly one selected sacrifice or owned-graveyard exile activation cost with a closed current type, subtype, color, supertype, token, nontoken, or source-wide another predicate",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing typed fixed zone-change cost, canonical actor-bound object query, replacement continuation, and replay owners across reusable one-object activation predicates without adding a second payment or movement path.",
+          "explicit_exclusions": [
+            "chosen, named, linked, historical, attachment, counter, defender, modified, suspected, and quantity-derived predicates",
+            "complex, hybrid, Phyrexian, and snow mana symbols",
+            "mana abilities with selected zone-change costs",
+            "mixed type, subtype, token, Vehicle, Blood, or asymmetric disjunctions",
+            "self-source plus selected-object compound costs and cost-order choices",
+            "zero, multiple, optional, random, variable, or repeated selected objects"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-activation-zone-change-predicates-existing-owner-v2"
+        },
+        {
           "bundle_id": "bundle:fixed-homogeneous-target-sets",
           "member_family_ids": [
             "activated_effect:destroy",
@@ -1411,23 +1457,18 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v151-fixed-face-down-lifecycle",
-      "compiler_version": "oracle-ir-v151",
-      "bundle_id": "bundle:fixed-face-down-lifecycle",
-      "candidate_ids": ["compiler:fixed-face-down-lifecycle"],
+      "transition_id": "oracle-ir-v152-fixed-activation-zone-change-predicates",
+      "compiler_version": "oracle-ir-v152",
+      "bundle_id": "bundle:fixed-activation-zone-change-predicates",
+      "candidate_ids": ["compiler:fixed-activation-zone-change-predicates"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "keyword_dependency:disguise",
-        "keyword_dependency:megamorph"
+        "activated_cost:complete-alternate-additional-cost-grammar",
+        "activated_cost:restricted-payment-predicates"
       ],
       "capability_ids": [
-        "casting.disguise.fixed_mana",
-        "casting.megamorph.fixed_mana",
-        "trigger.event.normalized_public_action"
+        "activation.selected_zone_change.fixed"
       ],
-      "measurement_id": "measurement:fixed-face-down-lifecycle",
+      "measurement_id": "measurement:fixed-activation-zone-change-predicates",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -1439,6 +1480,15 @@
         "certified_material_residual_reduction_lower_bound": 109,
         "measurement_probe_id": "fixed-spell-cast-characteristic-trigger-existing-owner-v2",
         "reason": "Exact-source certification found that the v1 probe admitted seven dependency-inexact regeneration or optional self-return bodies. The v2 integrated-owner probe removes those false positives and remains conservative against the realized 66-card, 111-ability outcome."
+      },
+      {
+        "transition_id": "oracle-ir-v152-fixed-activation-zone-change-predicates",
+        "original_expected_complete_card_gain": 53,
+        "certified_complete_card_lower_bound": 53,
+        "certified_exact_ability_lower_bound": 84,
+        "certified_material_residual_reduction_lower_bound": 84,
+        "measurement_probe_id": "fixed-activation-zone-change-predicates-existing-owner-v2",
+        "reason": "Exact-source certification found that the v1 carrier probe counted one syntactically matched residual that did not become an exact activated-ability node. The v2 integrated-node probe excludes that false positive while retaining the certified 53-card gain."
       }
     ],
     "harvest_provenance": [

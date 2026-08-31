@@ -111,7 +111,7 @@ class CostChoice:
             object.__setattr__(self, "predicate", FrozenMap(self.predicate))
             tap_cost = self.fixed_tap_cost()
             if tap_cost is None:
-                if self.count != 1 or self.card_type is not None or self.another:
+                if self.count != 1 or self.card_type is not None:
                     raise ValueError(
                         "typed zone-change cost choices require one exact query"
                     )
@@ -119,6 +119,10 @@ class CostChoice:
                 if cost is None or self.zone != cost.origin_zone:
                     raise ValueError(
                         "typed zone-change cost choice origin is inconsistent"
+                    )
+                if self.another and cost.operation != "sacrifice_one":
+                    raise ValueError(
+                        "another is supported only for typed sacrifice costs"
                     )
 
     def fixed_zone_change_cost(self) -> Any | None:
