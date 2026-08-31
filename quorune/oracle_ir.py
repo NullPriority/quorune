@@ -531,7 +531,8 @@ def _contextual_effect_templates(
 def _keyword_node_for_mechanics(
     *,
     node_id: str,
-    line: str, material_line: str, card_name: str, effect_template: Any,
+    line: str,
+    material_line: str,
     span: SourceSpan,
     mechanics: tuple[str, ...],
     printed_power: str | None,
@@ -705,8 +706,7 @@ def _fallback_keyword_mechanics(
 def _keyword_nodes(
     *,
     node_id: str,
-    line: str,
-    material_line: str,
+    line: str, material_line: str, card_name: str, effect_template: Any,
     span: SourceSpan,
     keywords: Sequence[str],
     printed_card_types: tuple[str, ...],
