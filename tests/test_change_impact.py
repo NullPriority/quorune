@@ -53,6 +53,11 @@ class ChangeImpactTests(unittest.TestCase):
                 "test_fixed_target_effect_sequences",
                 "test_high_risk_interaction_assurance",
             },
+            "quorune/compiler/saga_chapter_nodes.py": {
+                "test_card_program_trust",
+                "test_rules_scheduler",
+                "test_saga_counter_progression",
+            },
             "quorune/compiler/prevention_templates.py": {
                 "test_fixed_token_creation_effects",
                 "test_high_risk_interaction_assurance",

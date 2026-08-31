@@ -1,0 +1,30 @@
+{
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-714300000099",
+      "name": "Ordinary Saga Chapter Fixture",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "I — You gain 2 life.\nII, III — Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "constructed_generic_behavior",
+  "rulings": [],
+  "schema_version": 1,
+  "source": "Constructed generic Saga chapter fixture"
+}

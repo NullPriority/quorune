@@ -23,8 +23,10 @@ from quorune.entry_counter_model import (
     EntryCounterError,
     intrinsic_entry_counters,
 )
-from quorune.model import CardInstance, StackItem
-from quorune.oracle_ir import generated_programs
+from quorune.model import CardInstance, GameState, StackItem
+from quorune.oracle_ir import compile_oracle_card, generated_programs
+from quorune.read_ahead import saga_chapter_line, saga_chapter_numbers
+from quorune.compiler.program_generation import register_generated_programs
 from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
@@ -84,6 +86,10 @@ class SagaCounterProgressionTests(unittest.TestCase):
                 / "tests"
                 / "fixtures"
                 / "read-ahead-saga-cards.json",
+                ROOT
+                / "tests"
+                / "fixtures"
+                / "ordinary-saga-chapter-programs.json",
             ],
             database,
         )
@@ -272,6 +278,22 @@ class SagaCounterProgressionTests(unittest.TestCase):
                 )
         return handler_program
 
+    def register_ordinary_saga_chapters(self, engine) -> CardRecord:
+        record = self.db.lookup("Ordinary Saga Chapter Fixture", fuzzy=False)
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="provisional",
+            capability_registry=self.capabilities,
+            capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        return record
+
     @staticmethod
     def begin_read_ahead_entry(session, card: CardInstance) -> None:
         engine = session.engine
@@ -429,6 +451,159 @@ class SagaCounterProgressionTests(unittest.TestCase):
             program.to_dict(),
             CardProgram.from_dict(program.to_dict()).to_dict(),
         )
+
+    def test_ordinary_saga_chapter_programs_compile_exact(self):
+        record = self.db.lookup("Ordinary Saga Chapter Fixture", fuzzy=False)
+        ir = compile_card_program(
+            self.db,
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+
+        chapter_abilities = [
+            ability
+            for ability in ir.abilities
+            if str(ability.event or "").startswith("saga.chapter.")
+        ]
+        self.assertEqual(
+            ["saga.chapter.1", "saga.chapter.2", "saga.chapter.3"],
+            [ability.event for ability in chapter_abilities],
+        )
+        self.assertTrue(
+            all(ability.trust_level == "trusted" for ability in chapter_abilities)
+        )
+        self.assertTrue(
+            all(
+                "counter.producer.saga_lore"
+                in ability.capability_dependencies
+                and "trigger.placement.apnap"
+                in ability.capability_dependencies
+                for ability in chapter_abilities
+            )
+        )
+        self.assertEqual(
+            chapter_abilities[1].provenance["source_span"],
+            chapter_abilities[2].provenance["source_span"],
+        )
+        self.assertEqual((), ir.residuals)
+        self.assertEqual(ir.to_dict(), CardProgram.from_dict(ir.to_dict()).to_dict())
+
+    def test_compiled_ordinary_saga_chapter_dispatches_and_resolves(self):
+        session = self.session(7143031)
+        engine = session.engine
+        record = self.register_ordinary_saga_chapters(engine)
+        saga = self.add_saga(
+            engine,
+            seat="A",
+            ref="ordinary-saga-chapter",
+            zone="battlefield",
+            oracle_id=record.oracle_id,
+        )
+        saga.counters["lore"] = 0
+        life_before = engine.state.players["A"].life
+
+        advance_active_player_sagas(engine, "A")
+
+        self.assertEqual(1, saga.counters["lore"])
+        self.assertEqual(1, len(engine.state.pending_trigger_batches))
+        occurrence = engine.state.pending_trigger_batches[0].items[0]
+        program = engine.semantics.get(occurrence.source_ability_id)
+        self.assertIsNotNone(program)
+        self.assertEqual("saga.chapter.1", program.event)
+        self.assertEqual(
+            ["A", "B"],
+            list(engine.state.pending_trigger_batches[0].apnap_order),
+        )
+
+        engine._grant_priority("A")
+        item = engine.state.stack[-1]
+        resolved = engine.semantics.get(item.semantic_key)
+        self.assertIsNotNone(resolved)
+        engine._begin_resolve_item(
+            item,
+            resolved.effects,
+            resolved.destination,
+            note="compiled ordinary Saga chapter",
+        )
+
+        self.assertEqual(life_before + 2, engine.state.players["A"].life)
+
+    def test_ordinary_saga_chapter_grammar_fails_closed(self):
+        record = self.db.lookup("Ordinary Saga Chapter Fixture", fuzzy=False)
+        parsed = saga_chapter_line("II, III — Draw a card.")
+        self.assertIsNotNone(parsed)
+        self.assertEqual((2, 3), parsed.chapters)
+        self.assertEqual("Draw a card.", parsed.body)
+        for malformed in (
+            "III, II — Draw a card.",
+            "I, I — Draw a card.",
+            "XI — Draw a card.",
+            "I —",
+        ):
+            with self.subTest(malformed=malformed):
+                self.assertIsNone(saga_chapter_line(malformed))
+                self.assertEqual(
+                    (),
+                    saga_chapter_numbers(
+                        ("I — Draw a card.", malformed)
+                    ),
+                )
+
+        for changed in (
+            replace(record, type_line="Enchantment"),
+            replace(record, oracle_text="I — Choose a card name."),
+        ):
+            with self.subTest(type_line=changed.type_line):
+                ir = compile_oracle_card(
+                    changed,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertFalse(
+                    any(
+                        node.exact
+                        and str(node.event).startswith("saga.chapter.")
+                        for face in ir.faces
+                        for node in face.nodes
+                    )
+                )
+
+    def test_compiled_saga_chapters_batch_in_apnap_order_and_round_trip(self):
+        session = self.session(7143032, players=4)
+        engine = session.engine
+        record = self.register_ordinary_saga_chapters(engine)
+        trigger_batch = []
+        for seat in ("B", "A"):
+            saga = self.add_saga(
+                engine,
+                seat=seat,
+                ref=f"ordinary-saga-{seat.casefold()}",
+                zone="battlefield",
+                oracle_id=record.oracle_id,
+            )
+            saga.counters["lore"] = 1
+            dispatch_saga_chapters(
+                engine,
+                saga,
+                previous_lore=0,
+                trigger_batch=trigger_batch,
+            )
+        enqueue_trigger_batch(engine, trigger_batch)
+
+        batch = engine.state.pending_trigger_batches[0]
+        self.assertEqual(
+            ["A", "B"],
+            [group.controller for group in batch.groups],
+        )
+        self.assertEqual(
+            {"saga.chapter.1"},
+            {item.normalized_event_id for item in batch.items},
+        )
+        checkpoint = engine.state.to_dict()
+        self.assertEqual(checkpoint, GameState.from_dict(checkpoint).to_dict())
 
     def test_read_ahead_and_untrusted_chapters_fail_closed(self):
         record = self.db.lookup("Love Song of Night and Day")
