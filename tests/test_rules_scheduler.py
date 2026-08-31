@@ -2015,7 +2015,20 @@ class RulesSchedulerTests(unittest.TestCase):
                             "blockers": {
                                 "canonical_family_ids": list(member_ids)
                             },
-                        }
+                        },
+                        *(
+                            [
+                                {
+                                    "ability_id": "n1",
+                                    "source_line": 1,
+                                    "blockers": {
+                                        "canonical_family_ids": list(member_ids)
+                                    },
+                                }
+                            ]
+                            if oracle_id == "exact"
+                            else []
+                        ),
                     ],
                 }
                 for oracle_id in ("exact", "residual")

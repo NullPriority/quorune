@@ -975,7 +975,7 @@ def _fixed_activation_zone_change_predicate_measurement(
             for face in compiled.faces
             for node in face.nodes
         }
-        card_matches = 0
+        matched_node_ids: set[str] = set()
         for ability in candidates:
             node = nodes.get(str(ability.get("ability_id") or ""))
             if (
@@ -983,9 +983,10 @@ def _fixed_activation_zone_change_predicate_measurement(
                 and node.exact
                 and node.kind == "activated_ability"
             ):
-                card_matches += 1
+                matched_node_ids.add(node.node_id)
             else:
                 cards_with_unmatched_member_ability.add(oracle_id)
+        card_matches = len(matched_node_ids)
         if not card_matches:
             continue
         matched_abilities += card_matches
