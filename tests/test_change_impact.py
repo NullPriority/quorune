@@ -438,6 +438,7 @@ class CommanderEngine:
         self.assertTrue(
             {
                 "test_attack_transitions",
+                "test_block_keyword_compiler",
                 "test_block_transitions",
                 "test_fixed_counter_event_triggers",
                 "test_prowess_rules",
