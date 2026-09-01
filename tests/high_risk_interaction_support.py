@@ -912,7 +912,6 @@ ATTACHMENT_AND_CONTINUOUS_PAIRS = (
     _pair("capability.attachment.equip.fixed_mana", "residual.continuous_layer.affected-player-ordering"),
     _pair("capability.attachment.equip.fixed_mana", "residual.continuous_layer.continuous-effect-layers-and-dependencies"),
     _pair("capability.attachment.equip.fixed_mana", "residual.duration.until-end-of-turn"),
-    _pair("capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "residual.replacement.damage-prevention"),
 )
 
 TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS = tuple(
@@ -944,7 +943,6 @@ EFFECT_AND_REPLACEMENT_PAIRS = (
     _pair("capability.life.change.effect", "residual.replacement.self-replacement-and-prevention-ordering"),
     _pair("capability.life.gain.replacement.static_multiplier", "residual.replacement.replacement-applicability"),
     _pair("capability.life.gain.replacement.static_multiplier", "residual.replacement.self-replacement-and-prevention-ordering"),
-    _pair("capability.mana.activated.fixed_output", "residual.replacement.damage-prevention"),
     _pair("capability.mana.activated.fixed_output", "residual.replacement.replacement-applicability"),
     _pair("capability.mana.activated.fixed_output", "residual.replacement.self-replacement-and-prevention-ordering"),
     _pair("capability.permanent.destroy.effect", "residual.replacement.replacement-applicability"),
@@ -1136,7 +1134,6 @@ _bind(
 )
 _bind("starforged-sword", *ATTACHMENT_AND_CONTINUOUS_PAIRS[6:8])
 _bind("junk-jet", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
-_bind("soratami-cloud-chariot", ATTACHMENT_AND_CONTINUOUS_PAIRS[9])
 _bind(
     "saga-chapter-boundary",
     SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[0],
@@ -1157,19 +1154,18 @@ _bind("zabaz", *EFFECT_AND_REPLACEMENT_PAIRS[6:8])
 _bind("damage-result-and-coin-replacement", *EFFECT_AND_REPLACEMENT_PAIRS[8:12])
 _bind("decode-transmissions", *EFFECT_AND_REPLACEMENT_PAIRS[12:14])
 _bind("alhammarrets-archive", *EFFECT_AND_REPLACEMENT_PAIRS[14:16])
-_bind("kor-haven", EFFECT_AND_REPLACEMENT_PAIRS[16])
-_bind("game-trail", *EFFECT_AND_REPLACEMENT_PAIRS[17:19])
-_bind("rancid-earth", *EFFECT_AND_REPLACEMENT_PAIRS[19:21])
-_bind("cleansing-meditation", *EFFECT_AND_REPLACEMENT_PAIRS[21:23])
-_bind("legacy-weapon", *EFFECT_AND_REPLACEMENT_PAIRS[23:25])
-_bind("tekuthal", *EFFECT_AND_REPLACEMENT_PAIRS[25:27])
-_bind("oko-trickster", EFFECT_AND_REPLACEMENT_PAIRS[27])
-_bind("vile-requiem", EFFECT_AND_REPLACEMENT_PAIRS[28])
-_bind("serras-hymn", EFFECT_AND_REPLACEMENT_PAIRS[29])
-_bind("vile-requiem", EFFECT_AND_REPLACEMENT_PAIRS[30])
+_bind("game-trail", *EFFECT_AND_REPLACEMENT_PAIRS[16:18])
+_bind("rancid-earth", *EFFECT_AND_REPLACEMENT_PAIRS[18:20])
+_bind("cleansing-meditation", *EFFECT_AND_REPLACEMENT_PAIRS[20:22])
+_bind("legacy-weapon", *EFFECT_AND_REPLACEMENT_PAIRS[22:24])
+_bind("tekuthal", *EFFECT_AND_REPLACEMENT_PAIRS[24:26])
+_bind("oko-trickster", EFFECT_AND_REPLACEMENT_PAIRS[26])
+_bind("vile-requiem", EFFECT_AND_REPLACEMENT_PAIRS[27])
+_bind("serras-hymn", EFFECT_AND_REPLACEMENT_PAIRS[28])
+_bind("vile-requiem", EFFECT_AND_REPLACEMENT_PAIRS[29])
 _bind(
     "fixed-life-upkeep-prevention",
-    *EFFECT_AND_REPLACEMENT_PAIRS[31:34],
+    *EFFECT_AND_REPLACEMENT_PAIRS[30:33],
 )
 _bind("gideon-jura", DESTROY_DAMAGE_PREVENTION_PAIR)
 _bind("jaya-task-mage", DESTROY_REGENERATION_PAIR)

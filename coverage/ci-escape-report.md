@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "4728cf002ee6d69408f9af1043f1a082fda12127ab6647ae06e3720e72a3cc60"
+verified: "0991ad52edfdebc7b12ad41c8517e72d83957ada6c581b4924d8aac6a4961907"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 47
-- Deterministic escapes: 42
+- Escapes: 48
+- Deterministic escapes: 43
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -73,6 +73,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260829-45` | [33271661291](https://github.com/NullPriority/quorune/actions/runs/33271661291) | `missing_affected_test` | `not_applicable` | The scheduler regression now verifies that the post-harvest optional-effect measurement is retired below each complete-card, exact-ability, and residual-reduction floor while remaining non-authoritative for gameplay trust. The generated-governance impact route already selected the failing module; pre-cloud evidence for a materialized harvest must include the exact scheduler expectation whose current cohort changed. |
 | `ci-20260831-46` | [33342572604](https://github.com/NullPriority/quorune/actions/runs/33342572604) | `missing_affected_test` | `added` | The monotonic effective-keyword host contract now routes quorune/keyword_abilities.py to both direct Haste and aerial host modules before merge. The main-health recovery script already remains high-risk and selects the complete generated-validation inventory, including its direct-import regression. |
 | `ci-20260831-47` | [33366100343](https://github.com/NullPriority/quorune/actions/runs/33366100343) | `missing_affected_test` | `added` | The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion. |
+| `ci-20260901-48` | [33523463031](https://github.com/NullPriority/quorune/actions/runs/33523463031) | `missing_affected_test` | `not_applicable` | The promoted prevention incidences are removed from the residual fail-closed pair inventory, while the generated scheduler witness reads the content-bound pre-harvest transition measurement and separately permits the post-harvest current cohort to retire. Existing impact rules already selected both modules; future harvest pre-cloud evidence must run these exact adjacent methods. |
 
 ## Measurement limitations
 

@@ -2139,12 +2139,15 @@ class RulesSchedulerTests(unittest.TestCase):
                 self.assertFalse(_matches_probe(probe_id, source))
 
     def test_fixed_all_damage_prevention_probe_is_integrated_and_accounted(self):
-        measurement = next(
+        transition = next(
             row
-            for row in self.work_inputs["cohort_measurements"]["measurements"]
-            if row["bundle_id"]
-            == "bundle:fixed-all-damage-prevention-scopes"
+            for row in self.work_inputs["cohort_measurements"][
+                "transition_measurements"
+            ]
+            if row["transition_id"]
+            == "oracle-ir-v155-fixed-all-damage-prevention-scopes"
         )
+        measurement = transition["measurement"]
         accounting = measurement["candidate_accounting"]
         coverage = self.catalog["work_selection"]["coverage_family"]
         self.assertEqual("bounded_executable", measurement["decision"])
