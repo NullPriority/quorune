@@ -2141,57 +2141,50 @@ class RulesSchedulerTests(unittest.TestCase):
                 self.assertFalse(_matches_probe(probe_id, source))
 
     def test_attached_quoted_grant_probe_is_integrated_and_accounted(self):
-        transition = next(
-            row
-            for row in self.work_inputs["cohort_measurements"][
-                "transition_measurements"
-            ]
-            if row["transition_id"]
-            == "oracle-ir-v156-attached-quoted-ability-grants"
-        )
-        measurement = transition["measurement"]
-        accounting = measurement["candidate_accounting"]
-        coverage = self.catalog["work_selection"]["coverage_family"]
-        self.assertEqual("bounded_executable", measurement["decision"])
-        self.assertGreaterEqual(
-            measurement["complete_card_gain"],
-            coverage["minimum_complete_card_gain"],
-        )
-        self.assertEqual(
-            measurement["exact_ability_gain"],
-            2 * accounting["affected_oracle_carriers"],
-        )
-        self.assertEqual(
-            measurement["complete_card_gain"],
-            accounting["trusted_program_transitions"],
-        )
-        self.assertEqual(
-            measurement["material_residual_reduction"],
-            accounting["expected_oracle_residual_reduction"],
-        )
-        self.assertEqual(
-            accounting["expected_oracle_residual_reduction"],
-            accounting["expected_card_program_residual_reduction"],
-        )
-        self.assertEqual(
-            0,
-            accounting["newly_applicable_high_risk_pairs"],
-        )
         outcome = next(
             row
             for row in self.work_inputs["harvest_outcome_history"]["entries"]
             if row.get("transition_id")
             == "oracle-ir-v156-attached-quoted-ability-grants"
         )
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        self.assertEqual(
+            "measurement:attached-quoted-ability-grants",
+            outcome["measurement_id"],
+        )
+        self.assertEqual(
+            "attached-quoted-ability-grant-existing-owner-v1",
+            outcome["measurement_probe_id"],
+        )
+        self.assertGreaterEqual(
+            outcome["actual_complete_card_gain"],
+            coverage["minimum_complete_card_gain"],
+        )
+        self.assertEqual(
+            outcome["actual_complete_card_gain"],
+            outcome["actual_trusted_card_gain"],
+        )
+        self.assertEqual(
+            outcome["actual_complete_card_gain"],
+            outcome["actual_capability_closed_card_gain"],
+        )
+        self.assertEqual(
+            outcome["oracle_exact_ability_node_delta"],
+            2 * outcome["frontier_ability_carrier_delta"]["additions"],
+        )
+        self.assertEqual(
+            outcome["actual_material_oracle_residual_reduction"],
+            outcome["actual_material_card_program_residual_reduction"],
+        )
+        self.assertEqual(
+            outcome["actual_material_residual_reduction"],
+            outcome["actual_material_oracle_residual_reduction"],
+        )
         assurance = outcome["interaction_assurance_delta"]
         self.assertGreater(assurance["applicable_high_risk_pairs"], 0)
         self.assertEqual(
             assurance["applicable_high_risk_pairs"],
             assurance["covered_high_risk_pairs"],
-        )
-        self.assertGreater(
-            accounting["cards_excluded_by_unsupported_grammar"],
-            0,
         )
 
     def test_attached_grant_probe_derives_high_risk_capability_pairs(self):
