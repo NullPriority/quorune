@@ -1599,29 +1599,75 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-all-damage-prevention-scope-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:attached-quoted-ability-grants",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.attached.fixed_characteristics",
+            "component:quorune.ability_fragments.GrantedActivatedAbilitySpec",
+            "component:quorune.ability_fragments.GrantedTriggeredAbilitySpec",
+            "component:quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+            "component:quorune.compiler.continuous_templates.attached_quoted_ability_handler",
+            "component:quorune.rules.activation.query.activated_abilities",
+            "component:quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
+            "component:quorune.trigger_discovery._event_programs_for_source"
+          ],
+          "source_contexts": [
+            "activated",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "battlefield-attached-creature-subject",
+            "current-layer-6-typed-grant",
+            "fixed-output-mana-or-closed-activation-cost",
+            "independently-exact-inner-event-or-effect-program",
+            "single-quoted-ability",
+            "source-spanned-outer-and-inner-program-identities"
+          ],
+          "shared_dependencies": [
+            "continuous.attached.fixed_characteristics",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one independently exact activated, fixed-output mana, or triggered ability quoted inside one already-supported battlefield Aura or Equipment characteristic line",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing attachment, layer-6 fragment, activation-query, trigger-discovery, effect, mana, and replay owners across reusable Aura and Equipment grants without runtime Oracle parsing or a parallel ability engine.",
+          "explicit_exclusions": [
+            "alternative, sacrifice, discard, untap, life, energy, loyalty, selected-object, complex-symbol, dynamic, restricted-mana, and activation-limit costs",
+            "chosen, secret, linked, named-source, external Aura or Equipment references, text changes, and card-specific identities",
+            "multiple quotes, quoted static or declaration text, and unsupported inner targets, events, effects, or conditions",
+            "temporary, resolution-created, copied, removed, and non-attached grants",
+            "unsupported outer conditions, dynamic characteristic amounts, attachment-relative quantities, and noncreature attached subjects"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "attached-quoted-ability-grant-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v155-fixed-all-damage-prevention-scopes",
-      "compiler_version": "oracle-ir-v155",
-      "bundle_id": "bundle:fixed-all-damage-prevention-scopes",
-      "candidate_ids": ["compiler:fixed-all-damage-prevention-scopes"],
+      "transition_id": "oracle-ir-v156-attached-quoted-ability-grants",
+      "compiler_version": "oracle-ir-v156",
+      "bundle_id": "bundle:attached-quoted-ability-grants",
+      "candidate_ids": ["compiler:attached-quoted-ability-grants"],
       "family_ids": [
-        "continuous_layer:affected-player-ordering",
         "continuous_layer:continuous-effect-layers-and-dependencies",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
         "event_binding:normalized-event-binding",
-        "replacement:damage-prevention",
-        "replacement:replacement-applicability",
-        "replacement:self-replacement-and-prevention-ordering",
         "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "damage.prevention.persistent_amount"
+        "continuous.attached.fixed_characteristics"
       ],
-      "measurement_id": "measurement:fixed-all-damage-prevention-scopes",
+      "measurement_id": "measurement:attached-quoted-ability-grants",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2139,6 +2185,11 @@
         "candidate_id": "compiler:fixed-all-damage-prevention-scopes",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-harvest selector has no eligible carried candidate while the raw continuous-layer and prevention leaders remain heterogeneous. The generated integrated probe isolates one qualifying complete-card lower bound through the existing damage replacement predicate, durable prevention journal, current layer-6 ability applicability query, attachment reference, direct-target contract, cleanup owner, and exact replay boundary. It admits only fixed public all-damage source and recipient scopes with static or until-end-of-turn lifetime; finite, chosen, linked, dynamic, modal, multiple-target, combat-role, token, counter, and unsupported compound forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:attached-quoted-ability-grants",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector has no eligible carried candidate after the fixed all-damage prevention harvest, while the raw continuous-layer leader remains heterogeneous. A bounded comparison found no coherent public-entry-counter or self-zone cast family above the complete-card floor; strict top-library access and remaining anthem slices also stayed below it. The integrated attachment probe instead measures 75 quoted Aura or Equipment carriers, 150 exact outer and inner nodes, 75 removable residuals, and a conservative 56 complete-card lower bound. It reuses the existing attached-characteristic component, typed granted-ability fragments, activation query, trigger discovery, ordinary effect and mana programs, APNAP placement, and exact replay. Multiple quotes, external attachment references, static or declaration prose, unsupported inner effects, and alternative, nonmana, dynamic, restricted, or limited costs remain fail-closed."
       }
     ]
   },

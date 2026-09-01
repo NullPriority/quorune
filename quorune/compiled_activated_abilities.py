@@ -78,6 +78,8 @@ def compiled_activated_abilities(
         ),
         key=lambda value: value.key,
     ):
+        if program.provenance.get("granted_only"):
+            continue
         if program.active_zone not in {
             "battlefield",
             "hand",

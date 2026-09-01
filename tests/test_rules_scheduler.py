@@ -56,6 +56,7 @@ from scripts.harvest_outcome_history import (
 )
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.work_selection_cohort_measurements import (
+    _attached_quoted_ability_grant_measurement,
     _fixed_activation_zone_change_predicate_measurement,
     _matches_probe,
     _matches_query_self_characteristic_probe,
@@ -2138,14 +2139,14 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
-    def test_fixed_all_damage_prevention_probe_is_integrated_and_accounted(self):
+    def test_attached_quoted_grant_probe_is_integrated_and_accounted(self):
         transition = next(
             row
             for row in self.work_inputs["cohort_measurements"][
                 "transition_measurements"
             ]
             if row["transition_id"]
-            == "oracle-ir-v155-fixed-all-damage-prevention-scopes"
+            == "oracle-ir-v156-attached-quoted-ability-grants"
         )
         measurement = transition["measurement"]
         accounting = measurement["candidate_accounting"]
@@ -2157,7 +2158,7 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         self.assertEqual(
             measurement["exact_ability_gain"],
-            accounting["affected_oracle_carriers"],
+            2 * accounting["affected_oracle_carriers"],
         )
         self.assertEqual(
             measurement["complete_card_gain"],
@@ -2171,10 +2172,95 @@ class RulesSchedulerTests(unittest.TestCase):
             accounting["expected_oracle_residual_reduction"],
             accounting["expected_card_program_residual_reduction"],
         )
-        self.assertEqual(0, accounting["newly_applicable_high_risk_pairs"])
-        self.assertGreater(
-            accounting["cards_excluded_by_unsupported_prevention_grammar"],
+        self.assertEqual(
             0,
+            accounting["newly_applicable_high_risk_pairs"],
+        )
+        outcome = next(
+            row
+            for row in self.work_inputs["harvest_outcome_history"]["entries"]
+            if row.get("transition_id")
+            == "oracle-ir-v156-attached-quoted-ability-grants"
+        )
+        assurance = outcome["interaction_assurance_delta"]
+        self.assertGreater(assurance["applicable_high_risk_pairs"], 0)
+        self.assertEqual(
+            assurance["applicable_high_risk_pairs"],
+            assurance["covered_high_risk_pairs"],
+        )
+        self.assertGreater(
+            accounting["cards_excluded_by_unsupported_grammar"],
+            0,
+        )
+
+    def test_attached_grant_probe_derives_high_risk_capability_pairs(self):
+        source = 'Equipped creature has "{2}, {T}: Target player mills three cards."'
+        record = SimpleNamespace(
+            oracle_id="fixture:attached-grant-risk",
+            name="Attached grant risk fixture",
+            oracle_text=source,
+            faces=(),
+        )
+        outer = SimpleNamespace(
+            exact=True,
+            kind="static_ability",
+            template_id=(
+                "continuous-attached-fixed-characteristics-"
+                "granted-ability-v1"
+            ),
+            span=SimpleNamespace(line=1),
+            capability_dependencies=("attachment.equip.fixed_mana",),
+        )
+        inner = SimpleNamespace(
+            exact=True,
+            kind="granted_activated_ability",
+            template_id="mill-fixed-target-any-v1",
+            span=SimpleNamespace(line=1),
+            capability_dependencies=("zone.mill.fixed",),
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(outer, inner)),),
+            material_residuals=(),
+            status="exact",
+        )
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "face_id": "front",
+                            "source_line": 1,
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                }
+            ]
+        }
+        coverage = {
+            "minimum_complete_card_gain": 1,
+            "minimum_exact_ability_gain": 1,
+            "minimum_material_residual_reduction": 1,
+        }
+        with mock.patch(
+            "scripts.work_selection_cohort_measurements.compile_oracle_card",
+            return_value=compiled,
+        ):
+            measurement = _attached_quoted_ability_grant_measurement(
+                frontier=frontier,
+                bundle_id="bundle:attached-quoted-ability-grants",
+                probe_id="attached-quoted-ability-grant-existing-owner-v1",
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage=coverage,
+                cohort_fingerprint="fixture-fingerprint",
+            )
+        self.assertEqual(
+            1,
+            measurement["candidate_accounting"][
+                "newly_applicable_high_risk_pairs"
+            ],
         )
 
     def test_fixed_activation_measurement_counts_only_exact_compiled_nodes(self):

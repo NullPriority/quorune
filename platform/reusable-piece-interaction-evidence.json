@@ -4919,6 +4919,33 @@
       "capability_ids": [],
       "interaction_order": 2,
       "assertion": "The inexact chapter event binding cannot bypass the separate self-replacement and CR 616 ordering residual at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_equipped_granted_discard_obeys_destination_replacement",
+      "piece_ids": ["capability.attachment.equip.fixed_mana", "capability.zone.change.destination_replacement"],
+      "capability_ids": ["attachment.equip.fixed_mana", "zone.change.destination_replacement"],
+      "interaction_order": 2,
+      "assertion": "A fixed-mana Equip activation attaches the typed grant source, the recipient's granted attack trigger draws and selects a discard, and the canonical destination-replacement owner exiles that discarded card without disturbing the attachment."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_equipped_granted_mill_uses_activation_and_zone_owners",
+      "piece_ids": ["capability.attachment.equip.fixed_mana", "capability.zone.mill.fixed"],
+      "capability_ids": ["attachment.equip.fixed_mana", "zone.mill.fixed"],
+      "interaction_order": 2,
+      "assertion": "A fixed-mana Equip activation attaches the source, then the recipient's granted activation pays its own cost and mills the selected player through the canonical zone owner while the Equipment remains attached."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_granted_target_activation_survives_granting_aura_self_return",
+      "piece_ids": ["capability.target.public.player_or_damageable_permanent", "capability.zone.self_move.activated"],
+      "capability_ids": ["target.public.player_or_damageable_permanent", "zone.self_move.activated"],
+      "interaction_order": 2,
+      "assertion": "A recipient activates the granted public any-target program, the granting Aura returns itself to hand in response through the self-move owner, future grant discovery ends, and the already-activated recipient-bound damage still resolves."
     }
   ]
 }
