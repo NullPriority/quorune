@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "31ee2c5163b415f7a26e14e1b7c9dff88582bb1d1a247ce29105b254215b2089"
+verified: "4728cf002ee6d69408f9af1043f1a082fda12127ab6647ae06e3720e72a3cc60"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 45
-- Deterministic escapes: 40
+- Escapes: 47
+- Deterministic escapes: 42
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -71,6 +71,8 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260829-43` | [33266729920](https://github.com/NullPriority/quorune/actions/runs/33266729920) | `generated_artifact_drift` | `not_applicable` | The frontier now retains only immutable card-snapshot fields, and harvest receipts compare a canonical semantic frontier identity that ignores local archive locations while remaining sensitive to every card and blocker row. The generated-owner plan and existing source mappings already select the frontier, scheduler, and both focused regression modules, so no new impact edge is required. |
 | `ci-20260829-44` | [33270248897](https://github.com/NullPriority/quorune/actions/runs/33270248897) | `missing_affected_test` | `not_applicable` | The five promoted forms now have explicit positive exact-node, event, template, and residual-closure assertions, while the adjacent negative inventory retains only unsupported forms. The existing compiler-family impact edge already selected the owning module; future pre-cloud evidence for a promoted grammar must include its exact adjacent positive/residual boundary method rather than only the newly added runtime tests. |
 | `ci-20260829-45` | [33271661291](https://github.com/NullPriority/quorune/actions/runs/33271661291) | `missing_affected_test` | `not_applicable` | The scheduler regression now verifies that the post-harvest optional-effect measurement is retired below each complete-card, exact-ability, and residual-reduction floor while remaining non-authoritative for gameplay trust. The generated-governance impact route already selected the failing module; pre-cloud evidence for a materialized harvest must include the exact scheduler expectation whose current cohort changed. |
+| `ci-20260831-46` | [33342572604](https://github.com/NullPriority/quorune/actions/runs/33342572604) | `missing_affected_test` | `added` | The monotonic effective-keyword host contract now routes quorune/keyword_abilities.py to both direct Haste and aerial host modules before merge. The main-health recovery script already remains high-risk and selects the complete generated-validation inventory, including its direct-import regression. |
+| `ci-20260831-47` | [33366100343](https://github.com/NullPriority/quorune/actions/runs/33366100343) | `missing_affected_test` | `added` | The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion. |
 
 ## Measurement limitations
 
