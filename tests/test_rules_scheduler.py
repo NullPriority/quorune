@@ -2138,14 +2138,14 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
-    def test_fixed_all_damage_prevention_probe_is_integrated_and_accounted(self):
+    def test_attached_quoted_grant_probe_is_integrated_and_accounted(self):
         transition = next(
             row
             for row in self.work_inputs["cohort_measurements"][
                 "transition_measurements"
             ]
             if row["transition_id"]
-            == "oracle-ir-v155-fixed-all-damage-prevention-scopes"
+            == "oracle-ir-v156-attached-quoted-ability-grants"
         )
         measurement = transition["measurement"]
         accounting = measurement["candidate_accounting"]
@@ -2157,7 +2157,7 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         self.assertEqual(
             measurement["exact_ability_gain"],
-            accounting["affected_oracle_carriers"],
+            2 * accounting["affected_oracle_carriers"],
         )
         self.assertEqual(
             measurement["complete_card_gain"],
@@ -2171,9 +2171,12 @@ class RulesSchedulerTests(unittest.TestCase):
             accounting["expected_oracle_residual_reduction"],
             accounting["expected_card_program_residual_reduction"],
         )
-        self.assertEqual(0, accounting["newly_applicable_high_risk_pairs"])
         self.assertGreater(
-            accounting["cards_excluded_by_unsupported_prevention_grammar"],
+            accounting["newly_applicable_high_risk_pairs"],
+            0,
+        )
+        self.assertGreater(
+            accounting["cards_excluded_by_unsupported_grammar"],
             0,
         )
 

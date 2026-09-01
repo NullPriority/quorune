@@ -16,6 +16,10 @@ from ..rules.node_capability_shapes import (
     fixed_target_effect_sequence_node_capabilities,
 )
 from ..util import stable_json
+from .attached_granted_ability_nodes import (
+    GRANTED_ACTIVATED_ABILITY_KIND,
+    GRANTED_TRIGGERED_ABILITY_KIND,
+)
 from .fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
@@ -39,7 +43,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v7"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v8"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -534,11 +538,17 @@ def _resolution_body(
     if node.kind == "spell_ability":
         ability_word = _ABILITY_WORD.fullmatch(text)
         return ability_word.group("body") if ability_word else text
-    if node.kind == "triggered_ability":
+    if node.kind in {
+        "triggered_ability",
+        GRANTED_TRIGGERED_ABILITY_KIND,
+    }:
         if node.event == "unresolved" or ", " not in text:
             return None
         return text.split(", ", 1)[1]
-    if node.kind == "activated_ability":
+    if node.kind in {
+        "activated_ability",
+        GRANTED_ACTIVATED_ABILITY_KIND,
+    }:
         abilities = parse_activated_abilities(
             card_name=face_name or record.name,
             oracle_text=text,
@@ -705,7 +715,13 @@ def _observation(
         face_id=face_id,
         node_id=node.node_id,
         template_id=template_id,
-        context=node.kind,
+        context=(
+            "activated_ability"
+            if node.kind == GRANTED_ACTIVATED_ABILITY_KIND
+            else "triggered_ability"
+            if node.kind == GRANTED_TRIGGERED_ABILITY_KIND
+            else node.kind
+        ),
         clause_count=_clause_count(body, template_id),
         effect_count=len(node.effects),
         operation_order=operations,

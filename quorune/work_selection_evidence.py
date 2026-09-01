@@ -113,8 +113,8 @@ _CORRECTED_CONTENT_ENTRY_FIELDS = _CONTENT_ENTRY_FIELDS | {
 _CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS = (
     _MEASURED_CONTENT_ENTRY_FIELDS | {"forecast_correction"}
 )
-COHORT_MEASUREMENT_SCHEMA_VERSION = 3
-COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v3"
+COHORT_MEASUREMENT_SCHEMA_VERSION = 4
+COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v4"
 _COHORT_DECISIONS = {
     "bounded_executable",
     "retired_below_harvest_floor",
@@ -144,7 +144,7 @@ _COHORT_ACCOUNTING_FIELDS = {
     "expected_card_program_residual_reduction",
     "newly_applicable_high_risk_pairs",
     "cards_excluded_by_unsupported_sibling",
-    "cards_excluded_by_unsupported_prevention_grammar",
+    "cards_excluded_by_unsupported_grammar",
 }
 _TRANSITION_MEASUREMENT_FIELDS = {
     "transition_id",

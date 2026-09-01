@@ -23,6 +23,9 @@ from .compiler.corpus_reporting import (
 from .compiler.continuous_templates import (
     controlled_characteristic_until_end_of_turn_effect,
 )
+from .compiler.attached_granted_ability_nodes import (
+    compile_keyword_or_attached_grant_nodes as _keyword_or_attached_grant_nodes,
+)
 from .compiler.closed_effect_programs import (
     closed_effect_program_template,
 )
@@ -114,6 +117,10 @@ from .compiler.optional_effect_templates import fixed_optional_effect_template
 from .compiler.optional_payment_templates import (
     reviewed_fixed_optional_mana_payment_trigger_template,
 )
+from .compiler.oracle_source_text import (
+    source_lines as _source_lines,
+    without_parenthetical_reminder as _without_parenthetical_reminder,
+)
 from .compiler.scry_templates import fixed_scry_effect_template
 from .compiler.self_return_templates import fixed_self_return_effect_template
 from .compiler.storm_nodes import STORM_MECHANIC_ID
@@ -137,7 +144,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v155"
+ORACLE_COMPILER_VERSION = "oracle-ir-v156"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -166,38 +173,6 @@ _PERMANENT_CARD_TYPES = frozenset(
     }
 )
 _SPELL_CARD_TYPES = frozenset({"instant", "sorcery"})
-
-
-def _source_lines(text: str) -> Iterable[tuple[str, SourceSpan]]:
-    offset = 0
-    for line_number, raw in enumerate(text.splitlines(keepends=True), 1):
-        line = raw.rstrip("\r\n")
-        stripped = line.strip()
-        if stripped:
-            left = len(line) - len(line.lstrip())
-            yield stripped, SourceSpan(
-                start=offset + left,
-                end=offset + left + len(stripped),
-                line=line_number,
-            )
-        offset += len(raw)
-    if text and not text.splitlines(keepends=True):
-        yield text, SourceSpan(0, len(text), 1)
-
-
-def _without_parenthetical_reminder(text: str) -> str:
-    result: list[str] = []
-    depth = 0
-    for character in text:
-        if character == "(":
-            depth += 1
-            continue
-        if character == ")" and depth:
-            depth -= 1
-            continue
-        if depth == 0:
-            result.append(character)
-    return "".join(result).strip()
 
 
 def _is_ordinary_saga_rules_reminder(
@@ -1232,20 +1207,20 @@ def _compile_face(
     for index, row in enumerate(material_rows, 1):
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue
-        line, material_line, span = row
-        node_id = f"{face_id}:n{index}"
-        keyword_nodes = _keyword_nodes(
-            node_id=node_id, line=line, material_line=material_line, card_name=face_name or record.name, effect_template=contextual_effect_template, span=span,
-            keywords=keywords, printed_card_types=tuple(sorted(card_types)),
+        line, material_line, span = row; node_id = f"{face_id}:n{index}"
+        early_nodes = _keyword_or_attached_grant_nodes(
+            record=record, face_id=face_id, node_id=node_id, line=line,
+            material_line=material_line, span=span,
+            source_name=face_name or record.name, effect_template=contextual_effect_template, keywords=keywords,
+            printed_card_types=tuple(sorted(card_types)),
             printed_subtypes=printed_subtypes, saga_chapters=saga_chapters,
             printed_power=None if record.faces else record.power,
-            trusted_mechanics=trusted_mechanics,
+            source_attachment_relation=source_attachment_relation, trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
-            capability_profile=capability_profile,
-            residuals=residuals,
+            capability_profile=capability_profile, residuals=residuals, keyword_node_compiler=_keyword_nodes, compile_inner=_activated_or_fixed_event_trigger_node, grant_effect_templates=_contextual_effect_templates, material_line_for=_without_parenthetical_reminder,
         )
-        if keyword_nodes:
-            nodes.extend(keyword_nodes)
+        if early_nodes is not None:
+            nodes.extend(early_nodes)
             continue
 
         ability_node = _activated_or_fixed_event_trigger_node(

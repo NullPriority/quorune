@@ -84,6 +84,13 @@ _ATTACHED_SUPPORTED_ABILITIES = frozenset(
         "wither",
     }
 )
+
+_ATTACHED_QUOTED_ABILITY_SENTINELS = (
+    "Flying",
+    "Reach",
+    "Vigilance",
+    "Haste",
+)
 _CARD_TYPE_WORDS = frozenset(
     {
         "artifact",
@@ -955,6 +962,113 @@ def attached_fixed_characteristics_handler(
                             *modifier["remove_abilities"],
                         )
                     ),
+                }
+            )
+        ),
+    )
+
+
+def _attached_quoted_ability_shell(
+    oracle_line: str,
+    *,
+    source_name: str,
+) -> tuple[
+    str,
+    tuple[str, Mapping[str, Any], tuple[str, ...]],
+    str,
+] | None:
+    """Parse one quoted ability without widening the outer attachment grammar."""
+
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    if text.count('"') != 2:
+        return None
+    quote_start = text.find('"')
+    quote_end = text.rfind('"')
+    quoted = text[quote_start + 1 : quote_end].strip()
+    if (
+        not quoted
+        or "\n" in quoted
+        or not text[:quote_start].casefold().startswith(
+            ("enchanted creature ", "equipped creature ")
+        )
+    ):
+        return None
+    lowered = text.casefold()
+    for sentinel in _ATTACHED_QUOTED_ABILITY_SENTINELS:
+        if sentinel.casefold() in lowered:
+            continue
+        synthetic = (
+            text[:quote_start]
+            + sentinel
+            + text[quote_end + 1 :]
+        )
+        compiled = attached_fixed_characteristics_handler(
+            synthetic,
+            source_name=source_name,
+        )
+        if compiled is None:
+            continue
+        modifier = compiled[1].get("modifier")
+        if not isinstance(modifier, Mapping) or list(
+            modifier.get("add_abilities", ())
+        ).count(sentinel) != 1:
+            continue
+        return quoted, compiled, sentinel
+    return None
+
+
+def attached_quoted_ability_text(
+    oracle_line: str,
+    *,
+    source_name: str = "source",
+) -> str | None:
+    """Return the sole quoted ability when the existing outer owner accepts it."""
+
+    shell = _attached_quoted_ability_shell(
+        oracle_line,
+        source_name=source_name,
+    )
+    return shell[0] if shell is not None else None
+
+
+def attached_quoted_ability_handler(
+    oracle_line: str,
+    *,
+    fragment: Mapping[str, Any],
+    fragment_capabilities: tuple[str, ...],
+    source_name: str = "source",
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    """Add one separately compiled typed ability to an accepted outer shell."""
+
+    shell = _attached_quoted_ability_shell(
+        oracle_line,
+        source_name=source_name,
+    )
+    if shell is None:
+        return None
+    _quoted, compiled, sentinel = shell
+    _template_id, raw_handler, raw_capabilities = compiled
+    handler = dict(raw_handler)
+    modifier = {
+        key: list(value) if isinstance(value, list) else value
+        for key, value in dict(handler["modifier"]).items()
+    }
+    modifier["add_abilities"].remove(sentinel)
+    modifier["add_ability_fragments"].append(dict(fragment))
+    handler["modifier"] = modifier
+    sentinel_capabilities = _attached_ability_capabilities((sentinel,))
+    return (
+        "continuous-attached-fixed-characteristics-granted-ability-v1",
+        handler,
+        tuple(
+            sorted(
+                {
+                    *(
+                        capability
+                        for capability in raw_capabilities
+                        if capability not in sentinel_capabilities
+                    ),
+                    *fragment_capabilities,
                 }
             )
         ),

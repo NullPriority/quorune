@@ -443,6 +443,8 @@ def program_from_generated_node_group(
         capability_closure=capability_closure,
         composed_spell=composed_spell,
     )
+    if str(first.kind).startswith("granted_"):
+        provenance["granted_only"] = True
     return SemanticProgram(
         key=f"{record.oracle_id}:{ability_id}",
         label=(

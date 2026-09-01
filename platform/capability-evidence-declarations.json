@@ -6124,6 +6124,22 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_granted_activation_shares_offer_commit_lifetime_and_rollback",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Share one current layer-6 recipient grant between activation offers and commands, preserve target rollback, and end it on detach or granting-ability removal."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_granted_mana_ability_is_recipient_bound_and_ends_on_departure",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Discover fixed-output mana only on the attached recipient and remove it immediately when the granting source departs."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_aura_equipment_anthem_temporary_effect_and_draw_compose",
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6188,6 +6204,14 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
+      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_keeps_unsupported_attached_grants_residual",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject multiple quotes, static prose, external attachment references, and costs outside the closed typed grant schema."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_rejects_conditional_and_unrepresented_text",
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6208,6 +6232,14 @@
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject one-sided authoritative attachment state without mutation."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_lowers_attached_quoted_abilities_to_typed_programs",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile one accepted attached shell and one independently exact quoted activated, fixed-output mana, or triggered program into a recipient-bound typed fragment."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -6264,6 +6296,14 @@
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Round-trip relation effects while retaining the historical unrelated shape."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_granted_triggers_preserve_multiplicity_and_replay",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve independently granted trigger multiplicity through ordinary ordering, placement, resolution, checkpoint save, and exact replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
