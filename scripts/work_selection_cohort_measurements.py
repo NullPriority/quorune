@@ -9,6 +9,9 @@ from quorune.characteristic_evaluation import type_parts
 from quorune.compiler.activated_zone_change_costs import (
     fixed_activated_zone_change_cost,
 )
+from quorune.compiler.cast_cost_modifier_templates import (
+    self_spell_cost_reduction_handler,
+)
 from quorune.compiler.exile_templates import targeted_exile_effect_template
 from quorune.compiler.damage_templates import source_pronoun_damage_effect_template
 from quorune.compiler.destruction_templates import destruction_effect_template
@@ -66,6 +69,9 @@ from quorune.oracle_ir import (
     compile_oracle_card,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.semantic_runtime.cast_costs import (
+    SELF_SPELL_COST_REDUCTION_HANDLER_ID,
+)
 from quorune.work_selection_evidence import (
     COHORT_MEASUREMENT_ALGORITHM_VERSION,
     COHORT_MEASUREMENT_SCHEMA_VERSION,
@@ -135,6 +141,9 @@ _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER = (
 _PROBE_TRIGGER_ABILITY_WORD_CARRIER = (
     "trigger-ability-word-carrier-existing-owner-v1"
 )
+_PROBE_SELF_SPELL_COST_REDUCTION = (
+    "fixed-self-spell-cost-reduction-existing-owner-v1"
+)
 _PROBE_IDS = {
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
@@ -156,6 +165,7 @@ _PROBE_IDS = {
     _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS,
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
+    _PROBE_SELF_SPELL_COST_REDUCTION,
     _PROBE_TOKEN,
     _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE,
     _PROBE_TRIGGER_ABILITY_WORD_CARRIER,
@@ -601,6 +611,8 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
+        return self_spell_cost_reduction_handler(source) is not None
     if probe_id == _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(
@@ -851,6 +863,103 @@ def _matches_probe(
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
     )
+
+
+def _self_spell_cost_reduction_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure integrated selected-face self-reduction programs."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    matched_abilities = 0
+    exact_nodes = 0
+    complete_cards = 0
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        unresolved = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+        ]
+        matched = [
+            ability
+            for ability in unresolved
+            if _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not matched:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented_lines = {
+            node.span.line
+            for face in compiled.faces
+            for node in face.nodes
+            if node.exact
+            and any(
+                handler.get("handler_id")
+                == SELF_SPELL_COST_REDUCTION_HANDLER_ID
+                for handler in node.handlers
+            )
+        }
+        matched_lines = {int(ability["source_line"]) for ability in matched}
+        if not matched_lines <= represented_lines:
+            raise WorkSelectionCohortMeasurementError(
+                "Self spell-cost probe matched a carrier without an exact "
+                f"integrated node on {record.name}"
+            )
+        matched_cards[oracle_id] = len(unresolved) - len(matched)
+        matched_abilities += len(matched)
+        exact_nodes += len(matched_lines)
+        if compiled.status == "exact":
+            complete_cards += 1
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or exact_nodes >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": exact_nodes,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
 
 
 def _trigger_ability_word_carrier_measurement(
@@ -1185,6 +1294,15 @@ def _measurement(
     if probe_id not in _PROBE_IDS:
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
+        )
+    if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
+        return _self_spell_cost_reduction_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
         )
     member_ids = {str(value) for value in bundle["member_family_ids"]}
     if probe_id == _PROBE_FIXED_HOMOGENEOUS_TARGET_SET:

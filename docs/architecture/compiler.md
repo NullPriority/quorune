@@ -607,7 +607,11 @@ stable program identity per threshold; the resulting `saga.chapter.N` events
 remain in the existing replacement-aware lore progression, APNAP trigger, Read
 Ahead, final-chapter, replay, and state-based-action owners. Malformed,
 non-Saga, copied, granted, conditional, linked, dynamic, or independently
-inexact chapter material remains residual. Other nontrigger ability words,
+inexact chapter material remains residual. Each ordinary chapter program also
+contributes its semantic identity to the shared current layer-6 ability
+snapshot. Threshold dispatch and final-chapter cleanup therefore suppress a
+removed or absent current-face chapter without stopping lore progression or
+replaying a threshold after the ability returns. Other nontrigger ability words,
 quoted text, and unsupported event or effect grammar also remain material and
 fail closed through their existing owners.
 
@@ -710,6 +714,17 @@ permanent, so an object matching several historic-permanent branches still
 reduces the generic total only once. Unsupported qualities, granted or removed
 Affinity, and equivalent rules text remain residual instead of becoming runtime
 Oracle interpretation.
+
+The same selected-face cast-cost registry separately owns fixed reductions on
+the carrying spell. One immutable descriptor can read a closed public object
+count or threshold, total mana value, devotion, Domain, or the canonical
+current-turn spell, death, or active-player facts and reduce a fixed generic or
+colored component in the ordinary total-cost stage. Battlefield predicates use
+current effective type, subtype, color, keyword, and named-counter state;
+graveyard and exile predicates remain actor-relative public queries. Target-
+relative prices, facts absent from the turn journal, power/toughness sums,
+chosen or secret qualities, caps, floors, increases, and open arithmetic remain
+source-spanned residuals.
 
 Ordinary printed `Improvise` and `Delve` lower through the same selected-face
 casting-payment component family. Improvise advertises current controlled

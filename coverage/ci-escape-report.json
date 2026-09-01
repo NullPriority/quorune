@@ -777,6 +777,42 @@
       "resolution": "The scheduler regression now verifies that the post-harvest optional-effect measurement is retired below each complete-card, exact-ability, and residual-reduction floor while remaining non-authoritative for gameplay trust. The generated-governance impact route already selected the failing module; pre-cloud evidence for a materialized harvest must include the exact scheduler expectation whose current cohort changed.",
       "run_id": 33271661291,
       "summary": "The public-event harvest consumed the overlapping fixed optional-effect cohort down to one card and one ability, but a generated scheduler regression still expected that current cohort to remain above the normal harvest floor."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-02 (job 99340770855)"
+      ],
+      "head_sha": "5d4da92890e00f01b66694dcccc203077ae2a54f",
+      "id": "ci-20260831-46",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_haste_rules.HasteRuleTests.test_as_though_haste_applies_only_to_activation_cost_boundary",
+        "test_haste_rules.HasteRuleTests.test_control_timestamp_restricts_only_current_creatures",
+        "test_haste_rules.HasteRuleTests.test_current_effective_haste_is_case_insensitive_and_redundant",
+        "test_haste_rules.HasteRuleTests.test_malformed_effective_keywords_fail_closed"
+      ],
+      "resolution": "The monotonic effective-keyword host contract now routes quorune/keyword_abilities.py to both direct Haste and aerial host modules before merge. The main-health recovery script already remains high-risk and selects the complete generated-validation inventory, including its direct-import regression.",
+      "run_id": 33342572604,
+      "summary": "The fixed face-down lifecycle changed the effective-keyword host call to pass the face-down bypass flag, but pull-request impact selection omitted the focused Haste host-double module; the complete main matrix then found four deterministic signature failures."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-05 (job 99406995914)",
+        "Main / Broad / Python / windows / functional-05 (job 99406995985)"
+      ],
+      "head_sha": "e2eae3a60c3563763b1667e2eea617ce41a30cd5",
+      "id": "ci-20260831-47",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_counter_placement_effects.FixedCounterPlacementCompilerTests.test_pinned_source_descriptors_lower_across_trigger_and_activation_contexts[Dreadmobile]"
+      ],
+      "resolution": "The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion.",
+      "run_id": 33366100343,
+      "summary": "The fixed activation zone-change harvest made Dreadmobile's selected sacrifice cost capability-closed, but its neighboring pinned-source counter-placement inventory still expected the activation to remain inexact and was not selected before merge."
     }
   ],
   "known_flaky_tests": [],
@@ -784,7 +820,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-08-29T19:59:54Z",
+  "observed_at": "2026-08-31T23:30:00Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -829,7 +865,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "31ee2c5163b415f7a26e14e1b7c9dff88582bb1d1a247ce29105b254215b2089",
+  "source_fingerprint": "4728cf002ee6d69408f9af1043f1a082fda12127ab6647ae06e3720e72a3cc60",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -839,12 +875,12 @@
       "flaky_test": 6,
       "generated_artifact_drift": 4,
       "infrastructure": 1,
-      "missing_affected_test": 14,
+      "missing_affected_test": 16,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 40,
-    "escape_count": 45,
+    "deterministic_escape_count": 42,
+    "escape_count": 47,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [

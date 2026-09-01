@@ -58,6 +58,11 @@ class ChangeImpactTests(unittest.TestCase):
                 "test_rules_scheduler",
                 "test_saga_counter_progression",
             },
+            "quorune/self_cast_reductions.py": {
+                "test_card_program_trust",
+                "test_fixed_spell_cost_reductions",
+                "test_rules_scheduler",
+            },
             "quorune/compiler/prevention_templates.py": {
                 "test_fixed_token_creation_effects",
                 "test_high_risk_interaction_assurance",
@@ -145,6 +150,18 @@ class ChangeImpactTests(unittest.TestCase):
                     "fixed-resolution-characteristic-effect-contract",
                     plan.matched_rule_ids,
                 )
+
+    def test_effective_keyword_owner_selects_all_host_contracts(self):
+        plan = classify_changes(["quorune/keyword_abilities.py"])
+
+        self.assertLessEqual(
+            {"test_aerial_blocking", "test_haste_rules"},
+            set(plan.test_modules),
+        )
+        self.assertIn(
+            "effective-keyword-host-contract",
+            plan.matched_rule_ids,
+        )
 
     def test_continuous_runtime_changes_select_performance_contract(self):
         for owner in (

@@ -21,6 +21,10 @@ from ..evoke import (
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
+from ..self_cast_reductions import (
+    SelfCastReductionError,
+    SelfSpellCostReductionSpec,
+)
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -39,6 +43,12 @@ FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID = (
 FIXED_SPELL_COST_REDUCTION_EVENT = "cast.cost.modify"
 FIXED_SPELL_COST_REDUCTION_HANDLER_ID = (
     "modification.cast-cost.fixed-query.v1"
+)
+SELF_SPELL_COST_REDUCTION_CAPABILITY_ID = (
+    "casting.cost.self_public_reduction"
+)
+SELF_SPELL_COST_REDUCTION_HANDLER_ID = (
+    "modification.cast-cost.self-public.v1"
 )
 
 
@@ -415,6 +425,51 @@ class FixedSpellCostReductionHandler:
         return (self.validate(descriptor),)
 
 
+@dataclass(frozen=True, slots=True)
+class SelfSpellCostReductionHandler:
+    handler_id: str = SELF_SPELL_COST_REDUCTION_HANDLER_ID
+    schema_version: int = 1
+    family: str = "casting.cost.modifier.self_public"
+    event: str = FIXED_SPELL_COST_REDUCTION_EVENT
+    rule_references: tuple[str, ...] = ("601.2f", "601.2h")
+    capability_dependencies: tuple[str, ...] = (
+        SELF_SPELL_COST_REDUCTION_CAPABILITY_ID,
+    )
+
+    def validate(
+        self,
+        descriptor: Mapping[str, Any],
+    ) -> SelfSpellCostReductionSpec:
+        exact_fields(
+            descriptor,
+            {"handler_id", "schema_version", "event", "reduction"},
+            field="self spell-cost reduction handler",
+        )
+        if (
+            descriptor["handler_id"] != self.handler_id
+            or type(descriptor["schema_version"]) is not int
+            or descriptor["schema_version"] != self.schema_version
+            or descriptor["event"] != self.event
+        ):
+            raise SemanticNodeError(
+                "Self spell-cost reduction identity, version, or event changed"
+            )
+        try:
+            return SelfSpellCostReductionSpec.from_dict(
+                descriptor["reduction"]
+            )
+        except (SelfCastReductionError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[SelfSpellCostReductionSpec, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
 class CastCostComponentRegistry(
     RuntimeComponentRegistry[
         object,
@@ -423,7 +478,8 @@ class CastCostComponentRegistry(
         | ImproviseSpec
         | DelveSpec
         | FixedManaEvokeSpec
-        | FixedSpellCostReductionSpec,
+        | FixedSpellCostReductionSpec
+        | SelfSpellCostReductionSpec,
     ]
 ):
     pass
@@ -439,6 +495,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             EvokeCostHandler(),
             FixedSpellCostReductionHandler(),
             ImproviseCostHandler(),
+            SelfSpellCostReductionHandler(),
             TypedAffinityCostHandler(),
         )
     )
@@ -598,6 +655,9 @@ __all__ = [
     "FIXED_SPELL_COST_REDUCTION_HANDLER_ID",
     "FixedSpellCostReductionHandler",
     "FixedSpellCostReductionSpec",
+    "SELF_SPELL_COST_REDUCTION_CAPABILITY_ID",
+    "SELF_SPELL_COST_REDUCTION_HANDLER_ID",
+    "SelfSpellCostReductionHandler",
     "IMPROVISE_HANDLER_ID",
     "ImproviseCostHandler",
     "ImproviseSpec",

@@ -17,6 +17,7 @@ from ...compiled_cast_costs import (
     compiled_delve_specs,
     compiled_evoke_specs,
     compiled_improvise_specs,
+    compiled_self_spell_cost_reduction_specs,
 )
 from ...compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
@@ -38,6 +39,7 @@ from ...object_query import object_matches_query, object_query_result
 from ...semantic_runtime.cast_costs import (
     active_fixed_spell_cost_reductions,
 )
+from ...self_cast_reductions import evaluated_self_reduction
 from ..action_proposals import CastCostOption
 from ..casting_additional_costs import (
     AdditionalCostError,
@@ -109,6 +111,8 @@ class CastCostHost(Protocol):
     ) -> bool: ...
 
     def _maximum_affordable_x(self, seat: str, card: Any) -> int: ...
+
+    def _current_turn_history(self, kind: str) -> tuple[Any, ...]: ...
 
 
 def _expand_fixed_alternative_options(
@@ -546,6 +550,7 @@ def _apply_static_reductions(
     card: Any,
     option: dict[str, Any],
     *,
+    program: Any,
     cast_type_line: str | None = None,
 ) -> None:
     reduction = _static_generic_reduction(
@@ -554,16 +559,44 @@ def _apply_static_reductions(
         card,
         cast_type_line=cast_type_line,
     )
-    if not reduction:
-        return
-    applied = min(int(option["requirements"]["GENERIC"]), reduction)
-    option["requirements"]["GENERIC"] -= applied
-    option.setdefault("cost_reductions", []).append(
-        {
-            "kind": "fixed_query",
-            "count": applied,
-        }
-    )
+    if reduction:
+        applied = min(int(option["requirements"]["GENERIC"]), reduction)
+        option["requirements"]["GENERIC"] -= applied
+        option.setdefault("cost_reductions", []).append(
+            {
+                "kind": "fixed_query",
+                "count": applied,
+            }
+        )
+    self_reduction: dict[str, int] = {}
+    for specification in compiled_self_spell_cost_reduction_specs(
+        host,
+        card.oracle_id,
+        spell_program=program,
+    ):
+        for key, amount in evaluated_self_reduction(
+            host,
+            seat,
+            specification,
+        ).items():
+            self_reduction[key] = self_reduction.get(key, 0) + amount
+    applied_self: dict[str, int] = {}
+    for key in sorted(self_reduction):
+        applied = min(
+            int(option["requirements"].get(key, 0)),
+            self_reduction[key],
+        )
+        if not applied:
+            continue
+        option["requirements"][key] -= applied
+        applied_self[key] = applied
+    if applied_self:
+        option.setdefault("cost_reductions", []).append(
+            {
+                "kind": "self_public",
+                "reduction": applied_self,
+            }
+        )
 
 
 def _apply_affinity(
@@ -1100,6 +1133,7 @@ def _maximum_affordable_x_with_mechanics(
     host: CastCostHost,
     seat: str,
     card: Any,
+    program: Any,
     mechanics: Sequence[Mapping[str, Any]],
     *,
     spend_context: Any,
@@ -1117,7 +1151,13 @@ def _maximum_affordable_x_with_mechanics(
         for raw_option in printed:
             option = copy.deepcopy(raw_option)
             option["requirements"] = host._mana_vector(option["requirements"])
-            _apply_static_reductions(host, seat, card, option)
+            _apply_static_reductions(
+                host,
+                seat,
+                card,
+                option,
+                program=program,
+            )
             payment = _apply_payment_mechanics(
                 host,
                 seat,
@@ -1343,6 +1383,7 @@ def _finalize_option(
     seat: str,
     card: Any,
     option: dict[str, Any],
+    program: Any,
     mandatory_costs: Sequence[Mapping[str, Any]],
     mechanics: Sequence[Mapping[str, Any]],
     response: Mapping[str, Any],
@@ -1367,6 +1408,7 @@ def _finalize_option(
         seat,
         card,
         option,
+        program=program,
         cast_type_line=cast_type_line,
     )
     exile_spec = option.get("exile_from_hand")
@@ -1403,16 +1445,13 @@ def _finalize_option(
     elif x_value_policy is not None:
         return None
     elif has_x:
-        maximum = (
-            _maximum_affordable_x_with_mechanics(
-                host,
-                seat,
-                card,
-                mechanics,
-                spend_context=spend_context,
-            )
-            if mechanics
-            else host._maximum_affordable_x(seat, card)
+        maximum = _maximum_affordable_x_with_mechanics(
+            host,
+            seat,
+            card,
+            program,
+            mechanics,
+            spend_context=spend_context,
         )
         if maximum < 0:
             return None
@@ -1498,6 +1537,7 @@ def build_cast_cost_options(
             seat,
             card,
             option,
+            program,
             mandatory,
             mechanics,
             submission,

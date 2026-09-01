@@ -6015,6 +6015,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/self_cast_reductions.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/self_zone_move.py",
       "layer": "rules",
       "owning_subsystem": "zones_and_object_identity",
@@ -8338,5 +8352,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "37965987e3acd77fe128b4e27118424374a53ecde9a612958be495e2643de982"
+  "fingerprint": "ddcb57aa3672e57bdd1d83776f2615daac7b5a5a7ffebb5c97793008952d4cea"
 }

@@ -684,6 +684,33 @@
       "status": "trusted"
     },
     {
+      "id": "casting.cost.self_public_reduction",
+      "version": 1,
+      "official_rules": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Reduce the carrying spell's selected-face total cost through one or more closed public-state, public-object, mana-value, devotion, Domain, or current-turn facts.",
+        "inputs": ["one source-spanned self spell-cost reduction descriptor", "the selected face's ordinary total-cost option", "current public battlefield, graveyard, exile, controller, opponent, and turn facts", "cycle-safe effective object characteristics"],
+        "outputs": ["one immutable selected-face reduction program", "one recomputed generic or colored reduction vector", "the same authoritative offer and accepted-command price", "one deterministic reduction journal entry"],
+        "exclusions": ["target-relative reductions", "life-gain, draw, sacrifice, discard, Cycling, crime, or other facts absent from the canonical turn journal", "power, toughness, greatest, differently named, counter-total, distinct-creature-type, or Adventure-ability quantities", "chosen or secret qualities", "reduction caps, floors, cost increases, alternate costs, and open arithmetic", "copied, granted, removed, or text-changed self-reduction abilities outside selected-face typed propagation"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.self_cast_reductions.SelfSpellCostReductionSpec", "quorune.compiler.cast_cost_modifier_templates.self_spell_cost_reduction_handler", "quorune.semantic_runtime.cast_costs.SelfSpellCostReductionHandler", "quorune.compiled_cast_costs.compiled_self_spell_cost_reduction_specs", "quorune.self_cast_reductions.evaluated_self_reduction", "quorune.rules.casting.costs._apply_static_reductions"],
+      "positive_tests": ["test_self_reducers_compile_closed_public_metrics", "test_self_reduction_offer_and_commit_share_public_query"],
+      "negative_tests": ["test_unsupported_spell_reduction_grammar_remains_residual", "test_self_reduction_descriptor_fails_closed"],
+      "interaction_tests": ["test_self_and_source_reductions_share_total_cost_pipeline", "test_self_reduction_recomputes_current_control_and_rejects_stale_offer", "test_self_reduction_uses_mana_value_devotion_history_and_colored_floor"],
+      "multiplayer_tests": ["test_self_reduction_is_private_multiplayer_and_replays"],
+      "privacy_tests": ["test_self_reduction_is_private_multiplayer_and_replays"],
+      "replay_tests": ["test_self_reduction_is_private_multiplayer_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The descriptor consumes only current authoritative public objects, selected-face cost data, and the canonical bounded turn-history vocabulary; unsupported facts and queries do not compile.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_self_reduction_compiler_and_runtime_mutants_are_killed removes lowering and evaluated reduction independently; exact compilation and authoritative cost assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "casting.payment.affinity_artifacts",
       "version": 1,
       "official_rules": ["601.2f", "601.2g", "601.2h", "702.41", "702.41a", "702.41b"],
@@ -2089,20 +2116,20 @@
     },
     {
       "id": "counter.producer.saga_lore",
-      "version": 3,
+      "version": 4,
       "official_rules": ["101.4", "122.1", "122.6", "603.2", "603.3", "614.1c", "614.16", "616.1", "616.1f", "702.155", "702.155a", "702.155b", "702.155c", "714.2b", "714.2d", "714.3", "714.3a", "714.3b", "714.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and execute ordinary and printed Read Ahead Saga lore progression plus source-spanned ordinary chapter programs whose effect bodies are independently exact: an ordinary one-counter self-replacement or a controller-scoped final-chapter choice inside the canonical zone-change tree, followed by replacement-aware turn progression and APNAP chapter placement.",
         "inputs": ["Saga card-form subtype", "ordinary absence of Read Ahead or one source-spanned printed Read Ahead keyword", "contiguous printed chapter symbols", "one independently exact typed body for each represented ordinary chapter carrier", "prospective battlefield identity and controller", "active-player precombat-main boundary", "complete represented counter-quantity replacement snapshot", "effect-qualified versus unqualified replacement scope"],
         "outputs": ["source-spanned ordinary card-form, Read Ahead keyword, and ordinary chapter-event declarations", "private replacement-journaled Read Ahead chapter choice", "replacement-aware entry lore counter", "exact entry-turn chapter gate after counter replacement", "immutable simultaneous precombat lore-counter transaction", "seat-scoped CR 616 suspension and strict continuation", "typed chapter events after all counters commit", "APNAP trigger placement, deterministic multi-chapter identity, and exact replay"],
-        "exclusions": ["Sagas lacking contiguous printed chapter symbols", "chapter carriers with independently inexact, optional, linked, reflexive, conditional, dynamic, or otherwise unsupported bodies", "copied, granted, removed, or layer-modified Read Ahead and chapter abilities outside typed ability propagation", "effects adding, moving, or removing lore counters", "final-chapter sacrifice when state_based.saga_final_chapter is unavailable", "counter replacement families outside the typed quantity vocabulary", "unrepresented copy, face, layer, or phasing interactions"]
+        "exclusions": ["Sagas lacking contiguous printed chapter symbols", "chapter carriers with independently inexact, optional, linked, reflexive, conditional, dynamic, or otherwise unsupported bodies", "copied or granted chapter abilities and copied, granted, removed, or layer-modified Read Ahead outside typed ability propagation", "effects adding, moving, or removing lore counters", "final-chapter sacrifice when state_based.saga_final_chapter is unavailable", "counter replacement families outside the typed quantity vocabulary", "unrepresented copy, face, layer, or phasing interactions"]
       },
       "dependencies": ["counter.placement.quantity_replacement", "trigger.placement.apnap", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.entry_counter_model.intrinsic_entry_counters", "quorune.compiler.card_form_rules.compile_intrinsic_entry_counter_forms", "quorune.read_ahead.saga_chapter_line", "quorune.read_ahead.saga_chapter_numbers", "quorune.compiler.saga_chapter_nodes.ordinary_saga_chapter_nodes", "quorune.compiler.keyword_nodes.read_ahead_keyword_node", "quorune.compiler.program_generation._generated_ability_id", "quorune.semantic_runtime.entry_choices.ReadAheadEntryChoiceHandler", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.counter_placement.prepare_counter_placements", "quorune.saga_progression.capture_saga_lore_turn_action", "quorune.saga_progression.commit_saga_lore_turn_action", "quorune.saga_progression.dispatch_saga_chapters", "quorune.saga_progression.dispatch_saga_entry_chapters", "quorune.turn_counter_coordination.coordinate_turn_counter_step", "quorune.turn_counter_coordination.resume_turn_counter_replacement", "quorune.trigger_processing.enqueue_trigger_batch"],
+      "implementation_components": ["quorune.entry_counter_model.intrinsic_entry_counters", "quorune.compiler.card_form_rules.compile_intrinsic_entry_counter_forms", "quorune.read_ahead.saga_chapter_line", "quorune.read_ahead.saga_chapter_numbers", "quorune.compiler.saga_chapter_nodes.ordinary_saga_chapter_nodes", "quorune.compiler.keyword_nodes.read_ahead_keyword_node", "quorune.compiler.program_generation._generated_ability_id", "quorune.compiled_ability_fragments.compiled_static_ability_fragments", "quorune.trigger_discovery.program_has_current_ability_fragments", "quorune.semantic_runtime.entry_choices.ReadAheadEntryChoiceHandler", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.counter_placement.prepare_counter_placements", "quorune.saga_progression.capture_saga_lore_turn_action", "quorune.saga_progression.commit_saga_lore_turn_action", "quorune.saga_progression.dispatch_saga_chapters", "quorune.saga_progression.dispatch_saga_entry_chapters", "quorune.turn_counter_coordination.coordinate_turn_counter_step", "quorune.turn_counter_coordination.resume_turn_counter_replacement", "quorune.trigger_processing.enqueue_trigger_batch"],
       "positive_tests": ["test_ordinary_saga_card_form_is_source_spanned_and_closed", "test_ordinary_saga_chapter_programs_compile_exact", "test_compiled_ordinary_saga_chapter_dispatches_and_resolves", "test_entry_and_precombat_lore_use_distinct_counter_paths", "test_multiple_sagas_commit_lore_before_any_chapter_dispatch", "test_read_ahead_compiles_one_exact_source_pinned_choice"],
-      "negative_tests": ["test_ordinary_saga_chapter_grammar_fails_closed", "test_read_ahead_and_untrusted_chapters_fail_closed", "test_read_ahead_runtime_boundaries_fail_before_mutation", "test_stale_saga_snapshot_rolls_back_without_partial_mutation"],
-      "interaction_tests": ["test_competing_saga_entry_replacements_order_to_three_or_four", "test_read_ahead_quantity_replacement_uses_exact_chapter_gate", "test_saga_entry_counter_uses_quantity_replacement_but_turn_action_does_not", "test_saga_turn_action_applies_unqualified_but_not_effect_only_replacement", "test_simultaneous_saga_turn_replacements_pin_event_ids_and_replay", "test_destination_redirect_retargets_nested_saga_counter"],
+      "negative_tests": ["test_ordinary_saga_chapter_grammar_fails_closed", "test_read_ahead_and_untrusted_chapters_fail_closed", "test_read_ahead_runtime_boundaries_fail_before_mutation", "test_stale_saga_snapshot_rolls_back_without_partial_mutation", "test_current_copy_face_without_chapter_ability_does_not_dispatch"],
+      "interaction_tests": ["test_competing_saga_entry_replacements_order_to_three_or_four", "test_read_ahead_quantity_replacement_uses_exact_chapter_gate", "test_saga_entry_counter_uses_quantity_replacement_but_turn_action_does_not", "test_saga_turn_action_applies_unqualified_but_not_effect_only_replacement", "test_simultaneous_saga_turn_replacements_pin_event_ids_and_replay", "test_destination_redirect_retargets_nested_saga_counter", "test_removed_current_chapter_abilities_do_not_dispatch_or_block_lore"],
       "multiplayer_tests": ["test_compiled_saga_chapters_batch_in_apnap_order_and_round_trip", "test_four_player_precombat_lore_only_advances_active_players_sagas", "test_four_player_saga_entry_replacement_choices_follow_apnap", "test_read_ahead_choice_is_private_and_replays_exactly", "test_saga_turn_replacement_choice_is_private_resumable_and_exact"],
       "privacy_tests": ["test_read_ahead_choice_is_private_and_replays_exactly", "test_saga_entry_replacement_choice_replays_exactly", "test_saga_turn_replacement_choice_is_private_resumable_and_exact"],
       "replay_tests": ["test_precombat_saga_progression_replays_exactly", "test_read_ahead_choice_is_private_and_replays_exactly", "test_saga_entry_replacement_choice_replays_exactly", "test_saga_entry_replacement_continuation_survives_process_restart", "test_saga_turn_replacement_choice_is_private_resumable_and_exact", "test_simultaneous_saga_turn_replacements_pin_event_ids_and_replay"],
@@ -4735,20 +4762,20 @@
     },
     {
       "id": "state_based.saga_final_chapter",
-      "version": 1,
+      "version": 2,
       "official_rules": ["101.4", "603.3", "701.17", "704.3", "704.5s", "714.2d", "714.2e", "714.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Evaluate and commit ordinary and Read Ahead Saga final-chapter sacrifice as part of one immutable simultaneous state-based-action snapshot.",
-        "inputs": ["current phased-in Saga subtype", "physical and logical object identity", "current controller", "nonnegative lore count", "trusted typed chapter-event declarations", "chapter abilities pending for the exact logical incarnation"],
+        "inputs": ["current phased-in Saga subtype", "physical and logical object identity", "current controller", "nonnegative lore count", "current effective trusted typed chapter-event declarations", "chapter abilities pending for the exact logical incarnation"],
         "outputs": ["canonical final chapter number", "exact-incarnation chapter deferral", "typed simultaneous Saga sacrifice", "replacement-aware zone change", "normalized sacrifice and departure events", "exact replay"],
-        "exclusions": ["Sagas without trusted typed chapter programs", "copied, gained, removed, or layer-modified Read Ahead or chapter abilities outside typed ability propagation", "arbitrary lore-counter movement", "one completed Saga simultaneously subject to another zone-moving state-based action", "unrepresented phasing triggers or zone-change replacements", "generic sacrifice-trigger compilation beyond the normalized event"]
+        "exclusions": ["Sagas without trusted typed chapter programs", "copied or gained chapter abilities and copied, gained, removed, or layer-modified Read Ahead outside typed ability propagation", "arbitrary lore-counter movement", "one completed Saga simultaneously subject to another zone-moving state-based action", "unrepresented phasing triggers or zone-change replacements", "generic sacrifice-trigger compilation beyond the normalized event"]
       },
       "dependencies": ["counter.producer.saga_lore", "trigger.placement.apnap", "zone.change.destination_replacement"],
       "implementation_components": ["quorune.saga_lifecycle.SagaFinalChapterSnapshot", "quorune.saga_progression.saga_final_chapter_snapshot", "quorune.saga_progression.saga_chapter_trigger_pending", "quorune.state_based_actions.evaluate_permanent_state_based_actions", "quorune.state_based_execution.prepare_state_based_execution", "quorune.state_based_execution.commit_state_based_zone_changes", "quorune.state_based_execution.log_saga_sacrifices", "quorune.zone_trigger_events.ZoneTransitionKind.SACRIFICE"],
       "positive_tests": ["test_completed_saga_waits_only_for_its_pending_chapter", "test_final_chapter_sba_waits_then_sacrifices_under_current_control", "test_waiting_final_chapter_batch_defers_before_stack_placement"],
-      "negative_tests": ["test_blocked_final_lifecycle_prevents_trusted_saga_card_form", "test_completed_saga_with_another_zone_action_fails_closed", "test_malformed_saga_lifecycle_fails_closed", "test_old_incarnation_chapter_does_not_protect_reentered_saga", "test_saga_lifecycle_snapshot_staleness_rolls_back_before_mutation"],
-      "interaction_tests": ["test_completed_phased_out_saga_waits_until_it_phases_in", "test_countered_final_chapter_uses_the_next_sba_check", "test_final_chapter_sacrifice_uses_destination_replacement", "test_read_ahead_quantity_replacement_uses_exact_chapter_gate", "test_source_leaving_before_chapter_resolution_is_not_sacrificed_twice", "test_sacrifice_transition_is_closed_and_emits_typed_event"],
+      "negative_tests": ["test_blocked_final_lifecycle_prevents_trusted_saga_card_form", "test_completed_saga_with_another_zone_action_fails_closed", "test_malformed_saga_lifecycle_fails_closed", "test_old_incarnation_chapter_does_not_protect_reentered_saga", "test_saga_lifecycle_snapshot_staleness_rolls_back_before_mutation", "test_removed_final_chapter_ability_suppresses_sba_and_restore_does_not_replay"],
+      "interaction_tests": ["test_completed_phased_out_saga_waits_until_it_phases_in", "test_countered_final_chapter_uses_the_next_sba_check", "test_final_chapter_sacrifice_uses_destination_replacement", "test_read_ahead_quantity_replacement_uses_exact_chapter_gate", "test_source_leaving_before_chapter_resolution_is_not_sacrificed_twice", "test_sacrifice_transition_is_closed_and_emits_typed_event", "test_removed_final_chapter_ability_suppresses_sba_and_restore_does_not_replay"],
       "multiplayer_tests": ["test_four_player_completed_sagas_move_in_one_sba_batch"],
       "privacy_tests": [],
       "replay_tests": ["test_final_chapter_completion_replays_exactly"],

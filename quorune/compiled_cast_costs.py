@@ -9,8 +9,11 @@ from .semantic_runtime.cast_costs import (
     AffinitySpec,
     CONVOKE_ACTIVE_ZONE,
     CONVOKE_COST_EVENT,
+    FIXED_SPELL_COST_REDUCTION_EVENT,
+    SELF_SPELL_COST_REDUCTION_HANDLER_ID,
     default_cast_cost_component_registry,
 )
+from .self_cast_reductions import SelfSpellCostReductionSpec
 
 
 class CompiledCastCostHost(Protocol):
@@ -139,6 +142,38 @@ def compiled_evoke_specs(
     )
 
 
+def compiled_self_spell_cost_reduction_specs(
+    host: CompiledCastCostHost,
+    oracle_id: str,
+    *,
+    spell_program: Any,
+) -> tuple[SelfSpellCostReductionSpec, ...]:
+    """Return selected-face public self-reduction descriptors."""
+
+    expected_face = _selected_face_id(spell_program)
+    registry = default_cast_cost_component_registry()
+    result: list[SelfSpellCostReductionSpec] = []
+    for program in host.semantics.runtime_handler_programs_for_oracle(
+        oracle_id,
+        active_zone="all",
+        event=FIXED_SPELL_COST_REDUCTION_EVENT,
+    ):
+        if not host.semantic_program_is_current_trusted(program):
+            continue
+        if str(program.provenance.get("face_id") or "") != expected_face:
+            continue
+        for descriptor in program.handlers:
+            if (
+                descriptor.get("handler_id")
+                != SELF_SPELL_COST_REDUCTION_HANDLER_ID
+            ):
+                continue
+            value = registry.lower(descriptor, None)[0]
+            if isinstance(value, SelfSpellCostReductionSpec):
+                result.append(value)
+    return tuple(result)
+
+
 def _compiled_specs(
     host: CompiledCastCostHost,
     oracle_id: str,
@@ -176,4 +211,5 @@ __all__ = [
     "compiled_delve_specs",
     "compiled_evoke_specs",
     "compiled_improvise_specs",
+    "compiled_self_spell_cost_reduction_specs",
 ]

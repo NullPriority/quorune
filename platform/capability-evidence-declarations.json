@@ -2570,6 +2570,94 @@
       "applicability_note": "Replay the reduced cost offer, mana payment, stack transition, draw resolution, and final authoritative hash exactly."
     },
     {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_and_source_reductions_share_total_cost_pipeline",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose the carrying spell's public reduction with an independently active source reducer in one deterministic total-cost stage."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_recomputes_current_control_and_rejects_stale_offer",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute a public controller-relative threshold through the same offer and command query, rejecting a stale controller change before payment or stack mutation."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose cycle-safe public mana-value, devotion, current-turn, generic, and colored reductions in the canonical total-cost stage."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Price and cast the carrying spell in four-player state without granting another seat access to the hidden hand action."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_compiler_and_runtime_mutants_are_killed",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove source-spanned lowering and evaluated runtime reduction independently so exact compilation and cost assertions reject both mutants."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_descriptor_fails_closed",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject unknown fields, changed identity, empty terms, negative mana, and malformed public metrics before a cost option exists."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep target-relative, unjournaled draw history, power totals, Adventure predicates, and unrelated reducer grammar material."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reducers_compile_closed_public_metrics",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed public thresholds, public object counts, total mana value, devotion, turn facts, and colored reductions into selected-face typed descriptors."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_offer_and_commit_share_public_query",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Advertise and accept one graveyard-counted reduction through the same immutable selected-face cost query."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use only public count inputs while withholding the carrying spell and its cast action from every other pilot."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the public count, reduced mana payment, stack transition, resolution, and final authoritative hash exactly."
+    },
+    {
       "capability_id": "casting.disguise.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_disguise_ward_uses_face_down_characteristics_only",
@@ -10321,6 +10409,14 @@
     {
       "capability_id": "counter.producer.saga_lore",
       "evidence_class": "interaction",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_removed_current_chapter_abilities_do_not_dispatch_or_block_lore",
+      "official_rule_ids": ["101.4", "122.1", "122.6", "603.2", "603.3", "614.1c", "614.16", "616.1", "616.1f", "702.155", "702.155a", "702.155b", "702.155c", "714.2b", "714.2d", "714.3", "714.3a", "714.3b", "714.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Continue the rule-generated lore action while suppressing a crossed chapter whose exact current layer-6 program ability is absent."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "interaction",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_saga_entry_counter_uses_quantity_replacement_but_turn_action_does_not",
       "official_rule_ids": ["101.4", "122.1", "122.6", "603.2", "603.3", "614.1c", "614.16", "616.1", "616.1f", "702.155", "702.155a", "702.155b", "702.155c", "714.2b", "714.2d", "714.3", "714.3a", "714.3b", "714.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -10389,6 +10485,14 @@
       "official_rule_ids": ["101.4", "122.1", "122.6", "603.2", "603.3", "614.1c", "614.16", "616.1", "616.1f", "702.155", "702.155a", "702.155b", "702.155c", "714.2b", "714.2d", "714.3", "714.3a", "714.3b", "714.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill removal of the Saga entry self-replacement and misclassification of the turn action as effect-generated through entry and Doubling Season boundary assertions."
+    },
+    {
+      "capability_id": "counter.producer.saga_lore",
+      "evidence_class": "negative",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_current_copy_face_without_chapter_ability_does_not_dispatch",
+      "official_rule_ids": ["101.4", "122.1", "122.6", "603.2", "603.3", "614.1c", "614.16", "616.1", "616.1f", "702.155", "702.155a", "702.155b", "702.155c", "714.2b", "714.2d", "714.3", "714.3a", "714.3b", "714.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Do not dispatch a printed chapter program when the current copied Saga face has no matching typed ability fragment."
     },
     {
       "capability_id": "counter.producer.saga_lore",
@@ -18655,6 +18759,14 @@
     },
     {
       "capability_id": "state_based.saga_final_chapter",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_removed_final_chapter_ability_suppresses_sba_and_restore_does_not_replay",
+      "official_rule_ids": ["101.4", "603.3", "701.17", "704.3", "704.5s", "714.2d", "714.2e", "714.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use the current represented chapter inventory for cleanup, then sacrifice after restoration without replaying an already crossed threshold."
+    },
+    {
+      "capability_id": "state_based.saga_final_chapter",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_four_player_completed_sagas_move_in_one_sba_batch",
       "official_rule_ids": ["101.4", "603.3", "701.17", "704.3", "704.5s", "714.2d", "714.2e", "714.4"],
@@ -18684,6 +18796,14 @@
       "official_rule_ids": ["101.4", "603.3", "701.17", "704.3", "704.5s", "714.2d", "714.2e", "714.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Do not allow a chapter ability from an older logical incarnation to defer the current Saga's state action."
+    },
+    {
+      "capability_id": "state_based.saga_final_chapter",
+      "evidence_class": "negative",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_removed_final_chapter_ability_suppresses_sba_and_restore_does_not_replay",
+      "official_rule_ids": ["101.4", "603.3", "701.17", "704.3", "704.5s", "714.2d", "714.2e", "714.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suppress final-chapter sacrifice while the current layer-6 ability inventory has no represented final chapter."
     },
     {
       "capability_id": "state_based.saga_final_chapter",

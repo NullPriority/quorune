@@ -1494,22 +1494,72 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-library-selection-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-self-spell-cost-reductions",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:unparsed-this-spell-costs",
+            "quantity_expression:dynamic-quantity",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.cost.self_public_reduction",
+            "component:quorune.compiled_cast_costs.compiled_self_spell_cost_reduction_specs",
+            "component:quorune.compiler.cast_cost_modifier_templates.self_spell_cost_reduction_handler",
+            "component:quorune.rules.casting.costs._apply_static_reductions",
+            "component:quorune.self_cast_reductions.evaluated_self_reduction",
+            "component:quorune.semantic_runtime.cast_costs.SelfSpellCostReductionHandler"
+          ],
+          "source_contexts": [
+            "spell"
+          ],
+          "normalized_literal_parameters": [
+            "canonical-spell-or-death-turn-fact",
+            "cycle-safe-public-object-count",
+            "domain-or-devotion-count",
+            "fixed-colored-or-generic-reduction",
+            "fixed-public-count-threshold",
+            "selected-face-self-descriptor",
+            "total-mana-value-query"
+          ],
+          "shared_dependencies": [
+            "casting.cost.self_public_reduction"
+          ],
+          "shared_grammar": "fixed generic or colored reductions on the carrying spell derived from one closed public-state threshold, public object count, total mana value, devotion, Domain, or canonical current-turn fact",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the selected-face typed cast-cost owner across fixed public counts and conditions while leaving target choice, unsupported history, dynamic power, and open arithmetic outside the price query.",
+          "explicit_exclusions": [
+            "chosen, secret, and open ability-presence predicates outside the shared effective-characteristic query",
+            "copied, granted, removed, and text-changed self-reduction abilities outside selected-face typed propagation",
+            "life-gain, draw, sacrifice, discard, Cycling, crime, and other facts absent from the canonical turn journal",
+            "power, toughness, greatest, differently named, counter-total, distinct-creature-type, and Adventure-ability quantities",
+            "reduction caps, floors, cost increases, alternate costs, and open arithmetic",
+            "target-relative reductions and costs whose price cannot be advertised before target selection"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-self-spell-cost-reduction-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v153-ordinary-saga-chapter-programs",
-      "compiler_version": "oracle-ir-v153",
-      "bundle_id": "bundle:ordinary-saga-chapter-programs",
-      "candidate_ids": ["compiler:ordinary-saga-chapter-programs"],
+      "transition_id": "oracle-ir-v154-fixed-self-spell-cost-reductions",
+      "compiler_version": "oracle-ir-v154",
+      "bundle_id": "bundle:fixed-self-spell-cost-reductions",
+      "candidate_ids": ["compiler:fixed-self-spell-cost-reductions"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "effect_clause:unparsed-this-spell-costs",
+        "quantity_expression:dynamic-quantity",
+        "target_or_choice:conditional-effect"
       ],
       "capability_ids": [
-        "counter.producer.saga_lore"
+        "casting.cost.self_public_reduction"
       ],
-      "measurement_id": "measurement:ordinary-saga-chapter-programs",
+      "measurement_id": "measurement:fixed-self-spell-cost-reductions",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2017,6 +2067,11 @@
         "candidate_id": "compiler:fixed-face-down-lifecycle",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector reports no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A preserved implementation-backed probe had already measured 29 complete cards and 76 exact Disguise or Megamorph method abilities, below every normal harvest floor. The current frontier adds 39 capability-closed mandatory source-self turned-face-up triggers through the existing public-action event and typed body owners, producing a conservative 115-ability and residual lower bound for one face-down lifecycle. Variable or nonmana methods, Manifest, Cloak, copied or granted methods, aggregate or non-source events, and optional, conditional, reflexive, linked, or independently inexact bodies remain fail-closed; current cohort identities and lower bounds are derived into the generated measurement artifact."
+      },
+      {
+        "candidate_id": "compiler:fixed-self-spell-cost-reductions",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector reports no eligible carried candidate after the ordinary Saga chapter harvest, and policy prohibits another subthreshold card tranche. A bounded comparison retired strict top-library permission, existing additional-cost, and individual alternate-cast lifecycles below the complete-card floor; a fixed all-damage prevention cohort reached the floor but required a new persistent replacement component. The selected integrated probe instead crosses the normal complete-card floor through the existing selected-face cast-cost registry and authoritative total-cost query. It accepts only fixed public object counts, public thresholds, total mana value, devotion, Domain, and canonical spell, death, or turn facts. Target-relative prices, unsupported history, dynamic power or toughness, arbitrary ability predicates, chosen or private facts, floors, caps, and open arithmetic remain fail-closed."
       }
     ]
   },

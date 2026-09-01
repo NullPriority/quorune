@@ -9,6 +9,7 @@ from unittest import mock
 from common import ROOT, keep_all, make_session
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.cast_cost_modifier_templates import (
+    self_spell_cost_reduction_handler,
     static_fixed_spell_cost_reduction_handler,
 )
 from quorune.deck import DeckLoader
@@ -25,6 +26,8 @@ from quorune.semantic_runtime.cast_costs import (
     FIXED_SPELL_COST_REDUCTION_EVENT,
     FIXED_SPELL_COST_REDUCTION_HANDLER_ID,
     FixedSpellCostReductionHandler,
+    SELF_SPELL_COST_REDUCTION_HANDLER_ID,
+    SelfSpellCostReductionHandler,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
 from scripts.build_test_database import build_fixture_database
@@ -32,6 +35,9 @@ from scripts.build_test_database import build_fixture_database
 
 FIXTURE_PATH = (
     ROOT / "tests" / "fixtures" / "fixed-spell-cost-reduction-cards.json"
+)
+SELF_REDUCTION_FIXTURE_PATH = (
+    ROOT / "tests" / "fixtures" / "self-spell-cost-reduction-cards.json"
 )
 
 
@@ -123,7 +129,10 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
 
     def test_unsupported_spell_reduction_grammar_remains_residual(self):
         unsupported = (
-            "This spell costs {1} less to cast for each creature you control.",
+            "This spell costs {2} less to cast if it targets a tapped creature.",
+            "This spell costs {1} less to cast for each card you've drawn this turn.",
+            "This spell costs {X} less to cast, where X is the total power of creatures you control.",
+            "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
             "The first creature spell you cast each turn costs {2} less to cast.",
             "Spells you cast of the chosen type cost {1} less to cast.",
             "Creature spells with flying you cast cost {1} less to cast.",
@@ -143,6 +152,94 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                         for node in ir.faces[0].nodes
                     )
                 )
+
+    def test_self_reducers_compile_closed_public_metrics(self):
+        cases = (
+            (
+                "This spell costs {2} less to cast if you control a Wizard.",
+                "fixed_public_threshold",
+                {"GENERIC": 2},
+            ),
+            (
+                "This spell costs {1} less to cast for each creature card in your graveyard.",
+                "object_count",
+                {"GENERIC": 1},
+            ),
+            (
+                "This spell costs {X} less to cast, where X is the total mana value of noncreature artifacts you control.",
+                "total_mana_value",
+                {"GENERIC": 1},
+            ),
+            (
+                "This spell costs {3} less to cast if a creature died this turn.",
+                "turn_fact",
+                {"GENERIC": 3},
+            ),
+            (
+                "This spell costs {X} less to cast, where X is your devotion to blue. (Each {U} in the mana costs of permanents you control counts toward your devotion to blue.)",
+                "devotion",
+                {"GENERIC": 1},
+            ),
+            (
+                "This spell costs {G} less to cast for each green creature you control.",
+                "object_count",
+                {"G": 1},
+            ),
+        )
+        for index, (text, metric, reduction) in enumerate(cases, 1):
+            with self.subTest(text=text):
+                compiled = self_spell_cost_reduction_handler(text)
+                self.assertIsNotNone(compiled)
+                ir = self.compile(text, 601_502_000 + index)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("self-spell-cost-public-reduction-v1", node.template_id)
+                self.assertEqual("all", node.active_zone)
+                descriptor = node.handlers[0]
+                term = descriptor["reduction"]["terms"][0]
+                self.assertEqual(metric, term["metric"]["kind"])
+                self.assertEqual(reduction, term["reduction"])
+
+    def test_self_reduction_descriptor_fails_closed(self):
+        compiled = self_spell_cost_reduction_handler(
+            "This spell costs {2} less to cast if you control a Wizard."
+        )
+        self.assertIsNotNone(compiled)
+        assert compiled is not None
+        descriptor = dict(compiled[1])
+        self.assertEqual(
+            SELF_SPELL_COST_REDUCTION_HANDLER_ID,
+            descriptor["handler_id"],
+        )
+        SelfSpellCostReductionHandler().validate(descriptor)
+        malformed = (
+            {**descriptor, "schema_version": True},
+            {**descriptor, "event": "resolve"},
+            {**descriptor, "unknown": True},
+            {
+                **descriptor,
+                "reduction": {
+                    **descriptor["reduction"],
+                    "terms": [],
+                },
+            },
+            {
+                **descriptor,
+                "reduction": {
+                    **descriptor["reduction"],
+                    "terms": [
+                        {
+                            **descriptor["reduction"]["terms"][0],
+                            "reduction": {"GENERIC": -1},
+                        }
+                    ],
+                },
+            },
+        )
+        for value in malformed:
+            with self.subTest(value=value):
+                with self.assertRaises(SemanticNodeError):
+                    SelfSpellCostReductionHandler().validate(value)
 
     def test_fixed_spell_cost_descriptor_is_strict(self):
         compiled = static_fixed_spell_cost_reduction_handler(
@@ -185,6 +282,7 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
                 ROOT / "tests" / "fixtures" / "bestow-cards.json",
                 ROOT / "tests" / "fixtures" / "kicker-rules-cards.json",
                 FIXTURE_PATH,
+                SELF_REDUCTION_FIXTURE_PATH,
             ],
             database,
         )
@@ -324,6 +422,221 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         option = self.cost_option(engine, spell)
         self.assertEqual(0, option["requirements"]["GENERIC"])
         self.assertEqual(1, option["requirements"]["U"])
+
+    def test_self_reduction_offer_and_commit_share_public_query(self):
+        session = self.session(601_520_001)
+        engine = session.engine
+        counted = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="COUNTED-CREATURE",
+            zone="graveyard",
+        )
+        spell = self.add_card(
+            session,
+            name="Public Census Spell Fixture",
+            ref="CENSUS-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 5, "U": 1})
+        self.prepare_main(session)
+
+        action = self.cast_action(engine, spell)
+        option = next(value for value in action["cost_options"] if value["id"] == "normal")
+        self.assertEqual(5, option["requirements"]["GENERIC"])
+        result = session.act("pilot:B", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("stack", spell.zone)
+        self.assertEqual("graveyard", counted.zone)
+
+    def test_self_reduction_recomputes_current_control_and_rejects_stale_offer(self):
+        session = self.session(601_520_002, players=4)
+        engine = session.engine
+        wizard = self.add_card(
+            session,
+            name="Public Wizard Fixture",
+            ref="THRESHOLD-WIZARD",
+            zone="battlefield",
+        )
+        spell = self.add_card(
+            session,
+            name="Public Threshold Spell Fixture",
+            ref="THRESHOLD-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 2, "U": 1})
+        self.prepare_main(session)
+
+        action = self.cast_action(engine, spell)
+        option = next(value for value in action["cost_options"] if value["id"] == "normal")
+        self.assertEqual(2, option["requirements"]["GENERIC"])
+        engine.change_control(
+            wizard.object_id,
+            "A",
+            reason="self-reduction stale-offer fixture",
+        )
+        before = authoritative_state_hash(engine.state)
+        result = session.act("pilot:B", {"action_id": action["id"]})
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.assertEqual("hand", spell.zone)
+
+    def test_self_reduction_uses_mana_value_devotion_history_and_colored_floor(self):
+        session = self.session(601_520_003)
+        engine = session.engine
+        artifact = self.add_card(
+            session,
+            name="Arcane Signet",
+            ref="MANA-VALUE-ARTIFACT",
+            zone="battlefield",
+        )
+        artifact.annotations["copy_overrides"] = {
+            "type_line": "Artifact",
+            "mana_value": 4,
+            "mana_cost": "{2}{U}{U}",
+        }
+        green_one = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="GREEN-ONE",
+            zone="battlefield",
+        )
+        green_two = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="GREEN-TWO",
+            zone="battlefield",
+        )
+        mana_value_spell = self.add_card(
+            session,
+            name="Public Mana Value Spell Fixture",
+            ref="MANA-VALUE-SPELL",
+        )
+        devotion_spell = self.add_card(
+            session,
+            name="Public Devotion Spell Fixture",
+            ref="DEVOTION-SPELL",
+        )
+        history_spell = self.add_card(
+            session,
+            name="Public History Spell Fixture",
+            ref="HISTORY-SPELL",
+        )
+        colored_spell = self.add_card(
+            session,
+            name="Colored Census Spell Fixture",
+            ref="COLORED-SPELL",
+        )
+        engine._record_turn_history("creature_died", actor="A")
+        engine.state.players["B"].mana_pool.update({"C": 30, "G": 2, "U": 4})
+        self.prepare_main(session)
+
+        self.assertEqual(4, self.cost_option(engine, mana_value_spell)["requirements"]["GENERIC"])
+        self.assertEqual(5, self.cost_option(engine, devotion_spell)["requirements"]["GENERIC"])
+        self.assertEqual(2, self.cost_option(engine, history_spell)["requirements"]["GENERIC"])
+        colored = self.cost_option(engine, colored_spell)
+        self.assertEqual(0, colored["requirements"]["G"])
+        self.assertEqual(3, colored["requirements"]["GENERIC"])
+        self.assertEqual("B", green_one.controller)
+        self.assertEqual("B", green_two.controller)
+
+    def test_self_and_source_reductions_share_total_cost_pipeline(self):
+        session = self.session(601_520_006)
+        engine = session.engine
+        self.add_card(
+            session,
+            name="Goblin Electromancer",
+            ref="EXTERNAL-REDUCER",
+            zone="battlefield",
+        )
+        self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="SELF-COUNTED-CREATURE",
+            zone="graveyard",
+        )
+        spell = self.add_card(
+            session,
+            name="Public Census Spell Fixture",
+            ref="STACKED-REDUCTION-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.prepare_main(session)
+
+        option = self.cost_option(engine, spell)
+
+        self.assertEqual(4, option["requirements"]["GENERIC"])
+
+    def test_self_reduction_is_private_multiplayer_and_replays(self):
+        session = self.session(601_520_004, players=4)
+        engine = session.engine
+        self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="PRIVATE-COUNTED-CREATURE",
+            zone="graveyard",
+        )
+        spell = self.add_card(
+            session,
+            name="Public Census Spell Fixture",
+            ref="PRIVATE-CENSUS-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 5, "U": 1})
+        self.prepare_main(session)
+        action = self.cast_action(engine, spell)
+        self.assertFalse(
+            any(
+                row.get("card") == spell.ref
+                for row in engine._priority_action_hints("A")["actions"]
+            )
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        result = session.act("pilot:B", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_stack_with_passes(session)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "self-cost-reduction-replay"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_self_reduction_compiler_and_runtime_mutants_are_killed(self):
+        record = self.db.lookup("Public Threshold Spell Fixture", fuzzy=False)
+        with mock.patch(
+            "quorune.compiler.runtime_templates.self_spell_cost_reduction_handler",
+            return_value=None,
+        ):
+            ir = compile_oracle_card(
+                record,
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            )
+        self.assertTrue(ir.material_residuals)
+
+        session = self.session(601_520_005)
+        engine = session.engine
+        self.add_card(
+            session,
+            name="Public Wizard Fixture",
+            ref="MUTANT-WIZARD",
+            zone="battlefield",
+        )
+        spell = self.add_card(
+            session,
+            name="Public Threshold Spell Fixture",
+            ref="MUTANT-SELF-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.prepare_main(session)
+        self.assertEqual(2, self.cost_option(engine, spell)["requirements"]["GENERIC"])
+        with mock.patch(
+            "quorune.rules.casting.costs.compiled_self_spell_cost_reduction_specs",
+            return_value=(),
+        ):
+            self.assertEqual(4, self.cost_option(engine, spell)["requirements"]["GENERIC"])
 
     def test_reduction_applies_to_kicker_total_before_payment(self):
         session = self.session(601_510_002)

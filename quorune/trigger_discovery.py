@@ -7,6 +7,7 @@ from typing import Any, Protocol
 
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    StaticComponentSpec,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
     canonical_ability_fragments,
@@ -711,11 +712,10 @@ def program_has_current_ability_fragments(
 ) -> bool:
     """Require every typed fragment declared by one current-ability program."""
 
-    required = fragments_from_descriptors(program.handlers)
-    if not required:
-        raise GameRuleError(
-            "A current-ability trigger has no typed ability fragment"
-        )
+    required = (
+        StaticComponentSpec(program.key),
+        *fragments_from_descriptors(program.handlers),
+    )
     available = list(
         canonical_ability_fragments(
             characteristics.get("ability_fragments", ())
