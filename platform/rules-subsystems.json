@@ -1532,12 +1532,12 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Extends the selected-face typed cast-cost owner across fixed public counts and conditions while leaving target choice, unsupported history, dynamic power, and open arithmetic outside the price query.",
           "explicit_exclusions": [
-            "target-relative reductions and costs whose price cannot be advertised before target selection",
+            "chosen, secret, and open ability-presence predicates outside the shared effective-characteristic query",
+            "copied, granted, removed, and text-changed self-reduction abilities outside selected-face typed propagation",
             "life-gain, draw, sacrifice, discard, Cycling, crime, and other facts absent from the canonical turn journal",
             "power, toughness, greatest, differently named, counter-total, distinct-creature-type, and Adventure-ability quantities",
-            "chosen, secret, and open ability-presence predicates outside the shared effective-characteristic query",
             "reduction caps, floors, cost increases, alternate costs, and open arithmetic",
-            "copied, granted, removed, and text-changed self-reduction abilities outside selected-face typed propagation"
+            "target-relative reductions and costs whose price cannot be advertised before target selection"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-self-spell-cost-reduction-existing-owner-v1"
