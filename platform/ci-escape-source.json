@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-31T23:30:00Z",
+  "observed_at": "2026-09-01T15:25:00Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -707,6 +707,24 @@
       ],
       "impact_edge_status": "added",
       "resolution": "The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion."
+    },
+    {
+      "id": "ci-20260901-48",
+      "run_id": 33523463031,
+      "head_sha": "6866e57ebb4548253f44d2df66d629861f04eb7b",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The fixed all-damage prevention harvest promoted two residual high-risk witnesses and completed its cohort, but the focused pre-cloud set omitted the adjacent fail-closed inventory and read the retired current cohort instead of its immutable transition measurement.",
+      "failed_surfaces": [
+        "PR / Generated and architecture (job 99909020412)"
+      ],
+      "regressions": [
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary[Kor Haven]",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary[Soratami Cloud Chariot]",
+        "test_rules_scheduler.RulesSchedulerTests.test_fixed_all_damage_prevention_probe_is_integrated_and_accounted"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The promoted prevention incidences are removed from the residual fail-closed pair inventory, while the generated scheduler witness reads the content-bound pre-harvest transition measurement and separately permits the post-harvest current cohort to retire. Existing impact rules already selected both modules; future harvest pre-cloud evidence must run these exact adjacent methods."
     }
   ],
   "recent_pull_requests": [

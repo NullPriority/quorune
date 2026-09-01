@@ -120,6 +120,9 @@ from .counter_removal_handlers import (
     FixedCounterRemovalHandler,
 )
 from .damage_replacements import (
+    AllDamagePreventionHandler,
+    AllDamagePreventionNode,
+    AllDamagePreventionScopeNode,
     collect_damage_replacement_effects,
     DamageQuantityReplacementHandler,
     DamageQuantityReplacementNode,
@@ -534,6 +537,9 @@ __all__ = [
     "FlashCastPermissionHandler",
     "FixedDamagePreventionHandler",
     "FixedDamagePreventionNode",
+    "AllDamagePreventionHandler",
+    "AllDamagePreventionNode",
+    "AllDamagePreventionScopeNode",
     "StaticDamageRedirectionHandler",
     "StaticDamageRedirectionNode",
     "LifeGainMultiplierHandler",

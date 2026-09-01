@@ -247,6 +247,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.basic_land_type.add_all_lands",
                 "action.draw.reveal_first",
                 "modification.activation.loyalty-cost",
+                "prevention.damage.all",
                 "prevention.damage.fixed",
                 "prohibition.combat.goad",
                 "participation.untap_step.static",

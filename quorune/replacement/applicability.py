@@ -49,6 +49,7 @@ def condition_matches(
                 "contains",
                 "contains_all",
                 "contains_any",
+                "contains_none",
                 "lt",
                 "lte",
                 "gt",
@@ -78,6 +79,10 @@ def condition_matches(
                 return False
             if "contains_any" in expected and not set(
                 expected["contains_any"]
+            ).intersection(set(actual or ())):
+                return False
+            if "contains_none" in expected and set(
+                expected["contains_none"]
             ).intersection(set(actual or ())):
                 return False
             for predicate, comparison in (

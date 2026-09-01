@@ -5,6 +5,7 @@ from typing import Any, Mapping
 from ..damage import DamageError, recipient_snapshot
 from ..damage_modifier_state import (
     DamageModifierDuration,
+    DamagePreventionScope,
     DamageRedirectionEffect,
     DamageSubject,
     PreventionDamageKind,
@@ -81,6 +82,18 @@ def _damage_subject(snapshot: Any) -> DamageSubject:
         logical_object_id=snapshot.logical_object_id,
         owner=snapshot.owner,
     )
+
+
+def _prevention_scope(effect: Mapping[str, Any]) -> DamagePreventionScope:
+    raw = effect.get("scope")
+    if raw is None:
+        return DamagePreventionScope()
+    if not isinstance(raw, Mapping):
+        raise GameRuleError("Damage prevention scope must be an object")
+    try:
+        return DamagePreventionScope.from_dict(raw)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
 
 
 def _positive_amount(value: Any, *, field: str) -> int:
@@ -384,6 +397,7 @@ def _apply_create_damage_prevention_shield(
             recipient_kind=PreventionRecipientKind(
                 str(effect.get("recipient_kind") or "any")
             ),
+            scope=_prevention_scope(effect),
             chosen_source_ref=(
                 str(effect["chosen_source"])
                 if effect.get("chosen_source") is not None

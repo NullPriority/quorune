@@ -370,7 +370,8 @@
       "write_policy": "database",
       "input_groups": [
         "platform-source",
-        "python-product"
+        "python-product",
+        "rules-source"
       ],
       "input_paths": [],
       "implementation_inputs": [

@@ -15,6 +15,7 @@ from quorune.damage import (
 from quorune.errors import GameRuleError
 from quorune.model import GameState
 from quorune.object_query import ObjectQuerySpec
+from quorune.oracle_ir import compile_oracle_card
 from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
@@ -31,10 +32,12 @@ from quorune.damage_prevention import (
     PreventionRecipientKind,
     expire_end_of_turn_damage_modifiers,
 )
+from quorune.damage_modifier_state import DamagePreventionScope
 from quorune.replacement_effects import (
     ReplacementChoiceRequired,
 )
 from quorune.semantics import SemanticProgram
+from quorune.rules.capabilities import load_default_capability_registry
 
 
 class DamagePreventionShieldTests(DamageReplacementPipelineBase):
@@ -49,6 +52,7 @@ class DamagePreventionShieldTests(DamageReplacementPipelineBase):
         chosen_source=None,
         damage_kind: PreventionDamageKind = PreventionDamageKind.ANY,
         recipient_kind: PreventionRecipientKind = PreventionRecipientKind.ANY,
+        scope: DamagePreventionScope = DamagePreventionScope(),
     ) -> DamagePreventionShield:
         value = DamagePreventionShield(
             shield_id=shield_id,
@@ -65,6 +69,7 @@ class DamagePreventionShieldTests(DamageReplacementPipelineBase):
             created_turn_sequence=engine.state.turn_sequence,
             damage_kind=damage_kind,
             recipient_kind=recipient_kind,
+            scope=scope,
             chosen_source=chosen_source,
             label="Fixture prevention shield",
         )
@@ -91,6 +96,176 @@ class DamagePreventionShieldTests(DamageReplacementPipelineBase):
         self.assertEqual(2, engine.state.damage_prevention_shields[0].remaining)
         self.assertEqual(1, len(result.prevention_events))
         self.assertEqual(3, result.prevention_events[0].prevented_amount)
+
+    def test_scoped_all_shield_filters_round_trips_and_expires(self):
+        engine = self.session(615002).engine
+
+        def resolved(proposal):
+            try:
+                prepared = prepare_damage_batch(engine, (proposal,))
+            except ReplacementChoiceRequired as required:
+                effect_id = next(
+                    value
+                    for value in required.pending.choice.options
+                    if "prevention.shield" in value
+                )
+                prepared = prepare_damage_batch(
+                    engine,
+                    (proposal,),
+                    selections=(effect_id,),
+                )
+            return commit_prepared_damage_batch(engine, prepared).events[0]
+
+        creature_source = self.add_permanent(
+            engine, seat="A", name="Mishra, Eminent One", ref="a-creature-source"
+        )
+        noncreature_source = self.add_permanent(
+            engine,
+            seat="A",
+            name="Scoped Prevention Ward",
+            ref="a-enchantment-source",
+        )
+        scope = DamagePreventionScope(
+            target_controller_relation="source_controller",
+            target_kinds=("player",),
+            source_characteristics_all=("creature",),
+        )
+        engine.apply_effect(
+            {
+                "op": "create_damage_prevention_shield",
+                "source": "fixture:scoped-all",
+                "subject": "*",
+                "mode": "all",
+                "duration": "until_end_of_turn",
+                "scope": scope.to_dict(),
+            },
+            actor="B",
+        )
+        self.assertEqual(scope, engine.state.damage_prevention_shields[0].scope)
+        restored = GameState.from_dict(engine.state.to_dict())
+        self.assertEqual(scope, restored.damage_prevention_shields[0].scope)
+
+        matching = resolved(
+            self.proposal(engine, source=creature_source, target="B", amount=3)
+        )
+        self.assertEqual((0, 3), (matching.dealt_amount, matching.prevented_amount))
+        nonmatching_source = resolved(
+            self.proposal(
+                    engine,
+                    source=noncreature_source,
+                    target="B",
+                    amount=3,
+                    event_id="damage:scoped-noncreature",
+                )
+        )
+        self.assertEqual(
+            (3, 0),
+            (nonmatching_source.dealt_amount, nonmatching_source.prevented_amount),
+        )
+        nonmatching_target = resolved(
+            self.proposal(
+                    engine,
+                    source=creature_source,
+                    target="A",
+                    amount=3,
+                    event_id="damage:scoped-wrong-player",
+                )
+        )
+        self.assertEqual(
+            (3, 0),
+            (nonmatching_target.dealt_amount, nonmatching_target.prevented_amount),
+        )
+
+        before = tuple(engine.state.damage_prevention_shields)
+        malformed = scope.to_dict()
+        malformed["target_kinds"] = ["secret"]
+        with self.assertRaisesRegex(GameRuleError, "target kind"):
+            engine.apply_effect(
+                {
+                    "op": "create_damage_prevention_shield",
+                    "source": "fixture:malformed-scoped-all",
+                    "subject": "*",
+                    "mode": "all",
+                    "duration": "until_end_of_turn",
+                    "scope": malformed,
+                },
+                actor="B",
+            )
+        self.assertEqual(before, tuple(engine.state.damage_prevention_shields))
+        expire_end_of_turn_damage_modifiers(engine.state)
+        self.assertFalse(engine.state.damage_prevention_shields)
+
+    def test_compiled_turn_bound_scopes_install_through_existing_shield_owner(self):
+        engine = self.session(615003).engine
+        source = self.add_permanent(
+            engine,
+            seat="A",
+            name="Entry Prevention Guardian",
+            ref="a-scoped-haze-source",
+        )
+        protected = self.add_permanent(
+            engine,
+            seat="B",
+            name="Entry Prevention Guardian",
+            ref="b-scoped-haze-target",
+        )
+        protected.counters["+1/+1"] = 10
+        ir = compile_oracle_card(
+            self.db.lookup("Scoped Prevention Haze"),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+        )
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(2, len(node.effects))
+        before = tuple(engine.state.damage_prevention_shields)
+        for effect in node.effects:
+            resolved_effect = dict(effect)
+            resolved_effect["source"] = "fixture:scoped-haze"
+            engine.apply_effect(resolved_effect, actor="B")
+        self.assertEqual(
+            len(before) + 2,
+            len(engine.state.damage_prevention_shields),
+        )
+
+        def resolved(proposal):
+            try:
+                prepared = prepare_damage_batch(engine, (proposal,))
+            except ReplacementChoiceRequired as required:
+                effect_id = next(
+                    value
+                    for value in required.pending.choice.options
+                    if "prevention.shield" in value
+                )
+                prepared = prepare_damage_batch(
+                    engine,
+                    (proposal,),
+                    selections=(effect_id,),
+                )
+            return commit_prepared_damage_batch(engine, prepared).events[0]
+
+        player_event = resolved(
+            self.proposal(
+                engine,
+                source=source,
+                target="B",
+                event_id="damage:compiled-scoped-player",
+            )
+        )
+        self.assertEqual(
+            (0, 3), (player_event.dealt_amount, player_event.prevented_amount)
+        )
+        permanent_event = resolved(
+            self.proposal(
+                engine,
+                source=source,
+                target=protected,
+                event_id="damage:compiled-scoped-permanent",
+            )
+        )
+        self.assertEqual(
+            (0, 3),
+            (permanent_event.dealt_amount, permanent_event.prevented_amount),
+        )
 
     def test_exhausted_amount_and_next_instance_shields_are_removed(self):
         for index, (mode, remaining) in enumerate(
@@ -201,7 +376,7 @@ class DamagePreventionShieldTests(DamageReplacementPipelineBase):
             "duration": "until_end_of_turn",
         }
         for field, value in (
-            ("damage_kind", "noncombat"),
+            ("damage_kind", "combat_and_noncombat"),
             ("recipient_kind", "creature"),
         ):
             with self.subTest(field=field):
@@ -741,6 +916,9 @@ class DamagePreventionShieldTests(DamageReplacementPipelineBase):
             remaining=4,
             damage_kind=PreventionDamageKind.COMBAT,
             recipient_kind=PreventionRecipientKind.PLAYER,
+            scope=DamagePreventionScope(
+                source_characteristics_all=("creature",),
+            ),
         )
         engine.state.active_player = "A"
         engine.state.phase = "combat"

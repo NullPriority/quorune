@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
@@ -543,7 +544,7 @@ def static_runtime_template(
                 "rules capability"
             ),
         )
-    static_damage = static_damage_handler(text)
+    static_damage = static_damage_handler(text, card_name=source_name)
     if static_damage is None:
         return None
     if (
@@ -573,5 +574,11 @@ def static_runtime_template(
         dependency_reason=(
             "generic damage replacement depends on an untrusted rules "
             "capability"
+        ),
+        runtime_coverage=(
+            (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+            if static_damage[1]["handler_id"]
+            == "prevention.damage.all.v1"
+            else ()
         ),
     )

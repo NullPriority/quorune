@@ -5,10 +5,12 @@ from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..replacement_effects import (
+    PreventAmount,
     RedirectDamage,
     ReplacementClass,
     ReplacementEffect,
 )
+from ..damage_modifier_state import DamageModifierError, DamagePreventionScope
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -17,6 +19,7 @@ from .context import SemanticNodeError
 _QUANTITY_HANDLER_ID = "replacement.damage.quantity.v1"
 _QUANTITY_V2_HANDLER_ID = "replacement.damage.quantity.v2"
 _FIXED_PREVENTION_HANDLER_ID = "prevention.damage.fixed.v1"
+_ALL_PREVENTION_HANDLER_ID = "prevention.damage.all.v1"
 _STATIC_REDIRECTION_HANDLER_ID = "replacement.damage.redirect-to-source.v1"
 _RELATIONS = {"any", "source_controller", "opponent"}
 _TARGET_KINDS = {"player", "permanent"}
@@ -24,6 +27,7 @@ _TARGET_KINDS = {"player", "permanent"}
 
 class DamageReplacementHost(Protocol):
     semantics: Any
+    state: Any
     active_seats: list[str]
 
     def _semantic_event_sources(
@@ -31,6 +35,8 @@ class DamageReplacementHost(Protocol):
     ) -> list[Any]: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,6 +66,18 @@ class FixedDamagePreventionNode:
 
 
 @dataclass(frozen=True, slots=True)
+class AllDamagePreventionScopeNode:
+    damage_kind: str
+    source_controller_turn_only: bool
+    scope: DamagePreventionScope
+
+
+@dataclass(frozen=True, slots=True)
+class AllDamagePreventionNode:
+    scopes: tuple[AllDamagePreventionScopeNode, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class StaticDamageRedirectionNode:
     condition: DamageReplacementCondition
 
@@ -70,6 +88,8 @@ class DamageReplacementSourceContext:
     source_controller: str
     component_id: str = ""
     source_destination: RedirectDamage | None = None
+    attached_ref: str | None = None
+    active_player: str | None = None
 
     def __post_init__(self) -> None:
         if not self.source_ref or not self.source_controller:
@@ -509,6 +529,184 @@ class FixedDamagePreventionHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class AllDamagePreventionHandler:
+    """Lower current static all-damage prevention through the shared scope."""
+
+    handler_id: str = _ALL_PREVENTION_HANDLER_ID
+    schema_version: int = 1
+    family: str = "prevention.damage.all"
+    event: str = "damage"
+    rule_references: tuple[str, ...] = (
+        "120.4b",
+        "615.1",
+        "615.6",
+        "615.10",
+        "615.12",
+        "615.12a",
+        "616.1",
+        "616.1f",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        "damage.prevention.persistent_amount",
+    )
+
+    def validate(
+        self, descriptor: Mapping[str, Any]
+    ) -> AllDamagePreventionNode:
+        _validate_envelope(descriptor, handler_id=self.handler_id)
+        modification = descriptor["modification"]
+        if not isinstance(modification, Mapping):
+            raise SemanticNodeError(
+                "All-damage prevention modification must be an object"
+            )
+        exact_fields(
+            modification,
+            {"amount"},
+            field="all-damage prevention modification",
+        )
+        if modification["amount"] != "all":
+            raise SemanticNodeError(
+                "All-damage prevention must prevent the complete event"
+            )
+        condition = descriptor["condition"]
+        if not isinstance(condition, Mapping):
+            raise SemanticNodeError(
+                "All-damage prevention condition must be an object"
+            )
+        exact_fields(
+            condition,
+            {"scopes"},
+            field="all-damage prevention condition",
+        )
+        raw_scopes = condition["scopes"]
+        if not isinstance(raw_scopes, list) or not raw_scopes:
+            raise SemanticNodeError(
+                "All-damage prevention scopes must be a nonempty list"
+            )
+        scopes: list[AllDamagePreventionScopeNode] = []
+        for raw in raw_scopes:
+            if not isinstance(raw, Mapping):
+                raise SemanticNodeError(
+                    "All-damage prevention scope entry must be an object"
+                )
+            exact_fields(
+                raw,
+                {"damage_kind", "source_controller_turn_only", "scope"},
+                field="all-damage prevention scope entry",
+            )
+            damage_kind = str(raw["damage_kind"])
+            turn_only = raw["source_controller_turn_only"]
+            if damage_kind not in {"any", "combat", "noncombat"}:
+                raise SemanticNodeError(
+                    "All-damage prevention kind is unsupported"
+                )
+            if type(turn_only) is not bool:
+                raise SemanticNodeError(
+                    "All-damage prevention turn scope must be boolean"
+                )
+            raw_scope = raw["scope"]
+            if not isinstance(raw_scope, Mapping):
+                raise SemanticNodeError(
+                    "All-damage prevention applicability scope is malformed"
+                )
+            try:
+                scope = DamagePreventionScope.from_dict(raw_scope)
+            except DamageModifierError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            scopes.append(
+                AllDamagePreventionScopeNode(
+                    damage_kind=damage_kind,
+                    source_controller_turn_only=turn_only,
+                    scope=scope,
+                )
+            )
+        return AllDamagePreventionNode(scopes=tuple(scopes))
+
+    @staticmethod
+    def _resolved_ref(
+        value: str | None,
+        context: DamageReplacementSourceContext,
+    ) -> str | None:
+        if value is None:
+            return None
+        if value == "$source":
+            return context.source_ref
+        if value == "$attached":
+            return context.attached_ref
+        if value.startswith("$"):
+            raise SemanticNodeError(
+                "Static all-damage prevention has an unresolved reference"
+            )
+        return value
+
+    def _resolved_scope(
+        self,
+        scope: DamagePreventionScope,
+        context: DamageReplacementSourceContext,
+    ) -> DamagePreventionScope | None:
+        values = scope.to_dict()
+        for field in (
+            "source_ref",
+            "target_ref",
+            "excluded_source_ref",
+            "excluded_target_ref",
+        ):
+            raw = values[field]
+            resolved = self._resolved_ref(
+                str(raw) if raw is not None else None,
+                context,
+            )
+            if raw == "$attached" and resolved is None:
+                return None
+            values[field] = resolved
+        try:
+            return DamagePreventionScope.from_dict(values)
+        except DamageModifierError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: DamageReplacementSourceContext,
+    ) -> tuple[ReplacementEffect, ...]:
+        node = self.validate(descriptor)
+        effects: list[ReplacementEffect] = []
+        for index, entry in enumerate(node.scopes):
+            if (
+                entry.source_controller_turn_only
+                and context.active_player != context.source_controller
+            ):
+                continue
+            scope = self._resolved_scope(entry.scope, context)
+            if scope is None:
+                continue
+            conditions = scope.event_conditions(
+                controller=context.source_controller
+            )
+            conditions["amount"] = {"not_in": [0]}
+            if entry.damage_kind != "any":
+                conditions["combat"] = {
+                    "eq": entry.damage_kind == "combat"
+                }
+            component_id = context.component_id or "all"
+            effects.append(
+                ReplacementEffect(
+                    effect_id=(
+                        f"{self.handler_id}:{context.source_ref}:"
+                        f"{component_id}:{index}"
+                    ),
+                    source_id=context.source_ref,
+                    event_kind=self.event,
+                    replacement_class=ReplacementClass.OTHER,
+                    conditions=conditions,
+                    operations=(PreventAmount(),),
+                    label=f"{context.source_ref}: prevent all damage",
+                )
+            )
+        return tuple(effects)
+
+
+@dataclass(frozen=True, slots=True)
 class StaticDamageRedirectionHandler:
     """Redirect matching damage to the current battlefield source.
 
@@ -617,6 +815,7 @@ def default_damage_replacement_registry() -> DamageReplacementRegistry:
             DamageQuantityReplacementHandler(),
             DamageQuantityReplacementV2Handler(),
             FixedDamagePreventionHandler(),
+            AllDamagePreventionHandler(),
             StaticDamageRedirectionHandler(),
         )
     )
@@ -641,6 +840,9 @@ def collect_damage_replacement_effects(
     )
     registry = default_damage_replacement_registry()
     effects: list[ReplacementEffect] = []
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..trigger_discovery import program_has_current_ability_fragments
+
     for source in candidates:
         active_zone = (
             source_zones.get(source.object_id, source.zone)
@@ -660,6 +862,14 @@ def collect_damage_replacement_effects(
         )
         for program in programs:
             if not host.semantic_program_is_current_trusted(program):
+                continue
+            if (
+                CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
+                and not program_has_current_ability_fragments(
+                    program,
+                    host._effective_card_data(source),
+                )
+            ):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
                 source_destination = None
@@ -692,14 +902,25 @@ def collect_damage_replacement_effects(
                         target_types=destination.types,
                         target_subtypes=destination.subtypes,
                     )
-                effects.append(
-                    registry.replacement_effect(
+                attached = host.state.cards.get(
+                    getattr(source, "attached_to", None) or ""
+                )
+                effects.extend(
+                    registry.lower(
                         descriptor,
                         DamageReplacementSourceContext(
                             source_ref=source.ref,
                             source_controller=source.controller,
                             component_id=f"{program.key}:{descriptor_index}",
                             source_destination=source_destination,
+                            attached_ref=(
+                                attached.ref
+                                if attached is not None
+                                and attached.zone == "battlefield"
+                                and not attached.phased_out
+                                else None
+                            ),
+                            active_player=host.state.active_player,
                         ),
                     )
                 )

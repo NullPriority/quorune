@@ -2138,6 +2138,45 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_fixed_all_damage_prevention_probe_is_integrated_and_accounted(self):
+        transition = next(
+            row
+            for row in self.work_inputs["cohort_measurements"][
+                "transition_measurements"
+            ]
+            if row["transition_id"]
+            == "oracle-ir-v155-fixed-all-damage-prevention-scopes"
+        )
+        measurement = transition["measurement"]
+        accounting = measurement["candidate_accounting"]
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertGreaterEqual(
+            measurement["complete_card_gain"],
+            coverage["minimum_complete_card_gain"],
+        )
+        self.assertEqual(
+            measurement["exact_ability_gain"],
+            accounting["affected_oracle_carriers"],
+        )
+        self.assertEqual(
+            measurement["complete_card_gain"],
+            accounting["trusted_program_transitions"],
+        )
+        self.assertEqual(
+            measurement["material_residual_reduction"],
+            accounting["expected_oracle_residual_reduction"],
+        )
+        self.assertEqual(
+            accounting["expected_oracle_residual_reduction"],
+            accounting["expected_card_program_residual_reduction"],
+        )
+        self.assertEqual(0, accounting["newly_applicable_high_risk_pairs"])
+        self.assertGreater(
+            accounting["cards_excluded_by_unsupported_prevention_grammar"],
+            0,
+        )
+
     def test_fixed_activation_measurement_counts_only_exact_compiled_nodes(self):
         member_ids = {"activated_cost:fixed-zone-change"}
         frontier = {

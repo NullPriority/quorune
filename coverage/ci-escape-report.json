@@ -813,6 +813,24 @@
       "resolution": "The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion.",
       "run_id": 33366100343,
       "summary": "The fixed activation zone-change harvest made Dreadmobile's selected sacrifice cost capability-closed, but its neighboring pinned-source counter-placement inventory still expected the activation to remain inexact and was not selected before merge."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Generated and architecture (job 99909020412)"
+      ],
+      "head_sha": "6866e57ebb4548253f44d2df66d629861f04eb7b",
+      "id": "ci-20260901-48",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary[Kor Haven]",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary[Soratami Cloud Chariot]",
+        "test_rules_scheduler.RulesSchedulerTests.test_fixed_all_damage_prevention_probe_is_integrated_and_accounted"
+      ],
+      "resolution": "The promoted prevention incidences are removed from the residual fail-closed pair inventory, while the generated scheduler witness reads the content-bound pre-harvest transition measurement and separately permits the post-harvest current cohort to retire. Existing impact rules already selected both modules; future harvest pre-cloud evidence must run these exact adjacent methods.",
+      "run_id": 33523463031,
+      "summary": "The fixed all-damage prevention harvest promoted two residual high-risk witnesses and completed its cohort, but the focused pre-cloud set omitted the adjacent fail-closed inventory and read the retired current cohort instead of its immutable transition measurement."
     }
   ],
   "known_flaky_tests": [],
@@ -820,7 +838,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-08-31T23:30:00Z",
+  "observed_at": "2026-09-01T15:25:00Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -865,7 +883,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "4728cf002ee6d69408f9af1043f1a082fda12127ab6647ae06e3720e72a3cc60",
+  "source_fingerprint": "0991ad52edfdebc7b12ad41c8517e72d83957ada6c581b4924d8aac6a4961907",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -875,12 +893,12 @@
       "flaky_test": 6,
       "generated_artifact_drift": 4,
       "infrastructure": 1,
-      "missing_affected_test": 16,
+      "missing_affected_test": 17,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 42,
-    "escape_count": 47,
+    "deterministic_escape_count": 43,
+    "escape_count": 48,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [
