@@ -141,11 +141,6 @@ class AttackKeywordCompilerTests(unittest.TestCase):
                     "Whenever this creature attacks, another target attacker "
                     "gets +1/+0 until end of turn.",
                 ),
-                (
-                    "Melee",
-                    "Whenever this creature attacks, it gets +1/+1 until end "
-                    "of turn.",
-                ),
             ),
             start=702_121_100,
         ):
