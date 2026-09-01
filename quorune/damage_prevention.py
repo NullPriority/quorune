@@ -50,8 +50,19 @@ def _shield_replacement_effect(
     shield: DamagePreventionShield,
 ) -> ReplacementEffect:
     conditions = shield.subject.event_conditions()
-    if shield.damage_kind == PreventionDamageKind.COMBAT:
-        conditions["combat"] = {"eq": True}
+    scope_conditions = shield.scope.event_conditions(
+        controller=shield.controller
+    )
+    for field, predicate in scope_conditions.items():
+        if field in conditions and conditions[field] != predicate:
+            raise DamageModifierError(
+                "Prevention subject and scope predicates conflict"
+            )
+        conditions[field] = predicate
+    if shield.damage_kind != PreventionDamageKind.ANY:
+        conditions["combat"] = {
+            "eq": shield.damage_kind == PreventionDamageKind.COMBAT
+        }
     if shield.recipient_kind != PreventionRecipientKind.ANY:
         conditions["target_kind"] = {"eq": shield.recipient_kind.value}
     if shield.chosen_source is not None:
@@ -252,6 +263,7 @@ def commit_damage_modifier_plan(
                     created_turn_sequence=shield.created_turn_sequence,
                     damage_kind=shield.damage_kind,
                     recipient_kind=shield.recipient_kind,
+                    scope=shield.scope,
                     chosen_source=shield.chosen_source,
                     label=shield.label,
                     aftermath=shield.aftermath,
@@ -342,6 +354,7 @@ def project_damage_modifier_snapshot(
                 created_turn_sequence=shield.created_turn_sequence,
                 damage_kind=shield.damage_kind,
                 recipient_kind=shield.recipient_kind,
+                scope=shield.scope,
                 chosen_source=shield.chosen_source,
                 label=shield.label,
                 aftermath=shield.aftermath,

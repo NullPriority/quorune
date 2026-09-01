@@ -14,6 +14,9 @@ from quorune.compiler.cast_cost_modifier_templates import (
 )
 from quorune.compiler.exile_templates import targeted_exile_effect_template
 from quorune.compiler.damage_templates import source_pronoun_damage_effect_template
+from quorune.compiler.fixed_all_damage_prevention import (
+    fixed_all_damage_prevention_specs,
+)
 from quorune.compiler.destruction_templates import destruction_effect_template
 from quorune.compiler.optional_effect_templates import (
     fixed_optional_effect_template,
@@ -144,6 +147,9 @@ _PROBE_TRIGGER_ABILITY_WORD_CARRIER = (
 _PROBE_SELF_SPELL_COST_REDUCTION = (
     "fixed-self-spell-cost-reduction-existing-owner-v1"
 )
+_PROBE_FIXED_ALL_DAMAGE_PREVENTION = (
+    "fixed-all-damage-prevention-scope-existing-owner-v1"
+)
 _PROBE_IDS = {
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
@@ -157,6 +163,7 @@ _PROBE_IDS = {
     _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     _PROBE_ATTACHED_CHARACTERISTIC_CLOSURE,
     _PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES,
+    _PROBE_FIXED_ALL_DAMAGE_PREVENTION,
     _PROBE_FIXED_FACE_DOWN_LIFECYCLE,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_FIXED_LIBRARY_SELECTION,
@@ -611,6 +618,18 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_FIXED_ALL_DAMAGE_PREVENTION:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "All-damage prevention measurement requires card context"
+            )
+        return bool(
+            _fixed_all_damage_prevention_specs_for_ability(
+                source,
+                card_record=card_record,
+                ability=ability,
+            )
+        )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return self_spell_cost_reduction_handler(source) is not None
     if probe_id == _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS:
@@ -863,6 +882,233 @@ def _matches_probe(
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
     )
+
+
+_FIXED_ALL_DAMAGE_PREVENTION_FAMILIES = frozenset(
+    {
+        "continuous_layer:affected-player-ordering",
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "replacement:damage-prevention",
+        "replacement:replacement-applicability",
+        "replacement:self-replacement-and-prevention-ordering",
+        "target_or_choice:target-predicate",
+    }
+)
+
+
+def _ability_family_ids(ability: Mapping[str, Any]) -> set[str]:
+    return {
+        str(family_id)
+        for residual in ability.get("residuals", ())
+        for family_id in residual.get("family_ids", ())
+    }
+
+
+def _fixed_all_damage_prevention_specs_for_ability(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> tuple[Any, ...] | None:
+    if not _ability_family_ids(ability).issubset(
+        _FIXED_ALL_DAMAGE_PREVENTION_FAMILIES
+    ):
+        return None
+    source_name, _source_is_permanent, _attachment_relation = (
+        _source_face_context(card_record, ability)
+    )
+    kind = str(ability.get("kind") or "")
+    material = _without_parenthetical_reminder(source)
+    bodies: list[str] = []
+    if kind in {"spell_ability", "static_ability"}:
+        bodies.append(material)
+    elif kind == "activated_ability":
+        parsed = parse_activated_abilities(
+            card_name=source_name,
+            oracle_text=material,
+            keywords=getattr(card_record, "keywords", ()),
+        )
+        if len(parsed) == 1:
+            bodies.append(parsed[0].effect_text)
+    elif kind == "triggered_ability":
+        binding = fixed_counter_trigger_binding(
+            material,
+            card_name=source_name,
+        )
+        if binding is not None:
+            bodies.append(binding.body)
+    expected_duration = (
+        "static" if kind == "static_ability" else "until_end_of_turn"
+    )
+    for body in bodies:
+        specs = fixed_all_damage_prevention_specs(
+            body,
+            card_name=source_name,
+        )
+        if specs is not None and all(
+            spec.duration == expected_duration for spec in specs
+        ):
+            return specs
+    return None
+
+
+def _fixed_all_damage_prevention_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure the closed static and turn-bound all-prevention grammar."""
+
+    parsed_by_card: dict[str, list[Mapping[str, Any]]] = {}
+    prevention_carriers_by_card: dict[str, list[Mapping[str, Any]]] = {}
+    cards_by_id: dict[str, Mapping[str, Any]] = {}
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        cards_by_id[oracle_id] = card
+        for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
+            source = _source_line(record, ability)
+            if "prevent all" in source.casefold() and "damage" in source.casefold():
+                prevention_carriers_by_card.setdefault(oracle_id, []).append(ability)
+            if _fixed_all_damage_prevention_specs_for_ability(
+                source,
+                card_record=record,
+                ability=ability,
+            ) is not None:
+                parsed_by_card.setdefault(oracle_id, []).append(ability)
+
+    registry = load_default_capability_registry()
+    matched_by_card: dict[str, list[Mapping[str, Any]]] = {}
+    compiled_by_card: dict[str, Any] = {}
+    for oracle_id, parsed in parsed_by_card.items():
+        record = cards_by_oracle_id[oracle_id]
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented_lines = {
+            node.span.line
+            for face in compiled.faces
+            for node in face.nodes
+            if node.exact
+            and (
+                any(
+                    handler.get("handler_id") == "prevention.damage.all.v1"
+                    for handler in node.handlers
+                )
+                or any(
+                    effect.get("op") == "create_damage_prevention_shield"
+                    and effect.get("scope") is not None
+                    for effect in node.effects
+                )
+            )
+        }
+        represented = [
+            ability
+            for ability in parsed
+            if int(ability["source_line"]) in represented_lines
+        ]
+        if represented:
+            matched_by_card[oracle_id] = represented
+            compiled_by_card[oracle_id] = compiled
+
+    affected_carriers = sum(len(values) for values in matched_by_card.values())
+    complete_cards = 0
+    exact_siblings = 0
+    remaining_sibling_nodes = 0
+    expected_residual_reduction = 0
+    one_additional = 0
+    two_additional = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    for oracle_id, matched in matched_by_card.items():
+        card = cards_by_id[oracle_id]
+        compiled = compiled_by_card[oracle_id]
+        exact_siblings += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        remaining = [
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        ]
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        expected_residual_reduction += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+        remaining_sibling_nodes += len(remaining)
+        one_additional += len(remaining) == 1
+        two_additional += len(remaining) == 2
+        if compiled.status == "exact":
+            complete_cards += 1
+        if remaining:
+            unsupported_sibling_cards += 1
+        if any(
+            ability not in matched
+            for ability in prevention_carriers_by_card.get(oracle_id, ())
+        ):
+            unsupported_grammar_cards.add(oracle_id)
+    unsupported_grammar_cards.update(
+        set(prevention_carriers_by_card) - set(matched_by_card)
+    )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or affected_carriers >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_by_card),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": affected_carriers,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": affected_carriers,
+            "existing_exact_sibling_nodes": exact_siblings,
+            "remaining_residual_sibling_nodes": remaining_sibling_nodes,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": len(matched_by_card) - complete_cards,
+            "expected_oracle_residual_reduction": expected_residual_reduction,
+            "expected_card_program_residual_reduction": expected_residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": unsupported_sibling_cards,
+            "cards_excluded_by_unsupported_prevention_grammar": len(
+                unsupported_grammar_cards
+            ),
+        },
+    }
 
 
 def _self_spell_cost_reduction_measurement(
@@ -1294,6 +1540,15 @@ def _measurement(
     if probe_id not in _PROBE_IDS:
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
+        )
+    if probe_id == _PROBE_FIXED_ALL_DAMAGE_PREVENTION:
+        return _fixed_all_damage_prevention_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
         )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return _self_spell_cost_reduction_measurement(

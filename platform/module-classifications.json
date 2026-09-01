@@ -1949,6 +1949,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/fixed_all_damage_prevention.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/compiler/fixed_controller_effect_sequences.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8352,5 +8367,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "ddcb57aa3672e57bdd1d83776f2615daac7b5a5a7ffebb5c97793008952d4cea"
+  "fingerprint": "0d8810e282d9a802c8e86f2a0760473b860d97933c4eb82e5125690452fc7cba"
 }

@@ -1541,25 +1541,87 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-self-spell-cost-reduction-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-all-damage-prevention-scopes",
+          "member_family_ids": [
+            "continuous_layer:affected-player-ordering",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "replacement:damage-prevention",
+            "replacement:replacement-applicability",
+            "replacement:self-replacement-and-prevention-ordering",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:damage.prevention.persistent_amount",
+            "component:quorune.compiler.fixed_all_damage_prevention.fixed_all_damage_prevention_specs",
+            "component:quorune.compiler.prevention_templates.fixed_prevention_effect_template",
+            "component:quorune.damage.prepare_damage_batch",
+            "component:quorune.damage_modifier_state.DamagePreventionScope",
+            "component:quorune.damage_prevention.collect_damage_modifier_effects",
+            "component:quorune.semantic_runtime.damage_replacements.AllDamagePreventionHandler"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "all-combat-noncombat-damage-kind",
+            "battlefield-static-or-until-end-of-turn-lifetime",
+            "current-source-attached-or-selected-target-identity",
+            "fixed-public-source-characteristic-scope",
+            "fixed-public-subject-characteristic-scope",
+            "source-controller-opponent-relation"
+          ],
+          "shared_dependencies": [
+            "damage.prevention.persistent_amount",
+            "damage.prevention.static_fixed",
+            "damage.replacement.order"
+          ],
+          "shared_grammar": "complete fixed all-damage prevention through one public source scope, one public recipient scope, and either current battlefield-static or until-end-of-turn lifetime",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing prevention replacement predicate, durable shield journal, and current trusted runtime-component discovery across reusable static, spell, activated, and normalized-trigger carriers without another damage or mutation pipeline.",
+          "explicit_exclusions": [
+            "all-but-N, finite, next-instance, divided, variable, and open-arithmetic quantities",
+            "combat-role relationships not carried by an existing selected-target or damage-kind predicate",
+            "compound bodies whose other instructions lack independent capability closure",
+            "conditional secret, chosen, historical, linked-result, dynamic power, dynamic toughness, and mana-value facts",
+            "modal, optional-prevention, repeated-decision, and unsupported multiple-target grammar",
+            "quoted or granted rules text and card-specific runtime identity",
+            "resolution-chosen sources and remembered sources outside the existing incarnation-pinned source-choice owner",
+            "source or recipient token, counter, attachment-state, or target-relative predicates absent from the typed damage snapshot"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-all-damage-prevention-scope-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v154-fixed-self-spell-cost-reductions",
-      "compiler_version": "oracle-ir-v154",
-      "bundle_id": "bundle:fixed-self-spell-cost-reductions",
-      "candidate_ids": ["compiler:fixed-self-spell-cost-reductions"],
+      "transition_id": "oracle-ir-v155-fixed-all-damage-prevention-scopes",
+      "compiler_version": "oracle-ir-v155",
+      "bundle_id": "bundle:fixed-all-damage-prevention-scopes",
+      "candidate_ids": ["compiler:fixed-all-damage-prevention-scopes"],
       "family_ids": [
+        "continuous_layer:affected-player-ordering",
         "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:unparsed-this-spell-costs",
-        "quantity_expression:dynamic-quantity",
-        "target_or_choice:conditional-effect"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "replacement:damage-prevention",
+        "replacement:replacement-applicability",
+        "replacement:self-replacement-and-prevention-ordering",
+        "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "casting.cost.self_public_reduction"
+        "damage.prevention.persistent_amount"
       ],
-      "measurement_id": "measurement:fixed-self-spell-cost-reductions",
+      "measurement_id": "measurement:fixed-all-damage-prevention-scopes",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2072,6 +2134,11 @@
         "candidate_id": "compiler:fixed-self-spell-cost-reductions",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector reports no eligible carried candidate after the ordinary Saga chapter harvest, and policy prohibits another subthreshold card tranche. A bounded comparison retired strict top-library permission, existing additional-cost, and individual alternate-cast lifecycles below the complete-card floor; a fixed all-damage prevention cohort reached the floor but required a new persistent replacement component. The selected integrated probe instead crosses the normal complete-card floor through the existing selected-face cast-cost registry and authoritative total-cost query. It accepts only fixed public object counts, public thresholds, total mana value, devotion, Domain, and canonical spell, death, or turn facts. Target-relative prices, unsupported history, dynamic power or toughness, arbitrary ability predicates, chosen or private facts, floors, caps, and open arithmetic remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-all-damage-prevention-scopes",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-harvest selector has no eligible carried candidate while the raw continuous-layer and prevention leaders remain heterogeneous. The generated integrated probe isolates one qualifying complete-card lower bound through the existing damage replacement predicate, durable prevention journal, current layer-6 ability applicability query, attachment reference, direct-target contract, cleanup owner, and exact replay boundary. It admits only fixed public all-damage source and recipient scopes with static or until-end-of-turn lifetime; finite, chosen, linked, dynamic, modal, multiple-target, combat-role, token, counter, and unsupported compound forms remain fail-closed."
       }
     ]
   },

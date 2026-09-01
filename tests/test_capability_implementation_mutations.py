@@ -80,6 +80,7 @@ from quorune.damage_prevention import (
 )
 from quorune.damage_modifier_state import (
     ChosenDamageSource,
+    DamagePreventionScope,
     DamageAftermathRecipient,
     DealDamagePreventionAftermath,
     GainLifePreventionAftermath,
@@ -2764,9 +2765,19 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
             created_turn_sequence=1,
             damage_kind=PreventionDamageKind.COMBAT,
             recipient_kind=PreventionRecipientKind.PLAYER,
+            scope=DamagePreventionScope(
+                source_characteristics_all=("creature",),
+                target_controller_relation="source_controller",
+            ),
         )
 
-        def damage_event(*, combat: bool, target_kind: str):
+        def damage_event(
+            *,
+            combat: bool,
+            target_kind: str,
+            source_characteristics=("creature",),
+            target_controller="B",
+        ):
             return replacement_effects.ReplaceableEvent(
                 event_id=f"damage:{combat}:{target_kind}",
                 kind="damage",
@@ -2775,6 +2786,8 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
                     "amount": 1,
                     "combat": combat,
                     "target_kind": target_kind,
+                    "source_characteristics": source_characteristics,
+                    "target_controller": target_controller,
                 },
             )
 
@@ -2800,10 +2813,35 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
                     (effect,),
                 )
             )
+            self.assertIsNone(
+                replacement_effects.replacement_choice(
+                    damage_event(
+                        combat=True,
+                        target_kind="player",
+                        source_characteristics=("artifact",),
+                    ),
+                    (effect,),
+                )
+            )
+            self.assertIsNone(
+                replacement_effects.replacement_choice(
+                    damage_event(
+                        combat=True,
+                        target_kind="player",
+                        target_controller="A",
+                    ),
+                    (effect,),
+                )
+            )
 
         assert_scope()
         original = damage_prevention_module._shield_replacement_effect
-        for removed in ("combat", "target_kind"):
+        for removed in (
+            "combat",
+            "source_characteristics",
+            "target_controller",
+            "target_kind",
+        ):
             with self.subTest(removed=removed):
                 def scope_mutant(value, *, removed_field=removed):
                     effect = original(value)

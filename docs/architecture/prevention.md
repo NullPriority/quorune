@@ -36,6 +36,17 @@ players only. The replacement query composes that scope with the
 existing subject and incarnation-pinned chosen-source predicates, so excluded
 noncombat or recipient-kind events neither apply nor consume the shield.
 
+Fixed all-damage instructions can additionally carry one closed public source
+scope and one closed public recipient scope. The same immutable scope value is
+used by until-end-of-turn shields and battlefield-static components. It covers
+current controller or opponent relations, source or attached-object identity,
+one already selected direct target, fixed type, subtype, color, and keyword
+predicates, and any, combat, or noncombat damage. Static discovery requires the
+current layer-6 ability component, recomputes controller and attachment facts,
+and stops when the source leaves the battlefield. Turn-bound shields freeze
+their resolved public identities and expire through the ordinary cleanup
+owner. Both forms still enter the same affected-player replacement ordering.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial
@@ -61,9 +72,11 @@ Runtime components and handlers never mutate shield state directly. Generic
 code does not recognize card names or Oracle IDs. New prevention grammar must
 compile to typed descriptors with exact predicates, provenance, duration, and
 capability dependencies; unsupported predicates and aftermath forms stay
-material residuals. Source or recipient characteristic predicates,
-controller-relative recipient groups, combat-source exceptions, and
-"all but N" quantities remain outside the represented scoped-shield boundary.
+material residuals. Token, counter, open combat-role, dynamic power or
+toughness, mana-value, secret, chosen, history-relative, linked-result, modal,
+optional-prevention, repeated-decision, and unsupported multiple-target
+predicates remain outside the represented fixed all-damage boundary. So do
+combat-source exceptions and "all but N" quantities.
 
 See [ADR 0012](../adr/0012-damage-transaction-and-static-prevention.md),
 [ADR 0015](../adr/0015-durable-damage-modifier-ownership.md), and

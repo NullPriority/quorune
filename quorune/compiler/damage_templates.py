@@ -18,6 +18,10 @@ from .direct_target import (
     DirectPermanentTargetSpec,
     direct_permanent_target_spec,
 )
+from .fixed_all_damage_prevention import (
+    fixed_all_damage_prevention_scope_descriptor,
+    fixed_all_damage_prevention_specs,
+)
 
 
 _ABILITY_WORD = re.compile(
@@ -734,6 +738,8 @@ def _additive_damage_handler(
 
 def static_damage_handler(
     text: str,
+    *,
+    card_name: str = "",
 ) -> tuple[str, dict[str, Any], str] | None:
     """Lower a closed static damage/prevention wording family."""
 
@@ -761,6 +767,42 @@ def static_damage_handler(
                 "modification": {"destination": "source"},
             },
             "damage.redirection.static_to_source",
+        )
+    all_prevention = fixed_all_damage_prevention_specs(
+        normalized,
+        card_name=card_name,
+    )
+    if all_prevention is not None and all(
+        spec.duration == "static"
+        and spec.source.selected_target is None
+        and spec.recipient.selected_target is None
+        for spec in all_prevention
+    ):
+        return (
+            "damage-prevention-fixed-all-scopes-static-v1",
+            {
+                "handler_id": "prevention.damage.all.v1",
+                "schema_version": 1,
+                "event": "damage",
+                "condition": {
+                    "scopes": [
+                        {
+                            "damage_kind": spec.damage_kind,
+                            "source_controller_turn_only": (
+                                spec.source_controller_turn_only
+                            ),
+                            "scope": (
+                                fixed_all_damage_prevention_scope_descriptor(
+                                    spec
+                                )
+                            ),
+                        }
+                        for spec in all_prevention
+                    ]
+                },
+                "modification": {"amount": "all"},
+            },
+            "damage.prevention.persistent_amount",
         )
     match = _DAMAGE_QUANTITY_REPLACEMENT.fullmatch(normalized)
     handler_id = "replacement.damage.quantity.v1"

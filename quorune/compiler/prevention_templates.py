@@ -11,6 +11,11 @@ from ..object_query import (
 from ..rules.source_references import SourceReferenceSpec
 from ..rules.capabilities import capability_dependencies_for_node
 from ..semantics import SemanticProgram
+from .fixed_all_damage_prevention import (
+    fixed_all_damage_prevention_scope_descriptor,
+    fixed_all_damage_prevention_specs,
+    fixed_all_damage_prevention_target_schema,
+)
 
 
 PreventionTemplate = tuple[
@@ -833,6 +838,38 @@ def fixed_prevention_effect_template(
         result = production(normalized)
         if result is not None:
             return result
+    if card_name:
+        specs = fixed_all_damage_prevention_specs(
+            normalized,
+            card_name=card_name,
+        )
+        if specs is not None and all(
+            spec.duration == "until_end_of_turn"
+            and not spec.source_controller_turn_only
+            and not spec.source.attached_identity
+            and not spec.recipient.attached_identity
+            for spec in specs
+        ):
+            target_schema = fixed_all_damage_prevention_target_schema(specs)
+            return (
+                "damage-prevention-fixed-all-scopes-v1",
+                tuple(
+                    {
+                        "op": "create_damage_prevention_shield",
+                        "source": "$source",
+                        "subject": "*",
+                        "mode": "all",
+                        "duration": "until_end_of_turn",
+                        "damage_kind": spec.damage_kind,
+                        "scope": fixed_all_damage_prevention_scope_descriptor(
+                            spec
+                        ),
+                    }
+                    for spec in specs
+                ),
+                target_schema,
+                _rules(target_schema),
+            )
     return None
 
 

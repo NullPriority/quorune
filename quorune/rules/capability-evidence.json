@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "4853be701134982bf0110079e0fa921748fa15b6fd4f74f64a5381161db08012",
-  "declaration_source_fingerprint": "7474cf964917987167735317c22bd0c9cdad228c05e401d044424952b707ffc6",
+  "registry_fingerprint": "34b3ab8a5a70c2d2a01839799f62b9ca63d5f423924ca5be75dd620b0deaffbe",
+  "declaration_source_fingerprint": "552f96be7b3332ce00ebf9150ede8bde0a11a0a614140717481bf1cd567457b7",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -29870,6 +29870,68 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_attached_static_prevention_uses_current_attachment_and_source_facts",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the current attached permanent and current public damage-source characteristics before applying a static all-damage prevention component."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_static_all_prevention_tracks_controller_ability_and_source_lifecycle",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute controller-relative scope and suppress a static prevention component after current layer-6 ability removal or source departure."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_prevention_immediate_sequencing.PreventionImmediateSequencingTests.test_immediate_life_gain_uses_static_replacement_once",
       "official_rule_ids": [
         "609.7",
@@ -30051,7 +30113,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Remove combat or recipient-kind scope from the replacement conditions independently and prove each mutant admits excluded damage."
+      "applicability_note": "Remove combat kind, recipient kind, current source characteristics, or controller-relative recipient scope independently and prove each mutant admits excluded damage."
     },
     {
       "capability_id": "damage.prevention.persistent_amount",
@@ -30149,6 +30211,37 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_all_prevention_handler_fails_closed_and_lowers_negative_scope",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject malformed static all-prevention descriptors and preserve closed negative characteristic and color predicates."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_prevention_immediate_sequencing.PreventionImmediateSequencingTests.test_all_targets_illegal_stops_before_choice_shield_and_life",
       "official_rule_ids": [
         "609.7",
@@ -30242,6 +30335,68 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_damage_prevention_shields.DamagePreventionShieldTests.test_compiled_turn_bound_scopes_install_through_existing_shield_owner",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Feed compiler-produced fixed public source and recipient scopes directly into the existing until-end-of-turn shield creation owner."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_damage_prevention_shields.DamagePreventionShieldTests.test_scoped_all_shield_filters_round_trips_and_expires",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Create, filter, checkpoint, restore, and expire one until-end-of-turn all-damage shield with a typed public source and recipient scope."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_damage_prevention_shields.DamagePreventionShieldTests.test_until_end_of_turn_shields_expire_at_the_cleanup_boundary",
       "official_rule_ids": [
         "609.7",
@@ -30269,6 +30424,68 @@
         "commander_review"
       ],
       "applicability_note": "Expire represented until-end-of-turn prevention state at the cleanup boundary."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_fixed_all_prevention_compiles_across_existing_typed_owners",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed public static, spell, activated, target, attachment, turn, and normalized-trigger prevention scopes through existing typed owners."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_static_all_prevention_tracks_controller_ability_and_source_lifecycle",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply every qualifying damage event while the static component remains currently applicable and stop at its lifecycle boundary."
     },
     {
       "capability_id": "damage.prevention.persistent_amount",
@@ -52557,5 +52774,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "209e015a5d0fd8b52ae9ac184a1fdd42800c185728eaa16a42ee3bbddb2ba1c2"
+  "fingerprint": "a401988871fa0fef5f1e2da09fed1ad5a29db682907fb000b67dd6bf5a659a0c"
 }

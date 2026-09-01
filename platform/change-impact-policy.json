@@ -628,11 +628,19 @@
     {
       "id": "compiler-prevention-expectations",
       "patterns": [
-        "quorune/compiler/prevention_templates.py"
+        "quorune/compiler/damage_templates.py",
+        "quorune/compiler/fixed_all_damage_prevention.py",
+        "quorune/compiler/prevention_templates.py",
+        "tests/fixtures/fixed-all-damage-prevention-cards.json"
       ],
       "test_modules": [
+        "test_capability_implementation_mutations",
+        "test_card_program_trust",
+        "test_damage_prevention_shields",
+        "test_damage_replacement_model",
         "test_fixed_token_creation_effects",
-        "test_high_risk_interaction_assurance"
+        "test_high_risk_interaction_assurance",
+        "test_rules_scheduler"
       ]
     },
     {

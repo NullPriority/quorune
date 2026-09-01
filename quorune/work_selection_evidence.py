@@ -113,8 +113,8 @@ _CORRECTED_CONTENT_ENTRY_FIELDS = _CONTENT_ENTRY_FIELDS | {
 _CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS = (
     _MEASURED_CONTENT_ENTRY_FIELDS | {"forecast_correction"}
 )
-COHORT_MEASUREMENT_SCHEMA_VERSION = 2
-COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v2"
+COHORT_MEASUREMENT_SCHEMA_VERSION = 3
+COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v3"
 _COHORT_DECISIONS = {
     "bounded_executable",
     "retired_below_harvest_floor",
@@ -133,6 +133,19 @@ _COHORT_ROW_FIELDS = {
     "decision",
     "grants_gameplay_trust",
 }
+_COHORT_ACCOUNTING_FIELD = "candidate_accounting"
+_COHORT_ACCOUNTING_FIELDS = {
+    "affected_oracle_carriers",
+    "existing_exact_sibling_nodes",
+    "remaining_residual_sibling_nodes",
+    "trusted_program_transitions",
+    "unresolved_program_transitions",
+    "expected_oracle_residual_reduction",
+    "expected_card_program_residual_reduction",
+    "newly_applicable_high_risk_pairs",
+    "cards_excluded_by_unsupported_sibling",
+    "cards_excluded_by_unsupported_prevention_grammar",
+}
 _TRANSITION_MEASUREMENT_FIELDS = {
     "transition_id",
     "frontier_fingerprint",
@@ -144,6 +157,25 @@ _TRANSITION_MEASUREMENT_FIELDS = {
 
 class WorkSelectionCohortMeasurementError(ValueError):
     pass
+
+
+def _validate_cohort_row_shape(value: Mapping[str, Any]) -> bool:
+    fields = set(value)
+    if fields != _COHORT_ROW_FIELDS and fields != _COHORT_ROW_FIELDS | {
+        _COHORT_ACCOUNTING_FIELD
+    }:
+        return False
+    accounting = value.get(_COHORT_ACCOUNTING_FIELD)
+    if accounting is None:
+        return True
+    return bool(
+        isinstance(accounting, Mapping)
+        and set(accounting) == _COHORT_ACCOUNTING_FIELDS
+        and all(
+            type(accounting.get(field)) is int and accounting[field] >= 0
+            for field in _COHORT_ACCOUNTING_FIELDS
+        )
+    )
 
 
 def validate_harvest_forecast_correction(
@@ -232,7 +264,7 @@ def _validate_transition_measurements(
             or not str(raw.get("frontier_fingerprint") or "")
             or not str(raw.get("oracle_source_sha256") or "")
             or not isinstance(measurement, Mapping)
-            or set(measurement) != _COHORT_ROW_FIELDS
+            or not _validate_cohort_row_shape(measurement)
             or not str(measurement.get("cohort_fingerprint") or "")
             or any(
                 type(measurement.get(field)) is not int
@@ -322,7 +354,7 @@ def validate_work_selection_cohort_measurements(
     )
     result: dict[str, Mapping[str, Any]] = {}
     for row in measurements:
-        if not isinstance(row, Mapping) or set(row) != _COHORT_ROW_FIELDS:
+        if not isinstance(row, Mapping) or not _validate_cohort_row_shape(row):
             raise WorkSelectionCohortMeasurementError(
                 "Cohort measurement row is malformed"
             )

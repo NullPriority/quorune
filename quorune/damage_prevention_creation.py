@@ -10,6 +10,7 @@ from .damage_modifier_state import (
     DamageAftermathRecipient,
     DamageModifierDuration,
     DamageModifierError,
+    DamagePreventionScope,
     DamagePreventionShield,
     DamageSubject,
     DealDamagePreventionAftermath,
@@ -287,6 +288,7 @@ class PreventionShieldCreationRequest:
     subjects: tuple[PreventionSubjectAllocation, ...]
     damage_kind: PreventionDamageKind = PreventionDamageKind.ANY
     recipient_kind: PreventionRecipientKind = PreventionRecipientKind.ANY
+    scope: DamagePreventionScope = DamagePreventionScope()
     chosen_source_ref: str | None = None
     source_predicate: ObjectQuerySpec = ObjectQuerySpec()
     label: str = ""
@@ -309,6 +311,10 @@ class PreventionShieldCreationRequest:
         ):
             raise DamagePreventionCreationError(
                 "Prevention creation requires typed damage and recipient scope"
+            )
+        if not isinstance(self.scope, DamagePreventionScope):
+            raise DamagePreventionCreationError(
+                "Prevention creation requires a typed applicability scope"
             )
         subjects = tuple(self.subjects)
         if not subjects or any(
@@ -734,6 +740,7 @@ def plan_prevention_shield_creation(
                 created_turn_sequence=int(host.state.turn_sequence),
                 damage_kind=request.damage_kind,
                 recipient_kind=request.recipient_kind,
+                scope=request.scope,
                 chosen_source=chosen,
                 label=request.label,
                 aftermath=_aftermath_for_subject(host, request, subject),
