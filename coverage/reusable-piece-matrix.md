@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "cb606d2cb989770a3dbc9da62e51b55d395c87bb1d9266059198ebc0458572e7"
+verified: "65e8b9ada24b2457482947660971a6a27f0f3d26c79fc0fcdeca1cb3e526fed1"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,12 +17,12 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 2,231
+- Pieces: 2,235
 - Cards indexed: 31,623
-- Material abilities classified: 59,328
+- Material abilities classified: 59,329
 - Unclassified material spans: 0
 - Mapped pinned rules: 927 / 3,309
-- Applicable piece pairs: 64,161
+- Applicable piece pairs: 64,477
 - Covered piece pairs: 821
 
 ## Ontology classes
@@ -33,14 +33,14 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `card_forms` — Card types and specialized forms | 6 |
 | `choices_continuations` — Modes, targets, choices, and continuations | 13 |
 | `combat` — Combat | 24 |
-| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,121 |
+| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,123 |
 | `continuous_effects` — Static abilities and continuous effects | 46 |
 | `costs_mana` — Costs and mana | 8 |
 | `events_mutations` — Typed events and mutations | 111 |
-| `keyword_mechanics` — Keyword actions and keyword abilities | 566 |
+| `keyword_mechanics` — Keyword actions and keyword abilities | 567 |
 | `multiplayer_commander` — Multiplayer, Commander, and profile pieces | 4 |
 | `object_identity` — Object identity and lifetime | 31 |
-| `one_shot_effects` — One-shot semantic effects | 175 |
+| `one_shot_effects` — One-shot semantic effects | 176 |
 | `players_format` — Players, relationships, and format state | 2 |
 | `proposals` — Casting and activation proposals | 23 |
 | `quantities` — Quantity and value expressions | 1 |
@@ -61,17 +61,16 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `replacement_prevention` | `inventoried` | 21 | 4 |
 | `state_turn_loops_stabilization` | `inventoried` | 0 | 0 |
 | `targets_modes_searches_references_choices` | `inventoried` | 15 | 10 |
-| `typed_transactions_events_mutations` | `inventoried` | 286 | 78 |
+| `typed_transactions_events_mutations` | `inventoried` | 287 | 78 |
 
 ## Highest current blocker leverage
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 5,795 | 2,495 | 2,495 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 5,746 | 2,465 | 2,465 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,434 | 225 | 225 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,873 | 134 | 134 | `absent` | `untested` |
 | `residual.activated_effect.create-token` | `one_shot_effects` | 314 | 26 | 26 | `absent` | `untested` |
-| `residual.replacement.damage-prevention` | `replacement_prevention` | 167 | 24 | 24 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
 | `residual.effect_clause.create-token` | `one_shot_effects` | 560 | 18 | 18 | `absent` | `untested` |
 | `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 106 | 18 | 18 | `absent` | `untested` |
@@ -79,6 +78,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `residual.activated_effect.put-onto-battlefield` | `one_shot_effects` | 221 | 14 | 14 | `absent` | `untested` |
 | `residual.keyword_dependency.start-your-engines` | `keyword_mechanics` | 40 | 14 | 14 | `absent` | `untested` |
 | `residual.effect_clause.exile` | `one_shot_effects` | 563 | 13 | 13 | `absent` | `untested` |
+| `residual.replacement.damage-prevention` | `replacement_prevention` | 143 | 13 | 13 | `absent` | `untested` |
 | `residual.effect_clause.return` | `one_shot_effects` | 568 | 11 | 11 | `absent` | `untested` |
 | `residual.effect_clause.sacrifice` | `one_shot_effects` | 110 | 11 | 11 | `absent` | `untested` |
 | `residual.keyword_dependency.rebound` | `keyword_mechanics` | 34 | 11 | 11 | `absent` | `untested` |
