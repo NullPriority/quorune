@@ -16,6 +16,15 @@ from quorune.carddb import CardDatabase, CardRecord
 from quorune.counter_placement import (
     prepare_counter_placements as canonical_prepare_counter_placements,
 )
+from quorune.continuous_effect_model import (
+    ContinuousEffect,
+    ContinuousEffectDuration,
+    ContinuousEffectOrigin,
+    ContinuousObjectIdentity,
+    ContinuousOperation,
+    Layer,
+)
+from quorune.continuous_effect_state import commit_continuous_effect
 from quorune.deck import DeckLoader
 from quorune.engine import TURN_STEPS
 from quorune.errors import GameRuleError
@@ -24,6 +33,7 @@ from quorune.entry_counter_model import (
     intrinsic_entry_counters,
 )
 from quorune.model import CardInstance, GameState, StackItem
+from quorune.object_predicate import ObjectQuerySpec
 from quorune.oracle_ir import compile_oracle_card, generated_programs
 from quorune.read_ahead import saga_chapter_line, saga_chapter_numbers
 from quorune.compiler.program_generation import register_generated_programs
@@ -1410,6 +1420,116 @@ class SagaCounterProgressionTests(unittest.TestCase):
 
         self.assertEqual(2, active_saga.counters["lore"])
         self.assertEqual(1, other_saga.counters["lore"])
+
+    def test_removed_current_chapter_abilities_do_not_dispatch_or_block_lore(self):
+        session = self.session(7143014)
+        engine = session.engine
+        record = self.register_ordinary_saga_chapters(engine)
+        saga = self.add_saga(
+            engine,
+            seat="A",
+            ref="removed-chapters",
+            zone="battlefield",
+            oracle_id=record.oracle_id,
+        )
+        identity = ContinuousObjectIdentity(
+            object_id=saga.object_id,
+            logical_object_id=saga.logical_object_id,
+        )
+        commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id="fixture:remove-saga-chapters",
+                source_id="fixture:chapter-removal-source",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("remove_all_abilities"),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                applies=ObjectQuerySpec(zones=("battlefield",)),
+                locked_objects=(identity,),
+            ),
+        )
+
+        changed = advance_active_player_sagas(engine, "A")
+
+        self.assertEqual((saga.object_id,), changed)
+        self.assertEqual(1, saga.counters["lore"])
+        self.assertFalse(engine.state.stack)
+        self.assertFalse(engine.state.pending_trigger_batches)
+
+    def test_current_copy_face_without_chapter_ability_does_not_dispatch(self):
+        session = self.session(7143015)
+        engine = session.engine
+        record = self.register_ordinary_saga_chapters(engine)
+        saga = self.add_saga(
+            engine,
+            seat="A",
+            ref="copied-saga-face",
+            zone="battlefield",
+            oracle_id=record.oracle_id,
+        )
+        saga.annotations["copy_overrides"] = {
+            "name": "Copied Saga Face",
+            "type_line": "Enchantment — Saga",
+            "ability_fragments": [],
+        }
+        saga.counters["lore"] = 1
+
+        dispatch_saga_chapters(
+            engine,
+            saga,
+            previous_lore=0,
+            trigger_batch=[],
+        )
+
+        self.assertFalse(engine.state.stack)
+        self.assertFalse(engine.state.pending_trigger_batches)
+
+    def test_removed_final_chapter_ability_suppresses_sba_and_restore_does_not_replay(self):
+        session = self.session(7143016)
+        engine = session.engine
+        record = self.register_ordinary_saga_chapters(engine)
+        saga = self.add_saga(
+            engine,
+            seat="A",
+            ref="removed-final-chapter",
+            zone="battlefield",
+            oracle_id=record.oracle_id,
+        )
+        saga.counters["lore"] = 2
+        identity = ContinuousObjectIdentity(
+            object_id=saga.object_id,
+            logical_object_id=saga.logical_object_id,
+        )
+        effect = ContinuousEffect(
+            effect_id="fixture:remove-final-saga-chapter",
+            source_id="fixture:chapter-removal-source",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=engine._next_zone_timestamp(),
+            operations=(ContinuousOperation("remove_all_abilities"),),
+            origin=ContinuousEffectOrigin.RESOLUTION,
+            duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+            applies=ObjectQuerySpec(zones=("battlefield",)),
+            locked_objects=(identity,),
+        )
+        commit_continuous_effect(engine.state, effect)
+
+        advance_active_player_sagas(engine, "A")
+        self.assertEqual(3, saga.counters["lore"])
+        self.assertFalse(engine.state.stack)
+        self.assertFalse(engine.state.pending_trigger_batches)
+        self.assertFalse(engine._stabilize())
+        self.assertEqual("battlefield", saga.zone)
+        assert engine.state.continuous_effects is not None
+        engine.state.continuous_effects.remove(effect)
+        self.assertFalse(engine._stabilize())
+
+        self.assertEqual("graveyard", saga.zone)
+        self.assertFalse(engine.state.stack)
+        self.assertFalse(engine.state.pending_trigger_batches)
 
     def test_final_chapter_sba_waits_then_sacrifices_under_current_control(self):
         session = self.session(7144001)

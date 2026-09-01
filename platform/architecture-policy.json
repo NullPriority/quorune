@@ -133,6 +133,7 @@
     "quorune/characteristic_evaluation.py",
     "quorune/characteristic_evaluation_host.py",
     "quorune/dynamic_characteristics.py",
+    "quorune/self_cast_reductions.py",
     "quorune/continuous_effect_state.py",
     "quorune/continuous_effects.py",
     "quorune/continuous_effect_model.py",
@@ -390,6 +391,7 @@
       ,"quorune/selection/target_query.py": "narrow read-only target identity and last-known-information query"
       ,"quorune/zone_transition_model.py": "typed read-only zone-transition host protocol, plan, and departure snapshot definitions"
       ,"quorune/dynamic_characteristics.py": "typed read-only dynamic-characteristic evaluation over public battlefield and owner graveyard state"
+      ,"quorune/self_cast_reductions.py": "typed read-only self spell-cost reduction metrics over public objects and canonical current-turn facts"
       ,"quorune/characteristic_evaluation_host.py": "typed read-only effective-characteristic integration over authoritative public state"
     },
     "model_definition": "quorune/model.py"

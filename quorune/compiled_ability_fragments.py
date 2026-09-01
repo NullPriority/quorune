@@ -4,6 +4,7 @@ from typing import Any, Protocol
 
 from .ability_fragments import (
     AbilityFragmentError,
+    CURRENT_ABILITY_FRAGMENT_COVERAGE,
     StaticComponentSpec,
     StaticAbilityFragment,
     ability_fragment_to_dict,
@@ -98,6 +99,7 @@ def compiled_static_ability_fragments(
                 active_zone="battlefield",
             )
             if program.handlers
+            or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
         }
     )
     programs_by_key.update(
@@ -108,6 +110,7 @@ def compiled_static_ability_fragments(
                 active_zone="all",
             )
             if program.handlers
+            or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
         }
     )
     for program in (
@@ -129,6 +132,8 @@ def compiled_static_ability_fragments(
             and program.event == "characteristics.evaluate"
             and program.ability_id.startswith("static:")
         ):
+            fragments.append(StaticComponentSpec(program.key))
+        if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage:
             fragments.append(StaticComponentSpec(program.key))
         fragments.extend(fragments_from_descriptors(program.handlers))
     return canonical_ability_fragments(fragments)

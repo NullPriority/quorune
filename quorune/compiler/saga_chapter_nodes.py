@@ -6,6 +6,7 @@ from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 from ..read_ahead import saga_chapter_line
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
@@ -137,6 +138,7 @@ def ordinary_saga_chapter_nodes(
                 closure.fingerprint if closure is not None else None
             ),
             runtime_coverage=(
+                CURRENT_ABILITY_FRAGMENT_COVERAGE,
                 "saga_chapter_dispatch",
                 "apnap_trigger_placement",
             ),

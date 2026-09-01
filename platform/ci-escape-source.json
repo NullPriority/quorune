@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-08-29T19:59:54Z",
+  "observed_at": "2026-08-31T23:30:00Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -671,6 +671,42 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The scheduler regression now verifies that the post-harvest optional-effect measurement is retired below each complete-card, exact-ability, and residual-reduction floor while remaining non-authoritative for gameplay trust. The generated-governance impact route already selected the failing module; pre-cloud evidence for a materialized harvest must include the exact scheduler expectation whose current cohort changed."
+    },
+    {
+      "id": "ci-20260831-46",
+      "run_id": 33342572604,
+      "head_sha": "5d4da92890e00f01b66694dcccc203077ae2a54f",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The fixed face-down lifecycle changed the effective-keyword host call to pass the face-down bypass flag, but pull-request impact selection omitted the focused Haste host-double module; the complete main matrix then found four deterministic signature failures.",
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-02 (job 99340770855)"
+      ],
+      "regressions": [
+        "test_haste_rules.HasteRuleTests.test_as_though_haste_applies_only_to_activation_cost_boundary",
+        "test_haste_rules.HasteRuleTests.test_control_timestamp_restricts_only_current_creatures",
+        "test_haste_rules.HasteRuleTests.test_current_effective_haste_is_case_insensitive_and_redundant",
+        "test_haste_rules.HasteRuleTests.test_malformed_effective_keywords_fail_closed"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The monotonic effective-keyword host contract now routes quorune/keyword_abilities.py to both direct Haste and aerial host modules before merge. The main-health recovery script already remains high-risk and selects the complete generated-validation inventory, including its direct-import regression."
+    },
+    {
+      "id": "ci-20260831-47",
+      "run_id": 33366100343,
+      "head_sha": "e2eae3a60c3563763b1667e2eea617ce41a30cd5",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The fixed activation zone-change harvest made Dreadmobile's selected sacrifice cost capability-closed, but its neighboring pinned-source counter-placement inventory still expected the activation to remain inexact and was not selected before merge.",
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-05 (job 99406995914)",
+        "Main / Broad / Python / windows / functional-05 (job 99406995985)"
+      ],
+      "regressions": [
+        "test_fixed_counter_placement_effects.FixedCounterPlacementCompilerTests.test_pinned_source_descriptors_lower_across_trigger_and_activation_contexts[Dreadmobile]"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion."
     }
   ],
   "recent_pull_requests": [

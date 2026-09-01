@@ -7,6 +7,7 @@ import re
 from typing import Any, Mapping, Protocol, Sequence
 
 from .characteristic_evaluation import type_parts
+from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .counter_placement import (
     CounterPlacementCommitPlan,
     CounterPlacementError,
@@ -19,6 +20,7 @@ from .counter_placement import (
 from .model import StackItem
 from .saga_lifecycle import SagaFinalChapterSnapshot
 from .trigger_processing import enqueue_trigger_batch
+from .trigger_discovery import program_has_current_ability_fragments
 
 
 _CHAPTER_EVENT = re.compile(r"saga\.chapter\.(?P<number>[1-9]\d*)")
@@ -132,11 +134,34 @@ def represented_chapter_numbers(
     """Return only trusted typed chapter-event declarations for this face."""
 
     numbers: set[int] = set()
+    characteristics: Mapping[str, Any] | None = None
     for program in host.semantics.programs_for_oracle(card.oracle_id):
         match = _CHAPTER_EVENT.fullmatch(str(program.event or ""))
         if match is None or not host.semantic_program_is_current_trusted(program):
             continue
+        if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage:
+            if characteristics is None:
+                characteristics = host._effective_card_data(card)
+            if not program_has_current_ability_fragments(
+                program,
+                characteristics,
+            ):
+                continue
         numbers.add(int(match.group("number")))
+    return tuple(sorted(numbers))
+
+
+def _trusted_chapter_numbers(
+    host: SagaProgressionHost,
+    card: Any,
+) -> tuple[int, ...]:
+    numbers = {
+        int(match.group("number"))
+        for program in host.semantics.programs_for_oracle(card.oracle_id)
+        if (match := _CHAPTER_EVENT.fullmatch(str(program.event or "")))
+        is not None
+        and host.semantic_program_is_current_trusted(program)
+    }
     return tuple(sorted(numbers))
 
 
@@ -220,11 +245,14 @@ def saga_final_chapter_snapshot(
 
     if not _is_current_saga(host, card):
         return None
-    chapters = represented_chapter_numbers(host, card)
-    if not chapters:
+    trusted_chapters = _trusted_chapter_numbers(host, card)
+    if not trusted_chapters:
         raise SagaProgressionError(
             "Saga final-chapter state requires trusted typed chapter programs"
         )
+    chapters = represented_chapter_numbers(host, card)
+    if not chapters:
+        return None
     lore = card.counters.get("lore", 0)
     if type(lore) is not int or lore < 0:
         raise SagaProgressionError(
@@ -262,7 +290,7 @@ def capture_saga_lore_turn_action(
             continue
         if not _is_current_saga(host, card):
             continue
-        chapters = represented_chapter_numbers(host, card)
+        chapters = _trusted_chapter_numbers(host, card)
         if not chapters:
             raise SagaProgressionError(
                 "Saga progression requires trusted typed chapter programs"
@@ -325,11 +353,13 @@ def dispatch_saga_chapters(
         raise SagaProgressionError(
             "Saga chapter dispatch cannot consume a counter-removal event"
         )
-    represented = set(represented_chapter_numbers(host, card))
-    if not represented:
+    if not _trusted_chapter_numbers(host, card):
         raise SagaProgressionError(
             "Saga chapter dispatch requires trusted typed chapter programs"
         )
+    represented = set(represented_chapter_numbers(host, card))
+    if not represented:
+        return
     for chapter in range(previous_lore + 1, current_lore + 1):
         if chapter not in represented:
             continue
@@ -361,11 +391,13 @@ def dispatch_saga_entry_chapters(
             )
         if not _is_current_saga(host, card):
             return
-        represented = set(represented_chapter_numbers(host, card))
-        if not represented:
+        if not _trusted_chapter_numbers(host, card):
             raise SagaProgressionError(
                 "Saga chapter dispatch requires trusted typed chapter programs"
             )
+        represented = set(represented_chapter_numbers(host, card))
+        if not represented:
+            return
         current_lore = int(card.counters.get("lore", 0))
         # CR 702.155a permits an entry-turn chapter only when the Saga has
         # exactly that chapter's number after all counter replacements.
@@ -407,7 +439,7 @@ def commit_saga_lore_turn_action(
             or card.logical_object_id != subject.logical_object_id
             or card.controller != subject.controller
             or not _is_current_saga(host, card)
-            or represented_chapter_numbers(host, card) != subject.chapters
+            or _trusted_chapter_numbers(host, card) != subject.chapters
         ):
             raise SagaProgressionError(
                 "Saga turn-action snapshot changed before commit"

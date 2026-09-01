@@ -303,7 +303,10 @@ def _owner(relative: str, layer: str) -> str:
         return "oracle_compiler"
     if relative == "quorune/rules/source_references.py":
         return "oracle_compiler"
-    if relative == "quorune/casting_cost_host.py":
+    if relative in {
+        "quorune/casting_cost_host.py",
+        "quorune/self_cast_reductions.py",
+    }:
         return "casting_activation_and_costs"
     if relative in {
         "quorune/compiled_morph.py",
@@ -667,6 +670,7 @@ def build_classifications() -> dict[str, Any]:
                             "target_forms.py",
                             "session.py",
                             "semantics.py",
+                            "self_cast_reductions.py",
                             "card_programs/",
                             "semantic_runtime/",
                             "semantic_choices/",

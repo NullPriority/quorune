@@ -12,6 +12,7 @@ from .casting_activation_metadata_templates import (
     static_self_zone_cast_permission_handler,
 )
 from .cast_cost_modifier_templates import (
+    self_spell_cost_reduction_handler,
     static_fixed_spell_cost_reduction_handler,
 )
 from .combat_metadata_templates import static_goad_prohibition_handler
@@ -435,6 +436,20 @@ def static_runtime_template(
     source_is_class: bool = False,
 ) -> StaticRuntimeTemplate | None:
     """Select one closed static runtime production for an Oracle line."""
+
+    self_spell_reduction = self_spell_cost_reduction_handler(text)
+    if self_spell_reduction is not None:
+        return StaticRuntimeTemplate(
+            compiled=self_spell_reduction,
+            kind="static_ability",
+            event="cast.cost.modify",
+            active_zone="all",
+            dependency_reason=(
+                "self spell-cost reductions require their closed public-query "
+                "capability"
+            ),
+            runtime_coverage=("self_cast_cost_reduction",),
+        )
 
     if source_permanent:
         if source_name is not None and not source_is_class:

@@ -2116,6 +2116,28 @@ class RulesSchedulerTests(unittest.TestCase):
             )
         )
 
+    def test_self_spell_cost_reduction_probe_is_closed(self):
+        probe_id = "fixed-self-spell-cost-reduction-existing-owner-v1"
+        for source in (
+            "This spell costs {2} less to cast if you control a Wizard.",
+            "This spell costs {1} less to cast for each creature card in your graveyard.",
+            "This spell costs {X} less to cast, where X is the total mana value of noncreature artifacts you control.",
+            "This spell costs {3} less to cast if a creature died this turn.",
+            "Domain — This spell costs {1} less to cast for each basic land type among lands you control.",
+            "This spell costs {G} less to cast for each green creature you control.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "This spell costs {2} less to cast if it targets a tapped creature.",
+            "This spell costs {1} less to cast for each card you've drawn this turn.",
+            "This spell costs {X} less to cast, where X is the total power of creatures you control.",
+            "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
+            "The first spell you cast each turn costs {1} less to cast.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_fixed_activation_measurement_counts_only_exact_compiled_nodes(self):
         member_ids = {"activated_cost:fixed-zone-change"}
         frontier = {

@@ -224,6 +224,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.trigger.ward",
                 "casting.bestow.fixed_mana",
                 "casting.cost.modifier.fixed_query",
+                "casting.cost.modifier.self_public",
                 "casting.disguise.fixed_mana",
                 "casting.evoke.fixed_mana",
                 "casting.flashback.fixed_mana",

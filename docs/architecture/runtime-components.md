@@ -62,6 +62,15 @@ equivalent rules text, and dynamically granted or removed Affinity fail closed;
 runtime code does not inspect Oracle text or keyword metadata as substitute
 authority.
 
+`modification.cast-cost.self-public.v1` represents fixed reductions printed on
+the spell carrying the descriptor. Selected-face discovery evaluates only
+public controller/opponent object queries, fixed public thresholds, total mana
+value, devotion, Domain, and canonical spell, death, or active-turn facts. The
+result is a generic or colored reduction vector applied by the same total-cost
+query used for offers and accepted commands. Target-relative prices,
+unrecorded history, dynamic power/toughness, chosen or hidden facts, and open
+arithmetic fail closed rather than becoming a runtime prose query.
+
 `ability.activated.mana.color-set.v1` binds a compiler-pinned relative object
 query to the activating seat and reads only matching public battlefield
 objects or that seat's graveyard. It derives colors from current effective
