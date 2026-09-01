@@ -142,6 +142,7 @@ def enqueue_block_transition_triggers(engine: Any) -> None:
         blocked_attackers: set[str] = set()
         for assignment in event.assignments:
             blocker = participants[assignment.blocker_object_id]
+            blocked_attacker = participants[assignment.attacker_object_id]
             semantic_trigger_refs.extend(
                 engine._dispatch_semantic_event(
                     "creature.blocks",
@@ -151,9 +152,10 @@ def enqueue_block_transition_triggers(engine: Any) -> None:
                         "controller": blocker.controller,
                         "types": ["creature"],
                         "keywords": list(blocker.keywords),
-                        "blocked_attacker": participants[
-                            assignment.attacker_object_id
-                        ].reference,
+                        "blocked_attacker": blocked_attacker.reference,
+                        "blocked_attacker_keywords": list(
+                            blocked_attacker.keywords
+                        ),
                         "block_transition": event.to_dict(),
                     },
                     sources=semantic_sources,

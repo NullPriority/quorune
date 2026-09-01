@@ -646,6 +646,15 @@ when the source leaves the battlefield. Simultaneous multi-permanent Explore,
 repeated Explore, Explore replacement effects, and broader granted/copy
 propagation remain explicit residuals.
 
+Mandatory source-self combat triggers may also place exactly one +1/+1 counter
+after the source deals committed combat damage to a player. The compiler shares
+the normalized damage occurrence and fixed event-trigger composition owner;
+resolution uses the same incarnation-pinned source reference and canonical
+replacement-aware `PlaceCountersIntent` transaction as every other fixed
+counter effect. Noncombat damage, permanent recipients, fully prevented
+damage, optional placement, other counter kinds or counts, and broader damage
+wording remain residual.
+
 One printed fixed positive ordinary-mana or fixed positive life
 cumulative-upkeep instance uses a two-stage semantic continuation. The first
 stage places its age counter through the same replacement-aware transaction and

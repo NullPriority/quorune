@@ -626,6 +626,19 @@
       ]
     },
     {
+      "id": "source-combat-growth-trigger-contract",
+      "patterns": [
+        "quorune/compiler/fixed_source_combat_growth.py"
+      ],
+      "test_modules": [
+        "test_attack_transitions",
+        "test_block_transitions",
+        "test_fixed_counter_event_triggers",
+        "test_prowess_rules",
+        "test_rules_scheduler"
+      ]
+    },
+    {
       "id": "compiler-prevention-expectations",
       "patterns": [
         "quorune/compiler/damage_templates.py",

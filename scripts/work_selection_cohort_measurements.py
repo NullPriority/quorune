@@ -40,6 +40,11 @@ from quorune.compiler.fixed_counter_trigger_nodes import (
 from quorune.compiler.fixed_homogeneous_target_sets import (
     FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,
 )
+from quorune.compiler.fixed_source_combat_growth import (
+    FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
+    SOURCE_ZONE_OBJECT,
+    fixed_source_combat_growth_effect_template,
+)
 from quorune.compiler.fixed_library_selection_templates import (
     fixed_library_selection_effect_template,
 )
@@ -154,6 +159,9 @@ _PROBE_FIXED_ALL_DAMAGE_PREVENTION = (
 _PROBE_ATTACHED_QUOTED_ABILITY_GRANT = (
     "attached-quoted-ability-grant-existing-owner-v1"
 )
+_PROBE_SOURCE_COMBAT_GROWTH_TRIGGER = (
+    "fixed-source-combat-growth-trigger-existing-owner-v1"
+)
 _ATTACHED_GRANT_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
     {
         tuple(
@@ -199,6 +207,7 @@ _PROBE_IDS = {
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
     _PROBE_SELF_SPELL_COST_REDUCTION,
+    _PROBE_SOURCE_COMBAT_GROWTH_TRIGGER,
     _PROBE_TOKEN,
     _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE,
     _PROBE_TRIGGER_ABILITY_WORD_CARRIER,
@@ -655,6 +664,27 @@ def _matches_probe(
                 card_record=card_record,
                 ability=ability,
             )
+        )
+    if probe_id == _PROBE_SOURCE_COMBAT_GROWTH_TRIGGER:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Source combat-growth measurement requires card context"
+            )
+        card_name, _source_is_permanent, _attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        binding = fixed_counter_trigger_binding(
+            _without_parenthetical_reminder(source),
+            card_name=card_name,
+        )
+        return bool(
+            binding is not None
+            and fixed_source_combat_growth_effect_template(
+                binding.body,
+                event=binding.event.value,
+                variant=binding.variant,
+            )[0]
+            in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
         )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return self_spell_cost_reduction_handler(source) is not None
@@ -1337,6 +1367,184 @@ def _attached_quoted_ability_grant_measurement(
     }
 
 
+def _source_combat_growth_trigger_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact source-self combat growth through integrated owners."""
+
+    cards_by_id: dict[str, Mapping[str, Any]] = {}
+    broad_carriers: dict[str, list[Mapping[str, Any]]] = {}
+    matched_carriers: dict[str, list[Mapping[str, Any]]] = {}
+    broad = re.compile(
+        r"^Whenever this creature "
+        r"(?:attacks|blocks|becomes blocked|deals combat damage)\b.*"
+        r"(?:gets [+-]|counter on (?:it|this creature))",
+        re.IGNORECASE,
+    )
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        cards_by_id[oracle_id] = card
+        for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
+            source = _source_line(record, ability)
+            if broad.search(source):
+                broad_carriers.setdefault(oracle_id, []).append(ability)
+            if _matches_probe(
+                probe_id,
+                source,
+                card_record=record,
+                ability=ability,
+            ):
+                matched_carriers.setdefault(oracle_id, []).append(ability)
+
+    registry = load_default_capability_registry()
+    represented_by_card: dict[str, list[Mapping[str, Any]]] = {}
+    compiled_by_card: dict[str, Any] = {}
+    for oracle_id, carriers in matched_carriers.items():
+        compiled = compile_oracle_card(
+            cards_by_oracle_id[oracle_id],
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented: list[Mapping[str, Any]] = []
+        for ability in carriers:
+            face_id = str(ability.get("face_id") or "front")
+            source_line = int(ability["source_line"])
+            face = next(
+                (value for value in compiled.faces if value.face_id == face_id),
+                None,
+            )
+            if face is None:
+                continue
+            nodes = [
+                node
+                for node in face.nodes
+                if node.span.line == source_line
+                and node.exact
+                and len(node.effects) == 1
+                and node.effects[0].get("card") == SOURCE_ZONE_OBJECT
+                and node.effects[0].get("op")
+                in {"modify_stats_until_end_of_turn", "place_counters"}
+                and "current_ability_fragment_required" in node.runtime_coverage
+            ]
+            if len(nodes) == 1:
+                represented.append(ability)
+        if represented:
+            represented_by_card[oracle_id] = represented
+            compiled_by_card[oracle_id] = compiled
+
+    affected_carriers = sum(
+        len(values) for values in represented_by_card.values()
+    )
+    complete_cards = 0
+    exact_siblings = 0
+    remaining_sibling_nodes = 0
+    expected_residual_reduction = 0
+    one_additional = 0
+    two_additional = 0
+    unsupported_sibling_cards = 0
+    for oracle_id, represented in represented_by_card.items():
+        card = cards_by_id[oracle_id]
+        compiled = compiled_by_card[oracle_id]
+        exact_siblings += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        remaining = [
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        ]
+        remaining_sibling_nodes += len(remaining)
+        one_additional += len(remaining) == 1
+        two_additional += len(remaining) == 2
+        unsupported_sibling_cards += bool(remaining)
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        expected_residual_reduction += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+        complete_cards += compiled.status == "exact"
+        if len(represented) != len(matched_carriers[oracle_id]):
+            raise WorkSelectionCohortMeasurementError(
+                "Source combat-growth probe matched a carrier without one "
+                "exact integrated node"
+            )
+
+    unsupported_grammar_cards = set(broad_carriers) - set(
+        represented_by_card
+    )
+    unsupported_grammar_cards.update(
+        oracle_id
+        for oracle_id, carriers in broad_carriers.items()
+        if any(
+            ability not in represented_by_card.get(oracle_id, ())
+            for ability in carriers
+        )
+    )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or affected_carriers >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(represented_by_card),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": affected_carriers,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": affected_carriers,
+            "existing_exact_sibling_nodes": exact_siblings,
+            "remaining_residual_sibling_nodes": remaining_sibling_nodes,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": (
+                len(represented_by_card) - complete_cards
+            ),
+            "expected_oracle_residual_reduction": expected_residual_reduction,
+            "expected_card_program_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                unsupported_sibling_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                unsupported_grammar_cards
+            ),
+        },
+    }
+
+
 def _self_spell_cost_reduction_measurement(
     *,
     frontier: Mapping[str, Any],
@@ -1778,6 +1986,15 @@ def _measurement(
         )
     if probe_id == _PROBE_ATTACHED_QUOTED_ABILITY_GRANT:
         return _attached_quoted_ability_grant_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_SOURCE_COMBAT_GROWTH_TRIGGER:
+        return _source_combat_growth_trigger_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,

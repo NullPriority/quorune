@@ -427,6 +427,24 @@ class CommanderEngine:
                     plan.matched_rule_ids,
                 )
 
+    def test_source_combat_growth_owner_selects_public_event_contract(self):
+        plan = classify_changes(
+            ["quorune/compiler/fixed_source_combat_growth.py"]
+        )
+        self.assertIn(
+            "source-combat-growth-trigger-contract",
+            plan.matched_rule_ids,
+        )
+        self.assertTrue(
+            {
+                "test_attack_transitions",
+                "test_block_transitions",
+                "test_fixed_counter_event_triggers",
+                "test_prowess_rules",
+                "test_rules_scheduler",
+            }.issubset(plan.test_modules)
+        )
+
     def test_browser_action_and_choice_contracts_are_explicit(self):
         for path in (
             "quorune/rules/action_catalog.py",
