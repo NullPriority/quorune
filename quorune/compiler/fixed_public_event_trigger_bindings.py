@@ -7,6 +7,9 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from .fixed_entry_return_requirements import (
+    fixed_entry_return_requirement_spec,
+)
 
 
 _PUBLIC_DAMAGE_TRIGGER = re.compile(
@@ -81,6 +84,57 @@ def _all_conditions(
     if not values:
         return None
     return values[0] if len(values) == 1 else {"all": values}
+
+
+def _entry_return_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    requirement = fixed_entry_return_requirement_spec(material_line)
+    if requirement is None or ", " not in material_line:
+        return None
+    condition: Mapping[str, Any]
+    if requirement.event_predicate is None:
+        condition = {"field": "card", "op": "eq", "value": "$source.ref"}
+    else:
+        query = requirement.event_predicate
+        values: list[Mapping[str, Any]] = []
+        if query.controller == "$actor":
+            values.append(
+                {
+                    "field": "controller",
+                    "op": "eq",
+                    "value": "$source.controller",
+                }
+            )
+        if query.types_all:
+            values.append(
+                {
+                    "field": "types",
+                    "op": "contains_any",
+                    "value": list(query.types_all),
+                }
+            )
+        if query.subtypes_all:
+            values.append(
+                {
+                    "field": "subtypes",
+                    "op": "contains_any",
+                    "value": list(query.subtypes_all),
+                }
+            )
+        if query.exclude_ref == "$source":
+            values.append(
+                {"field": "card", "op": "ne", "value": "$source.ref"}
+            )
+        condition = values[0] if len(values) == 1 else {"all": values}
+    return _spec(
+        "permanent.enter",
+        "fixed_entry_return_requirement",
+        material_line.split(", ", 1)[1],
+        "fixed-counter-entry-return-public-zone-trigger-v1",
+        "trigger-event-normalized-zone-change",
+        condition=condition,
+    )
 
 
 def _spec(
@@ -287,6 +341,9 @@ def _public_zone_spec(
     *,
     card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
+    entry_return = _entry_return_spec(material_line)
+    if entry_return is not None:
+        return entry_return
     parsers: tuple[Callable[[str], FixedPublicEventBindingSpec | None], ...] = (
         _artifact_graveyard_spec,
         _land_entry_spec,

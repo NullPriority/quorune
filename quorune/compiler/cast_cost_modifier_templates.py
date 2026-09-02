@@ -517,7 +517,7 @@ def _single_spell_quality(
     return "conjunction", fields
 
 
-def _fixed_spell_predicate(subject: str) -> ObjectQuerySpec | None:
+def fixed_spell_predicate(subject: str) -> ObjectQuerySpec | None:
     normalized = subject.strip()
     if normalized.casefold() == "spells you cast":
         return ObjectQuerySpec()
@@ -569,7 +569,7 @@ def static_fixed_spell_cost_reduction_handler(
     if match is None:
         return None
     try:
-        predicate = _fixed_spell_predicate(match.group("subject"))
+        predicate = fixed_spell_predicate(match.group("subject"))
     except ObjectQueryError:
         return None
     if predicate is None:
@@ -590,6 +590,7 @@ def static_fixed_spell_cost_reduction_handler(
 
 __all__ = [
     "CastCostModifierTemplate",
+    "fixed_spell_predicate",
     "self_spell_cost_reduction_handler",
     "static_fixed_spell_cost_reduction_handler",
 ]

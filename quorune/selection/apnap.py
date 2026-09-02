@@ -100,8 +100,11 @@ class ApnapChoiceOwnerMixin:
         card_type = str((effect.get("filter") or {}).get("type") or "").casefold()
         controller_only = bool((effect.get("filter") or {}).get("controlled", True))
         candidates: list[str] = []
+        excluded_ref = str(effect.get("exclude_ref") or "")
         for object_id in self.state.players[seat].zones.get(zone, []):
             card = self.state.cards[object_id]
+            if excluded_ref and card.ref == excluded_ref:
+                continue
             if controller_only and zone == "battlefield" and card.controller != seat:
                 continue
             if card_type and card_type not in str(self._effective_card_data(card).get("type_line") or "").casefold():
@@ -176,6 +179,8 @@ class ApnapChoiceOwnerMixin:
                 "count",
                 "then",
                 "prompt",
+                *(("exclude_ref",) if "exclude_ref" in effect else ()),
+                *(("require_full_count", "fallback_effects") if effect.get("require_full_count") is True else ()),
                 *(("hidden",) if private_discard else ()),
                 *(('target',) if "target" in effect else ()),
             }
@@ -198,6 +203,7 @@ class ApnapChoiceOwnerMixin:
                 )
                 not in {
                     ("battlefield", "sacrifice", False),
+                    ("battlefield", "return_owner_hand", False),
                     ("hand", "discard", True),
                 }
                 or type(effect.get("actor")) is not str
@@ -210,6 +216,18 @@ class ApnapChoiceOwnerMixin:
                 )
                 or type(effect.get("prompt")) is not str
                 or not str(effect.get("prompt")).strip()
+                or (
+                    "exclude_ref" in effect
+                    and (type(effect.get("exclude_ref")) is not str or not effect.get("exclude_ref"))
+                )
+                or (
+                    effect.get("require_full_count") is True
+                    and (
+                        effect.get("then") != "return_owner_hand"
+                        or not isinstance(effect.get("fallback_effects"), list)
+                        or not effect.get("fallback_effects")
+                    )
+                )
             ):
                 raise GameRuleError("Typed APNAP choice effect is malformed")
         choice_state = {
@@ -230,6 +248,15 @@ class ApnapChoiceOwnerMixin:
         effect = state["effect"]
         options = self._choice_options(seat, effect)
         count = min(int(effect.get("count", 1)), len(options))
+        if effect.get("require_full_count") is True and count < int(
+            effect.get("count", 1)
+        ):
+            selected = dict(state["selected"])
+            selected[seat] = []
+            state["selected"] = selected
+            state["queue"] = queue[1:]
+            self._issue_next_apnap_choice(state)
+            return
         if count == 0:
             selected = dict(state["selected"])
             selected[seat] = []
@@ -375,6 +402,7 @@ class ApnapChoiceOwnerMixin:
             "sacrifice": "graveyard",
             "discard": "graveyard",
             "exile": "exile",
+            "return_owner_hand": "hand",
         }.get(then)
         if destination is None:
             raise GameRuleError(f"Unsupported APNAP continuation {then}")
@@ -397,9 +425,14 @@ class ApnapChoiceOwnerMixin:
         instruction_pointer = int(
             semantic_frame.get("instruction_pointer", 0)
         )
-        self._continue_resolution(
-            stack_ref=stack_ref,
-            effects=[
+        full_count_required = effect.get("require_full_count") is True
+        full_count_paid = len(selected_refs) == int(effect.get("count", 1))
+        if full_count_required and not full_count_paid:
+            commit_effects = [
+                dict(value) for value in effect.get("fallback_effects", [])
+            ]
+        else:
+            commit_effects = [
                 {
                     "op": APNAP_OBJECT_COMMIT_OPERATION,
                     "actor": actor,
@@ -415,7 +448,12 @@ class ApnapChoiceOwnerMixin:
                     ),
                     "event_code": f"choice.{then}",
                     "message": f"Applied simultaneous {then} choices.",
-                },
+                }
+            ]
+        self._continue_resolution(
+            stack_ref=stack_ref,
+            effects=[
+                *commit_effects,
                 *(dict(item) for item in resume.get("effects", [])),
             ],
             destination=resume.get("destination"),

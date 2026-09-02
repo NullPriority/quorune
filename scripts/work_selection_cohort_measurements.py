@@ -4,6 +4,7 @@ from functools import lru_cache, partial
 import re
 from typing import Any, Mapping, Sequence
 
+from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from quorune.abilities import parse_activated_abilities
 from quorune.characteristic_evaluation import type_parts
 from quorune.compiler.activated_zone_change_costs import (
@@ -29,6 +30,9 @@ from quorune.compiler.modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
+from quorune.compiler.public_cast_cost_modifiers import (
+    public_cast_cost_modifier_template,
+)
 from quorune.compiler.regeneration_templates import (
     fixed_regeneration_effect_template,
 )
@@ -36,6 +40,10 @@ from quorune.compiler.fixed_counter_trigger_nodes import (
     FixedSpellCastCharacteristicQuery,
     fixed_counter_trigger_binding,
     fixed_typed_event_effect_trigger_node,
+)
+from quorune.compiler.fixed_cast_lifecycles import fixed_cast_lifecycle_spec
+from quorune.compiler.fixed_entry_return_requirements import (
+    fixed_entry_return_requirement_spec,
 )
 from quorune.compiler.fixed_homogeneous_target_sets import (
     FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,
@@ -162,6 +170,13 @@ _PROBE_ATTACHED_QUOTED_ABILITY_GRANT = (
 _PROBE_SOURCE_COMBAT_GROWTH_TRIGGER = (
     "fixed-source-combat-growth-trigger-existing-owner-v1"
 )
+_PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER = (
+    "public-static-cast-cost-modifier-existing-owner-v1"
+)
+_PROBE_FIXED_CAST_LIFECYCLES = "fixed-cast-lifecycle-existing-owner-v1"
+_PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS = (
+    "fixed-entry-return-requirement-existing-owner-v1"
+)
 _ATTACHED_GRANT_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
     {
         tuple(
@@ -187,6 +202,8 @@ _PROBE_IDS = {
     _PROBE_ATTACHED_QUOTED_ABILITY_GRANT,
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
+    _PROBE_FIXED_CAST_LIFECYCLES,
+    _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY,
@@ -203,6 +220,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_LIBRARY_SELECTION,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
+    _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
     _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS,
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
@@ -688,6 +706,12 @@ def _matches_probe(
         )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return self_spell_cost_reduction_handler(source) is not None
+    if probe_id == _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER:
+        return public_cast_cost_modifier_template(source) is not None
+    if probe_id == _PROBE_FIXED_CAST_LIFECYCLES:
+        return fixed_cast_lifecycle_spec(source) is not None
+    if probe_id == _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS:
+        return fixed_entry_return_requirement_spec(source) is not None
     if probe_id == _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(
@@ -1545,6 +1569,163 @@ def _source_combat_growth_trigger_measurement(
     }
 
 
+def _fixed_entry_return_requirement_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact entry-return triggers through event and choice owners."""
+
+    registry = load_default_capability_registry()
+    cards_by_id: dict[str, Mapping[str, Any]] = {}
+    broad_cards: set[str] = set()
+    matched_by_card: dict[str, list[Mapping[str, Any]]] = {}
+    represented_by_card: dict[str, list[Mapping[str, Any]]] = {}
+    compiled_by_card: dict[str, Any] = {}
+    broad = re.compile(
+        r"^When .+ enters, (?:sacrifice it unless you )?return .+ owner's hand",
+        re.IGNORECASE,
+    )
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        cards_by_id[oracle_id] = card
+        for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
+            source = _source_line(record, ability)
+            if broad.search(source):
+                broad_cards.add(oracle_id)
+            if _matches_probe(
+                probe_id,
+                source,
+                card_record=record,
+                ability=ability,
+            ):
+                matched_by_card.setdefault(oracle_id, []).append(ability)
+
+    for oracle_id, carriers in matched_by_card.items():
+        compiled = compile_oracle_card(
+            cards_by_oracle_id[oracle_id],
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented: list[Mapping[str, Any]] = []
+        for ability in carriers:
+            face_id = str(ability.get("face_id") or "front")
+            source_line = int(ability["source_line"])
+            face = next(
+                (value for value in compiled.faces if value.face_id == face_id),
+                None,
+            )
+            if face is None:
+                continue
+            nodes = [
+                node
+                for node in face.nodes
+                if node.span.line == source_line
+                and node.exact
+                and node.template_id
+                == "fixed-typed-effect-entry-return-public-zone-trigger-v1"
+                and len(node.effects) == 1
+                and node.effects[0].get("op")
+                in {"bounce", "choose_cards_apnap", "choose_option"}
+                and CURRENT_ABILITY_FRAGMENT_COVERAGE in node.runtime_coverage
+                and "choice.controller.fixed_return_owner_hand"
+                in node.capability_dependencies
+            ]
+            if len(nodes) == 1:
+                represented.append(ability)
+        if represented:
+            represented_by_card[oracle_id] = represented
+            compiled_by_card[oracle_id] = compiled
+
+    affected_carriers = sum(len(value) for value in represented_by_card.values())
+    complete_cards = 0
+    exact_siblings = 0
+    remaining_siblings = 0
+    expected_residual_reduction = 0
+    one_additional = 0
+    two_additional = 0
+    unsupported_sibling_cards = 0
+    for oracle_id, represented in represented_by_card.items():
+        card = cards_by_id[oracle_id]
+        compiled = compiled_by_card[oracle_id]
+        exact_siblings += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        remaining = [
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        ]
+        remaining_siblings += len(remaining)
+        one_additional += len(remaining) == 1
+        two_additional += len(remaining) == 2
+        unsupported_sibling_cards += bool(remaining)
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        expected_residual_reduction += max(
+            0, base_residuals - len(compiled.material_residuals)
+        )
+        complete_cards += compiled.status == "exact"
+        if len(represented) != len(matched_by_card[oracle_id]):
+            raise WorkSelectionCohortMeasurementError(
+                "Entry-return probe matched a carrier without one exact "
+                "integrated node"
+            )
+
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or affected_carriers >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(represented_by_card),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": affected_carriers,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable" if reaches_floor else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": affected_carriers,
+            "existing_exact_sibling_nodes": exact_siblings,
+            "remaining_residual_sibling_nodes": remaining_siblings,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": len(represented_by_card) - complete_cards,
+            "expected_oracle_residual_reduction": expected_residual_reduction,
+            "expected_card_program_residual_reduction": expected_residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": unsupported_sibling_cards,
+            "cards_excluded_by_unsupported_grammar": len(
+                broad_cards - set(represented_by_card)
+            ),
+        },
+    }
+
+
 def _self_spell_cost_reduction_measurement(
     *,
     frontier: Mapping[str, Any],
@@ -1995,6 +2176,15 @@ def _measurement(
         )
     if probe_id == _PROBE_SOURCE_COMBAT_GROWTH_TRIGGER:
         return _source_combat_growth_trigger_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS:
+        return _fixed_entry_return_requirement_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,

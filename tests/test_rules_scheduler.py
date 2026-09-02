@@ -58,6 +58,7 @@ from scripts.update_rules_scheduler import _compact_markdown
 from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
     _fixed_activation_zone_change_predicate_measurement,
+    _fixed_entry_return_requirement_measurement,
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
@@ -2338,6 +2339,86 @@ class RulesSchedulerTests(unittest.TestCase):
                 "affected_oracle_carriers"
             ],
         )
+
+    def test_entry_return_probe_requires_integrated_exact_node(self):
+        source = (
+            "When this land enters, return a land you control to its owner's hand."
+        )
+        record = SimpleNamespace(
+            oracle_id="fixture:entry-return",
+            name="Entry return fixture",
+            oracle_text=source,
+            type_line="Land",
+            faces=(),
+        )
+        ability = {
+            "ability_id": "front:n1",
+            "face_id": "front",
+            "source_line": 1,
+            "status": "unresolved",
+            "residuals": [{"residual_id": "r1"}],
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "abilities": [ability],
+                }
+            ]
+        }
+        node = SimpleNamespace(
+            exact=True,
+            span=SimpleNamespace(line=1),
+            template_id=(
+                "fixed-typed-effect-entry-return-public-zone-trigger-v1"
+            ),
+            effects=(
+                {
+                    "op": "choose_cards_apnap",
+                    "actor": "$controller",
+                },
+            ),
+            runtime_coverage=("current_ability_fragment_required",),
+            capability_dependencies=(
+                "choice.controller.fixed_return_owner_hand",
+            ),
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(node,)),),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _fixed_entry_return_requirement_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-entry-return-requirements",
+                probe_id=(
+                    "fixed-entry-return-requirement-existing-owner-v1"
+                ),
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
 
     def test_fixed_activation_measurement_counts_only_exact_compiled_nodes(self):
         member_ids = {"activated_cost:fixed-zone-change"}

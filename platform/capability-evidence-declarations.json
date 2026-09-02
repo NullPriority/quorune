@@ -3914,6 +3914,86 @@
       "applicability_note": "Reject a stale issued candidate and a malformed typed predicate while preserving the exact authoritative state hash."
     },
     {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Choose a currently controlled permanent owned by another seat and move it to its owner's hand through the canonical simultaneous transition."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_unless_branch_and_ability_removal",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Exercise both return and sacrifice branches, exact-payment fallback, source exclusion, and current layer-6 ability removal."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_external_entry_self_returns_batch_in_apnap_order",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Batch controlled-subtype and other-object entry triggers across seats in ordinary APNAP order and return each exact source."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_capability_dependency_fails_closed",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the entry-return capability and require the otherwise matching trigger to lose exact trust before runtime admission."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_capability_shape_mutants_fail_closed",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject unknown outer fields, renamed options, unsupported fallback effects, and controller-bearing predicates before capability closure."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_entry_return_requirements_compile_exactly_and_fail_closed",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep targeted, up-to, aggregate, optional, variable, opponent-relative, and compound entry-return forms material and fail closed."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_entry_return_requirements_compile_exactly_and_fail_closed",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower the fixed source-entry and external-entry grammar to source-spanned typed event, choice, return, fallback, and current-ability descriptors."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose only public return choices and preserve owner-scoped hand state after the public battlefield object moves."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the public choice continuation, owner-hand destination, normalized move, and final authoritative state hash."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_revalidates_and_rolls_back",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject a chosen permanent that left the battlefield after issuance and preserve the exact authoritative state hash without resuming the trigger."
+    },
+    {
       "capability_id": "choice.modal.fixed_nonrepeating",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_nonrepeating_modal_programs.FixedNonrepeatingModalRuntimeTests.test_choose_two_spell_commits_ordered_modes_targets_and_replays",
