@@ -1703,14 +1703,14 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v158-opponent-quantifier-boundaries",
-      "compiler_version": "oracle-ir-v158",
+      "transition_id": "oracle-ir-v159-prevention-applicability-boundaries",
+      "compiler_version": "oracle-ir-v159",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Preserve existential singular-opponent and aggregate plural-opponents quantification in typed public self spell-cost reductions."
+      "non_harvest_reason": "Correct unavailable prevention facts and deduplicate sibling prevent-all scopes only through an explicit semantic application group."
     },
     "forecast_corrections": [
       {
