@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "9527be15444b0351727fd3dd1d3502d1dbea862b87cb5f29dd39a893a7034cc0"
+verified: "17f9ad6320f834278cbb81047404d8746be263b07a33fbcc2df929af2496329c"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `55c17a732cef1611a3877b1a077ef4e0d0f277e595bbfcc4e09f2e7951eff6af`
+Source fingerprint: `ce149131eea2bc63ad4e77ce4346e328f2a31ef806c96f35c1df9877d478edde`
 
 ## Current top-level state
 
@@ -20,9 +20,9 @@ Source fingerprint: `55c17a732cef1611a3877b1a077ef4e0d0f277e595bbfcc4e09f2e7951e
 - Subsystems: `21`
 - Selected subsystem: `replacement-prevention`
 - Selected batch: `counter-producer-replacement-closure`
-- Selected cross-program work: `none`
-- Selected work class: `none`
-- Selected work state: `none`
+- Selected cross-program work: `ci:materialize-harvest-outcome`
+- Selected work class: `ci_correctness`
+- Selected work state: `implementation`
 - Measurement grants gameplay trust: `not_applicable`
 
 ## Cross-program work selection
@@ -34,8 +34,8 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 
 | Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |
 |---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 2 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 1 | selected | implementation | true | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 2 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 3 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 54 |
@@ -69,7 +69,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 33 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
 | 34 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 236 | 0.0 | 0 | 0 |
 
-Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.
+Selected reason: Complete the declared semantic transition's content receipts so the current feature fixed point can materialize its outcome before another implementation cohort is selected.
 
 ## Top blockers
 
