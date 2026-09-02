@@ -8,7 +8,7 @@ import unittest
 
 from quorune import replacement_effects
 
-from common import ROOT, keep_all, make_session
+from common import ROOT, keep_all, make_session, pass_current
 from property_budget import property_transitions
 from scripts.build_test_database import build_fixture_database
 from quorune.carddb import CardDatabase
@@ -19,6 +19,7 @@ from quorune.damage import (
     DamageError,
     DamageRecipientSnapshot,
     prepare_damage_batch,
+    source_snapshot,
 )
 from quorune.continuous_effect_state import commit_continuous_effect
 from quorune.continuous_effects import (
@@ -31,7 +32,8 @@ from quorune.continuous_effects import (
 )
 from quorune.deck import DeckLoader
 from quorune.engine import GameRuleError
-from quorune.model import CardInstance, StackItem
+from quorune.damage_modifier_state import DamagePreventionScope
+from quorune.model import CardInstance, CombatState, StackItem
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.projection import StateProjector
 from quorune.record import (
@@ -42,10 +44,14 @@ from quorune.record import (
 from quorune.compiler.fixed_all_damage_prevention import (
     fixed_all_damage_prevention_specs,
 )
-from quorune.oracle_ir import compile_oracle_card
+from quorune.oracle_ir import (
+    compile_oracle_card,
+    register_generated_programs,
+)
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.replacement_effects import (
     ReplacementChoiceRequired,
+    replacement_choice,
     resolve_replacements,
 )
 from quorune.semantic_runtime import (
@@ -226,6 +232,476 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
                         card_name="Generic Prevention Fixture",
                     )
                 )
+
+    def add_card(
+        self,
+        engine,
+        *,
+        seat: str,
+        name: str,
+        ref: str,
+        zone: str,
+    ) -> CardInstance:
+        record = self.db.lookup(name)
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="provisional",
+            capability_registry=load_default_capability_registry(),
+            capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        value = CardInstance(
+            object_id=f"fixture:{ref}",
+            ref=ref,
+            oracle_id=record.oracle_id,
+            printed_name=record.name,
+            owner=seat,
+            controller=seat,
+            zone=zone,
+            zone_timestamp=engine._next_zone_timestamp(),
+            known_to=list(engine.seats),
+            revealed_to=list(engine.seats),
+        )
+        engine.state.cards[value.object_id] = value
+        engine.state.players[seat].zones[zone].append(value.object_id)
+        return value
+
+    @staticmethod
+    def resolve_stack(session) -> None:
+        for _ in range(16):
+            if not session.engine.state.stack:
+                return
+            pass_current(session)
+        raise AssertionError("Prevention fixture stack did not resolve")
+
+    def test_targeted_prevention_scope_substitutes_nested_target_reference(self):
+        session = self.session(120461510)
+        engine = session.engine
+        spell = self.add_card(
+            engine,
+            seat="A",
+            name="Targeted Prevention Technique",
+            ref="targeted-prevention-spell",
+            zone="hand",
+        )
+        chosen = self.add_card(
+            engine,
+            seat="B",
+            name="White Knight",
+            ref="chosen-attacker",
+            zone="battlefield",
+        )
+        other = self.add_card(
+            engine,
+            seat="B",
+            name="Mishra, Eminent One",
+            ref="other-attacker",
+            zone="battlefield",
+        )
+        compiled = compile_oracle_card(
+            self.db.lookup("Targeted Prevention Technique"),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+        )
+        effect = compiled.faces[0].nodes[0].effects[0]
+        self.assertEqual("$target.0", effect["scope"]["source_ref"])
+        engine.state.active_player = "B"
+        engine.state.phase = "combat"
+        engine.state.step = "declare_blockers"
+        engine.state.combat = CombatState(
+            attackers_declared=True,
+            attackers={
+                chosen.object_id: "A",
+                other.object_id: "A",
+            },
+            defending_players=["A"],
+        )
+        chosen.attacking = "A"
+        other.attacking = "A"
+        engine.state.players["A"].mana_pool["W"] = 1
+        engine.state.priority_player = "A"
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:A",
+            {
+                "a": "cast",
+                "card": spell.ref,
+                "targets": [chosen.ref],
+                "pay": "manual",
+                "payment": {"W": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_stack(session)
+        self.assertEqual(1, len(engine.state.damage_prevention_shields))
+        shield = engine.state.damage_prevention_shields[0]
+        self.assertEqual(chosen.ref, shield.scope.source_ref)
+        self.assertNotEqual("$target.0", shield.scope.source_ref)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "nested-target-prevention"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+        result = commit_prepared_damage_batch(
+            engine,
+            prepare_damage_batch(
+                engine,
+                (
+                    self.proposal(
+                        engine,
+                        source=chosen,
+                        target="A",
+                        event_id="damage:chosen-attacker",
+                        combat=True,
+                    ),
+                    self.proposal(
+                        engine,
+                        source=other,
+                        target="A",
+                        event_id="damage:other-attacker",
+                        combat=True,
+                    ),
+                ),
+            ),
+        )
+        self.assertEqual([0, 3], [event.dealt_amount for event in result.events])
+        self.assertEqual(
+            [3, 0], [event.prevented_amount for event in result.events]
+        )
+
+    @staticmethod
+    def negative_scope_effect(
+        *,
+        excluded_type: str | None = None,
+        excluded_color: str | None = None,
+    ):
+        handler = AllDamagePreventionHandler()
+        scope = DamagePreventionScope(
+            source_characteristics_none=(
+                (excluded_type,) if excluded_type is not None else ()
+            ),
+            source_colors_none=(
+                (excluded_color,) if excluded_color is not None else ()
+            ),
+        )
+        descriptor = {
+            "handler_id": handler.handler_id,
+            "schema_version": 1,
+            "event": "damage",
+            "condition": {
+                "scopes": [
+                    {
+                        "damage_kind": "any",
+                        "source_controller_turn_only": False,
+                        "scope": scope.to_dict(),
+                    }
+                ]
+            },
+            "modification": {"amount": "all"},
+        }
+        return handler.lower(
+            descriptor,
+            DamageReplacementSourceContext(
+                source_ref="negative-scope-source",
+                source_controller="A",
+            ),
+        )[0]
+
+    @staticmethod
+    def source_fact_event(
+        event_id: str,
+        *,
+        source_characteristics=None,
+        source_colors=None,
+    ):
+        payload = {
+            "amount": 3,
+            "prevented": 0,
+            "source": "damage-source",
+            "source_controller": "A",
+            "target": "B",
+            "target_controller": "B",
+            "target_kind": "player",
+            "target_characteristics": [],
+            "combat": False,
+            "unpreventable": False,
+        }
+        if source_characteristics is not None:
+            payload["source_characteristics"] = source_characteristics
+        if source_colors is not None:
+            payload["source_colors"] = source_colors
+        return replacement_effects.ReplaceableEvent(
+            event_id=event_id,
+            kind="damage",
+            affected_player="B",
+            payload=payload,
+        )
+
+    def test_negative_source_type_predicate_does_not_match_missing_characteristics(self):
+        effect = self.negative_scope_effect(excluded_type="artifact")
+        missing = self.source_fact_event("damage:missing-source-types")
+        self.assertIsNone(replacement_choice(missing, (effect,)))
+        explicit_empty = self.source_fact_event(
+            "damage:empty-source-types",
+            source_characteristics=[],
+        )
+        resolved_empty = resolve_replacements(
+            explicit_empty,
+            (effect,),
+            selections=(effect.effect_id,),
+        )
+        self.assertEqual(0, resolved_empty.payload["amount"])
+
+    def test_negative_source_color_predicate_does_not_match_missing_characteristics(self):
+        effect = self.negative_scope_effect(excluded_color="U")
+        missing = self.source_fact_event("damage:missing-source-colors")
+        self.assertIsNone(replacement_choice(missing, (effect,)))
+        explicit_empty = self.source_fact_event(
+            "damage:empty-source-colors",
+            source_colors=[],
+        )
+        resolved_empty = resolve_replacements(
+            explicit_empty,
+            (effect,),
+            selections=(effect.effect_id,),
+        )
+        self.assertEqual(0, resolved_empty.payload["amount"])
+
+    def test_negative_source_predicate_uses_lki_when_rules_require_it(self):
+        engine = self.session(120461511).engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="White Knight",
+            ref="departed-negative-source",
+            zone="battlefield",
+        )
+        snapshot = source_snapshot(engine, source.ref, controller="A")
+        scope = DamagePreventionScope(
+            source_characteristics_none=("artifact",),
+            source_colors_none=("U",),
+            target_kinds=("player",),
+        )
+        engine.apply_effect(
+            {
+                "op": "create_damage_prevention_shield",
+                "source": "fixture:lki-negative-scope",
+                "subject": "*",
+                "mode": "all",
+                "duration": "until_end_of_turn",
+                "scope": scope.to_dict(),
+            },
+            actor="B",
+        )
+        engine.move_card(source.object_id, "graveyard", log=False)
+        proposal = damage_proposal(
+            engine,
+            proposal_id="damage:departed-source-lki",
+            actor="A",
+            source_ref=source.ref,
+            source_override=snapshot,
+            target="B",
+            amount=3,
+            combat=False,
+            reason="departed source LKI witness",
+        )
+        result = commit_prepared_damage_batch(
+            engine,
+            prepare_damage_batch(engine, (proposal,)),
+        )
+        self.assertEqual((0, 3), (
+            result.events[0].dealt_amount,
+            result.events[0].prevented_amount,
+        ))
+
+    def test_negative_source_predicate_fails_closed_without_current_or_lki_facts(self):
+        effects = (
+            self.negative_scope_effect(excluded_type="artifact"),
+            self.negative_scope_effect(excluded_color="U"),
+        )
+        missing = self.source_fact_event("damage:no-current-or-lki")
+        for effect in effects:
+            with self.subTest(effect_id=effect.effect_id):
+                self.assertIsNone(replacement_choice(missing, (effect,)))
+
+    def test_to_and_by_prevention_overlap_has_one_semantic_application(self):
+        session = self.session(120461512)
+        engine = session.engine
+        device = self.add_card(
+            engine,
+            seat="A",
+            name="Overlap Prevention Device",
+            ref="overlap-prevention-device",
+            zone="battlefield",
+        )
+        chosen = self.add_card(
+            engine,
+            seat="A",
+            name="White Knight",
+            ref="overlap-prevention-creature",
+            zone="battlefield",
+        )
+        furnace = self.add_card(
+            engine,
+            seat="A",
+            name="Furnace of Rath",
+            ref="overlap-furnace",
+            zone="battlefield",
+        )
+        ability = next(
+            ability
+            for ability in engine._activated_abilities(device)
+            if ability.target_schema
+        )
+        engine.state.players["A"].mana_pool["C"] = 1
+        engine.state.priority_player = "A"
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        activated = session.act(
+            "pilot:A",
+            {
+                "a": "activate",
+                "source": device.ref,
+                "ability": ability.ability_id,
+                "targets": [chosen.ref],
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.resolve_stack(session)
+        self.assertEqual(2, len(engine.state.damage_prevention_shields))
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "overlap-prevention-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+        proposal = self.proposal(
+            engine,
+            source=chosen,
+            target=chosen,
+            amount=3,
+            event_id="damage:overlapping-to-and-by",
+            combat=True,
+        )
+        with self.assertRaises(ReplacementChoiceRequired) as required:
+            prepare_damage_batch(engine, (proposal,))
+        options = required.exception.pending.choice.options
+        self.assertEqual(2, len(options))
+        furnace_id = next(value for value in options if "quantity" in value)
+        prepared = prepare_damage_batch(
+            engine,
+            (proposal,),
+            selections=(furnace_id,),
+        )
+        result = commit_prepared_damage_batch(engine, prepared)
+        event = result.events[0]
+        self.assertEqual((0, 6), (event.dealt_amount, event.prevented_amount))
+        self.assertEqual(1, len(result.prevention_events))
+        self.assertEqual(1, len([
+            effect_id
+            for effect_id in event.applied_effects
+            if "prevention" in effect_id
+        ]))
+        self.assertTrue(
+            all(
+                shield.remaining is None
+                for shield in engine.state.damage_prevention_shields
+            )
+        )
+
+    def test_resolved_one_shot_prevention_locks_effect_controller(self):
+        engine = self.session(120461513).engine
+        device = self.add_card(
+            engine,
+            seat="A",
+            name="Controller-Locked Prevention Device",
+            ref="controller-locked-device",
+            zone="battlefield",
+        )
+        protected_a = self.add_card(
+            engine,
+            seat="A",
+            name="White Knight",
+            ref="controller-locked-a",
+            zone="battlefield",
+        )
+        protected_b = self.add_card(
+            engine,
+            seat="B",
+            name="White Knight",
+            ref="controller-locked-b",
+            zone="battlefield",
+        )
+        source = self.add_card(
+            engine,
+            seat="B",
+            name="Entry Prevention Guardian",
+            ref="controller-locked-damage-source",
+            zone="battlefield",
+        )
+        ability = next(
+            ability
+            for ability in engine._activated_abilities(device)
+            if not ability.target_schema
+        )
+        engine.state.players["A"].mana_pool["C"] = 1
+        engine.state.priority_player = "A"
+        engine._activate(
+            "A",
+            {"source": device.ref, "ability": ability.ability_id},
+        )
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine._prepare_stack_resolution()
+        self.assertTrue(engine.state.damage_prevention_shields)
+        self.assertTrue(
+            all(
+                shield.controller == "A"
+                for shield in engine.state.damage_prevention_shields
+            )
+        )
+        engine.change_control(
+            device.object_id,
+            "B",
+            reason="resolved prevention controller lock witness",
+        )
+        proposals = (
+            self.proposal(
+                engine,
+                source=source,
+                target=protected_a,
+                event_id="damage:locked-controller-a",
+            ),
+            self.proposal(
+                engine,
+                source=source,
+                target=protected_b,
+                event_id="damage:locked-controller-b",
+            ),
+        )
+        result = commit_prepared_damage_batch(
+            engine,
+            prepare_damage_batch(engine, proposals),
+        )
+        self.assertEqual([0, 3], [event.dealt_amount for event in result.events])
+        self.assertEqual(
+            [3, 0], [event.prevented_amount for event in result.events]
+        )
 
     def test_all_prevention_handler_fails_closed_and_lowers_negative_scope(self):
         handler = AllDamagePreventionHandler()

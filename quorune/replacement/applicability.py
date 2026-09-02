@@ -8,6 +8,15 @@ from .model import (
     ReplacementEffect,
     ReplacementEffectError,
 )
+from .operations import operation_to_dict
+
+
+_COLLECTION_PREDICATES = {
+    "contains",
+    "contains_all",
+    "contains_any",
+    "contains_none",
+}
 
 
 def canonical_effects(
@@ -65,6 +74,8 @@ def condition_matches(
                 raise ReplacementEffectError(
                     "Replacement condition predicates cannot be empty"
                 )
+            if actual is None and _COLLECTION_PREDICATES.intersection(expected):
+                return False
             if "in" in expected and actual not in expected["in"]:
                 return False
             if "not_in" in expected and actual in expected["not_in"]:
@@ -107,17 +118,47 @@ def condition_matches(
     return True
 
 
+def _deduplicate_equivalent_prevent_all(
+    effects: Iterable[ReplacementEffect],
+) -> list[ReplacementEffect]:
+    """Collapse one semantic prevent-all application after scope matching."""
+
+    result: list[ReplacementEffect] = []
+    seen: set[tuple[Any, ...]] = set()
+    for effect in effects:
+        prevent_all = (
+            len(effect.operations) == 1
+            and operation_to_dict(effect.operations[0]) == {"op": "prevent"}
+            and not effect.decline_operations
+        )
+        if not prevent_all:
+            result.append(effect)
+            continue
+        identity = (
+            effect.source_id,
+            effect.replacement_class,
+            effect.optional,
+            effect.chooser,
+            effect.label,
+        )
+        if identity in seen:
+            continue
+        seen.add(identity)
+        result.append(effect)
+    return result
+
+
 def replacement_choice(
     event: ReplaceableEvent,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementChoice | None:
-    applicable = [
+    applicable = _deduplicate_equivalent_prevent_all([
         effect
         for effect in canonical_effects(effects)
         if effect.event_kind == event.kind
         and effect.effect_id not in event.applied_effects
         and condition_matches(effect.conditions, event)
-    ]
+    ])
     if not applicable:
         return None
     selected_class = min(effect.replacement_class for effect in applicable)

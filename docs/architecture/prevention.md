@@ -46,6 +46,13 @@ current layer-6 ability component, recomputes controller and attachment facts,
 and stops when the source leaves the battlefield. Turn-bound shields freeze
 their resolved public identities and expire through the ordinary cleanup
 owner. Both forms still enter the same affected-player replacement ordering.
+Negative type, subtype, keyword, and color predicates distinguish an explicitly
+known empty collection from unavailable current or last-known facts. Missing
+facts fail closed instead of satisfying a `contains none` predicate. When two
+independently useful prevent-all scopes from one semantic source both match the
+same damage event, the replacement owner collapses only that event's equivalent
+nonconsuming applications to one ordering option and one public application;
+each scope remains independently available for later nonoverlapping events.
 
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
