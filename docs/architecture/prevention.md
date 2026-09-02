@@ -49,10 +49,12 @@ owner. Both forms still enter the same affected-player replacement ordering.
 Negative type, subtype, keyword, and color predicates distinguish an explicitly
 known empty collection from unavailable current or last-known facts. Missing
 facts fail closed instead of satisfying a `contains none` predicate. When two
-independently useful prevent-all scopes from one semantic source both match the
-same damage event, the replacement owner collapses only that event's equivalent
-nonconsuming applications to one ordering option and one public application;
-each scope remains independently available for later nonoverlapping events.
+sibling scopes lowered from one `dealt to and dealt by` instruction both match
+the same damage event, their explicit semantic application-group identity
+collapses them to one ordering option and one public application. Independently
+created shields remain distinct even when they share a source and label, so the
+selected shield alone owns its aftermath or triggered consequence. Each sibling
+scope remains independently available for later nonoverlapping events.
 
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior

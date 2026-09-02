@@ -11921,6 +11921,14 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_independent_all_prevention_shields_with_same_source_and_label_remain_distinct",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep separately created all-prevention shields as distinct replacement choices despite a shared source and label, and run only the selected shield's aftermath."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_negative_source_predicate_uses_lki_when_rules_require_it",
       "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],

@@ -84,6 +84,7 @@ def _shield_replacement_effect(
         conditions=conditions,
         operations=(operation,),
         label=shield.label or f"Prevent damage with {shield.source_id}",
+        application_group_id=shield.application_group_id,
     )
 
 
@@ -266,6 +267,7 @@ def commit_damage_modifier_plan(
                     scope=shield.scope,
                     chosen_source=shield.chosen_source,
                     label=shield.label,
+                    application_group_id=shield.application_group_id,
                     aftermath=shield.aftermath,
                     triggered_ability=shield.triggered_ability,
                 )
@@ -357,6 +359,7 @@ def project_damage_modifier_snapshot(
                 scope=shield.scope,
                 chosen_source=shield.chosen_source,
                 label=shield.label,
+                application_group_id=shield.application_group_id,
                 aftermath=shield.aftermath,
                 triggered_ability=shield.triggered_ability,
             )

@@ -32,7 +32,14 @@ from quorune.continuous_effects import (
 )
 from quorune.deck import DeckLoader
 from quorune.engine import GameRuleError
-from quorune.damage_modifier_state import DamagePreventionScope
+from quorune.damage_modifier_state import (
+    DamageModifierDuration,
+    DamagePreventionScope,
+    DamagePreventionShield,
+    DamageSubject,
+    GainLifePreventionAftermath,
+    PreventionMode,
+)
 from quorune.model import CardInstance, CombatState, StackItem
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.projection import StateProjector
@@ -144,6 +151,30 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
         malformed["condition"]["unknown"] = True
         with self.assertRaisesRegex(SemanticNodeError, "unknown fields"):
             prevention.validate(malformed)
+        with self.assertRaisesRegex(
+            replacement_effects.ReplacementEffectError,
+            "mandatory prevent-all siblings",
+        ):
+            replacement_effects.ReplacementEffect(
+                effect_id="malformed:grouped-finite-prevention",
+                source_id="malformed:grouped-source",
+                event_kind="damage",
+                replacement_class=replacement_effects.ReplacementClass.OTHER,
+                operations=({"op": "prevent", "amount": 1},),
+                application_group_id="malformed:application-group",
+            )
+        grouped = replacement_effects.ReplacementEffect(
+            effect_id="grouped:prevent-all",
+            source_id="grouped:source",
+            event_kind="damage",
+            replacement_class=replacement_effects.ReplacementClass.OTHER,
+            operations=({"op": "prevent"},),
+            application_group_id="grouped:application",
+        )
+        self.assertEqual(
+            grouped,
+            replacement_effects.ReplacementEffect.from_dict(grouped.to_dict()),
+        )
 
         inventory = default_damage_replacement_registry().inventory()
         self.assertEqual(
@@ -215,6 +246,29 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
             capability_profile="commander_review",
         ).faces[0].nodes[0]
         self.assertEqual("attacking", targeted.target_schema["combat_state"])
+        overlap = compile_oracle_card(
+            self.db.lookup("Overlap Prevention Device"),
+            capability_registry=capabilities,
+            capability_profile="commander_review",
+        ).faces[0].nodes[0]
+        self.assertEqual(2, len(overlap.effects))
+        self.assertEqual(
+            {"$stack"},
+            {
+                effect.get("application_group_id")
+                for effect in overlap.effects
+            },
+        )
+        paired_specs = fixed_all_damage_prevention_specs(
+            "Prevent all damage that would be dealt to and dealt by this creature.",
+            card_name="Generic Prevention Fixture",
+        )
+        self.assertIsNotNone(paired_specs)
+        assert paired_specs is not None
+        self.assertEqual(
+            {"dealt_to_and_by"},
+            {spec.application_group for spec in paired_specs},
+        )
 
         for unsupported in (
             "Prevent the next 3 damage that would be dealt to you this turn.",
@@ -582,6 +636,18 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
         self.assertTrue(activated.ok, activated.summary)
         self.resolve_stack(session)
         self.assertEqual(2, len(engine.state.damage_prevention_shields))
+        application_groups = {
+            shield.application_group_id
+            for shield in engine.state.damage_prevention_shields
+        }
+        self.assertEqual(1, len(application_groups))
+        self.assertNotIn(None, application_groups)
+        self.assertEqual(
+            engine.state.damage_prevention_shields[0],
+            DamagePreventionShield.from_dict(
+                engine.state.damage_prevention_shields[0].to_dict()
+            ),
+        )
         expected_hash = authoritative_state_hash(engine.state)
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "overlap-prevention-replay"
@@ -622,6 +688,88 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
                 for shield in engine.state.damage_prevention_shields
             )
         )
+
+    def test_independent_all_prevention_shields_with_same_source_and_label_remain_distinct(
+        self,
+    ):
+        engine = self.session(120461514).engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="White Knight",
+            ref="independent-prevention-source",
+            zone="battlefield",
+        )
+        common = {
+            "source_id": "shared-prevention-source",
+            "controller": "A",
+            "subject": DamageSubject(
+                ref="B",
+                kind="player",
+                controller="B",
+            ),
+            "mode": PreventionMode.ALL,
+            "remaining": None,
+            "duration": DamageModifierDuration.UNTIL_END_OF_TURN,
+            "created_turn_sequence": engine.state.turn_sequence,
+            "label": "Shared prevention label",
+        }
+        first = DamagePreventionShield(
+            shield_id="independent-prevention-one",
+            aftermath=(
+                GainLifePreventionAftermath(
+                    player="A",
+                    fixed_amount=1,
+                ),
+            ),
+            **common,
+        )
+        second = DamagePreventionShield(
+            shield_id="independent-prevention-two",
+            aftermath=(
+                GainLifePreventionAftermath(
+                    player="A",
+                    fixed_amount=2,
+                ),
+            ),
+            **common,
+        )
+        engine.state.damage_prevention_shields.extend((first, second))
+        self.assertIsNone(first.application_group_id)
+        self.assertIsNone(second.application_group_id)
+        proposal = self.proposal(
+            engine,
+            source=source,
+            target="B",
+            amount=3,
+            event_id="damage:independent-prevention-shields",
+        )
+
+        with self.assertRaises(ReplacementChoiceRequired) as required:
+            prepare_damage_batch(engine, (proposal,))
+        self.assertEqual(
+            {first.effect_id, second.effect_id},
+            set(required.exception.pending.choice.options),
+        )
+
+        life_before = engine.state.players["A"].life
+        prepared = prepare_damage_batch(
+            engine,
+            (proposal,),
+            selections=(second.effect_id,),
+        )
+        result = commit_prepared_damage_batch(engine, prepared)
+
+        self.assertEqual((0, 3), (
+            result.events[0].dealt_amount,
+            result.events[0].prevented_amount,
+        ))
+        self.assertEqual((second.effect_id,), result.events[0].applied_effects)
+        self.assertEqual(
+            (second.effect_id,),
+            tuple(event.effect_id for event in result.prevention_events),
+        )
+        self.assertEqual(life_before + 2, engine.state.players["A"].life)
 
     def test_resolved_one_shot_prevention_locks_effect_controller(self):
         engine = self.session(120461513).engine

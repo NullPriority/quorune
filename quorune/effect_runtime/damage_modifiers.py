@@ -405,6 +405,11 @@ def _apply_create_damage_prevention_shield(
             ),
             source_predicate=_source_predicate(effect),
             label=str(effect.get("label") or reason),
+            application_group_id=(
+                str(effect["application_group_id"])
+                if effect.get("application_group_id") is not None
+                else None
+            ),
             aftermath=_prevention_aftermath_requests(effect, actor=actor),
             triggered_ability=_prevention_trigger_request(
                 effect, actor=actor

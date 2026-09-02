@@ -8,9 +8,6 @@ from .model import (
     ReplacementEffect,
     ReplacementEffectError,
 )
-from .operations import operation_to_dict
-
-
 _COLLECTION_PREDICATES = {
     "contains",
     "contains_all",
@@ -118,32 +115,21 @@ def condition_matches(
     return True
 
 
-def _deduplicate_equivalent_prevent_all(
+def _deduplicate_explicit_application_groups(
     effects: Iterable[ReplacementEffect],
 ) -> list[ReplacementEffect]:
-    """Collapse one semantic prevent-all application after scope matching."""
+    """Collapse applicable sibling scopes only when explicitly grouped."""
 
     result: list[ReplacementEffect] = []
-    seen: set[tuple[Any, ...]] = set()
+    seen: set[str] = set()
     for effect in effects:
-        prevent_all = (
-            len(effect.operations) == 1
-            and operation_to_dict(effect.operations[0]) == {"op": "prevent"}
-            and not effect.decline_operations
-        )
-        if not prevent_all:
+        group_id = effect.application_group_id
+        if group_id is None:
             result.append(effect)
             continue
-        identity = (
-            effect.source_id,
-            effect.replacement_class,
-            effect.optional,
-            effect.chooser,
-            effect.label,
-        )
-        if identity in seen:
+        if group_id in seen:
             continue
-        seen.add(identity)
+        seen.add(group_id)
         result.append(effect)
     return result
 
@@ -152,7 +138,7 @@ def replacement_choice(
     event: ReplaceableEvent,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementChoice | None:
-    applicable = _deduplicate_equivalent_prevent_all([
+    applicable = _deduplicate_explicit_application_groups([
         effect
         for effect in canonical_effects(effects)
         if effect.event_kind == event.kind
