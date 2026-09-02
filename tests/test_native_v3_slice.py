@@ -214,6 +214,27 @@ class NativeV3AuditAndPilotTests(unittest.TestCase):
         self.assertEqual(
             "fully_playable", by_name["Protean Hulk"]["status"]
         )
+        for name in (
+            "Golgari Rot Farm",
+            "Simic Growth Chamber",
+            "Dimir Aqueduct",
+        ):
+            with self.subTest(superseded_entry_return=name):
+                row = by_name[name]
+                self.assertEqual("fully_playable", row["status"])
+                self.assertNotIn(
+                    "trigger:enter",
+                    {program["ability_id"] for program in row["programs"]},
+                )
+                self.assertEqual(
+                    ["trigger:front:n2"],
+                    [
+                        program["ability_id"]
+                        for program in row["programs"]
+                        if "fixed-entry-return-requirement"
+                        in program["semantic_family"]
+                    ],
+                )
 
 
 class TrustedSemanticScenarioTests(unittest.TestCase):

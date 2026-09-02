@@ -84,20 +84,17 @@ class ExactLandFamilyTests(unittest.TestCase):
                     reason=f"{name} scenario",
                 )
                 self.assertFalse(engine._stabilize())
+                self.assertEqual(1, len(engine.state.stack))
                 engine._prepare_stack_resolution()
                 packet = session.packet("pilot:B", full=True)
-                options = {
-                    row["id"]
-                    for row in packet["decision"]["ctx"]["objects"]
-                }
+                self.assertEqual("choice.apnap", packet["decision"]["kind"])
+                options = set(packet["decision"]["ctx"]["options"])
                 self.assertEqual({bounce.ref, own_land.ref}, options)
                 result = session.act(
                     "pilot:B",
                     {
                         "action_id": "choose",
-                        "objects": [own_land.ref],
-                        "plan": "FIX_COLORS",
-                        "reason": "Return the basic land and keep the bounce land.",
+                        "cards": [own_land.ref],
                     },
                 )
 
