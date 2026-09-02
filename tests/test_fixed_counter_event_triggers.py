@@ -2616,6 +2616,25 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                     self.compile(text, type_line="Creature — Test").status,
                 )
 
+    def test_entry_return_untapped_basic_land_subtypes_compile_exactly(self):
+        for subtype in ("Plains", "Island", "Swamp", "Mountain", "Forest"):
+            with self.subTest(subtype=subtype):
+                ir = self.compile(
+                    "When this land enters, return an untapped "
+                    f"{subtype} you control to its owner's hand.",
+                    type_line="Land",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                effect = node.effects[0]
+                self.assertEqual("choose_cards_apnap", effect["op"])
+                self.assertEqual(["land"], effect["predicate"]["types_all"])
+                self.assertEqual(
+                    [subtype.casefold()],
+                    effect["predicate"]["subtypes_all"],
+                )
+                self.assertFalse(effect["predicate"]["tapped"])
+
     def test_entry_return_capability_dependency_fails_closed(self):
         text = "When this land enters, return a land you control to its owner's hand."
         value = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
@@ -6995,6 +7014,47 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
 
+    def test_entry_return_untapped_basic_land_subtypes_execute(self):
+        for index, subtype in enumerate(
+            ("Plains", "Island", "Swamp", "Mountain", "Forest")
+        ):
+            with self.subTest(subtype=subtype):
+                session = self.session(121076 + index)
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name=f"Generic Untapped {subtype} Entry Return Fixture",
+                    ref=f"entry-return-{subtype.casefold()}-source",
+                    zone="hand",
+                )
+                candidate = self.add_card(
+                    engine,
+                    seat="A",
+                    name=f"Generic {subtype} Land Witness",
+                    ref=f"entry-return-{subtype.casefold()}-candidate",
+                    zone="battlefield",
+                )
+                self.register_typed_event_trigger(engine, source)
+
+                engine.move_card(
+                    source.object_id,
+                    "battlefield",
+                    reason=f"untapped {subtype} entry-return witness",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+                self.resolve_top(engine)
+                self.assertEqual("choice.apnap", engine.state.pending_decision.kind)
+                result = session.act(
+                    "pilot:A",
+                    {"action_id": "choose", "cards": [candidate.ref]},
+                )
+
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("hand", candidate.zone)
+                self.assertEqual("battlefield", source.zone)
+
     def test_entry_return_choice_revalidates_and_rolls_back(self):
         session = self.session(121075)
         engine = session.engine
@@ -7193,6 +7253,171 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.resolve_top(engine)
         self.assertEqual("hand", controlled_source.zone)
         self.assertEqual("battlefield", dragon.zone)
+
+    def test_external_entry_self_return_uses_source_incarnation(self):
+        for reenter in (False, True):
+            with self.subTest(reenter=reenter):
+                session = self.session(121081 + int(reenter))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Controlled Subtype Entry Return Fixture",
+                    ref=f"external-entry-incarnation-{int(reenter)}",
+                    zone="battlefield",
+                )
+                program = self.register_typed_event_trigger(engine, source)
+                dragon = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Dragon Witness",
+                    ref=f"external-entry-dragon-{int(reenter)}",
+                    zone="hand",
+                )
+                engine.move_card(
+                    dragon.object_id,
+                    "battlefield",
+                    reason="external entry incarnation witness",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+                item = next(
+                    value
+                    for value in engine.state.stack
+                    if value.semantic_key == program.key
+                )
+                source_incarnation = item.context["source_logical_object_id"]
+
+                engine.move_card(
+                    source.object_id,
+                    "graveyard",
+                    reason="external entry source left before resolution",
+                    semantic_events=False,
+                )
+                if reenter:
+                    engine.move_card(
+                        source.object_id,
+                        "battlefield",
+                        reason="external entry source reentered before resolution",
+                        semantic_events=False,
+                    )
+                    self.assertNotEqual(
+                        source_incarnation,
+                        source.logical_object_id,
+                    )
+
+                self.resolve_top(engine)
+
+                self.assertEqual(
+                    "battlefield" if reenter else "graveyard",
+                    source.zone,
+                )
+                self.assertEqual("battlefield", dragon.zone)
+
+    def test_entry_return_unless_sacrifice_uses_source_incarnation(self):
+        for reenter in (False, True):
+            with self.subTest(reenter=reenter):
+                session = self.session(121083 + int(reenter))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Unless Return Fixture",
+                    ref=f"entry-unless-incarnation-{int(reenter)}",
+                    zone="hand",
+                )
+                program = self.register_typed_event_trigger(engine, source)
+                engine.move_card(
+                    source.object_id,
+                    "battlefield",
+                    reason="entry unless incarnation witness",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+                item = next(
+                    value
+                    for value in engine.state.stack
+                    if value.semantic_key == program.key
+                )
+                source_incarnation = item.context["source_logical_object_id"]
+                engine.move_card(
+                    source.object_id,
+                    "graveyard",
+                    reason="entry unless source left before resolution",
+                    semantic_events=False,
+                )
+                if reenter:
+                    engine.move_card(
+                        source.object_id,
+                        "battlefield",
+                        reason="entry unless source reentered before resolution",
+                        semantic_events=False,
+                    )
+                    self.assertNotEqual(
+                        source_incarnation,
+                        source.logical_object_id,
+                    )
+
+                self.resolve_top(engine)
+                result = session.act(
+                    "pilot:A",
+                    {"action_id": "choose", "choice": "sacrifice"},
+                )
+
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(
+                    "battlefield" if reenter else "graveyard",
+                    source.zone,
+                )
+
+    def test_reentered_source_remains_excluded_from_another_return_payment(self):
+        session = self.session(121085)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Entry Unless Return Fixture",
+            ref="entry-unless-another-incarnation",
+            zone="hand",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            reason="entry unless another exclusion witness",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        item = next(
+            value for value in engine.state.stack if value.semantic_key == program.key
+        )
+        old_incarnation = item.context["source_logical_object_id"]
+        engine.move_card(
+            source.object_id,
+            "graveyard",
+            reason="another source left before resolution",
+            semantic_events=False,
+        )
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            reason="another source reentered before resolution",
+            semantic_events=False,
+        )
+        self.assertNotEqual(old_incarnation, source.logical_object_id)
+
+        self.resolve_top(engine)
+        selected_return = session.act(
+            "pilot:A",
+            {"action_id": "choose", "choice": "return"},
+        )
+
+        self.assertTrue(selected_return.ok, selected_return.summary)
+        self.assertNotEqual(
+            "choice.apnap",
+            getattr(engine.state.pending_decision, "kind", None),
+        )
+        self.assertEqual("battlefield", source.zone)
 
 
 if __name__ == "__main__":

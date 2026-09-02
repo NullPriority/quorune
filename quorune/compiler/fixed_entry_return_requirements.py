@@ -18,7 +18,17 @@ _COLOR_CODES = {
     "red": "R",
     "green": "G",
 }
-_LAND_SUBTYPES = {"plains", "island", "swamp", "mountain", "forest"}
+_UNTAPPED_BASIC_LAND_SUBTYPES = {
+    "plains": "plains",
+    "island": "island",
+    "islands": "island",
+    "swamp": "swamp",
+    "swamps": "swamp",
+    "mountain": "mountain",
+    "mountains": "mountain",
+    "forest": "forest",
+    "forests": "forest",
+}
 _COUNT_WORDS = {"a": 1, "an": 1, "another": 1, "two": 2, "three": 3}
 FIXED_ENTRY_RETURN_CAPABILITY = "choice.controller.fixed_return_owner_hand"
 FIXED_ENTRY_RETURN_MECHANIC = "fixed-entry-return-requirement"
@@ -127,14 +137,14 @@ class FixedEntryReturnRequirementSpec:
         if full_payment:
             effect["require_full_count"] = True
             effect["fallback_effects"] = [
-                {"op": "sacrifice_if_present", "card": "$source"}
+                {"op": "sacrifice_if_present", "card": "$source.zone_object"}
             ]
         return effect
 
     @property
     def effects(self) -> tuple[dict[str, Any], ...]:
         if self.return_source:
-            return ({"op": "bounce", "card": "$source"},)
+            return ({"op": "bounce", "card": "$source.zone_object"},)
         choice = self._choice_effect(
             full_payment=self.sacrifice_source_unless_paid
         )
@@ -152,7 +162,10 @@ class FixedEntryReturnRequirementSpec:
                 "then_by_choice": {
                     "return": [choice],
                     "sacrifice": [
-                        {"op": "sacrifice_if_present", "card": "$source"}
+                        {
+                            "op": "sacrifice_if_present",
+                            "card": "$source.zone_object",
+                        }
                     ],
                 },
             },
@@ -202,8 +215,10 @@ def _controlled_quality_query(
     elif normalized in {"artifact", "artifacts"}:
         fields["types_all"] = ("artifact",)
     elif normalized.startswith("untapped "):
-        subtype = normalized.removeprefix("untapped ").removesuffix("s")
-        if subtype not in _LAND_SUBTYPES:
+        subtype = _UNTAPPED_BASIC_LAND_SUBTYPES.get(
+            normalized.removeprefix("untapped ")
+        )
+        if subtype is None:
             return None
         fields["types_all"] = ("land",)
         fields["subtypes_all"] = (subtype,)

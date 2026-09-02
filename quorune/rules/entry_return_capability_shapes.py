@@ -46,7 +46,9 @@ def _choice_is_closed(effect: Mapping[str, Any]) -> bool:
         return False
     if effect.get("require_full_count") is True and effect.get(
         "fallback_effects"
-    ) != [{"op": "sacrifice_if_present", "card": "$source"}]:
+    ) != [
+        {"op": "sacrifice_if_present", "card": "$source.zone_object"}
+    ]:
         return False
     try:
         predicate = ObjectQuerySpec.from_dict(effect["predicate"])
@@ -90,7 +92,9 @@ def _contains_closed_choice(effect: Mapping[str, Any]) -> bool:
         or not isinstance(branches["return"][0], Mapping)
         or not _choice_is_closed(branches["return"][0])
         or branches["sacrifice"]
-        != [{"op": "sacrifice_if_present", "card": "$source"}]
+        != [
+            {"op": "sacrifice_if_present", "card": "$source.zone_object"}
+        ]
     ):
         return False
     return True
@@ -115,7 +119,7 @@ def fixed_entry_return_node_capabilities(
     source_return = (
         set(effect) == {"op", "card"}
         and effect.get("op") == "bounce"
-        and effect.get("card") == "$source"
+        and effect.get("card") == "$source.zone_object"
     )
     if not source_return and not _contains_closed_choice(effect):
         return ()

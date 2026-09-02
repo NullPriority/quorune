@@ -257,7 +257,11 @@ choice continuation to one controller-scoped owner-hand destination. It accepts
 one through three public permanents matching a closed battlefield
 `ObjectQuerySpec`, including the complete alternative of sacrificing the
 entering source when the return is declined or cannot be paid. Controlled
-fixed-subtype and other fixed-type entries may instead return the exact source.
+fixed-subtype and other fixed-type entries may instead return the exact source
+incarnation. Self-return and sacrifice fallbacks use the shared logical-object-
+aware source placeholder, so an old trigger cannot move a re-entered permanent.
+Untapped basic-land predicates normalize Plains, Island, Swamp, Mountain, and
+Forest through an explicit canonical mapping.
 All selected objects move simultaneously through the canonical destination-
 replacement coordinator. Targets, up-to or aggregate sets, hidden or opponent
 subjects, variable or optional returns, compound bodies, and dynamic, chosen,

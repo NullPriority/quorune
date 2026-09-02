@@ -3931,6 +3931,30 @@
     },
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_unless_sacrifice_uses_source_incarnation",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Leave the sacrifice-unless-return source before its trigger resolves and prove an absent or re-entered new incarnation cannot be sacrificed by the old trigger."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_external_entry_self_return_uses_source_incarnation",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve an external-entry self-return trigger after its source remains absent or re-enters as a new logical object without moving that new incarnation."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_reentered_source_remains_excluded_from_another_return_payment",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep the stable source reference excluded from an old another-payment choice while preventing its incarnation-stale fallback from sacrificing the re-entered permanent."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_external_entry_self_returns_batch_in_apnap_order",
       "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
@@ -3964,10 +3988,26 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_untapped_basic_land_subtypes_compile_exactly",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Normalize each of Plains, Island, Swamp, Mountain, and Forest through an explicit canonical untapped-land subtype mapping."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_entry_return_requirements_compile_exactly_and_fail_closed",
       "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower the fixed source-entry and external-entry grammar to source-spanned typed event, choice, return, fallback, and current-ability descriptors."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_untapped_basic_land_subtypes_execute",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Offer and commit an owner-hand return for an untapped permanent of each canonical basic land subtype."
     },
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",

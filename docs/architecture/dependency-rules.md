@@ -52,7 +52,9 @@ route to `quorune/public_zone_moves.py`; CR 903.9 owner choices are modeled by
 `quorune/commander_zones.py` and the public nontarget choice owner. Fixed
 entry-return requirements reuse that choice boundary with an owner-hand
 destination and still commit only through the simultaneous zone-transition
-owner. Exile,
+owner. Their self-return and sacrifice fallback references are pinned to the
+trigger source's logical incarnation, while `another` selection exclusion
+retains the stable public source reference. Exile,
 return, and public-set movement share the closed
 `rules/single_object_zone_transition.py` typed-origin preparation, stale-plan
 validation, and the canonical simultaneous zone-transition substrate while
