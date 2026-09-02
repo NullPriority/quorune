@@ -1649,25 +1649,74 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "attached-quoted-ability-grant-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-source-combat-growth-triggers",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "capability:counter.producer.fixed_effect",
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_public_action",
+            "component:quorune.block_transition_engine_adapter.enqueue_block_transition_triggers",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.compiler.fixed_source_combat_growth.fixed_source_combat_growth_effect_template",
+            "component:quorune.trigger_discovery.dispatch_semantic_event"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "current-layer-6-source-component",
+            "fixed-integer-power-toughness-until-end-of-turn",
+            "fixed-self-plus-one-counter",
+            "normalized-source-attack-block-or-combat-damage-event",
+            "sealed-blocked-attacker-flying-predicate"
+          ],
+          "shared_dependencies": [
+            "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "counter.producer.fixed_effect",
+            "trigger.effect.fixed_event",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "mandatory source-self attack, block, becomes-blocked, flying-block, or combat-damage-to-a-player triggers with one fixed integer power/toughness change until end of turn or exactly one +1/+1 counter",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing normalized combat occurrences, typed event predicate, incarnation-pinned source reference, fixed characteristic duration, counter placement, current ability applicability, APNAP placement, and replay owners without a parallel combat or effect engine.",
+          "explicit_exclusions": [
+            "ability grants, declaration restrictions, type changes, and independently unsupported additional effects",
+            "combined, aggregate, one-or-more, intervening-if, reflexive, delayed, and repeated trigger grammar",
+            "dynamic, variable, counted, for-each, power-derived, and toughness-derived quantities",
+            "non-self subjects, attack recipients, damage recipients other than a player, and broader damage events",
+            "optional, may, payment, modal, targeted, divided, and choice-bearing bodies",
+            "other counter kinds, counter counts other than one, counter movement, and counter removal",
+            "target-relative, chosen, secret, historical, linked, and unsupported combat predicates"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-source-combat-growth-trigger-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v156-attached-quoted-ability-grants",
-      "compiler_version": "oracle-ir-v156",
-      "bundle_id": "bundle:attached-quoted-ability-grants",
-      "candidate_ids": ["compiler:attached-quoted-ability-grants"],
+      "transition_id": "oracle-ir-v157-fixed-source-combat-growth-triggers",
+      "compiler_version": "oracle-ir-v157",
+      "bundle_id": "bundle:fixed-source-combat-growth-triggers",
+      "candidate_ids": ["compiler:fixed-source-combat-growth-triggers"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "target_or_choice:target-predicate"
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "continuous.attached.fixed_characteristics"
+        "counter.producer.fixed_event_trigger",
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_public_action"
       ],
-      "measurement_id": "measurement:attached-quoted-ability-grants",
+      "measurement_id": "measurement:fixed-source-combat-growth-triggers",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2190,6 +2239,11 @@
         "candidate_id": "compiler:attached-quoted-ability-grants",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector has no eligible carried candidate after the fixed all-damage prevention harvest, while the raw continuous-layer leader remains heterogeneous. A bounded comparison found no coherent public-entry-counter or self-zone cast family above the complete-card floor; strict top-library access and remaining anthem slices also stayed below it. The integrated attachment probe instead measures 75 quoted Aura or Equipment carriers, 150 exact outer and inner nodes, 75 removable residuals, and a conservative 56 complete-card lower bound. It reuses the existing attached-characteristic component, typed granted-ability fragments, activation query, trigger discovery, ordinary effect and mana programs, APNAP placement, and exact replay. Multiple quotes, external attachment references, static or declaration prose, unsupported inner effects, and alternative, nonmana, dynamic, restricted, or limited costs remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-source-combat-growth-triggers",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector has no eligible carried candidate after the attached quoted-ability harvest, while its aggregate leaders remain heterogeneous. A bounded comparison retired mandatory additional costs, self-zone casting, dynamic cast-entry counters, strict top-library access, and other fragmented families below the normal complete-card floor. The integrated source-combat probe instead isolates 65 exact carriers across 64 cards with a conservative 54-card closure through existing normalized attack, block, damage, typed predicate, fixed source characteristic, counter placement, current layer-6 ability applicability, APNAP, and replay owners. Optional, payment, variable, aggregate, targeted, multi-effect, other-counter, non-self, broader-damage, combined-event, and unsupported combat-predicate forms remain fail-closed; current cohort identities and counts are derived into the generated measurement artifact."
       }
     ]
   },

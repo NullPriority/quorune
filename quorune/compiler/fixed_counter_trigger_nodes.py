@@ -5,11 +5,16 @@ from enum import Enum
 import re
 from typing import Any, Callable, Mapping, Sequence
 
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
+from .fixed_source_combat_growth import (
+    FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
+    fixed_source_combat_growth_effect_template,
+)
 from .spell_cast_predicates import (
     FixedSpellCastCharacteristicKind,
     FixedSpellCastCharacteristicQuery,
@@ -890,6 +895,36 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
+def _binding_effect_template(
+    binding: FixedCounterTriggerBinding,
+    body: str,
+    *,
+    card_name: str,
+    effect_template: Callable[..., tuple[
+        str | None,
+        tuple[Mapping[str, Any], ...],
+        Mapping[str, Any] | None,
+        tuple[str, ...],
+    ]],
+) -> tuple[
+    tuple[
+        str | None,
+        tuple[Mapping[str, Any], ...],
+        Mapping[str, Any] | None,
+        tuple[str, ...],
+    ],
+    bool,
+]:
+    specialized = fixed_source_combat_growth_effect_template(
+        body,
+        event=binding.event.value,
+        variant=binding.variant,
+    )
+    if specialized[0] is not None:
+        return specialized, True
+    return effect_template(body, card_name=card_name), False
+
+
 def fixed_counter_event_trigger_node(
     *,
     node_id: str,
@@ -926,10 +961,17 @@ def fixed_counter_event_trigger_node(
         if optional_match is not None
         else binding.body
     )
-    template, effects, target_schema, body_mechanics = effect_template(
-        body,
-        card_name=card_name,
-    )
+    if optional_match is None:
+        compiled, source_combat_growth = _binding_effect_template(
+            binding,
+            body,
+            card_name=card_name,
+            effect_template=effect_template,
+        )
+    else:
+        compiled = effect_template(body, card_name=card_name)
+        source_combat_growth = False
+    template, effects, target_schema, body_mechanics = compiled
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
     )
@@ -1000,6 +1042,11 @@ def fixed_counter_event_trigger_node(
         template_id=template_id,
         effects=effects,
         target_schema=target_schema,
+        runtime_coverage=(
+            (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+            if source_combat_growth
+            else ()
+        ),
         mechanics=mechanics,
         residual_ids=residual_ids,
         capability_dependencies=gate.capabilities,
@@ -1054,10 +1101,13 @@ def fixed_typed_event_effect_trigger_node(
     )
     if binding is None:
         return None
-    template, effects, target_schema, body_mechanics = effect_template(
+    compiled, source_combat_growth = _binding_effect_template(
+        binding,
         binding.body,
         card_name=card_name,
+        effect_template=effect_template,
     )
+    template, effects, target_schema, body_mechanics = compiled
     if (
         template is None
         or (
@@ -1114,6 +1164,12 @@ def fixed_typed_event_effect_trigger_node(
         template_id=binding.typed_effect_template_id,
         effects=effects,
         target_schema=target_schema,
+        runtime_coverage=(
+            (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+            if source_combat_growth
+            and template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
+            else ()
+        ),
         mechanics=mechanics,
         residual_ids=residual_ids,
         capability_dependencies=gate.capabilities,

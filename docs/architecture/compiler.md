@@ -839,6 +839,19 @@ bindings remain residual until all authoritative producers carry their typed
 causes rather than requiring inference from a zone pair. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
 
+`compiler/fixed_source_combat_growth.py` owns the narrower source-self combat
+growth body grammar. It accepts only mandatory fixed integer power/toughness
+changes until end of turn or exactly one +1/+1 counter after the source
+attacks, blocks, becomes blocked, blocks a creature with Flying, or deals
+combat damage to a player. Attack, block, and committed damage producers remain
+authoritative for the occurrence; the flying predicate reads the blocked
+attacker's sealed public keyword snapshot. Both effects use
+`$source.zone_object`, so resolution affects only the same current battlefield
+incarnation, and discovery uses the shared current layer-6 ability-component
+query. Optional, payment, dynamic, aggregate, combined-event, targeted,
+multi-effect, other-counter, non-self, and broader damage forms remain
+source-spanned residuals.
+
 ## Extending the compiler
 
 Add the smallest reusable grammar production and typed construct. Include

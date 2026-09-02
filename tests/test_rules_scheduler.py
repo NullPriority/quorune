@@ -61,6 +61,7 @@ from scripts.work_selection_cohort_measurements import (
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
+    _source_combat_growth_trigger_measurement,
 )
 
 
@@ -2140,57 +2141,50 @@ class RulesSchedulerTests(unittest.TestCase):
                 self.assertFalse(_matches_probe(probe_id, source))
 
     def test_attached_quoted_grant_probe_is_integrated_and_accounted(self):
-        transition = next(
-            row
-            for row in self.work_inputs["cohort_measurements"][
-                "transition_measurements"
-            ]
-            if row["transition_id"]
-            == "oracle-ir-v156-attached-quoted-ability-grants"
-        )
-        measurement = transition["measurement"]
-        accounting = measurement["candidate_accounting"]
-        coverage = self.catalog["work_selection"]["coverage_family"]
-        self.assertEqual("bounded_executable", measurement["decision"])
-        self.assertGreaterEqual(
-            measurement["complete_card_gain"],
-            coverage["minimum_complete_card_gain"],
-        )
-        self.assertEqual(
-            measurement["exact_ability_gain"],
-            2 * accounting["affected_oracle_carriers"],
-        )
-        self.assertEqual(
-            measurement["complete_card_gain"],
-            accounting["trusted_program_transitions"],
-        )
-        self.assertEqual(
-            measurement["material_residual_reduction"],
-            accounting["expected_oracle_residual_reduction"],
-        )
-        self.assertEqual(
-            accounting["expected_oracle_residual_reduction"],
-            accounting["expected_card_program_residual_reduction"],
-        )
-        self.assertEqual(
-            0,
-            accounting["newly_applicable_high_risk_pairs"],
-        )
         outcome = next(
             row
             for row in self.work_inputs["harvest_outcome_history"]["entries"]
             if row.get("transition_id")
             == "oracle-ir-v156-attached-quoted-ability-grants"
         )
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        self.assertEqual(
+            "measurement:attached-quoted-ability-grants",
+            outcome["measurement_id"],
+        )
+        self.assertEqual(
+            "attached-quoted-ability-grant-existing-owner-v1",
+            outcome["measurement_probe_id"],
+        )
+        self.assertGreaterEqual(
+            outcome["actual_complete_card_gain"],
+            coverage["minimum_complete_card_gain"],
+        )
+        self.assertEqual(
+            outcome["actual_complete_card_gain"],
+            outcome["actual_trusted_card_gain"],
+        )
+        self.assertEqual(
+            outcome["actual_complete_card_gain"],
+            outcome["actual_capability_closed_card_gain"],
+        )
+        self.assertEqual(
+            outcome["oracle_exact_ability_node_delta"],
+            2 * outcome["frontier_ability_carrier_delta"]["additions"],
+        )
+        self.assertEqual(
+            outcome["actual_material_oracle_residual_reduction"],
+            outcome["actual_material_card_program_residual_reduction"],
+        )
+        self.assertEqual(
+            outcome["actual_material_residual_reduction"],
+            outcome["actual_material_oracle_residual_reduction"],
+        )
         assurance = outcome["interaction_assurance_delta"]
         self.assertGreater(assurance["applicable_high_risk_pairs"], 0)
         self.assertEqual(
             assurance["applicable_high_risk_pairs"],
             assurance["covered_high_risk_pairs"],
-        )
-        self.assertGreater(
-            accounting["cards_excluded_by_unsupported_grammar"],
-            0,
         )
 
     def test_attached_grant_probe_derives_high_risk_capability_pairs(self):
@@ -2260,6 +2254,88 @@ class RulesSchedulerTests(unittest.TestCase):
             1,
             measurement["candidate_accounting"][
                 "newly_applicable_high_risk_pairs"
+            ],
+        )
+
+    def test_source_combat_growth_probe_requires_integrated_exact_node(self):
+        source = (
+            "Whenever this creature attacks, it gets +2/+0 until end of turn."
+        )
+        record = SimpleNamespace(
+            oracle_id="fixture:source-combat-growth",
+            name="Source combat growth fixture",
+            oracle_text=source,
+            type_line="Creature — Test",
+            faces=(),
+        )
+        ability = {
+            "ability_id": "front:n1",
+            "face_id": "front",
+            "source_line": 1,
+            "status": "unresolved",
+            "residuals": [{"residual_id": "r1"}],
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "abilities": [ability],
+                }
+            ]
+        }
+        node = SimpleNamespace(
+            exact=True,
+            span=SimpleNamespace(line=1),
+            effects=(
+                {
+                    "op": "modify_stats_until_end_of_turn",
+                    "card": "$source.zone_object",
+                    "power": 2,
+                    "toughness": 0,
+                },
+            ),
+            runtime_coverage=("current_ability_fragment_required",),
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(node,)),),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _source_combat_growth_trigger_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-source-combat-growth-triggers",
+                probe_id=(
+                    "fixed-source-combat-growth-trigger-existing-owner-v1"
+                ),
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+        self.assertEqual(
+            1,
+            measurement["candidate_accounting"][
+                "affected_oracle_carriers"
             ],
         )
 

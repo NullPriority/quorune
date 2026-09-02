@@ -27,7 +27,8 @@ _PUBLIC_ATTACK_TRIGGER = re.compile(
 )
 _PUBLIC_BLOCK_TRIGGER = re.compile(
     r"^Whenever (?P<subject>this creature|a creature you control with defender) "
-    r"(?P<event>blocks|becomes blocked), (?P<body>.+)$",
+    r"(?P<event>blocks|becomes blocked)"
+    r"(?P<blocked> a creature with flying)?, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _PUBLIC_CYCLE_TRIGGER = re.compile(
@@ -414,9 +415,16 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
         return None
     subject = " ".join(match.group("subject").casefold().split())
     event = match.group("event").casefold()
+    blocked_flying = match.group("blocked") is not None
+    if blocked_flying and (subject != "this creature" or event != "blocks"):
+        return None
     return _spec(
         "creature.blocks" if event == "blocks" else "creature.becomes_blocked",
-        f"{subject.replace(' ', '_')}_{event.replace(' ', '_')}",
+        (
+            "this_creature_blocks_flying"
+            if blocked_flying
+            else f"{subject.replace(' ', '_')}_{event.replace(' ', '_')}"
+        ),
         match.group("body"),
         "fixed-counter-public-block-trigger-v1",
         "trigger-event-normalized-public-action",
@@ -429,6 +437,13 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
             else None,
             {"field": "keywords", "op": "contains_any", "value": ["defender"]}
             if "defender" in subject
+            else None,
+            {
+                "field": "blocked_attacker_keywords",
+                "op": "contains_any",
+                "value": ["flying"],
+            }
+            if blocked_flying
             else None,
         ),
     )

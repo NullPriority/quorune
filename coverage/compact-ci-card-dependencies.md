@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "79741c28270c4e9caaa72360948b6eacd2e705a1ebb34ba0000e0448c49461b8"
+verified: "a9f0342f65006c8896a72ec7ebf2104e96dd78f17dc5bfa0eb61b346335ff742"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---

@@ -148,21 +148,14 @@ class BlockKeywordCompilerTests(unittest.TestCase):
                 self.assertTrue(lowering.residual_reason)
 
     def test_conditional_keyword_wording_is_not_promoted_as_printed_keyword(self):
-        for suffix, text in enumerate(
-            (
-                "As long as this creature is attacking, it has flanking.",
-                "Whenever this creature blocks, it gets +1/+1 until end of turn.",
-            ),
-            start=702_045_100,
-        ):
-            with self.subTest(text=text):
-                ir = compile_oracle_card(
-                    _keyword_card("bushido", text, suffix),
-                    capability_registry=self.capabilities,
-                    capability_profile="commander_review",
-                )
-                self.assertNotEqual("exact", ir.status)
-                self.assertTrue(ir.faces[0].residuals)
+        text = "As long as this creature is attacking, it has flanking."
+        ir = compile_oracle_card(
+            _keyword_card("bushido", text, 702_045_100),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertNotEqual("exact", ir.status)
+        self.assertTrue(ir.faces[0].residuals)
 
 
 if __name__ == "__main__":
