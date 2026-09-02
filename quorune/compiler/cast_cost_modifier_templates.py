@@ -238,12 +238,12 @@ def _public_condition_metric(condition: str) -> CastReductionMetric | None:
         ),
         (
             r"an opponent controls (?P<quality>.+)",
-            CastReductionQueryScope.OPPONENT_ZONES,
+            CastReductionQueryScope.ANY_OPPONENT,
             1,
         ),
         (
             rf"your opponents control (?P<count>{_COUNT_PATTERN}) or more (?P<quality>.+)",
-            CastReductionQueryScope.OPPONENT_ZONES,
+            CastReductionQueryScope.OPPONENTS_COMBINED,
             None,
         ),
         (
@@ -253,13 +253,13 @@ def _public_condition_metric(condition: str) -> CastReductionMetric | None:
         ),
         (
             rf"an opponent has (?P<count>{_COUNT_PATTERN}) or more (?P<quality>.+) in their graveyard",
-            CastReductionQueryScope.OPPONENT_ZONES,
+            CastReductionQueryScope.ANY_OPPONENT,
             None,
         ),
     )
     if normalized == "an opponent controls no basic lands":
         query = _relative_query(
-            CastReductionQueryScope.OPPONENT_ZONES,
+            CastReductionQueryScope.ANY_OPPONENT,
             _quality_query("basic lands", zone="battlefield"),
         )
         return (
@@ -357,7 +357,7 @@ def _object_count_metric(value: str) -> CastReductionMetric | None:
     elif match := re.fullmatch(r"(?P<quality>.+?) on the battlefield", normalized):
         parts = ((CastReductionQueryScope.ALL_ZONES, match.group("quality"), "battlefield"),)
     elif match := re.fullmatch(r"(?P<quality>.+?) your opponents control", normalized):
-        parts = ((CastReductionQueryScope.OPPONENT_ZONES, match.group("quality"), "battlefield"),)
+        parts = ((CastReductionQueryScope.OPPONENTS_COMBINED, match.group("quality"), "battlefield"),)
     elif match := re.fullmatch(r"(?P<quality>.+?) you control", normalized):
         parts = ((CastReductionQueryScope.CONTROLLER_ZONE, match.group("quality"), "battlefield"),)
     else:

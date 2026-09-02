@@ -17,6 +17,10 @@ class SelfCastReductionError(ValueError):
 
 class CastReductionQueryScope(str, Enum):
     CONTROLLER_ZONE = "controller_zone"
+    ANY_OPPONENT = "any_opponent"
+    OPPONENTS_COMBINED = "opponents_combined"
+    # Historical v1 descriptors flattened every opponent into one query. Keep
+    # decoding that value with its original combined meaning for exact replay.
     OPPONENT_ZONES = "opponent_zones"
     ALL_ZONES = "all_zones"
 
@@ -148,6 +152,19 @@ class CastReductionMetric:
                 )
         if self.minimum is not None and self.maximum is not None and self.minimum > self.maximum:
             raise SelfCastReductionError("Cast-reduction bounds are contradictory")
+
+        any_opponent = any(
+            query.scope is CastReductionQueryScope.ANY_OPPONENT
+            for query in self.queries
+        )
+        if any_opponent and (
+            self.kind is not CastReductionMetricKind.FIXED_PUBLIC_THRESHOLD
+            or len(self.queries) != 1
+            or self.require_all
+        ):
+            raise SelfCastReductionError(
+                "Any-opponent reductions require one independent threshold"
+            )
 
         if self.kind is CastReductionMetricKind.FIXED_PUBLIC_THRESHOLD:
             if not self.queries or (self.minimum is None and self.maximum is None):
@@ -337,7 +354,11 @@ def _object_ids(host: SelfCastReductionHost, seat: str, query: CastReductionObje
     zone = query.query.zones[0]
     if query.scope is CastReductionQueryScope.CONTROLLER_ZONE:
         return tuple(host.state.players[seat].zones[zone])
-    if query.scope is CastReductionQueryScope.OPPONENT_ZONES:
+    if query.scope in {
+        CastReductionQueryScope.ANY_OPPONENT,
+        CastReductionQueryScope.OPPONENTS_COMBINED,
+        CastReductionQueryScope.OPPONENT_ZONES,
+    }:
         return tuple(
             object_id
             for other, player in host.state.players.items()
@@ -352,9 +373,13 @@ def _object_ids(host: SelfCastReductionHost, seat: str, query: CastReductionObje
     )
 
 
-def _matching_cards(host: SelfCastReductionHost, seat: str, specification: CastReductionObjectQuery) -> tuple[tuple[Any, Mapping[str, Any]], ...]:
+def _matching_cards_from_ids(
+    host: SelfCastReductionHost,
+    specification: CastReductionObjectQuery,
+    object_ids: tuple[str, ...],
+) -> tuple[tuple[Any, Mapping[str, Any]], ...]:
     result: list[tuple[Any, Mapping[str, Any]]] = []
-    for object_id in _object_ids(host, seat, specification):
+    for object_id in object_ids:
         card = host.state.cards.get(object_id)
         if card is None:
             continue
@@ -370,6 +395,33 @@ def _matching_cards(host: SelfCastReductionHost, seat: str, specification: CastR
         if object_matches_query(row, specification.query):
             result.append((card, effective))
     return tuple(result)
+
+
+def _matching_cards(host: SelfCastReductionHost, seat: str, specification: CastReductionObjectQuery) -> tuple[tuple[Any, Mapping[str, Any]], ...]:
+    return _matching_cards_from_ids(
+        host,
+        specification,
+        _object_ids(host, seat, specification),
+    )
+
+
+def _any_opponent_query_counts(
+    host: SelfCastReductionHost,
+    seat: str,
+    query: CastReductionObjectQuery,
+) -> tuple[int, ...]:
+    zone = query.query.zones[0]
+    return tuple(
+        len(
+            _matching_cards_from_ids(
+                host,
+                query,
+                tuple(player.zones[zone]),
+            )
+        )
+        for other, player in host.state.players.items()
+        if other != seat and player.in_game
+    )
 
 
 def _query_count(host: SelfCastReductionHost, seat: str, metric: CastReductionMetric) -> int:
@@ -445,15 +497,30 @@ def cast_reduction_multiplier(host: SelfCastReductionHost, seat: str, metric: Ca
         assert metric.turn_fact is not None
         return int(_turn_fact_holds(host, seat, metric.turn_fact))
 
-    counts = [len(_matching_cards(host, seat, query)) for query in metric.queries]
-    values = counts if metric.require_all else [sum(counts)]
-    return int(
-        all(
+    def within_bounds(value: int) -> bool:
+        return (
             (metric.minimum is None or value >= metric.minimum)
             and (metric.maximum is None or value <= metric.maximum)
-            for value in values
         )
-    )
+
+    if (
+        len(metric.queries) == 1
+        and metric.queries[0].scope is CastReductionQueryScope.ANY_OPPONENT
+    ):
+        return int(
+            any(
+                within_bounds(value)
+                for value in _any_opponent_query_counts(
+                    host,
+                    seat,
+                    metric.queries[0],
+                )
+            )
+        )
+
+    counts = [len(_matching_cards(host, seat, query)) for query in metric.queries]
+    values = counts if metric.require_all else [sum(counts)]
+    return int(all(within_bounds(value) for value in values))
 
 
 def evaluated_self_reduction(host: SelfCastReductionHost, seat: str, specification: SelfSpellCostReductionSpec) -> dict[str, int]:

@@ -66,8 +66,10 @@ authority.
 the spell carrying the descriptor. Selected-face discovery evaluates only
 public controller/opponent object queries, fixed public thresholds, total mana
 value, devotion, Domain, and canonical spell, death, or active-turn facts. The
-result is a generic or colored reduction vector applied by the same total-cost
-query used for offers and accepted commands. Target-relative prices,
+typed query distinguishes existential `an opponent` thresholds, evaluated per
+opponent, from aggregate `your opponents` quantities. The result is a generic
+or colored reduction vector applied by the same total-cost query used for
+offers and accepted commands. Target-relative prices,
 unrecorded history, dynamic power/toughness, chosen or hidden facts, and open
 arithmetic fail closed rather than becoming a runtime prose query.
 

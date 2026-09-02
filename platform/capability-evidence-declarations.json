@@ -2572,6 +2572,14 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_multiple_qualifying_opponents_apply_one_fixed_reduction",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Apply one fixed existential reduction when several opponents independently satisfy the same public threshold."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_and_source_reductions_share_total_cost_pipeline",
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -2627,11 +2635,43 @@
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_graveyard_threshold_is_not_combined_across_opponents",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject an existential graveyard threshold when no individual opponent qualifies even though the combined opponent count reaches the threshold."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Evaluate a singular opponent's zero-basic-land condition independently instead of requiring every opponent's combined battlefield to contain no basic land."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reducers_compile_closed_public_metrics",
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed public thresholds, public object counts, total mana value, devotion, turn facts, and colored reductions into selected-face typed descriptors."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_compiler_preserves_opponent_quantification",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower singular and plural opponent wording to distinct typed existential and combined scopes while retaining legacy scope decoding."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_combined_opponents_threshold_still_aggregates_when_oracle_wording_requires_it",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Aggregate objects across all opponents only for plural Oracle wording that explicitly names the combined opponents set."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
