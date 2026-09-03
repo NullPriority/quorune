@@ -447,6 +447,26 @@ class CommanderEngine:
             }.issubset(plan.test_modules)
         )
 
+    def test_entry_return_owner_selects_choice_and_zone_contracts(self):
+        plan = classify_changes(
+            ["quorune/compiler/fixed_entry_return_requirements.py"]
+        )
+        self.assertIn(
+            "entry-return-trigger-contract",
+            plan.matched_rule_ids,
+        )
+        self.assertTrue(
+            {
+                "test_card_program_trust",
+                "test_fixed_affected_player_discards",
+                "test_fixed_affected_player_sacrifices",
+                "test_fixed_counter_event_triggers",
+                "test_return_to_hand_rules",
+                "test_rules_scheduler",
+                "test_zone_general_rules",
+            }.issubset(plan.test_modules)
+        )
+
     def test_browser_action_and_choice_contracts_are_explicit(self):
         for path in (
             "quorune/rules/action_catalog.py",

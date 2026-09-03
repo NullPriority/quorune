@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import FrozenInstanceError, replace
 import json
 from pathlib import Path
@@ -76,6 +77,9 @@ from quorune.record import (
 from quorune.rules.capabilities import (
     CapabilityRegistry,
     load_default_capability_registry,
+)
+from quorune.rules.entry_return_capability_shapes import (
+    fixed_entry_return_node_capabilities,
 )
 from quorune.semantic_choices.context import (
     SemanticChoiceContext,
@@ -2553,6 +2557,192 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 type_line="Creature — Test",
             )
         self.assertNotEqual("exact", mutated.status)
+
+    def test_fixed_entry_return_requirements_compile_exactly_and_fail_closed(self):
+        cases = (
+            (
+                "When this land enters, return a land you control to its owner's hand.",
+                "Land",
+                "choose_cards_apnap",
+            ),
+            (
+                "When this creature enters, sacrifice it unless you return another creature you control to its owner's hand.",
+                "Creature — Faerie",
+                "choose_option",
+            ),
+            (
+                "When a Dragon you control enters, return this enchantment to its owner's hand.",
+                "Enchantment",
+                "bounce",
+            ),
+            (
+                "When another creature enters, return this creature to its owner's hand.",
+                "Creature — Drake",
+                "bounce",
+            ),
+        )
+        for text, type_line, operation in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("permanent.enter", node.event)
+                self.assertEqual(
+                    "fixed-typed-effect-entry-return-public-zone-trigger-v1",
+                    node.template_id,
+                )
+                self.assertEqual(operation, node.effects[0]["op"])
+                self.assertIn(
+                    "choice.controller.fixed_return_owner_hand",
+                    node.capability_dependencies,
+                )
+                self.assertEqual(
+                    (CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+                    node.runtime_coverage,
+                )
+
+        exclusions = (
+            "When this creature enters, return up to one target creature you control to its owner's hand.",
+            "When this creature enters, return each other creature you control to its owner's hand.",
+            "When this creature enters, you may return another creature you control to its owner's hand.",
+            "When this creature enters, return X creatures you control to their owner's hand.",
+            "When this creature enters, return another creature you control to its owner's hand, then draw a card.",
+            "When a creature an opponent controls enters, return this creature to its owner's hand.",
+        )
+        for text in exclusions:
+            with self.subTest(excluded=text):
+                self.assertNotEqual(
+                    "exact",
+                    self.compile(text, type_line="Creature — Test").status,
+                )
+
+    def test_entry_return_untapped_basic_land_subtypes_compile_exactly(self):
+        for subtype in ("Plains", "Island", "Swamp", "Mountain", "Forest"):
+            with self.subTest(subtype=subtype):
+                ir = self.compile(
+                    "When this land enters, return an untapped "
+                    f"{subtype} you control to its owner's hand.",
+                    type_line="Land",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                effect = node.effects[0]
+                self.assertEqual("choose_cards_apnap", effect["op"])
+                self.assertEqual(["land"], effect["predicate"]["types_all"])
+                self.assertEqual(
+                    [subtype.casefold()],
+                    effect["predicate"]["subtypes_all"],
+                )
+                self.assertFalse(effect["predicate"]["tapped"])
+
+    def test_entry_return_counts_lower_as_many_and_exact_unless_shapes(self):
+        for word, count, quality, pronoun in (
+            ("a", 1, "creature", "its"),
+            ("two", 2, "creatures", "their"),
+            ("three", 3, "creatures", "their"),
+        ):
+            with self.subTest(count=count, payment="as-many-as-possible"):
+                ordinary = self.compile(
+                    "When this land enters, return "
+                    f"{word} {quality} you control to {pronoun} owner's hand.",
+                    type_line="Land",
+                )
+                self.assertEqual("exact", ordinary.status, ordinary.material_residuals)
+                choice = ordinary.faces[0].nodes[0].effects[0]
+                self.assertEqual("choose_cards_apnap", choice["op"])
+                self.assertEqual(count, choice["count"])
+                self.assertNotIn("require_full_count", choice)
+                self.assertNotIn("fallback_effects", choice)
+
+            with self.subTest(count=count, payment="exact-unless"):
+                unless = self.compile(
+                    "When this land enters, sacrifice it unless you return "
+                    f"{word} {quality} you control to {pronoun} owner's hand.",
+                    type_line="Land",
+                )
+                self.assertEqual("exact", unless.status, unless.material_residuals)
+                option = unless.faces[0].nodes[0].effects[0]
+                choice = option["then_by_choice"]["return"][0]
+                self.assertEqual("choose_cards_apnap", choice["op"])
+                self.assertEqual(count, choice["count"])
+                self.assertTrue(choice["require_full_count"])
+                fallback = [
+                    {"op": "sacrifice_if_present", "card": "$source.zone_object"}
+                ]
+                self.assertEqual(fallback, choice["fallback_effects"])
+                self.assertEqual(
+                    fallback,
+                    option["then_by_choice"]["sacrifice"],
+                )
+
+    def test_entry_return_capability_dependency_fails_closed(self):
+        text = "When this land enters, return a land you control to its owner's hand."
+        value = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        capability = next(
+            row
+            for row in value["capabilities"]
+            if row["id"] == "choice.controller.fixed_return_owner_hand"
+        )
+        capability["status"] = "blocked"
+        capability["blockers"] = ["focused entry-return dependency mutation"]
+        registry = CapabilityRegistry(value)
+        registry.mark_evidence_verified("0" * 64)
+        record = replace(
+            self.db.lookup("Generic Entry Land Return Fixture"),
+            oracle_text=text,
+        )
+        ir = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        self.assertNotEqual("exact", ir.status)
+        self.assertTrue(ir.material_residuals)
+
+    def test_entry_return_capability_shape_mutants_fail_closed(self):
+        ir = self.compile(
+            "When this creature enters, sacrifice it unless you return "
+            "another creature you control to its owner's hand.",
+            type_line="Creature — Faerie",
+        )
+        node = ir.faces[0].nodes[0]
+        arguments = {
+            "target_schema": node.target_schema,
+            "mechanic_ids": node.mechanics,
+        }
+        self.assertEqual(
+            ("choice.controller.fixed_return_owner_hand",),
+            fixed_entry_return_node_capabilities(
+                effects=node.effects,
+                **arguments,
+            ),
+        )
+        unexpected_field = deepcopy(node.effects[0])
+        unexpected_field["unsupported"] = True
+        wrong_option = deepcopy(node.effects[0])
+        wrong_option["options"][0]["id"] = "decline"
+        wrong_fallback = deepcopy(node.effects[0])
+        wrong_fallback["then_by_choice"]["sacrifice"] = [
+            {"op": "draw", "count": 1}
+        ]
+        open_return = deepcopy(node.effects[0])
+        open_return["then_by_choice"]["return"][0]["predicate"][
+            "controller"
+        ] = "$actor"
+        for mutant in (
+            unexpected_field,
+            wrong_option,
+            wrong_fallback,
+            open_return,
+        ):
+            with self.subTest(mutant=mutant):
+                self.assertEqual(
+                    (),
+                    fixed_entry_return_node_capabilities(
+                        effects=(mutant,),
+                        **arguments,
+                    ),
+                )
 
 
 class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
@@ -6799,6 +6989,609 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
                 for item in engine.state.stack
             )
         )
+
+    def test_entry_return_choice_uses_owner_hand_and_replays(self):
+        session = self.session(121069, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Entry Land Return Fixture",
+            ref="entry-return-source",
+            zone="hand",
+        )
+        candidate = self.add_card(
+            engine,
+            seat="B",
+            name="Forest",
+            ref="entry-return-candidate",
+            zone="battlefield",
+        )
+        engine.change_control(
+            candidate.object_id,
+            "A",
+            reason="entry-return owner-hand witness",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            reason="entry-return source entered",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        self.assertEqual(program.key, engine.state.stack[-1].semantic_key)
+        self.resolve_top(engine)
+        self.assertEqual("choice.apnap", engine.state.pending_decision.kind)
+        self.assertEqual(["A"], engine.state.pending_decision.actors)
+        projected = StateProjector(self.db, engine.state)
+        self.assertIsNotNone(projected._decision("pilot:A"))
+        for seat in "BCD":
+            self.assertIsNone(projected._decision(f"pilot:{seat}"))
+        self.assertNotIn(
+            candidate.object_id,
+            json.dumps(projected._decision("pilot:A"), sort_keys=True),
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act(
+            "pilot:A",
+            {"action_id": "choose", "cards": [candidate.ref]},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("hand", candidate.zone)
+        self.assertEqual("B", candidate.owner)
+        self.assertIn(candidate.object_id, engine.state.players["B"].zones["hand"])
+        self.assertEqual("battlefield", source.zone)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "entry-return-choice"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_entry_return_untapped_basic_land_subtypes_execute(self):
+        for index, subtype in enumerate(
+            ("Plains", "Island", "Swamp", "Mountain", "Forest")
+        ):
+            with self.subTest(subtype=subtype):
+                session = self.session(121076 + index)
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name=f"Generic Untapped {subtype} Entry Return Fixture",
+                    ref=f"entry-return-{subtype.casefold()}-source",
+                    zone="hand",
+                )
+                candidate = self.add_card(
+                    engine,
+                    seat="A",
+                    name=f"Generic {subtype} Land Witness",
+                    ref=f"entry-return-{subtype.casefold()}-candidate",
+                    zone="battlefield",
+                )
+                self.register_typed_event_trigger(engine, source)
+
+                engine.move_card(
+                    source.object_id,
+                    "battlefield",
+                    reason=f"untapped {subtype} entry-return witness",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+                self.resolve_top(engine)
+                self.assertEqual("choice.apnap", engine.state.pending_decision.kind)
+                result = session.act(
+                    "pilot:A",
+                    {"action_id": "choose", "cards": [candidate.ref]},
+                )
+
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("hand", candidate.zone)
+                self.assertEqual("battlefield", source.zone)
+
+    def test_entry_return_counts_execute_as_many_and_exact_unless(self):
+        count_cases = (
+            ("One", 1),
+            ("Two", 2),
+            ("Three", 3),
+        )
+
+        def stage(
+            *,
+            seed: int,
+            source_name: str,
+            candidate_count: int,
+        ):
+            session = self.session(seed)
+            engine = session.engine
+            source = self.add_card(
+                engine,
+                seat="A",
+                name=source_name,
+                ref=f"entry-count-source-{seed}",
+                zone="hand",
+            )
+            program = self.register_typed_event_trigger(engine, source)
+            candidates = [
+                self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Dragon Witness",
+                    ref=f"entry-count-candidate-{seed}-{index}",
+                    zone="battlefield",
+                )
+                for index in range(candidate_count)
+            ]
+            engine.move_card(
+                source.object_id,
+                "battlefield",
+                reason="entry return fixed-count witness",
+                semantic_events=True,
+            )
+            engine._stabilize()
+            self.assertEqual(program.key, engine.state.stack[-1].semantic_key)
+            self.resolve_top(engine)
+            return session, source, candidates
+
+        seed = 121086
+        for count_label, count in count_cases:
+            for available in (max(0, count - 1), count + 1):
+                with self.subTest(
+                    count=count,
+                    available=available,
+                    payment="as-many-as-possible",
+                ):
+                    session, source, candidates = stage(
+                        seed=seed,
+                        source_name=(
+                            f"Generic {count_label} Creature Entry Return Fixture"
+                        ),
+                        candidate_count=available,
+                    )
+                    seed += 1
+                    selected = candidates[: min(count, available)]
+                    if selected:
+                        decision = StateProjector(
+                            self.db, session.engine.state
+                        )._decision("pilot:A")
+                        self.assertEqual(len(selected), decision["ctx"]["count"])
+                        returned = session.act(
+                            "pilot:A",
+                            {
+                                "action_id": "choose",
+                                "cards": [card.ref for card in selected],
+                            },
+                        )
+                        self.assertTrue(returned.ok, returned.summary)
+                    else:
+                        self.assertIsNone(session.engine.state.pending_decision)
+                    self.assertEqual("battlefield", source.zone)
+                    self.assertTrue(all(card.zone == "hand" for card in selected))
+                    self.assertTrue(
+                        all(
+                            card.zone == "battlefield"
+                            for card in candidates[len(selected) :]
+                        )
+                    )
+
+            for available in (max(0, count - 1), count):
+                with self.subTest(
+                    count=count,
+                    available=available,
+                    payment="exact-unless",
+                ):
+                    session, source, candidates = stage(
+                        seed=seed,
+                        source_name=(
+                            f"Generic {count_label} Creature Entry Unless Fixture"
+                        ),
+                        candidate_count=available,
+                    )
+                    seed += 1
+                    selected_return = session.act(
+                        "pilot:A",
+                        {"action_id": "choose", "choice": "return"},
+                    )
+                    self.assertTrue(selected_return.ok, selected_return.summary)
+                    if available == count:
+                        returned = session.act(
+                            "pilot:A",
+                            {
+                                "action_id": "choose",
+                                "cards": [card.ref for card in candidates],
+                            },
+                        )
+                        self.assertTrue(returned.ok, returned.summary)
+                        self.assertEqual("battlefield", source.zone)
+                        self.assertTrue(
+                            all(card.zone == "hand" for card in candidates)
+                        )
+                    else:
+                        self.assertNotEqual(
+                            "choice.apnap",
+                            getattr(
+                                session.engine.state.pending_decision,
+                                "kind",
+                                None,
+                            ),
+                        )
+                        self.assertEqual("graveyard", source.zone)
+                        self.assertTrue(
+                            all(
+                                card.zone == "battlefield"
+                                for card in candidates
+                            )
+                        )
+
+    def test_entry_return_choice_revalidates_and_rolls_back(self):
+        session = self.session(121075)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Entry Creature Return Fixture",
+            ref="entry-return-stale-source",
+            zone="hand",
+        )
+        candidate = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Entry Dragon Witness",
+            ref="entry-return-stale-candidate",
+            zone="battlefield",
+        )
+        self.register_typed_event_trigger(engine, source)
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            reason="entry return stale source entered",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        self.resolve_top(engine)
+        self.assertEqual("choice.apnap", engine.state.pending_decision.kind)
+        engine.move_card(candidate.object_id, "graveyard", log=False)
+        expected_hash = authoritative_state_hash(engine.state)
+        rejected = session.act(
+            "pilot:A",
+            {"action_id": "choose", "cards": [candidate.ref]},
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(expected_hash, authoritative_state_hash(engine.state))
+        self.assertEqual("graveyard", candidate.zone)
+        self.assertEqual("battlefield", source.zone)
+
+    def test_entry_return_unless_branch_and_ability_removal(self):
+        for seed, selection, expected_source_zone, expected_candidate_zone in (
+            (121070, "sacrifice", "graveyard", "battlefield"),
+            (121071, "return", "battlefield", "hand"),
+        ):
+            with self.subTest(selection=selection):
+                session = self.session(seed)
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Unless Return Fixture",
+                    ref=f"entry-unless-source-{selection}",
+                    zone="hand",
+                )
+                candidate = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Dragon Witness",
+                    ref=f"entry-unless-candidate-{selection}",
+                    zone="battlefield",
+                )
+                self.register_typed_event_trigger(engine, source)
+                engine.move_card(
+                    source.object_id,
+                    "battlefield",
+                    reason="entry unless return source entered",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+                self.resolve_top(engine)
+                chosen = session.act(
+                    "pilot:A",
+                    {"action_id": "choose", "choice": selection},
+                )
+                self.assertTrue(chosen.ok, chosen.summary)
+                if selection == "return":
+                    returned = session.act(
+                        "pilot:A",
+                        {"action_id": "choose", "cards": [candidate.ref]},
+                    )
+                    self.assertTrue(returned.ok, returned.summary)
+                self.assertEqual(expected_source_zone, source.zone)
+                self.assertEqual(expected_candidate_zone, candidate.zone)
+
+        fallback_session = self.session(121072)
+        fallback_engine = fallback_session.engine
+        fallback = self.add_card(
+            fallback_engine,
+            seat="A",
+            name="Generic Entry Unless Return Fixture",
+            ref="entry-unless-no-payment",
+            zone="hand",
+        )
+        self.register_typed_event_trigger(fallback_engine, fallback)
+        fallback_engine.move_card(
+            fallback.object_id,
+            "battlefield",
+            reason="entry unless unavailable return",
+            semantic_events=True,
+        )
+        fallback_engine._stabilize()
+        self.resolve_top(fallback_engine)
+        fallback_choice = fallback_session.act(
+            "pilot:A",
+            {"action_id": "choose", "choice": "return"},
+        )
+        self.assertTrue(fallback_choice.ok, fallback_choice.summary)
+        self.assertEqual("graveyard", fallback.zone)
+
+        removed_session = self.session(121073)
+        removed_engine = removed_session.engine
+        removed = self.add_card(
+            removed_engine,
+            seat="A",
+            name="Generic Entry Creature Return Fixture",
+            ref="entry-return-removed",
+            zone="hand",
+        )
+        self.register_typed_event_trigger(removed_engine, removed)
+        commit_continuous_effect(
+            removed_engine.state,
+            ContinuousEffect(
+                effect_id="fixture:remove-entry-return",
+                source_id="fixture:remove-entry-return-owner",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=removed_engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("remove_all_abilities"),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                applies=ObjectQuerySpec(
+                    zones=("battlefield",),
+                    types_all=("creature",),
+                ),
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        object_id=removed.object_id,
+                        logical_object_id=(
+                            f"{removed.object_id}@{removed.zone_change_counter + 1}"
+                        ),
+                    ),
+                ),
+            ),
+        )
+        removed_engine.move_card(
+            removed.object_id,
+            "battlefield",
+            reason="entry return removed ability witness",
+            semantic_events=True,
+        )
+        removed_engine._stabilize()
+        self.assertFalse(removed_engine.state.stack)
+
+    def test_external_entry_self_returns_batch_in_apnap_order(self):
+        session = self.session(121074, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        controlled_source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Controlled Subtype Entry Return Fixture",
+            ref="entry-return-controlled-source",
+            zone="battlefield",
+        )
+        other_source = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Other Entry Return Fixture",
+            ref="entry-return-other-source",
+            zone="battlefield",
+        )
+        controlled_program = self.register_typed_event_trigger(
+            engine, controlled_source
+        )
+        other_program = self.register_typed_event_trigger(engine, other_source)
+        dragon = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Entry Dragon Witness",
+            ref="entry-return-dragon",
+            zone="hand",
+        )
+        engine.move_card(
+            dragon.object_id,
+            "battlefield",
+            reason="external entry return Dragon witness",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        self.assertEqual(
+            {controlled_program.key, other_program.key},
+            {item.semantic_key for item in engine.state.stack},
+        )
+        self.assertEqual("B", engine.state.stack[-1].controller)
+        self.resolve_top(engine)
+        self.assertEqual("hand", other_source.zone)
+        self.resolve_top(engine)
+        self.assertEqual("hand", controlled_source.zone)
+        self.assertEqual("battlefield", dragon.zone)
+
+    def test_external_entry_self_return_uses_source_incarnation(self):
+        for reenter in (False, True):
+            with self.subTest(reenter=reenter):
+                session = self.session(121081 + int(reenter))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Controlled Subtype Entry Return Fixture",
+                    ref=f"external-entry-incarnation-{int(reenter)}",
+                    zone="battlefield",
+                )
+                program = self.register_typed_event_trigger(engine, source)
+                dragon = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Dragon Witness",
+                    ref=f"external-entry-dragon-{int(reenter)}",
+                    zone="hand",
+                )
+                engine.move_card(
+                    dragon.object_id,
+                    "battlefield",
+                    reason="external entry incarnation witness",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+                item = next(
+                    value
+                    for value in engine.state.stack
+                    if value.semantic_key == program.key
+                )
+                source_incarnation = item.context["source_logical_object_id"]
+
+                engine.move_card(
+                    source.object_id,
+                    "graveyard",
+                    reason="external entry source left before resolution",
+                    semantic_events=False,
+                )
+                if reenter:
+                    engine.move_card(
+                        source.object_id,
+                        "battlefield",
+                        reason="external entry source reentered before resolution",
+                        semantic_events=False,
+                    )
+                    self.assertNotEqual(
+                        source_incarnation,
+                        source.logical_object_id,
+                    )
+
+                self.resolve_top(engine)
+
+                self.assertEqual(
+                    "battlefield" if reenter else "graveyard",
+                    source.zone,
+                )
+                self.assertEqual("battlefield", dragon.zone)
+
+    def test_entry_return_unless_sacrifice_uses_source_incarnation(self):
+        for reenter in (False, True):
+            with self.subTest(reenter=reenter):
+                session = self.session(121083 + int(reenter))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Unless Return Fixture",
+                    ref=f"entry-unless-incarnation-{int(reenter)}",
+                    zone="hand",
+                )
+                program = self.register_typed_event_trigger(engine, source)
+                engine.move_card(
+                    source.object_id,
+                    "battlefield",
+                    reason="entry unless incarnation witness",
+                    semantic_events=True,
+                )
+                engine._stabilize()
+                item = next(
+                    value
+                    for value in engine.state.stack
+                    if value.semantic_key == program.key
+                )
+                source_incarnation = item.context["source_logical_object_id"]
+                engine.move_card(
+                    source.object_id,
+                    "graveyard",
+                    reason="entry unless source left before resolution",
+                    semantic_events=False,
+                )
+                if reenter:
+                    engine.move_card(
+                        source.object_id,
+                        "battlefield",
+                        reason="entry unless source reentered before resolution",
+                        semantic_events=False,
+                    )
+                    self.assertNotEqual(
+                        source_incarnation,
+                        source.logical_object_id,
+                    )
+
+                self.resolve_top(engine)
+                result = session.act(
+                    "pilot:A",
+                    {"action_id": "choose", "choice": "sacrifice"},
+                )
+
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(
+                    "battlefield" if reenter else "graveyard",
+                    source.zone,
+                )
+
+    def test_reentered_source_remains_excluded_from_another_return_payment(self):
+        session = self.session(121085)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Entry Unless Return Fixture",
+            ref="entry-unless-another-incarnation",
+            zone="hand",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            reason="entry unless another exclusion witness",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        item = next(
+            value for value in engine.state.stack if value.semantic_key == program.key
+        )
+        old_incarnation = item.context["source_logical_object_id"]
+        engine.move_card(
+            source.object_id,
+            "graveyard",
+            reason="another source left before resolution",
+            semantic_events=False,
+        )
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            reason="another source reentered before resolution",
+            semantic_events=False,
+        )
+        self.assertNotEqual(old_incarnation, source.logical_object_id)
+
+        self.resolve_top(engine)
+        selected_return = session.act(
+            "pilot:A",
+            {"action_id": "choose", "choice": "return"},
+        )
+
+        self.assertTrue(selected_return.ok, selected_return.summary)
+        self.assertNotEqual(
+            "choice.apnap",
+            getattr(engine.state.pending_decision, "kind", None),
+        )
+        self.assertEqual("battlefield", source.zone)
 
 
 if __name__ == "__main__":

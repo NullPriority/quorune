@@ -641,6 +641,21 @@
       ]
     },
     {
+      "id": "entry-return-trigger-contract",
+      "patterns": [
+        "quorune/compiler/fixed_entry_return_requirements.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_affected_player_discards",
+        "test_fixed_affected_player_sacrifices",
+        "test_fixed_counter_event_triggers",
+        "test_return_to_hand_rules",
+        "test_rules_scheduler",
+        "test_zone_general_rules"
+      ]
+    },
+    {
       "id": "compiler-prevention-expectations",
       "patterns": [
         "quorune/compiler/damage_templates.py",

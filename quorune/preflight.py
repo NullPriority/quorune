@@ -783,6 +783,7 @@ def _register_deck_programs(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         promote_exact_runtime_handlers=True,
+        promote_exact_trigger_programs=True,
         promote_exact_effect_programs=True,
         promote_exact_capability_declarations=True,
     )

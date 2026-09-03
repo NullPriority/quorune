@@ -251,6 +251,22 @@ It emits `$source` and a narrow shape-gated mechanic rather than claiming the
 broad zone-change rules family. Targeted returns, source-zone costs, and other
 destinations continue through their existing independent owners.
 
+`compiler/fixed_entry_return_requirements.py` composes that source return with
+the normalized public entry-event owner and extends the existing APNAP object
+choice continuation to one controller-scoped owner-hand destination. It accepts
+one through three public permanents matching a closed battlefield
+`ObjectQuerySpec`, including the complete alternative of sacrificing the
+entering source when the return is declined or cannot be paid. Controlled
+fixed-subtype and other fixed-type entries may instead return the exact source
+incarnation. Self-return and sacrifice fallbacks use the shared logical-object-
+aware source placeholder, so an old trigger cannot move a re-entered permanent.
+Untapped basic-land predicates normalize Plains, Island, Swamp, Mountain, and
+Forest through an explicit canonical mapping.
+All selected objects move simultaneously through the canonical destination-
+replacement coordinator. Targets, up-to or aggregate sets, hidden or opponent
+subjects, variable or optional returns, compound bodies, and dynamic, chosen,
+linked, or unsupported event predicates remain source-spanned residuals.
+
 `compiler/affected_player_sacrifice_templates.py` owns one mandatory fixed
 affected-player sacrifice leaf shared by spell, triggered, activated, and
 fixed Choose one modal contexts. Target-player, target-opponent, each-player,

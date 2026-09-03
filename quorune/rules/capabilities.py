@@ -33,6 +33,9 @@ from .affected_player_sacrifice_capability_shapes import (
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
 )
+from .entry_return_capability_shapes import (
+    fixed_entry_return_node_capabilities,
+)
 from .node_capability_shapes import (
     fixed_alternative_additional_cost_node_capabilities,
     fixed_counter_additional_cost_node_capabilities,
@@ -113,6 +116,10 @@ from ..compiler.optional_effect_templates import (
 from ..compiler.optional_payment_templates import (
     FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,
     FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
+)
+from ..compiler.fixed_entry_return_requirements import (
+    FIXED_ENTRY_RETURN_CAPABILITY,
+    FIXED_ENTRY_RETURN_MECHANIC,
 )
 from ..compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_MECHANIC,
@@ -1027,6 +1034,7 @@ def _targeted_effect_capabilities(
         fixed_draw_node_capabilities,
         fixed_affected_player_discard_node_capabilities,
         fixed_affected_player_sacrifice_node_capabilities,
+        fixed_entry_return_node_capabilities,
         fixed_mill_node_capabilities,
         fixed_impulse_access_node_capabilities,
         fixed_monarch_node_capabilities,
@@ -1391,6 +1399,22 @@ def _regeneration_covered_mechanics(supplied: set[str]) -> set[str]:
     }
 
 
+def _return_to_hand_covered_mechanics(supplied: set[str]) -> set[str]:
+    covered: set[str] = set()
+    if supplied.intersection(
+        {
+            "card.return.own_graveyard_to_owner_hand",
+            "permanent.return.owner_hand",
+        }
+    ):
+        covered.add("return-to-owner-hand")
+    if FIXED_ENTRY_RETURN_CAPABILITY in supplied:
+        covered.update(
+            {FIXED_ENTRY_RETURN_MECHANIC, "return-to-owner-hand"}
+        )
+    return covered
+
+
 def capability_covered_mechanics(
     dependencies: Iterable[str],
 ) -> tuple[str, ...]:
@@ -1428,13 +1452,7 @@ def capability_covered_mechanics(
                 "fixed-public-zone-move-set",
             }
         )
-    if supplied.intersection(
-        {
-            "card.return.own_graveyard_to_owner_hand",
-            "permanent.return.owner_hand",
-        }
-    ):
-        covered.add("return-to-owner-hand")
+    covered.update(_return_to_hand_covered_mechanics(supplied))
     if "stack.counter.effect" in supplied:
         covered.add("counter")
     covered.update(_shape_gated_covered_mechanics(supplied))

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "1877376fb6b80e5fe77cb0466d6cc26997921968509d2f0f7d88a547d0f2179f",
-  "declaration_source_fingerprint": "82d8c46e68bb6d6d95303f5c31d1ba5705e801d312402712255131f296cc6ec2",
+  "registry_fingerprint": "380bef36589df0ca03461162d0318712399557c8c862c50bde0743fe9454ff0d",
+  "declaration_source_fingerprint": "4421d974334bdaf4822334db3eb7ff719c682b65a099b444c5d7e379f1936dc3",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -9879,6 +9879,346 @@
         "commander_review"
       ],
       "applicability_note": "Reject a stale issued candidate and a malformed typed predicate while preserving the exact authoritative state hash."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose a currently controlled permanent owned by another seat and move it to its owner's hand through the canonical simultaneous transition."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_counts_execute_as_many_and_exact_unless",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "For fixed counts one through three, cap an ordinary return at the available legal objects while requiring the complete count before an unless payment avoids the source-sacrifice fallback."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_unless_branch_and_ability_removal",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise both return and sacrifice branches, exact-payment fallback, source exclusion, and current layer-6 ability removal."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_unless_sacrifice_uses_source_incarnation",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Leave the sacrifice-unless-return source before its trigger resolves and prove an absent or re-entered new incarnation cannot be sacrificed by the old trigger."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_external_entry_self_return_uses_source_incarnation",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve an external-entry self-return trigger after its source remains absent or re-enters as a new logical object without moving that new incarnation."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_reentered_source_remains_excluded_from_another_return_payment",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the stable source reference excluded from an old another-payment choice while preventing its incarnation-stale fallback from sacrificing the re-entered permanent."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_external_entry_self_returns_batch_in_apnap_order",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Batch controlled-subtype and other-object entry triggers across seats in ordinary APNAP order and return each exact source."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_capability_dependency_fails_closed",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the entry-return capability and require the otherwise matching trigger to lose exact trust before runtime admission."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_capability_shape_mutants_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject unknown outer fields, renamed options, unsupported fallback effects, and controller-bearing predicates before capability closure."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_entry_return_requirements_compile_exactly_and_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep targeted, up-to, aggregate, optional, variable, opponent-relative, and compound entry-return forms material and fail closed."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_counts_lower_as_many_and_exact_unless_shapes",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed counts one through three to ordinary as-many-as-possible choices or exact unless-payment choices with the logical-source fallback."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_untapped_basic_land_subtypes_compile_exactly",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normalize each of Plains, Island, Swamp, Mountain, and Forest through an explicit canonical untapped-land subtype mapping."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_entry_return_requirements_compile_exactly_and_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower the fixed source-entry and external-entry grammar to source-spanned typed event, choice, return, fallback, and current-ability descriptors."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_untapped_basic_land_subtypes_execute",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer and commit an owner-hand return for an untapped permanent of each canonical basic land subtype."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only public return choices and preserve owner-scoped hand state after the public battlefield object moves."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the public choice continuation, owner-hand destination, normalized move, and final authoritative state hash."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_revalidates_and_rolls_back",
+      "official_rule_ids": [
+        "101.4",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "603.3",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a chosen permanent that left the battlefield after issuance and preserve the exact authoritative state hash without resuming the trigger."
     },
     {
       "capability_id": "choice.modal.fixed_nonrepeating",
@@ -53305,5 +53645,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "1d64e72b5af541afb255d26fc4675ce769258db327457ce54e74f7ed9c7550f0"
+  "fingerprint": "ea33232862db6df08f3762cd0e4a4ced3d35ff10c1aceaede6db958d7d2416e9"
 }

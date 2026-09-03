@@ -61,11 +61,12 @@ def _intents(effect: Mapping[str, Any]) -> tuple[Any, ...]:
             type(value) is not str or not value
             for value in (actor, destination, reason, event_code, message)
         )
-        or destination not in {"exile", "graveyard"}
+        or destination not in {"exile", "graveyard", "hand"}
         or event_code not in {
             "choice.discard",
             "choice.exile",
             "choice.sacrifice",
+            "choice.return_owner_hand",
         }
     ):
         raise SemanticChoiceError("APNAP object commit is malformed")
@@ -122,6 +123,7 @@ class ApnapObjectCommitHandler:
     test_modules: tuple[str, ...] = (
         "tests.test_fixed_affected_player_discards",
         "tests.test_fixed_affected_player_sacrifices",
+        "tests.test_fixed_counter_event_triggers",
     )
 
     def prepare(

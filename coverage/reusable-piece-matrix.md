@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "40e0a0ed5b66d7e02527c7c5c6278930463e5b61a3fb1c23d63adb6f75ce6be3"
+verified: "28e0f8b6bdce4decf0291258ed7186e5517314fad51c2ccf4c8a7aebe7061e49"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,27 +17,27 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 2,239
+- Pieces: 2,242
 - Cards indexed: 31,623
 - Material abilities classified: 59,404
 - Unclassified material spans: 0
 - Mapped pinned rules: 927 / 3,309
-- Applicable piece pairs: 65,187
+- Applicable piece pairs: 65,434
 - Covered piece pairs: 824
 
 ## Ontology classes
 
 | Class | Pieces |
 |---|---:|
-| `actions_permissions` — Actions, permissions, and prohibitions | 75 |
+| `actions_permissions` — Actions, permissions, and prohibitions | 76 |
 | `card_forms` — Card types and specialized forms | 6 |
 | `choices_continuations` — Modes, targets, choices, and continuations | 13 |
 | `combat` — Combat | 24 |
-| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,127 |
+| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,128 |
 | `continuous_effects` — Static abilities and continuous effects | 46 |
 | `costs_mana` — Costs and mana | 8 |
 | `events_mutations` — Typed events and mutations | 111 |
-| `keyword_mechanics` — Keyword actions and keyword abilities | 567 |
+| `keyword_mechanics` — Keyword actions and keyword abilities | 568 |
 | `multiplayer_commander` — Multiplayer, Commander, and profile pieces | 4 |
 | `object_identity` — Object identity and lifetime | 31 |
 | `one_shot_effects` — One-shot semantic effects | 176 |
@@ -52,7 +52,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | System | Status | Pieces | Blocking pieces |
 |---|---|---:|---:|
-| `action_legality_casting_activation_costs_mana` | `inventoried` | 106 | 6 |
+| `action_legality_casting_activation_costs_mana` | `inventoried` | 107 | 6 |
 | `combat` | `compositional` | 24 | 0 |
 | `derived_characteristics_static_layers` | `inventoried` | 46 | 7 |
 | `generic_triggers_stack_placement` | `inventoried` | 3 | 3 |

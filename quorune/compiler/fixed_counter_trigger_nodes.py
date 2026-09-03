@@ -15,6 +15,9 @@ from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
     fixed_source_combat_growth_effect_template,
 )
+from .fixed_entry_return_requirements import (
+    fixed_entry_return_effect_template,
+)
 from .spell_cast_predicates import (
     FixedSpellCastCharacteristicKind,
     FixedSpellCastCharacteristicQuery,
@@ -66,6 +69,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-public-cycle-trigger-v1",
         "fixed-counter-public-face-up-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
+        "fixed-counter-entry-return-public-zone-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(
@@ -922,6 +926,10 @@ def _binding_effect_template(
     )
     if specialized[0] is not None:
         return specialized, True
+    if binding.variant == "fixed_entry_return_requirement":
+        entry_return = fixed_entry_return_effect_template(body)
+        if entry_return[0] is not None:
+            return entry_return, True
     return effect_template(body, card_name=card_name), False
 
 
@@ -962,7 +970,7 @@ def fixed_counter_event_trigger_node(
         else binding.body
     )
     if optional_match is None:
-        compiled, source_combat_growth = _binding_effect_template(
+        compiled, requires_current_ability = _binding_effect_template(
             binding,
             body,
             card_name=card_name,
@@ -970,7 +978,7 @@ def fixed_counter_event_trigger_node(
         )
     else:
         compiled = effect_template(body, card_name=card_name)
-        source_combat_growth = False
+        requires_current_ability = False
     template, effects, target_schema, body_mechanics = compiled
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
@@ -1044,7 +1052,7 @@ def fixed_counter_event_trigger_node(
         target_schema=target_schema,
         runtime_coverage=(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if source_combat_growth
+            if requires_current_ability
             else ()
         ),
         mechanics=mechanics,
@@ -1101,7 +1109,7 @@ def fixed_typed_event_effect_trigger_node(
     )
     if binding is None:
         return None
-    compiled, source_combat_growth = _binding_effect_template(
+    compiled, requires_current_ability = _binding_effect_template(
         binding,
         binding.body,
         card_name=card_name,
@@ -1166,8 +1174,11 @@ def fixed_typed_event_effect_trigger_node(
         target_schema=target_schema,
         runtime_coverage=(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if source_combat_growth
-            and template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
+            if requires_current_ability
+            and (
+                template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
+                or binding.variant == "fixed_entry_return_requirement"
+            )
             else ()
         ),
         mechanics=mechanics,

@@ -1698,19 +1698,160 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-source-combat-growth-trigger-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-static-cast-cost-modifiers",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.cost.modifier.fixed_query",
+            "component:quorune.compiler.public_cast_cost_modifiers.public_cast_cost_modifier_template",
+            "component:quorune.rules.casting.costs._apply_static_reductions",
+            "component:quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "all-player-source-controller-or-source-opponent-relation",
+            "first-or-second-controller-spell-ordinal",
+            "fixed-generic-positive-or-negative-adjustment",
+            "fixed-public-spell-characteristic-predicate",
+            "graveyard-or-exile-cast-origin",
+            "source-controller-turn-relation"
+          ],
+          "shared_dependencies": [
+            "casting.cost.modifier.fixed_query"
+          ],
+          "shared_grammar": "one static source-spanned fixed generic spell-cost increase or reduction over a closed caster relation, spell characteristic predicate, public cast origin, turn relation, or first/second spell ordinal through the existing total-cost owner",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends one authoritative offer-and-commit total-cost path across fixed source-controller, opponent, and global spell taxes and reductions while preserving current ability applicability, selected-face characteristics, deterministic ordering, privacy, and replay.",
+          "explicit_exclusions": [
+            "activated-ability, loyalty, morph, commander-tax, and other non-spell costs",
+            "alternate, additional, optional, and payment-dependent costs",
+            "colored, hybrid, Phyrexian, snow, variable, negative, zero, capped, floored, and open-arithmetic adjustments",
+            "copied, granted, removed, text-changed, conditional, modal, temporary, and non-battlefield source abilities outside the shared current-ability query",
+            "dynamic power, toughness, greatest, total-characteristic, distinct-name, distinct-type, color-cardinality, and other cycle-sensitive quantities",
+            "target-relative, chosen, named, secret, linked, and card-specific predicates"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-static-cast-cost-modifier-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-cast-lifecycles",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.unearth.fixed_mana",
+            "capability:casting.flashback.fixed_mana",
+            "component:quorune.compiler.fixed_cast_lifecycles.fixed_cast_lifecycle_spec",
+            "component:quorune.rules.casting.costs.build_cast_cost_options",
+            "component:quorune.trigger_processing.schedule_delayed_trigger"
+          ],
+          "source_contexts": [
+            "spell",
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "buyback-additional-cost-and-resolution-return",
+            "dash-alternate-cost-haste-and-delayed-return",
+            "fixed-ordinary-mana-cost",
+            "warp-alternate-cost-delayed-exile-and-exile-recast"
+          ],
+          "shared_dependencies": [
+            "casting.additional_cost.fixed_mana",
+            "casting.flashback.fixed_mana",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "ordinary fixed-mana Buyback, Dash, and Warp cast methods represented by one typed cost option, immutable cast designation, canonical spell or battlefield departure owner, and identity-pinned delayed lifecycle",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Generalizes the existing Flashback, Unearth, selected-face cost, destination replacement, delayed trigger, Haste, and replay owners into one reusable cast-lifecycle substrate while retaining mechanic-specific typed adapters.",
+          "explicit_exclusions": [
+            "Madness, Foretell, Plot, Escape, Blitz, Disturb, and other separate zone or choice lifecycles",
+            "alternative source zones other than the represented hand and later Warp exile permission",
+            "countered Buyback spells, replaced or prevented resolutions, phased-out delayed subjects, and stale object incarnations",
+            "independently unsupported spell or permanent abilities",
+            "multiple instances, cost reducers, copied or granted abilities, text changes, spell copies, and tokens",
+            "variable, hybrid, Phyrexian, snow, life, discard, sacrifice, random, and compound costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-cast-lifecycle-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-entry-return-requirements",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:permanent.return.owner_hand",
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_zone_change",
+            "component:quorune.compiler.fixed_entry_return_requirements.fixed_entry_return_requirement_spec",
+            "component:quorune.rules.single_object_zone_transition.prepare_single_object_zone_transition",
+            "component:quorune.trigger_discovery.dispatch_semantic_event"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-controlled-subtype-entry-predicate",
+            "fixed-one-two-or-three-controlled-permanent-choice",
+            "fixed-other-object-entry-predicate",
+            "owner-hand-destination",
+            "sacrifice-source-unless-returned",
+            "source-entry-event",
+            "source-exclusion"
+          ],
+          "shared_dependencies": [
+            "permanent.return.owner_hand",
+            "trigger.effect.fixed_event",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "mandatory source-entry return of one to three controller-selected public permanents to their owners' hands, optionally as the complete alternative to sacrificing the entering source, plus controlled fixed-subtype or other fixed-type entry returning the source itself",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Composes the existing source-entry occurrence, public ObjectQuerySpec choice, owner-hand transition, sacrifice, APNAP placement, rollback, and replay owners without a parallel zone mutation path.",
+          "explicit_exclusions": [
+            "additional effects after the return or sacrifice decision",
+            "chosen, named, linked, dynamic, historic, target-relative, and unsupported characteristic predicates",
+            "copied, granted, removed, text-changed, or independently unsupported source abilities",
+            "source events other than one current battlefield entry or one fixed controlled-subtype public entry",
+            "targets, up-to counts, each or all sets, opponent-controlled subjects, hidden zones, and non-owner destinations",
+            "variable, optional, modal, intervening-if, reflexive, repeated, delayed, and compound bodies"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-entry-return-requirement-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v159-prevention-applicability-boundaries",
-      "compiler_version": "oracle-ir-v159",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct unavailable prevention facts and deduplicate sibling prevent-all scopes only through an explicit semantic application group."
+      "transition_id": "oracle-ir-v160-fixed-entry-return-requirements",
+      "compiler_version": "oracle-ir-v160",
+      "bundle_id": "bundle:fixed-entry-return-requirements",
+      "candidate_ids": ["compiler:fixed-entry-return-requirements"],
+      "family_ids": [
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
+      ],
+      "capability_ids": [
+        "choice.controller.fixed_return_owner_hand",
+        "permanent.return.owner_hand",
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_zone_change"
+      ],
+      "measurement_id": "measurement:fixed-entry-return-requirements",
+      "non_harvest_reason": null
     },
     "forecast_corrections": [
       {
@@ -2237,6 +2378,11 @@
         "candidate_id": "compiler:fixed-source-combat-growth-triggers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector has no eligible carried candidate after the attached quoted-ability harvest, while its aggregate leaders remain heterogeneous. A bounded comparison retired mandatory additional costs, self-zone casting, dynamic cast-entry counters, strict top-library access, and other fragmented families below the normal complete-card floor. The integrated source-combat probe instead isolates 65 exact carriers across 64 cards with a conservative 54-card closure through existing normalized attack, block, damage, typed predicate, fixed source characteristic, counter placement, current layer-6 ability applicability, APNAP, and replay owners. Optional, payment, variable, aggregate, targeted, multi-effect, other-counter, non-self, broader-damage, combined-event, and unsupported combat-predicate forms remain fail-closed; current cohort identities and counts are derived into the generated measurement artifact."
+      },
+      {
+        "candidate_id": "compiler:fixed-entry-return-requirements",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The generated selector has no eligible carried candidate after the source-combat harvest, while the raw continuous-layer leader remains heterogeneous and the rules queue still points to a nonmeasured counter prerequisite. Bounded integrated probes retired public static cast-cost modifiers at 16 complete cards and fixed-mana Buyback, Dash, and Warp lifecycles at 25. The selected entry-return family instead measures 52 exact carriers and a conservative 50-card closure through existing normalized entry events, typed public predicates, controller-scoped choices, owner-hand transitions, sacrifice fallback, current layer-6 ability applicability, APNAP, and replay owners. Targets, up-to and aggregate sets, hidden or opponent subjects, variable, optional, modal, compound, dynamic, chosen, linked, and unsupported event forms remain fail-closed; current cohort identities and counts are generated from the current frontier."
       }
     ]
   },
