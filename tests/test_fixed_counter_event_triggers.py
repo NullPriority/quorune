@@ -2635,6 +2635,46 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
                 self.assertFalse(effect["predicate"]["tapped"])
 
+    def test_entry_return_counts_lower_as_many_and_exact_unless_shapes(self):
+        for word, count, quality, pronoun in (
+            ("a", 1, "creature", "its"),
+            ("two", 2, "creatures", "their"),
+            ("three", 3, "creatures", "their"),
+        ):
+            with self.subTest(count=count, payment="as-many-as-possible"):
+                ordinary = self.compile(
+                    "When this land enters, return "
+                    f"{word} {quality} you control to {pronoun} owner's hand.",
+                    type_line="Land",
+                )
+                self.assertEqual("exact", ordinary.status, ordinary.material_residuals)
+                choice = ordinary.faces[0].nodes[0].effects[0]
+                self.assertEqual("choose_cards_apnap", choice["op"])
+                self.assertEqual(count, choice["count"])
+                self.assertNotIn("require_full_count", choice)
+                self.assertNotIn("fallback_effects", choice)
+
+            with self.subTest(count=count, payment="exact-unless"):
+                unless = self.compile(
+                    "When this land enters, sacrifice it unless you return "
+                    f"{word} {quality} you control to {pronoun} owner's hand.",
+                    type_line="Land",
+                )
+                self.assertEqual("exact", unless.status, unless.material_residuals)
+                option = unless.faces[0].nodes[0].effects[0]
+                choice = option["then_by_choice"]["return"][0]
+                self.assertEqual("choose_cards_apnap", choice["op"])
+                self.assertEqual(count, choice["count"])
+                self.assertTrue(choice["require_full_count"])
+                fallback = [
+                    {"op": "sacrifice_if_present", "card": "$source.zone_object"}
+                ]
+                self.assertEqual(fallback, choice["fallback_effects"])
+                self.assertEqual(
+                    fallback,
+                    option["then_by_choice"]["sacrifice"],
+                )
+
     def test_entry_return_capability_dependency_fails_closed(self):
         text = "When this land enters, return a land you control to its owner's hand."
         value = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
@@ -7054,6 +7094,140 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
                 self.assertTrue(result.ok, result.summary)
                 self.assertEqual("hand", candidate.zone)
                 self.assertEqual("battlefield", source.zone)
+
+    def test_entry_return_counts_execute_as_many_and_exact_unless(self):
+        count_cases = (
+            ("One", 1),
+            ("Two", 2),
+            ("Three", 3),
+        )
+
+        def stage(
+            *,
+            seed: int,
+            source_name: str,
+            candidate_count: int,
+        ):
+            session = self.session(seed)
+            engine = session.engine
+            source = self.add_card(
+                engine,
+                seat="A",
+                name=source_name,
+                ref=f"entry-count-source-{seed}",
+                zone="hand",
+            )
+            program = self.register_typed_event_trigger(engine, source)
+            candidates = [
+                self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Entry Dragon Witness",
+                    ref=f"entry-count-candidate-{seed}-{index}",
+                    zone="battlefield",
+                )
+                for index in range(candidate_count)
+            ]
+            engine.move_card(
+                source.object_id,
+                "battlefield",
+                reason="entry return fixed-count witness",
+                semantic_events=True,
+            )
+            engine._stabilize()
+            self.assertEqual(program.key, engine.state.stack[-1].semantic_key)
+            self.resolve_top(engine)
+            return session, source, candidates
+
+        seed = 121086
+        for count_label, count in count_cases:
+            for available in (max(0, count - 1), count + 1):
+                with self.subTest(
+                    count=count,
+                    available=available,
+                    payment="as-many-as-possible",
+                ):
+                    session, source, candidates = stage(
+                        seed=seed,
+                        source_name=(
+                            f"Generic {count_label} Creature Entry Return Fixture"
+                        ),
+                        candidate_count=available,
+                    )
+                    seed += 1
+                    selected = candidates[: min(count, available)]
+                    if selected:
+                        decision = StateProjector(
+                            self.db, session.engine.state
+                        )._decision("pilot:A")
+                        self.assertEqual(len(selected), decision["ctx"]["count"])
+                        returned = session.act(
+                            "pilot:A",
+                            {
+                                "action_id": "choose",
+                                "cards": [card.ref for card in selected],
+                            },
+                        )
+                        self.assertTrue(returned.ok, returned.summary)
+                    else:
+                        self.assertIsNone(session.engine.state.pending_decision)
+                    self.assertEqual("battlefield", source.zone)
+                    self.assertTrue(all(card.zone == "hand" for card in selected))
+                    self.assertTrue(
+                        all(
+                            card.zone == "battlefield"
+                            for card in candidates[len(selected) :]
+                        )
+                    )
+
+            for available in (max(0, count - 1), count):
+                with self.subTest(
+                    count=count,
+                    available=available,
+                    payment="exact-unless",
+                ):
+                    session, source, candidates = stage(
+                        seed=seed,
+                        source_name=(
+                            f"Generic {count_label} Creature Entry Unless Fixture"
+                        ),
+                        candidate_count=available,
+                    )
+                    seed += 1
+                    selected_return = session.act(
+                        "pilot:A",
+                        {"action_id": "choose", "choice": "return"},
+                    )
+                    self.assertTrue(selected_return.ok, selected_return.summary)
+                    if available == count:
+                        returned = session.act(
+                            "pilot:A",
+                            {
+                                "action_id": "choose",
+                                "cards": [card.ref for card in candidates],
+                            },
+                        )
+                        self.assertTrue(returned.ok, returned.summary)
+                        self.assertEqual("battlefield", source.zone)
+                        self.assertTrue(
+                            all(card.zone == "hand" for card in candidates)
+                        )
+                    else:
+                        self.assertNotEqual(
+                            "choice.apnap",
+                            getattr(
+                                session.engine.state.pending_decision,
+                                "kind",
+                                None,
+                            ),
+                        )
+                        self.assertEqual("graveyard", source.zone)
+                        self.assertTrue(
+                            all(
+                                card.zone == "battlefield"
+                                for card in candidates
+                            )
+                        )
 
     def test_entry_return_choice_revalidates_and_rolls_back(self):
         session = self.session(121075)
