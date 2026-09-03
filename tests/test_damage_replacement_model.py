@@ -175,6 +175,12 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
             grouped,
             replacement_effects.ReplacementEffect.from_dict(grouped.to_dict()),
         )
+        historical = grouped.to_dict()
+        historical.pop("application_group_id")
+        restored_historical = replacement_effects.ReplacementEffect.from_dict(
+            historical
+        )
+        self.assertIsNone(restored_historical.application_group_id)
 
         inventory = default_damage_replacement_registry().inventory()
         self.assertEqual(
@@ -692,7 +698,8 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
     def test_independent_all_prevention_shields_with_same_source_and_label_remain_distinct(
         self,
     ):
-        engine = self.session(120461514).engine
+        session = self.session(120461514)
+        engine = session.engine
         source = self.add_card(
             engine,
             seat="A",
@@ -737,39 +744,96 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
         engine.state.damage_prevention_shields.extend((first, second))
         self.assertIsNone(first.application_group_id)
         self.assertIsNone(second.application_group_id)
-        proposal = self.proposal(
-            engine,
-            source=source,
-            target="B",
-            amount=3,
-            event_id="damage:independent-prevention-shields",
+        self.assertNotEqual(first.effect_id, second.effect_id)
+        program = SemanticProgram(
+            key="test:independent-prevention-replay",
+            label="Resolve independent prevention shields",
+            effects=[
+                {
+                    "op": "damage",
+                    "source": "$source",
+                    "target": "B",
+                    "amount": 3,
+                }
+            ],
+            trust_level="provisional",
         )
+        engine.semantics.put(program)
+        engine.state.stack.append(
+            StackItem(
+                stack_id="independent-prevention-replay",
+                ref="S-independent-prevention-replay",
+                kind="triggered_ability",
+                controller="A",
+                label=program.label,
+                source_object_id=source.object_id,
+                semantic_key=program.key,
+                visibility=["A", "B"],
+            )
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
 
-        with self.assertRaises(ReplacementChoiceRequired) as required:
-            prepare_damage_batch(engine, (proposal,))
+        for principal in ("pilot:A", "pilot:B"):
+            passed = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual("replacement.order", engine.state.pending_decision.kind)
+        projected = StateProjector(self.db, engine.state)._decision("pilot:B")
+        self.assertIsNotNone(projected)
+        assert projected is not None
         self.assertEqual(
             {first.effect_id, second.effect_id},
-            set(required.exception.pending.choice.options),
+            {option["id"] for option in projected["ctx"]["options"]},
         )
 
         life_before = engine.state.players["A"].life
-        prepared = prepare_damage_batch(
-            engine,
-            (proposal,),
-            selections=(second.effect_id,),
+        target_life_before = engine.state.players["B"].life
+        chosen = session.act(
+            "pilot:B",
+            {
+                "action_id": "choose",
+                "choices": {"replacement": second.effect_id},
+            },
         )
-        result = commit_prepared_damage_batch(engine, prepared)
-
-        self.assertEqual((0, 3), (
-            result.events[0].dealt_amount,
-            result.events[0].prevented_amount,
-        ))
-        self.assertEqual((second.effect_id,), result.events[0].applied_effects)
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertEqual(target_life_before, engine.state.players["B"].life)
+        prevented = [
+            event
+            for event in engine.state.events
+            if event.code == "effect.damage.prevented"
+        ]
+        self.assertEqual(1, len(prevented))
         self.assertEqual(
-            (second.effect_id,),
-            tuple(event.effect_id for event in result.prevention_events),
+            [second.effect_id], prevented[0].details["applied_effects"]
         )
         self.assertEqual(life_before + 2, engine.state.players["A"].life)
+        aftermath = [
+            event
+            for event in engine.state.events
+            if event.code == "damage.prevention.aftermath"
+        ]
+        self.assertEqual(
+            [(second.effect_id, 2)],
+            [
+                (event.details["effect_id"], event.details["applied_amount"])
+                for event in aftermath
+            ],
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "independent-prevention-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(3, replay["commands"])
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_resolved_one_shot_prevention_locks_effect_controller(self):
         engine = self.session(120461513).engine
