@@ -210,7 +210,9 @@ granted or removed Convoke, and rules-text equivalents fail closed.
 Source-pinned self spell-cost reductions enter that same total-cost stage. The
 selected face supplies one strict typed metric over public effective objects,
 mana value, devotion, Domain, or the bounded current-turn journal, and the
-casting owner applies its generic or colored vector before payment mechanics.
+metric preserves whether opponent thresholds are existential per opponent or
+aggregate across all opponents. The casting owner applies its generic or
+colored vector before payment mechanics.
 Offer construction and accepted-command validation call the identical query;
 a control, object, or turn-fact change therefore reprices or rejects the stale
 action before mutation. Target-dependent prices and unjournaled history remain

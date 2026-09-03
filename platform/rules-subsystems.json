@@ -1703,21 +1703,14 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v157-fixed-source-combat-growth-triggers",
-      "compiler_version": "oracle-ir-v157",
-      "bundle_id": "bundle:fixed-source-combat-growth-triggers",
-      "candidate_ids": ["compiler:fixed-source-combat-growth-triggers"],
-      "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
-      ],
-      "capability_ids": [
-        "counter.producer.fixed_event_trigger",
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_public_action"
-      ],
-      "measurement_id": "measurement:fixed-source-combat-growth-triggers",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v158-opponent-quantifier-boundaries",
+      "compiler_version": "oracle-ir-v158",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Preserve existential singular-opponent and aggregate plural-opponents quantification in typed public self spell-cost reductions."
     },
     "forecast_corrections": [
       {

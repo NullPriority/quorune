@@ -21,6 +21,7 @@ from quorune.record import (
     replay_record,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.self_cast_reductions import CastReductionQueryScope
 from quorune.semantic_runtime.cast_costs import (
     FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,
     FIXED_SPELL_COST_REDUCTION_EVENT,
@@ -200,6 +201,50 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                 self.assertEqual(metric, term["metric"]["kind"])
                 self.assertEqual(reduction, term["reduction"])
 
+    def test_self_reduction_compiler_preserves_opponent_quantification(self):
+        cases = (
+            (
+                "This spell costs {2} less to cast if an opponent has three or more creature cards in their graveyard.",
+                CastReductionQueryScope.ANY_OPPONENT,
+            ),
+            (
+                "This spell costs {2} less to cast if an opponent controls no basic lands.",
+                CastReductionQueryScope.ANY_OPPONENT,
+            ),
+            (
+                "This spell costs {2} less to cast if your opponents control three or more creatures.",
+                CastReductionQueryScope.OPPONENTS_COMBINED,
+            ),
+        )
+        for index, (text, expected_scope) in enumerate(cases, 1):
+            with self.subTest(text=text):
+                compiled = self_spell_cost_reduction_handler(text)
+                self.assertIsNotNone(compiled)
+                assert compiled is not None
+                descriptor = compiled[1]
+                scope = descriptor["reduction"]["terms"][0]["metric"][
+                    "queries"
+                ][0]["scope"]
+                self.assertEqual(expected_scope.value, scope)
+                ir = self.compile(text, 601_503_000 + index)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+
+        legacy_compiled = self_spell_cost_reduction_handler(
+            "This spell costs {2} less to cast if your opponents control "
+            "three or more creatures."
+        )
+        self.assertIsNotNone(legacy_compiled)
+        assert legacy_compiled is not None
+        legacy = json.loads(json.dumps(legacy_compiled[1]))
+        legacy["reduction"]["terms"][0]["metric"]["queries"][0][
+            "scope"
+        ] = CastReductionQueryScope.OPPONENT_ZONES.value
+        specification = SelfSpellCostReductionHandler().validate(legacy)
+        self.assertEqual(
+            CastReductionQueryScope.OPPONENT_ZONES,
+            specification.terms[0].metric.queries[0].scope,
+        )
+
     def test_self_reduction_descriptor_fails_closed(self):
         compiled = self_spell_cost_reduction_handler(
             "This spell costs {2} less to cast if you control a Wizard."
@@ -231,6 +276,58 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                         {
                             **descriptor["reduction"]["terms"][0],
                             "reduction": {"GENERIC": -1},
+                        }
+                    ],
+                },
+            },
+            {
+                **descriptor,
+                "reduction": {
+                    **descriptor["reduction"],
+                    "terms": [
+                        {
+                            **descriptor["reduction"]["terms"][0],
+                            "metric": {
+                                **descriptor["reduction"]["terms"][0][
+                                    "metric"
+                                ],
+                                "queries": [
+                                    {
+                                        **descriptor["reduction"]["terms"][0][
+                                            "metric"
+                                        ]["queries"][0],
+                                        "scope": "everybody",
+                                    }
+                                ],
+                            },
+                        }
+                    ],
+                },
+            },
+            {
+                **descriptor,
+                "reduction": {
+                    **descriptor["reduction"],
+                    "terms": [
+                        {
+                            **descriptor["reduction"]["terms"][0],
+                            "metric": {
+                                **descriptor["reduction"]["terms"][0][
+                                    "metric"
+                                ],
+                                "kind": "object_count",
+                                "minimum": None,
+                                "queries": [
+                                    {
+                                        **descriptor["reduction"]["terms"][0][
+                                            "metric"
+                                        ]["queries"][0],
+                                        "scope": (
+                                            CastReductionQueryScope.ANY_OPPONENT.value
+                                        ),
+                                    }
+                                ],
+                            },
                         }
                     ],
                 },
@@ -447,6 +544,144 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("stack", spell.zone)
         self.assertEqual("graveyard", counted.zone)
+
+    def test_any_opponent_graveyard_threshold_is_not_combined_across_opponents(
+        self,
+    ):
+        session = self.session(601_520_007, players=4)
+        engine = session.engine
+        for seat in ("A", "C", "D"):
+            self.add_card(
+                session,
+                name="Birds of Paradise",
+                ref=f"SEPARATE-GRAVEYARD-{seat}",
+                seat=seat,
+                zone="graveyard",
+            )
+        spell = self.add_card(
+            session,
+            name="Any Opponent Graveyard Threshold Spell Fixture",
+            ref="ANY-OPPONENT-GRAVEYARD-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.prepare_main(session)
+
+        action = self.cast_action(engine, spell)
+        option = next(
+            value for value in action["cost_options"] if value["id"] == "normal"
+        )
+        self.assertEqual(4, option["requirements"]["GENERIC"])
+        result = session.act("pilot:B", {"action_id": action["id"]})
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("stack", spell.zone)
+        self.assertEqual(0, engine.state.players["B"].mana_pool.get("C", 0))
+
+    def test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent(
+        self,
+    ):
+        session = self.session(601_520_008, players=4)
+        engine = session.engine
+        for seat in ("A", "C"):
+            self.add_card(
+                session,
+                name="Forest",
+                ref=f"BASIC-LAND-{seat}",
+                seat=seat,
+                zone="battlefield",
+            )
+        spell = self.add_card(
+            session,
+            name="Any Opponent Basic Land Absence Spell Fixture",
+            ref="ANY-OPPONENT-NO-BASIC-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.prepare_main(session)
+
+        action = self.cast_action(engine, spell)
+        option = next(
+            value for value in action["cost_options"] if value["id"] == "normal"
+        )
+        self.assertEqual(2, option["requirements"]["GENERIC"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act("pilot:B", {"action_id": action["id"]})
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("stack", spell.zone)
+        self.assertEqual(2, engine.state.players["B"].mana_pool.get("C", 0))
+        self.resolve_stack_with_passes(session)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "any-opponent-zero-basic-replay"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_combined_opponents_threshold_still_aggregates_when_oracle_wording_requires_it(
+        self,
+    ):
+        session = self.session(601_520_009, players=4)
+        engine = session.engine
+        for seat in ("A", "C", "D"):
+            self.add_card(
+                session,
+                name="Birds of Paradise",
+                ref=f"COMBINED-BATTLEFIELD-{seat}",
+                seat=seat,
+                zone="battlefield",
+            )
+        spell = self.add_card(
+            session,
+            name="Combined Opponents Threshold Spell Fixture",
+            ref="COMBINED-OPPONENTS-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.prepare_main(session)
+
+        action = self.cast_action(engine, spell)
+        option = next(
+            value for value in action["cost_options"] if value["id"] == "normal"
+        )
+        self.assertEqual(2, option["requirements"]["GENERIC"])
+        result = session.act("pilot:B", {"action_id": action["id"]})
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("stack", spell.zone)
+        self.assertEqual(2, engine.state.players["B"].mana_pool.get("C", 0))
+
+    def test_multiple_qualifying_opponents_apply_one_fixed_reduction(self):
+        session = self.session(601_520_010, players=4)
+        engine = session.engine
+        for seat in ("A", "C"):
+            for index in range(3):
+                self.add_card(
+                    session,
+                    name="Birds of Paradise",
+                    ref=f"QUALIFYING-GRAVEYARD-{seat}-{index}",
+                    seat=seat,
+                    zone="graveyard",
+                )
+        spell = self.add_card(
+            session,
+            name="Any Opponent Graveyard Threshold Spell Fixture",
+            ref="MULTIPLE-QUALIFYING-OPPONENTS-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 4, "U": 1})
+        self.prepare_main(session)
+
+        action = self.cast_action(engine, spell)
+        option = next(
+            value for value in action["cost_options"] if value["id"] == "normal"
+        )
+        self.assertEqual(2, option["requirements"]["GENERIC"])
+        result = session.act("pilot:B", {"action_id": action["id"]})
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("stack", spell.zone)
+        self.assertEqual(2, engine.state.players["B"].mana_pool.get("C", 0))
 
     def test_self_reduction_recomputes_current_control_and_rejects_stale_offer(self):
         session = self.session(601_520_002, players=4)
