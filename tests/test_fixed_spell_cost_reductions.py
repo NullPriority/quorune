@@ -875,7 +875,8 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         self.prepare_main(session)
         self.assertEqual(2, self.cost_option(engine, spell)["requirements"]["GENERIC"])
         with mock.patch(
-            "quorune.rules.casting.costs.compiled_self_spell_cost_reduction_specs",
+            "quorune.rules.casting.static_modifiers."
+            "compiled_self_spell_cost_reduction_specs",
             return_value=(),
         ):
             self.assertEqual(4, self.cost_option(engine, spell)["requirements"]["GENERIC"])
@@ -1076,7 +1077,8 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         engine.state.players["B"].mana_pool.update({"C": 2, "U": 1})
         self.prepare_main(session)
         with mock.patch(
-            "quorune.rules.casting.costs.active_fixed_spell_cost_reductions",
+            "quorune.rules.casting.static_modifiers."
+            "active_fixed_spell_cost_reductions",
             return_value=(),
         ):
             option = self.cost_option(engine, spell)
