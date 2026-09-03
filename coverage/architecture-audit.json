@@ -25079,7 +25079,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 22,
+        "primary_test_count": 23,
         "primary_tests": [
           "test_amass_rules",
           "test_counter_placement_replacements",
@@ -25087,6 +25087,7 @@
           "test_damage_result_events",
           "test_evolve_counter_placement",
           "test_exact_mishra_closure",
+          "test_fixed_counter_event_triggers",
           "test_fixed_counter_placement_sets",
           "test_fixed_keyword_entry_counters",
           "test_fixed_player_counter_placement_effects",
@@ -28944,7 +28945,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "26627435d24ebe0da002a0119b82580e31776dad8786d54b83a8e5f33a79e6e1",
+      "fingerprint": "7aace8b0fe8f6659f19d496eef0edeeac96c72f010059b2a41652d61d4951555",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -29802,8 +29803,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 3754,
-      "discovered_total": 7063,
+      "conventional_ast_cases": 3762,
+      "discovered_total": 7071,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 203,
