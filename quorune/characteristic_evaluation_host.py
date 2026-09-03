@@ -247,6 +247,14 @@ class CharacteristicEvaluationHostMixin:
                         and "ability_fragments" in copy_overrides
                     )
                 )
+                ability_presence_programs = (
+                    *self.semantics.programs_for_oracle(source.oracle_id),
+                    *self.semantics.runtime_handler_programs_for_oracle(
+                        source.oracle_id,
+                        active_zone="battlefield",
+                        event="characteristics.evaluate",
+                    ),
+                )
                 has_registered_static_component = any(
                     program.active_zone in {"all", "battlefield"}
                     and (
@@ -257,9 +265,7 @@ class CharacteristicEvaluationHostMixin:
                         )
                         or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
                     )
-                    for program in self.semantics.programs_for_oracle(
-                        source.oracle_id,
-                    )
+                    for program in ability_presence_programs
                 )
                 if (
                     not component_effects
