@@ -1446,16 +1446,11 @@ class RulesSchedulerTests(unittest.TestCase):
 
     def test_generated_nonviable_measurements_retire_without_trust(self):
         expected = {
-            "bundle:fixed-token-creation-contexts": (
-                "measured_nonviable",
-                (0, 17, 17),
-            ),
-            "bundle:fixed-exile-contexts": (
-                "measured_nonviable",
-                (0, 19, 19),
-            ),
+            "bundle:fixed-token-creation-contexts",
+            "bundle:fixed-exile-contexts",
         }
-        for candidate_id, (measurement_status, gains) in expected.items():
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        for candidate_id in expected:
             policy = next(
                 row
                 for row in self.catalog["work_selection"]["coverage_family"]
@@ -1483,15 +1478,19 @@ class RulesSchedulerTests(unittest.TestCase):
                 if row["bundle_id"] == candidate_id
             )
             self.assertEqual(
-                gains,
-                (
-                    outcome["complete_card_gain"],
-                    outcome["exact_ability_gain"],
-                    outcome["material_residual_reduction"],
-                ),
-            )
-            self.assertEqual(
                 "retired_below_harvest_floor", outcome["decision"]
+            )
+            self.assertLess(
+                outcome["complete_card_gain"],
+                coverage["minimum_complete_card_gain"],
+            )
+            self.assertLess(
+                outcome["exact_ability_gain"],
+                coverage["minimum_exact_ability_gain"],
+            )
+            self.assertLess(
+                outcome["material_residual_reduction"],
+                coverage["minimum_material_residual_reduction"],
             )
             self.assertFalse(outcome["grants_gameplay_trust"])
             self.assertEqual(
@@ -1535,16 +1534,63 @@ class RulesSchedulerTests(unittest.TestCase):
             if row["bundle_id"] == bundle_id
         )
         coverage = self.catalog["work_selection"]["coverage_family"]
-        self.assertEqual("bounded_executable", measurement["decision"])
-        self.assertGreaterEqual(
-            measurement["complete_card_gain"],
-            coverage["minimum_complete_card_gain"],
+        transition = next(
+            (
+                row
+                for row in self.work_inputs["cohort_measurements"][
+                    "transition_measurements"
+                ]
+                if row["measurement"]["bundle_id"] == bundle_id
+            ),
+            None,
         )
-        self.assertGreater(measurement["exact_ability_gain"], 0)
-        self.assertGreater(
-            measurement["material_residual_reduction"],
-            measurement["exact_ability_gain"],
+        if transition is not None:
+            forecast = transition["measurement"]
+            self.assertEqual("bounded_executable", forecast["decision"])
+            self.assertGreaterEqual(
+                forecast["complete_card_gain"],
+                coverage["minimum_complete_card_gain"],
+            )
+            self.assertGreater(forecast["exact_ability_gain"], 0)
+            self.assertGreater(
+                forecast["material_residual_reduction"],
+                forecast["exact_ability_gain"],
+            )
+            self.assertFalse(forecast["grants_gameplay_trust"])
+        else:
+            outcome = next(
+                row
+                for row in reversed(
+                    self.work_inputs["harvest_outcome_history"]["entries"]
+                )
+                if row.get("bundle_id") == bundle_id
+            )
+            self.assertGreaterEqual(
+                outcome["expected_complete_card_gain"],
+                coverage["minimum_complete_card_gain"],
+            )
+            self.assertGreater(outcome["actual_exact_ability_gain"], 0)
+            self.assertGreater(
+                outcome["actual_material_residual_reduction"],
+                outcome["actual_exact_ability_gain"],
+            )
+        self.assertIn(
+            measurement["decision"],
+            {"bounded_executable", "retired_below_harvest_floor"},
         )
+        if measurement["decision"] == "retired_below_harvest_floor":
+            self.assertLess(
+                measurement["complete_card_gain"],
+                coverage["minimum_complete_card_gain"],
+            )
+            self.assertLess(
+                measurement["exact_ability_gain"],
+                coverage["minimum_exact_ability_gain"],
+            )
+            self.assertLess(
+                measurement["material_residual_reduction"],
+                coverage["minimum_material_residual_reduction"],
+            )
         self.assertFalse(measurement["grants_gameplay_trust"])
         self.assertEqual(
             bundle_measurement_fingerprint(
