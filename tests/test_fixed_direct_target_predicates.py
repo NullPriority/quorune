@@ -260,8 +260,8 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
         unsupported = (
             "target artifact, enchantment, or creature with flying",
             "target artifact creature or black creature",
-            "target creature with power 3 or greater",
-            "target creature that was dealt damage this turn",
+            "target creature with power X or greater",
+            "target creature that was dealt damage by a Goblin this turn",
             "target creature with a counter on it",
             "target creature that has an activated ability with {T} in its cost",
             "target permanent with the same name as another permanent",

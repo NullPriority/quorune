@@ -5,6 +5,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..errors import GameRuleError
 from ..model import CardInstance, StackItem
+from ..object_query import exact_numeric_characteristic
 from ..object_predicate import (
     ObjectQueryError,
     permanent_state_predicate_matches,
@@ -13,6 +14,7 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.modal_selection import canonical_modes
 from ..semantics import SemanticProgram
 from ..target_characteristics import TargetCharacteristicSnapshot
+from ..target_history import target_damage_history_matches
 from ..target_predicates import TargetPredicateError, target_predicate_matches
 from ..target_protection import TargetProtectionVerdict
 from ..target_protection_engine_adapter import target_protection_verdict_for_row
@@ -36,6 +38,24 @@ from .target_query import (
 
 
 TARGET_OPERATION_ID = "selection.target.semantic.v1"
+
+
+def _target_characteristic_row_values(
+    data: Mapping[str, Any],
+    *,
+    card: CardInstance | None,
+) -> dict[str, Any]:
+    """Project target characteristics through the exact numeric owner."""
+
+    values = TargetCharacteristicSnapshot.from_effective_data(data).row_values()
+    if card is not None:
+        values["power"] = exact_numeric_characteristic(card, data, "power")
+        values["toughness"] = exact_numeric_characteristic(
+            card,
+            data,
+            "toughness",
+        )
+    return values
 
 
 class TargetSelectionHost(Protocol):
@@ -97,6 +117,39 @@ def _target_group_combat_state_matches(
     if group.combat_state == "attacking_or_blocking":
         return attacking or blocking
     return True
+
+
+def _target_group_object_facts_match(
+    group: TargetGroup,
+    *,
+    card: CardInstance | None,
+    history: Any,
+    turn_sequence: int,
+    actor: str,
+) -> bool:
+    """Evaluate typed object facts outside the main target matcher."""
+
+    history_matches = group.damage_history is None or bool(
+        card is not None
+        and target_damage_history_matches(
+            group.damage_history,
+            history=history,
+            turn_sequence=turn_sequence,
+            actor=actor,
+            object_incarnation=card.logical_object_id,
+        )
+    )
+    return bool(
+        history_matches
+        and (
+            group.commander is None
+            or bool(card and card.is_commander) == group.commander
+        )
+        and (
+            group.token is None
+            or bool(card and card.is_token) == group.token
+        )
+    )
 
 
 class TargetSelectionOwnerMixin:
@@ -222,9 +275,7 @@ class TargetSelectionOwnerMixin:
                         ),
                         "controller": item.controller,
                         "owner": card.owner if card else item.controller,
-                        **TargetCharacteristicSnapshot.from_effective_data(
-                            data
-                        ).row_values(),
+                        **_target_characteristic_row_values(data, card=card),
                         "card": card,
                         "stack_item": item,
                         "stack_source_types": stack_source_types,
@@ -263,9 +314,7 @@ class TargetSelectionOwnerMixin:
                             ),
                             "controller": card.controller,
                             "owner": card.owner,
-                            **TargetCharacteristicSnapshot.from_effective_data(
-                                data
-                            ).row_values(),
+                            **_target_characteristic_row_values(data, card=card),
                             "card": card,
                         }
                     )
@@ -379,12 +428,12 @@ class TargetSelectionOwnerMixin:
             turn_sequence=self.state.turn_sequence,
         ):
             return False
-        if group.commander is not None and (
-            bool(card and card.is_commander) != group.commander
-        ):
-            return False
-        if group.token is not None and (
-            bool(card and card.is_token) != group.token
+        if not _target_group_object_facts_match(
+            group,
+            card=card if isinstance(card, CardInstance) else None,
+            history=self.state.turn_history,
+            turn_sequence=self.state.turn_sequence,
+            actor=controller,
         ):
             return False
         derived = {

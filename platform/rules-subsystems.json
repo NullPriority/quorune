@@ -1843,6 +1843,56 @@
           "measurement_probe_id": "fixed-casting-surface-existing-owner-v2"
         },
         {
+          "bundle_id": "bundle:fixed-public-numeric-damage-targets",
+          "member_family_ids": [
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:target.permanent.characteristic_predicate",
+            "capability:target.permanent.damage_history_predicate",
+            "component:quorune.compiler.direct_target.DirectPermanentTargetSpec",
+            "component:quorune.damage.DamageEvent",
+            "component:quorune.selection.targeting.TargetSelectionOwnerMixin._target_row_matches",
+            "component:quorune.target_characteristics.TargetCharacteristicSnapshot",
+            "component:quorune.target_history.TargetDamageHistorySpec",
+            "component:quorune.target_numeric.TargetNumericCharacteristicSpec"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "current-creature-power-or-toughness",
+            "fixed-at-least-or-at-most-bound",
+            "positive-damage-current-turn-history",
+            "source-and-recipient-logical-incarnation",
+            "total-or-either-power-toughness-comparison"
+          ],
+          "shared_dependencies": [
+            "damage.amount.positive",
+            "target.permanent.characteristic_predicate",
+            "target.permanent.damage_history_predicate",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one public creature target with a fixed current power or toughness bound, or one positive current-turn was-dealt, dealt-any, or dealt-to-actor damage fact, enforced by the same offer, command-validation, and resolution target owner",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing direct-target descriptor across destruction, exile, tap, damage, fixed characteristic, trigger, activated, and modal owners while adding one incarnation-safe positive-damage journal fact.",
+          "explicit_exclusions": [
+            "ability-presence, attachment, modified, chosen, named, linked, hidden-zone, and arbitrary history predicates",
+            "damage by a qualified source, damage to a player other than the actor, previous-turn damage, zero or fully prevented damage, and combat blocking relationships",
+            "greatest, least, source-relative, variable, exact-without-comparison, and open-arithmetic characteristic values",
+            "noncreature numeric targets and scoped disjunctions whose numeric qualifier applies to only one branch",
+            "power or toughness predicates combined with mana value, tapped state, named counters, entry history, or damage history",
+            "target-changing, multiple-target, divided, aggregate, nontarget set, and independently unsupported effect grammar"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-public-numeric-damage-target-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-entry-return-requirements",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",
@@ -1894,28 +1944,18 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v161-fixed-casting-surface-closure",
-      "compiler_version": "oracle-ir-v161",
-      "bundle_id": "bundle:fixed-casting-surface-closure",
-      "candidate_ids": ["compiler:fixed-casting-surface-closure"],
+      "transition_id": "oracle-ir-v162-fixed-public-numeric-damage-targets",
+      "compiler_version": "oracle-ir-v162",
+      "bundle_id": "bundle:fixed-public-numeric-damage-targets",
+      "candidate_ids": ["compiler:fixed-public-numeric-damage-targets"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:unparsed-buyback-2",
-        "effect_clause:unparsed-buyback-2-b",
-        "effect_clause:unparsed-buyback-2-g",
-        "effect_clause:unparsed-buyback-2-u",
-        "effect_clause:unparsed-buyback-2-w",
-        "effect_clause:unparsed-buyback-3",
-        "effect_clause:unparsed-buyback-4",
-        "effect_clause:unparsed-buyback-5",
-        "keyword_dependency:retrace"
+        "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "casting.additional_cost.zone_change.fixed_discard",
-        "casting.cost.modifier.fixed_query",
-        "casting.lifecycle.fixed_public"
+        "target.permanent.characteristic_predicate",
+        "target.permanent.damage_history_predicate"
       ],
-      "measurement_id": "measurement:fixed-casting-surface-closure",
+      "measurement_id": "measurement:fixed-public-numeric-damage-targets",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

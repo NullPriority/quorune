@@ -1,7 +1,7 @@
 ---
 title: "Target legality and protection"
 status: "current"
-authoritative_source: "quorune/targets.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, and CommanderEngine._target_row_matches"
+authoritative_source: "quorune/targets.py, quorune/target_characteristics.py, quorune/target_history.py, quorune/target_numeric.py, quorune/object_query.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, and CommanderEngine._target_row_matches"
 verified: "2026-08-24"
 audience: "rules, compiler, replay, and architecture contributors"
 maintenance: "hand-maintained"
@@ -35,14 +35,30 @@ text at runtime. Token status remains an authoritative object fact. The same
 snapshot supplies one fixed exact,
 minimum, or maximum mana-value qualifier. That qualifier observes represented
 copy-derived characteristics and the public mana value of a face-down object;
-it does not open power, toughness, variable, total, or combined public-state
-numeric grammar. The compiler's `DirectPermanentTargetSpec` owner supplies
+it does not open variable or combined public-state mana-value grammar. The
+snapshot also supplies fixed at-least or at-most power, toughness, either-value,
+or total power-and-toughness predicates for creature targets. The shared exact
+numeric boundary includes current continuous and count-derived characteristics,
+power/toughness counters, and current-turn stat deltas. A missing or nonintegral
+value fails closed when that value is required to prove the comparison; an
+either-value predicate may still be proved by its other exact value. The compiler's
+`DirectPermanentTargetSpec` owner supplies
 this one schema vocabulary to counter placement, destruction, exile, and tap
 or untap effects; no effect family adds a private legality predicate. Scoped
-disjunctions, power or toughness, combat and damage history, unnamed counter
-presence, and name or attachment relations remain residual. Ability-presence
-wording also remains residual until one shared layer-6 ability applicability
-query can serve every static and target consumer.
+disjunctions, variable, greatest, least, and source-relative numeric values,
+unnamed counter presence, and name or attachment relations remain residual.
+Ability-presence wording remains outside this target grammar and must use the
+shared layer-6 ability-applicability query rather than a family-specific check.
+
+Three positive current-turn damage facts are represented for creature targets:
+the current incarnation was dealt damage, dealt damage to any recipient, or
+dealt damage to the acting player. The canonical damage transaction records
+post-replacement and post-prevention source and recipient logical identities in
+the typed turn journal. Zero or fully prevented damage, previous turns, stale
+incarnations, qualified sources, blocking relationships, and damage to another
+player for dealt-to-you wording do not satisfy the predicate. Offer generation,
+submitted-command validation, and resolution revalidation consume the same
+typed history query.
 
 A target group may additionally require every selected public object to share
 one owner. The planner proves that a legal combination exists before it offers
@@ -137,6 +153,7 @@ objects; candidate enumeration remains owned by the surrounding target query.
 
 Primary evidence is in `test_hexproof_targeting.py`,
 `test_shroud_targeting.py`, `test_fixed_mana_value_target_predicates.py`,
+`test_fixed_damage_history_targets.py`,
 `test_fixed_direct_target_predicates.py`, `test_oracle_ir.py`, and
 `test_capability_implementation_mutations.py`. Broader player Hexproof, player
 Shroud, Hexproof-from-quality, effects that ignore either ability, hidden-zone

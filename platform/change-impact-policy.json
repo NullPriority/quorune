@@ -282,6 +282,27 @@
       ]
     },
     {
+      "id": "fixed-public-numeric-damage-target-contract",
+      "patterns": [
+        "quorune/compiler/direct_target.py",
+        "quorune/damage.py",
+        "quorune/model.py",
+        "quorune/rules/permanent_predicate_capability_shapes.py",
+        "quorune/selection/targeting.py",
+        "quorune/target_characteristics.py",
+        "quorune/target_history.py",
+        "quorune/target_numeric.py",
+        "quorune/targets.py"
+      ],
+      "test_modules": [
+        "test_counter_target_predicates",
+        "test_damage_replacement_model",
+        "test_fixed_damage_history_targets",
+        "test_fixed_mana_value_target_predicates",
+        "test_turn_history_rules"
+      ]
+    },
+    {
       "id": "fixed-homogeneous-target-set-contract",
       "patterns": [
         "quorune/compiler/fixed_homogeneous_target_sets.py",

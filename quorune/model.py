@@ -51,6 +51,7 @@ TurnHistoryEventKind = Literal[
     "creature_attacked",
     "creature_died",
     "player_damaged",
+    "permanent_damaged",
 ]
 
 
@@ -69,6 +70,7 @@ class TurnHistoryEvent:
     object_incarnation: str | None = None
     target: str | None = None
     target_kind: str | None = None
+    target_object_incarnation: str | None = None
     types: tuple[str, ...] = ()
     amount: int = 0
 

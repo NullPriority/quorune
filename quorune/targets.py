@@ -13,6 +13,8 @@ from .relative_power_target import (
     RelativePowerTargetError,
 )
 from .target_forms import TargetCharacteristicForm
+from .target_history import TargetDamageHistorySpec
+from .target_numeric import TargetNumericCharacteristicSpec
 
 
 PUBLIC_TARGET_ZONES = {
@@ -160,6 +162,24 @@ def _target_state_predicate(
         return PermanentStatePredicateSpec.from_dict(value)
     except ObjectQueryError as exc:
         raise ValueError(str(exc)) from exc
+
+
+def _target_numeric_characteristic(
+    raw: Mapping[str, Any],
+) -> TargetNumericCharacteristicSpec | None:
+    value = raw.get("numeric_characteristic")
+    if value is None:
+        return None
+    return TargetNumericCharacteristicSpec.from_mapping(value)
+
+
+def _target_damage_history(
+    raw: Mapping[str, Any],
+) -> TargetDamageHistorySpec | None:
+    value = raw.get("damage_history")
+    if value is None:
+        return None
+    return TargetDamageHistorySpec.from_mapping(value)
 
 
 def _target_characteristic_fields(
@@ -318,6 +338,8 @@ _TARGET_GROUP_FIELDS = frozenset(
         "resolution_condition",
         "state_predicate",
         "characteristic_forms_any",
+        "numeric_characteristic",
+        "damage_history",
         "id",
         "group",
         # Validated by the owning compiler/capability shape rather than by
@@ -392,6 +414,8 @@ class TargetGroup:
     resolution_condition: dict[str, Any] = field(default_factory=dict)
     state_predicate: PermanentStatePredicateSpec | None = None
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
+    numeric_characteristic: TargetNumericCharacteristicSpec | None = None
+    damage_history: TargetDamageHistorySpec | None = None
 
     def __post_init__(self) -> None:
         if type(self.same_owner) is not bool:
@@ -420,6 +444,26 @@ class TargetGroup:
                 raise ValueError(
                     f"Target {field_name} must be an exact integer from 0 through 5"
                 )
+        if self.numeric_characteristic is not None and not isinstance(
+            self.numeric_characteristic,
+            TargetNumericCharacteristicSpec,
+        ):
+            raise ValueError("Target numeric characteristic must be typed")
+        if self.damage_history is not None and not isinstance(
+            self.damage_history,
+            TargetDamageHistorySpec,
+        ):
+            raise ValueError("Target damage history must be typed")
+        if (
+            self.numeric_characteristic is not None
+            or self.damage_history is not None
+        ) and (
+            self.zones != ("battlefield",)
+            or self.categories != ("permanent",)
+        ):
+            raise ValueError(
+                "Numeric and history predicates require one battlefield permanent"
+            )
 
     def matches_type_characteristics(
         self,
@@ -542,6 +586,8 @@ class TargetGroup:
             "characteristic_forms_any": _characteristic_forms(
                 raw.get("characteristic_forms_any", [])
             ),
+            "numeric_characteristic": _target_numeric_characteristic(raw),
+            "damage_history": _target_damage_history(raw),
         }
         return cls(**fields)
 

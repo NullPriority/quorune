@@ -10,6 +10,15 @@ from ..object_predicate import (
     ObjectQueryError,
     PermanentStatePredicateSpec,
 )
+from ..target_history import (
+    TargetDamageHistoryKind,
+    TargetDamageHistorySpec,
+)
+from ..target_numeric import (
+    TargetNumericCharacteristic,
+    TargetNumericCharacteristicSpec,
+    TargetNumericComparison,
+)
 from .creature_subtypes import canonical_creature_subtype
 
 
@@ -99,6 +108,56 @@ def _validate_mana_value_predicate(
         )
 
 
+def _validate_numeric_characteristic_predicate(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    numeric = spec.numeric_characteristic
+    if numeric is None:
+        return
+    if not isinstance(numeric, TargetNumericCharacteristicSpec):
+        raise ValueError("Direct permanent numeric predicate must be typed")
+    if _positive_direct_types(spec) != {"creature"}:
+        raise ValueError(
+            "Direct permanent numeric predicates require a creature target"
+        )
+    if (
+        spec.state_predicate is not None
+        or spec.damage_history is not None
+        or spec.mana_value_min is not None
+        or spec.mana_value_max is not None
+        or spec.mana_value_equal is not None
+    ):
+        raise ValueError(
+            "Direct permanent numeric predicates cannot mix other numeric, "
+            "state, or history predicates"
+        )
+
+
+def _validate_damage_history_predicate(
+    spec: "DirectPermanentTargetSpec",
+) -> None:
+    history = spec.damage_history
+    if history is None:
+        return
+    if not isinstance(history, TargetDamageHistorySpec):
+        raise ValueError("Direct permanent damage history must be typed")
+    if _positive_direct_types(spec) != {"creature"}:
+        raise ValueError(
+            "Direct permanent damage history requires one creature target"
+        )
+    if (
+        spec.state_predicate is not None
+        or spec.numeric_characteristic is not None
+        or spec.combat_state is not None
+        or spec.mana_value_min is not None
+        or spec.mana_value_max is not None
+        or spec.mana_value_equal is not None
+    ):
+        raise ValueError(
+            "Direct permanent damage history cannot mix another state predicate"
+        )
+
+
 def _validate_public_state_predicate(
     spec: "DirectPermanentTargetSpec",
 ) -> None:
@@ -144,6 +203,56 @@ def _strip_mana_value_predicate(
         else "mana_value_equal"
     )
     return match.group("body"), {field: int(match.group("value"))}
+
+
+def _strip_numeric_characteristic_predicate(
+    phrase: str,
+) -> tuple[str, TargetNumericCharacteristicSpec | None]:
+    match = re.fullmatch(
+        r"(?P<body>.+) with (?P<characteristic>power|toughness|"
+        r"power or toughness|total power and toughness) (?P<value>\d+) "
+        r"or (?P<direction>less|greater)",
+        phrase,
+    )
+    if match is None:
+        return phrase, None
+    characteristic = TargetNumericCharacteristic(
+        match.group("characteristic").replace(" ", "_")
+    )
+    return (
+        match.group("body"),
+        TargetNumericCharacteristicSpec(
+            characteristic=characteristic,
+            comparison=(
+                TargetNumericComparison.AT_MOST
+                if match.group("direction") == "less"
+                else TargetNumericComparison.AT_LEAST
+            ),
+            value=int(match.group("value")),
+        ),
+    )
+
+
+def _strip_damage_history_predicate(
+    phrase: str,
+) -> tuple[str, TargetDamageHistorySpec | None]:
+    for suffix, kind in (
+        (
+            " that was dealt damage this turn",
+            TargetDamageHistoryKind.WAS_DEALT_DAMAGE,
+        ),
+        (
+            " that dealt damage to you this turn",
+            TargetDamageHistoryKind.DEALT_DAMAGE_TO_ACTOR,
+        ),
+        (
+            " that dealt damage this turn",
+            TargetDamageHistoryKind.DEALT_DAMAGE,
+        ),
+    ):
+        if phrase.endswith(suffix):
+            return phrase[: -len(suffix)], TargetDamageHistorySpec(kind)
+    return phrase, None
 
 
 def _split_direct_or_terms(value: str) -> tuple[str, ...]:
@@ -559,12 +668,14 @@ class DirectPermanentTargetSpec:
     mana_value_min: int | None = None
     mana_value_max: int | None = None
     mana_value_equal: int | None = None
+    numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     state_predicate: PermanentStatePredicateSpec | None = None
     controller_relation: str = "any"
     source_exclusion: bool = False
     token: bool | None = None
     commander: bool | None = None
     combat_state: str | None = None
+    damage_history: TargetDamageHistorySpec | None = None
 
     def __post_init__(self) -> None:
         _canonicalize_direct_target_spec(self)
@@ -574,8 +685,10 @@ class DirectPermanentTargetSpec:
         _validate_direct_keyword_predicates(self)
         _validate_direct_color_predicates(self)
         _validate_mana_value_predicate(self)
+        _validate_numeric_characteristic_predicate(self)
         _validate_public_state_predicate(self)
         _validate_direct_target_flags(self)
+        _validate_damage_history_predicate(self)
 
     @property
     def characteristic_slug(self) -> str:
@@ -639,6 +752,17 @@ class DirectPermanentTargetSpec:
             predicate += f"-mana-value-{self.mana_value_min}-or-greater"
         elif self.mana_value_max is not None:
             predicate += f"-mana-value-{self.mana_value_max}-or-less"
+        if self.numeric_characteristic is not None:
+            numeric = self.numeric_characteristic
+            predicate += (
+                f"-{numeric.characteristic.value.replace('_', '-')}"
+                f"-{numeric.value}-"
+                + (
+                    "or-greater"
+                    if numeric.comparison is TargetNumericComparison.AT_LEAST
+                    else "or-less"
+                )
+            )
         return predicate
 
     @property
@@ -661,6 +785,8 @@ class DirectPermanentTargetSpec:
                 ) + "-counter"
         if self.combat_state is not None:
             predicate += "-" + self.combat_state.replace("_", "-")
+        if self.damage_history is not None:
+            predicate += "-" + self.damage_history.kind.value.replace("_", "-")
         return predicate
 
     @property
@@ -686,11 +812,16 @@ class DirectPermanentTargetSpec:
             or self.mana_value_min is not None
             or self.mana_value_max is not None
             or self.mana_value_equal is not None
+            or self.numeric_characteristic is not None
         )
 
     @property
     def uses_public_state(self) -> bool:
         return self.state_predicate is not None or self.combat_state is not None
+
+    @property
+    def uses_damage_history(self) -> bool:
+        return self.damage_history is not None
 
     def to_target_schema(self) -> dict[str, Any]:
         schema: dict[str, Any] = {
@@ -726,6 +857,10 @@ class DirectPermanentTargetSpec:
             schema["mana_value_max"] = self.mana_value_max
         if self.mana_value_equal is not None:
             schema["mana_value"] = self.mana_value_equal
+        if self.numeric_characteristic is not None:
+            schema["numeric_characteristic"] = (
+                self.numeric_characteristic.to_dict()
+            )
         if self.state_predicate is not None:
             schema["state_predicate"] = self.state_predicate.to_dict()
         if self.controller_relation != "any":
@@ -738,6 +873,8 @@ class DirectPermanentTargetSpec:
             schema["commander"] = self.commander
         if self.combat_state is not None:
             schema["combat_state"] = self.combat_state
+        if self.damage_history is not None:
+            schema["damage_history"] = self.damage_history.to_dict()
         return schema
 
     @classmethod
@@ -771,11 +908,13 @@ class DirectPermanentTargetSpec:
             "mana_value_min",
             "mana_value_max",
             "mana_value",
+            "numeric_characteristic",
             "state_predicate",
             "controller_relation",
             "source_exclusion",
             "token",
             "combat_state",
+            "damage_history",
             *(('commander',) if allow_commander else ()),
         }
         if set(schema) - allowed:
@@ -817,12 +956,24 @@ class DirectPermanentTargetSpec:
             mana_value_min=schema.get("mana_value_min"),
             mana_value_max=schema.get("mana_value_max"),
             mana_value_equal=schema.get("mana_value"),
+            numeric_characteristic=(
+                TargetNumericCharacteristicSpec.from_mapping(
+                    schema["numeric_characteristic"]
+                )
+                if schema.get("numeric_characteristic") is not None
+                else None
+            ),
             state_predicate=state_predicate,
             controller_relation=schema.get("controller_relation", "any"),
             source_exclusion=source_exclusion,
             token=schema.get("token"),
             commander=schema.get("commander"),
             combat_state=schema.get("combat_state"),
+            damage_history=(
+                TargetDamageHistorySpec.from_mapping(schema["damage_history"])
+                if schema.get("damage_history") is not None
+                else None
+            ),
         )
         if spec.to_target_schema() != schema:
             raise ValueError("Direct permanent target schema is not canonical")
@@ -850,6 +1001,10 @@ def direct_permanent_target_spec(
     else:
         return None
 
+    phrase, numeric_characteristic = _strip_numeric_characteristic_predicate(
+        phrase
+    )
+    phrase, damage_history = _strip_damage_history_predicate(phrase)
     state_predicate: PermanentStatePredicateSpec | None = None
     phrase, mana_value_fields = _strip_mana_value_predicate(phrase)
     counter_state = re.fullmatch(
@@ -894,6 +1049,8 @@ def direct_permanent_target_spec(
         "controller_relation": relation,
         "source_exclusion": exclude_source,
         "state_predicate": state_predicate,
+        "numeric_characteristic": numeric_characteristic,
+        "damage_history": damage_history,
         **mana_value_fields,
     }
     if (

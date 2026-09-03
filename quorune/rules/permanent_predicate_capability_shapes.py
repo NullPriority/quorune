@@ -11,6 +11,9 @@ from ..object_predicate import ObjectQueryError, PermanentStatePredicateSpec
 PUBLIC_PERMANENT_STATE_CAPABILITY = (
     "state_query.permanent.public_state_predicate"
 )
+TARGET_DAMAGE_HISTORY_CAPABILITY = (
+    "target.permanent.damage_history_predicate"
+)
 
 
 def direct_permanent_target_schema_is_closed(
@@ -49,6 +52,11 @@ def direct_target_predicate_capabilities(
         *(
             (PUBLIC_PERMANENT_STATE_CAPABILITY,)
             if target_spec.uses_public_state
+            else ()
+        ),
+        *(
+            (TARGET_DAMAGE_HISTORY_CAPABILITY,)
+            if target_spec.uses_damage_history
             else ()
         ),
     )
@@ -95,6 +103,7 @@ def fixed_counter_target_set_state_capabilities(
 
 
 __all__ = [
+    "TARGET_DAMAGE_HISTORY_CAPABILITY",
     "direct_target_predicate_capabilities",
     "direct_permanent_target_schema_is_closed",
     "fixed_counter_target_schema_is_closed",

@@ -1,7 +1,7 @@
 ---
 title: "Damage transaction"
 status: "current"
-authoritative_source: "quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, and quorune/combat_damage_*"
+authoritative_source: "quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, and quorune/combat_damage_*"
 verified: "2026-08-07"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
@@ -70,6 +70,14 @@ life, placement, removal, and permanent-result batch unchanged.
 State-based actions consume temporal damage markers according to their own
 owner. Damage code does not perform unrelated state-based checks or bypass
 focused life, counter, or permanent-state mutation boundaries.
+
+Each positive final damage result also appends one typed current-turn history
+fact after the containing result plan commits. The fact preserves the source
+logical incarnation and, for a permanent recipient, the recipient logical
+incarnation. Player and permanent results share this one damage transaction;
+zero and fully prevented damage append nothing. Current target predicates may
+query these public facts, while a zone change invalidates the old incarnation
+without deleting replay history.
 
 ## Replay, privacy, and extension
 

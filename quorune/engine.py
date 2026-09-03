@@ -565,6 +565,7 @@ class CommanderEngine(
         object_incarnation: str | None = None,
         target: str | None = None,
         target_kind: str | None = None,
+        target_object_incarnation: str | None = None,
         types: Iterable[str] = (),
         amount: int = 0,
     ) -> None:
@@ -588,6 +589,7 @@ class CommanderEngine(
                 object_incarnation=object_incarnation,
                 target=target,
                 target_kind=target_kind,
+                target_object_incarnation=target_object_incarnation,
                 types=tuple(sorted({str(value).casefold() for value in types})),
                 amount=max(0, int(amount)),
             )
