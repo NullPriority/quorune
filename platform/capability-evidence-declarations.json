@@ -3924,6 +3924,14 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_counts_execute_as_many_and_exact_unless",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "For fixed counts one through three, cap an ordinary return at the available legal objects while requiring the complete count before an unless payment avoids the source-sacrifice fallback."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_unless_branch_and_ability_removal",
       "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -3984,6 +3992,14 @@
       "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep targeted, up-to, aggregate, optional, variable, opponent-relative, and compound entry-return forms material and fail closed."
+    },
+    {
+      "capability_id": "choice.controller.fixed_return_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_entry_return_counts_lower_as_many_and_exact_unless_shapes",
+      "official_rule_ids": ["101.4", "400.2", "400.3", "400.6", "400.7", "603.3", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower fixed counts one through three to ordinary as-many-as-possible choices or exact unless-payment choices with the logical-source fallback."
     },
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
