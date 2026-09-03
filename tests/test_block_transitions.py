@@ -20,6 +20,7 @@ from quorune.block_transitions import (
 )
 from quorune.combat_relationship_state import (
     BlockDeclarationAssignment,
+    CombatRelationshipStateError,
     commit_block_declaration,
 )
 from quorune.model import CombatState
@@ -375,6 +376,46 @@ class BlockTransitionCommitAndResolutionTests(unittest.TestCase):
             [blocker.object_id], combat.blockers[attacker.object_id]
         )
         self.assertEqual(attacker.object_id, blocker.blocking)
+
+    def test_duplicate_blocker_assignment_is_rejected_until_multi_block_is_supported(
+        self,
+    ):
+        first_attacker = self.card("A1", "A")
+        second_attacker = self.card("A2", "A")
+        blocker = self.card("B1", "B")
+        combat = CombatState(
+            attackers={
+                first_attacker.object_id: "B",
+                second_attacker.object_id: "B",
+            }
+        )
+
+        with self.assertRaisesRegex(
+            CombatRelationshipStateError,
+            "A blocker cannot be committed more than once",
+        ):
+            commit_block_declaration(
+                combat,
+                {
+                    first_attacker.object_id: first_attacker,
+                    second_attacker.object_id: second_attacker,
+                    blocker.object_id: blocker,
+                },
+                controller="B",
+                assignments=(
+                    BlockDeclarationAssignment(
+                        blocker_object_id=blocker.object_id,
+                        attacker_object_id=first_attacker.object_id,
+                    ),
+                    BlockDeclarationAssignment(
+                        blocker_object_id=blocker.object_id,
+                        attacker_object_id=second_attacker.object_id,
+                    ),
+                ),
+            )
+
+        self.assertEqual({}, combat.blockers)
+        self.assertIsNone(blocker.blocking)
 
     def test_source_departure_makes_resolution_do_nothing(self):
         source = _participant(

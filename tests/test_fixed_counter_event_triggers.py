@@ -20,6 +20,7 @@ from quorune.continuous_effects import (
     ContinuousOperation,
     Layer,
 )
+from quorune.counter_placement import place_counters_on_refs
 from quorune.damage import damage_proposal, resolve_damage_batch
 from quorune.damage_modifier_state import (
     DamageModifierDuration,
@@ -4528,6 +4529,55 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
             )
         )
 
+    def test_source_combat_growth_trigger_controller_is_stable_after_stack_placement(
+        self,
+    ):
+        session = self.session(121069, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        source = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Attack Growth Trigger Fixture",
+            ref="source-combat-growth-controller-lock",
+            zone="battlefield",
+        )
+        engine.change_control(
+            source.object_id,
+            "A",
+            reason="source combat growth pre-event controller witness",
+        )
+        source.temporary_keywords.append("Haste")
+        program = self.register_typed_event_trigger(engine, source)
+
+        engine._issue_attackers()
+        declared = session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {source.ref: "B"}},
+        )
+        self.assertTrue(declared.ok, declared.summary)
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("A", item.controller)
+
+        engine.change_control(
+            source.object_id,
+            "C",
+            reason="source combat growth post-placement controller witness",
+        )
+
+        self.assertEqual("C", source.controller)
+        self.assertEqual("A", item.controller)
+        self.resolve_top(engine)
+        self.assertEqual(4, engine._numeric_stat(source.object_id, "power"))
+
     def test_source_combat_growth_block_bindings_use_sealed_participants(self):
         cases = (
             (
@@ -4673,6 +4723,111 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(3, engine._numeric_stat(source.object_id, "power"))
         self.assertEqual(3, engine._numeric_stat(source.object_id, "toughness"))
 
+    def test_gaining_flying_after_block_declaration_does_not_create_trigger(self):
+        session = self.session(121070)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 6
+        engine.state.phase = "combat"
+        engine.state.step = "declare_blockers"
+        source = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Flying Block Growth Trigger Fixture",
+            ref="source-combat-growth-gain-flying",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        attacker_ref = engine.create_token(
+            "A",
+            name="Post-declaration flying attacker",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "2",
+                "toughness": "2",
+            },
+        )[0]
+        attacker = engine._resolve_object("A", attacker_ref)
+        attacker.attacking = "B"
+        engine.state.combat = CombatState(
+            attackers_declared=True,
+            had_attacking_creature=True,
+            attackers={attacker.object_id: "B"},
+            defending_players=["B"],
+        )
+        engine._begin_blocker_decisions()
+        result = session.act(
+            "pilot:B",
+            {"a": "block", "blk": {source.ref: attacker.ref}},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+        attacker.temporary_keywords.append("Flying")
+        engine._stabilize()
+
+        self.assertIn("flying", engine._combat_keywords(attacker))
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+    def test_losing_flying_after_block_declaration_does_not_remove_existing_trigger(
+        self,
+    ):
+        session = self.session(121071)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 6
+        engine.state.phase = "combat"
+        engine.state.step = "declare_blockers"
+        source = self.add_card(
+            engine,
+            seat="B",
+            name="Generic Flying Block Growth Trigger Fixture",
+            ref="source-combat-growth-lose-flying",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        attacker_ref = engine.create_token(
+            "A",
+            name="Declaration-time flying attacker",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "2",
+                "toughness": "2",
+            },
+            temporary_keywords=("Flying",),
+        )[0]
+        attacker = engine._resolve_object("A", attacker_ref)
+        attacker.attacking = "B"
+        engine.state.combat = CombatState(
+            attackers_declared=True,
+            had_attacking_creature=True,
+            attackers={attacker.object_id: "B"},
+            defending_players=["B"],
+        )
+        engine._begin_blocker_decisions()
+        result = session.act(
+            "pilot:B",
+            {"a": "block", "blk": {source.ref: attacker.ref}},
+        )
+        self.assertTrue(result.ok, result.summary)
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual(["flying"], item.context["blocked_attacker_keywords"])
+
+        attacker.temporary_keywords.clear()
+
+        self.assertNotIn("flying", engine._combat_keywords(attacker))
+        self.assertEqual("B", item.controller)
+        self.resolve_top(engine)
+        self.assertEqual(4, engine._numeric_stat(source.object_id, "power"))
+
     def test_source_combat_growth_damage_requires_committed_player_damage(self):
         session = self.session(121066, players=4)
         engine = session.engine
@@ -4774,6 +4929,311 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.assertTrue(item.context["combat"])
         self.resolve_top(engine)
         self.assertEqual(1, source.counters.get("+1/+1"))
+
+    def test_combat_damage_growth_triggers_in_each_positive_double_strike_damage_step(
+        self,
+    ):
+        session = self.session(121072)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 7
+        engine.state.phase = "combat"
+        engine.state.step = "combat_damage"
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Combat Damage Growth Trigger Fixture",
+            ref="source-combat-growth-double-strike",
+            zone="battlefield",
+        )
+        source.temporary_keywords.append("Double strike")
+        source.attacking = "B"
+        engine.state.combat = CombatState(
+            attackers_declared=True,
+            blockers_declared=True,
+            had_attacking_creature=True,
+            attackers={source.object_id: "B"},
+            defending_players=["B"],
+        )
+        program = self.register_trigger(engine, source)
+
+        engine._begin_combat_damage()
+        first = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual(1, first.context["damage_step"])
+        self.assertTrue(first.context["first_strike_step"])
+        self.assertEqual(1, first.context["amount"])
+        self.resolve_top(engine)
+        self.assertEqual(1, source.counters.get("+1/+1"))
+
+        engine._advance_step()
+
+        second = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual(2, second.context["damage_step"])
+        self.assertTrue(second.context["first_strike_step"])
+        self.assertEqual(2, second.context["amount"])
+        self.assertNotEqual(first.ref, second.ref)
+        self.resolve_top(engine)
+        self.assertEqual(2, source.counters.get("+1/+1"))
+        self.assertEqual(37, engine.state.players["B"].life)
+
+    def test_combat_damage_growth_triggers_once_for_positive_trample_player_damage(
+        self,
+    ):
+        session = self.session(121073)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 7
+        engine.state.phase = "combat"
+        engine.state.step = "combat_damage"
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Combat Damage Growth Trigger Fixture",
+            ref="source-combat-growth-trample",
+            zone="battlefield",
+        )
+        source.temporary_keywords.append("Trample")
+        place_counters_on_refs(
+            engine,
+            actor="A",
+            object_refs=(source.ref,),
+            counter_name="+1/+1",
+            amount=3,
+            reason="source combat growth trample fixture",
+        )
+        blocker_ref = engine.create_token(
+            "B",
+            name="Source combat growth trample blocker",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "1",
+                "toughness": "2",
+            },
+        )[0]
+        blocker = engine._resolve_object("B", blocker_ref)
+        source.attacking = "B"
+        blocker.blocking = source.object_id
+        engine.state.combat = CombatState(
+            attackers_declared=True,
+            blockers_declared=True,
+            had_attacking_creature=True,
+            attackers={source.object_id: "B"},
+            defending_players=["B"],
+            blockers={source.object_id: [blocker.object_id]},
+        )
+        program = self.register_trigger(engine, source)
+        engine._begin_combat_damage()
+
+        result = session.act(
+            "pilot:A",
+            {
+                "a": "dmg",
+                "assignments": [
+                    {"source": source.ref, "target": blocker.ref, "amount": 2},
+                    {"source": source.ref, "target": "B", "amount": 2},
+                ],
+            },
+        )
+
+        self.assertTrue(result.ok, result.summary)
+        matching = [
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        ]
+        self.assertEqual(1, len(matching))
+        self.assertEqual("B", matching[0].context["player"])
+        self.assertEqual(2, matching[0].context["amount"])
+        self.assertEqual(2, matching[0].context["assigned_amount"])
+        self.resolve_top(engine)
+        self.assertEqual(4, source.counters.get("+1/+1"))
+        self.assertEqual(38, engine.state.players["B"].life)
+
+    def test_combat_damage_to_nonplayer_permanents_does_not_satisfy_player_binding(
+        self,
+    ):
+        for index, kind in enumerate(("planeswalker", "battle")):
+            with self.subTest(kind=kind):
+                session = self.session(121074 + index, players=3)
+                engine = session.engine
+                engine.state.active_player = "A"
+                engine.state.phase_index = 7
+                engine.state.phase = "combat"
+                engine.state.step = "combat_damage"
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Combat Damage Growth Trigger Fixture",
+                    ref=f"source-combat-growth-{kind}",
+                    zone="battlefield",
+                )
+                if kind == "planeswalker":
+                    target_ref = engine.create_token(
+                        "B",
+                        name="Source combat growth planeswalker target",
+                        characteristics={
+                            "type_line": "Token Planeswalker — Test",
+                            "loyalty": "5",
+                        },
+                    )[0]
+                else:
+                    target_ref = engine.create_token(
+                        "C",
+                        name="Source combat growth battle target",
+                        battle_protector="B",
+                        characteristics={
+                            "type_line": "Token Battle — Siege",
+                            "defense": "5",
+                        },
+                    )[0]
+                target = engine._resolve_object(
+                    "A", target_ref, zones={"battlefield"}
+                )
+                source.attacking = target.ref
+                engine.state.combat = CombatState(
+                    attackers_declared=True,
+                    blockers_declared=True,
+                    had_attacking_creature=True,
+                    attackers={source.object_id: target.ref},
+                    attack_target_context={
+                        source.object_id: {
+                            "target": target.ref,
+                            "kind": kind,
+                            "defending_player": "B",
+                            "logical_object_id": target.logical_object_id,
+                        }
+                    },
+                    defending_players=["B"],
+                )
+                program = self.register_trigger(engine, source)
+
+                engine._begin_combat_damage()
+
+                self.assertFalse(
+                    any(
+                        item.semantic_key == program.key
+                        for item in engine.state.stack
+                    )
+                )
+                damage_event = next(
+                    event
+                    for event in reversed(engine.state.events)
+                    if event.code == "combat.damage"
+                )
+                self.assertEqual(
+                    target.ref,
+                    damage_event.details["damage_events"][0]["target"],
+                )
+                self.assertEqual(
+                    "permanent",
+                    damage_event.details["damage_events"][0]["target_kind"],
+                )
+
+    def test_combat_damage_growth_trigger_is_created_when_source_dies_in_same_damage_batch(
+        self,
+    ):
+        session = self.session(121076)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 7
+        engine.state.phase = "combat"
+        engine.state.step = "combat_damage"
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Combat Damage Growth Trigger Fixture",
+            ref="source-combat-growth-lethal",
+            zone="battlefield",
+        )
+        source.temporary_keywords.append("Trample")
+        place_counters_on_refs(
+            engine,
+            actor="A",
+            object_refs=(source.ref,),
+            counter_name="+1/+1",
+            amount=1,
+            reason="source combat growth simultaneous lethal fixture",
+        )
+        blocker_ref = engine.create_token(
+            "B",
+            name="Source combat growth lethal blocker",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "2",
+                "toughness": "1",
+            },
+        )[0]
+        blocker = engine._resolve_object("B", blocker_ref)
+        source.attacking = "B"
+        blocker.blocking = source.object_id
+        engine.state.combat = CombatState(
+            attackers_declared=True,
+            blockers_declared=True,
+            had_attacking_creature=True,
+            attackers={source.object_id: "B"},
+            defending_players=["B"],
+            blockers={source.object_id: [blocker.object_id]},
+        )
+        program = self.register_trigger(engine, source)
+        engine._begin_combat_damage()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        source_logical_at_damage = source.logical_object_id
+
+        result = session.act(
+            "pilot:A",
+            {
+                "a": "dmg",
+                "assignments": [
+                    {"source": source.ref, "target": blocker.ref, "amount": 1},
+                    {"source": source.ref, "target": "B", "amount": 1},
+                ],
+            },
+        )
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", source.zone)
+        item = next(
+            value
+            for value in engine.state.stack
+            if value.semantic_key == program.key
+        )
+        self.assertEqual("A", item.controller)
+        self.assertEqual("A", item.context["source_controller"])
+        self.assertEqual("battlefield", item.context["source_zone"])
+        self.assertEqual(
+            source_logical_at_damage,
+            item.context["source_logical_object_id"],
+        )
+        self.assertNotEqual(source_logical_at_damage, source.logical_object_id)
+        self.assertEqual(1, item.context["amount"])
+
+        for _ in range(8):
+            if not any(
+                value.semantic_key == program.key
+                for value in engine.state.stack
+            ):
+                break
+            pass_current(session)
+
+        self.assertEqual("graveyard", source.zone)
+        self.assertNotIn("+1/+1", source.counters)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "source-combat-growth-lethal"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_source_combat_growth_shares_apnap_and_pins_source_incarnation(self):
         session = self.session(121067, players=4)
