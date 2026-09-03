@@ -174,7 +174,7 @@ _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER = (
     "public-static-cast-cost-modifier-existing-owner-v1"
 )
 _PROBE_FIXED_CAST_LIFECYCLES = "fixed-cast-lifecycle-existing-owner-v1"
-_PROBE_FIXED_CASTING_SURFACE = "fixed-casting-surface-existing-owner-v1"
+_PROBE_FIXED_CASTING_SURFACE = "fixed-casting-surface-existing-owner-v2"
 _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS = (
     "fixed-entry-return-requirement-existing-owner-v1"
 )

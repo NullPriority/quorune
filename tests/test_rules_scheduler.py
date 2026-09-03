@@ -2013,7 +2013,7 @@ class RulesSchedulerTests(unittest.TestCase):
                 self.assertFalse(_matches_probe(probe_id, source))
 
     def test_fixed_casting_surface_probe_is_closed(self):
-        probe_id = "fixed-casting-surface-existing-owner-v1"
+        probe_id = "fixed-casting-surface-existing-owner-v2"
         for source in (
             "Buyback {3}",
             "Dash {1}{R}",

@@ -1840,7 +1840,7 @@
             "variable, hybrid, Phyrexian, snow, nonmana, random, repeated, and modified lifecycle costs"
           ],
           "measurement_status": "generated_probe",
-          "measurement_probe_id": "fixed-casting-surface-existing-owner-v1"
+          "measurement_probe_id": "fixed-casting-surface-existing-owner-v2"
         },
         {
           "bundle_id": "bundle:fixed-entry-return-requirements",
@@ -1936,6 +1936,15 @@
         "certified_material_residual_reduction_lower_bound": 84,
         "measurement_probe_id": "fixed-activation-zone-change-predicates-existing-owner-v2",
         "reason": "Exact-source certification found that the v1 carrier probe counted one syntactically matched residual that did not become an exact activated-ability node. The v2 integrated-node probe excludes that false positive while retaining the certified 53-card gain."
+      },
+      {
+        "transition_id": "oracle-ir-v161-fixed-casting-surface-closure",
+        "original_expected_complete_card_gain": 71,
+        "certified_complete_card_lower_bound": 71,
+        "certified_exact_ability_lower_bound": 126,
+        "certified_material_residual_reduction_lower_bound": 126,
+        "measurement_probe_id": "fixed-casting-surface-existing-owner-v2",
+        "reason": "The immutable source receipt predates the ordinal type-journal correction and measured 128 carriers. The corrected closed probe excludes two unsupported ordinal characteristic forms while retaining a 71-card, 126-ability lower bound; exact-source certification realizes 72 cards and 127 abilities."
       }
     ],
     "harvest_provenance": [
