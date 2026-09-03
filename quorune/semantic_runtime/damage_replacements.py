@@ -70,6 +70,7 @@ class AllDamagePreventionScopeNode:
     damage_kind: str
     source_controller_turn_only: bool
     scope: DamagePreventionScope
+    application_group: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -589,9 +590,16 @@ class AllDamagePreventionHandler:
                 raise SemanticNodeError(
                     "All-damage prevention scope entry must be an object"
                 )
+            expected_fields = {
+                "damage_kind",
+                "source_controller_turn_only",
+                "scope",
+            }
+            if "application_group" in raw:
+                expected_fields.add("application_group")
             exact_fields(
                 raw,
-                {"damage_kind", "source_controller_turn_only", "scope"},
+                expected_fields,
                 field="all-damage prevention scope entry",
             )
             damage_kind = str(raw["damage_kind"])
@@ -603,6 +611,14 @@ class AllDamagePreventionHandler:
             if type(turn_only) is not bool:
                 raise SemanticNodeError(
                     "All-damage prevention turn scope must be boolean"
+                )
+            application_group = raw.get("application_group")
+            if application_group is not None and (
+                type(application_group) is not str
+                or not application_group
+            ):
+                raise SemanticNodeError(
+                    "All-damage prevention application group must be nonempty or null"
                 )
             raw_scope = raw["scope"]
             if not isinstance(raw_scope, Mapping):
@@ -618,6 +634,7 @@ class AllDamagePreventionHandler:
                     damage_kind=damage_kind,
                     source_controller_turn_only=turn_only,
                     scope=scope,
+                    application_group=application_group,
                 )
             )
         return AllDamagePreventionNode(scopes=tuple(scopes))
@@ -689,6 +706,12 @@ class AllDamagePreventionHandler:
                     "eq": entry.damage_kind == "combat"
                 }
             component_id = context.component_id or "all"
+            application_group_id = (
+                f"{self.handler_id}:{context.source_ref}:{component_id}:"
+                f"{entry.application_group}"
+                if entry.application_group is not None
+                else None
+            )
             effects.append(
                 ReplacementEffect(
                     effect_id=(
@@ -701,6 +724,7 @@ class AllDamagePreventionHandler:
                     conditions=conditions,
                     operations=(PreventAmount(),),
                     label=f"{context.source_ref}: prevent all damage",
+                    application_group_id=application_group_id,
                 )
             )
         return tuple(effects)

@@ -76,6 +76,7 @@ class FixedAllDamagePreventionSpec:
     source: FixedDamageObjectScope
     recipient: FixedDamageObjectScope
     source_controller_turn_only: bool = False
+    application_group: str | None = None
 
     def __post_init__(self) -> None:
         if self.damage_kind not in _DAMAGE_KINDS:
@@ -88,6 +89,13 @@ class FixedAllDamagePreventionSpec:
             raise ValueError("All-damage prevention requires typed scopes")
         if type(self.source_controller_turn_only) is not bool:
             raise ValueError("All-damage prevention turn scope must be boolean")
+        if self.application_group is not None and (
+            type(self.application_group) is not str
+            or not self.application_group
+        ):
+            raise ValueError(
+                "All-damage prevention application group must be nonempty or null"
+            )
 
 
 _ANY_SCOPE = FixedDamageObjectScope()
@@ -422,6 +430,7 @@ def fixed_all_damage_prevention_specs(
                 source=_ANY_SCOPE,
                 recipient=recipients[0],
                 source_controller_turn_only=source_controller_turn_only,
+                application_group="dealt_to_and_by",
             ),
             FixedAllDamagePreventionSpec(
                 damage_kind=kind,
@@ -429,6 +438,7 @@ def fixed_all_damage_prevention_specs(
                 source=source,
                 recipient=_ANY_SCOPE,
                 source_controller_turn_only=source_controller_turn_only,
+                application_group="dealt_to_and_by",
             ),
         )
     split = _split_recipient_and_source(body)

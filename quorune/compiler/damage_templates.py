@@ -796,6 +796,11 @@ def static_damage_handler(
                                     spec
                                 )
                             ),
+                            **(
+                                {"application_group": spec.application_group}
+                                if spec.application_group is not None
+                                else {}
+                            ),
                         }
                         for spec in all_prevention
                     ]

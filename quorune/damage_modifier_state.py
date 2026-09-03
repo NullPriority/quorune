@@ -1209,6 +1209,7 @@ class DamagePreventionShield:
     scope: DamagePreventionScope = DamagePreventionScope()
     chosen_source: ChosenDamageSource | None = None
     label: str = ""
+    application_group_id: str | None = None
     aftermath: tuple[PreventionAftermath, ...] = ()
     triggered_ability: PreventionTriggeredAbility | None = None
 
@@ -1256,6 +1257,13 @@ class DamagePreventionShield:
         ):
             raise DamageModifierError(
                 "A prevention shield chosen source must be typed"
+            )
+        if self.application_group_id is not None and (
+            type(self.application_group_id) is not str
+            or not self.application_group_id
+        ):
+            raise DamageModifierError(
+                "A prevention application-group identity must be nonempty or null"
             )
         aftermath = tuple(self.aftermath)
         if any(
@@ -1307,6 +1315,8 @@ class DamagePreventionShield:
             result["recipient_kind"] = self.recipient_kind.value
         if self.scope != DamagePreventionScope():
             result["scope"] = self.scope.to_dict()
+        if self.application_group_id is not None:
+            result["application_group_id"] = self.application_group_id
         if self.aftermath:
             result["aftermath"] = [value.to_dict() for value in self.aftermath]
         if self.triggered_ability is not None:
@@ -1333,6 +1343,7 @@ class DamagePreventionShield:
             field
             for field in (
                 "aftermath",
+                "application_group_id",
                 "damage_kind",
                 "recipient_kind",
                 "triggered_ability",
@@ -1402,6 +1413,11 @@ class DamagePreventionShield:
                 else None
             ),
             label=str(value["label"] or ""),
+            application_group_id=(
+                str(value["application_group_id"])
+                if value.get("application_group_id") is not None
+                else None
+            ),
             aftermath=tuple(
                 prevention_aftermath_from_dict(item)
                 for item in value.get("aftermath", ())

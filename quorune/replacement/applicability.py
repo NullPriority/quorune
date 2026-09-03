@@ -8,6 +8,12 @@ from .model import (
     ReplacementEffect,
     ReplacementEffectError,
 )
+_COLLECTION_PREDICATES = {
+    "contains",
+    "contains_all",
+    "contains_any",
+    "contains_none",
+}
 
 
 def canonical_effects(
@@ -65,6 +71,8 @@ def condition_matches(
                 raise ReplacementEffectError(
                     "Replacement condition predicates cannot be empty"
                 )
+            if actual is None and _COLLECTION_PREDICATES.intersection(expected):
+                return False
             if "in" in expected and actual not in expected["in"]:
                 return False
             if "not_in" in expected and actual in expected["not_in"]:
@@ -107,17 +115,36 @@ def condition_matches(
     return True
 
 
+def _deduplicate_explicit_application_groups(
+    effects: Iterable[ReplacementEffect],
+) -> list[ReplacementEffect]:
+    """Collapse applicable sibling scopes only when explicitly grouped."""
+
+    result: list[ReplacementEffect] = []
+    seen: set[str] = set()
+    for effect in effects:
+        group_id = effect.application_group_id
+        if group_id is None:
+            result.append(effect)
+            continue
+        if group_id in seen:
+            continue
+        seen.add(group_id)
+        result.append(effect)
+    return result
+
+
 def replacement_choice(
     event: ReplaceableEvent,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementChoice | None:
-    applicable = [
+    applicable = _deduplicate_explicit_application_groups([
         effect
         for effect in canonical_effects(effects)
         if effect.event_kind == event.kind
         and effect.effect_id not in event.applied_effects
         and condition_matches(effect.conditions, event)
-    ]
+    ])
     if not applicable:
         return None
     selected_class = min(effect.replacement_class for effect in applicable)

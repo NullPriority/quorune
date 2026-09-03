@@ -292,6 +292,7 @@ class PreventionShieldCreationRequest:
     chosen_source_ref: str | None = None
     source_predicate: ObjectQuerySpec = ObjectQuerySpec()
     label: str = ""
+    application_group_id: str | None = None
     aftermath: tuple[PreventionAftermathRequest, ...] = ()
     triggered_ability: PreventionTriggeredAbilityRequest | None = None
 
@@ -342,6 +343,13 @@ class PreventionShieldCreationRequest:
         if not isinstance(self.source_predicate, ObjectQuerySpec):
             raise DamagePreventionCreationError(
                 "Prevention creation requires a typed source predicate"
+            )
+        if self.application_group_id is not None and (
+            type(self.application_group_id) is not str
+            or not self.application_group_id
+        ):
+            raise DamagePreventionCreationError(
+                "Prevention creation application group must be nonempty or null"
             )
         aftermath = tuple(self.aftermath)
         if any(
@@ -496,6 +504,7 @@ def _shield_ids(
             "amounts": [allocation.amount for allocation in request.subjects],
             "chosen_source": request.chosen_source_ref,
             "source_predicate": request.source_predicate.to_dict(),
+            "application_group_id": request.application_group_id,
             "aftermath": [
                 (
                     {
@@ -743,6 +752,7 @@ def plan_prevention_shield_creation(
                 scope=request.scope,
                 chosen_source=chosen,
                 label=request.label,
+                application_group_id=request.application_group_id,
                 aftermath=_aftermath_for_subject(host, request, subject),
                 triggered_ability=triggered_ability,
             )

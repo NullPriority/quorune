@@ -400,6 +400,7 @@ class ReplacementEffect:
     optional: bool = False
     chooser: str = "affected_player"
     label: str = ""
+    application_group_id: str | None = None
 
     def __post_init__(self) -> None:
         if not self.effect_id or not self.source_id:
@@ -426,6 +427,13 @@ class ReplacementEffect:
             raise ReplacementEffectError(
                 "Replacement effect optional must be a boolean"
             )
+        if self.application_group_id is not None and (
+            type(self.application_group_id) is not str
+            or not self.application_group_id
+        ):
+            raise ReplacementEffectError(
+                "Replacement application-group identity must be nonempty or null"
+            )
         try:
             object.__setattr__(self, "conditions", FrozenMap(self.conditions))
             lowered = tuple(lower_operation(value) for value in self.operations)
@@ -437,6 +445,15 @@ class ReplacementEffect:
         if not lowered:
             raise ReplacementEffectError(
                 "Replacement effects require operations"
+            )
+        if self.application_group_id is not None and (
+            len(lowered) != 1
+            or operation_to_dict(lowered[0]) != {"op": "prevent"}
+            or lowered_decline
+            or self.optional
+        ):
+            raise ReplacementEffectError(
+                "Replacement application groups require mandatory prevent-all siblings"
             )
         object.__setattr__(self, "operations", lowered)
         if lowered_decline and not self.optional:
@@ -462,6 +479,8 @@ class ReplacementEffect:
                 operation_to_dict(value)
                 for value in self.decline_operations
             ]
+        if self.application_group_id is not None:
+            result["application_group_id"] = self.application_group_id
         return result
 
     @classmethod
@@ -479,7 +498,11 @@ class ReplacementEffect:
         }
         actual = set(value)
         missing = sorted(required - actual)
-        unknown = sorted(actual - required - {"decline_operations"})
+        unknown = sorted(
+            actual
+            - required
+            - {"application_group_id", "decline_operations"}
+        )
         if missing or unknown:
             details: list[str] = []
             if missing:
@@ -526,6 +549,11 @@ class ReplacementEffect:
             optional=value["optional"],
             chooser=str(value["chooser"] or ""),
             label=str(value["label"] or ""),
+            application_group_id=(
+                str(value["application_group_id"])
+                if value.get("application_group_id") is not None
+                else None
+            ),
         )
 
 

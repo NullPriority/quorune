@@ -864,6 +864,11 @@ def fixed_prevention_effect_template(
                         "scope": fixed_all_damage_prevention_scope_descriptor(
                             spec
                         ),
+                        **(
+                            {"application_group_id": "$stack"}
+                            if spec.application_group is not None
+                            else {}
+                        ),
                     }
                     for spec in specs
                 ),

@@ -11921,10 +11921,50 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_independent_all_prevention_shields_with_same_source_and_label_remain_distinct",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep separately created all-prevention shields as distinct replacement choices despite a shared source and label, and run only the selected shield's aftermath."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_negative_source_predicate_uses_lki_when_rules_require_it",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Carry typed last-known source characteristics through a real departed-source damage proposal and apply the negative scope from those facts."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_resolved_one_shot_prevention_locks_effect_controller",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve a controller-relative shield, change control of its source, and keep the resolved effect controller locked."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_static_all_prevention_tracks_controller_ability_and_source_lifecycle",
       "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute controller-relative scope and suppress a static prevention component after current layer-6 ability removal or source departure."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_targeted_prevention_scope_substitutes_nested_target_reference",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Cast and resolve a targeted prevention spell so nested scope identity binds to the selected attacker and preserves replay."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_to_and_by_prevention_overlap_has_one_semantic_application",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Match both halves of a to-and-by scope, expose one prevention option beside an independent quantity effect, and record one public prevention application."
     },
     {
       "capability_id": "damage.prevention.persistent_amount",
@@ -12009,6 +12049,30 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_negative_source_color_predicate_does_not_match_missing_characteristics",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Distinguish an unavailable source-color field from an explicitly known empty color set and fail the negative predicate closed."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_negative_source_predicate_fails_closed_without_current_or_lki_facts",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject negative type and color scopes when neither current nor last-known source facts are available."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_negative_source_type_predicate_does_not_match_missing_characteristics",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Distinguish an unavailable source-characteristic field from an explicitly known empty type set and fail the negative predicate closed."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_prevention_immediate_sequencing.PreventionImmediateSequencingTests.test_all_targets_illegal_stops_before_choice_shield_and_life",
       "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -12073,6 +12137,14 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_targeted_prevention_scope_substitutes_nested_target_reference",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile, cast, target, resolve, checkpoint, and replay a nested direct-target prevention scope through the existing shield owner."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_combat_scoped_prevention_compiles_in_spell_and_activated_contexts",
       "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -12125,6 +12197,22 @@
       "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Create and consume finite, next-instance, or all-damage prevention shields through a typed damage batch."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_targeted_prevention_scope_substitutes_nested_target_reference",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the target command and resolved nested scope to the same authoritative state hash."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_damage_replacement_model.DamageReplacementModelTests.test_to_and_by_prevention_overlap_has_one_semantic_application",
+      "official_rule_ids": ["609.7", "609.7a", "609.7b", "615.1", "615.2", "615.3", "615.4", "615.5", "615.6", "615.7", "615.8", "615.9", "615.11", "615.12", "615.12a", "615.13", "616.1", "616.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the targeted activation that installs both independently useful scopes before verifying one overlapping semantic application."
     },
     {
       "capability_id": "damage.prevention.persistent_amount",
