@@ -17,6 +17,11 @@ from ..effect_contracts import (
     effect_family_contract,
     REANIMATE_OPERATION,
 )
+from ..impulse_access import grant_temporary_cast_permission
+from ..impulse_access_model import (
+    TemporaryCastPermissionError,
+    TemporaryCastPermissionGrant,
+)
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..model import CardInstance
 from ..milling import mill_cards, MillRequest
@@ -106,6 +111,19 @@ def _apply_move_if_in_zone(
 ) -> Any:
     op = operation
     expected_zone = str(effect.get("from") or "")
+    raw_grant = effect.get("then_cast_permission")
+    try:
+        grant = (
+            TemporaryCastPermissionGrant.from_dict(raw_grant)
+            if isinstance(raw_grant, Mapping)
+            else None
+        )
+    except TemporaryCastPermissionError as exc:
+        raise GameRuleError(str(exc)) from exc
+    if raw_grant is not None and grant is None:
+        raise GameRuleError("Linked cast permission must be a typed object")
+    if grant is not None and grant.player != actor:
+        raise GameRuleError("Linked cast-permission player changed")
     try:
         card = host._resolve_object(
             actor,
@@ -124,7 +142,7 @@ def _apply_move_if_in_zone(
             importance=2,
         )
         return None
-    if not expected_zone or card.zone != expected_zone:
+    if not expected_zone or card.zone != expected_zone or card.phased_out:
         return None
     expected_counter = effect.get(
         "expected_zone_change_counter"
@@ -158,9 +176,10 @@ def _apply_move_if_in_zone(
             changed_objects=[card.object_id],
         )
         return None
-    return host.move_card(
+    destination = str(effect.get("destination") or "graveyard")
+    moved = host.move_card(
         card.object_id,
-        str(effect.get("destination") or "graveyard"),
+        destination,
         controller=effect.get("controller"),
         tapped=(
             bool(effect["tapped"])
@@ -183,6 +202,14 @@ def _apply_move_if_in_zone(
             else None
         ),
     )
+    if grant is not None and card.zone == destination:
+        grant_temporary_cast_permission(
+            host,
+            card=card,
+            grant=grant,
+            reason=reason,
+        )
+    return moved
 
 
 

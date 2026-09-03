@@ -2,69 +2,20 @@ from __future__ import annotations
 
 """Closed grammar for public static spell-cost increases and reductions."""
 
-from dataclasses import dataclass
-from enum import Enum
 import re
-from typing import Any
 
+from ..cast_cost_modifiers import (
+    CastCostAffectedController,
+    CastCostModifierError,
+    CastCostOrdinal,
+    CastCostTurnRelation,
+    PublicCastCostModifierSpec,
+)
 from ..object_predicate import ObjectQuerySpec
 from .cast_cost_modifier_templates import fixed_spell_predicate
 
 
-class CastCostAffectedController(str, Enum):
-    SOURCE_CONTROLLER = "source_controller"
-    SOURCE_OPPONENTS = "source_opponents"
-    ALL_PLAYERS = "all_players"
-
-
-class CastCostTurnRelation(str, Enum):
-    ANY = "any"
-    SOURCE_CONTROLLER_TURN = "source_controller_turn"
-    NOT_SOURCE_CONTROLLER_TURN = "not_source_controller_turn"
-
-
-class CastCostOrdinal(str, Enum):
-    ANY = "any"
-    FIRST = "first"
-    SECOND = "second"
-
-
-@dataclass(frozen=True, slots=True)
-class PublicCastCostModifierTemplate:
-    affected_controller: CastCostAffectedController
-    predicates_any: tuple[ObjectQuerySpec, ...]
-    generic_adjustment: int
-    cast_origin_zones: tuple[str, ...] = ()
-    excluded_cast_origin_zones: tuple[str, ...] = ()
-    turn_relation: CastCostTurnRelation = CastCostTurnRelation.ANY
-    ordinal: CastCostOrdinal = CastCostOrdinal.ANY
-
-    def __post_init__(self) -> None:
-        if not self.predicates_any or not all(
-            isinstance(value, ObjectQuerySpec) for value in self.predicates_any
-        ):
-            raise ValueError("Public cast-cost modifiers require typed spell predicates")
-        if type(self.generic_adjustment) is not int or self.generic_adjustment == 0:
-            raise ValueError("Public cast-cost modifiers require a nonzero adjustment")
-        allowed_zones = {"graveyard", "exile"}
-        if (
-            set(self.cast_origin_zones) - allowed_zones
-            or set(self.excluded_cast_origin_zones) - allowed_zones
-            or self.cast_origin_zones and self.excluded_cast_origin_zones
-        ):
-            raise ValueError("Public cast-cost modifier origin zones are unsupported")
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "schema_version": 1,
-            "affected_controller": self.affected_controller.value,
-            "predicates_any": [value.to_dict() for value in self.predicates_any],
-            "generic_adjustment": self.generic_adjustment,
-            "cast_origin_zones": list(self.cast_origin_zones),
-            "excluded_cast_origin_zones": list(self.excluded_cast_origin_zones),
-            "turn_relation": self.turn_relation.value,
-            "ordinal": self.ordinal.value,
-        }
+PublicCastCostModifierTemplate = PublicCastCostModifierSpec
 
 
 _ADJUSTMENT = re.compile(
@@ -203,15 +154,18 @@ def public_cast_cost_modifier_template(
     ) = subject
     amount = int(match.group("amount"))
     adjustment = amount if match.group("direction").casefold() == "more" else -amount
-    return PublicCastCostModifierTemplate(
-        affected_controller=affected_controller,
-        predicates_any=predicates,
-        generic_adjustment=adjustment,
-        cast_origin_zones=origin_zones,
-        excluded_cast_origin_zones=excluded_origin_zones,
-        turn_relation=turn_relation,
-        ordinal=ordinal,
-    )
+    try:
+        return PublicCastCostModifierSpec(
+            affected_controller=affected_controller,
+            predicates_any=predicates,
+            generic_adjustment=adjustment,
+            cast_origin_zones=origin_zones,
+            excluded_cast_origin_zones=excluded_origin_zones,
+            turn_relation=turn_relation,
+            ordinal=ordinal,
+        )
+    except CastCostModifierError:
+        return None
 
 
 __all__ = [

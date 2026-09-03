@@ -516,6 +516,44 @@
       ]
     },
     {
+      "id": "fixed-casting-surface-contract",
+      "patterns": [
+        "quorune/cast_cost_modifiers.py",
+        "quorune/cast_lifecycles.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/compiled_cast_lifecycles.py",
+        "quorune/compiler/cast_cost_modifier_templates.py",
+        "quorune/compiler/cast_lifecycle_nodes.py",
+        "quorune/compiler/fixed_cast_lifecycles.py",
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/compiler/public_cast_cost_modifiers.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/effect_runtime/objects_stack_and_tokens.py",
+        "quorune/effect_runtime/zones_and_attachments.py",
+        "quorune/engine.py",
+        "quorune/impulse_access.py",
+        "quorune/impulse_access_model.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/lifecycle_costs.py",
+        "quorune/rules/casting/static_modifiers.py",
+        "quorune/semantic_runtime/cast_costs.py",
+        "quorune/semantic_runtime/cast_lifecycles.py",
+        "quorune/stack_resolution.py",
+        "tests/fixtures/fixed-casting-surface-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_exact_mishra_closure",
+        "test_fixed_casting_surface",
+        "test_fixed_impulse_access",
+        "test_fixed_spell_cost_reductions",
+        "test_fixed_zone_change_additional_costs",
+        "test_rules_scheduler"
+      ]
+    },
+    {
       "id": "compiler-activated-cost-expectations",
       "patterns": [
         "quorune/abilities.py",

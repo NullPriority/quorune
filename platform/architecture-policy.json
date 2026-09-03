@@ -370,6 +370,7 @@
       ,"quorune/rules/action_catalog.py": "read-only executable action-offer catalog"
       ,"quorune/rules/action_explanations.py": "principal-scoped read-only unavailable-action explanations"
       ,"quorune/rules/casting/costs.py": "read-only casting-cost proposal query"
+      ,"quorune/cast_lifecycles.py": "typed casting-lifecycle coordinator delegating state changes to canonical cost, zone, keyword, trigger, and permission owners"
       ,"quorune/rules/casting/proposal.py": "read-only immutable casting proposal query"
       ,"quorune/rules/morph_actions.py": "typed Morph special-action planner delegating payment, object-state mutation, trigger discovery, and priority progression to canonical owners"
       ,"quorune/rules/activation/availability.py": "read-only activation payability query"

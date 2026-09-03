@@ -145,6 +145,7 @@ _PRINTED_KEYWORD_MECHANICS = frozenset(
     "hexproof indestructible infect lifelink menace reach shadow shroud "
     "trample vigilance wither ward equip enchant cycling crew dredge "
     "kicker toxic cumulative-upkeep echo morph bestow evoke flashback unearth "
+    "buyback dash retrace warp "
     "protection".split()
 )
 _CLAUSE_SIGNATURES: tuple[tuple[str, tuple[str, ...]], ...] = (

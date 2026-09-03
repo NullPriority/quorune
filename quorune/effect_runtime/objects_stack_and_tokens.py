@@ -23,6 +23,12 @@ from ..continuous_effect_state import (
 )
 from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
+from ..impulse_access import grant_temporary_cast_permission
+from ..impulse_access_model import (
+    ImpulseAccessDuration,
+    TemporaryCastPermissionError,
+    TemporaryCastPermissionGrant,
+)
 from ..util import unique_preserving_order
 from ..trigger_processing import schedule_delayed_trigger
 from ..token_creation import TokenCreationError, create_token_batch
@@ -745,40 +751,33 @@ def _apply_grant_cast_permission(
         raise GameRuleError(
             "The selected card does not satisfy the cast permission"
         )
-    card.annotations["temporary_play_permission"] = {
-        "player": actor,
-        "zone": card.zone,
-        "turn_sequence": host.state.turn_sequence,
-        "without_mana_cost": bool(
-            effect.get("without_mana_cost", False)
-        ),
-        "allow_land": False,
-        "allow_spell": True,
-        "source": str(effect.get("source") or ""),
-    }
-    host._log(
-        actor,
-        "permission.cast",
-        (
-            f"{actor} may cast {card.ref} from {card.zone} "
-            "this turn."
-        ),
-        {
-            "player": actor,
-            "object": card.ref,
-            "zone": card.zone,
-            "turn_sequence": host.state.turn_sequence,
-            "without_mana_cost": bool(
+    duration = effect.get("duration")
+    if duration not in {None, "until_used"}:
+        raise GameRuleError("Cast-permission duration is unsupported")
+    try:
+        grant = TemporaryCastPermissionGrant(
+            player=actor,
+            duration=(
+                ImpulseAccessDuration.UNTIL_USED
+                if duration == "until_used"
+                else ImpulseAccessDuration.END_OF_TURN
+            ),
+            not_before_turn_sequence=effect.get(
+                "not_before_turn_sequence"
+            ),
+            without_mana_cost=bool(
                 effect.get("without_mana_cost", False)
             ),
-            "reason": reason,
-        },
-        visibility=[actor, "analyst"],
-        importance=2,
-        changed_objects=[card.object_id],
-        changed_players=[actor],
+            source=str(effect.get("source") or ""),
+        )
+    except TemporaryCastPermissionError as exc:
+        raise GameRuleError(str(exc)) from exc
+    return grant_temporary_cast_permission(
+        host,
+        card=card,
+        grant=grant,
+        reason=reason,
     )
-    return card.ref
 
 
 

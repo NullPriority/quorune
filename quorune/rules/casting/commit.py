@@ -19,6 +19,14 @@ from ...counter_placement import (
 )
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
+from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec
+from ...cast_lifecycles import (
+    FixedCastLifecycleError,
+    FixedCastLifecycleKind,
+    FixedCastLifecycleSpec,
+    FIXED_CAST_LIFECYCLE_CONTEXT_FIELD,
+    fixed_cast_lifecycle_stack_fields,
+)
 from ...compiled_kicker import compiled_fixed_mana_kicker_spec
 from ...flashback import FLASHBACK_CAST_OPTION_ID
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
@@ -750,6 +758,10 @@ def _create_spell_item(
         )
         else "graveyard"
     )
+    destination, lifecycle_context = fixed_cast_lifecycle_stack_fields(
+        selected_option,
+        destination,
+    )
     ref = host._next_ref("S")
     used_improvise = bool(
         host.state.players[proposal.seat].stats.pop("next_spell_improvise", False)
@@ -808,6 +820,7 @@ def _create_spell_item(
             ),
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
+            **lifecycle_context,
             **(
                 {
                     EVOKE_PAYMENT_FIELD: copy.deepcopy(
@@ -1074,6 +1087,51 @@ def _revalidate_cast_contracts(
             raise CastProposalError(
                 "The fixed-mana Flashback contract changed before commit",
                 reason="stale_flashback_contract",
+            )
+    lifecycle_raw = selected_option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
+    if lifecycle_raw is not None:
+        try:
+            proposed_lifecycle = FixedCastLifecycleSpec.from_dict(
+                lifecycle_raw
+            )
+        except (FixedCastLifecycleError, TypeError) as exc:
+            raise CastProposalError(
+                str(exc),
+                reason="stale_fixed_cast_lifecycle_contract",
+            ) from exc
+        current_lifecycle = compiled_fixed_cast_lifecycle_spec(
+            host,
+            card,
+            proposed_lifecycle.kind,
+        )
+        expected_origin = {
+            FixedCastLifecycleKind.DASH: "hand",
+            FixedCastLifecycleKind.WARP: "hand",
+            FixedCastLifecycleKind.RETRACE: "graveyard",
+        }.get(proposed_lifecycle.kind)
+        option_id = str(selected_option.get("id") or "")
+        if (
+            current_lifecycle != proposed_lifecycle
+            or selected_option.get("fixed_cast_lifecycle_fingerprint")
+            != proposed_lifecycle.fingerprint
+            or (
+                expected_origin is not None
+                and proposal.origin != expected_origin
+            )
+            or (
+                proposed_lifecycle.kind
+                is FixedCastLifecycleKind.RETRACE
+                and option_id not in {"retrace"}
+            )
+            or (
+                proposed_lifecycle.kind
+                is not FixedCastLifecycleKind.RETRACE
+                and option_id != proposed_lifecycle.kind.value
+            )
+        ):
+            raise CastProposalError(
+                "The fixed cast-lifecycle contract changed before commit",
+                reason="stale_fixed_cast_lifecycle_contract",
             )
     evoke_payment = selected_option.get(EVOKE_PAYMENT_FIELD)
     if evoke_payment is not None:

@@ -1785,6 +1785,64 @@
           "measurement_probe_id": "fixed-cast-lifecycle-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-casting-surface-closure",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:unparsed-buyback-2",
+            "effect_clause:unparsed-buyback-2-b",
+            "effect_clause:unparsed-buyback-2-g",
+            "effect_clause:unparsed-buyback-2-u",
+            "effect_clause:unparsed-buyback-2-w",
+            "effect_clause:unparsed-buyback-3",
+            "effect_clause:unparsed-buyback-4",
+            "effect_clause:unparsed-buyback-5",
+            "keyword_dependency:retrace"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.cost.modifier.fixed_query",
+            "capability:casting.lifecycle.fixed_public",
+            "component:quorune.cast_lifecycles.FixedCastLifecycleSpec",
+            "component:quorune.compiler.public_cast_cost_modifiers.public_cast_cost_modifier_template",
+            "component:quorune.rules.casting.commit.commit_cast",
+            "component:quorune.rules.casting.costs.build_cast_cost_options"
+          ],
+          "source_contexts": [
+            "spell",
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "bare-retrace-with-typed-land-discard",
+            "buyback-fixed-ordinary-mana",
+            "dash-fixed-ordinary-mana",
+            "fixed-public-generic-cast-adjustment",
+            "public-caster-origin-turn-and-ordinal-predicates",
+            "warp-fixed-ordinary-mana"
+          ],
+          "shared_dependencies": [
+            "casting.additional_cost.zone_change.fixed_discard",
+            "casting.cost.modifier.fixed_query",
+            "casting.lifecycle.fixed_public",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one fixed public casting surface combining static generic taxes or reductions with fixed ordinary-mana Buyback, Dash, and Warp and bare Retrace through the existing authoritative cast option, total-cost, typed additional-cost, resolution, delayed-trigger, and permission owners",
+          "estimated_implementation_hours": 7,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Unifies previously subthreshold modifier and lifecycle cohorts behind one cast transaction, preserves shared layer-6 static-component applicability, and exposes reusable fixed option, destination, delayed-incarnation, and later-zone permission contracts without a parallel casting engine.",
+          "explicit_exclusions": [
+            "Blitz, Madness, Foretell, Plot, Escape, Rebound, Disturb, and other separate lifecycles",
+            "alternative-cost combinations outside the selected fixed lifecycle option",
+            "colored, variable, dynamic-count, target-relative, chosen, named, secret, capped, floored, and cost-setting modifiers",
+            "copied, granted, removed, or text-changed lifecycle abilities outside typed propagation",
+            "dynamic characteristic counts or type-changing predicates outside the cycle-safe cast-characteristic boundary",
+            "tokens, spell copies, inactive faces, and independently incomplete CardPrograms",
+            "variable, hybrid, Phyrexian, snow, nonmana, random, repeated, and modified lifecycle costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-casting-surface-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-entry-return-requirements",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",
@@ -1836,21 +1894,28 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v160-fixed-entry-return-requirements",
-      "compiler_version": "oracle-ir-v160",
-      "bundle_id": "bundle:fixed-entry-return-requirements",
-      "candidate_ids": ["compiler:fixed-entry-return-requirements"],
+      "transition_id": "oracle-ir-v161-fixed-casting-surface-closure",
+      "compiler_version": "oracle-ir-v161",
+      "bundle_id": "bundle:fixed-casting-surface-closure",
+      "candidate_ids": ["compiler:fixed-casting-surface-closure"],
       "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "effect_clause:unparsed-buyback-2",
+        "effect_clause:unparsed-buyback-2-b",
+        "effect_clause:unparsed-buyback-2-g",
+        "effect_clause:unparsed-buyback-2-u",
+        "effect_clause:unparsed-buyback-2-w",
+        "effect_clause:unparsed-buyback-3",
+        "effect_clause:unparsed-buyback-4",
+        "effect_clause:unparsed-buyback-5",
+        "keyword_dependency:retrace"
       ],
       "capability_ids": [
-        "choice.controller.fixed_return_owner_hand",
-        "permanent.return.owner_hand",
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_zone_change"
+        "casting.additional_cost.zone_change.fixed_discard",
+        "casting.cost.modifier.fixed_query",
+        "casting.lifecycle.fixed_public"
       ],
-      "measurement_id": "measurement:fixed-entry-return-requirements",
+      "measurement_id": "measurement:fixed-casting-surface-closure",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

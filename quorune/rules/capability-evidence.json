@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "380bef36589df0ca03461162d0318712399557c8c862c50bde0743fe9454ff0d",
-  "declaration_source_fingerprint": "4421d974334bdaf4822334db3eb7ff719c682b65a099b444c5d7e379f1936dc3",
+  "registry_fingerprint": "9aaba68e336a172052097bfde16a73e475fa0a36d87520d0e9d678776edb8bb4",
+  "declaration_source_fingerprint": "db2704ea53b3c185ef43a87616f0c7e6c487f58de621c7aca2c963944b95d2ed",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -6349,6 +6349,36 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifier_turn_origin_and_ordinal_predicates",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate current turn, prior committed casts, and cast origin without runtime Oracle parsing."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_share_offer_commit_and_current_ability",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use current spell keywords and the shared layer-6 static-component query in the authoritative cost path."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_aura_reducer_uses_bestow_spell_characteristics",
       "official_rule_ids": [
         "601.2f",
@@ -6409,6 +6439,21 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_scope_opponents_and_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply an opponent-scoped tax in four-player state without taxing the source controller."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
       "official_rule_ids": [
         "601.2f",
@@ -6435,6 +6480,21 @@
         "commander_review"
       ],
       "applicability_note": "Remove compiler production and runtime collection independently so the exact residual and unreduced offer assertions reject both mutants."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_public_static_modifier_near_misses_remain_residual",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject variable, colored, next-spell, chosen, dynamic-count, and target-relative adjustments."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -6469,6 +6529,21 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_public_static_modifiers_compile_closed_schema",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed public caster, characteristic, turn, ordinal, origin, increase, and reduction facts into one closed typed modifier."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_fixed_spell_reducers_compile_typed_query_descriptors",
       "official_rule_ids": [
         "601.2f",
@@ -6499,6 +6574,21 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_scope_opponents_and_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the taxed hidden spell private while exposing only public cost-source state."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
       "official_rule_ids": [
         "601.2f",
@@ -6510,6 +6600,21 @@
         "commander_review"
       ],
       "applicability_note": "Withhold another seat's hand action and physical object identity while retaining the controller's reduced offer."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_static_modifiers_scope_opponents_and_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the opponent-scoped total, payment, stack transition, and authoritative state exactly."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -7585,6 +7690,246 @@
         "commander_review"
       ],
       "applicability_note": "Replay the total-cost selection, mana payment, paid-kicker stack fact, and final authoritative battlefield hash."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_and_warp_are_identity_pinned_through_delayed_resolution",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Grant Dash Haste and move only the resolved Dash or Warp battlefield incarnation at the delayed trigger."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_modifiers_apply_to_lifecycle_total_costs",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply the public fixed modifier after selecting a lifecycle total and before canonical payment."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_retrace_uses_private_typed_land_discard_and_revalidates",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer Retrace only to the owner, select one land through the typed private cost, and reject a stale payment before mutation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Execute the Warp lifecycle in four-player state through the ordinary trigger and permission owners."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_lifecycle_descriptors_are_closed_and_dependency_gated",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mutate the closed cost descriptor and capability state so exact lifecycle admission is lost."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_cast_lifecycle_open_costs_and_other_families_remain_residual",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep variable, hybrid, nonmana, modified, and separate lifecycle families material."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_lifecycle_descriptors_are_closed_and_dependency_gated",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject cost-text drift and remove exact admission when the lifecycle capability is not trusted."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_partial_card_and_stale_lifecycle_contract_fail_closed",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Withhold a partial Retrace card and roll back a lifecycle whose current compiled identity changed before commit."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_fixed_cast_lifecycles_compile_source_spanned_typed_programs",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed Buyback, Dash, Warp, and bare Retrace into one source-spanned typed lifecycle descriptor family."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_buyback_resolves_to_hand_but_countered_spell_does_not",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Return a successfully resolved Buyback spell through replacement-aware resolution while a countered copy follows the ordinary graveyard path."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose public Warp zone state without leaking authoritative physical object identity."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the fixed Warp cost, stack transition, battlefield incarnation, delayed exile, and later-turn permission exactly."
     },
     {
       "capability_id": "casting.megamorph.fixed_mana",
@@ -53645,5 +53990,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "ea33232862db6df08f3762cd0e4a4ced3d35ff10c1aceaede6db958d7d2416e9"
+  "fingerprint": "a766a6188c3788fbc3decff64d8aa4af5cd82ac47e5ac1fb70f3496bea354a35"
 }

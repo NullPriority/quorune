@@ -17,7 +17,6 @@ from ...compiled_cast_costs import (
     compiled_delve_specs,
     compiled_evoke_specs,
     compiled_improvise_specs,
-    compiled_self_spell_cost_reduction_specs,
 )
 from ...compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
@@ -36,10 +35,6 @@ from ...convoke import (
 )
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...object_query import object_matches_query, object_query_result
-from ...semantic_runtime.cast_costs import (
-    active_fixed_spell_cost_reductions,
-)
-from ...self_cast_reductions import evaluated_self_reduction
 from ..action_proposals import CastCostOption
 from ..casting_additional_costs import (
     AdditionalCostError,
@@ -55,6 +50,14 @@ from ..casting_additional_cost_groups import (
     fixed_additional_cost_option_label,
     fixed_alternative_additional_cost,
     fixed_life_payment_additional_cost,
+)
+from .lifecycle_costs import (
+    retrace_base_options,
+    with_fixed_cast_lifecycle_costs,
+)
+from .static_modifiers import (
+    apply_static_reductions as _apply_owned_static_reductions,
+    fixed_generic_reduction as _static_generic_reduction,
 )
 
 
@@ -339,13 +342,13 @@ def _flashback_base_options(
         if not suppress_source_costs and card.zone == "graveyard"
         else None
     )
-    if flashback is None:
-        return result
-    if not cast_without_mana and not compiled_ordinary_zone_cast_permission(
-        host, seat, card
+    if (
+        card.zone == "graveyard"
+        and not cast_without_mana
+        and not compiled_ordinary_zone_cast_permission(host, seat, card)
     ):
         result.clear()
-    if not force_without_mana_cost:
+    if flashback is not None and not force_without_mana_cost:
         result.append(flashback.cast_cost_option())
     return result
 
@@ -381,6 +384,14 @@ def _cast_schema_and_mechanics(
         host,
         record,
         program,
+        schema,
+        suppress_source_costs=suppress_source_costs,
+    )
+    if schema is None:
+        return None
+    schema = with_fixed_cast_lifecycle_costs(
+        host,
+        card,
         schema,
         suppress_source_costs=suppress_source_costs,
     )
@@ -474,8 +485,23 @@ def _initial_options(
         force_without_mana_cost=force_without_mana_cost,
         suppress_source_costs=suppress_source_costs,
     )
+    base.extend(
+        retrace_base_options(
+            host,
+            card,
+            printed,
+            cast_without_mana=cast_without_mana,
+            force_without_mana_cost=force_without_mana_cost,
+            suppress_source_costs=suppress_source_costs,
+        )
+    )
     for raw in [] if cast_without_mana else schema.get("alternate_costs", []):
         alternative = dict(raw)
+        if (
+            alternative.get("source_zone") is not None
+            and str(alternative["source_zone"]) != card.zone
+        ):
+            continue
         if not host._alternate_cost_condition_met(
             seat, dict(alternative.get("condition") or {})
         ):
@@ -493,6 +519,11 @@ def _initial_options(
     expanded = list(base)
     for raw in schema.get("optional_costs", []):
         additional = dict(raw)
+        if (
+            additional.get("source_zone") is not None
+            and str(additional["source_zone"]) != card.zone
+        ):
+            continue
         additional_vector = host._mana_vector(additional.get("requirements"))
         for base_option in base:
             combined = host._mana_vector(base_option["requirements"])
@@ -526,24 +557,6 @@ def _initial_options(
     return expanded, mandatory, mechanics, has_x
 
 
-def _static_generic_reduction(
-    host: CastCostHost,
-    seat: str,
-    card: Any,
-    *,
-    cast_type_line: str | None = None,
-) -> int:
-    return sum(
-        reduction.generic_reduction
-        for reduction in active_fixed_spell_cost_reductions(
-            host,
-            seat,
-            card,
-            cast_type_line=cast_type_line,
-        )
-    )
-
-
 def _apply_static_reductions(
     host: CastCostHost,
     seat: str,
@@ -553,50 +566,20 @@ def _apply_static_reductions(
     program: Any,
     cast_type_line: str | None = None,
 ) -> None:
-    reduction = _static_generic_reduction(
+    _apply_owned_static_reductions(
         host,
         seat,
         card,
-        cast_type_line=cast_type_line,
-    )
-    if reduction:
-        applied = min(int(option["requirements"]["GENERIC"]), reduction)
-        option["requirements"]["GENERIC"] -= applied
-        option.setdefault("cost_reductions", []).append(
-            {
-                "kind": "fixed_query",
-                "count": applied,
-            }
-        )
-    self_reduction: dict[str, int] = {}
-    for specification in compiled_self_spell_cost_reduction_specs(
-        host,
-        card.oracle_id,
-        spell_program=program,
-    ):
-        for key, amount in evaluated_self_reduction(
+        option,
+        program=program,
+        fixed_reduction=_static_generic_reduction(
             host,
             seat,
-            specification,
-        ).items():
-            self_reduction[key] = self_reduction.get(key, 0) + amount
-    applied_self: dict[str, int] = {}
-    for key in sorted(self_reduction):
-        applied = min(
-            int(option["requirements"].get(key, 0)),
-            self_reduction[key],
-        )
-        if not applied:
-            continue
-        option["requirements"][key] -= applied
-        applied_self[key] = applied
-    if applied_self:
-        option.setdefault("cost_reductions", []).append(
-            {
-                "kind": "self_public",
-                "reduction": applied_self,
-            }
-        )
+            card,
+            cast_type_line=cast_type_line,
+        ),
+        cast_type_line=cast_type_line,
+    )
 
 
 def _apply_affinity(

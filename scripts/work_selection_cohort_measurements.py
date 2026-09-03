@@ -174,6 +174,7 @@ _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER = (
     "public-static-cast-cost-modifier-existing-owner-v1"
 )
 _PROBE_FIXED_CAST_LIFECYCLES = "fixed-cast-lifecycle-existing-owner-v1"
+_PROBE_FIXED_CASTING_SURFACE = "fixed-casting-surface-existing-owner-v1"
 _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS = (
     "fixed-entry-return-requirement-existing-owner-v1"
 )
@@ -203,6 +204,7 @@ _PROBE_IDS = {
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
     _PROBE_FIXED_CAST_LIFECYCLES,
+    _PROBE_FIXED_CASTING_SURFACE,
     _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
@@ -710,6 +712,11 @@ def _matches_probe(
         return public_cast_cost_modifier_template(source) is not None
     if probe_id == _PROBE_FIXED_CAST_LIFECYCLES:
         return fixed_cast_lifecycle_spec(source) is not None
+    if probe_id == _PROBE_FIXED_CASTING_SURFACE:
+        return bool(
+            fixed_cast_lifecycle_spec(source) is not None
+            or public_cast_cost_modifier_template(source) is not None
+        )
     if probe_id == _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS:
         return fixed_entry_return_requirement_spec(source) is not None
     if probe_id == _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS:
@@ -2192,6 +2199,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_FIXED_CASTING_SURFACE:
+        return _fixed_casting_surface_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return _self_spell_cost_reduction_measurement(
             frontier=frontier,
@@ -2409,6 +2425,154 @@ def _measurement(
             "bounded_executable" if reaches_floor else "retired_below_harvest_floor"
         ),
         "grants_gameplay_trust": False,
+    }
+
+
+def _fixed_casting_surface_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure the integrated fixed public modifier and lifecycle surface."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    matched_abilities = 0
+    complete_cards = 0
+    one_additional = 0
+    two_additional = 0
+    expected_residual_reduction = 0
+    existing_exact_sibling_nodes = 0
+    remaining_residual_sibling_nodes = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        potential = []
+        for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
+            source = _source_line(record, ability)
+            if (
+                fixed_cast_lifecycle_spec(source) is not None
+                or public_cast_cost_modifier_template(source) is not None
+            ):
+                potential.append(ability)
+        if not potential:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented_lines: set[int] = set()
+        for face in compiled.faces:
+            for node in face.nodes:
+                if not node.exact:
+                    continue
+                if node.template_id == "public-fixed-spell-cost-modifier-v1":
+                    represented_lines.add(node.span.line)
+                elif any(
+                    descriptor.get("handler_id")
+                    == "casting.lifecycle.fixed-public.v1"
+                    for descriptor in node.handlers
+                ):
+                    represented_lines.add(node.span.line)
+        represented = [
+            ability
+            for ability in potential
+            if int(ability.get("source_line") or 0) in represented_lines
+        ]
+        if not represented:
+            unsupported_grammar_cards.add(oracle_id)
+            continue
+        if len(represented) != len(potential):
+            unsupported_grammar_cards.add(oracle_id)
+        matched = len(represented)
+        matched_abilities += matched
+        matched_cards[oracle_id] = matched
+        remaining_nodes = [
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        ]
+        existing_exact_sibling_nodes += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        remaining_residual_sibling_nodes += len(remaining_nodes)
+        if compiled.status == "exact":
+            complete_cards += 1
+        else:
+            unsupported_sibling_cards += 1
+        one_additional += len(remaining_nodes) == 1
+        two_additional += len(remaining_nodes) == 2
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        expected_residual_reduction += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": matched_abilities,
+            "existing_exact_sibling_nodes": existing_exact_sibling_nodes,
+            "remaining_residual_sibling_nodes": (
+                remaining_residual_sibling_nodes
+            ),
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": (
+                len(matched_cards) - complete_cards
+            ),
+            "expected_oracle_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "expected_card_program_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                unsupported_sibling_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                unsupported_grammar_cards
+            ),
+        },
     }
 
 

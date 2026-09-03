@@ -33,11 +33,6 @@ CastCostModifierTemplate = tuple[
 ]
 
 
-_FIXED_GENERIC_SPELL_REDUCTION = re.compile(
-    r"^(?P<subject>.+?) cost(?:s)? "
-    r"\{(?P<amount>[1-9][0-9]*)\} less to cast\.?$",
-    re.IGNORECASE,
-)
 _CARD_TYPES = frozenset(
     {
         "artifact",
@@ -563,26 +558,21 @@ def fixed_spell_predicate(subject: str) -> ObjectQuerySpec | None:
 def static_fixed_spell_cost_reduction_handler(
     text: str,
 ) -> CastCostModifierTemplate | None:
-    """Lower one unconditional generic reduction over a fixed spell set."""
+    """Lower one public fixed-generic modifier through the shared schema."""
 
-    match = _FIXED_GENERIC_SPELL_REDUCTION.fullmatch(text.strip())
-    if match is None:
-        return None
-    try:
-        predicate = fixed_spell_predicate(match.group("subject"))
-    except ObjectQueryError:
-        return None
-    if predicate is None:
+    # Import lazily because the public grammar reuses fixed_spell_predicate.
+    from .public_cast_cost_modifiers import public_cast_cost_modifier_template
+
+    modifier = public_cast_cost_modifier_template(text)
+    if modifier is None:
         return None
     return (
-        "fixed-query-spell-cost-reduction-v1",
+        "public-fixed-spell-cost-modifier-v1",
         {
             "handler_id": FIXED_SPELL_COST_REDUCTION_HANDLER_ID,
-            "schema_version": 1,
+            "schema_version": 2,
             "event": FIXED_SPELL_COST_REDUCTION_EVENT,
-            "affected_controller": "source_controller",
-            "predicate": predicate.to_dict(),
-            "generic_reduction": int(match.group("amount")),
+            "modifier": modifier.to_dict(),
         },
         FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,
     )
