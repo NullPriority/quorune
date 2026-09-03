@@ -12,6 +12,8 @@ from common import keep_all, load_assets, make_session, pass_current
 from quorune.ability_fragments import (
     StaticComponentSpec,
     ability_fragment_to_dict,
+    canonical_ability_fragments,
+    granted_triggered_specs,
 )
 from quorune.abilities import parse_activated_abilities
 from quorune.attachments import (
@@ -41,7 +43,10 @@ from quorune.continuous_effect_model import (
     ContinuousOperation,
     Layer,
 )
-from quorune.continuous_effect_state import commit_continuous_effect
+from quorune.continuous_effect_state import (
+    commit_continuous_effect,
+    expire_end_of_turn_continuous_effects,
+)
 from quorune.continuous_effects import (
     CharacteristicState,
     evaluate_continuous_effects,
@@ -834,6 +839,29 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
                 self.assertFalse(
                     any(
                         node.kind.startswith("granted_")
+                        for node in ir.faces[0].nodes
+                    )
+                )
+
+    def test_attached_granted_departure_triggers_remain_residual(self):
+        capabilities = load_default_capability_registry()
+        for event_text in (
+            "When this creature dies, you gain 2 life.",
+            "When this creature leaves the battlefield, you gain 2 life.",
+        ):
+            with self.subTest(event_text=event_text):
+                ir = compile_oracle_card(
+                    attached_grant_record(
+                        f'Enchanted creature has "{event_text}"'
+                    ),
+                    capability_registry=capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+                self.assertFalse(
+                    any(
+                        node.kind == "granted_triggered_ability"
                         for node in ir.faces[0].nodes
                     )
                 )
@@ -1698,6 +1726,394 @@ class AttachedQuotedAbilityRuntimeTests(unittest.TestCase):
         )
         self.resolve_top(engine)
         self.assertEqual(recipient.object_id, equipment.attached_to)
+
+    @staticmethod
+    def remove_all_abilities(engine, recipient: CardInstance, *, suffix: str):
+        return commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id=f"test:recipient-ability-removal:{suffix}",
+                source_id=f"test:recipient-ability-removal-source:{suffix}",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("remove_all_abilities"),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        object_id=recipient.object_id,
+                        logical_object_id=recipient.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+
+    def declare_attached_grant_attacker(
+        self,
+        session,
+        recipient: CardInstance,
+        *,
+        defender: str,
+    ):
+        engine = session.engine
+        actor = recipient.controller
+        engine.state.active_player = actor
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        engine.state.priority_player = actor
+        engine._issue_attackers()
+        result = session.act(
+            f"pilot:{actor}",
+            {"a": "attack", "atk": {recipient.ref: defender}},
+        )
+        self.assertTrue(result.ok, result.summary)
+        return result
+
+    def test_attached_granted_activated_ability_is_controlled_by_recipient_controller(self):
+        session = self.session(6131020)
+        engine = session.engine
+        aura = self.add_fixture(
+            engine,
+            name="Attached Grant Damage Fixture",
+            ref="cross-controller-damage-aura",
+            seat="A",
+        )
+        recipient = self.creature(
+            engine,
+            ref="cross-controller-damage-recipient",
+            seat="B",
+        )
+        attach_objects(
+            engine.state.cards,
+            aura,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        granted = next(
+            ability
+            for ability in engine._activated_abilities(recipient)
+            if ability.builtin_semantic_key
+            == "fixture-attached-grant-damage:ability:granted:front:n2"
+        )
+        engine.state.priority_player = "B"
+        hints = engine._priority_action_hints("B")
+        self.assertTrue(
+            any(
+                offer["s"] == recipient.ref
+                and offer["a"] == granted.ability_id
+                for offer in hints["abilities"]
+            ),
+            hints,
+        )
+        life_before = engine.state.players["A"].life
+        engine._activate(
+            "B",
+            {
+                "source": recipient.ref,
+                "ability": granted.ability_id,
+                "targets": ["A"],
+            },
+        )
+        self.assertEqual("B", engine.state.stack[-1].controller)
+        a_stack = session.packet("pilot:A", full=True)["state"]["stack"]
+        b_stack = session.packet("pilot:B", full=True)["state"]["stack"]
+        self.assertEqual(a_stack, b_stack)
+        self.resolve_top(engine)
+        self.assertEqual(life_before - 1, engine.state.players["A"].life)
+
+    def test_attachment_controller_cannot_activate_ability_granted_to_opponents_creature(self):
+        session = self.session(6131021)
+        engine = session.engine
+        aura = self.add_fixture(
+            engine,
+            name="Attached Grant Damage Fixture",
+            ref="opponent-grant-aura",
+            seat="A",
+        )
+        recipient = self.creature(
+            engine,
+            ref="opponent-grant-recipient",
+            seat="B",
+        )
+        attach_objects(
+            engine.state.cards,
+            aura,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        granted = next(
+            ability
+            for ability in engine._activated_abilities(recipient)
+            if ability.builtin_semantic_key
+            == "fixture-attached-grant-damage:ability:granted:front:n2"
+        )
+        stack_before = list(engine.state.stack)
+        with self.assertRaises(GameRuleError):
+            engine._activate(
+                "A",
+                {
+                    "source": recipient.ref,
+                    "ability": granted.ability_id,
+                    "targets": ["B"],
+                },
+            )
+        self.assertFalse(recipient.tapped)
+        self.assertEqual(stack_before, engine.state.stack)
+
+    def test_attached_granted_trigger_uses_recipient_controller_at_trigger_time(self):
+        session = self.session(6131022)
+        engine = session.engine
+        equipment = self.add_fixture(
+            engine,
+            name="Attached Grant Trigger Fixture",
+            ref="cross-controller-trigger-equipment",
+            seat="A",
+        )
+        recipient = self.creature(
+            engine,
+            ref="cross-controller-trigger-recipient",
+            seat="B",
+        )
+        attach_objects(
+            engine.state.cards,
+            equipment,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        self.declare_attached_grant_attacker(
+            session,
+            recipient,
+            defender="A",
+        )
+        program_key = (
+            "fixture-attached-grant-trigger:trigger:front:n1:granted"
+        )
+        triggered = [
+            item for item in engine.state.stack if item.semantic_key == program_key
+        ]
+        self.assertEqual(1, len(triggered))
+        self.assertEqual("B", triggered[0].controller)
+        self.assertEqual(recipient.object_id, triggered[0].source_object_id)
+        self.assertEqual(
+            session.packet("pilot:A", full=True)["state"]["stack"],
+            session.packet("pilot:B", full=True)["state"]["stack"],
+        )
+
+    def test_attached_granted_trigger_controller_does_not_change_after_stack_placement(self):
+        session = self.session(6131023)
+        engine = session.engine
+        equipment = self.add_fixture(
+            engine,
+            name="Attached Grant Trigger Fixture",
+            ref="locked-trigger-equipment",
+            seat="A",
+        )
+        recipient = self.creature(
+            engine,
+            ref="locked-trigger-recipient",
+            seat="B",
+        )
+        attach_objects(
+            engine.state.cards,
+            equipment,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        life_before = {
+            seat: engine.state.players[seat].life for seat in ("A", "B")
+        }
+        self.declare_attached_grant_attacker(
+            session,
+            recipient,
+            defender="A",
+        )
+        triggered = engine.state.stack[-1]
+        self.assertEqual("B", triggered.controller)
+        engine.change_control(
+            recipient.object_id,
+            "A",
+            reason="attached grant controller-lock witness",
+        )
+        self.assertEqual("B", triggered.controller)
+        self.resolve_top(engine)
+        self.assertEqual(life_before["B"] + 2, engine.state.players["B"].life)
+        self.assertEqual(life_before["A"], engine.state.players["A"].life)
+
+    def test_attached_granted_trigger_apnap_uses_recipient_controller(self):
+        session = self.session(6131024)
+        engine = session.engine
+        recipient = self.creature(
+            engine,
+            ref="apnap-trigger-recipient",
+            seat="A",
+        )
+        for index in range(2):
+            equipment = self.add_fixture(
+                engine,
+                name="Attached Grant Trigger Fixture",
+                ref=f"opponent-trigger-equipment-{index}",
+                seat="B",
+            )
+            attach_objects(
+                engine.state.cards,
+                equipment,
+                recipient,
+                source_timestamp=engine._next_zone_timestamp(),
+            )
+        life_before = engine.state.players["A"].life
+        self.declare_attached_grant_attacker(
+            session,
+            recipient,
+            defender="B",
+        )
+        decision = engine.state.pending_decision
+        self.assertEqual("trigger.order", decision.kind)
+        self.assertEqual(["A"], decision.actors)
+        self.assertEqual(
+            "trigger.order",
+            session.packet("pilot:A", full=True)["decision"]["kind"],
+        )
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        pending = [
+            item
+            for batch in engine.state.pending_trigger_batches
+            for item in batch.items
+        ]
+        ordered = session.act(
+            "pilot:A",
+            {
+                "action_id": "order",
+                "triggers": [item.ref for item in pending],
+            },
+        )
+        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertTrue(engine.state.stack)
+        self.assertTrue(
+            all(item.controller == "A" for item in engine.state.stack)
+        )
+        for _ in range(16):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual(life_before + 4, engine.state.players["A"].life)
+
+    def test_recipient_that_loses_all_abilities_cannot_activate_attached_grant(self):
+        session = self.session(6131025)
+        engine = session.engine
+        aura = self.add_fixture(
+            engine,
+            name="Attached Grant Damage Fixture",
+            ref="removed-activation-aura",
+        )
+        recipient = self.creature(engine, ref="removed-activation-recipient")
+        attach_objects(
+            engine.state.cards,
+            aura,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        self.remove_all_abilities(
+            engine,
+            recipient,
+            suffix="activation",
+        )
+        self.assertFalse(
+            any(
+                ability.builtin_semantic_key
+                == "fixture-attached-grant-damage:ability:granted:front:n2"
+                for ability in engine._activated_abilities(recipient)
+            )
+        )
+
+    def test_recipient_that_loses_all_abilities_does_not_emit_attached_granted_trigger(self):
+        session = self.session(6131026)
+        engine = session.engine
+        equipment = self.add_fixture(
+            engine,
+            name="Attached Grant Trigger Fixture",
+            ref="removed-trigger-equipment",
+        )
+        recipient = self.creature(engine, ref="removed-trigger-recipient")
+        attach_objects(
+            engine.state.cards,
+            equipment,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        self.remove_all_abilities(
+            engine,
+            recipient,
+            suffix="trigger",
+        )
+        self.declare_attached_grant_attacker(
+            session,
+            recipient,
+            defender="B",
+        )
+        program_key = (
+            "fixture-attached-grant-trigger:trigger:front:n1:granted"
+        )
+        self.assertFalse(
+            any(item.semantic_key == program_key for item in engine.state.stack)
+        )
+        self.assertFalse(
+            any(
+                item.semantic_key == program_key
+                for batch in engine.state.pending_trigger_batches
+                for item in batch.items
+            )
+        )
+
+    def test_restoring_attached_grant_does_not_replay_missed_event(self):
+        session = self.session(6131027)
+        engine = session.engine
+        equipment = self.add_fixture(
+            engine,
+            name="Attached Grant Trigger Fixture",
+            ref="restored-trigger-equipment",
+        )
+        recipient = self.creature(engine, ref="restored-trigger-recipient")
+        attach_objects(
+            engine.state.cards,
+            equipment,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        self.remove_all_abilities(
+            engine,
+            recipient,
+            suffix="restoration",
+        )
+        self.declare_attached_grant_attacker(
+            session,
+            recipient,
+            defender="B",
+        )
+        program_key = (
+            "fixture-attached-grant-trigger:trigger:front:n1:granted"
+        )
+        self.assertFalse(
+            any(item.semantic_key == program_key for item in engine.state.stack)
+        )
+        self.assertEqual(1, expire_end_of_turn_continuous_effects(engine.state))
+        fragments = canonical_ability_fragments(
+            engine._effective_card_data(recipient).get(
+                "ability_fragments", ()
+            )
+        )
+        self.assertTrue(
+            any(
+                spec.semantic_key == program_key
+                for spec in granted_triggered_specs(fragments)
+            )
+        )
+        self.assertFalse(
+            any(item.semantic_key == program_key for item in engine.state.stack)
+        )
+        self.assertFalse(engine.state.pending_trigger_batches)
 
     def test_granted_activation_shares_offer_commit_lifetime_and_rollback(self):
         session = self.session(6131010)
