@@ -1516,6 +1516,44 @@ class RulesSchedulerTests(unittest.TestCase):
             )
         )
 
+    def test_fixed_public_numeric_damage_target_probe_is_closed(self):
+        bundle_id = "bundle:fixed-public-numeric-damage-targets"
+        policy = next(
+            row
+            for row in self.catalog["work_selection"]["coverage_family"][
+                "candidate_bundles"
+            ]
+            if row["bundle_id"] == bundle_id
+        )
+        self.assertEqual(
+            "fixed-public-numeric-damage-target-existing-owner-v1",
+            policy["measurement_probe_id"],
+        )
+        measurement = next(
+            row
+            for row in self.work_inputs["cohort_measurements"]["measurements"]
+            if row["bundle_id"] == bundle_id
+        )
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertGreaterEqual(
+            measurement["complete_card_gain"],
+            coverage["minimum_complete_card_gain"],
+        )
+        self.assertGreater(measurement["exact_ability_gain"], 0)
+        self.assertGreater(
+            measurement["material_residual_reduction"],
+            measurement["exact_ability_gain"],
+        )
+        self.assertFalse(measurement["grants_gameplay_trust"])
+        self.assertEqual(
+            bundle_measurement_fingerprint(
+                self.work_inputs["card_unlock_frontier"],
+                policy,
+            ),
+            measurement["cohort_fingerprint"],
+        )
+
     def test_fixed_optional_effect_probe_requires_a_closed_event_carrier(self):
         probe_id = "fixed-optional-effect-choice-existing-owner-v1"
         record = SimpleNamespace(

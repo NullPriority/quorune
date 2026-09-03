@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9aaba68e336a172052097bfde16a73e475fa0a36d87520d0e9d678776edb8bb4",
-  "declaration_source_fingerprint": "db2704ea53b3c185ef43a87616f0c7e6c487f58de621c7aca2c963944b95d2ed",
+  "registry_fingerprint": "9e3547c6de194e15906f481b1f732ad74339e9fe0c7e0855715415a07b5b4eb0",
+  "declaration_source_fingerprint": "40558be4c9bda8328335906b07da4f8dff2a8545613bd01d088616f9057b5f2f",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -45174,6 +45174,31 @@
     {
       "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_value_target_predicates.FixedManaValueTargetRuntimeTests.test_current_power_toughness_governs_offer_command_and_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate fixed power and toughness bounds from the same current effective-characteristic snapshot at offer, command validation, and resolution."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_targeted_destruction_effect_clauses.TargetedDestructionRuntimeTests.test_compiled_union_destruction_offer_command_resolution_and_replay",
       "official_rule_ids": [
         "105.2",
@@ -45344,7 +45369,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Reject scoped disjunctions, combat and numeric history, unnamed counters, relational identity, and family-specific layer-6 ability-presence checks."
+      "applicability_note": "Reject scoped disjunctions, unsupported combat and attachment history, unnamed counters, relational identity, and family-specific layer-6 ability-presence checks."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -45369,7 +45394,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Leave variable, total, conditional, public-state-combined, power, toughness, and hidden-zone numeric target grammar as explicit residuals."
+      "applicability_note": "Leave variable, exact-without-comparison, scoped-disjunction, conditional, greatest, source-relative, public-state-combined, and hidden-zone numeric target grammar as explicit residuals."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -45395,6 +45420,31 @@
         "commander_review"
       ],
       "applicability_note": "Reject negative, nonintegral, boolean, and competing exact/minimum/maximum mana-value fields before target execution."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_value_target_predicates.FixedManaValueTargetCompilerTests.test_numeric_target_model_roundtrips_and_rejects_open_forms",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject noncreature, variable, greatest, exact-without-comparison, scoped-disjunction, and competing numeric target predicates."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -45548,6 +45598,31 @@
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_value_target_predicates.FixedManaValueTargetCompilerTests.test_fixed_power_toughness_targets_compile_across_effect_contexts",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed at-least and at-most power, toughness, either-characteristic, and total-characteristic bounds through one target descriptor across effect owners."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "privacy",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_four_player_target_predicate_privacy_rollback_and_replay",
       "official_rule_ids": [
@@ -45595,6 +45670,201 @@
         "commander_review"
       ],
       "applicability_note": "Replay the accepted typed target and fixed counter placement to the same authoritative state hash."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_mana_value_target_predicates.FixedManaValueTargetRuntimeTests.test_current_power_toughness_governs_offer_command_and_resolution",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay resolution-time fixed numeric target revalidation to the same authoritative state hash."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetRuntimeTests.test_positive_damage_history_is_incarnation_bound_and_revalidated",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use positive canonical damage results and current logical incarnations for both offer and revalidation of damaged and damage-dealing creatures."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetRuntimeTests.test_prevented_and_previous_turn_damage_do_not_qualify",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep fully prevented damage and damage from another turn outside the positive current-turn target history."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetRuntimeTests.test_damage_history_target_privacy_save_load_and_exact_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the public legal-reference set in four players while retaining the authoritative logical identities only in state."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetCompilerTests.test_damage_history_parser_and_runtime_mutations_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the typed history parser and unconditional admission by the runtime history predicate."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetCompilerTests.test_damage_history_parser_and_runtime_mutations_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject previous-turn, qualified-source, combat-only, noncreature, opponent-relative, and malformed history predicates."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetRuntimeTests.test_prevented_and_previous_turn_damage_do_not_qualify",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fail closed when no positive damage result exists for the current turn and logical incarnation."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetCompilerTests.test_damage_history_targets_compile_across_effect_contexts",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower was-dealt, dealt-any, and dealt-to-actor target history through destruction, exile, and tap contexts."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetRuntimeTests.test_positive_damage_history_is_incarnation_bound_and_revalidated",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Record positive source and recipient logical identities through the canonical damage transaction and query them from the target owner."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetRuntimeTests.test_damage_history_target_privacy_save_load_and_exact_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only public legal refs while source and recipient logical incarnations remain authoritative checkpoint data."
+    },
+    {
+      "capability_id": "target.permanent.damage_history_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_history_targets.FixedDamageHistoryTargetRuntimeTests.test_damage_history_target_privacy_save_load_and_exact_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "608.2b",
+        "608.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Round-trip typed damage history through save, load, and exact Game Record replay without changing target admission."
     },
     {
       "capability_id": "target.protection.hexproof_permanent",
@@ -53990,5 +54260,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "a766a6188c3788fbc3decff64d8aa4af5cd82ac47e5ac1fb70f3496bea354a35"
+  "fingerprint": "6a563dad30d4491a51728e4ea14384dfe6f839624fe8c93acbcea045a4ec1738"
 }

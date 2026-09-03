@@ -86,6 +86,7 @@ from quorune.oracle_ir import (
     compile_oracle_card,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.targets import TargetGroup
 from quorune.semantic_runtime.cast_costs import (
     SELF_SPELL_COST_REDUCTION_HANDLER_ID,
 )
@@ -178,6 +179,9 @@ _PROBE_FIXED_CASTING_SURFACE = "fixed-casting-surface-existing-owner-v2"
 _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS = (
     "fixed-entry-return-requirement-existing-owner-v1"
 )
+_PROBE_FIXED_PUBLIC_NUMERIC_DAMAGE_TARGET = (
+    "fixed-public-numeric-damage-target-existing-owner-v1"
+)
 _ATTACHED_GRANT_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
     {
         tuple(
@@ -206,6 +210,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_CAST_LIFECYCLES,
     _PROBE_FIXED_CASTING_SURFACE,
     _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS,
+    _PROBE_FIXED_PUBLIC_NUMERIC_DAMAGE_TARGET,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY,
@@ -404,6 +409,26 @@ def _token_instruction_candidates(line: str) -> tuple[str, ...]:
         if marker >= 0:
             bodies.append(normalized[marker + 2 :].strip())
     return tuple(dict.fromkeys(bodies))
+
+
+_FIXED_NUMERIC_TARGET_SOURCE = re.compile(
+    r"\btarget [^.]+? with (?:power|toughness|power or toughness|"
+    r"total power and toughness) \d+ or (?:less|greater)\b",
+    re.IGNORECASE,
+)
+_FIXED_DAMAGE_HISTORY_TARGET_SOURCE = re.compile(
+    r"\btarget creature that (?:was dealt damage|dealt damage(?: to you)?) "
+    r"this turn\b",
+    re.IGNORECASE,
+)
+
+
+def _matches_fixed_public_numeric_damage_target(source: str) -> bool:
+    normalized = " ".join(source.split())
+    return bool(
+        _FIXED_NUMERIC_TARGET_SOURCE.search(normalized)
+        or _FIXED_DAMAGE_HISTORY_TARGET_SOURCE.search(normalized)
+    )
 
 
 def _exile_instruction_candidates(line: str) -> tuple[str, ...]:
@@ -719,6 +744,8 @@ def _matches_probe(
         )
     if probe_id == _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS:
         return fixed_entry_return_requirement_spec(source) is not None
+    if probe_id == _PROBE_FIXED_PUBLIC_NUMERIC_DAMAGE_TARGET:
+        return _matches_fixed_public_numeric_damage_target(source)
     if probe_id == _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(
@@ -2208,6 +2235,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_FIXED_PUBLIC_NUMERIC_DAMAGE_TARGET:
+        return _fixed_public_numeric_damage_target_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return _self_spell_cost_reduction_measurement(
             frontier=frontier,
@@ -2551,6 +2587,186 @@ def _fixed_casting_surface_measurement(
         "grants_gameplay_trust": False,
         "candidate_accounting": {
             "affected_oracle_carriers": matched_abilities,
+            "existing_exact_sibling_nodes": existing_exact_sibling_nodes,
+            "remaining_residual_sibling_nodes": (
+                remaining_residual_sibling_nodes
+            ),
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": (
+                len(matched_cards) - complete_cards
+            ),
+            "expected_oracle_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "expected_card_program_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                unsupported_sibling_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                unsupported_grammar_cards
+            ),
+        },
+    }
+
+
+def _target_group_mappings(
+    target_schema: Mapping[str, Any] | None,
+) -> tuple[Mapping[str, Any], ...]:
+    if not isinstance(target_schema, Mapping):
+        return ()
+    modes = target_schema.get("modes")
+    if isinstance(modes, Mapping):
+        groups: list[Mapping[str, Any]] = []
+        for definition in modes.values():
+            if not isinstance(definition, Mapping):
+                continue
+            nested = definition.get("groups")
+            if isinstance(nested, list):
+                groups.extend(
+                    value for value in nested if isinstance(value, Mapping)
+                )
+                continue
+            groups.append(
+                {
+                    key: value
+                    for key, value in definition.items()
+                    if key not in {"effects", "mechanics"}
+                }
+            )
+        return tuple(groups)
+    groups = target_schema.get("groups")
+    if isinstance(groups, list):
+        return tuple(value for value in groups if isinstance(value, Mapping))
+    return (target_schema,)
+
+
+def _node_has_fixed_public_numeric_damage_target(node: Any) -> bool:
+    for mapping in _target_group_mappings(node.target_schema):
+        try:
+            group = TargetGroup.from_mapping(mapping)
+        except (TypeError, ValueError):
+            continue
+        if (
+            group.numeric_characteristic is not None
+            or group.damage_history is not None
+        ):
+            return True
+    return False
+
+
+def _fixed_public_numeric_damage_target_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure fixed numeric and positive-damage direct-target closure."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    complete_cards = 0
+    exact_ability_gain = 0
+    expected_residual_reduction = 0
+    existing_exact_sibling_nodes = 0
+    remaining_residual_sibling_nodes = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        potential = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not potential:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        if not any(
+            node.exact and _node_has_fixed_public_numeric_damage_target(node)
+            for face in compiled.faces
+            for node in face.nodes
+        ):
+            unsupported_grammar_cards.add(oracle_id)
+            continue
+        current_exact = sum(
+            node.exact for face in compiled.faces for node in face.nodes
+        )
+        base_exact = int(card.get("exact_ability_count", 0))
+        exact_delta = max(0, current_exact - base_exact)
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        current_residuals = len(compiled.material_residuals)
+        residual_delta = max(0, base_residuals - current_residuals)
+        if not (exact_delta or residual_delta):
+            continue
+        remaining = [
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        ]
+        matched_cards[oracle_id] = len(remaining)
+        existing_exact_sibling_nodes += base_exact
+        exact_ability_gain += exact_delta
+        expected_residual_reduction += residual_delta
+        remaining_residual_sibling_nodes += len(remaining)
+        if compiled.status == "exact":
+            complete_cards += 1
+        else:
+            unsupported_sibling_cards += 1
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": exact_ability_gain,
             "existing_exact_sibling_nodes": existing_exact_sibling_nodes,
             "remaining_residual_sibling_nodes": (
                 remaining_residual_sibling_nodes

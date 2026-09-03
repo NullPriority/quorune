@@ -142,6 +142,7 @@ class DamageHost(Protocol):
         object_incarnation: str | None = None,
         target: str | None = None,
         target_kind: str | None = None,
+        target_object_incarnation: str | None = None,
         amount: int | None = None,
     ) -> None: ...
 
@@ -203,6 +204,7 @@ class DamageEvent:
     dealt_amount: int
     prevented_amount: int
     combat: bool
+    target_logical_object_id: str | None = None
     damage_step: int | None = None
     first_strike_step: bool = False
     unpreventable: bool = False
@@ -224,6 +226,12 @@ class DamageEvent:
             raise ValueError("Player damage cannot have a target object id")
         if self.target_kind == "permanent" and not self.target_object_id:
             raise ValueError("Permanent damage requires a target object id")
+        if self.target_kind == "player" and self.target_logical_object_id is not None:
+            raise ValueError("Player damage cannot have a target logical object id")
+        if self.target_kind == "permanent" and not self.target_logical_object_id:
+            raise ValueError(
+                "Permanent damage requires a target logical object identity"
+            )
         if len(self.applied_effects) != len(set(self.applied_effects)):
             raise ValueError(
                 "A damage event cannot apply one replacement effect twice"
@@ -270,6 +278,7 @@ class DamageEvent:
             "target": self.target,
             "target_kind": self.target_kind,
             "target_object_id": self.target_object_id,
+            "target_logical_object_id": self.target_logical_object_id,
             "target_controller": self.target_controller,
             "target_types": list(self.target_types),
             "target_subtypes": list(self.target_subtypes),
@@ -1075,6 +1084,11 @@ def _final_event(
             if payload.get("target_object_id") is not None
             else None
         ),
+        target_logical_object_id=(
+            str(payload["target_logical_object_id"])
+            if payload.get("target_logical_object_id") is not None
+            else None
+        ),
         target_controller=(
             str(payload["target_controller"])
             if payload.get("target_controller") is not None
@@ -1336,7 +1350,7 @@ def commit_prepared_damage_batch(
     commander_updates: list[tuple[str, str, int]] = []
     history_events: list[DamageEvent] = []
     for final in final_events:
-        if final.dealt_amount and final.target_kind == "player":
+        if final.dealt_amount:
             history_events.append(final)
         if not (
             final.dealt_amount
@@ -1385,11 +1399,16 @@ def commit_prepared_damage_batch(
         changed_players.append(target)
     for final in history_events:
         host._record_turn_history(
-            "player_damaged",
+            (
+                "player_damaged"
+                if final.target_kind == "player"
+                else "permanent_damaged"
+            ),
             actor=final.source_controller,
             object_incarnation=final.source_logical_object_id,
             target=final.target,
-            target_kind="player",
+            target_kind=final.target_kind,
+            target_object_incarnation=final.target_logical_object_id,
             amount=final.dealt_amount,
         )
 
