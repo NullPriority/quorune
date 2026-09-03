@@ -151,18 +151,33 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
         malformed["condition"]["unknown"] = True
         with self.assertRaisesRegex(SemanticNodeError, "unknown fields"):
             prevention.validate(malformed)
-        with self.assertRaisesRegex(
-            replacement_effects.ReplacementEffectError,
-            "mandatory prevent-all siblings",
+        for effect_id, operations, optional in (
+            (
+                "malformed:grouped-finite-prevention",
+                ({"op": "prevent", "amount": 1},),
+                False,
+            ),
+            (
+                "malformed:grouped-optional-prevention",
+                ({"op": "prevent"},),
+                True,
+            ),
         ):
-            replacement_effects.ReplacementEffect(
-                effect_id="malformed:grouped-finite-prevention",
-                source_id="malformed:grouped-source",
-                event_kind="damage",
-                replacement_class=replacement_effects.ReplacementClass.OTHER,
-                operations=({"op": "prevent", "amount": 1},),
-                application_group_id="malformed:application-group",
-            )
+            with self.subTest(effect_id=effect_id), self.assertRaisesRegex(
+                replacement_effects.ReplacementEffectError,
+                "mandatory prevent-all siblings",
+            ):
+                replacement_effects.ReplacementEffect(
+                    effect_id=effect_id,
+                    source_id="malformed:grouped-source",
+                    event_kind="damage",
+                    replacement_class=(
+                        replacement_effects.ReplacementClass.OTHER
+                    ),
+                    operations=operations,
+                    optional=optional,
+                    application_group_id="malformed:application-group",
+                )
         grouped = replacement_effects.ReplacementEffect(
             effect_id="grouped:prevent-all",
             source_id="grouped:source",
