@@ -344,6 +344,137 @@ class FixedDamageHistoryTargetRuntimeTests(unittest.TestCase):
         engine.state.turn_sequence += 1
         self.assertNotIn(target.ref, self.legal_refs(engine, "A", was_dealt))
 
+    def test_damage_history_destruction_and_draw_compose_atomically(self):
+        fixture = record(
+            "Destroy target creature that was dealt damage this turn. "
+            "Draw a card.",
+            suffix=162_020,
+        )
+        ir = compile_oracle_card(
+            fixture,
+            capability_registry=current_capabilities(),
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(
+            ("destroy", "draw"),
+            tuple(effect["op"] for effect in node.effects),
+        )
+        self.assertGreaterEqual(
+            set(node.capability_dependencies),
+            {
+                HISTORY_CAPABILITY,
+                "target.revalidate_resolution",
+                "zone.draw.library_to_hand",
+            },
+        )
+
+        def stage(seed: int):
+            session = self.session(seed, players=4)
+            engine = session.engine
+            source, target = self.creatures(engine, owner="B", count=2)
+            target.annotations["copy_overrides"] = {
+                "power": "3",
+                "toughness": "3",
+            }
+            self.damage(engine, actor="B", source=source, target=target)
+            selected, grouped = engine._validate_semantic_targets(
+                "A",
+                None,
+                [target.ref],
+                source_ref=None,
+                target_schema=node.target_schema,
+            )
+            program = SemanticProgram(
+                key=f"fixture:damage-history-draw:{seed}",
+                label="Damage history destruction and draw",
+                effects=copy.deepcopy(node.effects),
+                target_schema=copy.deepcopy(node.target_schema),
+                trust_level="provisional",
+            )
+            engine.semantics.put(program)
+            item = StackItem(
+                stack_id=f"damage-history-draw:{seed}",
+                ref=f"S-damage-history-draw:{seed}",
+                kind="triggered_ability",
+                controller="A",
+                label=program.label,
+                semantic_key=program.key,
+                targets=selected,
+                visibility=list(engine.seats),
+                context={
+                    "target_groups": grouped,
+                    "target_snapshots": {
+                        target.ref: engine._target_snapshot(target.ref)
+                    },
+                    "targets_revalidated": False,
+                    "targets_chosen_at_creation": True,
+                },
+            )
+            engine.state.stack.append(item)
+            engine.state.active_player = "A"
+            engine.state.phase = "precombat_main"
+            engine.state.step = "main"
+            return session, target, item
+
+        def resolve(session) -> None:
+            engine = session.engine
+            engine._grant_priority("A")
+            engine._issue_priority("A")
+            session.initial_checkpoint = checkpoint_envelope(engine.state)
+            session.commands.clear()
+            session.decisions.clear()
+            for seat in engine.seats:
+                result = session.act(
+                    f"pilot:{seat}",
+                    {"action_id": "pass"},
+                )
+                self.assertTrue(result.ok, result.summary)
+
+        session, target, item = stage(162_105)
+        engine = session.engine
+        hand_before = len(engine.state.players["A"].zones["hand"])
+        drawn_id = engine.state.players["A"].zones["library"][-1]
+        drawn = engine.state.cards[drawn_id]
+        resolve(session)
+        self.assertNotIn(item, engine.state.stack)
+        self.assertEqual("graveyard", target.zone)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+        self.assertIn(drawn_id, engine.state.players["A"].zones["hand"])
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "damage-history-draw"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+        opposing_packet = json.dumps(session.packet("pilot:B", full=True))
+        self.assertNotIn(drawn.object_id, opposing_packet)
+        self.assertNotIn(drawn.ref, opposing_packet)
+
+        stale, stale_target, stale_item = stage(162_106)
+        stale_engine = stale.engine
+        stale_hand = len(stale_engine.state.players["A"].zones["hand"])
+        old_incarnation = stale_target.logical_object_id
+        stale_engine.move_card(stale_target.object_id, "graveyard")
+        stale_engine.move_card(
+            stale_target.object_id,
+            "battlefield",
+            controller="B",
+        )
+        self.assertNotEqual(old_incarnation, stale_target.logical_object_id)
+        resolve(stale)
+        self.assertNotIn(stale_item, stale_engine.state.stack)
+        self.assertEqual("battlefield", stale_target.zone)
+        self.assertEqual(
+            stale_hand,
+            len(stale_engine.state.players["A"].zones["hand"]),
+        )
+
     def test_damage_history_target_privacy_save_load_and_exact_replay(self):
         session = self.session(162_103, players=4)
         engine = session.engine

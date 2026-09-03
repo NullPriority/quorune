@@ -5014,6 +5014,15 @@
       "capability_ids": ["target.permanent.damage_history_predicate", "target.revalidate_resolution"],
       "interaction_order": 2,
       "assertion": "Offer, command validation, and resolution query the same current-turn source and recipient logical incarnations, so a departed and returned object loses the old damage fact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_damage_history_destruction_and_draw_compose_atomically",
+      "piece_ids": ["capability.target.permanent.damage_history_predicate", "capability.zone.draw.library_to_hand"],
+      "capability_ids": ["target.permanent.damage_history_predicate", "zone.draw.library_to_hand"],
+      "interaction_order": 2,
+      "assertion": "A legal damage-history target is destroyed before the controller-private draw and replays exactly, while a departed and returned sole target makes the entire sequence fizzle without drawing."
     }
   ]
 }
