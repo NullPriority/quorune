@@ -1124,12 +1124,24 @@
           "classification": "rules_value",
           "file": "quorune/characteristic_evaluation_host.py",
           "flow_id": "card-identity-flow:3d1209d78e8ef832e322",
-          "line": 261,
+          "line": 251,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 261,
+          "source_line": 251,
+          "symbol": "CharacteristicEvaluationHostMixin._effective_static_component_key_map"
+        },
+        {
+          "classification": "rules_value",
+          "file": "quorune/characteristic_evaluation_host.py",
+          "flow_id": "card-identity-flow:0b4537240ff2668f4bf3",
+          "line": 253,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "oracle_id",
+          "source_kind": "attribute",
+          "source_line": 253,
           "symbol": "CharacteristicEvaluationHostMixin._effective_static_component_key_map"
         },
         {
@@ -5400,9 +5412,9 @@
           "generated_provenance": 12,
           "reviewed_historical_compatibility": 1,
           "reviewed_override": 3,
-          "rules_value": 231
+          "rules_value": 232
         },
-        "classified_flow_count": 445,
+        "classified_flow_count": 446,
         "prohibited_identity_dispatch_count": 0
       },
       "external_dependencies": {
@@ -11838,7 +11850,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 198099,
+      "logical_lines": 198105,
       "methods": {
         "dunder": 539,
         "private": 857,
@@ -12897,6 +12909,13 @@
           "physical_lines": 431
         },
         {
+          "file": "quorune/characteristic_evaluation_host.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 408,
+          "physical_lines": 435
+        },
+        {
           "file": "quorune/semantic_runtime/zone_replacement_model.py",
           "functions_and_methods": 8,
           "language": "python",
@@ -12909,13 +12928,6 @@
           "language": "python",
           "logical_lines": 403,
           "physical_lines": 462
-        },
-        {
-          "file": "quorune/characteristic_evaluation_host.py",
-          "functions_and_methods": 8,
-          "language": "python",
-          "logical_lines": 402,
-          "physical_lines": 429
         },
         {
           "file": "quorune/rules/activation_costs.py",
@@ -16444,7 +16456,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 216907,
+      "physical_lines": 216913,
       "python_file_count": 594,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -29220,7 +29232,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "bdb1e7401ce52a009ccb0931ccc3a63a544fba72bfeb2d7f19851649d0d981f9",
+      "fingerprint": "eafdbd28b7b5d67a6ae509abcfbe86a7b6a10b9e2ac78627cf8d1a5040c1370b",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
