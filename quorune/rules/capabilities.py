@@ -242,6 +242,12 @@ _SUNBURST_MECHANIC = "sunburst"
 _ECHO_MECHANIC = "echo"
 _UNEARTH_MECHANIC = "unearth"
 _KICKER_MECHANIC = "kicker"
+_FIXED_CAST_LIFECYCLE_MECHANICS = (
+    "buyback",
+    "dash",
+    "retrace",
+    "warp",
+)
 _DEVOID_MECHANIC = "devoid"
 _BASIC_LANDWALK_MECHANICS = (
     "plainswalk",
@@ -286,6 +292,10 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "casting.kicker.fixed_mana",
         "replacement.kicker.fixed_entry",
     ),
+    **{
+        mechanic: ("casting.lifecycle.fixed_public",)
+        for mechanic in _FIXED_CAST_LIFECYCLE_MECHANICS
+    },
     "self-zone-move": ("zone.self_move.activated",),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)

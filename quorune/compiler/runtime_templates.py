@@ -184,15 +184,23 @@ def _source_permanent_participation_template(
         )
     spell_cost_reduction = static_fixed_spell_cost_reduction_handler(text)
     if spell_cost_reduction is not None:
+        template_id = spell_cost_reduction[0]
         return StaticRuntimeTemplate(
             compiled=spell_cost_reduction,
             kind="static_ability",
             event="cast.cost.modify",
             dependency_reason=(
-                "fixed spell-cost reductions require their closed typed "
+                "fixed spell-cost modifiers require their closed typed "
                 "runtime capability"
             ),
-            runtime_coverage=("static_ability",),
+            runtime_coverage=(
+                "static_ability",
+                *(
+                    (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+                    if template_id == "public-fixed-spell-cost-modifier-v1"
+                    else ()
+                ),
+            ),
         )
     activation_restriction = static_activation_restriction_handler(text)
     if activation_restriction is not None:

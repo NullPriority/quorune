@@ -5,6 +5,10 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from .aura import aura_resolution_move_kwargs
+from .cast_lifecycles import (
+    complete_fixed_cast_lifecycle_resolution,
+    fixed_cast_lifecycle_resolution_destination,
+)
 from .errors import StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
@@ -131,13 +135,19 @@ def complete_stack_resolution(
         card.annotations["evoked"] = True
     host.move_card(
         card.object_id,
-        destination or "graveyard",
+        fixed_cast_lifecycle_resolution_destination(item, destination)
+        or "graveyard",
         controller=item.controller,
         **aura_resolution_move_kwargs(item),
         prepared_replacement=prepared_replacement,
         reason="spell resolved",
         log=False,
         semantic_events=True,
+    )
+    complete_fixed_cast_lifecycle_resolution(
+        host,
+        item=item,
+        card=card,
     )
     if evoked and card.zone != "battlefield":
         card.annotations.pop("evoked", None)

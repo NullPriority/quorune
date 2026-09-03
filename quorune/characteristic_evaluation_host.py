@@ -5,7 +5,10 @@ from typing import Any, Mapping, Sequence
 
 from .carddb_characteristics import separate_custom_display_text
 from .card_programs.runtime import collect_card_program_continuous_effects
-from .ability_fragments import static_component_keys
+from .ability_fragments import (
+    CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    static_component_keys,
+)
 from .characteristic_evaluation import evaluate_card_characteristics
 from .continuous_effects import ContinuousEffect, Layer
 from .continuous_effect_state import active_resolution_effects
@@ -244,14 +247,25 @@ class CharacteristicEvaluationHostMixin:
                         and "ability_fragments" in copy_overrides
                     )
                 )
-                has_registered_static_component = any(
-                    program.ability_id.startswith("static:")
-                    and bool(program.handlers)
-                    for program in self.semantics.runtime_handler_programs_for_oracle(
+                ability_presence_programs = (
+                    *self.semantics.programs_for_oracle(source.oracle_id),
+                    *self.semantics.runtime_handler_programs_for_oracle(
                         source.oracle_id,
                         active_zone="battlefield",
                         event="characteristics.evaluate",
+                    ),
+                )
+                has_registered_static_component = any(
+                    program.active_zone in {"all", "battlefield"}
+                    and (
+                        (
+                            program.ability_id.startswith("static:")
+                            and program.event == "characteristics.evaluate"
+                            and bool(program.handlers)
+                        )
+                        or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
                     )
+                    for program in ability_presence_programs
                 )
                 if (
                     not component_effects

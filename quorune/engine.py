@@ -31,6 +31,11 @@ from .compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
 )
+from .compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec
+from .cast_lifecycles import (
+    fixed_cast_lifecycle_resolution_destination,
+    FixedCastLifecycleKind,
+)
 from .card_programs.validation import (
     canonical_program_fingerprint,
     program_source_is_current,
@@ -2805,7 +2810,15 @@ class CommanderEngine(
         return bool(
             card.owner == seat
             and card.zone == "graveyard"
-            and compiled_fixed_mana_flashback_spec(self, card) is not None
+            and (
+                compiled_fixed_mana_flashback_spec(self, card) is not None
+                or compiled_fixed_cast_lifecycle_spec(
+                    self,
+                    card,
+                    FixedCastLifecycleKind.RETRACE,
+                )
+                is not None
+            )
         )
 
     def _cast(
@@ -4084,6 +4097,7 @@ class CommanderEngine(
         *,
         note: str = "",
     ) -> None:
+        destination = fixed_cast_lifecycle_resolution_destination(item, destination)
         if not self.state.stack or self.state.stack[-1] is not item:
             raise GameRuleError(
                 "Only the top object of the stack can begin resolving"

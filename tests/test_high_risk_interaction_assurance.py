@@ -5,6 +5,7 @@ import unittest
 from common import DB_PATH
 from high_risk_interaction_support import (
     ALL_HIGH_RISK_BOUNDARY_PAIRS,
+    CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,
     CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
     DESTROY_DAMAGE_PREVENTION_PAIR,
     DESTROY_REGENERATION_PAIR,
@@ -40,6 +41,15 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             ALL_HIGH_RISK_BOUNDARY_PAIRS,
+            database=self.db,
+        )
+
+    def test_cost_modifier_with_residual_prevention_fails_closed(
+        self,
+    ) -> None:
+        assert_high_risk_boundary_pairs(
+            self,
+            (CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,),
             database=self.db,
         )
 

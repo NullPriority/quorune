@@ -490,6 +490,18 @@ _WITNESSES = {
         "{2}{W/U}",
         loyalty="5",
     ),
+    "ith-high-arcanist": _Witness(
+        "Ith, High Arcanist",
+        "Legendary Creature — Human Wizard",
+        "Vigilance\n"
+        "{T}: Untap target attacking creature. Prevent all combat damage "
+        "that would be dealt to and dealt by that creature this turn.\n"
+        "Suspend 4—{W}{U}",
+        "{3}{W}{U}",
+        ("Vigilance", "Suspend"),
+        power="3",
+        toughness="5",
+    ),
     "ovinomancer": _Witness(
         "Ovinomancer",
         "Creature — Human Wizard",
@@ -1014,6 +1026,11 @@ COST_AND_REPLACEMENT_PAIRS = tuple(
     )
 )
 
+CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR = _pair(
+    "capability.casting.cost.modifier.fixed_query",
+    "residual.replacement.damage-prevention",
+)
+
 CONTINUOUS_AND_REPLACEMENT_PAIRS = (
     _pair(
         "residual.continuous_layer.affected-player-ordering",
@@ -1204,7 +1221,8 @@ _bind("etchings-of-the-chosen", *COST_AND_REPLACEMENT_PAIRS[6:8])
 _bind("prismatic-circle", CONTINUOUS_AND_REPLACEMENT_PAIRS[0])
 _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
-_bind("dovin-hand-of-control", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
+_bind("ith-high-arcanist", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
+_bind("dovin-hand-of-control", CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR)
 _bind("avatar-of-woe", CONTINUOUS_AND_REPLACEMENT_PAIRS[5])
 _bind(
     "knight-of-the-holy-nimbus",
@@ -1239,7 +1257,10 @@ _bind(
     *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
 )
 
-if set(_PAIR_WITNESS) != set(ALL_HIGH_RISK_BOUNDARY_PAIRS):
+if set(_PAIR_WITNESS) != {
+    *ALL_HIGH_RISK_BOUNDARY_PAIRS,
+    CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,
+}:
     raise AssertionError("high-risk witness map is incomplete")
 
 
@@ -1290,7 +1311,7 @@ def assert_high_risk_boundary_pairs(
     *,
     database: CardDatabase | None = None,
 ) -> None:
-    """Prove each residual pair stays blocked at runtime admission."""
+    """Prove each declared boundary pair stays blocked at runtime admission."""
 
     expected = tuple(pairs)
     case.assertEqual(len(expected), len(set(expected)))
@@ -1398,6 +1419,7 @@ def assert_high_risk_boundary_pairs(
 
 __all__ = [
     "ALL_HIGH_RISK_BOUNDARY_PAIRS",
+    "CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR",
     "CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR",
     "ATTACHMENT_AND_CONTINUOUS_PAIRS",
     "CONTINUOUS_AND_REPLACEMENT_PAIRS",

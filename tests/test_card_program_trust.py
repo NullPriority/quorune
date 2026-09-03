@@ -229,6 +229,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.evoke.fixed_mana",
                 "casting.flashback.fixed_mana",
                 "casting.kicker.fixed_mana",
+                "casting.lifecycle.fixed_public",
                 "casting.megamorph.fixed_mana",
                 "casting.morph.fixed_mana",
                 "casting.payment.affinity",

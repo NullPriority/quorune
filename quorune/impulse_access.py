@@ -6,7 +6,10 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
 from .errors import GameRuleError
-from .impulse_access_model import ImpulseAccessDuration
+from .impulse_access_model import (
+    ImpulseAccessDuration,
+    TemporaryCastPermissionGrant,
+)
 from .model import CardInstance, GameState
 from .zone_transitions import ZoneTransitionOwner
 
@@ -248,6 +251,74 @@ def resolve_fixed_impulse_access(
     )
 
 
+def grant_temporary_cast_permission(
+    host: ImpulseAccessHost,
+    *,
+    card: CardInstance,
+    grant: TemporaryCastPermissionGrant,
+    reason: str,
+) -> str:
+    """Commit one typed zone-pinned spell-cast permission."""
+
+    if not isinstance(grant, TemporaryCastPermissionGrant):
+        raise GameRuleError("Cast permission requires a typed grant")
+    if grant.player not in host.state.players or card.zone == "outside":
+        raise GameRuleError("Cast permission requires an in-game player and card")
+    permission = {
+        "player": grant.player,
+        "zone": card.zone,
+        "without_mana_cost": grant.without_mana_cost,
+        "allow_land": False,
+        "allow_spell": True,
+        "source": grant.source,
+    }
+    if grant.duration is ImpulseAccessDuration.UNTIL_USED:
+        if grant.not_before_turn_sequence <= host.state.turn_sequence:
+            raise GameRuleError(
+                "Until-used cast permission requires a later turn boundary"
+            )
+        permission.update(
+            {
+                "duration": grant.duration.value,
+                "not_before_turn_sequence": grant.not_before_turn_sequence,
+            }
+        )
+        duration_text = "on a later turn"
+    else:
+        permission["turn_sequence"] = host.state.turn_sequence
+        duration_text = "this turn"
+    card.annotations["temporary_play_permission"] = permission
+    details = {
+        "player": grant.player,
+        "object": card.ref,
+        "zone": card.zone,
+        "turn_sequence": host.state.turn_sequence,
+        "without_mana_cost": grant.without_mana_cost,
+        "reason": reason,
+    }
+    if grant.duration is ImpulseAccessDuration.UNTIL_USED:
+        details.update(
+            {
+                "duration": grant.duration.value,
+                "not_before_turn_sequence": grant.not_before_turn_sequence,
+            }
+        )
+    host._log(
+        grant.player,
+        "permission.cast",
+        (
+            f"{grant.player} may cast {card.ref} from {card.zone} "
+            f"{duration_text}."
+        ),
+        details,
+        visibility=[grant.player, "analyst"],
+        importance=2,
+        changed_objects=[card.object_id],
+        changed_players=[grant.player],
+    )
+    return card.ref
+
+
 def temporary_play_permission_is_current(
     state: GameState,
     seat: str,
@@ -267,6 +338,13 @@ def temporary_play_permission_is_current(
         return (
             type(turn_sequence) is int
             and turn_sequence == state.turn_sequence
+        )
+    if duration == ImpulseAccessDuration.UNTIL_USED.value:
+        not_before = permission.get("not_before_turn_sequence")
+        return (
+            type(not_before) is int
+            and not_before >= 0
+            and state.turn_sequence >= not_before
         )
     if duration != ImpulseAccessDuration.END_OF_NEXT_TURN.value:
         return False
@@ -325,6 +403,7 @@ __all__ = [
     "ImpulseAccessRequest",
     "ImpulseAccessResult",
     "prepare_fixed_impulse_access",
+    "grant_temporary_cast_permission",
     "resolve_fixed_impulse_access",
     "temporary_play_permission_is_current",
 ]

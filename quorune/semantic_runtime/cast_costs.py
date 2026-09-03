@@ -4,6 +4,13 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
+from ..cast_cost_modifiers import (
+    CastCostAffectedController,
+    CastCostModifierError,
+    CastCostOrdinal,
+    CastCostTurnRelation,
+    PublicCastCostModifierSpec,
+)
 from ..card_program_faces import program_matches_face
 from ..casting_payment_keywords import (
     AffinitySpec,
@@ -52,10 +59,7 @@ SELF_SPELL_COST_REDUCTION_HANDLER_ID = (
 )
 
 
-@dataclass(frozen=True, slots=True)
-class FixedSpellCostReductionSpec:
-    predicate: ObjectQuerySpec
-    generic_reduction: int
+FixedSpellCostReductionSpec = PublicCastCostModifierSpec
 
 
 @dataclass(frozen=True, slots=True)
@@ -353,7 +357,7 @@ class EvokeCostHandler:
 @dataclass(frozen=True, slots=True)
 class FixedSpellCostReductionHandler:
     handler_id: str = FIXED_SPELL_COST_REDUCTION_HANDLER_ID
-    schema_version: int = 1
+    schema_version: int = 2
     family: str = "casting.cost.modifier.fixed_query"
     event: str = FIXED_SPELL_COST_REDUCTION_EVENT
     rule_references: tuple[str, ...] = ("601.2f", "601.2h")
@@ -365,6 +369,28 @@ class FixedSpellCostReductionHandler:
         self,
         descriptor: Mapping[str, Any],
     ) -> FixedSpellCostReductionSpec:
+        version = descriptor.get("schema_version")
+        if (
+            descriptor.get("handler_id") != self.handler_id
+            or type(version) is not int
+            or version not in {1, self.schema_version}
+            or descriptor.get("event") != self.event
+        ):
+            raise SemanticNodeError(
+                "Spell-cost reduction identity, version, or event changed"
+            )
+        if version == self.schema_version:
+            exact_fields(
+                descriptor,
+                {"handler_id", "schema_version", "event", "modifier"},
+                field="public fixed spell-cost modifier handler",
+            )
+            try:
+                return PublicCastCostModifierSpec.from_dict(
+                    descriptor["modifier"]
+                )
+            except (CastCostModifierError, TypeError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
         exact_fields(
             descriptor,
             {
@@ -375,20 +401,11 @@ class FixedSpellCostReductionHandler:
                 "predicate",
                 "generic_reduction",
             },
-            field="fixed spell-cost reduction handler",
+            field="legacy fixed spell-cost reduction handler",
         )
-        if (
-            descriptor["handler_id"] != self.handler_id
-            or type(descriptor["schema_version"]) is not int
-            or descriptor["schema_version"] != self.schema_version
-            or descriptor["event"] != self.event
-        ):
-            raise SemanticNodeError(
-                "Spell-cost reduction identity, version, or event changed"
-            )
         if descriptor["affected_controller"] != "source_controller":
             raise SemanticNodeError(
-                "Spell-cost reductions support only the source controller"
+                "Legacy spell-cost reductions support only the source controller"
             )
         amount = descriptor["generic_reduction"]
         if type(amount) is not int or amount < 1:
@@ -399,22 +416,16 @@ class FixedSpellCostReductionHandler:
             predicate = ObjectQuerySpec.from_dict(descriptor["predicate"])
         except (ObjectQueryError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
-        if (
-            predicate.zones
-            or predicate.owner is not None
-            or predicate.controller is not None
-            or predicate.keywords_all
-            or predicate.token is not None
-            or predicate.tapped is not None
-            or predicate.include_phased_out
-            or predicate.known_to_actor is not None
-            or predicate.exclude_ref is not None
-            or predicate.state_predicate is not None
-        ):
-            raise SemanticNodeError(
-                "Spell-cost reductions require a fixed characteristic predicate"
+        try:
+            return PublicCastCostModifierSpec(
+                affected_controller=(
+                    CastCostAffectedController.SOURCE_CONTROLLER
+                ),
+                predicates_any=(predicate,),
+                generic_adjustment=-amount,
             )
-        return FixedSpellCostReductionSpec(predicate, amount)
+        except CastCostModifierError as exc:
+            raise SemanticNodeError(str(exc)) from exc
 
     def lower(
         self,
@@ -563,6 +574,8 @@ def evoke_handler_descriptor(spec: FixedManaEvokeSpec) -> dict[str, Any]:
 
 class FixedSpellCostReductionHost(Protocol):
     semantics: Any
+    state: Any
+    active_seats: Sequence[str]
 
     def _semantic_event_sources(
         self,
@@ -580,6 +593,83 @@ class FixedSpellCostReductionHost(Protocol):
     def card_record(self, card: Any) -> Any: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+    def _current_turn_history(self, kind: str) -> Sequence[Any]: ...
+
+    def _effective_static_component_key_map(
+        self,
+    ) -> Mapping[str, Sequence[str]]: ...
+
+
+def _modifier_controller_applies(
+    spec: PublicCastCostModifierSpec,
+    *,
+    source_controller: str,
+    caster: str,
+) -> bool:
+    if spec.affected_controller is CastCostAffectedController.ALL_PLAYERS:
+        return True
+    if spec.affected_controller is CastCostAffectedController.SOURCE_CONTROLLER:
+        return caster == source_controller
+    return caster != source_controller
+
+
+def _modifier_context_applies(
+    host: FixedSpellCostReductionHost,
+    spec: PublicCastCostModifierSpec,
+    *,
+    source_controller: str,
+    caster: str,
+    origin: str,
+) -> bool:
+    if not _modifier_controller_applies(
+        spec,
+        source_controller=source_controller,
+        caster=caster,
+    ):
+        return False
+    active_player = str(host.state.active_player or "")
+    if (
+        spec.turn_relation is CastCostTurnRelation.SOURCE_CONTROLLER_TURN
+        and active_player != source_controller
+    ) or (
+        spec.turn_relation
+        is CastCostTurnRelation.NOT_SOURCE_CONTROLLER_TURN
+        and active_player == source_controller
+    ):
+        return False
+    if spec.cast_origin_zones and origin not in spec.cast_origin_zones:
+        return False
+    if spec.excluded_cast_origin_zones and origin in spec.excluded_cast_origin_zones:
+        return False
+    prior_casts = sum(
+        getattr(event, "actor", None) == caster
+        and any(
+            _turn_history_types_match(event, predicate)
+            for predicate in spec.predicates_any
+        )
+        for event in host._current_turn_history("spell_cast")
+    )
+    if spec.ordinal is CastCostOrdinal.FIRST and prior_casts != 0:
+        return False
+    if spec.ordinal is CastCostOrdinal.SECOND and prior_casts != 1:
+        return False
+    return True
+
+
+def _turn_history_types_match(
+    event: Any,
+    predicate: ObjectQuerySpec,
+) -> bool:
+    types = {str(value).casefold() for value in getattr(event, "types", ())}
+    return bool(
+        set(predicate.types_all) <= types
+        and (
+            not predicate.types_any
+            or bool(set(predicate.types_any).intersection(types))
+        )
+        and not set(predicate.excluded_types).intersection(types)
+    )
 
 
 def active_fixed_spell_cost_reductions(
@@ -603,11 +693,12 @@ def active_fixed_spell_cost_reductions(
     )
     registry = default_cast_cost_component_registry()
     reductions: list[FixedSpellCostReductionSpec] = []
+    static_component_key_map: Mapping[str, Sequence[str]] | None = None
     for source in host._semantic_event_sources(zones={"battlefield"}):
         if (
             source.zone != "battlefield"
-            or source.controller != seat
             or source.phased_out
+            or source.controller not in host.active_seats
         ):
             continue
         record = host.card_record(source)
@@ -623,6 +714,17 @@ def active_fixed_spell_cost_reductions(
                 or not program_matches_face(record, program, source)
             ):
                 continue
+            from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+            if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage:
+                if static_component_key_map is None:
+                    static_component_key_map = (
+                        host._effective_static_component_key_map()
+                    )
+                if program.key not in set(
+                    static_component_key_map.get(source.object_id, ())
+                ):
+                    continue
             for descriptor in program.handlers:
                 if (
                     descriptor.get("handler_id")
@@ -631,7 +733,19 @@ def active_fixed_spell_cost_reductions(
                     continue
                 spec = registry.lower(descriptor, None)[0]
                 assert isinstance(spec, FixedSpellCostReductionSpec)
-                if object_matches_query(row, spec.predicate):
+                if (
+                    _modifier_context_applies(
+                        host,
+                        spec,
+                        source_controller=source.controller,
+                        caster=seat,
+                        origin=card.zone,
+                    )
+                    and any(
+                        object_matches_query(row, predicate)
+                        for predicate in spec.predicates_any
+                    )
+                ):
                     reductions.append(spec)
     return tuple(reductions)
 

@@ -111,7 +111,7 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status, ir.material_residuals)
                 node = ir.faces[0].nodes[0]
                 self.assertEqual(
-                    "fixed-query-spell-cost-reduction-v1",
+                    "public-fixed-spell-cost-modifier-v1",
                     node.template_id,
                 )
                 self.assertEqual(FIXED_SPELL_COST_REDUCTION_EVENT, node.event)
@@ -119,14 +119,21 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                     (FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,),
                     node.capability_dependencies,
                 )
-                self.assertEqual(("static_ability",), node.runtime_coverage)
+                self.assertEqual(
+                    (
+                        "static_ability",
+                        "current_ability_fragment_required",
+                    ),
+                    node.runtime_coverage,
+                )
                 descriptor = node.handlers[0]
                 self.assertEqual(
                     FIXED_SPELL_COST_REDUCTION_HANDLER_ID,
                     descriptor["handler_id"],
                 )
+                predicate = descriptor["modifier"]["predicates_any"][0]
                 for field, value in expected.items():
-                    self.assertEqual(value, descriptor["predicate"][field])
+                    self.assertEqual(value, predicate[field])
 
     def test_unsupported_spell_reduction_grammar_remains_residual(self):
         unsupported = (
@@ -134,13 +141,8 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
             "This spell costs {1} less to cast for each card you've drawn this turn.",
             "This spell costs {X} less to cast, where X is the total power of creatures you control.",
             "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
-            "The first creature spell you cast each turn costs {2} less to cast.",
             "Spells you cast of the chosen type cost {1} less to cast.",
-            "Creature spells with flying you cast cost {1} less to cast.",
-            "Spells you cast from your graveyard cost {1} less to cast.",
-            "Spells your opponents cast cost {1} less to cast.",
             "Spells you cast cost {W} less to cast.",
-            "Historic spells you cast cost {1} less to cast.",
         )
         for index, text in enumerate(unsupported, 1):
             with self.subTest(text=text):
@@ -356,9 +358,14 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
             {**descriptor, "unknown": True},
             {
                 **descriptor,
-                "predicate": {
-                    **descriptor["predicate"],
-                    "keywords_all": ["flying"],
+                "modifier": {
+                    **descriptor["modifier"],
+                    "predicates_any": [
+                        {
+                            **descriptor["modifier"]["predicates_any"][0],
+                            "zones": ["hand"],
+                        }
+                    ],
                 },
             },
         )
@@ -868,7 +875,8 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         self.prepare_main(session)
         self.assertEqual(2, self.cost_option(engine, spell)["requirements"]["GENERIC"])
         with mock.patch(
-            "quorune.rules.casting.costs.compiled_self_spell_cost_reduction_specs",
+            "quorune.rules.casting.static_modifiers."
+            "compiled_self_spell_cost_reduction_specs",
             return_value=(),
         ):
             self.assertEqual(4, self.cost_option(engine, spell)["requirements"]["GENERIC"])
@@ -1069,7 +1077,8 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         engine.state.players["B"].mana_pool.update({"C": 2, "U": 1})
         self.prepare_main(session)
         with mock.patch(
-            "quorune.rules.casting.costs.active_fixed_spell_cost_reductions",
+            "quorune.rules.casting.static_modifiers."
+            "active_fixed_spell_cost_reductions",
             return_value=(),
         ):
             option = self.cost_option(engine, spell)

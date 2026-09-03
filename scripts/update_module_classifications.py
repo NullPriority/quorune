@@ -53,6 +53,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/activated_ability_descriptor.py",
         "quorune/ability_fragments.py",
         "quorune/bloodthirst.py",
+        "quorune/cast_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
@@ -110,6 +111,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/compiled_ability_fragments.py",
         "quorune/compiled_activated_abilities.py",
         "quorune/compiled_cast_costs.py",
+        "quorune/compiled_cast_lifecycles.py",
         "quorune/compiled_cast_timing.py",
         "quorune/compiled_morph.py",
         "quorune/compiled_kicker.py",
@@ -166,6 +168,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/commander_zones.py",
         "quorune/convoke.py",
         "quorune/cast_timing.py",
+        "quorune/cast_lifecycles.py",
         "quorune/continuous_effects.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
@@ -305,6 +308,9 @@ def _owner(relative: str, layer: str) -> str:
         return "oracle_compiler"
     if relative in {
         "quorune/casting_cost_host.py",
+        "quorune/cast_cost_modifiers.py",
+        "quorune/cast_lifecycles.py",
+        "quorune/compiled_cast_lifecycles.py",
         "quorune/self_cast_reductions.py",
     }:
         return "casting_activation_and_costs"
@@ -671,6 +677,9 @@ def build_classifications() -> dict[str, Any]:
                             "session.py",
                             "semantics.py",
                             "self_cast_reductions.py",
+                            "cast_cost_modifiers.py",
+                            "cast_lifecycles.py",
+                            "compiled_cast_lifecycles.py",
                             "card_programs/",
                             "semantic_runtime/",
                             "semantic_choices/",
@@ -723,6 +732,7 @@ def build_classifications() -> dict[str, Any]:
                             "cycling_abilities.py",
                             "fixed_mana_abilities.py",
                             "intrinsic_basic_land_mana.py",
+                            "impulse_access_model.py",
                             "mana_ability_runtime.py",
                             "trigger_targeting.py",
                             "untap_step",

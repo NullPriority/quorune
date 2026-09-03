@@ -2012,6 +2012,31 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_fixed_casting_surface_probe_is_closed(self):
+        probe_id = "fixed-casting-surface-existing-owner-v2"
+        for source in (
+            "Buyback {3}",
+            "Dash {1}{R}",
+            "Warp {2}{U}",
+            "Retrace",
+            "Creature spells with flying you cast cost {1} less to cast.",
+            "Artifact spells your opponents cast cost {2} more to cast.",
+            "The first creature spell you cast each turn costs {1} less to cast.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "Blitz {1}{R}",
+            "Buyback—Discard a card.",
+            "Dash {X}{R}",
+            "Warp {W/U}",
+            "Retrace—Discard two lands.",
+            "Spells of the chosen type cost {1} less to cast.",
+            "This spell costs {1} less to cast if it targets a creature.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_fixed_activation_zone_change_predicate_probe_is_closed(self):
         probe_id = (
             "fixed-activation-zone-change-predicates-existing-owner-v2"

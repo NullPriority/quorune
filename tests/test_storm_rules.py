@@ -128,6 +128,7 @@ class StormCompilerTests(unittest.TestCase):
                 "Dragonstorm",
                 "Empty the Warrens",
                 "Grapeshot",
+                "Haze of Rage",
                 "Hunting Pack",
                 "Radstorm",
                 "Reaping the Graves",
