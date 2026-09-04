@@ -428,10 +428,14 @@ class CharacteristicEvaluationHostMixin:
         runtime_effects = (
             (
                 *active_resolution_effects(self.state, card),
-                *self._static_component_applicability_effects(
-                    card,
-                    base,
-                    static_component_key_map.get(card.object_id, ()),
+                *(
+                    self._static_component_applicability_effects(
+                        card,
+                        base,
+                        static_component_key_map.get(card.object_id, ()),
+                    )
+                    if static_component_key_map is not None
+                    else ()
                 ),
                 *collect_card_program_continuous_effects(
                     self.state,
