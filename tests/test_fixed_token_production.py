@@ -156,6 +156,10 @@ class FixedTokenProductionTests(unittest.TestCase):
                 "Token Cache",
                 "Restricted Prism",
                 "Artifact Prism",
+                "Changeling Armory",
+                "Junk Harness",
+                "Questioning Aura",
+                "Junk Breakdown",
             )
         )
         register_generated_programs(
@@ -950,6 +954,263 @@ class FixedTokenProductionTests(unittest.TestCase):
         expected_hash = authoritative_state_hash(engine.state)
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary) / "fixed-token-production-record"
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_changeling_token_and_fixed_equip_compose_and_replay(self):
+        session = self.session(1116111, players=2)
+        engine = session.engine
+        armory = self.add_card(
+            session,
+            name="Changeling Armory",
+            ref="changeling-armory",
+            owner="A",
+            zone="hand",
+        )
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.phase_index = TURN_STEPS.index(
+            ("precombat_main", "main")
+        )
+        engine.move_card(
+            armory.object_id,
+            "battlefield",
+            controller="A",
+            semantic_events=True,
+            reason="Changeling Equipment interaction fixture",
+        )
+        engine._stabilize()
+        self.pass_until_empty(session)
+        token = next(
+            card
+            for card in engine.state.cards.values()
+            if card.is_token and card.printed_name == "Shapeshifter"
+        )
+        engine.state.players["A"].mana_pool["C"] = 2
+        self.prepare_priority(session)
+        equip = next(
+            ability
+            for ability in compiled_activated_abilities(engine, armory)
+            if ability.builtin_semantic_key == "builtin:equip"
+        )
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = "A"
+        engine._activate(
+            "A",
+            {
+                "source": armory.ref,
+                "ability": equip.ability_id,
+                "targets": [token.ref],
+            },
+        )
+        engine._grant_priority("A")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        self.pass_until_empty(session)
+        self.assertEqual(token.object_id, armory.attached_to)
+        current = engine._effective_card_data(token)
+        self.assertEqual("2", current["power"])
+        self.assertEqual("2", current["toughness"])
+        self.assertEqual(
+            CREATURE_SUBTYPES,
+            frozenset(type_parts(current["type_line"])[1]),
+        )
+
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "changeling-equip-record"
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_junk_impulse_composes_with_equip_and_target_predicate(self):
+        session = self.session(1116112, players=2)
+        engine = session.engine
+        creature = self.add_card(
+            session,
+            name="Creature Payment",
+            ref="junk-equipped-creature",
+            owner="A",
+        )
+        harness = self.add_card(
+            session,
+            name="Junk Harness",
+            ref="junk-harness",
+            owner="A",
+            zone="hand",
+        )
+        breakdown = self.add_card(
+            session,
+            name="Junk Breakdown",
+            ref="junk-breakdown",
+            owner="A",
+            zone="hand",
+        )
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.phase_index = TURN_STEPS.index(
+            ("precombat_main", "main")
+        )
+        engine.move_card(
+            harness.object_id,
+            "battlefield",
+            controller="A",
+            semantic_events=True,
+            reason="Junk Equipment interaction fixture",
+        )
+        engine._stabilize()
+        self.pass_until_empty(session)
+        first_junk = next(
+            card
+            for card in engine.state.cards.values()
+            if card.is_token and card.printed_name == "Junk"
+        )
+        engine.state.players["A"].mana_pool.update({"C": 2, "R": 1})
+        self.prepare_priority(session)
+        equip = next(
+            ability
+            for ability in compiled_activated_abilities(engine, harness)
+            if ability.builtin_semantic_key == "builtin:equip"
+        )
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = "A"
+        engine._activate(
+            "A",
+            {
+                "source": harness.ref,
+                "ability": equip.ability_id,
+                "targets": [creature.ref],
+            },
+        )
+        engine._grant_priority("A")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        self.pass_until_empty(session)
+        self.assertEqual(creature.object_id, harness.attached_to)
+
+        result = session.act(
+            "pilot:A",
+            {
+                "action_id": f"cast:{breakdown.ref}",
+                "targets": [harness.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "R": 1},
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.pass_until_empty(session)
+        self.assertEqual("graveyard", harness.zone)
+        self.assertIsNone(harness.attached_to)
+        junks = [
+            card
+            for card in engine.state.cards.values()
+            if card.is_token and card.printed_name == "Junk"
+        ]
+        self.assertEqual(2, len(junks))
+        self.assertIn(first_junk, junks)
+        top = engine.state.players["A"].zones["library"][-1]
+        result = session.act(
+            "pilot:A",
+            {"action_id": f"activate:{first_junk.ref}:ab1"},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.pass_until_empty(session)
+        self.assertEqual("outside", first_junk.zone)
+        self.assertEqual("exile", engine.state.cards[top].zone)
+        self.assertIn(
+            "temporary_play_permission",
+            engine.state.cards[top].annotations,
+        )
+
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "junk-equip-target-record"
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_departed_aura_investigate_preserves_attachment_lki_and_draw(self):
+        session = self.session(1116113, players=2)
+        engine = session.engine
+        target = self.add_card(
+            session,
+            name="Creature Payment",
+            ref="questioned-creature",
+            owner="B",
+        )
+        aura = self.add_card(
+            session,
+            name="Questioning Aura",
+            ref="questioning-aura",
+            owner="A",
+            zone="hand",
+        )
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.phase_index = TURN_STEPS.index(
+            ("precombat_main", "main")
+        )
+        engine.move_card(
+            aura.object_id,
+            "battlefield",
+            controller="A",
+            aura_target_ref=target.ref,
+            semantic_events=True,
+            reason="Investigate attachment-LKI fixture",
+        )
+        engine._stabilize()
+        self.assertTrue(engine.state.stack)
+        engine.move_card(
+            aura.object_id,
+            "graveyard",
+            semantic_events=True,
+            reason="depart before attachment trigger resolves",
+        )
+        engine._grant_priority("A")
+        engine.pump()
+        engine.state.players["A"].mana_pool["C"] = 2
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        self.pass_until_empty(session)
+        self.assertTrue(target.tapped)
+        clue = next(
+            card
+            for card in engine.state.cards.values()
+            if card.is_token and card.printed_name == "Clue"
+        )
+        hand_before = len(engine.state.players["A"].zones["hand"])
+        result = session.act(
+            "pilot:A",
+            {"action_id": f"activate:{clue.ref}:ab1"},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.pass_until_empty(session)
+        self.assertEqual("outside", clue.zone)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "aura-investigate-record"
             session.save(directory)
             replay = replay_record(directory, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
