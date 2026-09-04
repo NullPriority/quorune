@@ -28,6 +28,7 @@ from scripts.validate_python_runtime import require_supported_python
 OUTPUT = ROOT / "coverage" / "work-selection-cohort-measurements.json"
 FRONTIER = ROOT / "coverage" / "card-unlock-frontier.json.gz"
 POLICY = ROOT / "platform" / "rules-subsystems.json"
+HARVEST_HISTORY = ROOT / "coverage" / "harvest-outcome-history.json"
 
 
 def _inputs() -> tuple[dict, dict, list[dict], dict[str, str]]:
@@ -121,16 +122,41 @@ def _preserved_transition_is_current(
     frontier_fingerprint: str,
     oracle_source_sha256: str,
     cohort_fingerprint: str,
+    completed_receipt_fingerprints: frozenset[str] = frozenset(),
 ) -> bool:
     if preserved is None:
         return False
     measurement = preserved.get("measurement")
+    if (
+        not isinstance(measurement, dict)
+        or preserved.get("oracle_source_sha256") != oracle_source_sha256
+    ):
+        return False
     return bool(
-        isinstance(measurement, dict)
-        and preserved.get("frontier_fingerprint")
-        == frontier_fingerprint
-        and preserved.get("oracle_source_sha256") == oracle_source_sha256
-        and measurement.get("cohort_fingerprint") == cohort_fingerprint
+        (
+            preserved.get("frontier_fingerprint")
+            == frontier_fingerprint
+            and measurement.get("cohort_fingerprint")
+            == cohort_fingerprint
+        )
+        or preserved.get("receipt_fingerprint")
+        in completed_receipt_fingerprints
+    )
+
+
+def _completed_transition_measurement_receipts(
+    transition_id: str,
+) -> frozenset[str]:
+    try:
+        value = json.loads(HARVEST_HISTORY.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return frozenset()
+    return frozenset(
+        str(entry.get("measurement_receipt_fingerprint") or "")
+        for entry in value.get("entries", ())
+        if isinstance(entry, dict)
+        and entry.get("transition_id") == transition_id
+        and str(entry.get("measurement_receipt_fingerprint") or "")
     )
 
 
@@ -176,6 +202,9 @@ def _transition_measurements(
         frontier_fingerprint=str(frontier.get("fingerprint") or ""),
         oracle_source_sha256=oracle_source_sha256,
         cohort_fingerprint=fingerprints[bundle_id],
+        completed_receipt_fingerprints=(
+            _completed_transition_measurement_receipts(transition_id)
+        ),
     ):
         return [preserved]
     measured = build_work_selection_cohort_measurements(

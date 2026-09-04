@@ -2445,6 +2445,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
     def test_transition_measurement_reuse_requires_current_semantic_inputs(self):
         receipt = {
+            "receipt_fingerprint": "receipt",
             "frontier_fingerprint": "frontier",
             "oracle_source_sha256": "oracle",
             "measurement": {"cohort_fingerprint": "cohort"},
@@ -2480,6 +2481,26 @@ class RulesSchedulerTests(unittest.TestCase):
                 frontier_fingerprint="frontier",
                 oracle_source_sha256="oracle",
                 cohort_fingerprint="cohort",
+            )
+        )
+        landed = deepcopy(receipt)
+        landed["frontier_fingerprint"] = "source-frontier"
+        self.assertTrue(
+            _preserved_transition_is_current(
+                landed,
+                frontier_fingerprint="generated-frontier",
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="generated-cohort",
+                completed_receipt_fingerprints=frozenset({"receipt"}),
+            )
+        )
+        self.assertFalse(
+            _preserved_transition_is_current(
+                landed,
+                frontier_fingerprint="generated-frontier",
+                oracle_source_sha256="changed-oracle",
+                cohort_fingerprint="generated-cohort",
+                completed_receipt_fingerprints=frozenset({"receipt"}),
             )
         )
 
