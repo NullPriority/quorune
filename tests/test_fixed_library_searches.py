@@ -214,7 +214,7 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
     def test_named_linked_attachment_compound_and_open_searches_remain_residual(
         self,
     ):
-        unsupported = (
+        leaf_unsupported = (
             "Search your library for a card named Nissa's Chosen, put it onto the battlefield, then shuffle.",
             "Search your library for up to three artifact cards with different names, put them onto the battlefield, then shuffle.",
             "Search your library for an Equipment card, put it onto the battlefield, attach it to a creature you control, then shuffle.",
@@ -222,9 +222,17 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
             "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Investigate.",
             "Search your library for up to two basic land cards and/or Gate cards, put them onto the battlefield tapped, then shuffle.",
         )
-        for text in unsupported:
+        for text in leaf_unsupported:
             with self.subTest(text=text):
                 self.assertIsNone(fixed_library_search_effect_template(text))
+
+        integrated_unsupported = tuple(
+            text
+            for text in leaf_unsupported
+            if not text.endswith("Investigate.")
+        )
+        for text in integrated_unsupported:
+            with self.subTest(integrated_text=text):
                 ir = self.compile(text)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)

@@ -257,6 +257,12 @@ class FixedTokenProductionTests(unittest.TestCase):
             compiler_record("Investigate Batch", "Investigate three times.", 1116002, keywords=("Investigate",)),
             compiler_record("Investigate Trigger", "When this creature enters, investigate.", 1116003, type_line="Creature — Scout", keywords=("Investigate",)),
             compiler_record("Optional Investigate", "You may investigate.", 1116004, keywords=("Investigate",)),
+            compiler_record(
+                "Search then Investigate",
+                "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Investigate.",
+                1116005,
+                keywords=("Investigate",),
+            ),
             compiler_record("Afterlife Pair", "Afterlife 1, afterlife 1", 2135001, type_line="Creature — Spirit", keywords=("Afterlife",)),
             compiler_record("Named Token", "Create a 1/1 colorless Sliver artifact creature token named Metallic Sliver.", 1110001),
             compiler_record("Legendary Token", "Create Voja, a legendary 2/2 green and white Wolf creature token.", 1110002),
