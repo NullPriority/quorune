@@ -29536,22 +29536,32 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "unsupported_fail_closed",
-      "blockers": [
-        "day_night_state_and_previous_turn_spell_count_not_implemented"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-502.2",
       "case_version": 1,
       "classification": "behavioral",
-      "covered_scenarios": [],
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "502"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
+        "quorune.turn_history.roll_turn_history",
+        "quorune.untap_step_coordination.coordinate_untap_step"
+      ],
       "notes": [
-        "The authoritative state does not represent day/night or the previous turn's spell count for this transition. Exact-list trusted preflight excludes unresolved material day/night cards; the turn action itself remains unimplemented."
+        "The bounded previous-turn summary supplies the prior active player's spell count, the public designation changes before untap selection, and resulting transforms and held triggers replay exactly. Shared-team modification is reviewed separately in 502.2a."
       ],
       "required_scenarios": [
         "positive",
@@ -29568,7 +29578,7 @@
         "end_line": 2155,
         "start_line": 2154
       },
-      "status": "blocked"
+      "status": "passing"
     },
     {
       "assertion_kind": "unsupported_fail_closed",
@@ -29625,6 +29635,8 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_ordinary_untap_is_stackless_and_advances_directly_to_upkeep",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_stun_and_next_untap_restrictions_precede_the_untap_batch",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_global_untap_limit_fails_closed_instead_of_untapping_all",
@@ -29632,6 +29644,7 @@
         "tests.test_exact_zimone_closure.ExactZimoneClosureTests.test_seedborn_muse_untaps_all_permanents_on_opponent_untap"
       ],
       "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
         "CommanderEngine._untap_permanent",
         "CommanderEngine._unsupported_untap_selection_source",
         "CommanderEngine._enter_step"
@@ -29677,18 +29690,20 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_ordinary_untap_is_stackless_and_advances_directly_to_upkeep",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_untap_trigger_waits_for_upkeep_priority_and_replays",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_untap_and_upkeep_triggers_share_one_apnap_order_batch_and_replay"
       ],
       "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
         "CommanderEngine._enter_step",
         "CommanderEngine._dispatch_semantic_event",
         "CommanderEngine._enqueue_semantic_trigger_batch",
         "CommanderEngine._grant_priority"
       ],
       "notes": [
-        "The engine grants no priority in the represented untap step, performs no stack resolution there, and carries represented triggers into the upkeep ordering/priority boundary with exact replay. The rule remains blocked because phasing, day/night, counter-removal, and arbitrary untap-trigger event production are incomplete."
+        "The engine grants no priority in the represented untap step, performs no stack resolution there, and carries represented triggers, including day/night face changes, into the upkeep ordering/priority boundary with exact replay. The rule remains blocked because phasing, counter-removal, and arbitrary untap-trigger event production are incomplete."
       ],
       "required_scenarios": [
         "positive",
@@ -29804,11 +29819,13 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_untap_and_upkeep_triggers_share_one_apnap_order_batch_and_replay",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_late_permanent_and_delayed_trigger_wait_for_later_upkeep",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_state_actions_precede_waiting_trigger_placement_and_priority"
       ],
       "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
         "CommanderEngine._enter_step",
         "CommanderEngine._dispatch_semantic_event",
         "CommanderEngine._delayed_trigger_stack_item",
@@ -29816,7 +29833,7 @@
         "CommanderEngine._stabilize"
       ],
       "notes": [
-        "Represented beginning-of-untap, becomes-untapped, permanent upkeep, and delayed upkeep triggers wait without priority and enter one APNAP/controller-order batch. Trigger time does not constrain a controller's submitted order. The rule remains blocked because phasing, day/night, all untap replacements and trigger sources, and CR 603.3b's complete two-part process are not yet represented."
+        "Represented beginning-of-untap, day/night transform, becomes-untapped, permanent upkeep, and delayed upkeep triggers wait without priority and enter one APNAP/controller-order batch. Trigger time does not constrain a controller's submitted order. The rule remains blocked because phasing, all untap replacements and trigger sources, and CR 603.3b's complete two-part process are not yet represented."
       ],
       "required_scenarios": [
         "positive",
@@ -37926,6 +37943,7 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_preflight_v080.NormalizedZoneEventTests.test_simultaneous_semantic_triggers_use_apnap_and_owner_order",
         "tests.test_combat_damage_rules.CombatDamageRuleTests.test_damage_and_resulting_death_triggers_share_one_order_batch"
       ],
@@ -38052,11 +38070,13 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
-        "tests.test_exact_artifact_engines.ExactArtifactEngineTests.test_padeem_hexproof_and_intervening_upkeep_condition"
+        "tests.test_exact_artifact_engines.ExactArtifactEngineTests.test_padeem_hexproof_and_intervening_upkeep_condition",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count"
       ],
       "implementation_components": [
         "CommanderEngine._semantic_event_condition_matches",
-        "CommanderEngine._prepare_stack_resolution"
+        "CommanderEngine._prepare_stack_resolution",
+        "quorune.spell_history_transform.spell_history_transform_condition_holds"
       ],
       "notes": [
         "Represented intervening conditions are checked before trigger creation and again immediately before resolution; a false second check removes the trigger without its effect."
@@ -53395,23 +53415,27 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-701.27",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "701"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count"
+      ],
+      "implementation_components": [
+        "mechanics/contracts/spell-history-transformations.json"
+      ],
+      "notes": [
+        "The subordinate cases own executable behavior."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "701.27",
       "rule_text_sha256": "d2d68041b53daa7577b38494eb66792f9bd9a3450f025587347a00610c67fbce",
       "schema_version": 1,
@@ -53420,26 +53444,41 @@
         "end_line": 3529,
         "start_line": 3528
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "double-faced tokens and copied, modal, melded, or merged forms remain excluded"
       ],
       "case_id": "cr-701.27a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "701.27"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "The owner accepts only a represented nonmodal double-faced card permanent."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "701.27a",
       "rule_text_sha256": "6c627a320a8df9446a686e3db2e9527594095ae73cf612aa1e2abe2afb988b44",
       "schema_version": 1,
@@ -53448,7 +53487,7 @@
         "end_line": 3531,
         "start_line": 3530
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -53479,23 +53518,33 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-701.27c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "negative"
+      ],
       "dependency_rule_ids": [
         "701.27"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "Non-double-faced objects ignore the instruction without mutation."
+      ],
+      "required_scenarios": [
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "701.27c",
       "rule_text_sha256": "863555647f874777524ff472ebc15bc8a60b9afe06570e0a3bbc06ebd32ce2cc",
       "schema_version": 1,
@@ -53504,26 +53553,36 @@
         "end_line": 3535,
         "start_line": 3534
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-701.27d",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "negative"
+      ],
       "dependency_rule_ids": [
         "701.27"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "Instant and sorcery destination faces are rejected."
+      ],
+      "required_scenarios": [
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "701.27d",
       "rule_text_sha256": "3f73c8a8b74dd13e4a618695b04b732d3c9645019f2bb93f7968f18df7cd1fcd",
       "schema_version": 1,
@@ -53532,7 +53591,7 @@
         "end_line": 3537,
         "start_line": 3536
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -53563,23 +53622,40 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "delayed and non-source transform instructions remain excluded"
       ],
       "case_id": "cr-701.27f",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "701.27"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent",
+        "quorune.trigger_discovery._semantic_trigger_context"
+      ],
+      "notes": [
+        "The stack item pins a monotonic transform count and ignores a stale instruction."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "701.27f",
       "rule_text_sha256": "428b864fb6cd388e91d05b98a8412b5ac6f54007fa74395e3dd5c6a6db40605b",
       "schema_version": 1,
@@ -53588,7 +53664,7 @@
         "end_line": 3541,
         "start_line": 3540
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -77923,23 +77999,27 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.145",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_compiler_lowers_paired_daybound_and_legacy_transform_nodes"
+      ],
+      "implementation_components": [
+        "mechanics/contracts/spell-history-transformations.json"
+      ],
+      "notes": [
+        "Paired keyword behavior is reviewed in 702.145a-g."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.145",
       "rule_text_sha256": "7b5949ef119ce2cc1d009dd03514753ef0d8c1b19104fdbfc1cbddd828d1b0d2",
       "schema_version": 1,
@@ -77948,26 +78028,39 @@
         "end_line": 5075,
         "start_line": 5074
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-702.145a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
       "dependency_rule_ids": [
         "702.145"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_compiler_lowers_paired_daybound_and_legacy_transform_nodes",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.compiler.day_night_nodes.day_night_keyword_node"
+      ],
+      "notes": [
+        "The compiler requires one Daybound front and one Nightbound back face."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "702.145a",
       "rule_text_sha256": "eb55658d68a81da9c338fd1e40676b64228fd61e36a9220f6642480c04abf23c",
       "schema_version": 1,
@@ -77976,26 +78069,42 @@
         "end_line": 5077,
         "start_line": 5076
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "copied, granted, text-changed, modal, merged, and token forms remain outside trust"
       ],
       "case_id": "cr-702.145b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "702.145"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.trusted_daybound_entry_face",
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "Night entry selects the back face before entry and non-bound transform effects are ignored while the component applies."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "702.145b",
       "rule_text_sha256": "17e02cd5b16c85f080f08dc36ecbc6e3ce0136d3899b0e5ffeba601b14e2f285",
       "schema_version": 1,
@@ -78004,26 +78113,38 @@
         "end_line": 5079,
         "start_line": 5078
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-702.145c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "702.145"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.synchronize_day_night"
+      ],
+      "notes": [
+        "Restoring the shared Daybound component at night immediately synchronizes the face."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "702.145c",
       "rule_text_sha256": "189d33018a190df23bbefb17fe2ed91d5adaebe09b07cbf0d212d4355ca8fa75",
       "schema_version": 1,
@@ -78032,26 +78153,36 @@
         "end_line": 5081,
         "start_line": 5080
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-702.145d",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive"
+      ],
       "dependency_rule_ids": [
         "702.145"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.synchronize_day_night"
+      ],
+      "notes": [
+        "An applicable Daybound permanent establishes day from neither."
+      ],
+      "required_scenarios": [
+        "positive"
+      ],
+      "reviewed": true,
       "rule_id": "702.145d",
       "rule_text_sha256": "9f9df38ee4e512985e17d62fa0a43c52347a219b730d8294d15167192cbfcbe8",
       "schema_version": 1,
@@ -78060,26 +78191,38 @@
         "end_line": 5083,
         "start_line": 5082
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "copied, granted, text-changed, modal, merged, and token forms remain outside trust"
       ],
       "case_id": "cr-702.145e",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "702.145"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "A currently applicable Nightbound component blocks non-bound transform instructions."
+      ],
+      "required_scenarios": [
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "702.145e",
       "rule_text_sha256": "1febe35a870605563e3b7cccda0f862b4c5c345499933b21dfa367b4f3a311d4",
       "schema_version": 1,
@@ -78088,26 +78231,38 @@
         "end_line": 5085,
         "start_line": 5084
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-702.145f",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "702.145"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.synchronize_day_night"
+      ],
+      "notes": [
+        "Nightbound faces synchronize to their Daybound faces when it becomes day."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "702.145f",
       "rule_text_sha256": "9d33461ad6147a3ca6858f21cd1a2403b428f8a9c3c2ca8abc2143662249d7c5",
       "schema_version": 1,
@@ -78116,26 +78271,38 @@
         "end_line": 5087,
         "start_line": 5086
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-702.145g",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
       "dependency_rule_ids": [
         "702.145"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.synchronize_day_night"
+      ],
+      "notes": [
+        "Nightbound establishes night from neither only when no applicable Daybound permanent exists."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "702.145g",
       "rule_text_sha256": "2b137742bf0cf4490261ab3a72da6cc03c19968a0b8355d3c34fc4e337d40ca7",
       "schema_version": 1,
@@ -78144,7 +78311,7 @@
         "end_line": 5089,
         "start_line": 5088
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -89624,23 +89791,33 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "double-faced tokens remain outside the represented transform owner"
       ],
       "case_id": "cr-712.9",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "negative"
+      ],
       "dependency_rule_ids": [
         "712"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "Ordinary non-double-faced permanents ignore transform instructions."
+      ],
+      "required_scenarios": [
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "712.9",
       "rule_text_sha256": "b1a5fafbbbf076ad3926dc052a8e59f248e32d4ed36d23ff1e9acc8b1110c0c7",
       "schema_version": 1,
@@ -89649,26 +89826,36 @@
         "end_line": 5899,
         "start_line": 5896
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-712.10",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "negative"
+      ],
       "dependency_rule_ids": [
         "712"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "A destination instant or sorcery face prevents the face change."
+      ],
+      "required_scenarios": [
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "712.10",
       "rule_text_sha256": "e86c235bc2b90ae0ce1e2cfd7ee3e98d815bed2f160ef73e97c49692bce600a3",
       "schema_version": 1,
@@ -89677,7 +89864,7 @@
         "end_line": 5901,
         "start_line": 5900
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -90128,23 +90315,37 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-712.18",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "712"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent"
+      ],
+      "notes": [
+        "Controller, logical identity, counters, damage, attachments, and timestamp survive transformation."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "712.18",
       "rule_text_sha256": "dcbe53fafa9f2748d9f52c5b601816b3a4252c95f9bde596fb2e0a337ec15ddf",
       "schema_version": 1,
@@ -90153,7 +90354,7 @@
         "end_line": 5937,
         "start_line": 5935
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -96115,21 +96316,25 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-731",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "mechanics/contracts/spell-history-transformations.json"
+      ],
+      "notes": [
+        "Subordinate rules own designation behavior."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "731",
       "rule_text_sha256": "ad37830d1feec79a1f5ac1dd952695a057350081776b423f7288974700a829d3",
       "schema_version": 1,
@@ -96138,26 +96343,44 @@
         "end_line": 6365,
         "start_line": 6364
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "explicit effects that make it day or night are not compiled"
       ],
       "case_id": "cr-731.1",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "731"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.day_night.synchronize_day_night",
+        "quorune.model.GameState"
+      ],
+      "notes": [
+        "The public designation begins absent and, once established, remains exactly day or night."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "731.1",
       "rule_text_sha256": "b06799110cb3b8dff5ebc2b2c8939d50b471c621b453ced88317143cb5a91505",
       "schema_version": 1,
@@ -96166,7 +96389,7 @@
         "end_line": 6367,
         "start_line": 6366
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -96197,23 +96420,38 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-731.2",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "731"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
+        "quorune.turn_history.roll_turn_history"
+      ],
+      "notes": [
+        "One bounded prior-turn summary supplies the second untap-step check."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "731.2",
       "rule_text_sha256": "f55d1ad910e181c23ab97b888f4bad693f3149af438a6c132bfb37c4a4db4558",
       "schema_version": 1,
@@ -96222,26 +96460,40 @@
         "end_line": 6371,
         "start_line": 6370
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "shared-team turns remain outside supported profiles"
       ],
       "case_id": "cr-731.2a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "multiplayer"
+      ],
       "dependency_rule_ids": [
         "731.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition"
+      ],
+      "notes": [
+        "Only the previous turn's active player's zero cast count changes day to night."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "multiplayer"
+      ],
+      "reviewed": true,
       "rule_id": "731.2a",
       "rule_text_sha256": "34b2afd9d52e1527cf5d0272c6a0170cc5dedb0d61bdaa81f7dc9c4cd4817279",
       "schema_version": 1,
@@ -96250,26 +96502,40 @@
         "end_line": 6373,
         "start_line": 6372
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "shared-team turns remain outside supported profiles"
       ],
       "case_id": "cr-731.2b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "multiplayer"
+      ],
       "dependency_rule_ids": [
         "731.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition"
+      ],
+      "notes": [
+        "Only two or more casts by the previous turn's active player change night to day."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "multiplayer"
+      ],
+      "reviewed": true,
       "rule_id": "731.2b",
       "rule_text_sha256": "e870b4f1abfdfc7146a33830a8e86c27be8b21a46511e3fceb93ae381d35f48b",
       "schema_version": 1,
@@ -96278,26 +96544,36 @@
         "end_line": 6375,
         "start_line": 6374
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "aggregate variants outside the declared bounded grammar remain unsupported"
       ],
       "case_id": "cr-731.2c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "negative"
+      ],
       "dependency_rule_ids": [
         "731.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability"
+      ],
+      "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition"
+      ],
+      "notes": [
+        "The untap check leaves neither unchanged unless an applicable bound permanent establishes a designation independently."
+      ],
+      "required_scenarios": [
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "731.2c",
       "rule_text_sha256": "bc2867a1a2805fb6a4ddb9e26d6f6c05b908397abceb4a4368b8ad474921a7a8",
       "schema_version": 1,
@@ -96306,7 +96582,7 @@
         "end_line": 6377,
         "start_line": 6376
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
