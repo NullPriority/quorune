@@ -121,6 +121,10 @@ class FixedManaModelTests(unittest.TestCase):
         malformed["oracle_line"] = 1
         with self.assertRaises(FixedManaAbilityError):
             FixedActivatedManaAbilitySpec.from_dict(malformed)
+        malformed = spec.to_dict()
+        malformed["spend_restriction"] = "unsupported"
+        with self.assertRaises(FixedManaAbilityError):
+            FixedActivatedManaAbilitySpec.from_dict(malformed)
 
     def test_fixed_mode_rejects_unknown_or_empty_outputs(self):
         with self.assertRaises(FixedManaAbilityError):

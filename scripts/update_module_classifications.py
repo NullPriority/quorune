@@ -70,6 +70,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/entry_counter_model.py",
         "quorune/evolve.py",
         "quorune/fixed_keyword_entry_counters.py",
+        "quorune/fixed_token_production.py",
         "quorune/day_night_model.py",
         "quorune/spell_history_transform_model.py",
         "quorune/leveler_bands.py",
@@ -215,6 +216,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/landwalk.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",
+        "quorune/mana_restrictions.py",
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
         "quorune/intrinsic_basic_land_mana.py",
@@ -472,6 +474,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/mana.py",
         "quorune/mana_activation.py",
+        "quorune/mana_restrictions.py",
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
         "quorune/intrinsic_basic_land_mana.py",
@@ -546,6 +549,7 @@ def _owner(relative: str, layer: str) -> str:
     }:
         return "combat_damage"
     if relative in {
+        "quorune/fixed_token_production.py",
         "quorune/standard_token_abilities.py",
         "quorune/token_creation.py",
     }:

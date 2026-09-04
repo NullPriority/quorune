@@ -71,6 +71,18 @@ _WITNESSES = {
         power="1",
         toughness="1",
     ),
+    "changeling-saga-boundary": _Witness(
+        "Generic Changeling Saga Boundary Fixture",
+        "Enchantment — Saga",
+        "I — Create a 2/2 blue Shapeshifter creature token with changeling.\n"
+        "II — Any number of target Shapeshifter creatures you control have "
+        "base power and toughness 4/4.\n"
+        "III — Choose up to one target creature or planeswalker. Each "
+        "creature with power 4 or greater you control deals damage equal to "
+        "its power to that permanent.",
+        "{1}{G}{U}",
+        ("Changeling",),
+    ),
     "floating-shield": _Witness(
         "Floating Shield",
         "Enchantment — Aura",
@@ -911,6 +923,10 @@ SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS = (
         "residual.event_binding.ordinary-saga-chapter-event-binding",
         "residual.replacement.self-replacement-and-prevention-ordering",
     ),
+    _pair(
+        "capability.continuous.characteristics.changeling",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
 )
 
 
@@ -1154,7 +1170,7 @@ _bind("junk-jet", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
 _bind(
     "saga-chapter-boundary",
     SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[0],
-    *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[3:],
+    *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[3:-1],
 )
 _bind(
     "saga-attached-boundary",
@@ -1163,6 +1179,10 @@ _bind(
 _bind(
     "saga-query-boundary",
     SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[2],
+)
+_bind(
+    "changeling-saga-boundary",
+    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[-1],
 )
 _bind("prismatic-circle", *EFFECT_AND_REPLACEMENT_PAIRS[:3])
 _bind("serras-hymn", EFFECT_AND_REPLACEMENT_PAIRS[3])

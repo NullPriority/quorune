@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 5,
+  "contract_version": 6,
   "mechanic_id": "cr-603-handling-triggered-abilities",
   "official_name": "Handling Triggered Abilities",
   "effective_date": "2026-08-07",
@@ -92,6 +92,7 @@
       "permanent enters or leaves",
       "creature dies",
       "artifact enters or goes to a graveyard",
+      "Afterlife source permanent goes to a graveyard from the battlefield",
       "land enters",
       "second card is drawn",
       "positive post-replacement and post-prevention damage is dealt",
@@ -238,18 +239,22 @@
     "test_fixed_source_event_capabilities_fail_closed",
     "test_source_zone_lifecycle_uses_last_known_controller_and_replays",
     "test_source_damage_bindings_use_committed_damage_events",
-    "test_source_damage_event_dispatch_mutant_is_killed"
+    "test_source_damage_event_dispatch_mutant_is_killed",
+    "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+    "test_multiple_afterlife_instances_share_apnap_batch_and_replay",
+    "test_copy_and_delayed_tokens_revalidate_and_replay",
+    "test_token_replacement_order_rollback_and_privacy"
   ],
   "implementation": {
-    "component": "immutable zone_trigger_events and post-result DamageEvent occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
-    "version": "trigger-handling-foundation-v6"
+    "component": "immutable zone_trigger_events and post-result DamageEvent occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering including fixed Afterlife and next-end-step token production, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
+    "version": "trigger-handling-foundation-v7"
   },
   "known_blockers": [
     "the Oracle compiler recognizes selected whole-text trigger templates rather than the complete trigger grammar",
     "the second CR 603.3b placement part for abilities that trigger from other abilities triggering is not represented",
     "generic modal trigger legality, all target and division choices, and illegal-trigger removal remain incomplete",
     "multi-occurrence, becomes, visibility, once-per-turn instruction, state, player-loss, linked-mid-sentence, and reflexive trigger families are incomplete",
-    "delayed-trigger creation provenance and simultaneous-event selection are not universally typed even though detected occurrences now share one typed placement path",
+    "delayed-trigger creation provenance and simultaneous-event selection are not universally typed outside the fixed source-independent next-end-step token form even though detected occurrences share one typed placement path",
     "entry and leaves look-back evaluation does not yet use the complete continuous-effect and LKI exception matrix",
     "Aura paired-object zone-change lookup and hidden-zone finding are incomplete",
     "generated trigger effects promote only when normalized event detection, placement, and every effect dependency are capability-closed; optional, intervening-if, reflexive, attachment-relative, aggregate, unrestricted-damage, creature-recipient, and unsupported-body variants remain outside the bounded fixed source-event family"

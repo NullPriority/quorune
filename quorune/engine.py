@@ -186,6 +186,10 @@ from .mana import (
     auto_plan_payment,
     parsed_cost,
 )
+from .mana_restrictions import (
+    mana_restriction_allows,
+    spell_mana_spend_context,
+)
 from .mana_activation import complete_mana_activation, complete_mana_plan_activations
 from .mana_ability_runtime import (
     mana_modes_for_ability,
@@ -2349,35 +2353,10 @@ class CommanderEngine(
         restriction: str,
         spend_context: str | None,
     ) -> bool:
-        is_spell = bool(spend_context and "spell" in spend_context)
-        is_artifact = bool(
-            spend_context and spend_context.startswith("artifact")
-        )
-        is_legendary = bool(
-            spend_context and "legendary" in spend_context
-        )
-        if restriction == "artifact_spell_or_ability":
-            return (
-                (is_spell and is_artifact)
-                or spend_context == "artifact_ability"
-            )
-        if restriction == "nonartifact_spell_prohibited":
-            return not (is_spell and not is_artifact)
-        if restriction == "legendary_spell_uncounterable":
-            return is_spell and is_legendary
-        return False
+        return mana_restriction_allows(restriction, spend_context)
 
     def _spell_mana_spend_context(self, type_line: str) -> str:
-        types, _, supertypes = self._type_parts(type_line)
-        artifact = "artifact" in types
-        legendary = "legendary" in supertypes
-        if artifact and legendary:
-            return "artifact_legendary_spell"
-        if artifact:
-            return "artifact_spell"
-        if legendary:
-            return "legendary_spell"
-        return "nonartifact_spell"
+        return spell_mana_spend_context(type_line)
 
     def _restricted_mana(self, seat: str) -> dict[str, dict[str, int]]:
         raw = self.state.players[seat].stats.setdefault(

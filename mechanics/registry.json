@@ -40,8 +40,8 @@
     {
       "mechanic_id": "cr-111-tokens",
       "path": "mechanics/contracts/basic-token-creation.json",
-      "sha256": "1736420c29d8ed5aa0d7bd0249e6ac71f2e80205fd8aa01609f560d3e3727879",
-      "version": 4
+      "sha256": "779fb2c398b35c76dab0f138d805b37fd58f985c680f07c372de0ddecf4c3207",
+      "version": 5
     },
     {
       "mechanic_id": "battle-cry",
@@ -142,8 +142,8 @@
     {
       "mechanic_id": "cr-707-copying-objects",
       "path": "mechanics/contracts/copying-objects.json",
-      "sha256": "f34a44de5daff3eb7878b31d70071fe72d6084e6056857016d4364c561cfc95a",
-      "version": 1
+      "sha256": "aa6762cc345c0922eb58504396bfcb13303c8bc6dd1dfff8c81315cd885346ca",
+      "version": 2
     },
     {
       "mechanic_id": "counter",
@@ -262,8 +262,8 @@
     {
       "mechanic_id": "cr-513-end-step",
       "path": "mechanics/contracts/end-step.json",
-      "sha256": "bb7213aa24b0720a1c718c4a7759bf4f39f205ef1d262479546ba437fe2b3cd6",
-      "version": 1
+      "sha256": "b225edaa3b4e31daab86b122d3b2a369552bd3ce1dc40edf541fb72115e3d63c",
+      "version": 2
     },
     {
       "mechanic_id": "cr-512-ending-phase",
@@ -358,8 +358,8 @@
     {
       "mechanic_id": "cr-603-handling-triggered-abilities",
       "path": "mechanics/contracts/handling-triggered-abilities.json",
-      "sha256": "8c7aa284a8365cba19604911e5c9562c43fac276ca19637ffe718f95d50f1665",
-      "version": 5
+      "sha256": "6381e9305465de45c184ecf8163b0a50c860d558a0af60594283d09dd2802842",
+      "version": 6
     },
     {
       "mechanic_id": "haste",
@@ -454,8 +454,8 @@
     {
       "mechanic_id": "cr-605-mana-abilities",
       "path": "mechanics/contracts/mana-abilities.json",
-      "sha256": "16e2415f54ae0de1c05872cfe7087980abd020885e5f861633fba79617cfc20e",
-      "version": 2
+      "sha256": "f6f564d6b03cc84091c36df086f1f544a03dc332ce610ee17c0292b1479f717c",
+      "version": 3
     },
     {
       "mechanic_id": "melee",
@@ -7109,17 +7109,17 @@
     {
       "category": "game_concepts",
       "contract_path": "mechanics/contracts/basic-token-creation.json",
-      "contract_sha256": "1736420c29d8ed5aa0d7bd0249e6ac71f2e80205fd8aa01609f560d3e3727879",
-      "contract_version": 4,
+      "contract_sha256": "779fb2c398b35c76dab0f138d805b37fd58f985c680f07c372de0ddecf4c3207",
+      "contract_version": 5,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "oracle_ir._effect_template, compiler.token_templates, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
-      "implementation_version": "token-lifecycle-v4",
+      "implementation_component": "oracle_ir._effect_template, compiler.token_templates, compiler.fixed_token_production_templates, compiler.token_production_keyword_nodes, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, standard_token_abilities, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
+      "implementation_version": "token-lifecycle-v5",
       "kind": "rules_section",
       "known_blockers": [
-        "tokens with unrecognized abilities, dynamic values, predefined named characteristics outside the closed vocabulary, or linked choices remain residual",
+        "tokens with arbitrary abilities, dynamic values, predefined characteristics outside the closed vocabulary, or linked choices remain residual",
         "optional, multiplying beyond the represented fixed additional-token family, prevention, prohibition, and mutable-state token replacements are not compiled",
-        "copy-token characteristic and entry replacement coverage is incomplete"
+        "copy-token support excludes source-LKI, modified, linked, nontarget, multiple-target, and zone-relative forms"
       ],
       "mechanic_id": "cr-111-tokens",
       "official_name": "Tokens",
@@ -7138,7 +7138,16 @@
         "test_additional_token_component_replays_exactly",
         "test_generic_additional_token_program_replays_exactly",
         "test_amass_without_army_creates_then_counters_one_black_army",
-        "test_amass_token_and_counter_replacements_suspend_in_rule_order_and_replay"
+        "test_amass_token_and_counter_replacements_suspend_in_rule_order_and_replay",
+        "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "test_token_production_grammar_and_capability_mutants_fail_closed",
+        "test_investigate_and_predefined_tokens_use_canonical_abilities",
+        "test_token_characteristic_fragments_use_shared_rules_owners",
+        "test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+        "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+        "test_multiple_afterlife_instances_share_apnap_batch_and_replay",
+        "test_copy_and_delayed_tokens_revalidate_and_replay",
+        "test_token_replacement_order_rollback_and_privacy"
       ],
       "trust_level": "untrusted"
     },
@@ -9075,15 +9084,15 @@
     {
       "category": "turn_structure",
       "contract_path": "mechanics/contracts/end-step.json",
-      "contract_sha256": "bb7213aa24b0720a1c718c4a7759bf4f39f205ef1d262479546ba437fe2b3cd6",
-      "contract_version": 1,
+      "contract_sha256": "b225edaa3b4e31daab86b122d3b2a369552bd3ce1dc40edf541fb72115e3d63c",
+      "contract_version": 2,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "CommanderEngine end-step entry, semantic and delayed trigger collection, trigger stabilization, priority, delayed-condition matching, and cleanup duration paths",
-      "implementation_version": "end-step-v1",
+      "implementation_component": "CommanderEngine end-step entry, semantic and delayed trigger collection, fixed next-end-step token scheduling, trigger stabilization, priority, delayed-condition matching, and cleanup duration paths",
+      "implementation_version": "end-step-v2",
       "kind": "rules_section",
       "known_blockers": [
-        "the Oracle compiler does not recognize every beginning-of-end-step wording, condition, target, mode, or optional choice",
+        "the Oracle compiler recognizes one fixed source-independent next-end-step token form but not every beginning-of-end-step wording, condition, target, mode, or optional choice",
         "the triggered-ability engine does not cover every source, look-back, intervening-condition, and multiplayer interaction",
         "the complete turn-duration continuous-effect registry remains incomplete under CR 514"
       ],
@@ -9099,7 +9108,8 @@
         "test_late_permanent_and_delayed_trigger_wait_for_next_end_step",
         "test_end_step_created_turn_duration_survives_until_cleanup",
         "test_determined_iteration_populates_with_haste_and_delayed_sacrifice",
-        "test_daretti_delayed_return_requires_same_logical_object"
+        "test_daretti_delayed_return_requires_same_logical_object",
+        "test_copy_and_delayed_tokens_revalidate_and_replay"
       ],
       "trust_level": "untrusted"
     },
@@ -9252,19 +9262,19 @@
     {
       "category": "spells_abilities_effects",
       "contract_path": "mechanics/contracts/handling-triggered-abilities.json",
-      "contract_sha256": "8c7aa284a8365cba19604911e5c9562c43fac276ca19637ffe718f95d50f1665",
-      "contract_version": 5,
+      "contract_sha256": "6381e9305465de45c184ecf8163b0a50c860d558a0af60594283d09dd2802842",
+      "contract_version": 6,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "immutable zone_trigger_events and post-result DamageEvent occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
-      "implementation_version": "trigger-handling-foundation-v6",
+      "implementation_component": "immutable zone_trigger_events and post-result DamageEvent occurrences, extracted trigger_discovery matching, oracle_ir trigger lowering including fixed Afterlife and next-end-step token production, typed trigger_batches APNAP/placement ownership, trigger_targeting, and narrow CommanderEngine coordination",
+      "implementation_version": "trigger-handling-foundation-v7",
       "kind": "rules_section",
       "known_blockers": [
         "the Oracle compiler recognizes selected whole-text trigger templates rather than the complete trigger grammar",
         "the second CR 603.3b placement part for abilities that trigger from other abilities triggering is not represented",
         "generic modal trigger legality, all target and division choices, and illegal-trigger removal remain incomplete",
         "multi-occurrence, becomes, visibility, once-per-turn instruction, state, player-loss, linked-mid-sentence, and reflexive trigger families are incomplete",
-        "delayed-trigger creation provenance and simultaneous-event selection are not universally typed even though detected occurrences now share one typed placement path",
+        "delayed-trigger creation provenance and simultaneous-event selection are not universally typed outside the fixed source-independent next-end-step token form even though detected occurrences share one typed placement path",
         "entry and leaves look-back evaluation does not yet use the complete continuous-effect and LKI exception matrix",
         "Aura paired-object zone-change lookup and hidden-zone finding are incomplete",
         "generated trigger effects promote only when normalized event detection, placement, and every effect dependency are capability-closed; optional, intervening-if, reflexive, attachment-relative, aggregate, unrestricted-damage, creature-recipient, and unsupported-body variants remain outside the bounded fixed source-event family"
@@ -9302,7 +9312,11 @@
         "test_fixed_source_event_capabilities_fail_closed",
         "test_source_zone_lifecycle_uses_last_known_controller_and_replays",
         "test_source_damage_bindings_use_committed_damage_events",
-        "test_source_damage_event_dispatch_mutant_is_killed"
+        "test_source_damage_event_dispatch_mutant_is_killed",
+        "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+        "test_multiple_afterlife_instances_share_apnap_batch_and_replay",
+        "test_copy_and_delayed_tokens_revalidate_and_replay",
+        "test_token_replacement_order_rollback_and_privacy"
       ],
       "trust_level": "untrusted"
     },
@@ -9342,17 +9356,17 @@
     {
       "category": "spells_abilities_effects",
       "contract_path": "mechanics/contracts/mana-abilities.json",
-      "contract_sha256": "16e2415f54ae0de1c05872cfe7087980abd020885e5f861633fba79617cfc20e",
-      "contract_version": 2,
+      "contract_sha256": "f6f564d6b03cc84091c36df086f1f544a03dc332ce610ee17c0292b1479f717c",
+      "contract_version": 3,
       "coverage_status": "partial",
       "dependencies": [],
       "implementation_component": "FixedActivatedManaAbilitySpec, IntrinsicBasicLandManaSpec, typed CardProgram card-form declarations, activation query, ManaAbilityRuntime, and the canonical mana-activation transaction",
-      "implementation_version": "typed-mana-ability-v2",
+      "implementation_version": "typed-mana-ability-v3",
       "kind": "rules_section",
       "known_blockers": [
         "the CR 605.1a exclusion for costs or effects that move cards to or from a library is not yet a complete typed classifier outside the closed fixed-output families",
         "triggered mana abilities are not generically identified or dispatched outside the stack",
-        "dynamic, conditional, restricted, and side-effecting mana-output grammar remains outside the fixed-output capability",
+        "dynamic, conditional, side-effecting, fixed-colored restricted, and spending restrictions outside the three exact represented forms remain outside the fixed-output capabilities",
         "explicit mana activation during arbitrary rule/effect payment windows is not exposed as a general nested decision",
         "activation reentrancy is not represented as a state that can be independently tested",
         "mana-production replacement and trigger integration is incomplete"
@@ -9392,7 +9406,10 @@
         "test_intrinsic_basic_land_mana_uses_live_effective_land_types",
         "test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped",
         "test_intrinsic_basic_land_mana_compiler_and_runtime_mutants_are_killed",
-        "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual"
+        "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual",
+        "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "test_compiled_restricted_mana_is_controller_scoped_and_replays",
+        "test_predefined_token_profiles_enforce_mana_and_impulse_rules"
       ],
       "trust_level": "untrusted"
     },
@@ -9966,15 +9983,15 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/copying-objects.json",
-      "contract_sha256": "f34a44de5daff3eb7878b31d70071fe72d6084e6056857016d4364c561cfc95a",
-      "contract_version": 1,
+      "contract_sha256": "aa6762cc345c0922eb58504396bfcb13303c8bc6dd1dfff8c81315cd885346ca",
+      "contract_version": 2,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "CardInstance.object_kind, CommanderEngine._create_copy_object/_copy_stack_item/_begin_resolve_item, and state_based_actions.evaluate_state_based_actions",
-      "implementation_version": "copy-object-lifecycle-v1",
+      "implementation_component": "CardInstance.object_kind, compiler.token_templates, token_creation.create_tokens, CommanderEngine._create_copy_object/_copy_stack_item/_begin_resolve_item, and state_based_actions.evaluate_state_based_actions",
+      "implementation_version": "copy-object-lifecycle-v2",
       "kind": "rules_section",
       "known_blockers": [
-        "the complete CR 707.2 copiable-values and layer-1 interaction matrix is not implemented",
+        "the complete CR 707.2 copiable-values and layer-1 interaction matrix is not implemented outside the exact current-target token-copy and existing stack-copy slices",
         "copying cards and casting or playing those copies under CR 707.12 is not integrated with the full casting and land-play workflows",
         "Prepare copy objects that remain in exile under CR 722.3c are not represented",
         "face-down, mutate, meld, stickers, linked abilities, and copy-effect exception interactions remain incomplete",
@@ -9998,7 +10015,9 @@
         "test_permanent_spell_keeps_its_logical_incarnation",
         "test_lithoform_engine_copies_triggered_ability_and_spell_types",
         "test_lithoform_engine_permanent_spell_copy_becomes_token",
-        "test_flusterstorm_storm_copies_are_individual_stack_objects"
+        "test_flusterstorm_storm_copies_are_individual_stack_objects",
+        "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "test_copy_and_delayed_tokens_revalidate_and_replay"
       ],
       "trust_level": "untrusted"
     },

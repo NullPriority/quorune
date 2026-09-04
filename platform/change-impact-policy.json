@@ -446,6 +446,46 @@
       ]
     },
     {
+      "id": "fixed-token-production-contract",
+      "patterns": [
+        "quorune/fixed_token_production.py",
+        "quorune/mana_restrictions.py",
+        "quorune/standard_token_abilities.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/compiler/fixed_token_production_templates.py",
+        "quorune/compiler/dependency_gate.py",
+        "quorune/compiler/token_production_keyword_nodes.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/rules/activation/resolution.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "mechanics/contracts/basic-token-creation.json",
+        "mechanics/contracts/copying-objects.json",
+        "mechanics/contracts/end-step.json",
+        "mechanics/contracts/handling-triggered-abilities.json",
+        "mechanics/contracts/mana-abilities.json",
+        "rules/conformance-reviews/cr-106-6-restricted-mana.json",
+        "rules/conformance-reviews/cr-111-fixed-token-production.json",
+        "rules/conformance-reviews/cr-701-16-investigate.json",
+        "rules/conformance-reviews/cr-702-135-afterlife.json",
+        "tests/fixtures/fixed-token-production-cards.json",
+        "tests/test_fixed_token_production.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_changeling_characteristics",
+        "test_combat_declaration_restrictions",
+        "test_delayed_triggers",
+        "test_fixed_impulse_access",
+        "test_fixed_mana_abilities",
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_rules_scheduler",
+        "test_token_creation_replacements",
+        "test_trigger_batches",
+        "test_zone_trigger_events"
+      ]
+    },
+    {
       "id": "attached-characteristic-closure-contract",
       "patterns": [
         "quorune/ability_fragments.py",

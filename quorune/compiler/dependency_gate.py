@@ -18,6 +18,7 @@ from ..rules.capabilities import (
 
 _PROWESS_MECHANIC = "prowess"
 _BLOODTHIRST_MECHANIC = "bloodthirst"
+_AFTERLIFE_MECHANIC = "afterlife"
 
 
 @dataclass(frozen=True, slots=True)
@@ -265,6 +266,12 @@ def keyword_dependency_gate(
     capability_profile: str,
 ) -> DependencyGate:
     """Select a reviewed keyword capability before generic mechanic gating."""
+
+    if mechanics == (_AFTERLIFE_MECHANIC,):
+        return DependencyGate(
+            blockers=("mechanic:afterlife-dedicated-lowering-required",),
+            capabilities=("trigger.keyword.afterlife.fixed",),
+        )
 
     if mechanics == ("equip",) and re.fullmatch(
         r"Equip\s+(?:\{(?:\d+|[WUBRGC])\})+\.?",

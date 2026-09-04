@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 2,
+  "contract_version": 3,
   "mechanic_id": "cr-605-mana-abilities",
   "official_name": "Mana Abilities",
   "effective_date": "2026-08-07",
@@ -57,7 +57,8 @@
       "loyalty-symbol cost",
       "trigger event",
       "priority or payment window",
-      "source availability"
+      "source availability",
+      "artifact and creature spell types for represented spending restrictions"
     ],
     "state_writes": [
       "mana pool",
@@ -80,7 +81,8 @@
       "an ability requiring a target is not a mana ability"
     ],
     "choices": [
-      "mana output mode"
+      "mana output mode",
+      "selectable color for a represented restricted any-color output"
     ],
     "hidden_information": [],
     "apnap": [],
@@ -111,7 +113,10 @@
     "triggered mana ability",
     "activation during casting",
     "activation during resolution-time payment",
-    "mana-producing spell"
+    "mana-producing spell",
+    "Powerstone nonartifact-spell restriction",
+    "artifact-only selectable any-color output",
+    "creature-only selectable any-color output"
   ],
   "witness_cards": [],
   "rulings": [],
@@ -145,21 +150,25 @@
     "test_intrinsic_basic_land_mana_uses_live_effective_land_types",
     "test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped",
     "test_intrinsic_basic_land_mana_compiler_and_runtime_mutants_are_killed",
-    "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual"
+    "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual",
+    "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+    "test_compiled_restricted_mana_is_controller_scoped_and_replays",
+    "test_predefined_token_profiles_enforce_mana_and_impulse_rules"
   ],
   "implementation": {
     "component": "FixedActivatedManaAbilitySpec, IntrinsicBasicLandManaSpec, typed CardProgram card-form declarations, activation query, ManaAbilityRuntime, and the canonical mana-activation transaction",
-    "version": "typed-mana-ability-v2",
+    "version": "typed-mana-ability-v3",
     "capability_ids": [
       "mana.activated.fixed_output",
+      "mana.activated.restricted_fixed_output",
       "mana.intrinsic.basic_land_type"
     ],
-    "supported_slice": "Target-free nonloyalty activated mana abilities with fully compiled fixed output modes and costs, plus CR 305.6 intrinsic abilities derived from current effective basic land types."
+    "supported_slice": "Target-free nonloyalty activated mana abilities with fully compiled fixed output modes and costs, the exact Powerstone colorless restriction and artifact-only or creature-only selectable any-color restrictions, plus CR 305.6 intrinsic abilities derived from current effective basic land types."
   },
   "known_blockers": [
     "the CR 605.1a exclusion for costs or effects that move cards to or from a library is not yet a complete typed classifier outside the closed fixed-output families",
     "triggered mana abilities are not generically identified or dispatched outside the stack",
-    "dynamic, conditional, restricted, and side-effecting mana-output grammar remains outside the fixed-output capability",
+    "dynamic, conditional, side-effecting, fixed-colored restricted, and spending restrictions outside the three exact represented forms remain outside the fixed-output capabilities",
     "explicit mana activation during arbitrary rule/effect payment windows is not exposed as a general nested decision",
     "activation reentrancy is not represented as a state that can be independently tested",
     "mana-production replacement and trigger integration is incomplete"

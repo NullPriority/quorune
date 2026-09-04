@@ -229,6 +229,11 @@ replacement batch before committing one timestamped batch and dispatching
 enter events. The closed mandatory fixed additional-token family transforms
 that same event with a typed operation, extends its type/subtype subject for
 replacement rediscovery, and cannot apply one source twice.
+Fixed Investigate, Afterlife, named and predefined definitions, exact targeted
+copies, and next-end-step creation all converge on that same transaction.
+Token Changeling and declaration restrictions are serialized as typed
+characteristic fragments, while Powerstone, Junk, and Vibranium use closed
+ability profiles; token display text never becomes runtime authority.
 `replacement_decisions.py` persists competing
 affected-seat choices as ordinary Game Record v3 continuations, and represented
 zone-destination changes use the same exact selection journal before mutation.

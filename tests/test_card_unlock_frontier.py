@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 import gzip
 import json
+from math import comb
 from pathlib import Path
 import unittest
 
@@ -10,6 +11,7 @@ from common import DB_PATH
 from quorune.carddb import CardDatabase
 from quorune.compiler.unlock_frontier import (
     BASE_RESIDUAL_FAMILIES,
+    MAX_BUNDLE_FAMILIES,
     build_card_unlock_frontier,
     canonical_card_data_snapshot,
     canonical_residual_families,
@@ -336,12 +338,28 @@ class CardUnlockFrontierTests(unittest.TestCase):
     def test_bundle_evaluation_is_bounded_and_optimizes_full_cards(self):
         evaluation = self.report["bundle_evaluation"]
         self.assertEqual(3, evaluation["maximum_size"])
-        self.assertGreater(evaluation["evaluated_bundle_count"], 0)
-        gains = [
-            row["expected_exact_card_gain"]
-            for row in evaluation["top_bundles"]
-        ]
-        self.assertEqual(sorted(gains, reverse=True), gains)
+        family_count = min(
+            len(self.report["family_candidates"]),
+            MAX_BUNDLE_FAMILIES,
+        )
+        expected_evaluations = sum(
+            comb(family_count, size)
+            for size in range(1, min(3, family_count) + 1)
+        )
+        self.assertEqual(
+            expected_evaluations,
+            evaluation["evaluated_bundle_count"],
+        )
+        expected_order = sorted(
+            evaluation["top_bundles"],
+            key=lambda row: (
+                -row["expected_exact_card_gain"],
+                -row["expected_exact_ability_gain"],
+                row["size"],
+                row["family_ids"],
+            ),
+        )
+        self.assertEqual(expected_order, evaluation["top_bundles"])
 
     def test_tracked_gzip_is_deterministic_and_round_trips(self):
         payload = b'{"frontier":"complete machine-readable rows"}\n'

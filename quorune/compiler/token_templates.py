@@ -1,12 +1,21 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from itertools import combinations
 import json
 import re
 from typing import Any, Mapping
 
+from ..ability_fragments import (
+    AllCreatureTypesCharacteristicDefinitionSpec,
+    ability_fragment_to_dict,
+)
+from ..fixed_token_production import (
+    FixedTokenCreationTemplate,
+)
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from .fixed_token_production_templates import (
+    extended_fixed_token_creation_effect_template,
+)
 
 
 _ADDITIONAL_DEFINITION = (
@@ -52,15 +61,22 @@ _CREATURE_TOKEN_KEYWORDS = frozenset(
         "haste",
         "hexproof",
         "indestructible",
+        "infect",
+        "islandwalk",
         "lifelink",
+        "mountainwalk",
         "menace",
+        "plainswalk",
         "reach",
+        "swampwalk",
         "trample",
         "vigilance",
+        "forestwalk",
+        "changeling",
     }
 )
 _FIXED_CREATURE_TOKEN = re.compile(
-    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}) "
+    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
     r"(?P<tapped>tapped )?"
     r"(?P<power>\d+)/(?P<toughness>\d+) "
     r"(?P<colors>white|blue|black|red|green|colorless)"
@@ -71,29 +87,11 @@ _FIXED_CREATURE_TOKEN = re.compile(
     re.IGNORECASE,
 )
 _FIXED_PREDEFINED_TOKEN = re.compile(
-    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}) "
+    rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
     r"(?P<tapped>tapped )?"
-    r"(?P<name>Treasure|Food|Map|Clue) tokens?\.?$",
+    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium) tokens?\.?$",
     re.IGNORECASE,
 )
-
-
-@dataclass(frozen=True, slots=True)
-class FixedTokenCreationTemplate:
-    template_id: str
-    effect: Mapping[str, Any]
-    mechanics: tuple[str, ...]
-
-    def compiled(
-        self,
-    ) -> tuple[
-        str,
-        tuple[Mapping[str, Any], ...],
-        None,
-        tuple[str, ...],
-    ]:
-        return self.template_id, (self.effect,), None, self.mechanics
-
 _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
     "treasure token": {
         "name": _TOKEN_TREASURE,
@@ -128,6 +126,34 @@ _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
         ),
         "ability_profile": "two_sac_draw_card_v1",
     },
+    "powerstone token": {
+        "name": "Powerstone",
+        "type_line": "Token Artifact — Powerstone",
+        "display_text": (
+            "{T}: Add {C}. This mana can't be spent to cast a nonartifact "
+            "spell."
+        ),
+        "ability_profile": "tap_colorless_restricted_v1",
+    },
+    "junk token": {
+        "name": "Junk",
+        "type_line": "Token Artifact — Junk",
+        "display_text": (
+            "{T}, Sacrifice this token: Exile the top card of your library. "
+            "You may play that card this turn. Activate only as a sorcery."
+        ),
+        "ability_profile": "tap_sac_impulse_one_v1",
+    },
+    "vibranium token": {
+        "name": "Vibranium",
+        "type_line": "Token Artifact — Vibranium",
+        "display_text": (
+            "{T}: Add {C}. This mana can't be spent to cast a nonartifact "
+            "spell."
+        ),
+        "keywords": ["Indestructible"],
+        "ability_profile": "tap_colorless_restricted_v1",
+    },
     "1/1 colorless thopter artifact creature token with flying": {
         "name": _TOKEN_THOPTER,
         "type_line": "Token Artifact Creature — Thopter",
@@ -154,7 +180,16 @@ _PREDEFINED_CREATION_DEFINITIONS: dict[str, Mapping[str, Any]] = {
         ),
     }
     for key, definition in _TOKEN_DEFINITIONS.items()
-    if key in {"treasure token", "food token", "map token", "clue token"}
+    if key
+    in {
+        "treasure token",
+        "food token",
+        "map token",
+        "clue token",
+        "powerstone token",
+        "junk token",
+        "vibranium token",
+    }
 }
 
 
@@ -186,7 +221,13 @@ def _fixed_colors(first: str, second: str | None) -> list[str] | None:
 
 
 def _positive_fixed_number(value: str) -> int | None:
-    amount = fixed_number(value)
+    amount = {
+        "eleven": 11,
+        "twelve": 12,
+        "thirteen": 13,
+    }.get(value.casefold())
+    if amount is None:
+        amount = fixed_number(value)
     return amount if amount > 0 else None
 
 
@@ -208,11 +249,17 @@ def _single_fixed_token_creation_effect_template(
 ) -> FixedTokenCreationTemplate | None:
     """Lower one complete fixed token-definition instruction.
 
-    Dynamic quantities, copies, named or legendary tokens, ability text,
+    Dynamic quantities, source-relative or modified copies, open ability text,
     attached or attacking tokens, and compound instructions remain residual.
     """
 
     normalized = " ".join(text.split())
+    extended = extended_fixed_token_creation_effect_template(
+        normalized,
+        compile_inner=_single_fixed_token_creation_effect_template,
+    )
+    if extended is not None:
+        return extended
     predefined = _FIXED_PREDEFINED_TOKEN.fullmatch(normalized)
     if predefined is not None:
         quantity = _positive_fixed_number(predefined.group("count"))
@@ -240,7 +287,13 @@ def _single_fixed_token_creation_effect_template(
                     if field != "name"
                 },
             },
-            mechanics=("cr-111-tokens",),
+            mechanics=(
+                "cr-111-tokens",
+                *(
+                    str(keyword).casefold()
+                    for keyword in definition.get("keywords", [])
+                ),
+            ),
         )
 
     creature = _FIXED_CREATURE_TOKEN.fullmatch(normalized)
@@ -271,6 +324,12 @@ def _single_fixed_token_creation_effect_template(
     if keywords:
         characteristics["keywords"] = [
             keyword.title() for keyword in keywords
+        ]
+    if "changeling" in keywords:
+        characteristics["ability_fragments"] = [
+            ability_fragment_to_dict(
+                AllCreatureTypesCharacteristicDefinitionSpec()
+            )
         ]
     return FixedTokenCreationTemplate(
         template_id="create-fixed-creature-token-v2",
@@ -344,7 +403,7 @@ def _fixed_token_batch_creation_effect_template(
                 template = _single_fixed_token_creation_effect_template(
                     candidate
                 )
-                if template is None:
+                if template is None or template.target_schema is not None:
                     break
                 templates.append(template)
             else:
@@ -388,9 +447,9 @@ def fixed_token_creation_effect_template(
     """Lower one closed fixed token-definition instruction.
 
     A single fixed definition or an unambiguous two- or three-definition
-    simultaneous batch is accepted. Dynamic quantities, copies, named or
-    legendary tokens, open ability text, attachments, attacking tokens, and
-    compound non-token instructions remain residual.
+    simultaneous nontargeted batch is accepted. Dynamic quantities,
+    source-relative or modified copies, open ability text, attachments,
+    attacking tokens, and compound non-token instructions remain residual.
     """
 
     return _single_fixed_token_creation_effect_template(

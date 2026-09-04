@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 701.16 — Fixed Investigate actions",
+  "cases": [
+    {
+      "rule_id": "701.16",
+      "rule_text_sha256": "e2641093476bbd11c799f3294ee8715631f539643136ee8e9183f870504f7dbb",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["quorune.rules.capabilities.CapabilityRegistry"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["Keyword-action heading; keyword_action.investigate.fixed owns the bounded fixed-count compiler and runtime slice."]
+    },
+    {
+      "rule_id": "701.16a",
+      "rule_text_sha256": "2ea7bfd703190097d8f3a6952dd477b517bd92b7ec88f0f56528a2caa8334cbe",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.fixed_token_production.FixedInvestigateSpec", "quorune.compiler.token_templates.fixed_token_creation_effect_template", "quorune.token_creation.create_tokens", "quorune.standard_token_abilities.standard_token_characteristics"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed", "tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities", "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "blockers": [],
+      "notes": ["Each represented action creates the canonical Clue definition through the ordinary replacement-aware token transaction; fixed repeated and independently optional wrappers compose through their existing typed owners."]
+    }
+  ]
+}

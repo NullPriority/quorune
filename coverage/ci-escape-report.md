@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "0991ad52edfdebc7b12ad41c8517e72d83957ada6c581b4924d8aac6a4961907"
+verified: "dd621ad3ddaa0b762d43dfd809ed86c7a3a2ced458a55893a04c7f862915e1b5"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 48
-- Deterministic escapes: 43
+- Escapes: 49
+- Deterministic escapes: 44
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -74,6 +74,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260831-46` | [33342572604](https://github.com/NullPriority/quorune/actions/runs/33342572604) | `missing_affected_test` | `added` | The monotonic effective-keyword host contract now routes quorune/keyword_abilities.py to both direct Haste and aerial host modules before merge. The main-health recovery script already remains high-risk and selects the complete generated-validation inventory, including its direct-import regression. |
 | `ci-20260831-47` | [33366100343](https://github.com/NullPriority/quorune/actions/runs/33366100343) | `missing_affected_test` | `added` | The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion. |
 | `ci-20260901-48` | [33523463031](https://github.com/NullPriority/quorune/actions/runs/33523463031) | `missing_affected_test` | `not_applicable` | The promoted prevention incidences are removed from the residual fail-closed pair inventory, while the generated scheduler witness reads the content-bound pre-harvest transition measurement and separately permits the post-harvest current cohort to retire. Existing impact rules already selected both modules; future harvest pre-cloud evidence must run these exact adjacent methods. |
+| `ci-20260904-49` | [33878325617](https://github.com/NullPriority/quorune/actions/runs/33878325617) | `missing_affected_test` | `not_applicable` | The leaf library-search owner still rejects every compound tail, while the integrated token-production owner now explicitly proves the promoted search-then-Investigate composition. Frontier evaluation derives its exact bounded combination count from the current family universe, and the global fail-closed witness executes every declared pair without pinning a volatile total. Existing complete compiler impact selection already includes all affected modules. |
 
 ## Measurement limitations
 

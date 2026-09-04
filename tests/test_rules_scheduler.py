@@ -55,10 +55,14 @@ from scripts.harvest_outcome_history import (
     HarvestOutcomeHistoryError,
 )
 from scripts.update_rules_scheduler import _compact_markdown
+from scripts.update_work_selection_cohort_measurements import (
+    _preserved_transition_is_current,
+)
 from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
     _fixed_activation_zone_change_predicate_measurement,
     _fixed_entry_return_requirement_measurement,
+    _fixed_token_production_measurement,
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
@@ -2337,6 +2341,168 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(1, measurement["complete_card_gain"])
         self.assertEqual(1, measurement["exact_ability_gain"])
         self.assertEqual(1, measurement["material_residual_reduction"])
+
+    def test_fixed_token_production_probe_is_closed_and_accounted(self):
+        probe_id = "fixed-token-production-existing-owner-v1"
+        for source in (
+            "Investigate three times.",
+            "Create a tapped Powerstone token.",
+            "Create a token that's a copy of target creature.",
+            "Create Voja, a legendary 2/2 green and white Wolf creature "
+            "token.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        afterlife = SimpleNamespace(keywords=("Afterlife",))
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "Afterlife 1, afterlife 1",
+                card_record=afterlife,
+            )
+        )
+        for source in (
+            "Investigate X times.",
+            "Create a token that's a copy of this creature.",
+            "Create a Wicked Role token attached to target creature.",
+            "Create a 1/1 red Warrior creature token tapped and attacking.",
+            "Afterlife 21",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=afterlife,
+                    )
+                )
+
+        record = SimpleNamespace(
+            oracle_id="fixture:fixed-token-production",
+            name="Token Fixture",
+            oracle_text="Create a Powerstone token.",
+            faces=(),
+            keywords=(),
+        )
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "partial",
+                    "exact_ability_count": 1,
+                    "minimum_known_blocker_set": [
+                        "effect_clause:create-token"
+                    ],
+                    "abilities": [
+                        {"residuals": [{"family_ids": []}]},
+                        {"residuals": [{"family_ids": []}]},
+                    ],
+                }
+            ]
+        }
+        compiled = SimpleNamespace(
+            status="exact",
+            material_residuals=(),
+            faces=(
+                SimpleNamespace(
+                    nodes=(
+                        SimpleNamespace(exact=True),
+                        SimpleNamespace(exact=True),
+                        SimpleNamespace(exact=True),
+                    )
+                ),
+            ),
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _fixed_token_production_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-token-production",
+                probe_id=probe_id,
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(2, measurement["exact_ability_gain"])
+        self.assertEqual(2, measurement["material_residual_reduction"])
+
+    def test_transition_measurement_reuse_requires_current_semantic_inputs(self):
+        receipt = {
+            "receipt_fingerprint": "receipt",
+            "frontier_fingerprint": "frontier",
+            "oracle_source_sha256": "oracle",
+            "measurement": {"cohort_fingerprint": "cohort"},
+        }
+        self.assertTrue(
+            _preserved_transition_is_current(
+                receipt,
+                frontier_fingerprint="frontier",
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="cohort",
+            )
+        )
+        for field, value in (
+            ("frontier_fingerprint", "changed-frontier"),
+            ("oracle_source_sha256", "changed-oracle"),
+        ):
+            with self.subTest(field=field):
+                stale = deepcopy(receipt)
+                stale[field] = value
+                self.assertFalse(
+                    _preserved_transition_is_current(
+                        stale,
+                        frontier_fingerprint="frontier",
+                        oracle_source_sha256="oracle",
+                        cohort_fingerprint="cohort",
+                    )
+                )
+        stale = deepcopy(receipt)
+        stale["measurement"]["cohort_fingerprint"] = "changed-cohort"
+        self.assertFalse(
+            _preserved_transition_is_current(
+                stale,
+                frontier_fingerprint="frontier",
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="cohort",
+            )
+        )
+        landed = deepcopy(receipt)
+        landed["frontier_fingerprint"] = "source-frontier"
+        self.assertTrue(
+            _preserved_transition_is_current(
+                landed,
+                frontier_fingerprint="generated-frontier",
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="generated-cohort",
+                completed_receipt_fingerprints=frozenset({"receipt"}),
+            )
+        )
+        self.assertFalse(
+            _preserved_transition_is_current(
+                landed,
+                frontier_fingerprint="generated-frontier",
+                oracle_source_sha256="changed-oracle",
+                cohort_fingerprint="generated-cohort",
+                completed_receipt_fingerprints=frozenset({"receipt"}),
+            )
+        )
 
     def test_attached_quoted_grant_probe_is_integrated_and_accounted(self):
         outcome = next(

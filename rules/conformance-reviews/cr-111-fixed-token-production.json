@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 111 — Fixed predefined and copy-token production",
+  "cases": [
+    {
+      "rule_id": "111.10f",
+      "rule_text_sha256": "4e3b8f05782cb2ade83a7165b87e8762502bfabe5f788e56411971aa58b21935",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.fixed_token_production.clue_token_effect", "quorune.standard_token_abilities.standard_token_characteristics"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities"],
+      "required_scenarios": ["positive", "interaction", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "interaction", "replay", "hidden_information"],
+      "blockers": [],
+      "notes": ["The canonical Clue profile exposes its typed sacrifice-and-draw ability without consulting display text."]
+    },
+    {
+      "rule_id": "111.10h",
+      "rule_text_sha256": "0365c016709eb5693d7ae1d471509845c1076d54603267f817e2d0fd6a245c35",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.token_templates.fixed_token_creation_effect_template", "quorune.standard_token_abilities.StandardTokenAbilityProfile", "quorune.mana_activation.complete_mana_activation"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules"],
+      "required_scenarios": ["positive", "negative", "interaction", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "replay"],
+      "blockers": [],
+      "notes": ["Powerstone creates a colorless artifact token whose stackless typed mana ability produces one colorless unit carrying the nonartifact-spell prohibition."]
+    },
+    {
+      "rule_id": "111.10t",
+      "rule_text_sha256": "715fbb3d8d60c983b84e825bb8ad88cfd18613344bc147170eb94404a51a7634",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.standard_token_abilities.StandardTokenAbilityProfile", "quorune.rules.activation.resolution.builtin_activation_resolution", "quorune.semantic_runtime.impulse_access"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules"],
+      "required_scenarios": ["positive", "negative", "interaction", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "negative", "interaction", "replay", "hidden_information"],
+      "blockers": [],
+      "notes": ["Junk uses a typed tap-and-sacrifice profile and the existing fixed impulse-access owner; its library result and temporary permission replay exactly."]
+    },
+    {
+      "rule_id": "111.10w",
+      "rule_text_sha256": "ffa49c4882b999434e0edcb5b0199a1791382815cc2d68c4c385be22229b6ae4",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.token_templates.fixed_token_creation_effect_template", "quorune.standard_token_abilities.StandardTokenAbilityProfile", "quorune.characteristic_evaluation.evaluate_card_characteristics"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities", "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules"],
+      "required_scenarios": ["positive", "negative", "interaction", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "replay"],
+      "blockers": [],
+      "notes": ["Vibranium combines the ordinary Indestructible characteristic with the same restricted colorless mana profile as Powerstone."]
+    },
+    {
+      "rule_id": "111.12",
+      "rule_text_sha256": "7820590db7f1a8b7cd590fc02bfe89d9c7ef241a346a23d7b673b4db72abfb9a",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.token_templates.fixed_token_creation_effect_template", "quorune.selection.targeting.TargetSelectionOwnerMixin", "quorune.token_creation.create_tokens"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed", "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay"],
+      "required_scenarios": ["positive", "negative", "interaction", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "replay"],
+      "blockers": ["source-LKI and nontarget copy instructions remain outside the fixed targeted-copy grammar", "modified, linked, multiple-target, and zone-relative copy-token instructions remain material residuals"],
+      "notes": ["A missing or new target incarnation creates no token; one current legal target uses the existing copiable-values and replacement-aware token owners."]
+    }
+  ]
+}

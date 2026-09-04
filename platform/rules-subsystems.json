@@ -2036,27 +2036,94 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "spell-history-transformations-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-token-production",
+          "member_family_ids": [
+            "activated_effect:create-token",
+            "activated_effect:unparsed-investigate",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:create-token",
+            "effect_clause:unparsed-investigate-three-times",
+            "keyword_dependency:investigate"
+          ],
+          "canonical_owner_ids": [
+            "capability:keyword_action.investigate.fixed",
+            "capability:mana.activated.restricted_fixed_output",
+            "capability:token.creation.fixed_copy",
+            "capability:token.creation.fixed_definition",
+            "capability:trigger.delayed.fixed_token_creation",
+            "capability:trigger.keyword.afterlife.fixed",
+            "component:quorune.compiler.token_templates.fixed_token_creation_effect_template",
+            "component:quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities",
+            "component:quorune.token_creation.create_tokens"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "canonical-investigate-fixed-count",
+            "fixed-current-target-copy",
+            "fixed-next-end-step-token",
+            "fixed-positive-token-quantity",
+            "named-or-legendary-fixed-definition",
+            "positive-fixed-afterlife-count",
+            "predefined-powerstone-junk-or-vibranium",
+            "represented-keyword-changeling-or-declaration-fragment",
+            "restricted-fixed-mana-profile"
+          ],
+          "shared_dependencies": [
+            "combat.declaration.typed_components",
+            "continuous.characteristics.changeling",
+            "target.revalidate_resolution",
+            "token.creation.fixed_definition",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "fixed positive token production across spell, triggered, activated, keyword-action, keyword-trigger, targeted-copy, and next-end-step contexts through the existing replacement-aware token transaction and typed target, trigger, characteristic, mana, and replay owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends one canonical token-definition compiler across proper names, legendary definitions, represented keywords and declaration fragments, rules-defined artifact profiles, fixed Investigate and Afterlife, exact target copies, and source-independent next-end-step creation without a parallel token or trigger engine.",
+          "explicit_exclusions": [
+            "Incubate, Roles, attached, attacking, source-LKI, nontarget, modified, linked, multiple-target, and zone-relative copies",
+            "arbitrary quoted abilities, unsupported keywords, open conditions, modal bodies, repeated delayed triggers, and compound non-token instructions",
+            "copied, granted, removed, or text-changed Afterlife and unsupported delayed times",
+            "independently unsupported sibling abilities and unsupported token replacement families",
+            "mana outputs or spending restrictions outside one colorless Powerstone form and artifact-only or creature-only selectable any-color forms",
+            "variable, zero, negative, nonintegral, per-object, linked, or target-player quantities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-token-production-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v164-spell-history-transformations",
-      "compiler_version": "oracle-ir-v164",
-      "bundle_id": "bundle:spell-history-transformations",
-      "candidate_ids": ["compiler:spell-history-transformations"],
+      "transition_id": "oracle-ir-v165-fixed-token-production",
+      "compiler_version": "oracle-ir-v165",
+      "bundle_id": "bundle:fixed-token-production",
+      "candidate_ids": ["compiler:fixed-token-production"],
       "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "keyword_dependency:daybound",
-        "keyword_dependency:nightbound"
+        "activated_effect:create-token",
+        "activated_effect:unparsed-investigate",
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "effect_clause:create-token",
+        "effect_clause:unparsed-investigate-three-times",
+        "keyword_dependency:investigate"
       ],
       "capability_ids": [
-        "card_form.day_night",
-        "permanent.transform.face_change",
-        "trigger.upkeep.previous_turn_transform"
+        "keyword_action.investigate.fixed",
+        "mana.activated.restricted_fixed_output",
+        "token.creation.fixed_copy",
+        "token.creation.fixed_definition",
+        "trigger.delayed.fixed_token_creation",
+        "trigger.keyword.afterlife.fixed"
       ],
-      "measurement_id": "measurement:spell-history-transformations",
+      "measurement_id": "measurement:fixed-token-production",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2608,6 +2675,11 @@
         "candidate_id": "compiler:spell-history-transformations",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-Leveler selector has no eligible carried candidate and its raw continuous-layer and token aggregates remain heterogeneous. A bounded exact-frontier comparison selects the paired Daybound/Nightbound and legacy each-upkeep spell-history transformation family because its generated probe reaches both the exact-ability and residual floors through one previous-turn summary, one logical-object-aware face-change owner, the shared layer-6 component applicability query, entry and untap coordination, APNAP placement, public projection, persistence, and replay. Arbitrary transforms, Convert, explicit day/night effects, shared-team turns, copied or granted forms, and independently unsupported sibling abilities remain fail-closed; all current cohort identities and counts are generated rather than policy-maintained."
+      },
+      {
+        "candidate_id": "compiler:fixed-token-production",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-transformation selector has no eligible carried candidate while its raw token and continuous-layer leaders remain heterogeneous. A bounded integrated probe selects one threshold-clearing fixed token-production family across spell, triggered, activated, keyword-action, keyword-trigger, target-copy, and delayed contexts. It reuses the replacement-aware token transaction, direct-target revalidation, normalized permanent-graveyard LKI, APNAP placement, typed characteristic fragments, fixed mana restrictions, and replay owners. Variable, Incubate, Role, attached, attacking, source-LKI, modified-copy, linked, arbitrary quoted-ability, unsupported keyword, conditional, and independently incomplete forms remain fail-closed; current cohort identities and counts are generated rather than policy-maintained."
       }
     ]
   },

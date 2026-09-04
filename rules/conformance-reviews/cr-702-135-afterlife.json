@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 702.135 — Fixed printed Afterlife",
+  "cases": [
+    {
+      "rule_id": "702.135",
+      "rule_text_sha256": "0ef6ed94a0c190f3edca1cda6aa3e15c26bffc466258a61fdc93b72709558a0f",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["quorune.rules.capabilities.CapabilityRegistry"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["Keyword heading; trigger.keyword.afterlife.fixed owns the bounded printed positive-integer slice."]
+    },
+    {
+      "rule_id": "702.135a",
+      "rule_text_sha256": "f9a949a74debc719935b0b7a8d88587e3682862a72dbcaf5a7333ee38f4dd093",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.token_production_keyword_nodes.fixed_afterlife_keyword_node", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.token_creation.create_tokens"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed", "tests.test_fixed_token_production.FixedTokenProductionTests.test_afterlife_uses_previous_controller_and_permanent_graveyard_lki", "tests.test_fixed_token_production.FixedTokenProductionTests.test_multiple_afterlife_instances_share_apnap_batch_and_replay"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "blockers": ["copied, granted, removed, and text-changed Afterlife is not yet propagated through a universal typed ability-instance owner", "shared-team turn ordering remains outside supported profiles"],
+      "notes": ["Printed fixed Afterlife listens to permanent.graveyard.self, uses previous-controller and current-ability LKI, and creates the canonical white-black flying Spirit definition through the existing APNAP and token owners."]
+    },
+    {
+      "rule_id": "702.135b",
+      "rule_text_sha256": "198e94c02869417082bfaa9cb02f8aad2336f89652b57ea5e2607506f429dfd0",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.keyword_nodes.keyword_node_plans", "quorune.compiler.generated_program_identity.generated_ability_id", "quorune.trigger_batches.PendingTriggerBatch"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "tests.test_fixed_token_production.FixedTokenProductionTests.test_multiple_afterlife_instances_share_apnap_batch_and_replay"],
+      "required_scenarios": ["positive", "interaction", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "interaction", "multiplayer", "replay", "hidden_information"],
+      "blockers": ["multiple copied or granted Afterlife instances remain outside the typed propagation boundary"],
+      "notes": ["Each printed instance receives a distinct source-spanned generated trigger identity and joins the ordinary private same-controller ordering inside the APNAP batch."]
+    }
+  ]
+}
