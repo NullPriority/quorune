@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "570df03f699507b29f45ddfe06aa02230632b702",
+  "baseline_commit": "02a89a1a64a9384ae33a1b82f707185a30fc97fc",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -480,7 +480,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 7065,
+    "logical_lines": 7049,
     "methods": [
       {
         "kind": "method",
@@ -550,11 +550,6 @@
       {
         "kind": "method",
         "name": "_apply_combat_assignments",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
-        "name": "_apply_layered_characteristic_annotations",
         "visibility": "private"
       },
       {
@@ -930,11 +925,6 @@
       {
         "kind": "method",
         "name": "_effect_has_missing_target",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
-        "name": "_effective_card_data",
         "visibility": "private"
       },
       {
@@ -1643,12 +1633,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7577
+    "physical_lines": 7555
   },
   "exception_binding": {
-    "adr": "docs/adr/0085-typed-fixed-homogeneous-target-sets.md",
-    "allowance_fingerprint": "8b7299e531d82aeea91352ab676c89ae259d4cfbe3d11742fac26be3e3028e3d",
-    "exception_id": "ARCH-EXC-0043"
+    "adr": "docs/adr/0092-typed-spell-history-transformations.md",
+    "allowance_fingerprint": "c572f50d3afa9d046cbeff3b1e463669a54d01d70738c528642a6a2cab73b5ae",
+    "exception_id": "ARCH-EXC-0044"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1816,11 +1806,6 @@
       "symbol": "validate_rule_conformance"
     },
     {
-      "file": "quorune/rules/capabilities.py",
-      "logical_lines": 154,
-      "symbol": "capability_covered_mechanics"
-    },
-    {
       "file": "quorune/rules_corpus.py",
       "logical_lines": 169,
       "symbol": "verify_rules_corpus"
@@ -1844,7 +1829,7 @@
   "oversized_modules": [
     {
       "file": "quorune/engine.py",
-      "logical_lines": 7065
+      "logical_lines": 7049
     },
     {
       "file": "quorune/record.py",
@@ -2013,6 +1998,7 @@
     "sylvan_library_settle",
     "tap",
     "tap_targets",
+    "transform",
     "transmute_artifact",
     "unearth",
     "untap",
