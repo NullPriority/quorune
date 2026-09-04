@@ -3550,6 +3550,24 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_query_grant_with_unresolved_entry_replacement_fails_closed",
+      "piece_ids": ["capability.continuous.ability.fixed_query_grant", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["continuous.ability.fixed_query_grant"],
+      "interaction_order": 2,
+      "assertion": "The exact typed land mana grant remains represented while an unsupported as-enters mass-sacrifice replacement keeps the complete CardProgram unavailable at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_query_grant_with_unresolved_entry_replacement_fails_closed",
+      "piece_ids": ["capability.continuous.ability.fixed_query_grant", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["continuous.ability.fixed_query_grant"],
+      "interaction_order": 2,
+      "assertion": "The exact typed land mana grant remains represented without admitting its unsupported self-replacement and prevention-ordering boundary."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_query_definition_executes_while_replacement_siblings_fail_closed",
       "piece_ids": ["capability.continuous.characteristics.query_power_toughness_definition", "residual.replacement.replacement-applicability"],
       "capability_ids": ["continuous.characteristics.query_power_toughness_definition"],

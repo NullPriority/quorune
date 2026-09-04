@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "71ac2a792f973ab43da41a8e713440421f33520dc557e5c668b170986663b1bf"
+verified: "f69d63314a18c5fc65c24205fadf94a7a5e70c90742ce14dacc24ee62e99aa34"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `cb0ac84941b693ae8a95af863c9809c8eb881a2e6194c38997c0dc84316d5c9a`
+Source fingerprint: `51c83c6c2d5d6b5794f2ffc24f4db136ab041ed6dc015ad157545897210808ff`
 
 ## Current top-level state
 
@@ -20,9 +20,9 @@ Source fingerprint: `cb0ac84941b693ae8a95af863c9809c8eb881a2e6194c38997c0dc84316
 - Subsystems: `21`
 - Selected subsystem: `replacement-prevention`
 - Selected batch: `counter-producer-replacement-closure`
-- Selected cross-program work: `ci:materialize-harvest-outcome`
-- Selected work class: `ci_correctness`
-- Selected work state: `implementation`
+- Selected cross-program work: `none`
+- Selected work class: `none`
+- Selected work state: `none`
 - Measurement grants gameplay trust: `not_applicable`
 
 ## Cross-program work selection
@@ -34,13 +34,13 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 
 | Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |
 |---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | selected | implementation | true | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 2 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 1 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 2 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 3 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 54 |
 | 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 2361 | 5469 | 38.704918 | 0 | 0 |
+| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 2322 | 5415 | 38.065574 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 10 | blocked | implementation | false | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -71,7 +71,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 35 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
 | 36 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 
-Selected reason: Complete the declared semantic transition's content receipts so the current feature fixed point can materialize its outcome before another implementation cohort is selected.
+Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.
 
 ## Top blockers
 
