@@ -2,6 +2,25 @@
   "cards": [
     {
       "cmc": 2.0,
+      "color_identity": ["W"],
+      "colors": ["W"],
+      "defense": null,
+      "keywords": ["Enchant"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Attached Grant Sacrifice Fixture",
+      "oracle_id": "fixture-attached-grant-sacrifice",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"{1}, Sacrifice this creature: You gain 2 life.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-09-04",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 2.0,
       "color_identity": ["U"],
       "colors": ["U"],
       "defense": null,

@@ -65,6 +65,7 @@ from quorune.read_ahead import saga_chapter_line
 from quorune.compiler.continuous_templates import (
     attached_fixed_characteristics_handler,
     attached_quoted_ability_text,
+    fixed_query_quoted_ability_text,
     fixed_power_toughness_anthem_handler,
     fixed_query_characteristic_grant_handler,
     fixed_query_keyword_grant_handler,
@@ -187,6 +188,9 @@ _PROBE_SPELL_HISTORY_TRANSFORMATIONS = (
     "spell-history-transformations-existing-owner-v1"
 )
 _PROBE_FIXED_TOKEN_PRODUCTION = "fixed-token-production-existing-owner-v1"
+_PROBE_TYPED_QUOTED_ABILITY_GRANT = (
+    "typed-quoted-ability-grant-existing-owner-v1"
+)
 _FIXED_TOKEN_PRODUCTION_FAMILIES = frozenset(
     {
         "activated_effect:create-token",
@@ -231,6 +235,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_LEVELER_BANDS,
     _PROBE_SPELL_HISTORY_TRANSFORMATIONS,
     _PROBE_FIXED_TOKEN_PRODUCTION,
+    _PROBE_TYPED_QUOTED_ABILITY_GRANT,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY,
@@ -803,6 +808,20 @@ def _matches_probe(
                 and int(match.group("count")) <= 20
                 for match in afterlife_matches
             )
+        )
+    if probe_id == _PROBE_TYPED_QUOTED_ABILITY_GRANT:
+        if card_record is None:
+            return False
+        source_name, _source_is_permanent, _attachment_relation = (
+            _source_face_context(card_record, ability or {})
+        )
+        return bool(
+            fixed_query_quoted_ability_text(source) is not None
+            or attached_quoted_ability_text(
+                source,
+                source_name=source_name,
+            )
+            is not None
         )
     if probe_id == _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS:
         if card_record is None or ability is None:
@@ -2329,6 +2348,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_TYPED_QUOTED_ABILITY_GRANT:
+        return _typed_quoted_ability_grant_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return _self_spell_cost_reduction_measurement(
             frontier=frontier,
@@ -3251,6 +3279,167 @@ def _fixed_token_production_measurement(
         "grants_gameplay_trust": False,
         "candidate_accounting": {
             "affected_oracle_carriers": exact_ability_gain,
+            "existing_exact_sibling_nodes": existing_exact_sibling_nodes,
+            "remaining_residual_sibling_nodes": (
+                remaining_residual_sibling_nodes
+            ),
+            "trusted_program_transitions": len(complete_cards),
+            "unresolved_program_transitions": (
+                len(matched_cards) - len(complete_cards)
+            ),
+            "expected_oracle_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "expected_card_program_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                unsupported_sibling_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                unsupported_grammar_cards
+            ),
+        },
+    }
+
+
+def _typed_quoted_ability_grant_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact typed inner programs behind attached or queried grants."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    affected_carriers = 0
+    exact_ability_gain = 0
+    expected_residual_reduction = 0
+    existing_exact_sibling_nodes = 0
+    remaining_residual_sibling_nodes = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    template_ids = {
+        "continuous-attached-fixed-characteristics-granted-ability-v1",
+        "continuous-fixed-query-granted-ability-v1",
+    }
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = [
+            ability
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+            and _CONTINUOUS_LAYER_FAMILY
+            in {
+                str(value)
+                for value in ability.get("blockers", {}).get(
+                    "canonical_family_ids", ()
+                )
+            }
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented = 0
+        for ability in candidates:
+            face_id = str(ability.get("face_id") or "front")
+            source_line = int(ability.get("source_line") or 0)
+            face = next(
+                (value for value in compiled.faces if value.face_id == face_id),
+                None,
+            )
+            if face is None:
+                continue
+            outer = [
+                node
+                for node in face.nodes
+                if node.span.line == source_line
+                and node.exact
+                and node.template_id in template_ids
+            ]
+            inner = [
+                node
+                for node in face.nodes
+                if node.span.line == source_line
+                and node.exact
+                and node.kind.startswith("granted_")
+            ]
+            if len(outer) == 1 and len(inner) == 1:
+                represented += 1
+        if not represented:
+            unsupported_grammar_cards.add(oracle_id)
+            continue
+        if represented != len(candidates):
+            unsupported_grammar_cards.add(oracle_id)
+        previous_residuals = sum(
+            len(ability.get("residuals", ()))
+            for ability in card.get("abilities", ())
+        )
+        residual_reduction = max(
+            0,
+            previous_residuals - len(compiled.material_residuals),
+        )
+        remaining = len(compiled.material_residuals)
+        matched_cards[oracle_id] = remaining
+        affected_carriers += represented
+        exact_ability_gain += represented * 2
+        expected_residual_reduction += residual_reduction
+        existing_exact_sibling_nodes += int(card.get("exact_ability_count", 0))
+        remaining_residual_sibling_nodes += remaining
+        if card.get("oracle_ir_status") != "exact" and compiled.status == "exact":
+            complete_cards.add(oracle_id)
+        else:
+            unsupported_sibling_cards += 1
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": affected_carriers,
             "existing_exact_sibling_nodes": existing_exact_sibling_nodes,
             "remaining_residual_sibling_nodes": (
                 remaining_residual_sibling_nodes

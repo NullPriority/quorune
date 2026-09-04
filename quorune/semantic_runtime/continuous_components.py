@@ -6,6 +6,7 @@ from typing import Any, Mapping, Protocol
 
 from ..ability_fragments import (
     GrantedActivatedAbilitySpec,
+    GrantedTriggeredAbilitySpec,
     StaticComponentSpec,
     StaticAbilityFragment,
     ability_fragment_to_dict,
@@ -80,6 +81,7 @@ class AddBasicLandTypeNode:
 
 @dataclass(frozen=True, slots=True)
 class FixedQueryAbilityGrantNode:
+    target_controller: str
     predicate: ObjectQuerySpec
     exclude_source: bool
     fragments: tuple[StaticAbilityFragment, ...]
@@ -655,9 +657,13 @@ class FixedQueryAbilityGrantHandler:
             {"target_controller", "predicate", "exclude_source"},
             field="runtime handler condition",
         )
-        if condition["target_controller"] != "source_controller":
+        if condition["target_controller"] not in {
+            "source_controller",
+            "source_opponents",
+            "any",
+        }:
             raise SemanticNodeError(
-                "fixed query ability grants require source-controller targets"
+                "fixed query ability grants require a supported public controller relation"
             )
         if type(condition["exclude_source"]) is not bool:
             raise SemanticNodeError(
@@ -703,16 +709,17 @@ class FixedQueryAbilityGrantHandler:
                 "fixed query ability grant fragments are malformed"
             ) from exc
         if any(
-            not isinstance(fragment, GrantedActivatedAbilitySpec)
-            or not fragment.mana_ability
-            or not fragment.fixed_mana_outputs
+            not isinstance(
+                fragment,
+                (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec),
+            )
             for fragment in fragments
         ):
             raise SemanticNodeError(
-                "fixed query ability grants currently require typed fixed-output "
-                "mana abilities"
+                "fixed query ability grants require typed activated or triggered abilities"
             )
         return FixedQueryAbilityGrantNode(
+            target_controller=condition["target_controller"],
             predicate=predicate,
             exclude_source=condition["exclude_source"],
             fragments=fragments,
@@ -724,11 +731,11 @@ class FixedQueryAbilityGrantHandler:
         context: ContinuousEffectSourceContext,
     ) -> tuple[ContinuousEffect, ...]:
         node = self.validate(descriptor)
-        predicate = replace(
+        predicate = _fixed_query_effect_predicate(
             node.predicate,
-            zones=("battlefield",),
-            controller=context.source_controller,
-            exclude_ref=(context.source_ref if node.exclude_source else None),
+            target_controller=node.target_controller,
+            exclude_source=node.exclude_source,
+            context=context,
         )
         return (
             ContinuousEffect(

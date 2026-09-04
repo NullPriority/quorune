@@ -443,6 +443,10 @@
         "coverage/harvest-outcome-history.json"
       ],
       "implementation_inputs": [
+        "quorune/rules_scheduler.py",
+        "quorune/work_selection.py",
+        "quorune/work_selection_bundles.py",
+        "scripts/harvest_outcome_history.py",
         "scripts/update_rules_scheduler.py"
       ],
       "database_identity": "none",

@@ -4,7 +4,7 @@ import unittest
 
 from common import keep_all, load_assets, make_session
 from quorune.attachments import attach_objects
-from quorune.abilities import ActivatedAbility
+from quorune.abilities import ActivatedAbility, CostChoice
 from quorune.ability_fragments import (
     AbilityFragmentError,
     DamageKeywordTriggerKind,
@@ -194,6 +194,64 @@ class AbilityFragmentModelTests(unittest.TestCase):
         )
         self.assertEqual(duplicated, reordered)
         self.assertEqual(2, duplicated.count(values[2]))
+
+    def test_extended_granted_activation_costs_round_trip_strictly(self):
+        spec = GrantedActivatedAbilitySpec(
+            ability_id="granted:source-cost",
+            semantic_key="fixture:granted:source-cost",
+            cost_text="{1}, Sacrifice a creature, Pay 2 life",
+            effect_text="Draw a card",
+            mana=(("GENERIC", 1),),
+            sacrifice_source=False,
+            life_payment=2,
+            choices=(
+                CostChoice("sacrifice", card_type="creature").to_dict(),
+            ),
+            schema_version=2,
+        )
+        serialized = ability_fragment_to_dict(spec)
+        self.assertEqual(spec, ability_fragment_from_dict(serialized))
+        self.assertEqual(2, serialized["value"]["schema_version"])
+        self.assertEqual(
+            "sacrifice",
+            serialized["value"]["choices"][0]["kind"],
+        )
+        restricted = GrantedActivatedAbilitySpec(
+            ability_id="granted:restricted-mana",
+            semantic_key="fixture:granted:restricted-mana",
+            cost_text="{T}",
+            effect_text="Add {C}",
+            tap_source=True,
+            mana_ability=True,
+            fixed_mana_outputs=((('C', 1),),),
+            mana_spend_restriction="nonartifact_spell_prohibited",
+            schema_version=2,
+        )
+        self.assertEqual(
+            restricted,
+            ability_fragment_from_dict(ability_fragment_to_dict(restricted)),
+        )
+        with self.assertRaisesRegex(
+            AbilityFragmentError,
+            "schema version 2",
+        ):
+            GrantedActivatedAbilitySpec(
+                ability_id="granted:bad-v1",
+                semantic_key="fixture:granted:bad-v1",
+                cost_text="Sacrifice this creature",
+                effect_text="Draw a card",
+                sacrifice_source=True,
+            )
+        with self.assertRaises(AbilityFragmentError):
+            ability_fragment_from_dict(
+                {
+                    "kind": "granted_activated",
+                    "value": {
+                        **serialized["value"],
+                        "unknown": True,
+                    },
+                }
+            )
 
     def test_static_handler_descriptors_are_closed_and_typed(self):
         descriptors = [

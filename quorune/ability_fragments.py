@@ -32,6 +32,7 @@ from .declaration_fragments import (
     DeclarationRestrictionTemplate,
 )
 from .creature_subtypes import canonical_creature_subtype
+from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
 from .replacement.immutable import thaw_value
 from .util import stable_json
@@ -450,10 +451,15 @@ class GrantedActivatedAbilitySpec:
     sorcery_speed: bool = False
     mana_ability: bool = False
     fixed_mana_outputs: tuple[tuple[tuple[str, int], ...], ...] = ()
+    untap_source: bool = False
+    sacrifice_source: bool = False
+    life_payment: int = 0
+    choices: tuple[FrozenMap, ...] = ()
+    mana_spend_restriction: str | None = None
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise AbilityFragmentError(
                 "Unsupported granted activated-ability schema version"
             )
@@ -463,9 +469,75 @@ class GrantedActivatedAbilitySpec:
                 field,
                 _nonempty_string(getattr(self, field), field=field),
             )
-        for field in ("tap_source", "sorcery_speed", "mana_ability"):
+        for field in (
+            "tap_source",
+            "untap_source",
+            "sacrifice_source",
+            "sorcery_speed",
+            "mana_ability",
+        ):
             if type(getattr(self, field)) is not bool:
                 raise AbilityFragmentError(f"{field} must be a boolean")
+        if type(self.life_payment) is not int or self.life_payment < 0:
+            raise AbilityFragmentError(
+                "Granted-ability life payment must be a nonnegative integer"
+            )
+        if not isinstance(self.choices, tuple):
+            raise AbilityFragmentError(
+                "Granted-ability choices must be typed cost choices"
+            )
+        normalized_choices: list[FrozenMap] = []
+        choice_fields = {"kind", "count", "zone", "card_type", "another"}
+        for choice in self.choices:
+            if not isinstance(choice, Mapping) or set(choice) != choice_fields:
+                raise AbilityFragmentError(
+                    "Granted-ability choices have a closed schema"
+                )
+            kind = choice.get("kind")
+            zone = choice.get("zone")
+            card_type = choice.get("card_type")
+            if (
+                kind not in {"discard", "sacrifice"}
+                or choice.get("count") != 1
+                or choice.get("another") is not False
+                or zone
+                != ("hand" if kind == "discard" else "battlefield")
+                or card_type
+                not in {
+                    None,
+                    "artifact",
+                    "creature",
+                    "enchantment",
+                    "land",
+                    "permanent",
+                }
+                or (kind == "discard" and card_type == "permanent")
+                or (kind == "sacrifice" and card_type is None)
+            ):
+                raise AbilityFragmentError(
+                    "Granted-ability cost choice is unsupported"
+                )
+            normalized_choices.append(FrozenMap(choice))
+        object.__setattr__(self, "choices", tuple(normalized_choices))
+        if self.mana_spend_restriction not in {
+            None,
+            "nonartifact_spell_prohibited",
+        }:
+            raise AbilityFragmentError(
+                "Granted-ability mana restriction is unsupported"
+            )
+        if self.schema_version == 1 and any(
+            (
+                self.untap_source,
+                self.sacrifice_source,
+                self.life_payment,
+                self.choices,
+                self.mana_spend_restriction is not None,
+            )
+        ):
+            raise AbilityFragmentError(
+                "Extended granted-ability costs require schema version 2"
+            )
         object.__setattr__(self, "mana", _mana_pairs(self.mana))
         if not isinstance(self.fixed_mana_outputs, tuple):
             raise AbilityFragmentError("fixed mana outputs must be a tuple")
@@ -480,6 +552,12 @@ class GrantedActivatedAbilitySpec:
             raise AbilityFragmentError(
                 "fixed mana outputs require a mana ability"
             )
+        if self.mana_spend_restriction is not None and (
+            not self.mana_ability or not normalized_outputs
+        ):
+            raise AbilityFragmentError(
+                "Granted-ability mana restrictions require fixed mana output"
+            )
         object.__setattr__(self, "fixed_mana_outputs", normalized_outputs)
 
     @property
@@ -487,7 +565,7 @@ class GrantedActivatedAbilitySpec:
         return dict(self.mana)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "schema_version": self.schema_version,
             "ability_id": self.ability_id,
             "semantic_key": self.semantic_key,
@@ -501,6 +579,17 @@ class GrantedActivatedAbilitySpec:
                 dict(output) for output in self.fixed_mana_outputs
             ],
         }
+        if self.schema_version == 2:
+            result.update(
+                {
+                    "untap_source": self.untap_source,
+                    "sacrifice_source": self.sacrifice_source,
+                    "life_payment": self.life_payment,
+                    "choices": [thaw_value(choice) for choice in self.choices],
+                    "mana_spend_restriction": self.mana_spend_restriction,
+                }
+            )
+        return result
 
     @classmethod
     def from_dict(
@@ -518,7 +607,20 @@ class GrantedActivatedAbilitySpec:
             "mana_ability",
             "fixed_mana_outputs",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        extended = {
+            *expected,
+            "untap_source",
+            "sacrifice_source",
+            "life_payment",
+            "choices",
+            "mana_spend_restriction",
+        }
+        if (
+            not isinstance(value, Mapping)
+            or set(value) not in {frozenset(expected), frozenset(extended)}
+            or (value.get("schema_version") == 1 and set(value) != expected)
+            or (value.get("schema_version") == 2 and set(value) != extended)
+        ):
             raise AbilityFragmentError(
                 "Granted activated-ability fragments have a closed schema"
             )
@@ -533,6 +635,12 @@ class GrantedActivatedAbilitySpec:
             raise AbilityFragmentError(
                 "Granted activated-ability fixed outputs must be an array of objects"
             )
+        if value["schema_version"] == 2 and not isinstance(
+            value["choices"], list
+        ):
+            raise AbilityFragmentError(
+                "Granted activated-ability choices must be an array"
+            )
         return cls(
             schema_version=value["schema_version"],
             ability_id=value["ability_id"],
@@ -544,6 +652,11 @@ class GrantedActivatedAbilitySpec:
             sorcery_speed=value["sorcery_speed"],
             mana_ability=value["mana_ability"],
             fixed_mana_outputs=tuple(value["fixed_mana_outputs"]),
+            untap_source=value.get("untap_source", False),
+            sacrifice_source=value.get("sacrifice_source", False),
+            life_payment=value.get("life_payment", 0),
+            choices=tuple(value.get("choices", ())),
+            mana_spend_restriction=value.get("mana_spend_restriction"),
         )
 
 

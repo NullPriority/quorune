@@ -186,6 +186,17 @@ restrictions, target-relative attachment or controller facts, chosen values,
 and untrusted granted abilities remain source-spanned residuals. Witness
 Protection and Retro-Mutation are explicit examples of those exclusions.
 
+The quoted-ability compiler also accepts one independently exact activated,
+fixed-output mana, or triggered body behind a closed live battlefield query.
+Both the query and attached forms emit a separately keyed inner CardProgram and
+a typed layer-6 fragment; the runtime never reparses the quote. The fragment
+preserves only activation costs already committed by the canonical activation
+transaction, including fixed mana, tap or untap, source sacrifice, life
+payment, selected public objects, and the represented restricted-mana profile.
+Multiple quotes, quoted static or declaration prose, named or external source
+references, hidden-zone recipients, and independently inexact bodies remain
+material residuals.
+
 The same compiler owner separately lowers fixed static characteristic bodies
 gated by one closed public-state condition. A versioned descriptor combines a
 source-controller turn, raw graveyard or hand count, life-total, current-turn

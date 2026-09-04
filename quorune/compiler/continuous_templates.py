@@ -91,6 +91,78 @@ _ATTACHED_QUOTED_ABILITY_SENTINELS = (
     "Vigilance",
     "Haste",
 )
+
+
+def _fixed_query_quoted_ability_shell(
+    oracle_line: str,
+) -> tuple[
+    str,
+    tuple[str, Mapping[str, Any], tuple[str, ...]],
+] | None:
+    """Parse one quoted ability behind an existing public battlefield query."""
+
+    text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    if text.count('"') != 2:
+        return None
+    quote_start = text.find('"')
+    quote_end = text.rfind('"')
+    quoted = text[quote_start + 1 : quote_end].strip()
+    if not quoted or "\n" in quoted:
+        return None
+    for sentinel in _ATTACHED_QUOTED_ABILITY_SENTINELS:
+        synthetic = text[:quote_start] + sentinel + text[quote_end + 1 :]
+        compiled = fixed_query_keyword_grant_handler(synthetic)
+        if compiled is None:
+            continue
+        modifier = compiled[1].get("modifier")
+        if not isinstance(modifier, Mapping) or list(
+            modifier.get("add_abilities", ())
+        ) != [sentinel]:
+            continue
+        return quoted, compiled
+    return None
+
+
+def fixed_query_quoted_ability_text(oracle_line: str) -> str | None:
+    """Return the sole quote when a closed live battlefield query owns it."""
+
+    shell = _fixed_query_quoted_ability_shell(oracle_line)
+    return shell[0] if shell is not None else None
+
+
+def fixed_query_quoted_ability_handler(
+    oracle_line: str,
+    *,
+    fragment: Mapping[str, Any],
+    fragment_capabilities: tuple[str, ...],
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    """Grant one independently exact typed ability to a queried live set."""
+
+    shell = _fixed_query_quoted_ability_shell(oracle_line)
+    if shell is None:
+        return None
+    _quoted, compiled = shell
+    condition = compiled[1].get("condition")
+    if not isinstance(condition, Mapping):
+        return None
+    return (
+        "continuous-fixed-query-granted-ability-v1",
+        {
+            "handler_id": "continuous.ability.fixed-query-grant.v1",
+            "schema_version": 1,
+            "event": "characteristics.evaluate",
+            "condition": dict(condition),
+            "modifier": {"add_ability_fragments": [dict(fragment)]},
+        },
+        tuple(
+            sorted(
+                {
+                    "continuous.ability.fixed_query_grant",
+                    *fragment_capabilities,
+                }
+            )
+        ),
+    )
 _CARD_TYPE_WORDS = frozenset(
     {
         "artifact",

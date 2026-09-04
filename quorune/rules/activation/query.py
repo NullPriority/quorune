@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from ...abilities import ActivatedAbility
+from ...abilities import ActivatedAbility, CostChoice
 from ...ability_fragments import (
     canonical_ability_fragments,
     granted_activated_specs,
@@ -84,6 +84,12 @@ def _typed_granted_abilities(
                     for key in ("GENERIC", "W", "U", "B", "R", "G", "C")
                 },
                 tap_source=spec.tap_source,
+                untap_source=spec.untap_source,
+                sacrifice_source=spec.sacrifice_source,
+                life_payment=spec.life_payment,
+                choices=tuple(
+                    CostChoice.from_dict(choice) for choice in spec.choices
+                ),
                 sorcery_speed=spec.sorcery_speed,
                 mana_ability=spec.mana_ability,
                 fixed_mana_outputs=tuple(
@@ -91,6 +97,7 @@ def _typed_granted_abilities(
                     for output in spec.fixed_mana_outputs
                 ),
                 builtin_semantic_key=spec.semantic_key,
+                mana_spend_restriction=spec.mana_spend_restriction,
             )
         )
     return tuple(result)

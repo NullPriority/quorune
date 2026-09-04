@@ -18,6 +18,7 @@ _HISTORY_FIELDS = {
     "algorithm_version",
     "legacy_provenance_fingerprint",
     "entries",
+    "non_harvest_transitions",
     "outcome_basis",
     "structural_carrier_limitation",
     "semantic_outcome_status",
@@ -113,6 +114,13 @@ _CORRECTED_CONTENT_ENTRY_FIELDS = _CONTENT_ENTRY_FIELDS | {
 _CORRECTED_MEASURED_CONTENT_ENTRY_FIELDS = (
     _MEASURED_CONTENT_ENTRY_FIELDS | {"forecast_correction"}
 )
+_NON_HARVEST_ENTRY_FIELDS = (
+    _CONTENT_ENTRY_FIELDS - {"expected_complete_card_gain_basis"}
+) | {
+    "compiler_version",
+    "non_harvest_reason",
+    "outcome_kind",
+}
 COHORT_MEASUREMENT_SCHEMA_VERSION = 4
 COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v4"
 _COHORT_DECISIONS = {
@@ -435,14 +443,25 @@ def work_selection_source_fingerprints(
 
 def _validated_history_header(
     value: Mapping[str, Any],
-) -> tuple[list[Any], str, Mapping[str, Any] | None]:
-    if set(value) != _HISTORY_FIELDS or int(value.get("schema_version") or 0) != 3:
+) -> tuple[list[Any], list[Any], str, Mapping[str, Any] | None]:
+    fields = set(value)
+    if fields not in {
+        frozenset(_HISTORY_FIELDS),
+        frozenset(_HISTORY_FIELDS - {"non_harvest_transitions"}),
+    } or int(value.get("schema_version") or 0) != 3:
         raise WorkSelectionError("Generated harvest history has an invalid shape")
     fingerprint_payload = dict(value)
     fingerprint = str(fingerprint_payload.pop("fingerprint") or "")
     if fingerprint != stable_hash(fingerprint_payload):
         raise WorkSelectionError("Generated harvest history fingerprint is stale")
-    history = list(value.get("entries", []))
+    raw_history = value.get("entries")
+    raw_non_harvest = value.get("non_harvest_transitions", [])
+    if not isinstance(raw_history, list) or not isinstance(
+        raw_non_harvest, list
+    ):
+        raise WorkSelectionError("Generated harvest history rows are invalid")
+    history = list(raw_history)
+    non_harvest = list(raw_non_harvest)
     status = str(value.get("semantic_outcome_status") or "")
     pending = value.get("pending_transition")
     if (
@@ -453,7 +472,12 @@ def _validated_history_header(
         raise WorkSelectionError(
             "Generated harvest history semantic outcome status is invalid"
         )
-    return history, status, pending if isinstance(pending, Mapping) else None
+    return (
+        history,
+        non_harvest,
+        status,
+        pending if isinstance(pending, Mapping) else None,
+    )
 
 
 def _validated_identity_list(value: Any, label: str) -> list[str]:
@@ -678,6 +702,73 @@ def _validate_history_entries(history: list[Any]) -> None:
             )
 
 
+def _validate_non_harvest_history(rows: list[Any]) -> None:
+    transition_ids: set[str] = set()
+    zero_fields = {
+        "actual_complete_card_gain",
+        "actual_exact_card_gain",
+        "actual_trusted_card_gain",
+        "actual_capability_closed_card_gain",
+        "actual_exact_ability_gain",
+        "actual_material_residual_reduction",
+        "actual_material_oracle_residual_reduction",
+        "actual_material_card_program_residual_reduction",
+        "failed_card_delta",
+        "hard_construction_failure_delta",
+        "oracle_exact_ability_node_delta",
+        "card_program_ability_record_delta",
+        "executable_trust_transition_delta",
+    }
+    for index, raw in enumerate(rows):
+        row = mapping(raw, f"non_harvest_transitions[{index}]")
+        unsigned = dict(row)
+        fingerprint = str(unsigned.pop("entry_fingerprint", ""))
+        transition_id = str(row.get("transition_id") or "")
+        base = row.get("base_receipt")
+        head = row.get("head_receipt")
+        transitions = row.get("executable_trust_transitions")
+        carriers = row.get("frontier_ability_carrier_delta")
+        reason = row.get("non_harvest_reason")
+        if (
+            set(row) != _NON_HARVEST_ENTRY_FIELDS
+            or fingerprint != stable_hash(unsigned)
+            or not transition_id
+            or transition_id in transition_ids
+            or row.get("receipt_identity_kind") != "semantic_content"
+            or row.get("outcome_kind") != "non_harvest"
+            or row.get("bundle_id") is not None
+            or row.get("candidate_ids") != []
+            or row.get("family_ids") != []
+            or row.get("capability_ids") != []
+            or row.get("expected_complete_card_gain") is not None
+            or not isinstance(reason, str)
+            or len(reason.strip()) < 20
+            or not isinstance(base, Mapping)
+            or not isinstance(head, Mapping)
+            or "commit" in base
+            or "commit" in head
+            or not str(base.get("content_fingerprint") or "")
+            or not str(head.get("content_fingerprint") or "")
+            or base.get("content_fingerprint")
+            == head.get("content_fingerprint")
+            or any(row.get(field) != 0 for field in zero_fields)
+            or any(row.get("oracle_status_delta", {}).values())
+            or any(row.get("card_program_status_delta", {}).values())
+            or not isinstance(transitions, Mapping)
+            or transitions.get("promoted") != 0
+            or transitions.get("regressed") != 0
+            or transitions.get("by_transition") != {}
+            or not isinstance(carriers, Mapping)
+            or carriers.get("additions") != 0
+            or carriers.get("removals") != 0
+            or carriers.get("reclassifications") != 0
+        ):
+            raise WorkSelectionError(
+                "Non-harvest semantic transition history is invalid"
+            )
+        transition_ids.add(transition_id)
+
+
 def _history_summary(history: list[Any], minimum_gain: int) -> dict[str, Any]:
     consecutive_subthreshold = 0
     for row in reversed(history):
@@ -707,13 +798,15 @@ def _history_summary(history: list[Any], minimum_gain: int) -> dict[str, Any]:
 def validate_harvest_history(
     value: Mapping[str, Any], *, minimum_gain: int
 ) -> dict[str, Any]:
-    history, status, pending = _validated_history_header(value)
+    history, non_harvest, status, pending = _validated_history_header(value)
     if status == "pending":
         assert pending is not None
         _validate_pending_transition(pending)
     _validate_history_entries(history)
+    _validate_non_harvest_history(non_harvest)
     return {
         **_history_summary(history, minimum_gain),
+        "non_harvest_transitions": non_harvest,
         "semantic_outcome_status": status,
         "pending_transition": pending,
     }
