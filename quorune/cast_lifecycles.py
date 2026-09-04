@@ -211,11 +211,12 @@ class FixedCastLifecycleSpec:
             FIXED_CAST_LIFECYCLE_CONTEXT_FIELD: self.to_dict(),
             "fixed_cast_lifecycle_fingerprint": self.fingerprint,
         }
+        if self.kind is FixedCastLifecycleKind.WARP:
+            option["source_zone"] = "hand"
         if self.kind in {
             FixedCastLifecycleKind.DASH,
             FixedCastLifecycleKind.WARP,
         }:
-            option["source_zone"] = "hand"
             option["x_value_policy"] = "zero"
         return option
 

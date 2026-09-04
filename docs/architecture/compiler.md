@@ -793,6 +793,18 @@ Nonmana Evoke remains unsupported except for an exact reviewed typed override;
 variable, Phyrexian, snow, granted, removed, and equivalent-text forms remain
 outside this compiler family.
 
+Fixed ordinary-mana Buyback, Dash, Warp, and bare Retrace lower through one
+typed cast-lifecycle owner. Dash contributes an alternative cost whenever the
+canonical casting owner already authorizes the card's current zone, including
+a designated commander in the command zone; the ordinary total-cost owner adds
+commander tax. Warp remains hand-only. Lifecycle lookup uses the shared
+static-component applicability query before both offer and commit. Because the
+layer engine does not yet evaluate exact ability additions or removals outside
+the battlefield, any relevant off-battlefield ability-layer effect makes the
+lifecycle unavailable rather than assuming its printed ability remains. That
+fail-closed boundary applies equally to Retrace and is not a general graveyard
+characteristic layer.
+
 Printed `Sunburst` lowers as one source-spanned `zone.change` descriptor per
 instance. The descriptor contains the counter kind derived from the printed
 selected-face card types, never a runtime type query. Cast commit separately

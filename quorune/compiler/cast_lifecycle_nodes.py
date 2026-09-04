@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..cast_lifecycles import (
     compile_fixed_cast_lifecycle,
     FixedCastLifecycleKind,
@@ -96,26 +97,29 @@ def fixed_cast_lifecycle_keyword_node(
         if gate.blockers
         else ()
     )
-    coverage = {
-        FixedCastLifecycleKind.BUYBACK: (
-            "fixed_mana_optional_additional_cost",
-            "replacement_aware_resolution_destination",
-        ),
-        FixedCastLifecycleKind.DASH: (
-            "fixed_mana_alternate_cost",
-            "zone_object_haste",
-            "identity_pinned_delayed_return",
-        ),
-        FixedCastLifecycleKind.WARP: (
-            "fixed_mana_alternate_cost",
-            "identity_pinned_delayed_exile",
-            "later_turn_exile_cast_permission",
-        ),
-        FixedCastLifecycleKind.RETRACE: (
-            "owner_graveyard_cast_permission",
-            "typed_land_discard_additional_cost",
-        ),
-    }[spec.kind]
+    coverage = (
+        *{
+            FixedCastLifecycleKind.BUYBACK: (
+                "fixed_mana_optional_additional_cost",
+                "replacement_aware_resolution_destination",
+            ),
+            FixedCastLifecycleKind.DASH: (
+                "fixed_mana_alternate_cost",
+                "zone_object_haste",
+                "identity_pinned_delayed_return",
+            ),
+            FixedCastLifecycleKind.WARP: (
+                "fixed_mana_alternate_cost",
+                "identity_pinned_delayed_exile",
+                "later_turn_exile_cast_permission",
+            ),
+            FixedCastLifecycleKind.RETRACE: (
+                "owner_graveyard_cast_permission",
+                "typed_land_discard_additional_cost",
+            ),
+        }[spec.kind],
+        CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    )
     return OracleNode(
         node_id=node_id,
         kind="keyword_ability",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 from pathlib import Path
 import tempfile
@@ -7,6 +8,7 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
+from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.cast_lifecycles import (
     FixedCastLifecycleKind,
@@ -32,6 +34,7 @@ from quorune.errors import GameRuleError
 from quorune.haste import has_effective_haste
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
@@ -45,6 +48,7 @@ from quorune.semantic_runtime.cast_lifecycles import (
     FixedCastLifecycleHandler,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from quorune.session import CommanderSession
 from scripts.build_test_database import build_fixture_database
 
 
@@ -226,6 +230,16 @@ class FixedCastingSurfaceCompilerTests(unittest.TestCase):
                 spec = FixedCastLifecycleHandler().validate(descriptor)
                 self.assertEqual(kind, spec.kind)
                 self.assertEqual(text, spec.oracle_line)
+                self.assertIn(
+                    CURRENT_ABILITY_FRAGMENT_COVERAGE,
+                    node.runtime_coverage,
+                )
+                if kind is FixedCastLifecycleKind.DASH:
+                    self.assertNotIn("source_zone", spec.fixed_cost_option())
+                elif kind is FixedCastLifecycleKind.WARP:
+                    self.assertEqual(
+                        "hand", spec.fixed_cost_option()["source_zone"]
+                    )
 
     def test_cast_lifecycle_open_costs_and_other_families_remain_residual(self):
         cases = (
@@ -356,6 +370,7 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
         seat: str = "B",
         zone: str = "hand",
         controller: str | None = None,
+        is_commander: bool = False,
     ) -> CardInstance:
         engine = session.engine
         record = self.db.lookup(name, fuzzy=False)
@@ -367,6 +382,10 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
             owner=seat,
             controller=controller or seat,
             zone=zone,
+            is_commander=is_commander,
+            commander_designation_id=(
+                f"commander:{seat}:{ref}" if is_commander else None
+            ),
             zone_timestamp=engine.state.event_sequence + 1,
             acquired_control_turn_count=-1,
             known_to=list(engine.seats) if zone != "hand" else [seat],
@@ -384,6 +403,221 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
             promote_exact_effect_programs=True,
         )
         return card
+
+    def test_dash_commander_offer_commit_tax_and_rollbacks(self):
+        with self.subTest(case="countered_then_taxed"):
+            session = self.session(160_020_009)
+            engine = session.engine
+            commander = self.add_card(
+                session,
+                name="Dash Creature Fixture",
+                ref="DASH-COMMANDER",
+                zone="command",
+                is_commander=True,
+            )
+            engine.state.players["B"].mana_pool.update({"C": 4, "R": 2})
+            self.prepare_main(session)
+
+            first = self.cast_action(engine, commander)
+            first_options = {
+                option["id"]: option for option in first["cost_options"]
+            }
+            self.assertIn("dash", first_options)
+            self.assertEqual(
+                1, first_options["dash"]["requirements"]["GENERIC"]
+            )
+            self.assertEqual(1, first_options["dash"]["requirements"]["R"])
+            accepted = session.act(
+                "pilot:B",
+                {
+                    "action_id": first["id"],
+                    "cost_option": "dash",
+                    "pay": "manual",
+                    "payment": {"C": 1, "R": 1},
+                },
+            )
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.assertEqual("stack", commander.zone)
+            self.assertEqual(
+                1,
+                engine.state.players["B"].commander_casts[
+                    commander.oracle_id
+                ],
+            )
+            stack_item = engine.state.stack[-1]
+            self.assertEqual(
+                "dash",
+                stack_item.context[FIXED_CAST_LIFECYCLE_CONTEXT_FIELD][
+                    "kind"
+                ],
+            )
+            cast_event = next(
+                event
+                for event in reversed(engine.state.events)
+                if event.code == "stack.cast"
+            )
+            self.assertEqual(
+                first_options["dash"]["requirements"],
+                cast_event.details["requirements"],
+            )
+
+            engine._counter_stack_item(
+                stack_item.ref,
+                reason="Countered Dash commander regression",
+                countered_by="A",
+            )
+            engine.permissions.invalidate_current()
+            engine.state.priority_player = None
+            if engine.state.pending_decision is None:
+                engine._stabilize()
+            self.assertEqual(
+                "state.commander_zone", engine.state.pending_decision.kind
+            )
+            returned = session.act(
+                "pilot:B", {"a": "choose", "choice": "command"}
+            )
+            self.assertTrue(returned.ok, returned.summary)
+            commander = engine.state.cards[commander.object_id]
+            self.assertEqual("command", commander.zone)
+            self.assertFalse(engine.state.delayed_triggers)
+
+            self.prepare_main(session)
+            second = self.cast_action(engine, commander)
+            second_dash = next(
+                option
+                for option in second["cost_options"]
+                if option["id"] == "dash"
+            )
+            self.assertEqual(3, second_dash["requirements"]["GENERIC"])
+            self.assertEqual(1, second_dash["requirements"]["R"])
+            second_result = session.act(
+                "pilot:B",
+                {
+                    "action_id": second["id"],
+                    "cost_option": "dash",
+                    "pay": "manual",
+                    "payment": {"C": 3, "R": 1},
+                },
+            )
+            self.assertTrue(second_result.ok, second_result.summary)
+            self.assertEqual(
+                2,
+                engine.state.players["B"].commander_casts[
+                    commander.oracle_id
+                ],
+            )
+
+        with self.subTest(case="stale_offer"):
+            session = self.session(160_020_010)
+            engine = session.engine
+            commander = self.add_card(
+                session,
+                name="Dash Creature Fixture",
+                ref="STALE-DASH-COMMANDER",
+                zone="command",
+                is_commander=True,
+            )
+            engine.state.players["B"].mana_pool.update({"C": 5, "R": 1})
+            self.prepare_main(session)
+            stale = deepcopy(self.cast_action(engine, commander))
+            engine.state.players["B"].commander_casts[
+                commander.oracle_id
+            ] = 1
+            before = authoritative_state_hash(engine.state)
+            rejected = session.act(
+                "pilot:B",
+                {
+                    "action_id": stale["id"],
+                    "cost_option": "dash",
+                    "pay": "auto",
+                },
+            )
+            self.assertFalse(rejected.ok)
+            self.assertIn("stale", rejected.summary.casefold())
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+
+        with self.subTest(case="insufficient_payment"):
+            session = self.session(160_020_011)
+            engine = session.engine
+            commander = self.add_card(
+                session,
+                name="Dash Creature Fixture",
+                ref="UNPAYABLE-DASH-COMMANDER",
+                zone="command",
+                is_commander=True,
+            )
+            engine.state.players["B"].mana_pool.update({"C": 1, "R": 1})
+            self.prepare_main(session)
+            action = self.cast_action(engine, commander)
+            before = authoritative_state_hash(engine.state)
+            rejected = session.act(
+                "pilot:B",
+                {
+                    "action_id": action["id"],
+                    "cost_option": "dash",
+                    "pay": "manual",
+                    "payment": {"C": 1},
+                },
+            )
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+            commander = engine.state.cards[commander.object_id]
+            self.assertEqual("command", commander.zone)
+            self.assertNotIn(
+                commander.oracle_id,
+                engine.state.players["B"].commander_casts,
+            )
+
+        with self.subTest(case="current_ability"):
+            session = self.session(160_020_012)
+            engine = session.engine
+            commander = self.add_card(
+                session,
+                name="Dash Creature Fixture",
+                ref="REMOVED-DASH-COMMANDER",
+                zone="command",
+                is_commander=True,
+            )
+            engine.state.players["B"].mana_pool.update({"C": 4, "R": 1})
+            self.prepare_main(session)
+            stale = deepcopy(self.cast_action(engine, commander))
+            self.remove_all_abilities(engine, commander)
+            before = authoritative_state_hash(engine.state)
+            rejected = session.act(
+                "pilot:B",
+                {
+                    "action_id": stale["id"],
+                    "cost_option": "dash",
+                    "pay": "auto",
+                },
+            )
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+            commander = engine.state.cards[commander.object_id]
+            self.prepare_main(session)
+            current = self.cast_action(engine, commander)
+            self.assertEqual(
+                {"normal"},
+                {option["id"] for option in current["cost_options"]},
+            )
+
+        with self.subTest(case="warp_remains_hand_only"):
+            session = self.session(160_020_013)
+            engine = session.engine
+            commander = self.add_card(
+                session,
+                name="Warp Creature Fixture",
+                ref="WARP-COMMANDER",
+                zone="command",
+                is_commander=True,
+            )
+            engine.state.players["B"].mana_pool.update({"C": 3, "U": 1})
+            self.prepare_main(session)
+            action = self.cast_action(engine, commander)
+            self.assertEqual(
+                {"normal"},
+                {option["id"] for option in action["cost_options"]},
+            )
 
     @staticmethod
     def prepare_main(session, seat: str = "B") -> None:
@@ -454,6 +688,49 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
         engine._start_trigger_batch(triggers, after="grant_priority")
         engine.state.priority_player = None
         engine._prepare_stack_resolution()
+
+    def resolve_replacement_aware_stack(
+        self,
+        session,
+        *,
+        apply_replacements: bool,
+    ) -> None:
+        for _ in range(32):
+            decision = session.state.pending_decision
+            if decision is not None and decision.kind == "replacement.order":
+                principal = session.pending_principals()[0]
+                projected = StateProjector(self.db, session.state)._decision(
+                    principal
+                )
+                self.assertIsNotNone(projected)
+                assert projected is not None
+                selected = next(
+                    option
+                    for option in projected["ctx"]["options"]
+                    if bool(option.get("decline"))
+                    is (not apply_replacements)
+                )
+                result = session.act(
+                    principal,
+                    {
+                        "action_id": "choose",
+                        "replacement": selected["id"],
+                    },
+                )
+                self.assertTrue(result.ok, result.summary)
+                continue
+            if session.state.stack:
+                principals = session.pending_principals()
+                self.assertTrue(principals)
+                result = session.act(
+                    principals[0], {"action_id": "pass"}
+                )
+                self.assertTrue(result.ok, result.summary)
+                continue
+            if decision is None or decision.kind == "priority":
+                return
+            self.fail(f"Unexpected lifecycle decision {decision.kind}")
+        self.fail("Replacement-aware lifecycle resolution did not stabilize")
 
     @staticmethod
     def remove_all_abilities(engine, card: CardInstance) -> None:
@@ -765,6 +1042,190 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
                         card.annotations,
                     )
 
+    def test_dash_delayed_return_uses_owner_and_incarnation_after_control_changes(
+        self,
+    ):
+        with self.subTest(case="control_change"):
+            session = self.session(160_024_001)
+            engine = session.engine
+            card = self.add_card(
+                session,
+                name="Dash Creature Fixture",
+                ref="CONTROLLED-DASH",
+            )
+            engine.state.players["B"].mana_pool.update({"C": 1, "R": 1})
+            self.prepare_main(session)
+            engine.permissions.invalidate_current()
+            engine._cast(
+                "B",
+                {"card": card.ref, "cost_option": "dash", "pay": "auto"},
+            )
+            self.resolve_top(engine)
+            self.assertTrue(has_effective_haste(engine, card))
+            engine.change_control(
+                card.object_id,
+                "A",
+                reason="Dash control-change regression",
+            )
+            self.resolve_delayed_end_step(engine)
+            self.assertEqual("hand", card.zone)
+            self.assertEqual("B", card.owner)
+            self.assertEqual("B", card.controller)
+            self.assertIn(
+                card.object_id, engine.state.players["B"].zones["hand"]
+            )
+
+        for index, mode in enumerate(("absent", "new_incarnation"), start=1):
+            with self.subTest(case=mode):
+                session = self.session(160_024_010 + index)
+                engine = session.engine
+                card = self.add_card(
+                    session,
+                    name="Dash Creature Fixture",
+                    ref=f"DASH-{mode.upper()}",
+                )
+                engine.state.players["B"].mana_pool.update(
+                    {"C": 1, "R": 1}
+                )
+                self.prepare_main(session)
+                engine.permissions.invalidate_current()
+                engine._cast(
+                    "B",
+                    {
+                        "card": card.ref,
+                        "cost_option": "dash",
+                        "pay": "auto",
+                    },
+                )
+                self.resolve_top(engine)
+                delayed_identity = card.logical_object_id
+                engine.move_card(card.object_id, "graveyard", log=False)
+                self.assertNotEqual(
+                    delayed_identity, card.logical_object_id
+                )
+                if mode == "new_incarnation":
+                    engine.move_card(
+                        card.object_id,
+                        "battlefield",
+                        controller="A",
+                        log=False,
+                    )
+                self.resolve_delayed_end_step(engine)
+                self.assertEqual(
+                    "graveyard" if mode == "absent" else "battlefield",
+                    card.zone,
+                )
+                if mode == "new_incarnation":
+                    self.assertEqual("A", card.controller)
+
+    def test_dash_commander_delayed_return_replacement_persists_and_replays(
+        self,
+    ):
+        session = self.session(160_025_001, players=4)
+        engine = session.engine
+        commander = self.add_card(
+            session,
+            name="Dash Creature Fixture",
+            ref="PERSISTED-DASH-COMMANDER",
+            zone="command",
+            is_commander=True,
+        )
+        engine.state.players["B"].mana_pool.update({"C": 1, "R": 1})
+        self.prepare_main(session)
+        owner_decision = StateProjector(self.db, engine.state)._decision(
+            "pilot:B"
+        )
+        self.assertIsNotNone(owner_decision)
+        self.assertIsNone(
+            StateProjector(self.db, engine.state)._decision("pilot:A")
+        )
+        assert owner_decision is not None
+        owner_actions = owner_decision["ctx"]["legal"]["actions"]
+        owner_cast = next(
+            action
+            for action in owner_actions
+            if action.get("card") == commander.ref
+        )
+        self.assertIn(
+            "dash",
+            {option["id"] for option in owner_cast["cost_options"]},
+        )
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        accepted = session.act(
+            "pilot:B",
+            {
+                "action_id": owner_cast["id"],
+                "cost_option": "dash",
+                "pay": "manual",
+                "payment": {"C": 1, "R": 1},
+            },
+        )
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("battlefield", commander.zone)
+        self.assertTrue(has_effective_haste(engine, commander))
+        self.assertTrue(
+            any(
+                trigger.active
+                and trigger.source_object_id == commander.object_id
+                for trigger in engine.state.delayed_triggers
+            )
+        )
+        for principal in ("pilot:A", "pilot:B", "pilot:C", "pilot:D"):
+            self.assertNotIn(
+                commander.object_id,
+                json.dumps(session.packet(principal, full=True), sort_keys=True),
+            )
+
+        scheduled_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            cast_dir = root / "dash-command-cast-record"
+            session.save(cast_dir)
+            loaded = CommanderSession.load(self.db, cast_dir)
+            self.assertEqual(
+                scheduled_hash, authoritative_state_hash(loaded.state)
+            )
+            replay = replay_record(cast_dir, self.db, verify=True)
+            self.assertTrue(replay["ok"], replay)
+            self.assertEqual(scheduled_hash, replay["final_state_hash"])
+
+            loaded_commander = loaded.state.cards[commander.object_id]
+            self.resolve_delayed_end_step(loaded.engine)
+            self.assertEqual(
+                "replacement.order", loaded.state.pending_decision.kind
+            )
+            self.assertEqual(["pilot:B"], loaded.pending_principals())
+            self.assertIsNotNone(
+                StateProjector(self.db, loaded.state)._decision("pilot:B")
+            )
+            self.assertIsNone(
+                StateProjector(self.db, loaded.state)._decision("pilot:A")
+            )
+            loaded.initial_checkpoint = checkpoint_envelope(loaded.state)
+            loaded.commands.clear()
+            loaded.decisions.clear()
+            self.resolve_replacement_aware_stack(
+                loaded,
+                apply_replacements=True,
+            )
+            self.assertEqual("command", loaded_commander.zone)
+
+            replacement_hash = authoritative_state_hash(loaded.state)
+            replacement_dir = root / "dash-command-replacement-record"
+            loaded.save(replacement_dir)
+            replacement_replay = replay_record(
+                replacement_dir, self.db, verify=True
+            )
+            self.assertTrue(replacement_replay["ok"], replacement_replay)
+            self.assertEqual(
+                replacement_hash,
+                replacement_replay["final_state_hash"],
+            )
+
     def test_retrace_uses_private_typed_land_discard_and_revalidates(self):
         session = self.session(160_020_005, players=4)
         engine = session.engine
@@ -828,6 +1289,41 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
         self.assertEqual("graveyard", land.zone)
         self.resolve_top(engine)
         self.assertEqual("graveyard", spell.zone)
+
+    def test_retrace_removed_graveyard_ability_fails_closed(self):
+        session = self.session(160_026_001)
+        engine = session.engine
+        spell = self.add_card(
+            session,
+            name="Retrace Spell Fixture",
+            ref="REMOVED-RETRACE",
+            zone="graveyard",
+        )
+        self.add_card(session, name="Forest", ref="REMOVED-RETRACE-LAND")
+        engine.state.players["B"].mana_pool.update({"C": 2, "U": 1})
+        self.remove_all_abilities(engine, spell)
+        self.prepare_main(session)
+
+        self.assertEqual((), engine._effective_static_component_keys(spell))
+        self.assertFalse(engine._compiled_zone_cast_permission("B", spell))
+        self.assertFalse(
+            any(
+                action.get("card") == spell.ref
+                for action in engine._priority_action_hints("B")["actions"]
+            )
+        )
+        before = authoritative_state_hash(engine.state)
+        with self.assertRaisesRegex(GameRuleError, "not authorized"):
+            engine._cast(
+                "B",
+                {
+                    "card": spell.ref,
+                    "from": "graveyard",
+                    "cost_option": "retrace",
+                    "pay": "auto",
+                },
+            )
+        self.assertEqual(before, authoritative_state_hash(engine.state))
 
     def test_partial_card_and_stale_lifecycle_contract_fail_closed(self):
         session = self.session(160_020_006)

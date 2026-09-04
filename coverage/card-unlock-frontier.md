@@ -2,7 +2,7 @@
 title: "Commander card-unlock frontier"
 status: "generated"
 authoritative_source: "coverage/card-unlock-frontier.json.gz"
-verified: "9c692b7c2e5786754da0f3121f8d2203244531396cc9046f74a0cfdb9aa9fc4d"
+verified: "aa228851bfc62cc04055c84151ec844b770cb621ef9ecb19f4955a0752b622c9"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,7 +17,7 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 - Oracle states: `{"exact":8874,"partial":11327,"unresolved":11422}`
 - CardProgram states: `{"residual":22749,"trusted":8874}`
 - Hard construction failures: 0
-- Frontier fingerprint: `9c692b7c2e5786754da0f3121f8d2203244531396cc9046f74a0cfdb9aa9fc4d`
+- Frontier fingerprint: `aa228851bfc62cc04055c84151ec844b770cb621ef9ecb19f4955a0752b622c9`
 
 ## Highest-leverage single families
 

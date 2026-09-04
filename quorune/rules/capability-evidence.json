@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9dd44f01cd3c761fe37f429543d88aae70c281ff6a4eed509357e06ec5d05aa4",
-  "declaration_source_fingerprint": "afcc2a4e628acd4d4efa71297f1e76ce7fa8f5021a2ced62a8f33b3c19050794",
+  "registry_fingerprint": "86799b539c973ac63594157dd3b3cb4d9ac0eaec83e2ffda4262770eaf1218eb",
+  "declaration_source_fingerprint": "11d1ded21a7ec8b48914f26c2d66f934c39c1e0a78447766a590931c1a994874",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -7924,6 +7924,66 @@
     {
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the command-zone Dash cast, Haste grant, delayed logical identity, owner-selected commander replacement, save/load, and exact replay through existing owners."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_offer_commit_tax_and_rollbacks",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use one advertised and committed Dash option from the command zone, add commander tax, and reject stale, unpayable, or no-longer-current choices without mutation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_delayed_return_uses_owner_and_incarnation_after_control_changes",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Return the resolved Dash incarnation to its physical owner's hand after control changes while ignoring absent or re-entered incarnations."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_modifiers_apply_to_lifecycle_total_costs",
       "official_rule_ids": [
         "601.2b",
@@ -7960,6 +8020,26 @@
         "commander_review"
       ],
       "applicability_note": "Offer Retrace only to the owner, select one land through the typed private cost, and reject a stale payment before mutation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Execute command-zone Dash and its owner-selected delayed commander replacement in a four-player state."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
@@ -8063,6 +8143,26 @@
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_retrace_removed_graveyard_ability_fails_closed",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suppress Retrace when an off-battlefield ability-layer change makes current component applicability unavailable instead of assuming the printed graveyard ability remains."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_fixed_cast_lifecycles_compile_source_spanned_typed_programs",
       "official_rule_ids": [
@@ -8103,6 +8203,46 @@
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_offer_commit_tax_and_rollbacks",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer and commit fixed Dash from the command zone through canonical cast authority and the ordinary commander-tax total."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the command-zone Dash offer and delayed commander replacement only to the acting owner without exposing physical object identity."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
       "official_rule_ids": [
@@ -8120,6 +8260,26 @@
         "commander_review"
       ],
       "applicability_note": "Expose public Warp zone state without leaking authoritative physical object identity."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.27",
+        "702.81",
+        "702.109",
+        "702.185"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay both the command-zone Dash cast with its delayed trigger and the persisted owner-selected command-zone replacement exactly."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
@@ -55548,5 +55708,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "47db52967b33d0bc75da3532b8b26f8c5d9de9164266aa9b995da740738d34e8"
+  "fingerprint": "df0159e725b356a86b191d53c1771e65c62b146d9b5eac6b8ed10ac61e33d675"
 }
