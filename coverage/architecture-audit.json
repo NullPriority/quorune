@@ -11990,7 +11990,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 202113,
+      "logical_lines": 202114,
       "methods": {
         "dunder": 549,
         "private": 865,
@@ -12037,8 +12037,8 @@
           "file": "quorune/rules/capabilities.py",
           "functions_and_methods": 35,
           "language": "python",
-          "logical_lines": 1499,
-          "physical_lines": 1589
+          "logical_lines": 1500,
+          "physical_lines": 1590
         },
         {
           "file": "quorune/oracle_ir.py",
@@ -16708,7 +16708,7 @@
           "physical_lines": 1604
         }
       ],
-      "physical_lines": 221321,
+      "physical_lines": 221322,
       "python_file_count": 610,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -22377,7 +22377,7 @@
         {
           "condition": "isinstance(operation, str) and operation",
           "file": "quorune/rules/capabilities.py",
-          "line": 1169,
+          "line": 1168,
           "string_literals": [],
           "symbol": "_nested_effect_operations"
         },
@@ -29642,7 +29642,7 @@
             "quorune/oracle_ir.py:145",
             "quorune/preflight.py:29",
             "quorune/rules/__init__.py:3",
-            "quorune/rules/capabilities.py:630"
+            "quorune/rules/capabilities.py:629"
           ],
           "explicit_capability_gate": [
             "quorune/compiler/bestow_nodes.py:11",
@@ -29766,7 +29766,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "28dd8cc6904108d5b4127474eceacf501fb7c611a41daada832e2fbea66261e6",
+      "fingerprint": "c739599c727e08e8f597861175021a0a5d9b8db702e36a12a8f7b115f31226ec",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
