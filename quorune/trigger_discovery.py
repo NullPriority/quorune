@@ -51,6 +51,12 @@ from .modular import (
     modular_counter_snapshot,
 )
 from .semantics import SemanticProgram
+from .spell_history_transform import (
+    SPELL_HISTORY_TRANSFORM_CONDITION_FIELD,
+    SPELL_HISTORY_TRANSFORM_COVERAGE,
+    SpellHistoryTransformError,
+    spell_history_transform_condition_holds,
+)
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
 from .trigger_processing import enqueue_trigger_batch
 from .trigger_participation import (
@@ -357,6 +363,17 @@ def _semantic_condition_actual(
         try:
             return death_return_condition_holds(counters, str(counter or ""))
         except DeathReturnError as exc:
+            raise GameRuleError(str(exc)) from exc
+    if field == SPELL_HISTORY_TRANSFORM_CONDITION_FIELD:
+        try:
+            return spell_history_transform_condition_holds(
+                host.state.turn_history,
+                current_turn_sequence=host.state.turn_sequence,
+                source=source,
+                context=context,
+                mode=condition.get("mode"),
+            )
+        except SpellHistoryTransformError as exc:
             raise GameRuleError(str(exc)) from exc
     if field.startswith("source_annotation."):
         return source.annotations.get(field.removeprefix("source_annotation."))
@@ -866,6 +883,8 @@ def _semantic_trigger_context(
             )
         except ModularError as exc:
             raise GameRuleError(str(exc)) from exc
+    if SPELL_HISTORY_TRANSFORM_COVERAGE in program.coverage:
+        stack_context["source_transform_count"] = source.transform_count
     return stack_context
 
 

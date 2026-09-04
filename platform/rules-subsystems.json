@@ -1984,22 +1984,79 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "typed-leveler-bands-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:spell-history-transformations",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "keyword_dependency:daybound",
+            "keyword_dependency:nightbound"
+          ],
+          "canonical_owner_ids": [
+            "capability:card_form.day_night",
+            "capability:permanent.transform.face_change",
+            "capability:trigger.upkeep.previous_turn_transform",
+            "component:quorune.compiler.day_night_nodes.day_night_keyword_node",
+            "component:quorune.compiler.spell_history_transform_nodes.previous_turn_transform_trigger_node",
+            "component:quorune.day_night.synchronize_day_night",
+            "component:quorune.permanent_transform.commit_transform_batch",
+            "component:quorune.turn_history.roll_turn_history"
+          ],
+          "source_contexts": [
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "daybound-front-nightbound-back-pair",
+            "each-upkeep-intervening-if",
+            "no-spells-last-turn",
+            "one-player-two-or-more-spells-last-turn",
+            "previous-active-player-spell-count",
+            "source-logical-object-and-transform-count",
+            "unique-public-day-night-designation"
+          ],
+          "shared_dependencies": [
+            "card_form.day_night",
+            "permanent.transform.face_change",
+            "trigger.placement.apnap",
+            "trigger.upkeep.previous_turn_transform"
+          ],
+          "shared_grammar": "paired canonical Daybound and Nightbound faces plus the two legacy each-upkeep previous-turn spell-count wordings, all using one bounded previous-turn summary and logical-object-aware transform owner",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes one coherent 67-card transformation family across entry, untap, legacy upkeep triggers, current-face ability applicability, simultaneous APNAP placement, projection, persistence, and replay.",
+          "explicit_exclusions": [
+            "arbitrary, targeted, mass, optional, delayed, compound, Convert, and explicit make-day-or-night instructions",
+            "copied, granted, text-changed, face-down, phased-out, modal, merged, melded, and double-faced-token forms",
+            "current-turn, team-turn, different threshold, different step, and non-source legacy trigger variants",
+            "instant or sorcery destination faces and independently unsupported sibling abilities",
+            "transform-into trigger effects and as-transforms static instructions outside the selected grammar"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "spell-history-transformations-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v163-typed-leveler-bands",
-      "compiler_version": "oracle-ir-v163",
-      "bundle_id": "bundle:typed-leveler-bands",
-      "candidate_ids": ["compiler:typed-leveler-bands"],
+      "transition_id": "oracle-ir-v164-spell-history-transformations",
+      "compiler_version": "oracle-ir-v164",
+      "bundle_id": "bundle:spell-history-transformations",
+      "candidate_ids": ["compiler:spell-history-transformations"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "keyword_dependency:daybound",
+        "keyword_dependency:nightbound"
       ],
       "capability_ids": [
-        "continuous.characteristics.leveler_bands"
+        "card_form.day_night",
+        "permanent.transform.face_change",
+        "trigger.upkeep.previous_turn_transform"
       ],
-      "measurement_id": "measurement:typed-leveler-bands",
+      "measurement_id": "measurement:spell-history-transformations",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2546,6 +2603,11 @@
         "candidate_id": "compiler:typed-leveler-bands",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-harvest generated selector has no eligible carried candidate and its raw continuous-layer leader remains heterogeneous. Bounded comparisons retired synchronous single-object blink, simple copy-token creation, and additional predefined artifact-token profiles below the normal harvest floor. The generated Leveler probe instead reaches the residual floor through one closed two-striation grammar and the existing Level Up counter transaction, shared layer-6 static-component applicability query, layer-7b base characteristic owner, copy values, projection, and replay. Class, Room, Prototype, noncreature or arbitrary striations, malformed ranges, variable characteristics, independently unsupported children, granted or text-changed symbols, and cycle-sensitive dynamic characteristic interactions remain fail-closed; current identities and measurements are derived into the generated cohort artifact."
+      },
+      {
+        "candidate_id": "compiler:spell-history-transformations",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-Leveler selector has no eligible carried candidate and its raw continuous-layer and token aggregates remain heterogeneous. A bounded exact-frontier comparison selects the paired Daybound/Nightbound and legacy each-upkeep spell-history transformation family because its generated probe reaches both the exact-ability and residual floors through one previous-turn summary, one logical-object-aware face-change owner, the shared layer-6 component applicability query, entry and untap coordination, APNAP placement, public projection, persistence, and replay. Arbitrary transforms, Convert, explicit day/night effects, shared-team turns, copied or granted forms, and independently unsupported sibling abilities remain fail-closed; all current cohort identities and counts are generated rather than policy-maintained."
       }
     ]
   },

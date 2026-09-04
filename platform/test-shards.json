@@ -128,6 +128,7 @@
       "test_record_lifecycle_v060",
       "test_renown_rules",
       "test_scry_rules",
+      "test_spell_history_transformations",
       "test_token_creation_replacements",
       "test_typed_untap_step_participation"
     ],

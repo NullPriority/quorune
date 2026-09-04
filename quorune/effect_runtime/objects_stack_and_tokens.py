@@ -29,6 +29,7 @@ from ..impulse_access_model import (
     TemporaryCastPermissionError,
     TemporaryCastPermissionGrant,
 )
+from ..permanent_transform import commit_transform_batch
 from ..util import unique_preserving_order
 from ..trigger_processing import schedule_delayed_trigger
 from ..token_creation import TokenCreationError, create_token_batch
@@ -996,6 +997,41 @@ def _apply_note(
     return None
 
 
+def _apply_transform(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> Any:
+    op = operation
+    value = effect.get("card")
+    if not value:
+        return None
+    expected = effect.get("expected_transform_count")
+    if type(expected) is not int or expected < 0:
+        raise GameRuleError(
+            "Triggered transform requires its nonnegative source snapshot"
+        )
+    try:
+        card = host._resolve_object(
+            actor,
+            str(value),
+            zones={"battlefield"},
+        )
+    except GameRuleError:
+        return None
+    results = commit_transform_batch(
+        host,
+        (card,),
+        reason=reason,
+        day_night_instruction=False,
+        expected_transform_counts={card.object_id: expected},
+    )
+    return results[0].card_ref if results else None
+
+
 HANDLERS = {
     'add_subtype': _apply_add_subtype,
     'add_subtype_until_end_of_turn': _apply_add_subtype_until_end_of_turn,
@@ -1018,6 +1054,7 @@ HANDLERS = {
     'modify_stats_until_end_of_turn': _apply_modify_stats_until_end_of_turn,
     'note': _apply_note,
     'reorder_top': _apply_reorder_top,
+    'transform': _apply_transform,
 }
 
 

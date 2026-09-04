@@ -416,6 +416,36 @@
       ]
     },
     {
+      "id": "spell-history-transformation-contract",
+      "patterns": [
+        "quorune/day_night.py",
+        "quorune/day_night_model.py",
+        "quorune/permanent_transform.py",
+        "quorune/spell_history_transform.py",
+        "quorune/spell_history_transform_model.py",
+        "quorune/compiler/day_night_nodes.py",
+        "quorune/compiler/spell_history_transform_nodes.py",
+        "quorune/effect_runtime/objects_stack_and_tokens.py",
+        "quorune/model.py",
+        "quorune/turn_history.py",
+        "quorune/turn_step_owner.py",
+        "quorune/untap_step_coordination.py",
+        "quorune/zone_transition_model.py",
+        "quorune/zone_transitions.py",
+        "mechanics/contracts/spell-history-transformations.json",
+        "rules/conformance-reviews/cr-731-spell-history-transformations.json",
+        "tests/fixtures/spell-history-transformations-cards.json",
+        "tests/test_spell_history_transformations.py"
+      ],
+      "test_modules": [
+        "test_beginning_phase_rules",
+        "test_card_program_trust",
+        "test_object_identity",
+        "test_spell_history_transformations",
+        "test_trigger_batches"
+      ]
+    },
+    {
       "id": "attached-characteristic-closure-contract",
       "patterns": [
         "quorune/ability_fragments.py",

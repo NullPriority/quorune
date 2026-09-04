@@ -63,6 +63,7 @@ from scripts.work_selection_cohort_measurements import (
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
     _source_combat_growth_trigger_measurement,
+    _spell_history_transformation_measurement,
 )
 
 
@@ -2249,6 +2250,93 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
+
+    def test_spell_history_transformation_probe_is_closed_and_accounted(self):
+        probe_id = "spell-history-transformations-existing-owner-v1"
+        for source in (
+            "Daybound (If a player casts no spells, it becomes night.)",
+            "Nightbound",
+            "At the beginning of each upkeep, if no spells were cast last "
+            "turn, transform this creature.",
+            "At the beginning of each upkeep, if a player cast two or more "
+            "spells last turn, transform Arin.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "At the beginning of your upkeep, if no spells were cast last "
+            "turn, transform this creature.",
+            "At the beginning of each upkeep, if a player cast three or more "
+            "spells last turn, transform this creature.",
+            "It becomes night.",
+            "Convert this creature.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
+        record = SimpleNamespace(
+            oracle_id="fixture:spell-history-transform",
+            name="Day Face // Night Face",
+            oracle_text="Daybound",
+            faces=(),
+        )
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "exact_ability_count": 1,
+                    "abilities": [
+                        {
+                            "face_id": "front",
+                            "source_line": 1,
+                            "status": "residual",
+                        }
+                    ],
+                }
+            ]
+        }
+        compiled = SimpleNamespace(
+            status="exact",
+            material_residuals=(),
+            faces=(
+                SimpleNamespace(
+                    nodes=(
+                        SimpleNamespace(
+                            exact=True,
+                            template_id="daybound-static-v1",
+                        ),
+                    )
+                ),
+            ),
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _spell_history_transformation_measurement(
+                frontier=frontier,
+                bundle_id="bundle:spell-history-transformations",
+                probe_id=probe_id,
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
 
     def test_attached_quoted_grant_probe_is_integrated_and_accounted(self):
         outcome = next(

@@ -310,6 +310,7 @@ def compile_keyword_or_attached_grant_nodes(
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
     keyword_nodes = keyword_node_compiler(
+        record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,
         card_name=source_name, effect_template=effect_template,
         span=span, keywords=keywords,

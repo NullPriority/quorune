@@ -175,6 +175,7 @@ VALID_EFFECT_OPERATIONS = {
     "discard_draw_up_to",
     "return_transformed",
     "transmute_artifact",
+    "transform",
 }
 
 

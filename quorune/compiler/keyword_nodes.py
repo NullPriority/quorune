@@ -78,6 +78,7 @@ from .dependency_gate import (
     explicit_capabilities_gate,
     keyword_dependency_gate,
 )
+from .day_night_nodes import day_night_keyword_node
 from .devoid_characteristics import DEVOID_MECHANIC_ID
 from .ir_model import (
     OracleNode,
@@ -298,6 +299,8 @@ def keyword_node_plans(
 
 def closed_special_keyword_node(
     *,
+    record: Any,
+    face_id: str,
     node_id: str,
     line: str,
     material_line: str,
@@ -321,6 +324,11 @@ def closed_special_keyword_node(
         "capability_profile": capability_profile,
         "residuals": residuals,
     }
+    day_night = day_night_keyword_node(
+        record=record, face_id=face_id, **values
+    )
+    if day_night is not None:
+        return day_night
     characteristic_definition = characteristic_definition_keyword_node(
         **values,
     )

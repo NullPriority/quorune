@@ -137,7 +137,7 @@ EFFECT_FAMILY_CONTRACTS = (
     EffectFamilyContract(
         family_id="objects-stack-and-tokens.v1",
         semantic_family="effect.object-stack-token",
-        rule_references=("111.2", "707.2", "701.5"),
+        rule_references=("111.2", "701.5", "701.27", "707.2"),
         operations=frozenset(
             {
                 "add_subtype",
@@ -161,6 +161,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "modify_stats_until_end_of_turn",
                 "note",
                 "reorder_top",
+                "transform",
             }
         ),
     ),

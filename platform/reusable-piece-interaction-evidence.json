@@ -5143,6 +5143,111 @@
       ],
       "interaction_order": 2,
       "assertion": "The current Leveler band gates a compiler-pinned any-target activation before the shared public player-or-permanent target owner validates the selected player."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_day_night_entry_untap_and_shared_component_applicability",
+      "piece_ids": [
+        "capability.card_form.day_night",
+        "capability.permanent.transform.face_change"
+      ],
+      "capability_ids": [
+        "card_form.day_night",
+        "permanent.transform.face_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "The public designation selects the represented entry face and synchronizes only currently applicable paired bound components through the canonical transform owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_simultaneous_transform_apnap_state_and_replay",
+      "piece_ids": [
+        "capability.card_form.day_night",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "card_form.day_night",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Day-to-night transformation occurs during the no-priority untap interval while all waiting transformation and upkeep triggers join the ordinary four-player APNAP batch."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_simultaneous_transform_apnap_state_and_replay",
+      "piece_ids": [
+        "capability.card_form.day_night",
+        "capability.trigger.upkeep.previous_turn_transform"
+      ],
+      "capability_ids": [
+        "card_form.day_night",
+        "trigger.upkeep.previous_turn_transform"
+      ],
+      "interaction_order": 2,
+      "assertion": "One bounded previous-turn summary drives the global previous-active-player day/night check and the distinct all-player legacy upkeep conditions without conflating them."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_simultaneous_transform_apnap_state_and_replay",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.permanent.transform.face_change"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "permanent.transform.face_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "A canonical Equipment relation remains reciprocal and legal when its attached double-faced permanent changes face without changing logical identity or timestamp."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_simultaneous_transform_apnap_state_and_replay",
+      "piece_ids": [
+        "capability.permanent.transform.face_change",
+        "capability.trigger.event.normalized_public_action"
+      ],
+      "capability_ids": [
+        "permanent.transform.face_change",
+        "trigger.event.normalized_public_action"
+      ],
+      "interaction_order": 2,
+      "assertion": "Each committed face change emits one normalized public transform event only after every member of the simultaneous batch has changed face."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_legacy_transform_intervening_identity_and_transform_count",
+      "piece_ids": [
+        "capability.permanent.transform.face_change",
+        "capability.trigger.upkeep.previous_turn_transform"
+      ],
+      "capability_ids": [
+        "permanent.transform.face_change",
+        "trigger.upkeep.previous_turn_transform"
+      ],
+      "interaction_order": 2,
+      "assertion": "The legacy intervening-if trigger pins source incarnation and transform count, so an absent, re-entered, or already-transformed source cannot be changed by the stale instruction."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_simultaneous_transform_apnap_state_and_replay",
+      "piece_ids": [
+        "capability.trigger.placement.apnap",
+        "capability.trigger.upkeep.previous_turn_transform"
+      ],
+      "capability_ids": [
+        "trigger.placement.apnap",
+        "trigger.upkeep.previous_turn_transform"
+      ],
+      "interaction_order": 2,
+      "assertion": "Qualifying legacy sources controlled by different players enter one deterministic APNAP batch before either source-transform instruction resolves."
     }
   ]
 }

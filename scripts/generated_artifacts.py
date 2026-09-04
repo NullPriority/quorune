@@ -26,6 +26,7 @@ _EXECUTION_CLASSES = {
 }
 _REUSE_POLICIES = {"safe", "noncacheable"}
 _DEPENDENT_CHANGE_POLICIES = {"inputs", "outputs"}
+_IMPLEMENTATION_IMPORT_POLICIES = {"runtime_imports", "semantic_imports"}
 
 
 class GeneratedArtifactManifestError(ValueError):
@@ -44,6 +45,7 @@ class GeneratorSpec:
     input_groups: tuple[str, ...] = ()
     input_paths: tuple[str, ...] = ()
     implementation_inputs: tuple[str, ...] = ()
+    implementation_import_policy: str = "runtime_imports"
     database_identity: str = "none"
     execution_class: str = "foundation"
     reuse_policy: str = "noncacheable"
@@ -231,7 +233,7 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
             "generated-artifact manifest has unknown or missing top-level fields"
         )
     schema_version = value.get("schema_version")
-    if schema_version not in {3, 4}:
+    if schema_version not in {3, 4, 5}:
         raise GeneratedArtifactManifestError(
             "unsupported generated-artifact manifest schema_version"
         )
@@ -273,9 +275,21 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
         if (
             not isinstance(row, Mapping)
             or not expected_fields.issubset(row)
-            or set(row) - expected_fields != (
-                {"dependent_change_policy"} if schema_version == 4 and "dependent_change_policy" in row else set()
-            )
+            or set(row) - expected_fields
+            != {
+                field
+                for field in (
+                    "dependent_change_policy",
+                    "implementation_import_policy",
+                )
+                if field in row
+                and (
+                    field == "dependent_change_policy"
+                    and schema_version >= 4
+                    or field == "implementation_import_policy"
+                    and schema_version >= 5
+                )
+            }
         ):
             raise GeneratedArtifactManifestError(
                 f"generators[{index}] has unknown or missing fields"
@@ -367,6 +381,14 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
             field=f"generator {generator_id} implementation_inputs",
             allow_empty=True,
         )
+        implementation_import_policy = str(
+            row.get("implementation_import_policy") or "runtime_imports"
+        )
+        if implementation_import_policy not in _IMPLEMENTATION_IMPORT_POLICIES:
+            raise GeneratedArtifactManifestError(
+                f"generator {generator_id} has unsupported "
+                "implementation_import_policy"
+            )
         for field_name, patterns in (
             ("input_paths", input_paths),
             ("implementation_inputs", implementation_inputs),
@@ -431,6 +453,7 @@ def parse_manifest(value: Mapping[str, Any]) -> tuple[GeneratorSpec, ...]:
                 input_groups=declared_groups,
                 input_paths=input_paths,
                 implementation_inputs=implementation_inputs,
+                implementation_import_policy=implementation_import_policy,
                 database_identity=database_identity,
                 execution_class=execution_class,
                 reuse_policy=reuse_policy,
@@ -660,6 +683,7 @@ def generator_manifest_fingerprint(spec: GeneratorSpec) -> str:
         "input_groups": list(spec.input_groups),
         "input_paths": list(spec.input_paths),
         "implementation_inputs": list(spec.implementation_inputs),
+        "implementation_import_policy": spec.implementation_import_policy,
         "database_identity": spec.database_identity,
         "execution_class": spec.execution_class,
         "reuse_policy": spec.reuse_policy,

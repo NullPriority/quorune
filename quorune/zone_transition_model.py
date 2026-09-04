@@ -113,6 +113,7 @@ class ZoneMovePlan:
     origin_identity_public: bool
     library_position: str | int | None
     destination_type_line: str
+    enter_face: str | None
     prepared_replacement: PreparedZoneChange
     prepared_life_payment: PreparedLifePayment | None
     prospective_battle_protector: str | None

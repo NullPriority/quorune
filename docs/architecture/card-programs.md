@@ -2,7 +2,7 @@
 title: "CardProgram architecture"
 status: "current"
 authoritative_source: "quorune/card_programs and schemas/card-program-v2.schema.json"
-verified: "2026-08-13"
+verified: "2026-09-04"
 audience: "compiler, rules, replay, and extension contributors"
 maintenance: "hand-maintained"
 ---
@@ -50,6 +50,15 @@ program before that choice is offered. Missing typed cast semantics fail closed.
 - Program descriptors may participate in later events through runtime
   components, but those components receive bounded immutable contexts and do
   not mutate state.
+
+Paired Daybound/Nightbound programs and legacy previous-turn self-transform
+programs carry the shared current-ability fragment marker. Runtime face and
+trigger discovery therefore consult the same layer-6 component applicability
+query used by other static components; removing an ability suppresses future
+participation without erasing a trigger already on the stack. The trigger
+captures both source logical identity and transform count, while the public
+day/night designation and bounded previous-turn summary remain Game Record
+state rather than CardProgram data.
 
 Combat declaration grammar is compiler-only. Exact costs, restrictions, and
 if-able requirements lower to registered static-ability fragments;

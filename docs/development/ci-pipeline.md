@@ -2,7 +2,7 @@
 title: "CI pipeline and two-slot development"
 status: "current"
 authoritative_source: "GitHub workflows, platform/test-shards.json, and local gate scripts"
-verified: "2026-08-21"
+verified: "2026-09-04"
 audience: "contributors and maintainers"
 maintenance: "hand-maintained"
 ---
@@ -132,12 +132,14 @@ impact plan invoke the same interface. Adding a file below `coverage/` or
 or a file with a registered generator marker requires adding that output to its
 owner in the same change.
 
-Owner reuse conservatively follows the complete Python import closure. The
-compiler-identity sentinel uses the compiler generator's implementation closure
-but treats package initializers as leaf boundaries: the initializer itself is
-semantic input, while modules re-exported only through that initializer do not
-require a compiler or schema bump. A module imported directly by the compiler
-closure remains semantic input and fails closed when its identity is unchanged.
+Each reusable owner declares an `implementation_import_policy`. The default
+`runtime_imports` policy conservatively follows the complete Python import
+closure. The compiler corpus declares `semantic_imports`, matching its compiler
+identity sentinel: package initializers remain inputs but are leaf boundaries,
+so unrelated runtime modules re-exported only by an initializer do not discard
+an immutable corpus result. A module imported directly by the compiler closure
+remains semantic input and still requires the canonical compiler identity to
+advance.
 
 The change-impact policy may also link a production owner directly to named
 neighboring test modules. Compiler promotion families use these links so a
@@ -165,7 +167,7 @@ database census in the same finalization run:
 
 `.github/workflows/generated-artifacts.yml` offloads the same governed writers
 to GitHub-hosted runners. Source-changing pull-request events and every `main`
-push first derive an affected-owner plan from schema-3 input declarations. A
+push first derive an affected-owner plan from schema-5 input declarations. A
 pre-corpus quick-gate phase records the affected tests for the ordinary PR
 matrix, but executes only runtime/compile validation, the generated manifest
 plan, and the compiler-identity sentinel before any census. The workflow is not

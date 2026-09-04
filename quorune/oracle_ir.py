@@ -136,6 +136,9 @@ from .compiler.static_runtime_nodes import (
 from .compiler.spell_additional_cost_nodes import (
     typed_additional_cost_spell_node,
 )
+from .compiler.spell_history_transform_nodes import (
+    previous_turn_transform_trigger_node,
+)
 from .compiler.tap_state_templates import targeted_tap_state_effect_template
 from .compiler.token_templates import fixed_token_creation_effect_template
 from .fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_MECHANICS
@@ -149,7 +152,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v163"
+ORACLE_COMPILER_VERSION = "oracle-ir-v164"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -480,8 +483,50 @@ def _contextual_effect_templates(
     return contextual_effect, contextual_trigger_effect
 
 
+def _ordinary_keyword_node(
+    *,
+    node_id: str,
+    line: str,
+    span: SourceSpan,
+    mechanics: tuple[str, ...],
+    gate: Any,
+    handlers: tuple[Mapping[str, Any], ...],
+    target_schema: Mapping[str, Any] | None,
+    residual_ids: tuple[str, ...],
+) -> OracleNode:
+    """Materialize the common closed printed-keyword node shape."""
+
+    flash = mechanics == (PRINTED_FLASH_MECHANIC,)
+    closure = gate.closure
+    return OracleNode(
+        node_id=node_id,
+        kind="keyword_ability",
+        text=line,
+        span=span,
+        active_zone=CAST_PERMISSION_ACTIVE_ZONE if flash else "battlefield",
+        event=CAST_PERMISSION_EVENT if flash else "continuous",
+        lowerable=True,
+        exact=not residual_ids,
+        template_id=(
+            "printed-flash-cast-permission-v1"
+            if flash
+            else "printed-keyword-list-v1"
+        ),
+        handlers=handlers,
+        target_schema=target_schema,
+        mechanics=mechanics,
+        residual_ids=residual_ids,
+        capability_dependencies=gate.capabilities,
+        capability_closure=closure.reachable if closure is not None else (),
+        capability_profile=closure.profile if closure is not None else None,
+        capability_fingerprint=(closure.fingerprint if closure is not None else None),
+    )
+
+
 def _keyword_node_for_mechanics(
     *,
+    record: CardRecord,
+    face_id: str,
     node_id: str,
     line: str,
     material_line: str,
@@ -494,6 +539,7 @@ def _keyword_node_for_mechanics(
     residuals: list[OracleResidual],
 ) -> OracleNode:
     closed_special = closed_special_keyword_node(
+        record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,
         span=span,
         mechanics=mechanics,
@@ -598,37 +644,15 @@ def _keyword_node_for_mechanics(
         residual_ids=residual_ids,
     ):
         return dredge
-    flash = mechanics == (PRINTED_FLASH_MECHANIC,)
-    return OracleNode(
+    return _ordinary_keyword_node(
         node_id=node_id,
-        kind="keyword_ability",
-        text=line,
+        line=line,
         span=span,
-        active_zone=(
-            CAST_PERMISSION_ACTIVE_ZONE if flash else "battlefield"
-        ),
-        event=CAST_PERMISSION_EVENT if flash else "continuous",
-        lowerable=True,
-        exact=not residual_ids,
-        template_id=(
-            "printed-flash-cast-permission-v1"
-            if flash
-            else "printed-keyword-list-v1"
-        ),
+        mechanics=mechanics,
+        gate=gate,
         handlers=fragment_lowering.handlers,
         target_schema=enchant_target_schema,
-        mechanics=mechanics,
         residual_ids=residual_ids,
-        capability_dependencies=gate.capabilities,
-        capability_closure=(
-            gate.closure.reachable if gate.closure is not None else ()
-        ),
-        capability_profile=(
-            gate.closure.profile if gate.closure is not None else None
-        ),
-        capability_fingerprint=(
-            gate.closure.fingerprint if gate.closure is not None else None
-        ),
     )
 
 
@@ -657,6 +681,8 @@ def _fallback_keyword_mechanics(
 
 def _keyword_nodes(
     *,
+    record: CardRecord,
+    face_id: str,
     node_id: str,
     line: str, material_line: str, card_name: str, effect_template: Any,
     span: SourceSpan,
@@ -779,6 +805,7 @@ def _keyword_nodes(
             continue
         nodes.append(
             _keyword_node_for_mechanics(
+                record=record, face_id=face_id,
                 node_id=plan.node_id,
                 line=plan.line,
                 material_line=plan.material_line,
@@ -1018,6 +1045,18 @@ def _activated_or_fixed_event_trigger_node(
     )
     if activated is not None:
         return activated
+    history_transform = previous_turn_transform_trigger_node(
+        node_id=node_id,
+        line=line,
+        material_line=material_line,
+        span=span,
+        card_name=card_name,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        residuals=residuals,
+    )
+    if history_transform is not None:
+        return history_transform
     return fixed_typed_event_effect_trigger_node(
         node_id=node_id, line=line, material_line=trigger_ability_word_material_line(material_line), span=span,
         card_name=card_name, trusted_mechanics=trusted_mechanics,

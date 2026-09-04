@@ -1,8 +1,8 @@
 ---
 title: "Rules kernel"
 status: "current"
-authoritative_source: "quorune engine and rules modules, including quorune/control_history.py, quorune/echo.py, quorune/saga_progression.py, quorune/mentor.py, quorune/relative_power_target.py, and quorune/target_predicates.py"
-verified: "2026-08-11"
+authoritative_source: "quorune engine and rules modules, including quorune/control_history.py, quorune/day_night.py, quorune/permanent_transform.py, quorune/turn_history.py, quorune/echo.py, quorune/saga_progression.py, quorune/mentor.py, quorune/relative_power_target.py, and quorune/target_predicates.py"
+verified: "2026-09-04"
 audience: "rules and engine contributors"
 maintenance: "hand-maintained"
 ---
@@ -243,6 +243,20 @@ intrinsic alternate destinations, broader prohibitions, and universal draw,
 damage, prevention, and entry participation remain blocked. New rules work must
 identify event/replacement participation and use capability IDs from the
 versioned registry.
+
+`turn_history.py` retains current-turn events plus one bounded per-player
+spell-count summary for the immediately previous turn. `day_night.py` consumes
+the previous active player's count during the second untap-step action, before
+the ordinary untap plan, and holds resulting triggers for the upkeep APNAP
+batch. Applicable paired Daybound/Nightbound components establish the unique
+public designation and synchronize their represented faces immediately;
+night entry selects the back face before entry characteristics are finalized.
+`permanent_transform.py` is the single active-face mutation owner. It preserves
+the logical object, controller, counters, damage, attachments, and timestamp,
+increments a replayed transform count, and ignores an activated or triggered
+instruction whose captured count is stale. Source reincarnation, ability
+removal, save/load, and public projection all use those typed identities rather
+than Oracle prose.
 
 Committed represented casts dispatch one strict immutable `SpellCastEvent`
 that pins the physical spell, logical incarnation, controller, origin, stack
