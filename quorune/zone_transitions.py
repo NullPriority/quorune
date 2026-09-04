@@ -479,7 +479,7 @@ class ZoneTransitionOwner:
             zone_timestamp=zone_timestamp,
         )
         card.zone = plan.destination
-        if enter_face is not None:
+        if enter_face is not None and plan.destination == "battlefield":
             card.active_face = enter_face
         if plan.destination == "battlefield":
             self._enter_battlefield(

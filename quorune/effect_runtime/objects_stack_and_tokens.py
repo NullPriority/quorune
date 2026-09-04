@@ -1006,6 +1006,15 @@ def _apply_transform(
     reason: str,
 ) -> Any:
     op = operation
+    allowed = {
+        "op",
+        "card",
+        "expected_transform_count",
+        "reason",
+        "_runtime_source",
+    }
+    if set(effect) - allowed:
+        raise GameRuleError("Transform effect has unknown fields")
     value = effect.get("card")
     if not value:
         return None
@@ -1021,6 +1030,12 @@ def _apply_transform(
             zones={"battlefield"},
         )
     except GameRuleError:
+        return None
+    runtime_source = effect.get("_runtime_source")
+    if not isinstance(runtime_source, Mapping) or (
+        runtime_source.get("object_id") != card.object_id
+        or runtime_source.get("logical_object_id") != card.logical_object_id
+    ):
         return None
     results = commit_transform_batch(
         host,

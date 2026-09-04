@@ -31,6 +31,8 @@ from quorune.day_night_model import (
     NIGHTBOUND_TEMPLATE_ID,
 )
 from quorune.deck import DeckLoader
+from quorune.effect_runtime.objects_stack_and_tokens import _apply_transform
+from quorune.errors import GameRuleError
 from quorune.model import (
     CardInstance,
     TurnEntry,
@@ -41,7 +43,10 @@ from quorune.oracle_ir import (
     compile_oracle_card,
     register_generated_programs,
 )
-from quorune.permanent_transform import commit_transform_batch
+from quorune.permanent_transform import (
+    PermanentTransformError,
+    commit_transform_batch,
+)
 from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
@@ -53,6 +58,7 @@ from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
 from quorune.session import CommanderSession
+from quorune.semantics import SemanticProgram
 from quorune.spell_history_transform import (
     SPELL_HISTORY_TRANSFORM_CAPABILITY_ID,
     SPELL_HISTORY_TRANSFORM_COVERAGE,
@@ -388,6 +394,111 @@ class SpellHistoryTransformationTests(unittest.TestCase):
                     ),
                 )
 
+        history = {
+            "schema_version": 1,
+            "turn_sequence": 1,
+            "events": [],
+            "previous_turn": {
+                "turn_sequence": 0,
+                "active_player": "A",
+                "spell_cast_counts": {"A": 0},
+            },
+        }
+        malformed_histories = []
+        for path, value in (
+            (("turn_sequence",), "0"),
+            (("active_player",), 7),
+            (("spell_cast_counts", "A"), True),
+            (("unexpected",), "field"),
+        ):
+            malformed_history = deepcopy(history)
+            target = malformed_history["previous_turn"]
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+            malformed_histories.append(malformed_history)
+        for malformed_history in malformed_histories:
+            with self.subTest(previous_turn=malformed_history["previous_turn"]):
+                with self.assertRaises(ValueError):
+                    TurnHistory.from_dict(malformed_history)
+
+        source = self.add_card(
+            session,
+            name="Village Watcher",
+            ref="strict-transform-source",
+            owner="A",
+        )
+        with self.assertRaises(PermanentTransformError):
+            commit_transform_batch(
+                engine,
+                (source,),
+                reason="missing transform snapshot fixture",
+                day_night_instruction=False,
+            )
+        with self.assertRaises(PermanentTransformError):
+            commit_transform_batch(
+                engine,
+                (source,),
+                reason="extra transform snapshot fixture",
+                day_night_instruction=False,
+                expected_transform_counts={
+                    source.object_id: 0,
+                    "fixture:unrequested": 0,
+                },
+            )
+        transform_effect = {
+            "op": "transform",
+            "card": source.ref,
+            "expected_transform_count": 0,
+            "_runtime_source": {
+                "object_id": source.object_id,
+                "logical_object_id": source.logical_object_id,
+            },
+        }
+        self.assertIsNone(
+            _apply_transform(
+                engine,
+                {
+                    key: value
+                    for key, value in transform_effect.items()
+                    if key != "_runtime_source"
+                },
+                actor="A",
+                operation="transform",
+                reason="missing runtime source fixture",
+            )
+        )
+        stale_effect = deepcopy(transform_effect)
+        stale_effect["_runtime_source"]["logical_object_id"] = "stale-incarnation"
+        self.assertIsNone(
+            _apply_transform(
+                engine,
+                stale_effect,
+                actor="A",
+                operation="transform",
+                reason="stale runtime source fixture",
+            )
+        )
+        with self.assertRaises(GameRuleError):
+            _apply_transform(
+                engine,
+                {**transform_effect, "unexpected": True},
+                actor="A",
+                operation="transform",
+                reason="unknown transform field fixture",
+            )
+        self.assertEqual(
+            source.ref,
+            _apply_transform(
+                engine,
+                transform_effect,
+                actor="A",
+                operation="transform",
+                reason="valid transform source fixture",
+            ),
+        )
+        self.assertEqual("Village Ravager", source.active_face)
+
     def test_transform_capability_and_compiler_mutations_fail_closed(self):
         value = deepcopy(self.registry_value)
         capability = next(
@@ -491,6 +602,58 @@ class SpellHistoryTransformationTests(unittest.TestCase):
         )
         self.assertEqual("Moonlit Adept", entering.active_face)
         self.assertEqual(4, engine._numeric_stat(entering.object_id, "power"))
+
+        replacement_source = self.add_card(
+            session,
+            name="Arcane Signet",
+            ref="night-entry-replacement-source",
+            owner="A",
+        )
+        engine.semantics.put(
+            SemanticProgram(
+                key="fixture:night-entry-destination-replacement",
+                label="Replace a Daybound battlefield entry",
+                oracle_id=replacement_source.oracle_id,
+                ability_id="static:front:night-entry-destination",
+                active_zone="battlefield",
+                event="zone.change",
+                trust_level="provisional",
+                handlers=[
+                    {
+                        "handler_id": "replacement.zone.destination.v1",
+                        "schema_version": 1,
+                        "event": "zone.change",
+                        "condition": {
+                            "destination": "battlefield",
+                            "object_kind": "card",
+                            "owner_relation": "opponent",
+                        },
+                        "destination": "exile",
+                        "counters": {},
+                    }
+                ],
+            )
+        )
+        redirected = self.add_card(
+            session,
+            name="Sunlit Adept",
+            ref="redirected-night-entry",
+            owner="B",
+            zone="hand",
+        )
+        with mock.patch.object(
+            type(engine),
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            engine.move_card(
+                redirected.object_id,
+                "battlefield",
+                controller="B",
+                semantic_events=True,
+            )
+        self.assertEqual("exile", redirected.zone)
+        self.assertIsNone(redirected.active_face)
 
         direct.active_face = "Sunlit Adept"
         daybound_program = next(

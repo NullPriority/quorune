@@ -163,6 +163,12 @@ class TurnHistory:
         previous = data.get("previous_turn")
         if previous is not None and not isinstance(previous, dict):
             raise ValueError("Previous-turn spell history must be an object")
+        if isinstance(previous, dict) and set(previous) != {
+            "turn_sequence",
+            "active_player",
+            "spell_cast_counts",
+        }:
+            raise ValueError("Previous-turn spell history has unknown fields")
         return cls(
             schema_version=int(data.get("schema_version", 1)),
             turn_sequence=int(data.get("turn_sequence", 0)),
@@ -171,24 +177,19 @@ class TurnHistory:
                 for event in data.get("events", [])
             ],
             previous_turn_sequence=(
-                int(previous["turn_sequence"])
+                previous["turn_sequence"]
                 if isinstance(previous, dict)
                 and previous.get("turn_sequence") is not None
                 else None
             ),
             previous_active_player=(
-                str(previous["active_player"])
+                previous["active_player"]
                 if isinstance(previous, dict)
                 and previous.get("active_player") is not None
                 else None
             ),
             previous_spell_cast_counts=(
-                {
-                    str(player): int(count)
-                    for player, count in dict(
-                        previous.get("spell_cast_counts", {})
-                    ).items()
-                }
+                previous.get("spell_cast_counts", {})
                 if isinstance(previous, dict)
                 else {}
             ),

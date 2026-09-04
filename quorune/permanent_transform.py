@@ -215,6 +215,10 @@ def transform_permanent(
 
     if type(day_night_instruction) is not bool:
         raise PermanentTransformError("Transform instruction kind must be explicit")
+    if not day_night_instruction and expected_transform_count is None:
+        raise PermanentTransformError(
+            "Activated or triggered transforms require a count snapshot"
+        )
     if expected_transform_count is not None and (
         type(expected_transform_count) is not int
         or expected_transform_count < 0
@@ -270,8 +274,15 @@ def commit_transform_batch(
     if type(reason) is not str or not reason:
         raise PermanentTransformError("Transform reason must be nonempty")
     expected = dict(expected_transform_counts or {})
-    if len({card.object_id for card in cards}) != len(cards):
+    object_ids = {card.object_id for card in cards}
+    if len(object_ids) != len(cards):
         raise PermanentTransformError("Transform batch contains duplicates")
+    if set(expected) - object_ids or (
+        not day_night_instruction and set(expected) != object_ids
+    ):
+        raise PermanentTransformError(
+            "Transform count snapshots must match the requested batch"
+        )
     results = tuple(
         result
         for card in cards
