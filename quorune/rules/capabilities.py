@@ -7,6 +7,13 @@ from pathlib import Path
 import re
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..fixed_token_production import (
+    AFTERLIFE_CAPABILITY_ID,
+    AFTERLIFE_MECHANIC_ID,
+    INVESTIGATE_CAPABILITY_ID,
+    INVESTIGATE_MECHANIC_ID,
+)
+
 from .component_resolution import implementation_component_resolves
 from .counter_capability_shapes import (
     fixed_counter_placement_group_node_capabilities,
@@ -68,6 +75,7 @@ from .node_capability_shapes import (
     targeted_tap_state_node_capabilities,
 )
 from .token_creation_capability_shapes import (
+    fixed_token_creation_covered_mechanics,
     fixed_token_creation_node_capabilities,
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
@@ -267,6 +275,9 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,),
+    INVESTIGATE_MECHANIC_ID: (INVESTIGATE_CAPABILITY_ID,),
+    "changeling": ("continuous.characteristics.changeling",),
     _DEVOID_MECHANIC: ("continuous.characteristics.devoid",),
     _CYCLING_MECHANIC: ("activation.cycling.hand",),
     _CREW_MECHANIC: ("activation.crew.fixed_power",),
@@ -1475,10 +1486,7 @@ def capability_covered_mechanics(
         }
     ):
         covered.add("cr-121-drawing-a-card")
-    if "token.creation.fixed_definition" in supplied:
-        covered.update(
-            {"cr-111-tokens", "fixed-token-definition-batch"}
-        )
+    covered.update(fixed_token_creation_covered_mechanics(supplied))
     covered.update(_fixed_modal_covered_mechanics(supplied))
     covered.update(_affected_player_choice_covered_mechanics(supplied))
     if _has_aura_attachment_capability(supplied):

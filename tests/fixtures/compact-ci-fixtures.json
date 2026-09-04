@@ -29,6 +29,7 @@
     "tests/fixtures/fixed-query-keyword-grant-cards.json",
     "tests/fixtures/fixed-spell-cost-reduction-cards.json",
     "tests/fixtures/fixed-token-creation-cards.json",
+    "tests/fixtures/fixed-token-production-cards.json",
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/leveler-bands-cards.json",

@@ -107,3 +107,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0090 — typed public event-effect triggers](0090-typed-public-event-effect-triggers.md)
 - [ADR 0091 — typed fixed library selection](0091-typed-fixed-library-selection.md)
 - [ADR 0092 — typed spell-history transformations](0092-typed-spell-history-transformations.md)
+- [ADR 0093 — typed fixed token production](0093-typed-fixed-token-production.md)

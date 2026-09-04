@@ -11,7 +11,7 @@ _FIXED_ENTRY_MECHANICS = ("fading", "graft", "vanishing")
 
 _KEYWORD_WITH_VALUE = re.compile(
     rf"^(?P<name>{re.escape(_BLOODTHIRST_MECHANIC)}|{re.escape(_RENOWN_MECHANIC)}|{re.escape(_MODULAR_MECHANIC)}|{'|'.join(map(re.escape, _FIXED_ENTRY_MECHANICS))}|ward|equip|enchant|bushido|cycling|crew|dredge|kicker|toxic|"
-    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|warp|level up|outlast|reinforce|scavenge)"
+    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|warp|level up|outlast|reinforce|scavenge)"
     r"(?:\s+(?P<value>.+))?$",
     re.IGNORECASE,
 )
@@ -65,6 +65,11 @@ def keyword_mechanics(
             # Proliferate is a keyword action whose imperative instruction
             # executes during resolution, not a keyword ability carried by
             # the source. Let the closed resolution grammar own it.
+            return None
+        if lower.startswith("investigate"):
+            # Investigate is a resolution-time keyword action. The fixed
+            # token-production grammar owns its complete instruction rather
+            # than treating it as a printed keyword ability.
             return None
         if re.fullmatch(r"support\s+.+", lower):
             # Support is a keyword action whose target set depends on whether

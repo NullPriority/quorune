@@ -3320,23 +3320,53 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "the general set of spending restrictions, riders, duration modifiers, and source annotations is not represented",
+        "fixed-colored restricted output and restrictions outside Powerstone, artifact-only any-color, creature-only any-color, artifact spell-or-ability, and legendary-spell rider forms remain outside the closed compilers",
+        "mana-production replacement and trigger interactions remain incomplete"
       ],
       "case_id": "cr-106.6",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "106"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiled_restricted_mana_is_controller_scoped_and_replays",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+        "tests.test_exact_mishra_closure.ExactMishraClosureTests.test_mightstone_modal_enter_and_restricted_powerstone_mana",
+        "tests.test_exact_zimone_closure.ExactZimoneClosureTests.test_delighted_halfling_restricted_mana_makes_legendary_spell_uncounterable"
+      ],
+      "implementation_components": [
+        "quorune.abilities.ActivatedAbility.mana_spend_restriction",
+        "quorune.fixed_mana_abilities.FixedActivatedManaAbilitySpec",
+        "quorune.engine.CommanderEngine._mana_restriction_allows",
+        "quorune.engine.CommanderEngine._apply_mana_spend"
+      ],
+      "notes": [
+        "Represented mana units carry a typed restriction or rider from production through spendability, authoritative payment, persistence, and replay; unsupported prose cannot select a generic runtime behavior."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "106.6",
       "rule_text_sha256": "a4b5ea5ae753fe516e8a30491c02869f7cfc2dda8a770fc36b205fdb961df18f",
       "schema_version": 1,
@@ -3345,7 +3375,7 @@
         "end_line": 427,
         "start_line": 425
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -6698,23 +6728,38 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-111.10f",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "111.10"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities"
+      ],
+      "implementation_components": [
+        "quorune.fixed_token_production.clue_token_effect",
+        "quorune.standard_token_abilities.standard_token_characteristics"
+      ],
+      "notes": [
+        "The canonical Clue profile exposes its typed sacrifice-and-draw ability without consulting display text."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "111.10f",
       "rule_text_sha256": "4e3b8f05782cb2ade83a7165b87e8762502bfabe5f788e56411971aa58b21935",
       "schema_version": 1,
@@ -6723,7 +6768,7 @@
         "end_line": 680,
         "start_line": 679
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",
@@ -6754,23 +6799,39 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-111.10h",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "111.10"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules"
+      ],
+      "implementation_components": [
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.standard_token_abilities.StandardTokenAbilityProfile",
+        "quorune.mana_activation.complete_mana_activation"
+      ],
+      "notes": [
+        "Powerstone creates a colorless artifact token whose stackless typed mana ability produces one colorless unit carrying the nonartifact-spell prohibition."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "111.10h",
       "rule_text_sha256": "0365c016709eb5693d7ae1d471509845c1076d54603267f817e2d0fd6a245c35",
       "schema_version": 1,
@@ -6779,7 +6840,7 @@
         "end_line": 684,
         "start_line": 683
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",
@@ -7034,23 +7095,41 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-111.10t",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "111.10"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules"
+      ],
+      "implementation_components": [
+        "quorune.standard_token_abilities.StandardTokenAbilityProfile",
+        "quorune.rules.activation.resolution.builtin_activation_resolution",
+        "quorune.semantic_runtime.impulse_access"
+      ],
+      "notes": [
+        "Junk uses a typed tap-and-sacrifice profile and the existing fixed impulse-access owner; its library result and temporary permission replay exactly."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "111.10t",
       "rule_text_sha256": "715fbb3d8d60c983b84e825bb8ad88cfd18613344bc147170eb94404a51a7634",
       "schema_version": 1,
@@ -7059,7 +7138,7 @@
         "end_line": 704,
         "start_line": 703
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",
@@ -7118,23 +7197,40 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-111.10w",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "111.10"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules"
+      ],
+      "implementation_components": [
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.standard_token_abilities.StandardTokenAbilityProfile",
+        "quorune.characteristic_evaluation.evaluate_card_characteristics"
+      ],
+      "notes": [
+        "Vibranium combines the ordinary Indestructible characteristic with the same restricted colorless mana profile as Powerstone."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "111.10w",
       "rule_text_sha256": "ffa49c4882b999434e0edcb5b0199a1791382815cc2d68c4c385be22229b6ae4",
       "schema_version": 1,
@@ -7143,7 +7239,7 @@
         "end_line": 710,
         "start_line": 709
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",
@@ -7174,23 +7270,43 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "source-LKI and nontarget copy instructions remain outside the fixed targeted-copy grammar",
+        "modified, linked, multiple-target, and zone-relative copy-token instructions remain material residuals"
       ],
       "case_id": "cr-111.12",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "111"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.selection.targeting.TargetSelectionOwnerMixin",
+        "quorune.token_creation.create_tokens"
+      ],
+      "notes": [
+        "A missing or new target incarnation creates no token; one current legal target uses the existing copiable-values and replacement-aware token owners."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "111.12",
       "rule_text_sha256": "7820590db7f1a8b7cd590fc02bfe89d9c7ef241a346a23d7b673b4db72abfb9a",
       "schema_version": 1,
@@ -7199,7 +7315,7 @@
         "end_line": 716,
         "start_line": 714
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -51494,23 +51610,27 @@
       "status": "passing"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-701.16",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "701"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions"
+      ],
+      "implementation_components": [
+        "quorune.rules.capabilities.CapabilityRegistry"
+      ],
+      "notes": [
+        "Keyword-action heading; keyword_action.investigate.fixed owns the bounded fixed-count compiler and runtime slice."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "701.16",
       "rule_text_sha256": "e2641093476bbd11c799f3294ee8715631f539643136ee8e9183f870504f7dbb",
       "schema_version": 1,
@@ -51519,26 +51639,50 @@
         "end_line": 3407,
         "start_line": 3406
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-701.16a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "701.16"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy"
+      ],
+      "implementation_components": [
+        "quorune.fixed_token_production.FixedInvestigateSpec",
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.token_creation.create_tokens",
+        "quorune.standard_token_abilities.standard_token_characteristics"
+      ],
+      "notes": [
+        "Each represented action creates the canonical Clue definition through the ordinary replacement-aware token transaction; fixed repeated and independently optional wrappers compose through their existing typed owners."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "701.16a",
       "rule_text_sha256": "2ea7bfd703190097d8f3a6952dd477b517bd92b7ec88f0f56528a2caa8334cbe",
       "schema_version": 1,
@@ -51547,7 +51691,7 @@
         "end_line": 3409,
         "start_line": 3408
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "static_traceability",
@@ -76853,23 +76997,27 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.135",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions"
+      ],
+      "implementation_components": [
+        "quorune.rules.capabilities.CapabilityRegistry"
+      ],
+      "notes": [
+        "Keyword heading; trigger.keyword.afterlife.fixed owns the bounded printed positive-integer slice."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.135",
       "rule_text_sha256": "0ef6ed94a0c190f3edca1cda6aa3e15c26bffc466258a61fdc93b72709558a0f",
       "schema_version": 1,
@@ -76878,26 +77026,51 @@
         "end_line": 4997,
         "start_line": 4996
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "copied, granted, removed, and text-changed Afterlife is not yet propagated through a universal typed ability-instance owner",
+        "shared-team turn ordering remains outside supported profiles"
       ],
       "case_id": "cr-702.135a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "702.135"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_multiple_afterlife_instances_share_apnap_batch_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.compiler.token_production_keyword_nodes.fixed_afterlife_keyword_node",
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.token_creation.create_tokens"
+      ],
+      "notes": [
+        "Printed fixed Afterlife listens to permanent.graveyard.self, uses previous-controller and current-ability LKI, and creates the canonical white-black flying Spirit definition through the existing APNAP and token owners."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "702.135a",
       "rule_text_sha256": "f9a949a74debc719935b0b7a8d88587e3682862a72dbcaf5a7333ee38f4dd093",
       "schema_version": 1,
@@ -76906,26 +77079,47 @@
         "end_line": 4999,
         "start_line": 4998
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "multiple copied or granted Afterlife instances remain outside the typed propagation boundary"
       ],
       "case_id": "cr-702.135b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "702.135"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "tests.test_fixed_token_production.FixedTokenProductionTests.test_multiple_afterlife_instances_share_apnap_batch_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.compiler.keyword_nodes.keyword_node_plans",
+        "quorune.compiler.generated_program_identity.generated_ability_id",
+        "quorune.trigger_batches.PendingTriggerBatch"
+      ],
+      "notes": [
+        "Each printed instance receives a distinct source-spanned generated trigger identity and joins the ordinary private same-controller ordering inside the APNAP batch."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "702.135b",
       "rule_text_sha256": "198e94c02869417082bfaa9cb02f8aad2336f89652b57ea5e2607506f429dfd0",
       "schema_version": 1,
@@ -76934,7 +77128,7 @@
         "end_line": 5001,
         "start_line": 5000
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "static_traceability",

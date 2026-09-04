@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "cr-707-copying-objects",
   "official_name": "Copying Objects",
   "effective_date": "2026-08-07",
@@ -39,17 +39,20 @@
       "spell copies represented by serialized noncard objects",
       "card copies represented by serialized noncard objects",
       "copied activated and triggered abilities represented by stack items",
-      "token permanents resulting from copied permanent spells"
+      "token permanents resulting from copied permanent spells",
+      "one token copying a current legal targeted battlefield permanent"
     ],
     "events": [
       "copy a stack item",
       "choose permitted new targets",
       "resolve or counter a spell copy",
       "permanent spell copy becomes a token",
+      "targeted token copy is created through the ordinary token event",
       "spell-copy or card-copy cessation"
     ],
     "state_reads": [
       "source copiable-characteristic snapshot",
+      "current target legality and logical incarnation",
       "copied modes, targets, X value, and selected face",
       "copy object kind and current zone"
     ],
@@ -69,7 +72,8 @@
     "targets": [
       "a spell copy is a spell target rather than an ability target",
       "new targets are selected only through the compiled copy effect",
-      "noncard copies are never legal card targets"
+      "noncard copies are never legal card targets",
+      "the fixed token-copy form accepts one target creature or one target artifact, creature, or land"
     ],
     "choices": [
       "implemented copies preserve modes, X, selected face, and unchanged targets",
@@ -89,6 +93,7 @@
     ],
     "copy": [
       "copying a represented spell copy creates another independent spell-copy object",
+      "one fixed target-copy token receives the target's current copiable values after revalidation",
       "copied external effects and the complete copiable-values rules remain outside this partial contract"
     ],
     "control_change": [
@@ -110,7 +115,8 @@
     "copy a permanent spell",
     "storm creates multiple spell copies",
     "countered spell copy reaches its destination before ceasing",
-    "card copy remains a nontoken permanent on the battlefield"
+    "card copy remains a nontoken permanent on the battlefield",
+    "fixed targeted permanent copy becomes a token"
   ],
   "witness_cards": [
     {
@@ -139,14 +145,16 @@
     "test_permanent_spell_keeps_its_logical_incarnation",
     "test_lithoform_engine_copies_triggered_ability_and_spell_types",
     "test_lithoform_engine_permanent_spell_copy_becomes_token",
-    "test_flusterstorm_storm_copies_are_individual_stack_objects"
+    "test_flusterstorm_storm_copies_are_individual_stack_objects",
+    "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+    "test_copy_and_delayed_tokens_revalidate_and_replay"
   ],
   "implementation": {
-    "component": "CardInstance.object_kind, CommanderEngine._create_copy_object/_copy_stack_item/_begin_resolve_item, and state_based_actions.evaluate_state_based_actions",
-    "version": "copy-object-lifecycle-v1"
+    "component": "CardInstance.object_kind, compiler.token_templates, token_creation.create_tokens, CommanderEngine._create_copy_object/_copy_stack_item/_begin_resolve_item, and state_based_actions.evaluate_state_based_actions",
+    "version": "copy-object-lifecycle-v2"
   },
   "known_blockers": [
-    "the complete CR 707.2 copiable-values and layer-1 interaction matrix is not implemented",
+    "the complete CR 707.2 copiable-values and layer-1 interaction matrix is not implemented outside the exact current-target token-copy and existing stack-copy slices",
     "copying cards and casting or playing those copies under CR 707.12 is not integrated with the full casting and land-play workflows",
     "Prepare copy objects that remain in exile under CR 722.3c are not represented",
     "face-down, mutate, meld, stickers, linked abilities, and copy-effect exception interactions remain incomplete",

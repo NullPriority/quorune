@@ -10,6 +10,7 @@ _EXPLORE_KEYS = frozenset(
     {"builtin:explore-target", "builtin:map-explore"}
 )
 _EQUIP_KEY = "builtin:equip"
+_JUNK_IMPULSE_KEY = "builtin:fixed-impulse-access:1:turn"
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +68,20 @@ def builtin_activation_resolution(
                 ),
             ),
             note="Built-in target-explore ability resolved",
+        )
+    if semantic_key == _JUNK_IMPULSE_KEY:
+        return BuiltinActivationResolution(
+            effects=(
+                FrozenMap(
+                    {
+                        "op": "fixed_impulse_access",
+                        "player": controller,
+                        "count": 1,
+                        "duration": "until_end_of_turn",
+                    }
+                ),
+            ),
+            note="Built-in Junk impulse access resolved",
         )
     if semantic_key == _EQUIP_KEY:
         return BuiltinActivationResolution(

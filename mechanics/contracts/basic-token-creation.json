@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 4,
+  "contract_version": 5,
   "mechanic_id": "cr-111-tokens",
   "official_name": "Tokens",
   "effective_date": "2026-08-07",
@@ -12,6 +12,12 @@
     "111.6",
     "111.7",
     "111.8",
+    "111.10",
+    "111.10f",
+    "111.10h",
+    "111.10t",
+    "111.10w",
+    "111.12",
     "614.16",
     "616.1",
     "616.1f",
@@ -27,11 +33,13 @@
       "the first nonbattlefield destination before the next state check",
       "outside after cessation"
     ],
-    "objects": ["basic creature tokens with fixed printed characteristics", "fixed 0/0 black subtype Army tokens created by ordinary Amass"],
+    "objects": ["fixed creature and artifact tokens with closed printed characteristics", "properly named and legendary fixed tokens", "fixed 0/0 black subtype Army tokens created by ordinary Amass", "one token copying a current legal targeted permanent"],
     "events": [
       "token creation and permanent entry",
       "mandatory fixed additional-token replacement through the immutable token event",
       "staged Amass token creation before the current Army set is queried",
+      "canonical Investigate and Afterlife production",
+      "source-independent next-end-step production",
       "token zone change",
       "token cessation as a state-based action"
     ],
@@ -46,25 +54,26 @@
       "outside tombstone after cessation"
     ],
     "costs": [],
-    "timing": ["during semantic effect resolution"],
+    "timing": ["during semantic effect resolution", "through Afterlife APNAP placement", "at one represented next-end-step delayed boundary"],
     "targets": [
-      "tokens are permanents on the battlefield but are never cards in another zone"
+      "tokens are permanents on the battlefield but are never cards in another zone",
+      "the fixed copy form revalidates one target creature or one target artifact, creature, or land"
     ],
-    "choices": [],
-    "hidden_information": [],
-    "apnap": [],
-    "layers": ["token base characteristics become copiable values"],
+    "choices": ["ordinary affected-controller token replacement ordering"],
+    "hidden_information": ["token facts are public while replacement and library-access choices remain principal-scoped"],
+    "apnap": ["Afterlife and delayed production reuse the normalized trigger batch"],
+    "layers": ["token base characteristics become copiable values", "represented Changeling and declaration fragments enter the shared characteristic and ability-presence boundary"],
     "replacement_effects": ["the closed mandatory fixed additional-token family may append a known token specification before the authoritative creation commit"],
-    "copy": ["copy tokens require a separate characteristic snapshot path"],
+    "copy": ["one exact target-copy form uses current copiable values after resolution target revalidation", "source-LKI, modified, linked, and zone-relative copies remain outside this slice"],
     "control_change": ["created token enters under the instructed controller"],
     "zone_change": [
       "a token first reaches its destination and triggers see that move",
       "after leaving the battlefield it cannot move again",
       "it ceases to exist at the next state-based-action check"
     ],
-    "source_leaves": []
+    "source_leaves": ["Afterlife uses last-known controller and ability presence", "a represented delayed trigger is source-independent"]
   },
-  "variants": ["fixed power/toughness colored creature token", "fixed artifact creature token", "fixed black subtype Army token"],
+  "variants": ["fixed power/toughness colored creature token", "fixed artifact creature token", "properly named or legendary token", "represented keyword, Changeling, or declaration-fragment token", "Powerstone, Junk, and Vibranium", "fixed black subtype Army token", "canonical Investigate and Afterlife", "exact targeted copy", "fixed next-end-step creation"],
   "witness_cards": [
     {
       "name": "Sprout",
@@ -84,16 +93,25 @@
     "test_additional_token_component_replays_exactly",
     "test_generic_additional_token_program_replays_exactly",
     "test_amass_without_army_creates_then_counters_one_black_army",
-    "test_amass_token_and_counter_replacements_suspend_in_rule_order_and_replay"
+    "test_amass_token_and_counter_replacements_suspend_in_rule_order_and_replay",
+    "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+    "test_token_production_grammar_and_capability_mutants_fail_closed",
+    "test_investigate_and_predefined_tokens_use_canonical_abilities",
+    "test_token_characteristic_fragments_use_shared_rules_owners",
+    "test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+    "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+    "test_multiple_afterlife_instances_share_apnap_batch_and_replay",
+    "test_copy_and_delayed_tokens_revalidate_and_replay",
+    "test_token_replacement_order_rollback_and_privacy"
   ],
   "implementation": {
-    "component": "oracle_ir._effect_template, compiler.token_templates, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
-    "version": "token-lifecycle-v4"
+    "component": "oracle_ir._effect_template, compiler.token_templates, compiler.fixed_token_production_templates, compiler.token_production_keyword_nodes, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, standard_token_abilities, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
+    "version": "token-lifecycle-v5"
   },
   "known_blockers": [
-    "tokens with unrecognized abilities, dynamic values, predefined named characteristics outside the closed vocabulary, or linked choices remain residual",
+    "tokens with arbitrary abilities, dynamic values, predefined characteristics outside the closed vocabulary, or linked choices remain residual",
     "optional, multiplying beyond the represented fixed additional-token family, prevention, prohibition, and mutable-state token replacements are not compiled",
-    "copy-token characteristic and entry replacement coverage is incomplete"
+    "copy-token support excludes source-LKI, modified, linked, nontarget, multiple-target, and zone-relative forms"
   ],
   "review_status": "reviewed"
 }

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 This is intentionally a closed grammar.  It compiles target-free, nonloyalty
 activated mana abilities whose complete output is known before activation.
-Dynamic quantities, restrictions, conditional output, and side effects in the
-effect clause remain outside this family.
+Dynamic quantities, open restrictions, conditional output, and side effects
+in the effect clause remain outside this family.
 """
 
 from dataclasses import dataclass
@@ -26,6 +26,18 @@ _ANY_COLOR = re.compile(
     r"^Add (?P<count>one|two|three) mana of any one color\.$",
     re.IGNORECASE,
 )
+_FIXED_SPEND_RESTRICTIONS = {
+    "artifact_spell_only",
+    "creature_spell_only",
+    "nonartifact_spell_prohibited",
+}
+_RESTRICTION_SUFFIXES = {
+    " This mana can't be spent to cast a nonartifact spell.": (
+        "nonartifact_spell_prohibited"
+    ),
+    " Spend this mana only to cast an artifact spell.": "artifact_spell_only",
+    " Spend this mana only to cast a creature spell.": "creature_spell_only",
+}
 
 
 class FixedManaAbilityError(ValueError):
@@ -132,6 +144,7 @@ class FixedActivatedManaAbilitySpec:
     sacrifice_source: bool
     life_payment: int
     modes: tuple[FixedManaMode, ...]
+    spend_restriction: str | None = None
     activation_limit: ActivationLimit | None = None
 
     def __post_init__(self) -> None:
@@ -188,6 +201,13 @@ class FixedActivatedManaAbilitySpec:
             raise FixedManaAbilityError(
                 "Fixed mana ability output modes must be unique"
             )
+        if self.spend_restriction is not None and (
+            type(self.spend_restriction) is not str
+            or self.spend_restriction not in _FIXED_SPEND_RESTRICTIONS
+        ):
+            raise FixedManaAbilityError(
+                "Fixed mana spending restriction is unsupported"
+            )
         if self.activation_limit is not None and not isinstance(
             self.activation_limit, ActivationLimit
         ):
@@ -217,6 +237,8 @@ class FixedActivatedManaAbilitySpec:
         }
         if self.activation_limit is not None:
             value["activation_limit"] = self.activation_limit.value
+        if self.spend_restriction is not None:
+            value["spend_restriction"] = self.spend_restriction
         return value
 
     @classmethod
@@ -237,6 +259,8 @@ class FixedActivatedManaAbilitySpec:
         }
         if "activation_limit" in value:
             expected.add("activation_limit")
+        if "spend_restriction" in value:
+            expected.add("spend_restriction")
         _exact_fields(value, expected, field="fixed mana ability")
         mana_cost = value["mana_cost"]
         modes = value["modes"]
@@ -262,6 +286,7 @@ class FixedActivatedManaAbilitySpec:
             sacrifice_source=value["sacrifice_source"],
             life_payment=value["life_payment"],
             modes=tuple(FixedManaMode.from_dict(mode) for mode in modes),
+            spend_restriction=value.get("spend_restriction"),
             activation_limit=value.get("activation_limit"),
         )
 
@@ -281,6 +306,7 @@ class FixedActivatedManaAbilitySpec:
             life_payment=self.life_payment,
             mana_ability=True,
             fixed_mana_outputs=self.modes,
+            mana_spend_restriction=self.spend_restriction,
             activation_limit=self.activation_limit,
         )
 
@@ -332,6 +358,22 @@ def fixed_mana_modes_from_effect(
     return modes if len(modes) == len({tuple(mode.bundle.items()) for mode in modes}) else None
 
 
+def _restricted_modes_are_closed(
+    restriction: str | None,
+    modes: tuple[FixedManaMode, ...],
+) -> bool:
+    if restriction is None:
+        return True
+    bundles = tuple(mode.bundle for mode in modes)
+    if restriction == "nonartifact_spell_prohibited":
+        return bundles == (normalize_mana_bundle({"C": 1}),)
+    if restriction in {"artifact_spell_only", "creature_spell_only"}:
+        return bundles == tuple(
+            normalize_mana_bundle({color: 1}) for color in "WUBRG"
+        )
+    return False
+
+
 def compile_fixed_activated_mana_ability(
     ability: Any,
 ) -> FixedActivatedManaAbilitySpec | None:
@@ -343,8 +385,22 @@ def compile_fixed_activated_mana_ability(
         # ability. Basic land types grant their intrinsic abilities through a
         # separate rules owner and must not be promoted by this family.
         return None
-    modes = fixed_mana_modes_from_effect(str(ability.effect_text))
-    if modes is None:
+    effect_text = " ".join(str(ability.effect_text).split())
+    restriction = ability.mana_spend_restriction
+    base_effect = effect_text
+    parsed_restriction = None
+    for suffix, candidate in _RESTRICTION_SUFFIXES.items():
+        if effect_text.endswith(suffix):
+            base_effect = effect_text[: -len(suffix)]
+            parsed_restriction = candidate
+            break
+    if restriction != parsed_restriction:
+        return None
+    modes = fixed_mana_modes_from_effect(base_effect)
+    if modes is None or not _restricted_modes_are_closed(
+        restriction,
+        modes,
+    ):
         return None
     if (
         not ability.mana_ability
@@ -378,6 +434,7 @@ def compile_fixed_activated_mana_ability(
         sacrifice_source=ability.sacrifice_source,
         life_payment=ability.life_payment,
         modes=modes,
+        spend_restriction=restriction,
         activation_limit=ability.activation_limit,
     )
 

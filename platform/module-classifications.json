@@ -2275,6 +2275,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/fixed_token_production_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/flashback_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -2951,6 +2966,21 @@
     },
     {
       "file": "quorune/compiler/temporary_declaration_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/token_production_keyword_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -4114,6 +4144,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/fixed_token_production.py",
+      "layer": "domain",
+      "owning_subsystem": "token_creation",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/flashback.py",
       "layer": "rules",
       "owning_subsystem": "casting_flashback",
@@ -4363,6 +4405,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/mana_restrictions.py",
+      "layer": "rules",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/mana_source_discovery.py",
@@ -8748,5 +8804,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "416cd85728cb94f63453f11c5f594636c731124946443f90682a9d93bd2e1221"
+  "fingerprint": "a7c2e675d4d01f1f976040708e674d2cf24b0a9cdd15b946818549153d7ff18e"
 }

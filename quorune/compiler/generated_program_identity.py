@@ -3,6 +3,7 @@ from __future__ import annotations
 from ..bloodthirst import BLOODTHIRST_MECHANIC
 from ..death_return import PERSIST_KEYWORD, UNDYING_KEYWORD
 from ..fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_MECHANICS
+from ..fixed_token_production import AFTERLIFE_MECHANIC_ID
 from ..modular import MODULAR_MECHANIC_ID
 from ..renown import RENOWN_MECHANIC_ID
 from ..riot import RIOT_MECHANIC
@@ -52,6 +53,7 @@ def generated_ability_id(
                 _EVOLVE_MECHANIC,
                 _CASCADE_MECHANIC,
                 _PROWESS_MECHANIC,
+                AFTERLIFE_MECHANIC_ID,
                 "chapter",
                 PERSIST_KEYWORD,
                 RENOWN_MECHANIC_ID,

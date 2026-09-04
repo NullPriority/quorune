@@ -115,6 +115,25 @@ def _preserved_transition_measurement(
     return None
 
 
+def _preserved_transition_is_current(
+    preserved: dict | None,
+    *,
+    frontier_fingerprint: str,
+    oracle_source_sha256: str,
+    cohort_fingerprint: str,
+) -> bool:
+    if preserved is None:
+        return False
+    measurement = preserved.get("measurement")
+    return bool(
+        isinstance(measurement, dict)
+        and preserved.get("frontier_fingerprint")
+        == frontier_fingerprint
+        and preserved.get("oracle_source_sha256") == oracle_source_sha256
+        and measurement.get("cohort_fingerprint") == cohort_fingerprint
+    )
+
+
 def _transition_measurements(
     *, records: dict, coverage: dict, bundles: list[dict]
 ) -> list[dict]:
@@ -128,12 +147,6 @@ def _transition_measurements(
     measurement_id = declaration.get("measurement_id")
     if not transition_id or not isinstance(measurement_id, str):
         return []
-    preserved = _preserved_transition_measurement(
-        transition_id=transition_id,
-        measurement_id=measurement_id,
-    )
-    if preserved is not None:
-        return [preserved]
     bundle_id = str(declaration.get("bundle_id") or "")
     bundle = next(
         (row for row in bundles if row.get("bundle_id") == bundle_id), None
@@ -148,6 +161,23 @@ def _transition_measurements(
     fingerprints = {
         bundle_id: bundle_measurement_fingerprint(frontier, bundle)
     }
+    snapshot = frontier.get("card_data_snapshot")
+    oracle_source_sha256 = (
+        str(snapshot.get("oracle_source_sha256") or "")
+        if isinstance(snapshot, dict)
+        else ""
+    )
+    preserved = _preserved_transition_measurement(
+        transition_id=transition_id,
+        measurement_id=measurement_id,
+    )
+    if _preserved_transition_is_current(
+        preserved,
+        frontier_fingerprint=str(frontier.get("fingerprint") or ""),
+        oracle_source_sha256=oracle_source_sha256,
+        cohort_fingerprint=fingerprints[bundle_id],
+    ):
+        return [preserved]
     measured = build_work_selection_cohort_measurements(
         frontier=frontier,
         bundle_policies=[bundle],
@@ -163,15 +193,10 @@ def _transition_measurements(
             "Semantic transition requires a generated positive complete-card "
             "cohort lower bound"
         )
-    snapshot = frontier.get("card_data_snapshot")
     receipt = {
         "transition_id": transition_id,
         "frontier_fingerprint": str(frontier.get("fingerprint") or ""),
-        "oracle_source_sha256": (
-            str(snapshot.get("oracle_source_sha256") or "")
-            if isinstance(snapshot, dict)
-            else ""
-        ),
+        "oracle_source_sha256": oracle_source_sha256,
         "measurement": measured,
     }
     receipt["receipt_fingerprint"] = stable_hash(receipt)

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 106.6 — Typed mana restrictions and riders",
+  "cases": [
+    {
+      "rule_id": "106.6",
+      "rule_text_sha256": "a4b5ea5ae753fe516e8a30491c02869f7cfc2dda8a770fc36b205fdb961df18f",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.abilities.ActivatedAbility.mana_spend_restriction", "quorune.fixed_mana_abilities.FixedActivatedManaAbilitySpec", "quorune.engine.CommanderEngine._mana_restriction_allows", "quorune.engine.CommanderEngine._apply_mana_spend"],
+      "executable_test_ids": ["tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed", "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiled_restricted_mana_is_controller_scoped_and_replays", "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules", "tests.test_exact_mishra_closure.ExactMishraClosureTests.test_mightstone_modal_enter_and_restricted_powerstone_mana", "tests.test_exact_zimone_closure.ExactZimoneClosureTests.test_delighted_halfling_restricted_mana_makes_legendary_spell_uncounterable"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "blockers": ["the general set of spending restrictions, riders, duration modifiers, and source annotations is not represented", "fixed-colored restricted output and restrictions outside Powerstone, artifact-only any-color, creature-only any-color, artifact spell-or-ability, and legendary-spell rider forms remain outside the closed compilers", "mana-production replacement and trigger interactions remain incomplete"],
+      "notes": ["Represented mana units carry a typed restriction or rider from production through spendability, authoritative payment, persistence, and replay; unsupported prose cannot select a generic runtime behavior."]
+    }
+  ]
+}

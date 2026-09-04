@@ -77,7 +77,13 @@ def fixed_activated_mana_node(
     )
     if spec is None:
         return ability, None
-    capabilities = ["mana.activated.fixed_output"]
+    capabilities = [
+        (
+            "mana.activated.restricted_fixed_output"
+            if spec.spend_restriction is not None
+            else "mana.activated.fixed_output"
+        )
+    ]
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     gate = explicit_capabilities_gate(
@@ -111,7 +117,11 @@ def fixed_activated_mana_node(
         event="activate",
         lowerable=True,
         exact=not gate.blockers,
-        template_id="activated-mana-fixed-output-v1",
+        template_id=(
+            "activated-mana-restricted-fixed-output-v1"
+            if spec.spend_restriction is not None
+            else "activated-mana-fixed-output-v1"
+        ),
         cost=activated_ability_cost(ability),
         handlers=(fixed_mana_handler_descriptor(spec),),
         mechanics=(
@@ -316,6 +326,7 @@ def _activated_effect_dependency_gate(
             "destroy",
             "destroy_all",
             "destroy_targets",
+            "delayed_trigger",
             "exile_permanent",
             "exile_permanent_targets",
             "exile_public_graveyard_card",

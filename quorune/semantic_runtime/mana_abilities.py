@@ -28,6 +28,7 @@ class FixedActivatedManaAbilityHandler:
     )
     capability_dependencies: tuple[str, ...] = (
         "mana.activated.fixed_output",
+        "mana.activated.restricted_fixed_output",
     )
 
     def validate(

@@ -714,20 +714,22 @@ Convert instructions, explicit effects that set day or night, transform-into
 effects, copied or granted forms, and independently unsupported siblings
 remain material residuals.
 
-`compiler/token_templates.py` owns fixed-definition token creation across
-spell, triggered, and activated effects. The closed production emits one
+`compiler/token_templates.py` and
+`compiler/fixed_token_production_templates.py` own fixed-definition token creation across
+spell, triggered, and activated effects. The closed production emits a
 positive fixed quantity, an optional tapped entry state, and either a
-represented Treasure, Food, or Map definition or a fixed creature definition
-with at most two colors, optional Artifact and Enchantment card types, and
-capability-backed keywords. Card-type words are parsed separately from the
-creature subtype and serialized in canonical type-line order. The corresponding
-node capability shape validates every emitted field and adds the keyword or
-predefined-token ability dependencies before promotion. Resolution uses the
-existing `create_token` semantic operation and the replacement-aware
-`token_creation.py` transaction. Dynamic quantities, copies, named or
-legendary tokens, Roles, attached or attacking tokens, custom quoted
-abilities, unrepresented predefined tokens, and compound or conditional
-instructions remain source-spanned residuals.
+represented predefined artifact definition or a fixed creature definition
+with up to three colors, optional Artifact and Enchantment card types, a
+proper name or Legendary supertype, and capability-backed keywords. Changeling
+and the exact can't-block or can't-be-blocked token sentences lower to the
+shared typed characteristic and declaration fragments rather than executable
+display text. The same owner lowers canonical fixed Investigate, fixed
+Afterlife through permanent-graveyard LKI, one current-target copy token, and
+one source-independent next-end-step creation. Every form reaches the existing
+replacement-aware `token_creation.py` transaction. Dynamic quantities,
+Incubate, Roles, attached or attacking tokens, source-LKI or modified copies,
+arbitrary quoted abilities, unsupported keywords, other delayed times, and
+compound or conditional instructions remain source-spanned residuals.
 
 ## Invariants
 
@@ -750,8 +752,11 @@ among qualifying legendary permanents or legendary creatures and
 planeswalkers, choosing among owned legendary creature cards in a graveyard,
 and adding one mana of each color among controlled permanents. Each form
 lowers an immutable relative `ObjectQuerySpec`. Monocolored-only, linked-exile,
-opponent-relative, additional-condition, restricted, and side-effecting
-variants remain source-spanned residuals.
+opponent-relative, additional-condition, and side-effecting variants remain
+source-spanned residuals. A separate restricted fixed-output capability admits
+only the Powerstone one-colorless nonartifact-spell prohibition and selectable
+any-color mana restricted to artifact or creature spells. Other outputs and
+spending restrictions remain residual.
 
 Printed `Affinity for` qualities in the closed casting-payment vocabulary lower
 as source-spanned `cast.cost` descriptors containing canonical effective-object

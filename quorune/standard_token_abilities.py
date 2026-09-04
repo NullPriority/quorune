@@ -18,6 +18,8 @@ class StandardTokenAbilityProfile(str, Enum):
     ONE_TAP_SAC_EXPLORE_CONTROLLED_CREATURE = (
         "one_tap_sac_explore_controlled_creature_v1"
     )
+    TAP_COLORLESS_RESTRICTED = "tap_colorless_restricted_v1"
+    TAP_SAC_IMPULSE_ONE = "tap_sac_impulse_one_v1"
 
 
 TOKEN_ABILITY_PROFILE_FIELD = "activated_ability_profile"
@@ -100,6 +102,49 @@ def _explore_controlled_creature() -> ActivatedAbility:
     )
 
 
+def _restricted_colorless_mana() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id="ab1",
+        line_index=0,
+        oracle_line=(
+            "{T}: Add {C}. This mana can't be spent to cast a nonartifact "
+            "spell."
+        ),
+        cost_text="{T}",
+        effect_text=(
+            "Add {C}. This mana can't be spent to cast a nonartifact spell."
+        ),
+        zones=("battlefield",),
+        mana=normalize_mana_bundle(None),
+        tap_source=True,
+        mana_ability=True,
+        fixed_mana_outputs=(FixedManaMode.from_bundle({"C": 1}),),
+        mana_spend_restriction="nonartifact_spell_prohibited",
+    )
+
+
+def _junk_impulse_one() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id="ab1",
+        line_index=0,
+        oracle_line=(
+            "{T}, Sacrifice this token: Exile the top card of your library. "
+            "You may play that card this turn. Activate only as a sorcery."
+        ),
+        cost_text="{T}, Sacrifice this token",
+        effect_text=(
+            "Exile the top card of your library. You may play that card this "
+            "turn. Activate only as a sorcery."
+        ),
+        zones=("battlefield",),
+        mana=normalize_mana_bundle(None),
+        tap_source=True,
+        sacrifice_source=True,
+        sorcery_speed=True,
+        builtin_semantic_key="builtin:fixed-impulse-access:1:turn",
+    )
+
+
 _STANDARD_TOKEN_ABILITIES = {
     StandardTokenAbilityProfile.TAP_SAC_ANY_COLOR_MANA: (
         _any_color_mana(),
@@ -112,6 +157,12 @@ _STANDARD_TOKEN_ABILITIES = {
     ),
     StandardTokenAbilityProfile.ONE_TAP_SAC_EXPLORE_CONTROLLED_CREATURE: (
         _explore_controlled_creature(),
+    ),
+    StandardTokenAbilityProfile.TAP_COLORLESS_RESTRICTED: (
+        _restricted_colorless_mana(),
+    ),
+    StandardTokenAbilityProfile.TAP_SAC_IMPULSE_ONE: (
+        _junk_impulse_one(),
     ),
 }
 

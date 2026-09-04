@@ -15126,6 +15126,62 @@
       "applicability_note": "Replay the suspended counter replacement and following Explore choice to the identical authoritative state hash."
     },
     {
+      "capability_id": "keyword_action.investigate.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities",
+      "official_rule_ids": ["111.10f", "701.16", "701.16a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Create a canonical Clue and expose its existing private draw activation through the ordinary activation owner."
+    },
+    {
+      "capability_id": "keyword_action.investigate.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
+      "official_rule_ids": ["111.10f", "701.16", "701.16a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve competing token replacements only through the affected controller's four-player choice."
+    },
+    {
+      "capability_id": "keyword_action.investigate.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["111.10f", "701.16", "701.16a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the Investigate production and require exact compiler admission to disappear."
+    },
+    {
+      "capability_id": "keyword_action.investigate.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["111.10f", "701.16", "701.16a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject optional, variable, linked, conditional, and target-player Investigate forms before runtime admission."
+    },
+    {
+      "capability_id": "keyword_action.investigate.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+      "official_rule_ids": ["111.10f", "701.16", "701.16a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower canonical single and fixed repeated Investigate instructions across spell, trigger, and activated contexts to one Clue definition."
+    },
+    {
+      "capability_id": "keyword_action.investigate.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
+      "official_rule_ids": ["111.10f", "701.16", "701.16a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project replacement ordering only to its chooser without exposing internal replacement state."
+    },
+    {
+      "capability_id": "keyword_action.investigate.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_investigate_and_predefined_tokens_use_canonical_abilities",
+      "official_rule_ids": ["111.10f", "701.16", "701.16a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the activated Investigate cost, Clue identity, token events, and final authoritative hash."
+    },
+    {
       "capability_id": "keyword_action.monstrosity.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_counter_keyword_actions.PermanentDesignationTests.test_zero_counter_commit_result_still_creates_monstrous_designation",
@@ -16319,6 +16375,62 @@
       "official_rule_ids": ["106.1", "106.4", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the exact activation command and typed fixed mana result from the initial checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Filter the same restricted mana unit differently for artifact, creature, and nonartifact spell payment contexts."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiled_restricted_mana_is_controller_scoped_and_replays",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Advertise both represented restricted mana activations only to their controller in four-player priority state."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the restricted-output capability and require exact mana ability admission to disappear."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject open, dynamic, conditional, multi-effect, and unsupported spending restrictions."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower fixed colorless and selectable any-color outputs with one of three exact spending restrictions."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiled_restricted_mana_is_controller_scoped_and_replays",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep server-issued activation authority scoped to the current controller while opponents receive only ordinary public permanent state."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiled_restricted_mana_is_controller_scoped_and_replays",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Persist and replay selected colors, distinct spending tags, tapped sources, mana pools, and controller-scoped activation authority."
     },
     {
       "capability_id": "mana.intrinsic.basic_land_type",
@@ -20912,6 +21024,62 @@
       "applicability_note": "Apply a reviewed mandatory replacement that adds a fixed token definition to one nonempty token-creation event controlled by the replacement source's controller."
     },
     {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
+      "official_rule_ids": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Revalidate the target at resolution and copy its current copiable values through the canonical token transaction."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
+      "official_rule_ids": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Retain affected-controller replacement ordering in four-player token creation."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Change the compiler-owned copy reference away from the selected target and require shape validation to reject it."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject source-LKI, modified, optional, multiple, chosen, and zone-linked copy-token forms."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+      "official_rule_ids": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower one exact targeted creature or artifact-creature-land copy instruction with a canonical target schema."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
+      "official_rule_ids": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose only public copy-token and replacement facts, not internal object identities."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
+      "official_rule_ids": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Persist the target snapshot, copied token characteristics, and final authoritative state."
+    },
+    {
       "capability_id": "token.creation.fixed_definition",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_replays_exactly",
@@ -21094,6 +21262,62 @@
       "official_rule_ids": ["121.1", "503.1", "503.1a", "603.3", "603.3b", "603.7", "603.7a", "603.7b", "603.7g"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Round-trip the waiting delayed trigger and replay its ordinary stack resolution to the exact final authoritative hash."
+    },
+    {
+      "capability_id": "trigger.delayed.fixed_token_creation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
+      "official_rule_ids": ["603.3", "603.7", "603.7a", "603.7b", "603.7g"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Let the source remain absent while the controller-frozen delayed trigger creates its token at the next end step."
+    },
+    {
+      "capability_id": "trigger.delayed.fixed_token_creation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
+      "official_rule_ids": ["603.3", "603.7", "603.7a", "603.7b", "603.7g"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose the delayed public token result with ordinary four-player replacement ordering."
+    },
+    {
+      "capability_id": "trigger.delayed.fixed_token_creation",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["603.3", "603.7", "603.7a", "603.7b", "603.7g"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Change the delayed event or body shape and require capability admission to fail."
+    },
+    {
+      "capability_id": "trigger.delayed.fixed_token_creation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["603.3", "603.7", "603.7a", "603.7b", "603.7g"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject other times, source-bound conditions, copies, custom abilities, and compound delayed bodies."
+    },
+    {
+      "capability_id": "trigger.delayed.fixed_token_creation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+      "official_rule_ids": ["603.3", "603.7", "603.7a", "603.7b", "603.7g"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower one complete next-end-step fixed token instruction into a single-use delayed trigger."
+    },
+    {
+      "capability_id": "trigger.delayed.fixed_token_creation",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
+      "official_rule_ids": ["603.3", "603.7", "603.7a", "603.7b", "603.7g"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep any resulting replacement choice scoped to its affected controller."
+    },
+    {
+      "capability_id": "trigger.delayed.fixed_token_creation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
+      "official_rule_ids": ["603.3", "603.7", "603.7a", "603.7b", "603.7g"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Persist and replay the waiting trigger, its fixed body, created token, and consumed state."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -22030,6 +22254,62 @@
       "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the countered-spell transition, normalized event ordering, trigger journal inputs, and final state hash exactly."
+    },
+    {
+      "capability_id": "trigger.keyword.afterlife.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+      "official_rule_ids": ["603.3", "603.3b", "702.135", "702.135a", "702.135b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use previous controller and last-known current ability state when a noncreature permanent carrying Afterlife reaches a graveyard."
+    },
+    {
+      "capability_id": "trigger.keyword.afterlife.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_multiple_afterlife_instances_share_apnap_batch_and_replay",
+      "official_rule_ids": ["603.3", "603.3b", "702.135", "702.135a", "702.135b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Place different-controller triggers in APNAP order and give one controller a private deterministic order for two independent instances."
+    },
+    {
+      "capability_id": "trigger.keyword.afterlife.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["603.3", "603.3b", "702.135", "702.135a", "702.135b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the dedicated Afterlife node and require the keyword to return to a material residual."
+    },
+    {
+      "capability_id": "trigger.keyword.afterlife.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
+      "official_rule_ids": ["603.3", "603.3b", "702.135", "702.135a", "702.135b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject zero, variable, malformed, copied, and unsupported Afterlife forms."
+    },
+    {
+      "capability_id": "trigger.keyword.afterlife.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+      "official_rule_ids": ["603.3", "603.3b", "702.135", "702.135a", "702.135b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower each canonical fixed Afterlife instance as an independent permanent-graveyard trigger."
+    },
+    {
+      "capability_id": "trigger.keyword.afterlife.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
+      "official_rule_ids": ["603.3", "603.3b", "702.135", "702.135a", "702.135b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep token replacement choices seat-scoped when Afterlife's public token event composes with replacements."
+    },
+    {
+      "capability_id": "trigger.keyword.afterlife.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_multiple_afterlife_instances_share_apnap_batch_and_replay",
+      "official_rule_ids": ["603.3", "603.3b", "702.135", "702.135a", "702.135b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Persist and replay independent instance identity, APNAP placement, private same-controller ordering, and fixed Spirit creation."
     },
     {
       "capability_id": "trigger.keyword.cascade",

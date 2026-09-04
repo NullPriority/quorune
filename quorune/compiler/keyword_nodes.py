@@ -79,6 +79,8 @@ from .dependency_gate import (
     keyword_dependency_gate,
 )
 from .day_night_nodes import day_night_keyword_node
+from .token_production_keyword_nodes import fixed_afterlife_keyword_node
+from ..fixed_token_production import AFTERLIFE_MECHANIC_ID
 from .devoid_characteristics import DEVOID_MECHANIC_ID
 from .ir_model import (
     OracleNode,
@@ -111,6 +113,7 @@ _RENOWN_MECHANIC = RENOWN_MECHANIC_ID
 _MODULAR_MECHANIC = MODULAR_MECHANIC_ID
 _ECHO_MECHANIC = ECHO_MECHANIC_ID
 _DEVOID_MECHANIC = DEVOID_MECHANIC_ID
+_AFTERLIFE_MECHANIC = AFTERLIFE_MECHANIC_ID
 _FACE_DOWN_METHOD_MECHANICS = frozenset(FACE_DOWN_CAST_METHODS)
 _TOXIC_MECHANIC = "toxic"
 _GROUPED_SPLIT_MECHANICS = (
@@ -119,6 +122,7 @@ _GROUPED_SPLIT_MECHANICS = (
     _SUNBURST_MECHANIC,
     _TOXIC_MECHANIC,
     _EVOLVE_MECHANIC,
+    _AFTERLIFE_MECHANIC,
     *tuple(sorted(FIXED_KEYWORD_ENTRY_MECHANICS)),
 )
 _PARAMETERIZED_SPLIT_MECHANICS = frozenset(
@@ -131,6 +135,7 @@ _PARAMETERIZED_SPLIT_MECHANICS = frozenset(
         _TOXIC_MECHANIC,
         _AFFINITY_MECHANIC,
         _EVOKE_MECHANIC,
+        _AFTERLIFE_MECHANIC,
         *FIXED_KEYWORD_ENTRY_MECHANICS,
     }
 )
@@ -156,6 +161,7 @@ _INSTANCE_PART_MECHANICS = (
     _TOXIC_MECHANIC,
     _CONVOKE_MECHANIC,
     _DEVOID_MECHANIC,
+    _AFTERLIFE_MECHANIC,
     *tuple(sorted(FIXED_KEYWORD_ENTRY_MECHANICS)),
 )
 _SPLIT_MECHANICS = frozenset(
@@ -329,6 +335,9 @@ def closed_special_keyword_node(
     )
     if day_night is not None:
         return day_night
+    afterlife = fixed_afterlife_keyword_node(**values)
+    if afterlife is not None:
+        return afterlife
     characteristic_definition = characteristic_definition_keyword_node(
         **values,
     )

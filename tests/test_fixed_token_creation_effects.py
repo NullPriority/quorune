@@ -188,11 +188,8 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             "Create X 1/1 green Saproling creature tokens.",
             "Create a token that's a copy of target creature you control.",
             "Create a Wicked Role token attached to target creature you control.",
-            "Create a 1/1 black Rat creature token with \"This token can't block.\"",
             "Create two 1/1 white Soldier creature tokens that are tapped and attacking.",
             "Create a 1/1 blue and red Otter creature token with prowess.",
-            "Create Ashaya, the Awoken World, a legendary 4/4 green Elemental creature token.",
-            "Create a tapped Powerstone token.",
             "Create a 3/3 colorless Golem artifact artifact creature token.",
             "Create 0 1/1 green Saproling creature tokens.",
         )
@@ -443,6 +440,24 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             ),
         )
 
+        declaration_batch = fixed_token_creation_effect_template(
+            "Create a 1/1 black Rat creature token with \"This token can't "
+            "block.\" and a Food token."
+        )
+        self.assertIsNotNone(declaration_batch)
+        self.assertTrue(
+            {
+                "combat.declaration.typed_components",
+                "token.creation.fixed_definition",
+            }.issubset(
+                capability_dependencies_for_node(
+                    effects=(declaration_batch.effect,),
+                    target_schema=None,
+                    mechanic_ids=declaration_batch.mechanics,
+                )
+            )
+        )
+
         malformed = (
             {**batch.effect, "tokens": batch.effect["tokens"][:1]},
             {**batch.effect, "tokens": [*batch.effect["tokens"], {}, {}]},
@@ -484,8 +499,6 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             "Create a token that's a copy of target creature and a Food token.",
             "Create a Wicked Role token attached to target creature and a "
             "Treasure token.",
-            "Create a 1/1 black Rat creature token with \"This token can't "
-            "block.\" and a Food token.",
             "Create a 1/1 white Soldier creature token, a 1/1 blue Bird "
             "creature token with flying, a 1/1 black Rat creature token, "
             "and a 1/1 red Goblin creature token.",

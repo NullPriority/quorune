@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "cr-513-end-step",
   "official_name": "End Step",
   "effective_date": "2026-08-07",
@@ -134,14 +134,15 @@
     "test_late_permanent_and_delayed_trigger_wait_for_next_end_step",
     "test_end_step_created_turn_duration_survives_until_cleanup",
     "test_determined_iteration_populates_with_haste_and_delayed_sacrifice",
-    "test_daretti_delayed_return_requires_same_logical_object"
+    "test_daretti_delayed_return_requires_same_logical_object",
+    "test_copy_and_delayed_tokens_revalidate_and_replay"
   ],
   "implementation": {
-    "component": "CommanderEngine end-step entry, semantic and delayed trigger collection, trigger stabilization, priority, delayed-condition matching, and cleanup duration paths",
-    "version": "end-step-v1"
+    "component": "CommanderEngine end-step entry, semantic and delayed trigger collection, fixed next-end-step token scheduling, trigger stabilization, priority, delayed-condition matching, and cleanup duration paths",
+    "version": "end-step-v2"
   },
   "known_blockers": [
-    "the Oracle compiler does not recognize every beginning-of-end-step wording, condition, target, mode, or optional choice",
+    "the Oracle compiler recognizes one fixed source-independent next-end-step token form but not every beginning-of-end-step wording, condition, target, mode, or optional choice",
     "the triggered-ability engine does not cover every source, look-back, intervening-condition, and multiplayer interaction",
     "the complete turn-duration continuous-effect registry remains incomplete under CR 514"
   ],

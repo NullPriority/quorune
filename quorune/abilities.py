@@ -290,7 +290,9 @@ class ActivationCondition:
 _DYNAMIC_MANA_OUTPUTS = frozenset({"opponent_land_colors"})
 _MANA_SPEND_RESTRICTIONS = frozenset(
     {
+        "artifact_spell_only",
         "artifact_spell_or_ability",
+        "creature_spell_only",
         "nonartifact_spell_prohibited",
         "legendary_spell_uncounterable",
     }
@@ -723,14 +725,26 @@ def _strip_inline_reminder_and_granted_text(line: str) -> str:
     owner rather than from their parenthesized Oracle reminder.
     """
 
+    preserve_token_declaration = bool(
+        re.search(
+            r":\s*Create .+? creature tokens? with [\"“]"
+            r"This token can't (?:block|be blocked)\.",
+            line,
+            re.IGNORECASE,
+        )
+    )
     result: list[str] = []
     parenthetical_depth = 0
     quoted = False
     for character in line:
         if character in {'"', "“", "”"} and parenthetical_depth == 0:
             quoted = not quoted
+            if preserve_token_declaration:
+                result.append(character)
             continue
         if quoted:
+            if preserve_token_declaration:
+                result.append(character)
             continue
         if character == "(":
             parenthetical_depth += 1
@@ -1127,7 +1141,14 @@ def _mana_spend_restriction(effect_text: str) -> str | None:
         "abilities of artifacts"
     ) in lower:
         return "artifact_spell_or_ability"
-    if "this mana can't be spent to cast nonartifact spells" in lower:
+    if "spend this mana only to cast an artifact spell" in lower:
+        return "artifact_spell_only"
+    if "spend this mana only to cast a creature spell" in lower:
+        return "creature_spell_only"
+    if (
+        "this mana can't be spent to cast nonartifact spells" in lower
+        or "this mana can't be spent to cast a nonartifact spell" in lower
+    ):
         return "nonartifact_spell_prohibited"
     if (
         "spend this mana only to cast a legendary spell" in lower

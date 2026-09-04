@@ -5248,6 +5248,231 @@
       ],
       "interaction_order": 2,
       "assertion": "Qualifying legacy sources controlled by different players enter one deterministic APNAP batch before either source-transform instruction resolves."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_investigate_and_predefined_tokens_use_canonical_abilities",
+      "piece_ids": [
+        "capability.keyword_action.investigate.fixed",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "keyword_action.investigate.fixed",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "A fixed Investigate instruction creates the canonical Clue definition through the same replacement-aware token transaction as explicit token creation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_investigate_and_predefined_tokens_use_canonical_abilities",
+      "piece_ids": [
+        "capability.keyword_action.investigate.fixed",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "keyword_action.investigate.fixed",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "The Clue produced by Investigate exposes the canonical private draw activation and replays its library-to-hand result exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+      "piece_ids": [
+        "capability.token.creation.fixed_definition",
+        "capability.trigger.keyword.afterlife.fixed"
+      ],
+      "capability_ids": [
+        "token.creation.fixed_definition",
+        "trigger.keyword.afterlife.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "A qualifying Afterlife occurrence freezes its previous controller before creating the exact fixed Spirit definition through the token owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+      "piece_ids": [
+        "capability.trigger.event.normalized_zone_change",
+        "capability.trigger.keyword.afterlife.fixed"
+      ],
+      "capability_ids": [
+        "trigger.event.normalized_zone_change",
+        "trigger.keyword.afterlife.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Afterlife consumes the normalized permanent-graveyard event and last-known ability state even when a type-changing effect made the departed permanent noncreature."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_multiple_afterlife_instances_share_apnap_batch_and_replay",
+      "piece_ids": [
+        "capability.trigger.keyword.afterlife.fixed",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "trigger.keyword.afterlife.fixed",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Distinct Afterlife instances retain separate generated identities while different controllers share one APNAP batch and one private same-controller ordering continuation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
+      "piece_ids": [
+        "capability.combat.block.flying",
+        "capability.trigger.keyword.afterlife.fixed"
+      ],
+      "capability_ids": [
+        "combat.block.flying",
+        "trigger.keyword.afterlife.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "The canonical Spirit created by Afterlife carries Flying through typed token characteristics rather than reminder or display text."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copy_and_delayed_tokens_revalidate_and_replay",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "The fixed copy-token effect revalidates the selected battlefield incarnation and refuses to copy a leave-and-reentered target."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copy_and_delayed_tokens_revalidate_and_replay",
+      "piece_ids": [
+        "capability.token.creation.fixed_definition",
+        "capability.trigger.delayed.fixed_token_creation"
+      ],
+      "capability_ids": [
+        "token.creation.fixed_definition",
+        "trigger.delayed.fixed_token_creation"
+      ],
+      "interaction_order": 2,
+      "assertion": "A source-independent next-end-step trigger stores one closed token body and later executes it through the canonical token transaction."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copy_and_delayed_tokens_revalidate_and_replay",
+      "piece_ids": [
+        "capability.trigger.delayed.fixed_token_creation",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "trigger.delayed.fixed_token_creation",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "The fixed delayed token occurrence enters the ordinary next-end-step APNAP placement path and replays after its source has left."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+      "piece_ids": [
+        "capability.activation.tap_untap_cost.haste",
+        "capability.mana.activated.restricted_fixed_output"
+      ],
+      "capability_ids": [
+        "activation.tap_untap_cost.haste",
+        "mana.activated.restricted_fixed_output"
+      ],
+      "interaction_order": 2,
+      "assertion": "Powerstone pays the shared tap-source cost before immediately adding one typed restricted colorless mana unit."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+      "piece_ids": [
+        "capability.mana.activated.restricted_fixed_output",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "mana.activated.restricted_fixed_output",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "A fixed Powerstone definition instantiates the standard restricted-mana profile, whose produced unit remains bound to the current spell-type payment context."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+      "piece_ids": [
+        "capability.token.creation.fixed_definition",
+        "capability.zone.impulse_access.fixed"
+      ],
+      "capability_ids": [
+        "token.creation.fixed_definition",
+        "zone.impulse_access.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "A fixed Junk definition instantiates the typed sacrifice profile and delegates its private library access and temporary play permission to the existing impulse owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_token_characteristic_fragments_use_shared_rules_owners",
+      "piece_ids": [
+        "capability.continuous.characteristics.changeling",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.changeling",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "A fixed Shapeshifter token carries the canonical Changeling characteristic fragment and is every creature type through the shared layer owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_token_characteristic_fragments_use_shared_rules_owners",
+      "piece_ids": [
+        "capability.combat.declaration.typed_components",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "combat.declaration.typed_components",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "The two represented token declaration sentences become shared typed block restrictions and change canonical block legality without runtime prose parsing."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_investigate_and_predefined_tokens_use_canonical_abilities",
+      "piece_ids": [
+        "capability.permanent.indestructible.ordinary",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "permanent.indestructible.ordinary",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "The canonical Vibranium definition carries Indestructible through ordinary typed token characteristics while its activated profile remains separately capability-gated."
     }
   ]
 }
