@@ -831,6 +831,30 @@
       "resolution": "The promoted prevention incidences are removed from the residual fail-closed pair inventory, while the generated scheduler witness reads the content-bound pre-harvest transition measurement and separately permits the post-harvest current cohort to retire. Existing impact rules already selected both modules; future harvest pre-cloud evidence must run these exact adjacent methods.",
       "run_id": 33523463031,
       "summary": "The fixed all-damage prevention harvest promoted two residual high-risk witnesses and completed its cohort, but the focused pre-cloud set omitted the adjacent fail-closed inventory and read the retired current cohort instead of its immutable transition measurement."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-12 (job 101041297616)",
+        "PR / Windows / functional-12 (job 101041297644)",
+        "PR / Python / functional-02 (job 101041297668)",
+        "PR / Windows / functional-02 (job 101041297828)",
+        "PR / Generated and architecture (job 101041297309)",
+        "PR / Windows / generated-validation (job 101041297861)"
+      ],
+      "head_sha": "e18a5b3b6cde72e04c651a975e66949716ba6367",
+      "id": "ci-20260904-49",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_fixed_library_searches.FixedLibrarySearchCompilerTests.test_named_linked_attachment_compound_and_open_searches_remain_residual",
+        "test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "test_card_unlock_frontier.CardUnlockFrontierTests.test_bundle_evaluation_is_bounded_and_optimizes_full_cards",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary"
+      ],
+      "resolution": "The leaf library-search owner still rejects every compound tail, while the integrated token-production owner now explicitly proves the promoted search-then-Investigate composition. Frontier evaluation derives its exact bounded combination count from the current family universe, and the global fail-closed witness executes every declared pair without pinning a volatile total. Existing complete compiler impact selection already includes all affected modules.",
+      "run_id": 33878325617,
+      "summary": "The fixed token-production harvest completed an Investigate composition, added one fail-closed interaction pair, and exhausted the compact frontier slice, but three neighboring tests retained the prior integrated residual, pair-count, and nonempty-frontier assumptions."
     }
   ],
   "known_flaky_tests": [],
@@ -883,7 +907,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "0991ad52edfdebc7b12ad41c8517e72d83957ada6c581b4924d8aac6a4961907",
+  "source_fingerprint": "dd621ad3ddaa0b762d43dfd809ed86c7a3a2ced458a55893a04c7f862915e1b5",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -893,12 +917,12 @@
       "flaky_test": 6,
       "generated_artifact_drift": 4,
       "infrastructure": 1,
-      "missing_affected_test": 17,
+      "missing_affected_test": 18,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 43,
-    "escape_count": 48,
+    "deterministic_escape_count": 44,
+    "escape_count": 49,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [
