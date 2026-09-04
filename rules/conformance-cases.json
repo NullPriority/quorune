@@ -88311,21 +88311,25 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-711",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_rows_compile_typed_bands_and_preserve_child_membership"
+      ],
+      "implementation_components": [
+        "mechanics/contracts/leveler-cards.json"
+      ],
+      "notes": [
+        "Section heading; bounded executable behavior is reviewed in the subordinate cases."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "711",
       "rule_text_sha256": "0fc090994449deb5270e255d433c4dd0ad5e00eadf06bb95dd4bc19c51f98da8",
       "schema_version": 1,
@@ -88334,26 +88338,32 @@
         "end_line": 5813,
         "start_line": 5812
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-711.1",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "711"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_rows_compile_typed_bands_and_preserve_child_membership",
+        "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_parser_rejects_malformed_ranges_and_open_children"
+      ],
+      "implementation_components": [
+        "quorune.compiler.leveler_context_nodes.parse_leveler_context",
+        "mechanics/contracts/leveler-cards.json"
+      ],
+      "notes": [
+        "The parser recognizes exactly two source-spanned symbols and their two fixed power/toughness boxes while retaining the printed uppermost values on the card record."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "711.1",
       "rule_text_sha256": "995083a0871a3d892131ef2cbb7e1a15565d06f5283450090e51c28725663bbc",
       "schema_version": 1,
@@ -88362,26 +88372,47 @@
         "end_line": 5815,
         "start_line": 5814
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "arbitrary, noncreature, malformed, and more-than-two striation layouts remain outside the bounded compiler",
+        "independently unsupported child abilities remain residual"
       ],
       "case_id": "cr-711.2",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "711"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_rows_compile_typed_bands_and_preserve_child_membership",
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_level_counters_gate_power_keywords_static_and_activated_abilities"
+      ],
+      "implementation_components": [
+        "quorune.leveler_bands.LevelerBandsSpec",
+        "quorune.ability_fragments.StaticComponentScopeSpec",
+        "quorune.compiler.leveler_context_nodes.apply_leveler_context",
+        "quorune.semantic_runtime.continuous_components.LevelerBandsHandler"
+      ],
+      "notes": [
+        "The outer typed descriptor binds each independently exact child program and fixed power/toughness pair to its source range."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "711.2",
       "rule_text_sha256": "4c9b4dccea94769e3255ae9ebec181dcdfb5d418253113bd583ff687cad47ad9",
       "schema_version": 1,
@@ -88390,26 +88421,45 @@
         "end_line": 5817,
         "start_line": 5816
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "variable, overlapping, noncontiguous, negative, and nonintegral ranges or characteristics are rejected"
       ],
       "case_id": "cr-711.2a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "711.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_level_counters_gate_power_keywords_static_and_activated_abilities",
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_copy_ability_removal_and_layer_ordering"
+      ],
+      "implementation_components": [
+        "quorune.leveler_bands.LevelerBandSpec.permits",
+        "quorune.semantic_runtime.continuous_components.LevelerBandsHandler",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map"
+      ],
+      "notes": [
+        "Inclusive finite bounds select one layer-7b base value and preserve only that range's shared layer-6 child components."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "711.2a",
       "rule_text_sha256": "430a208f9cebb96d8245cdfbb6464adaa05bc03bf431fa2316594a434f1cbaf6",
       "schema_version": 1,
@@ -88418,26 +88468,48 @@
         "end_line": 5819,
         "start_line": 5818
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "variable or malformed open ranges are rejected",
+        "independently unsupported child abilities remain residual"
       ],
       "case_id": "cr-711.2b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "711.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_level_counters_gate_power_keywords_static_and_activated_abilities",
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy"
+      ],
+      "implementation_components": [
+        "quorune.leveler_bands.LevelerBandSpec.permits",
+        "quorune.semantic_runtime.continuous_components.LevelerBandsHandler",
+        "quorune.continuous_effects._apply_ability_operation"
+      ],
+      "notes": [
+        "The open upper band begins exactly one level after the finite range and has no maximum."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "711.2b",
       "rule_text_sha256": "2078ee6a7f1066fb99f85544897b9ab72d3dac24a7a6af38e2b98d8202b5c115",
       "schema_version": 1,
@@ -88446,26 +88518,30 @@
         "end_line": 5821,
         "start_line": 5820
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-711.3",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "711"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_rows_compile_typed_bands_and_preserve_child_membership"
+      ],
+      "implementation_components": [
+        "quorune.compiler.leveler_context_nodes.ParsedLevelerContext"
+      ],
+      "notes": [
+        "Source line spans provide the grouping boundary; the visual striation itself creates no runtime state."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "711.3",
       "rule_text_sha256": "07ab7afc05488381c55ad31d1bd103b7fd4befbb9d50b2f6518320bcd1daa6e6",
       "schema_version": 1,
@@ -88474,26 +88550,48 @@
         "end_line": 5823,
         "start_line": 5822
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "arbitrary abilities printed before the first represented striation remain outside the bounded layout",
+        "granted and text-changed Level Up remain outside typed propagation"
       ],
       "case_id": "cr-711.4",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "711"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_level_counters_gate_power_keywords_static_and_activated_abilities",
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy"
+      ],
+      "implementation_components": [
+        "quorune.compiler.leveler_context_nodes.apply_leveler_context",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.rules.activation.query.activated_abilities"
+      ],
+      "notes": [
+        "The source-spanned Level Up program never receives a band component and remains available at every counter count unless the source loses all abilities."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "711.4",
       "rule_text_sha256": "89b6f8d92ca9422d56c58df9f39defcefe6a7788059a2c0094fd091d5367787b",
       "schema_version": 1,
@@ -88502,26 +88600,42 @@
         "end_line": 5825,
         "start_line": 5824
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "noncreature and arbitrary striation layouts remain outside the bounded compiler"
       ],
       "case_id": "cr-711.5",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "711"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_level_counters_gate_power_keywords_static_and_activated_abilities"
+      ],
+      "implementation_components": [
+        "quorune.leveler_bands.LevelerBandsSpec.active_band",
+        "quorune.semantic_runtime.continuous_components.LevelerBandsHandler",
+        "quorune.characteristic_evaluation.evaluate_card_characteristics"
+      ],
+      "notes": [
+        "When no band matches, the handler emits no layer-7b setter and the printed uppermost base power/toughness remains effective."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "711.5",
       "rule_text_sha256": "83a278984fd9cee58dbc41c474dc97795a4db3acf11f1582a295b119935cd29e",
       "schema_version": 1,
@@ -88530,26 +88644,41 @@
         "end_line": 5827,
         "start_line": 5826
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "nonbattlefield queries of flattened band keyword inventories remain outside this power/toughness claim"
       ],
       "case_id": "cr-711.6",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "711"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_copy_ability_removal_and_layer_ordering"
+      ],
+      "implementation_components": [
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_card_data"
+      ],
+      "notes": [
+        "The Leveler component participates only for a battlefield source, so nonbattlefield power/toughness remains the card record's printed uppermost value."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "711.6",
       "rule_text_sha256": "105c15c55da8f2d3c951015c2b5ac6a9d82ccf7d6eeefa15fd2c051338d38fc4",
       "schema_version": 1,
@@ -88558,26 +88687,38 @@
         "end_line": 5829,
         "start_line": 5828
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "Class Cards remain governed by their separate unimplemented aggregate"
       ],
       "case_id": "cr-711.7",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
       "dependency_rule_ids": [
         "711"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_parser_rejects_malformed_ranges_and_open_children"
+      ],
+      "implementation_components": [
+        "quorune.compiler.leveler_context_nodes.parse_leveler_context"
+      ],
+      "notes": [
+        "The parser requires layout=leveler and rejects Class, Room, Prototype, and other level-like layouts."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "711.7",
       "rule_text_sha256": "58c1ae77a8eae05cb66be79b9bbdf4a7b5456dbe78f0c68439bf250b334592ce",
       "schema_version": 1,
@@ -88586,7 +88727,7 @@
         "end_line": 5831,
         "start_line": 5830
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
