@@ -23,12 +23,15 @@ from ..ability_fragments import (
     ProtectionSpec,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
+    STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID,
     StaticAbilityFragment,
+    StaticComponentScopeSpec,
     ToxicSpec,
     ability_fragment_from_dict,
 )
 from ..enchant_spec import SimpleEnchantSpec, TypedEnchantSpec
 from ..enchant_spec import LinkedGraveyardCreatureEnchantSpec
+from ..leveler_bands import LEVELER_BANDS_CAPABILITY_ID
 from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
@@ -918,6 +921,39 @@ class ConditionalKeywordAbilityFragmentHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class StaticComponentScopeAbilityFragmentHandler:
+    """Carry one generic parent-to-child static component scope."""
+
+    handler_id: str = STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "ability.static.component_scope"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("604.1", "613.1f", "711.2")
+    capability_dependencies: tuple[str, ...] = (
+        LEVELER_BANDS_CAPABILITY_ID,
+    )
+
+    def validate(
+        self,
+        descriptor: Mapping[str, Any],
+    ) -> StaticComponentScopeSpec:
+        return _fragment(
+            descriptor,
+            handler_id=self.handler_id,
+            event=self.event,
+            expected_type=StaticComponentScopeSpec,
+        )
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
 class DynamicPowerToughnessAbilityFragmentHandler:
     handler_id: str = DYNAMIC_POWER_TOUGHNESS_FRAGMENT_HANDLER_ID
     schema_version: int = 1
@@ -1134,6 +1170,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ProwessAbilityFragmentHandler(),
             RenownAbilityFragmentHandler(),
             StormAbilityFragmentHandler(),
+            StaticComponentScopeAbilityFragmentHandler(),
             TrainingAbilityFragmentHandler(),
             TriggerMultiplierAbilityFragmentHandler(),
             ToxicAbilityFragmentHandler(),
@@ -1185,6 +1222,7 @@ __all__ = [
     "RENOWN_FRAGMENT_HANDLER_ID",
     "PROWESS_FRAGMENT_HANDLER_ID",
     "STORM_FRAGMENT_HANDLER_ID",
+    "STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID",
     "TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID",
     "WARD_FRAGMENT_HANDLER_ID",
     "TOXIC_FRAGMENT_HANDLER_ID",
@@ -1213,6 +1251,7 @@ __all__ = [
     "RenownAbilityFragmentHandler",
     "ProwessAbilityFragmentHandler",
     "StormAbilityFragmentHandler",
+    "StaticComponentScopeAbilityFragmentHandler",
     "TriggerMultiplierAbilityFragmentHandler",
     "ToxicAbilityFragmentHandler",
     "WardAbilityFragmentHandler",

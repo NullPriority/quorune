@@ -5,6 +5,7 @@ from typing import Any, Protocol
 from .ability_fragments import (
     AbilityFragmentError,
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    StaticComponentScopeSpec,
     StaticComponentSpec,
     StaticAbilityFragment,
     ability_fragment_to_dict,
@@ -135,7 +136,16 @@ def compiled_static_ability_fragments(
             fragments.append(StaticComponentSpec(program.key))
         if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage:
             fragments.append(StaticComponentSpec(program.key))
-        fragments.extend(fragments_from_descriptors(program.handlers))
+        descriptor_fragments = fragments_from_descriptors(program.handlers)
+        if any(
+            isinstance(fragment, StaticComponentScopeSpec)
+            and fragment.parent_semantic_key != program.key
+            for fragment in descriptor_fragments
+        ):
+            raise AbilityFragmentError(
+                "Static component scope parent disagrees with its program"
+            )
+        fragments.extend(descriptor_fragments)
     return canonical_ability_fragments(fragments)
 
 

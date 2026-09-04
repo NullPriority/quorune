@@ -1338,7 +1338,11 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
             (unprotected.dealt_amount, unprotected.prevented_amount),
         )
 
-        ward.controller = "B"
+        engine.change_control(
+            ward.object_id,
+            "B",
+            reason="static prevention controller witness",
+        )
         changed_controller = resolved(
             self.proposal(
                 engine,
@@ -1381,8 +1385,7 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
         )
         self.assertEqual((3, 0), (removed.dealt_amount, removed.prevented_amount))
         engine.state.continuous_effects.clear()
-        engine.state.players["A"].zones["battlefield"].remove(ward.object_id)
-        ward.zone = "graveyard"
+        engine.move_card(ward.object_id, "graveyard", log=False)
         departed = resolved(
             self.proposal(
                 engine,

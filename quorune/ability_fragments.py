@@ -77,6 +77,9 @@ class DamageKeywordTriggerKind(str, Enum):
 
 
 CURRENT_ABILITY_FRAGMENT_COVERAGE = "current_ability_fragment_required"
+STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID = (
+    "ability.static.component-scope.v1"
+)
 TOXIC_ABILITY_FRAGMENT_KIND = "toxic"
 
 
@@ -839,6 +842,94 @@ class StaticComponentSpec:
         return cls(**dict(value))
 
 
+@dataclass(frozen=True, slots=True)
+class StaticComponentScopeSpec:
+    """Keywords and child components supplied by one static component."""
+
+    parent_semantic_key: str
+    child_semantic_keys: tuple[str, ...]
+    keywords: tuple[str, ...]
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise AbilityFragmentError(
+                "Unsupported static-component-scope fragment schema version"
+            )
+        if (
+            type(self.parent_semantic_key) is not str
+            or not self.parent_semantic_key.strip()
+            or self.parent_semantic_key != self.parent_semantic_key.strip()
+        ):
+            raise AbilityFragmentError(
+                "Static component scopes require one canonical parent key"
+            )
+        if (
+            not isinstance(self.child_semantic_keys, tuple)
+            or any(
+                type(key) is not str
+                or not key.strip()
+                or key != key.strip()
+                for key in self.child_semantic_keys
+            )
+            or len(set(self.child_semantic_keys))
+            != len(self.child_semantic_keys)
+            or self.child_semantic_keys != tuple(sorted(self.child_semantic_keys))
+            or self.parent_semantic_key in self.child_semantic_keys
+        ):
+            raise AbilityFragmentError(
+                "Static component scopes require unique canonical child keys"
+            )
+        if (
+            not isinstance(self.keywords, tuple)
+            or any(
+                type(keyword) is not str
+                or not keyword.strip()
+                or keyword != keyword.strip()
+                for keyword in self.keywords
+            )
+            or len({keyword.casefold() for keyword in self.keywords})
+            != len(self.keywords)
+            or self.keywords
+            != tuple(sorted(self.keywords, key=str.casefold))
+        ):
+            raise AbilityFragmentError(
+                "Static keyword scopes require unique canonical keywords"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "parent_semantic_key": self.parent_semantic_key,
+            "child_semantic_keys": list(self.child_semantic_keys),
+            "keywords": list(self.keywords),
+        }
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> "StaticComponentScopeSpec":
+        if not isinstance(value, Mapping) or set(value) != {
+            "schema_version",
+            "parent_semantic_key",
+            "child_semantic_keys",
+            "keywords",
+        }:
+            raise AbilityFragmentError(
+                "Static component scopes have a closed schema"
+            )
+        if not isinstance(value["keywords"], list) or not isinstance(
+            value["child_semantic_keys"], list
+        ):
+            raise AbilityFragmentError(
+                "Static component scope keys and keywords must be arrays"
+            )
+        return cls(
+            schema_version=value["schema_version"],
+            parent_semantic_key=value["parent_semantic_key"],
+            child_semantic_keys=tuple(value["child_semantic_keys"]),
+            keywords=tuple(value["keywords"]),
+        )
+
+
 StaticAbilityFragment: TypeAlias = (
     SimpleEnchantSpec
     | TypedEnchantSpec
@@ -851,6 +942,7 @@ StaticAbilityFragment: TypeAlias = (
     | SpellCastKeywordTriggerSpec
     | ToxicSpec
     | StaticComponentSpec
+    | StaticComponentScopeSpec
     | CounterMaximumSpec
     | TriggerMultiplierSpec
     | WardSpec
@@ -891,6 +983,8 @@ def ability_fragment_to_dict(
         kind = TOXIC_ABILITY_FRAGMENT_KIND
     elif isinstance(fragment, StaticComponentSpec):
         kind = "static_component"
+    elif isinstance(fragment, StaticComponentScopeSpec):
+        kind = "static_component_scope"
     elif isinstance(fragment, CounterMaximumSpec):
         kind = "counter_maximum"
     elif isinstance(fragment, TriggerMultiplierSpec):
@@ -958,6 +1052,8 @@ def ability_fragment_from_dict(
         return ToxicSpec.from_dict(value["value"])
     if value["kind"] == "static_component":
         return StaticComponentSpec.from_dict(value["value"])
+    if value["kind"] == "static_component_scope":
+        return StaticComponentScopeSpec.from_dict(value["value"])
     if value["kind"] == "counter_maximum":
         try:
             return CounterMaximumSpec.from_dict(value["value"])
@@ -1040,6 +1136,7 @@ def canonical_ability_fragments(
                 SpellCastKeywordTriggerSpec,
                 ToxicSpec,
                 StaticComponentSpec,
+                StaticComponentScopeSpec,
                 CounterMaximumSpec,
                 TriggerMultiplierSpec,
                 WardSpec,
@@ -1067,10 +1164,10 @@ def canonical_ability_fragments(
     return tuple(fragment for _, fragment in sorted(keyed, key=lambda row: row[0]))
 
 
-def static_component_keys(
+def declared_static_component_keys(
     values: Iterable[StaticAbilityFragment | Mapping[str, Any]],
 ) -> tuple[str, ...]:
-    """Return the unique effective static CardProgram identities."""
+    """Return static CardProgram identities before parent applicability."""
 
     return tuple(
         sorted(
@@ -1079,6 +1176,46 @@ def static_component_keys(
                 for fragment in canonical_ability_fragments(values)
                 if isinstance(fragment, StaticComponentSpec)
             }
+        )
+    )
+
+
+def static_component_keys(
+    values: Iterable[StaticAbilityFragment | Mapping[str, Any]],
+) -> tuple[str, ...]:
+    """Return effective static identities after shared parent applicability."""
+
+    fragments = canonical_ability_fragments(values)
+    keys = set(declared_static_component_keys(fragments))
+    scopes = tuple(
+        fragment
+        for fragment in fragments
+        if isinstance(fragment, StaticComponentScopeSpec)
+    )
+    changed = True
+    while changed:
+        before = len(keys)
+        for scope in scopes:
+            if scope.parent_semantic_key not in keys:
+                keys.difference_update(scope.child_semantic_keys)
+        changed = len(keys) != before
+    return tuple(sorted(keys))
+
+
+def static_keyword_scope_keywords(
+    values: Iterable[StaticAbilityFragment | Mapping[str, Any]],
+) -> tuple[str, ...]:
+    """Return keywords whose printed aggregate needs a typed static owner."""
+
+    return tuple(
+        sorted(
+            {
+                keyword
+                for fragment in canonical_ability_fragments(values)
+                if isinstance(fragment, StaticComponentScopeSpec)
+                for keyword in fragment.keywords
+            },
+            key=str.casefold,
         )
     )
 
@@ -1361,6 +1498,7 @@ __all__ = [
     "ConditionalKeywordSpec",
     "ColorlessCharacteristicDefinitionSpec",
     "CURRENT_ABILITY_FRAGMENT_COVERAGE",
+    "STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID",
     "DamageKeywordTriggerKind",
     "DamageKeywordTriggerSpec",
     "DynamicPowerToughnessSpec",
@@ -1378,6 +1516,7 @@ __all__ = [
     "SpellCastKeywordTriggerSpec",
     "StaticAbilityFragment",
     "StaticComponentSpec",
+    "StaticComponentScopeSpec",
     "TOXIC_ABILITY_FRAGMENT_KIND",
     "ToxicSpec",
     "TriggerMultiplierSpec",
@@ -1389,6 +1528,7 @@ __all__ = [
     "counter_maximum_specs",
     "counter_maximum_values",
     "damage_keyword_trigger_specs",
+    "declared_static_component_keys",
     "declaration_cost_specs",
     "declaration_requirement_specs",
     "declaration_restriction_specs",
@@ -1399,5 +1539,6 @@ __all__ = [
     "protection_specs",
     "spell_cast_keyword_trigger_specs",
     "static_component_keys",
+    "static_keyword_scope_keywords",
     "toxic_specs",
 ]

@@ -68,6 +68,11 @@ from .compiler.life_templates import fixed_life_effect_template
 from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
+from .compiler.leveler_context_nodes import (
+    leveler_compilation_rows as _leveler_compilation_rows,
+    leveler_face_ir as _leveler_face_ir,
+    leveler_source_context as _leveler_source_context,
+)
 from .compiler.mill_templates import fixed_mill_effect_template
 from .compiler.impulse_access_templates import (
     fixed_impulse_access_effect_template,
@@ -144,7 +149,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v162"
+ORACLE_COMPILER_VERSION = "oracle-ir-v163"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -152,11 +157,6 @@ _TRIGGER_PREFIX = re.compile(
 )
 _REPLACEMENT_MARKERS = re.compile(
     r"\b(instead|as .+ enters|enters .+ with|skip)\b",
-    re.IGNORECASE,
-)
-_ORDINARY_SAGA_RULES_REMINDER = re.compile(
-    r"\(As this Saga enters and after your draw step, add a lore counter\. "
-    r"Sacrifice after [IVXLCDM]+\.\)",
     re.IGNORECASE,
 )
 _ABILITY_WORD = re.compile(
@@ -173,29 +173,6 @@ _PERMANENT_CARD_TYPES = frozenset(
     }
 )
 _SPELL_CARD_TYPES = frozenset({"instant", "sorcery"})
-
-
-def _is_ordinary_saga_rules_reminder(
-    type_line: str,
-    line: str,
-    material_line: str,
-) -> bool:
-    return (
-        "saga" in type_parts(type_line)[1]
-        and not material_line
-        and _ORDINARY_SAGA_RULES_REMINDER.fullmatch(line) is not None
-    )
-
-
-def _material_source_lines(
-    type_line: str,
-    oracle_text: str,
-) -> Iterable[tuple[str, str, SourceSpan]]:
-    for line, span in _source_lines(oracle_text):
-        material_line = _without_parenthetical_reminder(line)
-        if _is_ordinary_saga_rules_reminder(type_line, line, material_line):
-            continue
-        yield line, material_line, span
 
 
 def _read_ahead_face_context(
@@ -1187,7 +1164,10 @@ def _compile_face(
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
     contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
-    material_rows = tuple(_material_source_lines(type_line, oracle_text))
+    material_rows, leveler_context = _leveler_source_context(
+        record.layout, type_line, oracle_text,
+        ordinary_saga="saga" in type_parts(type_line)[1],
+    )
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
     if spell:
         typed_face = _typed_whole_spell_face(
@@ -1204,7 +1184,7 @@ def _compile_face(
         effect_template=contextual_effect_template,
         activated_or_event_node=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node,
     )
-    for index, row in enumerate(material_rows, 1):
+    for index, row in _leveler_compilation_rows(leveler_context, material_rows):
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue
         line, material_line, span = row; node_id = f"{face_id}:n{index}"
@@ -1394,12 +1374,9 @@ def _compile_face(
                 residual_ids=(residual_id,),
             )
         )
-    return OracleFaceIR(
-        face_id=face_id,
-        face_name=face_name,
-        oracle_text=oracle_text,
-        nodes=tuple(nodes),
-        residuals=tuple(residuals),
+    return _leveler_face_ir(
+        leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
+        keywords, nodes, residuals, capability_registry, capability_profile,
     )
 
 

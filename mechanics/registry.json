@@ -1,5 +1,5 @@
 {
-  "contract_count": 121,
+  "contract_count": 122,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -413,6 +413,12 @@
       "mechanic_id": "landwalk",
       "path": "mechanics/contracts/landwalk.json",
       "sha256": "a9d7fd9afc072290639af7b70cfbd77a5b0c6004ceab090050aeb98928ac6867",
+      "version": 1
+    },
+    {
+      "mechanic_id": "cr-711-leveler-cards",
+      "path": "mechanics/contracts/leveler-cards.json",
+      "sha256": "094dac93f662f524aa85cd61918037bf0fd19712ce3a26d7996a59770120439a",
       "version": 1
     },
     {
@@ -10019,17 +10025,37 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/leveler-cards.json",
+      "contract_sha256": "094dac93f662f524aa85cd61918037bf0fd19712ce3a26d7996a59770120439a",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [],
-      "implementation_component": null,
+      "implementation_component": "LevelerBandsSpec, Leveler compiler context, LevelerBandsHandler, shared StaticComponentSpec applicability, characteristic evaluation, compiled activation query, counter replacement, projection, persistence, and replay",
+      "implementation_version": "typed-leveler-bands-v1",
       "kind": "rules_section",
+      "known_blockers": [
+        "noncreature, missing, overlapping, noncontiguous, variable, negative, or more-than-two striation layouts",
+        "Class, Room, Prototype, and other level-like mechanics",
+        "independently unsupported abilities inside a represented band",
+        "granted, text-changed, merged, and arbitrary striation forms",
+        "dynamic characteristic counts and type-changing interactions outside the cycle-safe current characteristic boundary",
+        "aggregate Leveler Cards coverage remains incomplete"
+      ],
       "mechanic_id": "cr-711-leveler-cards",
       "official_name": "Leveler Cards",
       "rule_references": [
         "711"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_leveler_descriptor_is_strict_and_uses_typed_layer_boundaries",
+        "test_leveler_rows_compile_typed_bands_and_preserve_child_membership",
+        "test_leveler_parser_rejects_malformed_ranges_and_open_children",
+        "test_leveler_dependency_and_compiler_mutants_fail_closed",
+        "test_level_counters_gate_power_keywords_static_and_activated_abilities",
+        "test_leveler_copy_ability_removal_and_layer_ordering",
+        "test_leveler_trample_uses_current_band_in_damage_assignment",
+        "test_leveler_four_player_replacement_replay_and_privacy"
+      ],
       "trust_level": "untrusted"
     },
     {

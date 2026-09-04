@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "cr-711-leveler-cards",
+  "official_name": "Leveler Cards",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["711", "711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7", "702.87"],
+  "glossary_references": ["level symbol", "level up", "leveler card"],
+  "dependencies": ["activated abilities", "continuous effects", "counters", "copying objects", "layers", "replacement effects", "zones"],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["battlefield", "every nonbattlefield zone"],
+    "objects": ["one ordinary creature Leveler with exactly two canonical text-box striations", "one copied Leveler permanent with independent counters"],
+    "events": ["evaluate current characteristics", "add or remove a level counter", "activate Level Up", "copy the represented printed values", "remove or restore the source static component"],
+    "state_reads": ["source physical and logical incarnation", "current nonnegative level-counter count", "source timestamp", "current shared layer-6 static-component set"],
+    "state_writes": ["none during characteristic evaluation", "Level Up delegates counter mutation to the canonical replacement-aware counter owner"],
+    "costs": ["the independently compiled fixed ordinary-mana Level Up cost"],
+    "timing": ["Level Up retains its independently compiled sorcery timing at every level", "band characteristics recompute continuously on the battlefield"],
+    "targets": [],
+    "choices": ["represented competing counter replacements use their existing affected-player choice owner"],
+    "hidden_information": ["level counters and resulting battlefield characteristics are public", "authoritative replacement choices remain principal-scoped"],
+    "apnap": ["ordinary priority and the existing replacement ordering apply; characteristic evaluation creates no choice"],
+    "layers": ["a typed parent-to-child static scope removes the flattened printed band-keyword inventory from base values and suppresses every child when the level symbol is absent", "the active keywords are added at the source timestamp and inactive band child components are removed through the shared layer-6 static-component query", "the active band sets base power and toughness in layer 7b", "+1/+1 counters and fixed modifiers apply later in layer 7c"],
+    "replacement_effects": ["Level Up counter placement remains in the existing typed counter replacement transaction"],
+    "copy": ["copied printed band descriptors use the copy's own level counters and timestamp rather than the original permanent's current characteristics"],
+    "control_change": ["band selection follows the same public source object and is independent of controller"],
+    "zone_change": ["a new battlefield incarnation starts without the old object's level counters", "nonbattlefield power and toughness remain the printed uppermost values"],
+    "source_leaves": ["the battlefield static component stops applying immediately and cannot affect a later incarnation"]
+  },
+  "variants": ["finite lower ranges beginning above level one", "open upper ranges", "repeated keywords across both bands", "keyword, static, mana, triggered, and activated child programs when independently capability-closed", "copy, ability removal, counter replacement, save/load, and replay"],
+  "witness_cards": [
+    {"name": "Beastbreaker of Bala Ged", "oracle_id": "8c77f436-81ab-4200-b76d-58b1f91fc3d0"},
+    {"name": "Brimstone Mage", "oracle_id": "81dcb85e-d61f-430b-9540-5a3bb1378d5a"},
+    {"name": "Coralhelm Commander", "oracle_id": "0ca0a186-026d-4cec-9c23-15d94e6acca9"},
+    {"name": "Hexdrinker", "oracle_id": "69bc2afd-9f53-47f2-b9c8-f12732784e10"}
+  ],
+  "rulings": [],
+  "test_ids": ["test_leveler_descriptor_is_strict_and_uses_typed_layer_boundaries", "test_leveler_rows_compile_typed_bands_and_preserve_child_membership", "test_leveler_parser_rejects_malformed_ranges_and_open_children", "test_leveler_dependency_and_compiler_mutants_fail_closed", "test_level_counters_gate_power_keywords_static_and_activated_abilities", "test_leveler_copy_ability_removal_and_layer_ordering", "test_leveler_trample_uses_current_band_in_damage_assignment", "test_leveler_four_player_replacement_replay_and_privacy"],
+  "implementation": {
+    "component": "LevelerBandsSpec, Leveler compiler context, LevelerBandsHandler, shared StaticComponentSpec applicability, characteristic evaluation, compiled activation query, counter replacement, projection, persistence, and replay",
+    "version": "typed-leveler-bands-v1",
+    "capability_ids": ["continuous.characteristics.leveler_bands", "activation.counter_keyword.fixed"],
+    "supported_slice": "One ordinary creature Leveler whose fixed-mana Level Up action is exact and whose text has one finite fixed numeric band followed by one contiguous open fixed numeric band; only independently exact child abilities participate."
+  },
+  "known_blockers": ["noncreature, missing, overlapping, noncontiguous, variable, negative, or more-than-two striation layouts", "Class, Room, Prototype, and other level-like mechanics", "independently unsupported abilities inside a represented band", "granted, text-changed, merged, and arbitrary striation forms", "dynamic characteristic counts and type-changing interactions outside the cycle-safe current characteristic boundary", "aggregate Leveler Cards coverage remains incomplete"],
+  "review_status": "reviewed"
+}

@@ -1939,23 +1939,67 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-entry-return-requirement-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:typed-leveler-bands",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.counter_keyword.fixed",
+            "capability:continuous.characteristics.leveler_bands",
+            "component:quorune.ability_fragments.StaticComponentScopeSpec",
+            "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map",
+            "component:quorune.compiler.leveler_context_nodes.apply_leveler_context",
+            "component:quorune.semantic_runtime.continuous_components.LevelerBandsHandler"
+          ],
+          "source_contexts": [
+            "activated",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-numeric-base-power-toughness",
+            "inclusive-finite-level-range",
+            "independently-exact-child-program",
+            "level-counter-current-public-count",
+            "open-contiguous-upper-level-range"
+          ],
+          "shared_dependencies": [
+            "activation.counter_keyword.fixed",
+            "continuous.characteristics.leveler_bands"
+          ],
+          "shared_grammar": "one ordinary creature Leveler with exactly one finite LEVEL N-M striation followed by one contiguous LEVEL N+ striation, fixed nonnegative power/toughness, and only independently exact child programs, evaluated through the shared layer-6 static-component and layer-7b characteristic owners",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes the common Leveler layout across keyword, static, triggered, mana, and activated children while reusing the existing Level Up counter transaction, copy values, ability applicability, continuous layers, projection, and replay owners.",
+          "explicit_exclusions": [
+            "Class, Room, Prototype, and non-Leveler layouts",
+            "dynamic characteristic counts and affected type-changing interactions outside the cycle-safe current characteristic boundary",
+            "granted, text-changed, merged, and arbitrary striation forms",
+            "independently unsupported abilities within a represented striation",
+            "noncreature, missing, overlapping, noncontiguous, variable, negative, and more-than-two striation layouts",
+            "variable, nonintegral, missing, and characteristic-defining band power or toughness"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-leveler-bands-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v162-fixed-public-numeric-damage-targets",
-      "compiler_version": "oracle-ir-v162",
-      "bundle_id": "bundle:fixed-public-numeric-damage-targets",
-      "candidate_ids": ["compiler:fixed-public-numeric-damage-targets"],
+      "transition_id": "oracle-ir-v163-typed-leveler-bands",
+      "compiler_version": "oracle-ir-v163",
+      "bundle_id": "bundle:typed-leveler-bands",
+      "candidate_ids": ["compiler:typed-leveler-bands"],
       "family_ids": [
-        "target_or_choice:target-predicate"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "target.permanent.characteristic_predicate",
-        "target.permanent.damage_history_predicate"
+        "continuous.characteristics.leveler_bands"
       ],
-      "measurement_id": "measurement:fixed-public-numeric-damage-targets",
+      "measurement_id": "measurement:typed-leveler-bands",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2497,6 +2541,11 @@
         "candidate_id": "compiler:fixed-entry-return-requirements",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The generated selector has no eligible carried candidate after the source-combat harvest, while the raw continuous-layer leader remains heterogeneous and the rules queue still points to a nonmeasured counter prerequisite. Bounded integrated probes retired public static cast-cost modifiers at 16 complete cards and fixed-mana Buyback, Dash, and Warp lifecycles at 25. The selected entry-return family instead measures 52 exact carriers and a conservative 50-card closure through existing normalized entry events, typed public predicates, controller-scoped choices, owner-hand transitions, sacrifice fallback, current layer-6 ability applicability, APNAP, and replay owners. Targets, up-to and aggregate sets, hidden or opponent subjects, variable, optional, modal, compound, dynamic, chosen, linked, and unsupported event forms remain fail-closed; current cohort identities and counts are generated from the current frontier."
+      },
+      {
+        "candidate_id": "compiler:typed-leveler-bands",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-harvest generated selector has no eligible carried candidate and its raw continuous-layer leader remains heterogeneous. Bounded comparisons retired synchronous single-object blink, simple copy-token creation, and additional predefined artifact-token profiles below the normal harvest floor. The generated Leveler probe instead reaches the residual floor through one closed two-striation grammar and the existing Level Up counter transaction, shared layer-6 static-component applicability query, layer-7b base characteristic owner, copy values, projection, and replay. Class, Room, Prototype, noncreature or arbitrary striations, malformed ranges, variable characteristics, independently unsupported children, granted or text-changed symbols, and cycle-sensitive dynamic characteristic interactions remain fail-closed; current identities and measurements are derived into the generated cohort artifact."
       }
     ]
   },

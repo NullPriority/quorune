@@ -8,6 +8,7 @@ from typing import Any, Protocol
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
     StaticComponentSpec,
+    static_component_keys,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
     canonical_ability_fragments,
@@ -721,6 +722,8 @@ def program_has_current_ability_fragments(
             characteristics.get("ability_fragments", ())
         )
     )
+    if program.key not in static_component_keys(available):
+        return False
     for fragment in required:
         try:
             available.remove(fragment)

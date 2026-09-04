@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-08-28"
+verified: "2026-09-03"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -683,6 +683,24 @@ Star power,
 characteristic-defining or otherwise dynamic counts, and copy, face, text, or
 type-changing interactions remain residual until a cycle-safe zone-
 characteristic boundary owns them.
+
+`compiler/leveler_context_nodes.py` recognizes only ordinary creature Leveler
+layouts with one finite `LEVEL N-M` striation followed by its contiguous
+`LEVEL N+` striation and fixed nonnegative power/toughness in both. It combines
+each header with its printed power/toughness span, records independently exact
+child-program keys in one typed descriptor, and gives those children the
+shared current-ability-fragment coverage marker. A typed component-scope
+fragment binds those children to the parent level symbol and removes card
+data's flattened band-keyword inventory from base values. The runtime
+continuous owner uses the committed public level-counter count to remove
+inactive child components and rematerialize only the active keywords at the
+source timestamp in layer 6, then set the active base power/toughness in layer
+7b.
+Level Up itself remains outside the bands and available at every level through
+its existing activation owner. Class, Room, Prototype, noncreature or arbitrary
+striations, malformed ranges, variable characteristics, unsupported children,
+granted or text-changed symbols, and cycle-sensitive dynamic characteristic
+interactions remain residual or explicitly outside trust.
 
 `compiler/token_templates.py` owns fixed-definition token creation across
 spell, triggered, and activated effects. The closed production emits one

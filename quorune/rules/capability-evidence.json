@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9e3547c6de194e15906f481b1f732ad74339e9fe0c7e0855715415a07b5b4eb0",
-  "declaration_source_fingerprint": "40558be4c9bda8328335906b07da4f8dff2a8545613bd01d088616f9057b5f2f",
+  "registry_fingerprint": "a6acb778038f810ea79d46f2cdcdb98f4f57ec6a14699acfa82ea72d5da3a691",
+  "declaration_source_fingerprint": "5ad385ebedc6624bc6abfbf132c707ac3eb6669ab3e7604b84b6df2efbaee917",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -17362,6 +17362,160 @@
         "commander_review"
       ],
       "applicability_note": "Pin schema-v2 source, attached-object, and layer-5 count conditions into a checkpoint and replay the following authoritative command exactly."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_copy_ability_removal_and_layer_ordering",
+      "official_rule_ids": [
+        "711.1",
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.3",
+        "711.4",
+        "711.5",
+        "711.6",
+        "711.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the copy's own level counters, suppress the complete typed band through the shared layer-6 static-component query, and order its base power/toughness before counters and fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy",
+      "official_rule_ids": [
+        "711.1",
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.3",
+        "711.4",
+        "711.5",
+        "711.6",
+        "711.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a four-player Level Up activation through two independently applicable counter replacements and derive the resulting band from the committed count."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_dependency_and_compiler_mutants_fail_closed",
+      "official_rule_ids": [
+        "711.1",
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.3",
+        "711.4",
+        "711.5",
+        "711.6",
+        "711.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the typed band capability and remove contextual range parsing to prove both mutations prevent exact Leveler admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "negative",
+      "test_id": "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_parser_rejects_malformed_ranges_and_open_children",
+      "official_rule_ids": [
+        "711.1",
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.3",
+        "711.4",
+        "711.5",
+        "711.6",
+        "711.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject gaps, overlaps, variable characteristics, extra striations, non-Leveler layouts, arbitrary top rows, and independently unsupported band children."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "positive",
+      "test_id": "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_rows_compile_typed_bands_and_preserve_child_membership",
+      "official_rule_ids": [
+        "711.1",
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.3",
+        "711.4",
+        "711.5",
+        "711.6",
+        "711.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile two contiguous fixed ranges and bind each independently exact keyword, static, or activated child to its source-spanned range."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy",
+      "official_rule_ids": [
+        "711.1",
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.3",
+        "711.4",
+        "711.5",
+        "711.6",
+        "711.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Issue the replacement decision only to its authorized controller while every opponent receives only the public level count and resulting characteristics."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "replay",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy",
+      "official_rule_ids": [
+        "711.1",
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.3",
+        "711.4",
+        "711.5",
+        "711.6",
+        "711.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resume the pending counter-replacement choice from disk and exactly replay the resulting level count, active range, power/toughness, and keyword state."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -54260,5 +54414,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "6a563dad30d4491a51728e4ea14384dfe6f839624fe8c93acbcea045a4ec1738"
+  "fingerprint": "f8357b607752ad2dd0b5592754f261ab6fdce27908dfbf1bd3941fe1f3ee3765"
 }

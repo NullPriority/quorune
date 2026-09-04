@@ -5023,6 +5023,126 @@
       "capability_ids": ["target.permanent.damage_history_predicate", "zone.draw.library_to_hand"],
       "interaction_order": 2,
       "assertion": "A legal damage-history target is destroyed before the controller-private draw and replays exactly, while a departed and returned sole target makes the entire sequence fizzle without drawing."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_leveler_four_player_replacement_replay_and_privacy",
+      "piece_ids": [
+        "capability.activation.counter_keyword.fixed",
+        "capability.continuous.characteristics.leveler_bands"
+      ],
+      "capability_ids": [
+        "activation.counter_keyword.fixed",
+        "continuous.characteristics.leveler_bands"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real fixed-mana Level Up activation resolves through its canonical stack and counter owner before the typed Leveler component derives the active range from the committed level count."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_leveler_trample_uses_current_band_in_damage_assignment",
+      "piece_ids": [
+        "capability.combat.damage.assignment.trample",
+        "capability.continuous.characteristics.leveler_bands"
+      ],
+      "capability_ids": [
+        "combat.damage.assignment.trample",
+        "continuous.characteristics.leveler_bands"
+      ],
+      "interaction_order": 2,
+      "assertion": "Crossing the exact upper Leveler boundary adds Trample through current layer-6 characteristics, changing the authoritative combat-damage targets and permitting only legal excess assignment."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_leveler_copy_ability_removal_and_layer_ordering",
+      "piece_ids": [
+        "capability.continuous.characteristics.leveler_bands",
+        "capability.continuous.power_toughness.fixed_anthem"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.leveler_bands",
+        "continuous.power_toughness.fixed_anthem"
+      ],
+      "interaction_order": 2,
+      "assertion": "Coralhelm Commander's upper band exposes its separately typed Merfolk anthem only while the shared source component remains present, and removing that component removes the downstream modifier."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_leveler_copy_ability_removal_and_layer_ordering",
+      "piece_ids": [
+        "capability.continuous.characteristics.leveler_bands",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.leveler_bands",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "The active Leveler band sets base power/toughness in layer 7b before a resolution-created layer-7c modifier, while a later timestamped 7b setter wins inside its own sublayer."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_leveler_four_player_replacement_replay_and_privacy",
+      "piece_ids": [
+        "capability.continuous.characteristics.leveler_bands",
+        "capability.counter.placement.quantity_replacement"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.leveler_bands",
+        "counter.placement.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two independently applicable quantity replacements turn one Level Up result into four counters through a private resumable choice, after which the Leveler enters its upper band and replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_level_counters_gate_power_keywords_static_and_activated_abilities",
+      "piece_ids": [
+        "capability.continuous.characteristics.leveler_bands",
+        "capability.damage.amount.positive"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.leveler_bands",
+        "damage.amount.positive"
+      ],
+      "interaction_order": 2,
+      "assertion": "Brimstone Mage exposes only the fixed positive-damage activation in its current band; that activation deals its typed amount and the old lower-band command becomes invalid after the range changes."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_level_counters_gate_power_keywords_static_and_activated_abilities",
+      "piece_ids": [
+        "capability.continuous.characteristics.leveler_bands",
+        "capability.damage.result.player_life"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.leveler_bands",
+        "damage.result.player_life"
+      ],
+      "interaction_order": 2,
+      "assertion": "The active lower-band Brimstone Mage program resolves through canonical player damage and life mutation, while an inactive-band program cannot be submitted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_level_counters_gate_power_keywords_static_and_activated_abilities",
+      "piece_ids": [
+        "capability.continuous.characteristics.leveler_bands",
+        "capability.target.public.player_or_damageable_permanent"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.leveler_bands",
+        "target.public.player_or_damageable_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "The current Leveler band gates a compiler-pinned any-target activation before the shared public player-or-permanent target owner validates the selected player."
     }
   ]
 }

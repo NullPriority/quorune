@@ -2817,6 +2817,33 @@
       "status": "trusted"
     },
     {
+      "id": "continuous.characteristics.leveler_bands",
+      "version": 1,
+      "official_rules": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile one ordinary two-striation Leveler card so its fixed level-counter ranges set base power and toughness in layer 7b and expose only the printed abilities in the active range through the shared layer-6 applicability query.",
+        "inputs": ["one source-spanned fixed-mana Level up ability", "exactly one finite LEVEL N-M row followed by one contiguous LEVEL N+ row", "fixed nonnegative power and toughness in each striation", "current nonnegative level-counter count", "independently capability-closed keyword, static, triggered, mana, or activated child programs"],
+        "outputs": ["current range-selected base power and toughness", "current range-selected keyword and static-component set", "matching activated-ability offer and command legality", "copyable printed band descriptors", "exact replay"],
+        "exclusions": ["Class, Room, Prototype, and non-Leveler layouts", "missing, overlapping, noncontiguous, variable, negative, or more-than-two printed ranges", "variable or nonintegral power and toughness", "independently unsupported child abilities", "granted or text-changed level symbols", "merged permanents and arbitrary striation layouts", "dynamic characteristic counts and affected type-changing interactions outside the cycle-safe current characteristic boundary"]
+      },
+      "dependencies": ["activation.counter_keyword.fixed"],
+      "implementation_components": ["quorune.leveler_bands.LevelerBandsSpec", "quorune.ability_fragments.StaticComponentScopeSpec", "quorune.ability_fragments.static_component_keys", "quorune.ability_fragments.static_keyword_scope_keywords", "quorune.ability_fragment_host.AbilityFragmentHostMixin._compiled_base_characteristics", "quorune.compiler.leveler_context_nodes.parse_leveler_context", "quorune.compiler.leveler_context_nodes.apply_leveler_context", "quorune.semantic_runtime.ability_fragments.StaticComponentScopeAbilityFragmentHandler", "quorune.semantic_runtime.continuous_components.LevelerBandsHandler", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._static_component_applicability_effects", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.continuous_effects._apply_ability_operation", "quorune.continuous_effects.evaluate_continuous_effects"],
+      "positive_tests": ["test_leveler_rows_compile_typed_bands_and_preserve_child_membership", "test_level_counters_gate_power_keywords_static_and_activated_abilities"],
+      "negative_tests": ["test_leveler_parser_rejects_malformed_ranges_and_open_children"],
+      "interaction_tests": ["test_level_counters_gate_power_keywords_static_and_activated_abilities", "test_leveler_copy_ability_removal_and_layer_ordering"],
+      "multiplayer_tests": ["test_leveler_four_player_replacement_replay_and_privacy"],
+      "privacy_tests": ["test_leveler_four_player_replacement_replay_and_privacy"],
+      "replay_tests": ["test_leveler_four_player_replacement_replay_and_privacy"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking either the existing Level up activation/counter transaction or the typed band capability keeps the complete Leveler CardProgram unresolved before any band characteristic or child ability can become runtime authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler, range-boundary, layer-6 membership, layer-7b base-setting, activated-discovery, copy, and replay mutations are rejected by the typed Leveler witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "continuous.characteristics.query_count_modifier",
       "version": 1,
       "official_rules": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
