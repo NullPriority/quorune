@@ -770,6 +770,24 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
                 "granted_mana_ability",
                 "granted_activated",
             ),
+            (
+                'Enchanted creature has "Sacrifice this creature: You gain 2 life."',
+                "Enchantment — Aura",
+                "granted_activated_ability",
+                "granted_activated",
+            ),
+            (
+                'Equipped creature has "Discard a card: Draw a card."',
+                "Artifact — Equipment",
+                "granted_activated_ability",
+                "granted_activated",
+            ),
+            (
+                'Enchanted creature has "Pay 2 life: Draw a card."',
+                "Enchantment — Aura",
+                "granted_activated_ability",
+                "granted_activated",
+            ),
         )
         capabilities = load_default_capability_registry()
         for text, type_line, inner_kind, fragment_kind in fixtures:
@@ -820,9 +838,8 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
 
     def test_compiler_keeps_unsupported_attached_grants_residual(self):
         fixtures = (
-            'Enchanted creature has "Sacrifice this creature: You gain 2 life."',
-            'Enchanted creature has "Discard a card: Draw a card."',
-            'Enchanted creature has "Pay 2 life: Draw a card."',
+            'Enchanted creature has "Exile this creature: You gain 2 life."',
+            'Enchanted creature has "Pay {E}: Draw a card."',
             'Enchanted creature has "This creature has flying."',
             'Enchanted creature has "{T}: Tap this Aura."',
             'Enchanted creature has "{T}: Draw a card." and "{T}: Add {G}."',
@@ -1623,6 +1640,7 @@ class AttachedQuotedAbilityRuntimeTests(unittest.TestCase):
         keep_all(session)
         engine = session.engine
         for name in (
+            "Attached Grant Sacrifice Fixture",
             "Attached Grant Damage Fixture",
             "Attached Grant Trigger Fixture",
             "Attached Grant Mana Fixture",
@@ -1823,6 +1841,48 @@ class AttachedQuotedAbilityRuntimeTests(unittest.TestCase):
         self.assertEqual(a_stack, b_stack)
         self.resolve_top(engine)
         self.assertEqual(life_before - 1, engine.state.players["A"].life)
+
+    def test_attached_granted_source_sacrifice_uses_recipient_and_lki_program(self):
+        session = self.session(6131033)
+        engine = session.engine
+        aura = self.add_fixture(
+            engine,
+            name="Attached Grant Sacrifice Fixture",
+            ref="source-cost-aura",
+        )
+        recipient = self.creature(engine, ref="source-cost-recipient")
+        attach_objects(
+            engine.state.cards,
+            aura,
+            recipient,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        semantic_key = (
+            "fixture-attached-grant-sacrifice:ability:granted:front:n2"
+        )
+        granted = next(
+            ability
+            for ability in engine._activated_abilities(recipient)
+            if ability.builtin_semantic_key == semantic_key
+        )
+        self.assertTrue(granted.sacrifice_source)
+        engine.state.players["A"].mana_pool["C"] = 1
+        life_before = engine.state.players["A"].life
+
+        engine._activate(
+            "A",
+            {
+                "source": recipient.ref,
+                "ability": granted.ability_id,
+                "pay": "manual",
+                "payment": {"C": 1},
+            },
+        )
+
+        self.assertEqual("outside", recipient.zone)
+        self.assertEqual(semantic_key, engine.state.stack[-1].semantic_key)
+        self.resolve_top(engine)
+        self.assertEqual(life_before + 2, engine.state.players["A"].life)
 
     def test_attachment_controller_cannot_activate_ability_granted_to_opponents_creature(self):
         session = self.session(6131021)

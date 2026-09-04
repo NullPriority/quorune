@@ -32,6 +32,13 @@ class _Witness:
 
 
 _WITNESSES = {
+    "fixed-query-grant-entry-replacement": _Witness(
+        "Generic Query Grant Entry Replacement Fixture",
+        "Enchantment",
+        "As this enchantment enters, sacrifice all lands you control.\n"
+        'Lands you control have "{T}: Add two mana of any one color."',
+        "{2}",
+    ),
     "saga-chapter-boundary": _Witness(
         "Generic Saga Chapter Boundary Fixture",
         "Enchantment — Saga",
@@ -992,6 +999,17 @@ EFFECT_AND_REPLACEMENT_PAIRS = (
     DESTROY_REGENERATION_PAIR,
 )
 
+FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS = (
+    _pair(
+        "capability.continuous.ability.fixed_query_grant",
+        "residual.replacement.replacement-applicability",
+    ),
+    _pair(
+        "capability.continuous.ability.fixed_query_grant",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    ),
+)
+
 FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS = tuple(
     _pair(capability, "residual.replacement.regeneration")
     for capability in (
@@ -1125,6 +1143,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *ATTACHMENT_AND_CONTINUOUS_PAIRS,
             *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
             *EFFECT_AND_REPLACEMENT_PAIRS,
+            *FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
             *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
             *FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
             *ZONE_AND_CHOICE_PAIRS,
@@ -1185,6 +1204,10 @@ _bind(
     SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[-1],
 )
 _bind("prismatic-circle", *EFFECT_AND_REPLACEMENT_PAIRS[:3])
+_bind(
+    "fixed-query-grant-entry-replacement",
+    *FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
+)
 _bind("serras-hymn", EFFECT_AND_REPLACEMENT_PAIRS[3])
 _bind("tekuthal", *EFFECT_AND_REPLACEMENT_PAIRS[4:6])
 _bind("zabaz", *EFFECT_AND_REPLACEMENT_PAIRS[6:8])
@@ -1450,6 +1473,7 @@ __all__ = [
     "EFFECT_AND_REPLACEMENT_PAIRS",
     "FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS",
     "FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS",
+    "FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS",
     "FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS",
     "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",

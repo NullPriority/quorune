@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "86799b539c973ac63594157dd3b3cb4d9ac0eaec83e2ffda4262770eaf1218eb",
-  "declaration_source_fingerprint": "11d1ded21a7ec8b48914f26c2d66f934c39c1e0a78447766a590931c1a994874",
+  "registry_fingerprint": "731312f15eafbc844efd0116cf87ae41edd90546ca14d2329ecb5cd955ad4a5b",
+  "declaration_source_fingerprint": "14e51400b294fd7416e5379bd17658f8c99b6b907977bd9e460f29c54f1c825b",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -15623,6 +15623,82 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_extended_granted_costs_reach_canonical_activation_owners",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Carry typed discard, untap, life-payment, and restricted-mana costs from a live grant into the canonical activation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_granted_source_cost_is_atomic_revalidated_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Revalidate a recipient-bound source-sacrifice grant at commit, reject stale or insufficient offers atomically, and resolve from last-known source identity."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_live_query_recomputes_control_entry_source_and_layer_six",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute typed grants for entry, control, source departure and return, and shared layer-6 source-ability removal."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply two global typed grants in four-player state and retain separate recipient-controlled trigger occurrences through APNAP placement."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "mutation",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_fixed_query_ability_grant_is_typed_and_canonical",
       "official_rule_ids": [
@@ -15639,6 +15715,25 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal or alteration of the typed layer-6 operation, source-controller predicate, or token-and-creature applicability."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_group_quote_dependencies_fail_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block either the outer layer-6 grant or an independently exact inner behavior owner and reject exact admission."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -15661,6 +15756,25 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_group_quote_grammar_and_inner_behavior_fail_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep multiple quotes, static prose, external or named sources, hidden recipients, and unsupported activation costs residual."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_exact_zimone_closure.ExactZimoneClosureTests.test_insidious_roots_batches_graveyard_departures_and_grants_token_mana",
       "official_rule_ids": [
@@ -15680,6 +15794,44 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_group_quotes_compile_exact_typed_inner_programs_and_costs",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile one closed public query shell and independently exact activated, fixed-output mana, or triggered inner program into typed source-spanned nodes."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public trigger choices to the ordering player and omit physical and logical source identities from every seat view."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "replay",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_fixed_query_ability_grant_is_typed_and_canonical",
       "official_rule_ids": [
@@ -15696,6 +15848,44 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip the complete typed continuous effect and its fixed granted fragment without changing canonical identity."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay duplicate global grant discovery, APNAP ordering, placement, and both resolutions to the exact state hash."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_granted_source_cost_is_atomic_revalidated_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the source-sacrifice stack object and last-known recipient program through exact resolution."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -16255,6 +16445,29 @@
         "commander_review"
       ],
       "applicability_note": "Apply one source's represented multi-layer effect without losing its object relation."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_attached_static_characteristics.AttachedQuotedAbilityRuntimeTests.test_attached_granted_source_sacrifice_uses_recipient_and_lki_program",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sacrifice the attached recipient rather than the granting Aura and resolve its typed program from last-known source identity."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -55708,5 +55921,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "df0159e725b356a86b191d53c1771e65c62b146d9b5eac6b8ed10ac61e33d675"
+  "fingerprint": "a1302ea7441ac036e38346a78512f5583a7f458bb9280c1f951abb08bd0dff70"
 }

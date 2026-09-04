@@ -209,6 +209,24 @@ class ContinuousEffectComponentTests(unittest.TestCase):
             )["capability_dependencies"],
         )
 
+        global_trigger = ability_grant_descriptor()
+        global_trigger["condition"]["target_controller"] = "any"
+        global_trigger["modifier"]["add_ability_fragments"] = [
+            {
+                "kind": "granted_triggered",
+                "value": {
+                    "schema_version": 1,
+                    "ability_id": "test-trigger",
+                    "semantic_key": "fixture:test-trigger",
+                    "event": "combat.attack.declared",
+                    "label": "Whenever this creature attacks, draw a card.",
+                },
+            }
+        ]
+        trigger_effect = handler.lower(global_trigger, context)[0]
+        self.assertIsNone(trigger_effect.applies.controller)
+        self.assertEqual((), trigger_effect.applies.excluded_controllers)
+
     def test_fixed_query_ability_grant_rejects_malformed_descriptors(self):
         handler = FixedQueryAbilityGrantHandler()
         empty = ability_grant_descriptor()
@@ -220,6 +238,27 @@ class ContinuousEffectComponentTests(unittest.TestCase):
         competing_controller["condition"]["predicate"]["controller"] = "A"
         with self.assertRaisesRegex(SemanticNodeError, "reserve"):
             handler.validate(competing_controller)
+
+        unsupported_relation = ability_grant_descriptor()
+        unsupported_relation["condition"]["target_controller"] = "owner"
+        with self.assertRaisesRegex(SemanticNodeError, "controller relation"):
+            handler.validate(unsupported_relation)
+
+        unsupported_fragment = ability_grant_descriptor()
+        unsupported_fragment["modifier"]["add_ability_fragments"] = [
+            {
+                "kind": "static_component",
+                "value": {
+                    "schema_version": 1,
+                    "semantic_key": "fixture:static",
+                },
+            }
+        ]
+        with self.assertRaisesRegex(
+            SemanticNodeError,
+            "activated or triggered",
+        ):
+            handler.validate(unsupported_fragment)
 
     def test_multiple_anthem_components_stack_and_respect_control(self):
         session = self.session(1250602)

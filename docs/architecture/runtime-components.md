@@ -256,21 +256,26 @@ involved.
 attachment relation while lowering its closed operations into layers 4, 5, 6,
 7b, and 7c. It supports fixed or typed public-query power/toughness, base
 power/toughness, type, subtype, color, and separately trusted keyword changes.
-An Aura or Equipment line whose outer characteristic grammar is already closed
-may also carry exactly one quoted activated, fixed-output mana, or triggered
-ability. The compiler lowers that quote to a separately keyed exact
-CardProgram and adds only its typed `GrantedActivatedAbilitySpec` or
-`GrantedTriggeredAbilitySpec` in layer 6. Activation and trigger discovery bind
-the program to the attached recipient, suppress it when the current grant is
-absent, and never execute the quote as runtime text.
+An Aura or Equipment line whose outer characteristic grammar is already closed,
+or a source-controller, source-opponent, or global live battlefield query, may
+also carry exactly one quoted activated, fixed-output mana, or triggered
+ability. The compiler lowers that quote to a separately keyed exact CardProgram
+and adds only its typed `GrantedActivatedAbilitySpec` or
+`GrantedTriggeredAbilitySpec` in layer 6. Granted activations may preserve the
+closed mana, tap, untap, source-sacrifice, life-payment, selected-object, and
+represented restricted-mana costs already owned by the activation transaction.
+Activation and trigger discovery bind the program to each affected recipient,
+suppress it when the current grant is absent, and never execute the quote as
+runtime text.
 Dynamic quantities resolve through the shared cycle-safe layer-5 boundary; an
 "other" attached-object quantity excludes the attached subject rather than the
 Aura or Equipment source. Ability removal is ordered before additions from the
 same effect, and the shared static-component query determines whether the
 source still contributes any component. Conditions, names, text changes,
-declaration restrictions, target-relative state, multiple quotes, unsupported
-activation costs, external attachment-source references, and untrusted granted
-rules remain outside this owner.
+declaration restrictions, target-relative state, multiple quotes, source
+discard or exile, energy, loyalty, variable, dynamic, alternative-zone or
+usage-limited activation costs, external attachment-source references, and
+untrusted granted rules remain outside this owner.
 
 ## Ownership boundaries
 

@@ -16,7 +16,7 @@ from quorune.work_selection_evidence import (
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
-HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v7"
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v8"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
@@ -1107,6 +1107,138 @@ def _content_entry(
     return entry
 
 
+_NON_HARVEST_ZERO_FIELDS = (
+    "actual_complete_card_gain",
+    "actual_exact_card_gain",
+    "actual_trusted_card_gain",
+    "actual_capability_closed_card_gain",
+    "actual_exact_ability_gain",
+    "actual_material_residual_reduction",
+    "actual_material_oracle_residual_reduction",
+    "actual_material_card_program_residual_reduction",
+    "failed_card_delta",
+    "hard_construction_failure_delta",
+    "oracle_exact_ability_node_delta",
+    "card_program_ability_record_delta",
+    "executable_trust_transition_delta",
+)
+
+
+def _non_harvest_metrics_are_zero(metrics: Mapping[str, Any]) -> bool:
+    if any(metrics.get(field) != 0 for field in _NON_HARVEST_ZERO_FIELDS):
+        return False
+    for field in (
+        "oracle_status_delta",
+        "card_program_status_delta",
+    ):
+        values = metrics.get(field)
+        if not isinstance(values, Mapping) or any(values.values()):
+            return False
+    transitions = metrics.get("executable_trust_transitions")
+    carriers = metrics.get("frontier_ability_carrier_delta")
+    return bool(
+        isinstance(transitions, Mapping)
+        and transitions.get("promoted") == 0
+        and transitions.get("regressed") == 0
+        and not transitions.get("by_transition")
+        and isinstance(carriers, Mapping)
+        and carriers.get("additions") == 0
+        and carriers.get("removals") == 0
+        and carriers.get("reclassifications") == 0
+    )
+
+
+def _non_harvest_content_entry(
+    declaration: Mapping[str, Any],
+    *,
+    base: Mapping[str, Any],
+    head: Mapping[str, Any],
+) -> dict[str, Any]:
+    if (
+        declaration.get("outcome_kind") != "non_harvest"
+        or declaration.get("compiler_version") != head.get("compiler_version")
+        or base["card_data_snapshot"] != head["card_data_snapshot"]
+        or base["cards_considered"] != head["cards_considered"]
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Non-harvest semantic transition identity is inconsistent"
+        )
+    metrics = _transition_metrics(base, head)
+    if not _non_harvest_metrics_are_zero(metrics):
+        raise HarvestOutcomeHistoryError(
+            "A non-harvest transition cannot change card support"
+        )
+    entry = {
+        "transition_id": str(declaration["transition_id"]),
+        "compiler_version": str(declaration["compiler_version"]),
+        "bundle_id": None,
+        "candidate_ids": [],
+        "family_ids": [],
+        "capability_ids": [],
+        "expected_complete_card_gain": None,
+        "non_harvest_reason": str(declaration["non_harvest_reason"]),
+        "outcome_kind": "non_harvest",
+        "receipt_identity_kind": "semantic_content",
+        "base_receipt": _content_public_receipt(base),
+        "head_receipt": _content_public_receipt(head),
+        **metrics,
+    }
+    entry["entry_fingerprint"] = _hash(entry)
+    return entry
+
+
+def _validate_non_harvest_content_entry(entry: Any) -> dict[str, Any]:
+    if not isinstance(entry, Mapping):
+        raise HarvestOutcomeHistoryError(
+            "Content-bound non-harvest transition must be an object"
+        )
+    candidate = dict(entry)
+    fingerprint = candidate.pop("entry_fingerprint", None)
+    base = candidate.get("base_receipt")
+    head = candidate.get("head_receipt")
+    metrics = {
+        key: value
+        for key, value in candidate.items()
+        if key in _NON_HARVEST_ZERO_FIELDS
+        or key
+        in {
+            "oracle_status_delta",
+            "card_program_status_delta",
+            "executable_trust_transitions",
+            "frontier_ability_carrier_delta",
+        }
+    }
+    if (
+        fingerprint != _hash(candidate)
+        or candidate.get("receipt_identity_kind") != "semantic_content"
+        or candidate.get("outcome_kind") != "non_harvest"
+        or not str(candidate.get("transition_id") or "")
+        or candidate.get("compiler_version")
+        != (head.get("compiler_version") if isinstance(head, Mapping) else None)
+        or candidate.get("bundle_id") is not None
+        or candidate.get("candidate_ids") != []
+        or candidate.get("family_ids") != []
+        or candidate.get("capability_ids") != []
+        or candidate.get("expected_complete_card_gain") is not None
+        or not isinstance(candidate.get("non_harvest_reason"), str)
+        or len(candidate["non_harvest_reason"].strip()) < 20
+        or not isinstance(base, Mapping)
+        or not isinstance(head, Mapping)
+        or "commit" in base
+        or "commit" in head
+        or base.get("content_fingerprint")
+        != _receipt_content_fingerprint(base)
+        or head.get("content_fingerprint")
+        != _receipt_content_fingerprint(head)
+        or base.get("content_fingerprint") == head.get("content_fingerprint")
+        or not _non_harvest_metrics_are_zero(metrics)
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Content-bound non-harvest transition is malformed"
+        )
+    return dict(entry)
+
+
 def _validate_content_entry(
     entry: Any,
 ) -> dict[str, Any]:
@@ -1186,6 +1318,124 @@ def _tracked_content_entries(
     for row in content_rows:
         validated = _validate_content_entry(row)
         result.append(validated)
+    return result
+
+
+def _latest_semantic_receipt(
+    entries: Sequence[Mapping[str, Any]],
+    non_harvest_transitions: Sequence[Mapping[str, Any]],
+) -> Mapping[str, Any]:
+    latest = entries[-1]["head_receipt"]
+    for transition in non_harvest_transitions:
+        if (
+            transition["base_receipt"].get("content_fingerprint")
+            == latest.get("content_fingerprint")
+        ):
+            latest = transition["head_receipt"]
+    return latest
+
+
+def _pending_non_harvest_declaration(value: Any) -> dict[str, Any] | None:
+    if not isinstance(value, Mapping) or value.get("outcome_kind") != "non_harvest":
+        return None
+    fields = {
+        "transition_id",
+        "compiler_version",
+        "bundle_id",
+        "candidate_ids",
+        "family_ids",
+        "capability_ids",
+        "expected_complete_card_gain",
+        "non_harvest_reason",
+    }
+    try:
+        return validated_semantic_transition_declaration(
+            {field: value.get(field) for field in fields}
+        )
+    except HarvestOutcomeHistoryError:
+        return None
+
+
+def _pending_matches_receipt(
+    pending: Mapping[str, Any],
+    receipt: Mapping[str, Any],
+) -> bool:
+    hashes = pending.get("semantic_receipt_sha256")
+    counts = pending.get("support_counts")
+    if not isinstance(hashes, Mapping) or not isinstance(counts, Mapping):
+        return False
+    expected_hashes = {
+        path: receipt["blobs"][path].get("semantic_sha256")
+        or receipt["blobs"][path]["raw_sha256"]
+        for path in (_PROGRAM_PATH, _ORACLE_PATH, _FRONTIER_PATH)
+    }
+    expected_counts = {
+        "oracle_exact_cards": receipt["oracle_status_counts"].get("exact", 0),
+        "trusted_card_programs": receipt["trusted_programs"],
+        "capability_closed_card_programs": receipt[
+            "capability_closed_programs"
+        ],
+        "oracle_material_residuals": receipt["oracle_material_residuals"],
+        "card_program_material_residuals": receipt[
+            "card_program_material_residuals"
+        ],
+        "card_program_ability_records": receipt[
+            "card_program_ability_records"
+        ],
+        "hard_construction_failures": receipt["hard_construction_failures"],
+    }
+    return bool(
+        pending.get("compiler_version") == receipt.get("compiler_version")
+        and dict(hashes) == expected_hashes
+        and dict(counts) == expected_counts
+    )
+
+
+def _tracked_non_harvest_transitions(
+    repository: Path,
+    *,
+    entries: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    path = repository / "coverage" / "harvest-outcome-history.json"
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return []
+    rows = value.get("non_harvest_transitions", [])
+    if not isinstance(rows, list):
+        raise HarvestOutcomeHistoryError(
+            "Tracked non-harvest transition history is malformed"
+        )
+    result = [_validate_non_harvest_content_entry(row) for row in rows]
+    transition_ids = [row["transition_id"] for row in result]
+    if len(transition_ids) != len(set(transition_ids)):
+        raise HarvestOutcomeHistoryError(
+            "Tracked non-harvest transition identities must be unique"
+        )
+    pending = _pending_non_harvest_declaration(value.get("pending_transition"))
+    if pending is None or pending["transition_id"] in set(transition_ids):
+        return result
+    durable = _receipt(repository, _durable_main_tip(repository))
+    if not _pending_matches_receipt(value["pending_transition"], durable):
+        return result
+    base = _latest_semantic_receipt(entries, result)
+    durable_commit = _durable_main_tip(repository)
+    parent = _git(repository, "rev-parse", f"{durable_commit}^").decode().strip()
+    full_base = _receipt(repository, parent)
+    if (
+        _receipt_content_fingerprint(full_base)
+        != base.get("content_fingerprint")
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Pending non-harvest transition base receipt is unavailable"
+        )
+    result.append(
+        _non_harvest_content_entry(
+            pending,
+            base=full_base,
+            head=durable,
+        )
+    )
     return result
 
 
@@ -1451,8 +1701,17 @@ def build_harvest_outcome_history(
         raise HarvestOutcomeHistoryError(
             "Harvest outcome bundle identities must remain unique"
         )
+    non_harvest_transitions = _tracked_non_harvest_transitions(
+        repository,
+        entries=entries,
+    )
+    transition_ids = {
+        str(row.get("transition_id") or "")
+        for row in (*entries, *non_harvest_transitions)
+        if row.get("transition_id")
+    }
     current_receipt = _worktree_receipt(repository)
-    latest = entries[-1]["head_receipt"]
+    latest = _latest_semantic_receipt(entries, non_harvest_transitions)
     semantic_outcome_status = "current"
     pending = None
     validated_declaration = (
@@ -1471,6 +1730,14 @@ def build_harvest_outcome_history(
                 and _declaration_matches_content_entry(
                     validated_declaration, entries[-1]
                 )
+            )
+            matching_non_harvest = bool(
+                validated_declaration["outcome_kind"] == "non_harvest"
+                and non_harvest_transitions
+                and validated_declaration["transition_id"]
+                == non_harvest_transitions[-1]["transition_id"]
+                and validated_declaration["compiler_version"]
+                == non_harvest_transitions[-1]["compiler_version"]
             )
             if (
                 matching_content_entry
@@ -1494,6 +1761,7 @@ def build_harvest_outcome_history(
                 latest = entries[-1]["head_receipt"]
             elif (
                 not matching_content_entry
+                and not matching_non_harvest
                 and validated_declaration["compiler_version"]
                 == current_receipt["compiler_version"]
             ):
@@ -1511,10 +1779,15 @@ def build_harvest_outcome_history(
                 "Semantic transition compiler version does not match its receipt"
             )
         base = receipt(_durable_main_tip(repository))
-        if any(
-            row.get("transition_id") == validated_declaration["transition_id"]
-            for row in entries
+        if not _semantic_receipts_match(
+            latest,
+            base,
+            repository=repository,
         ):
+            raise HarvestOutcomeHistoryError(
+                "Harvest transition base does not match durable main"
+            )
+        if validated_declaration["transition_id"] in transition_ids:
             raise HarvestOutcomeHistoryError(
                 "Semantic transition identity has already been materialized"
             )
@@ -1530,6 +1803,37 @@ def build_harvest_outcome_history(
             )
         )
         latest = entries[-1]["head_receipt"]
+    elif (
+        validated_declaration is not None
+        and validated_declaration["outcome_kind"] == "non_harvest"
+    ):
+        if validated_declaration["compiler_version"] != current_receipt[
+            "compiler_version"
+        ]:
+            raise HarvestOutcomeHistoryError(
+                "Semantic transition compiler version does not match its receipt"
+            )
+        if validated_declaration["transition_id"] in transition_ids:
+            raise HarvestOutcomeHistoryError(
+                "Semantic transition identity has already been materialized"
+            )
+        base = receipt(_durable_main_tip(repository))
+        if not _semantic_receipts_match(
+            latest,
+            base,
+            repository=repository,
+        ):
+            raise HarvestOutcomeHistoryError(
+                "Non-harvest transition base does not match durable main"
+            )
+        non_harvest_transitions.append(
+            _non_harvest_content_entry(
+                validated_declaration,
+                base=base,
+                head=current_receipt,
+            )
+        )
+        latest = non_harvest_transitions[-1]["head_receipt"]
     else:
         current = _worktree_semantic_state(repository)
         semantic_outcome_status, pending = _semantic_outcome_state(
@@ -1545,6 +1849,7 @@ def build_harvest_outcome_history(
         "algorithm_version": HARVEST_HISTORY_ALGORITHM_VERSION,
         "legacy_provenance_fingerprint": _hash(provenance_rows),
         "entries": entries,
+        "non_harvest_transitions": non_harvest_transitions,
         "outcome_basis": (
             "Actual outcomes are derived from immutable semantic content "
             "receipts for the "

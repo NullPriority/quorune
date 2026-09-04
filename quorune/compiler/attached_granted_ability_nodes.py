@@ -17,6 +17,8 @@ from ..rules.capabilities import CapabilityRegistry
 from .continuous_templates import (
     attached_quoted_ability_handler,
     attached_quoted_ability_text,
+    fixed_query_quoted_ability_handler,
+    fixed_query_quoted_ability_text,
 )
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .static_runtime_nodes import runtime_handler_node
@@ -66,20 +68,16 @@ def attached_granted_program_ability_id(
 
 
 def _closed_granted_activation(ability: ActivatedAbility) -> bool:
-    """Keep grants inside the current v1 granted-activation schema."""
+    """Keep grants inside the shared closed granted-activation schema."""
 
     return bool(
         ability.zones == ("battlefield",)
         and ability.compiled_cost
         and not ability.complex_symbols
-        and not ability.untap_source
         and not ability.discard_source
-        and not ability.sacrifice_source
         and not ability.exile_source
-        and ability.life_payment == 0
         and ability.energy_payment == 0
         and ability.loyalty_delta is None
-        and not ability.choices
         and not ability.uncompiled_costs
         and ability.generic_reduction_per_legendary_creature == 0
         and ability.crew_threshold is None
@@ -88,7 +86,8 @@ def _closed_granted_activation(ability: ActivatedAbility) -> bool:
         and not ability.library_search_types
         and not ability.activation_conditions
         and ability.dynamic_mana_output is None
-        and ability.mana_spend_restriction is None
+        and ability.mana_spend_restriction
+        in {None, "nonartifact_spell_prohibited"}
     )
 
 
@@ -135,6 +134,13 @@ def attached_granted_ability_plan(
         if ability_id is None:
             return None
         semantic_key = f"{oracle_id}:{ability_id}"
+        extended_cost = bool(
+            ability.untap_source
+            or ability.sacrifice_source
+            or ability.life_payment
+            or ability.choices
+            or ability.mana_spend_restriction is not None
+        )
         fragment = ability_fragment_to_dict(
             GrantedActivatedAbilitySpec(
                 ability_id=ability_id,
@@ -151,6 +157,12 @@ def attached_granted_ability_plan(
                         fixed_mana.modes if fixed_mana is not None else ()
                     )
                 ),
+                untap_source=ability.untap_source,
+                sacrifice_source=ability.sacrifice_source,
+                life_payment=ability.life_payment,
+                choices=tuple(choice.to_dict() for choice in ability.choices),
+                mana_spend_restriction=ability.mana_spend_restriction,
+                schema_version=2 if extended_cost else 1,
             )
         )
         return AttachedGrantedAbilityPlan(
@@ -183,6 +195,91 @@ def attached_granted_ability_plan(
             )
         ),
     )
+
+
+def _compile_granted_ability_pair(
+    *,
+    record: CardRecord,
+    face_id: str,
+    node_id: str,
+    line: str,
+    material_line: str,
+    span: SourceSpan,
+    quoted: str,
+    compile_shell: Callable[
+        [Mapping[str, Any], tuple[str, ...]],
+        tuple[str, Mapping[str, Any], tuple[str, ...]] | None,
+    ],
+    runtime_coverage: str,
+    dependency_reason: str,
+    trusted_mechanics: frozenset[str],
+    capability_registry: CapabilityRegistry | None,
+    capability_profile: str,
+    residuals: list[OracleResidual],
+    compile_inner: Callable[..., OracleNode | None],
+    effect_template: Any,
+    trigger_effect_template: Any,
+    material_line_for: Callable[[str], str],
+) -> tuple[OracleNode, OracleNode] | None:
+    """Compile one accepted grant shell and one independent inner ability."""
+
+    inner_residuals: list[OracleResidual] = []
+    inner = compile_inner(
+        node_id=f"{node_id}:granted",
+        line=quoted,
+        material_line=material_line_for(quoted),
+        span=span,
+        card_name="Granted creature",
+        type_line="Creature — Fixture",
+        keywords=(),
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        residuals=inner_residuals,
+        effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template,
+    )
+    if inner is None or not inner.exact or inner_residuals:
+        return None
+    plan = attached_granted_ability_plan(
+        node=inner,
+        quoted_text=quoted,
+        oracle_id=record.oracle_id,
+        face_id=face_id,
+        source_line=span.line,
+        card_name="Granted creature",
+        keywords=(),
+    )
+    if plan is None:
+        return None
+    compiled = compile_shell(
+        plan.fragment,
+        tuple(inner.capability_dependencies),
+    )
+    if compiled is None:
+        return None
+    outer = runtime_handler_node(
+        node_id=node_id,
+        line=line,
+        span=span,
+        compiled=compiled,
+        kind="static_ability",
+        event="characteristics.evaluate",
+        runtime_coverage=(runtime_coverage,),
+        dependency_reason=dependency_reason,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        residuals=residuals,
+    )
+    granted = replace(
+        inner,
+        node_id=f"{node_id}:granted",
+        kind=plan.node_kind,
+        text=quoted,
+        active_zone="battlefield",
+        residual_ids=(),
+    )
+    return outer, granted
 
 
 def compile_attached_granted_ability_nodes(
@@ -220,68 +317,93 @@ def compile_attached_granted_ability_nodes(
     normalized_name = source_name.casefold().strip()
     if normalized_name and normalized_name in quoted.casefold():
         return None
-    inner_residuals: list[OracleResidual] = []
-    inner = compile_inner(
-        node_id=f"{node_id}:granted",
-        line=quoted,
-        material_line=material_line_for(quoted),
-        span=span,
-        card_name="Granted creature",
-        type_line="Creature — Fixture",
-        keywords=(),
-        trusted_mechanics=trusted_mechanics,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-        residuals=inner_residuals,
-        effect_template=effect_template,
-        trigger_effect_template=trigger_effect_template,
-    )
-    if inner is None or not inner.exact or inner_residuals:
-        return None
-    plan = attached_granted_ability_plan(
-        node=inner,
-        quoted_text=quoted,
-        oracle_id=record.oracle_id,
+    return _compile_granted_ability_pair(
+        record=record,
         face_id=face_id,
-        source_line=span.line,
-        card_name="Granted creature",
-        keywords=(),
-    )
-    if plan is None:
-        return None
-    compiled = attached_quoted_ability_handler(
-        material_line,
-        fragment=plan.fragment,
-        fragment_capabilities=tuple(inner.capability_dependencies),
-        source_name=source_name,
-    )
-    if compiled is None:
-        return None
-    outer = runtime_handler_node(
         node_id=node_id,
         line=line,
+        material_line=material_line,
         span=span,
-        compiled=compiled,
-        kind="static_ability",
-        event="characteristics.evaluate",
-        runtime_coverage=("attached_typed_ability_grant",),
+        quoted=quoted,
+        compile_shell=lambda fragment, fragment_capabilities: (
+            attached_quoted_ability_handler(
+                material_line,
+                fragment=fragment,
+                fragment_capabilities=fragment_capabilities,
+                source_name=source_name,
+            )
+        ),
+        runtime_coverage="attached_typed_ability_grant",
         dependency_reason=(
             "attached typed ability grant lacks trusted outer or inner "
             "capability closure"
         ),
+        trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         residuals=residuals,
+        compile_inner=compile_inner,
+        effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template,
+        material_line_for=material_line_for,
     )
-    granted = replace(
-        inner,
-        node_id=f"{node_id}:granted",
-        kind=plan.node_kind,
-        text=quoted,
-        active_zone="battlefield",
-        residual_ids=(),
+
+
+def compile_fixed_query_granted_ability_nodes(
+    *,
+    record: CardRecord,
+    face_id: str,
+    node_id: str,
+    line: str,
+    material_line: str,
+    span: SourceSpan,
+    source_name: str,
+    trusted_mechanics: frozenset[str],
+    capability_registry: CapabilityRegistry | None,
+    capability_profile: str,
+    residuals: list[OracleResidual],
+    compile_inner: Callable[..., OracleNode | None],
+    effect_template: Any,
+    trigger_effect_template: Any,
+    material_line_for: Callable[[str], str],
+) -> tuple[OracleNode, OracleNode] | None:
+    """Compile a typed quoted ability granted to one closed live query."""
+
+    quoted = fixed_query_quoted_ability_text(material_line)
+    if quoted is None or _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+        return None
+    normalized_name = source_name.casefold().strip()
+    if normalized_name and normalized_name in quoted.casefold():
+        return None
+    return _compile_granted_ability_pair(
+        record=record,
+        face_id=face_id,
+        node_id=node_id,
+        line=line,
+        material_line=material_line,
+        span=span,
+        quoted=quoted,
+        compile_shell=lambda fragment, fragment_capabilities: (
+            fixed_query_quoted_ability_handler(
+                material_line,
+                fragment=fragment,
+                fragment_capabilities=fragment_capabilities,
+            )
+        ),
+        runtime_coverage="fixed_query_typed_ability_grant",
+        dependency_reason=(
+            "fixed query typed ability grant lacks trusted outer or inner "
+            "capability closure"
+        ),
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        residuals=residuals,
+        compile_inner=compile_inner,
+        effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template,
+        material_line_for=material_line_for,
     )
-    return outer, granted
 
 
 def compile_keyword_or_attached_grant_nodes(
@@ -325,6 +447,19 @@ def compile_keyword_or_attached_grant_nodes(
     granted_effect, granted_trigger_effect = grant_effect_templates(
         True, ("creature",), None
     )
+    fixed_query_grant = compile_fixed_query_granted_ability_nodes(
+        record=record, face_id=face_id, node_id=node_id, line=line,
+        material_line=material_line, span=span, source_name=source_name,
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+        compile_inner=compile_inner,
+        effect_template=granted_effect,
+        trigger_effect_template=granted_trigger_effect,
+        material_line_for=material_line_for,
+    )
+    if fixed_query_grant is not None:
+        return fixed_query_grant
     return compile_attached_granted_ability_nodes(
         record=record, face_id=face_id, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name,
@@ -348,5 +483,6 @@ __all__ = [
     "attached_granted_ability_plan",
     "attached_granted_program_ability_id",
     "compile_attached_granted_ability_nodes",
+    "compile_fixed_query_granted_ability_nodes",
     "compile_keyword_or_attached_grant_nodes",
 ]

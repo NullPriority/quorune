@@ -515,6 +515,27 @@
       ]
     },
     {
+      "id": "typed-quoted-ability-grant-contract",
+      "patterns": [
+        "quorune/ability_fragments.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/rules/activation/query.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/attached-quoted-ability-grants.json",
+        "tests/fixtures/fixed-query-quoted-ability-grants.json",
+        "tests/test_attached_static_characteristics.py",
+        "tests/test_fixed_query_quoted_ability_grants.py"
+      ],
+      "test_modules": [
+        "test_attached_static_characteristics",
+        "test_casting_activation_proposal_equivalence",
+        "test_continuous_effect_components",
+        "test_fixed_query_quoted_ability_grants",
+        "test_typed_ability_fragments"
+      ]
+    },
+    {
       "id": "typed-query-self-characteristic-contract",
       "patterns": [
         "quorune/ability_fragments.py",

@@ -43,6 +43,7 @@ from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
     _content_entry,
+    _non_harvest_content_entry,
     _refresh_content_entry,
     _receipt,
     _receipt_content_fingerprint,
@@ -51,6 +52,8 @@ from scripts.harvest_outcome_history import (
     _semantic_outcome_state,
     _semantic_report_sha256,
     _validate_content_entry,
+    _validate_non_harvest_content_entry,
+    validated_semantic_transition_declaration,
     build_harvest_outcome_history,
     HarvestOutcomeHistoryError,
 )
@@ -63,6 +66,7 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_activation_zone_change_predicate_measurement,
     _fixed_entry_return_requirement_measurement,
     _fixed_token_production_measurement,
+    _typed_quoted_ability_grant_measurement,
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
@@ -1274,6 +1278,53 @@ class RulesSchedulerTests(unittest.TestCase):
 
         self.assertEqual(entry, _validate_content_entry(entry))
 
+    def test_non_harvest_transition_uses_squash_stable_content_identity(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        base = _receipt(ROOT, provenance[-1]["head_commit"])
+        head = deepcopy(base)
+        head["compiler_version"] = "oracle-ir-v999"
+        path = "coverage/card-program-coverage-commander.json"
+        head["blobs"][path]["semantic_sha256"] = "f" * 64
+        declaration = validated_semantic_transition_declaration(
+            {
+                "transition_id": "oracle-ir-v999-fixture-non-harvest",
+                "compiler_version": "oracle-ir-v999",
+                "bundle_id": None,
+                "candidate_ids": [],
+                "family_ids": [],
+                "capability_ids": [],
+                "expected_complete_card_gain": None,
+                "non_harvest_reason": (
+                    "Advance compiler identity without changing supported cards."
+                ),
+            }
+        )
+
+        entry = _non_harvest_content_entry(
+            declaration,
+            base=base,
+            head=head,
+        )
+
+        self.assertEqual(entry, _validate_non_harvest_content_entry(entry))
+        self.assertNotIn("commit", entry["base_receipt"])
+        self.assertNotIn("commit", entry["head_receipt"])
+        self.assertNotEqual(
+            entry["base_receipt"]["content_fingerprint"],
+            entry["head_receipt"]["content_fingerprint"],
+        )
+        changed_support = deepcopy(head)
+        changed_support["trusted_programs"] += 1
+        with self.assertRaisesRegex(
+            HarvestOutcomeHistoryError,
+            "cannot change card support",
+        ):
+            _non_harvest_content_entry(
+                declaration,
+                base=base,
+                head=changed_support,
+            )
+
     def test_content_receipt_refreshes_downstream_assurance_at_fixed_point(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]
         latest = provenance[-1]
@@ -2442,6 +2493,90 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(1, measurement["complete_card_gain"])
         self.assertEqual(2, measurement["exact_ability_gain"])
         self.assertEqual(2, measurement["material_residual_reduction"])
+
+    def test_typed_quoted_grant_probe_counts_outer_and_inner_nodes(self):
+        source = (
+            'Creatures you control have "{T}: This creature deals 1 damage '
+            'to any target."'
+        )
+        record = SimpleNamespace(
+            oracle_id="fixture:typed-query-grant",
+            name="Typed query grant fixture",
+            oracle_text=source,
+            type_line="Enchantment",
+            faces=(),
+        )
+        family = "continuous_layer:continuous-effect-layers-and-dependencies"
+        ability = {
+            "ability_id": "front:n1",
+            "face_id": "front",
+            "source_line": 1,
+            "status": "unresolved",
+            "blockers": {"canonical_family_ids": [family]},
+            "residuals": [{"residual_id": "r1"}],
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "unresolved",
+                    "exact_ability_count": 0,
+                    "minimum_known_blocker_set": [family],
+                    "abilities": [ability],
+                }
+            ]
+        }
+        outer = SimpleNamespace(
+            exact=True,
+            kind="static_ability",
+            template_id="continuous-fixed-query-granted-ability-v1",
+            span=SimpleNamespace(line=1),
+        )
+        inner = SimpleNamespace(
+            exact=True,
+            kind="granted_activated_ability",
+            template_id="damage-source-fixed-v1",
+            span=SimpleNamespace(line=1),
+        )
+        compiled = SimpleNamespace(
+            faces=(
+                SimpleNamespace(face_id="front", nodes=(outer, inner)),
+            ),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _typed_quoted_ability_grant_measurement(
+                frontier=frontier,
+                bundle_id="bundle:typed-quoted-ability-grants",
+                probe_id="typed-quoted-ability-grant-existing-owner-v1",
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 2,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(2, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+        self.assertEqual(
+            1,
+            measurement["candidate_accounting"]["affected_oracle_carriers"],
+        )
 
     def test_transition_measurement_reuse_requires_current_semantic_inputs(self):
         receipt = {

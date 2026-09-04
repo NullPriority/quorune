@@ -2099,19 +2099,69 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-token-production-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:typed-quoted-ability-grants",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.ability.fixed_query_grant",
+            "capability:continuous.attached.fixed_characteristics",
+            "component:quorune.ability_fragments.GrantedActivatedAbilitySpec",
+            "component:quorune.ability_fragments.GrantedTriggeredAbilitySpec",
+            "component:quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+            "component:quorune.compiler.attached_granted_ability_nodes.compile_fixed_query_granted_ability_nodes",
+            "component:quorune.compiler.continuous_templates.fixed_query_quoted_ability_handler",
+            "component:quorune.rules.activation.commit.commit_activation",
+            "component:quorune.rules.activation.query.activated_abilities",
+            "component:quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler",
+            "component:quorune.trigger_discovery._event_programs_for_source"
+          ],
+          "source_contexts": [
+            "activated",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "attached-creature-or-fixed-public-battlefield-query",
+            "fixed-typed-activation-cost",
+            "independently-exact-inner-program",
+            "one-quoted-ability",
+            "recipient-bound-source-reference",
+            "source-controller-source-opponent-or-global-relation"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_grant",
+            "continuous.attached.fixed_characteristics"
+          ],
+          "shared_grammar": "one independently exact quoted activated, fixed-output mana, or triggered ability granted through an attached-object relation or closed live battlefield ObjectQuerySpec, with recipient-bound source identity and canonical activation costs",
+          "estimated_implementation_hours": 7,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes every current-frontier carrier whose single quoted activated, fixed-output mana, or triggered ability is independently exact while reusing the shared layer-6 applicability, activation, trigger, APNAP, privacy, and replay owners; current counts remain generated-only.",
+          "explicit_exclusions": [
+            "arbitrary quoted static, declaration, replacement, or characteristic rules text",
+            "hidden-zone recipients and target relations outside source controller, source opponents, or global",
+            "independently inexact inner programs and untyped runtime Oracle interpretation",
+            "multiple quotes, external attachment references, source-name references, and open outer predicates",
+            "source discard or exile, energy, loyalty, variable, dynamic, alternative, nonbattlefield-zone, usage-limited, and unsupported restricted-mana activation costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-quoted-ability-grant-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v166-dash-command-zone-legality",
-      "compiler_version": "oracle-ir-v166",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct Dash source-zone legality and current-ability revalidation without changing compiler admission or claiming a card-support harvest."
+      "transition_id": "oracle-ir-v167-typed-quoted-ability-grants",
+      "compiler_version": "oracle-ir-v167",
+      "bundle_id": "bundle:typed-quoted-ability-grants",
+      "candidate_ids": ["compiler:typed-quoted-ability-grants"],
+      "family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies"],
+      "capability_ids": ["continuous.ability.fixed_query_grant", "continuous.attached.fixed_characteristics"],
+      "measurement_id": "measurement:typed-quoted-ability-grants",
+      "non_harvest_reason": null
     },
     "forecast_corrections": [
       {
