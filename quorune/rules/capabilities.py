@@ -277,7 +277,6 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,),
     INVESTIGATE_MECHANIC_ID: (INVESTIGATE_CAPABILITY_ID,),
-    "changeling": ("continuous.characteristics.changeling",),
     _DEVOID_MECHANIC: ("continuous.characteristics.devoid",),
     _CYCLING_MECHANIC: ("activation.cycling.hand",),
     _CREW_MECHANIC: ("activation.crew.fixed_power",),
@@ -1447,6 +1446,8 @@ def capability_covered_mechanics(
         for mechanic, required in MECHANIC_CAPABILITY_DEPENDENCIES.items()
         if set(required).issubset(supplied)
     }
+    if "continuous.characteristics.changeling" in supplied:
+        covered.add("changeling")
     if supplied.intersection({"target.public.player_or_damageable_permanent", "target.revalidate_resolution"}):
         covered.add("cr-115-targets")
     if "resolution.effect.fixed_homogeneous_target_set" in supplied:
