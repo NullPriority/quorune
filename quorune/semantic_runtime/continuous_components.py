@@ -6,20 +6,29 @@ from typing import Any, Mapping, Protocol
 
 from ..ability_fragments import (
     GrantedActivatedAbilitySpec,
+    StaticComponentSpec,
     StaticAbilityFragment,
-    ability_fragment_from_dict,
     ability_fragment_to_dict,
+    ability_fragment_from_dict,
 )
 from ..continuous_effects import (
     ContinuousEffect,
     ContinuousEffectOrigin,
+    ContinuousEffectRelation,
     ContinuousObjectIdentity,
     ContinuousOperation,
     Layer,
 )
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..mana import BASIC_LAND_MANA
+from ..leveler_bands import (
+    LEVELER_BANDS_CAPABILITY_ID,
+    LEVELER_BANDS_HANDLER_ID,
+    LevelerBandError,
+    LevelerBandsSpec,
+)
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..replacement.immutable import FrozenMap
 from ..continuous_conditions import FixedPublicStateConditionSnapshot
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
@@ -105,6 +114,7 @@ class ContinuousEffectSourceContext:
     source_logical_object_id: str | None = None
     public_state: FixedPublicStateConditionSnapshot | None = None
     resolved_quantity: int | None = None
+    source_counters: FrozenMap = FrozenMap()
 
     def __post_init__(self) -> None:
         if not self.source_object_id or not self.source_ref:
@@ -148,6 +158,24 @@ class ContinuousEffectSourceContext:
         ):
             raise SemanticNodeError(
                 "A continuous component quantity must be a nonnegative integer"
+            )
+        if not isinstance(self.source_counters, FrozenMap):
+            try:
+                object.__setattr__(
+                    self,
+                    "source_counters",
+                    FrozenMap(self.source_counters),
+                )
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(
+                    "Continuous component source counters must be immutable"
+                ) from exc
+        if any(
+            type(value) is not int or value < 0
+            for value in self.source_counters.values()
+        ):
+            raise SemanticNodeError(
+                "Continuous component source counters must be nonnegative integers"
             )
 
 
@@ -998,6 +1026,137 @@ class FixedQueryCharacteristicGrantHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class LevelerBandsHandler:
+    """Apply current Leveler abilities in layer 6 and base P/T in 7b."""
+
+    handler_id: str = LEVELER_BANDS_HANDLER_ID
+    schema_version: int = 1
+    family: str = "continuous.characteristics.leveler_bands"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = (
+        "711.2",
+        "711.2a",
+        "711.2b",
+        "711.4",
+        "711.5",
+        "711.6",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        LEVELER_BANDS_CAPABILITY_ID,
+    )
+
+    def validate(
+        self,
+        descriptor: Mapping[str, Any],
+    ) -> LevelerBandsSpec:
+        exact_fields(
+            descriptor,
+            {"handler_id", "schema_version", "event", "bands"},
+            field="Leveler-band handler",
+        )
+        if descriptor["handler_id"] != self.handler_id:
+            raise SemanticNodeError("Leveler-band handler identity changed")
+        if descriptor["schema_version"] != self.schema_version:
+            raise SemanticNodeError(
+                "Unsupported Leveler-band handler schema version"
+            )
+        if descriptor["event"] != self.event:
+            raise SemanticNodeError(
+                "Leveler bands must handle characteristic evaluation"
+            )
+        try:
+            return LevelerBandsSpec.from_dict(
+                {
+                    "schema_version": descriptor["schema_version"],
+                    "bands": descriptor["bands"],
+                }
+            )
+        except LevelerBandError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: ContinuousEffectSourceContext,
+    ) -> tuple[ContinuousEffect, ...]:
+        spec = self.validate(descriptor)
+        if context.source_logical_object_id is None:
+            raise SemanticNodeError(
+                "Leveler bands require one logical source incarnation"
+            )
+        try:
+            active = spec.active_band(context.source_counters)
+        except LevelerBandError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        identity = ContinuousObjectIdentity(
+            object_id=context.source_object_id,
+            logical_object_id=context.source_logical_object_id,
+        )
+        inactive_bands = tuple(
+            band for band in spec.bands if band is not active
+        )
+        ability_operations = [
+            *(
+                ContinuousOperation("add_ability", keyword)
+                for keyword in (active.keywords if active is not None else ())
+            ),
+            *(
+                ContinuousOperation(
+                    "remove_ability_fragment",
+                    ability_fragment_to_dict(
+                        StaticComponentSpec(semantic_key)
+                    ),
+                )
+                for band in inactive_bands
+                for semantic_key in band.semantic_keys
+            ),
+        ]
+        effects: list[ContinuousEffect] = []
+        if ability_operations:
+            effects.append(
+                ContinuousEffect(
+                    effect_id=(
+                        f"{context.source_object_id}:"
+                        f"{context.component_id}:level-abilities"
+                    ),
+                    source_id=context.source_object_id,
+                    layer=Layer.ABILITY,
+                    sublayer="6",
+                    timestamp=context.source_timestamp,
+                    operations=tuple(ability_operations),
+                    origin=ContinuousEffectOrigin.STATIC_ABILITY,
+                    applies=ObjectQuerySpec(zones=("battlefield",)),
+                    relation=ContinuousEffectRelation.SOURCE_OBJECT,
+                    related_object=identity,
+                )
+            )
+        if active is not None:
+            effects.append(
+                ContinuousEffect(
+                    effect_id=(
+                        f"{context.source_object_id}:"
+                        f"{context.component_id}:level-power-toughness"
+                    ),
+                    source_id=context.source_object_id,
+                    layer=Layer.POWER_TOUGHNESS,
+                    sublayer="7b",
+                    timestamp=context.source_timestamp,
+                    operations=(
+                        ContinuousOperation(
+                            "set_power_toughness",
+                            [active.power, active.toughness],
+                        ),
+                    ),
+                    origin=ContinuousEffectOrigin.STATIC_ABILITY,
+                    applies=ObjectQuerySpec(zones=("battlefield",)),
+                    relation=ContinuousEffectRelation.SOURCE_OBJECT,
+                    related_object=identity,
+                )
+            )
+        return tuple(effects)
+
+
 class ContinuousEffectComponentRegistry(
     RuntimeComponentRegistry[
         ContinuousEffectSourceContext,
@@ -1023,6 +1182,7 @@ def default_continuous_effect_component_registry(
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),
+            LevelerBandsHandler(),
             FixedPublicStateCharacteristicsHandler(),
             AttachedFixedCharacteristicsHandler(),
         )

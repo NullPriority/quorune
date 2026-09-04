@@ -7,10 +7,20 @@ from .carddb_characteristics import separate_custom_display_text
 from .card_programs.runtime import collect_card_program_continuous_effects
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    StaticComponentSpec,
+    ability_fragment_to_dict,
+    declared_static_component_keys,
     static_component_keys,
 )
 from .characteristic_evaluation import evaluate_card_characteristics
-from .continuous_effects import ContinuousEffect, Layer
+from .continuous_effects import (
+    ContinuousEffect,
+    ContinuousEffectOrigin,
+    ContinuousEffectRelation,
+    ContinuousObjectIdentity,
+    ContinuousOperation,
+    Layer,
+)
 from .continuous_effect_state import active_resolution_effects
 from .dynamic_characteristics import (
     apply_dynamic_characteristic_fragments,
@@ -19,6 +29,7 @@ from .dynamic_characteristics import (
 from .errors import GameRuleError
 from .model import CardInstance
 from .object_query import ObjectQueryResult, object_query_result
+from .semantic_runtime.ability_fragments import fragments_from_descriptors
 
 
 _STATIC_COMPONENT_PRESENCE_OPERATIONS = frozenset(
@@ -200,6 +211,23 @@ class CharacteristicEvaluationHostMixin:
             modified=modified,
         )
 
+    @staticmethod
+    def _declared_component_fragments(
+        card: CardInstance,
+        base: Mapping[str, Any],
+    ) -> tuple[Any, ...]:
+        copy_overrides = card.annotations.get("copy_overrides")
+        fragments = (
+            copy_overrides.get("ability_fragments", ())
+            if isinstance(copy_overrides, Mapping)
+            and "ability_fragments" in copy_overrides
+            else base.get("ability_fragments", ())
+        )
+        return (
+            *fragments,
+            *(card.annotations.get("granted_ability_fragments") or ()),
+        )
+
     def _effective_static_component_key_map(
         self,
     ) -> dict[str, tuple[str, ...]]:
@@ -321,6 +349,60 @@ class CharacteristicEvaluationHostMixin:
             card.object_id, ()
         )
 
+    def _static_component_applicability_effects(
+        self,
+        card: CardInstance,
+        base: Mapping[str, Any],
+        applicable_keys: Sequence[str],
+    ) -> tuple[ContinuousEffect, ...]:
+        """Remove every payload owned only by an inapplicable component."""
+
+        declared = set(
+            declared_static_component_keys(
+                self._declared_component_fragments(card, base)
+            )
+        )
+        inactive = sorted(declared - set(applicable_keys))
+        operations: list[ContinuousOperation] = []
+        for semantic_key in inactive:
+            operations.append(
+                ContinuousOperation(
+                    "remove_ability_fragment",
+                    ability_fragment_to_dict(
+                        StaticComponentSpec(semantic_key)
+                    ),
+                )
+            )
+            program = self.semantics.get(semantic_key)
+            if program is None:
+                continue
+            operations.extend(
+                ContinuousOperation(
+                    "remove_ability_fragment",
+                    ability_fragment_to_dict(fragment),
+                )
+                for fragment in fragments_from_descriptors(program.handlers)
+            )
+        if not operations:
+            return ()
+        identity = ContinuousObjectIdentity(
+            object_id=card.object_id,
+            logical_object_id=card.logical_object_id,
+        )
+        return (
+            ContinuousEffect(
+                effect_id=f"{card.object_id}:static-component-applicability",
+                source_id=card.object_id,
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=max(0, int(card.zone_timestamp)),
+                operations=tuple(operations),
+                origin=ContinuousEffectOrigin.STATIC_ABILITY,
+                relation=ContinuousEffectRelation.SOURCE_OBJECT,
+                related_object=identity,
+            ),
+        )
+
     def _effective_card_data(
         self,
         value: str | CardInstance,
@@ -346,6 +428,11 @@ class CharacteristicEvaluationHostMixin:
         runtime_effects = (
             (
                 *active_resolution_effects(self.state, card),
+                *self._static_component_applicability_effects(
+                    card,
+                    base,
+                    static_component_key_map.get(card.object_id, ()),
+                ),
                 *collect_card_program_continuous_effects(
                     self.state,
                     self.semantics,

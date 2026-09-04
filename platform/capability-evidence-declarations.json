@@ -7058,6 +7058,62 @@
       "applicability_note": "Pin schema-v2 source, attached-object, and layer-5 count conditions into a checkpoint and replay the following authoritative command exactly."
     },
     {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_copy_ability_removal_and_layer_ordering",
+      "official_rule_ids": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use the copy's own level counters, suppress the complete typed band through the shared layer-6 static-component query, and order its base power/toughness before counters and fixed modifiers."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy",
+      "official_rule_ids": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve a four-player Level Up activation through two independently applicable counter replacements and derive the resulting band from the committed count."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_dependency_and_compiler_mutants_fail_closed",
+      "official_rule_ids": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the typed band capability and remove contextual range parsing to prove both mutations prevent exact Leveler admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "negative",
+      "test_id": "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_parser_rejects_malformed_ranges_and_open_children",
+      "official_rule_ids": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject gaps, overlaps, variable characteristics, extra striations, non-Leveler layouts, arbitrary top rows, and independently unsupported band children."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "positive",
+      "test_id": "tests.test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_rows_compile_typed_bands_and_preserve_child_membership",
+      "official_rule_ids": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile two contiguous fixed ranges and bind each independently exact keyword, static, or activated child to its source-spanned range."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy",
+      "official_rule_ids": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Issue the replacement decision only to its authorized controller while every opponent receives only the public level count and resulting characteristics."
+    },
+    {
+      "capability_id": "continuous.characteristics.leveler_bands",
+      "evidence_class": "replay",
+      "test_id": "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_four_player_replacement_replay_and_privacy",
+      "official_rule_ids": ["711.1", "711.2", "711.2a", "711.2b", "711.3", "711.4", "711.5", "711.6", "711.7"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resume the pending counter-replacement choice from disk and exactly replay the resulting level count, active range, power/toughness, and keyword state."
+    },
+    {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_ability_removal_sibling_withholds_runtime_admission",

@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 
 from ..attachments import attached_object_identity
+from ..ability_fragments import static_component_keys
 from ..continuous_effects import ContinuousEffect
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
@@ -14,6 +15,7 @@ from ..continuous_conditions import (
 from ..continuous_effects import Layer
 from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..object_query import ObjectQueryResult, object_matches_query
+from ..replacement.immutable import FrozenMap
 from ..semantic_runtime import (
     ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,
     ContinuousEffectSourceContext,
@@ -191,6 +193,73 @@ def _applicable_static_programs(
     return tuple(programs)
 
 
+def _annotated_static_component_keys(source: Any) -> tuple[str, ...]:
+    annotations = getattr(source, "annotations", {}) or {}
+    copy_overrides = annotations.get("copy_overrides")
+    characteristics = (
+        copy_overrides
+        if isinstance(copy_overrides, Mapping)
+        and "ability_fragments" in copy_overrides
+        else annotations.get("object_characteristics")
+        or annotations.get("token_characteristics")
+        or {}
+    )
+    raw = (
+        characteristics.get("ability_fragments", ())
+        if isinstance(characteristics, Mapping)
+        else ()
+    )
+    return static_component_keys(
+        (
+            *raw,
+            *(annotations.get("granted_ability_fragments") or ()),
+        )
+    )
+
+
+def _continuous_programs_for_source(
+    semantics: "SemanticRegistry",
+    source: Any,
+    static_component_resolver: Callable[[Any], Sequence[str]] | None,
+) -> tuple["SemanticProgram", ...]:
+    if static_component_resolver is not None:
+        return _applicable_static_programs(
+            semantics,
+            source,
+            static_component_resolver(source),
+        )
+    copy_overrides = (getattr(source, "annotations", {}) or {}).get(
+        "copy_overrides"
+    )
+    copied_components = (
+        isinstance(copy_overrides, Mapping)
+        and "ability_fragments" in copy_overrides
+    )
+    programs = {
+        program.key: program
+        for program in (
+            ()
+            if copied_components
+            else semantics.runtime_handler_programs_for_oracle(
+                source.oracle_id,
+                active_zone="battlefield",
+                event="characteristics.evaluate",
+            )
+        )
+    }
+    programs.update(
+        {
+            program.key: program
+            for program in _applicable_static_programs(
+                semantics,
+                source,
+                _annotated_static_component_keys(source),
+            )
+        }
+    )
+    return tuple(programs[key] for key in sorted(programs))
+
+
 def collect_card_program_continuous_effects(
     state: ContinuousRuntimeState,
     semantics: "SemanticRegistry",
@@ -204,6 +273,9 @@ def collect_card_program_continuous_effects(
     static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
+    registered_handler_ids = frozenset(
+        str(row["handler_id"]) for row in registry.inventory()
+    )
     if metrics is not None:
         metrics.collection_calls += 1
     effects: list[ContinuousEffect] = []
@@ -225,18 +297,9 @@ def collect_card_program_continuous_effects(
                 or getattr(source, "face_down", False)
             ):
                 continue
-            if static_component_resolver is None:
-                programs = semantics.runtime_handler_programs_for_oracle(
-                    source.oracle_id,
-                    active_zone="battlefield",
-                    event="characteristics.evaluate",
-                )
-            else:
-                programs = _applicable_static_programs(
-                    semantics,
-                    source,
-                    static_component_resolver(source),
-                )
+            programs = _continuous_programs_for_source(
+                semantics, source, static_component_resolver
+            )
             if metrics is not None:
                 metrics.card_program_lookups += 1
             for program in programs:
@@ -247,6 +310,10 @@ def collect_card_program_continuous_effects(
                 ):
                     if metrics is not None:
                         metrics.descriptors_inspected += 1
+                    if str(
+                        descriptor.get("handler_id") or ""
+                    ) not in registered_handler_ids:
+                        continue
                     public_state = None
                     is_fixed_public_state = descriptor.get("handler_id") == (
                         FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
@@ -303,6 +370,9 @@ def collect_card_program_continuous_effects(
                             f"{program.key}:{descriptor_index}"
                         ),
                         source_logical_object_id=source.logical_object_id,
+                        source_counters=FrozenMap(
+                            getattr(source, "counters", {}) or {}
+                        ),
                         public_state=public_state,
                         resolved_quantity=resolved_quantity,
                         attached_object=(

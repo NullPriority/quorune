@@ -2,7 +2,7 @@
 title: "CardProgram runtime components"
 status: "current"
 authoritative_source: "quorune/semantic_runtime component registries and schemas/card-program-v2.schema.json"
-verified: "2026-08-15"
+verified: "2026-09-03"
 audience: "rules, compiler, runtime, replay, and extension contributors"
 maintenance: "hand-maintained"
 ---
@@ -101,8 +101,21 @@ the source controller without enumerating seats in the descriptor. Each
 compiled node also declares the exact combat, damage, destruction, or targeting
 capability that consumes the granted keyword. Combat-state, ability-qualified,
 dynamically counted, conditional, temporary, and unsupported-keyword predicates
-remain residual. Level-gated Class abilities remain residual until their
-applicability has a typed owner. Every trusted battlefield
+remain residual. `continuous.characteristics.leveler-bands.v1` selects one of
+two compiler-pinned contiguous Leveler ranges from the source's current public
+level-counter count. A typed static component-scope fragment binds every child
+program to the parent level symbol and removes the flattened band inventory
+from base values before ordinary layer ordering. The shared component query
+suppresses every child when the parent is absent. The Leveler component removes
+only inactive child `StaticComponentSpec` identities and adds the active
+keywords at the source timestamp in layer 6, followed by the active fixed base
+power/toughness in layer 7b. Triggered and continuous discovery consult the
+surviving component, while the same generic fragment-removal operation
+suppresses its materialized activated ability. Copies carry the descriptor but
+use their own counters and timestamp. Level Up remains an independent
+always-present activation. Class,
+Room, Prototype, arbitrary striations, unsupported children, and dynamic
+count/type-change edges remain outside this boundary. Every trusted battlefield
 `characteristics.evaluate` program contributes one `StaticComponentSpec` to
 the source's effective ability fragments. Continuous-component collection uses
 that single layer-6 component-presence query for printed programs, explicit

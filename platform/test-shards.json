@@ -120,6 +120,7 @@
       "test_fixed_direct_target_predicates",
       "test_fixed_impulse_access",
       "test_fixed_nonrepeating_modal_programs",
+      "test_leveler_bands",
       "test_main_phase_rules",
       "test_mass_destruction_effect_clauses",
       "test_modular_rules",

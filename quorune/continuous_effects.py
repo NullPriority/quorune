@@ -16,6 +16,7 @@ from .continuous_effect_model import (
 from .object_predicate import ObjectQuerySpec
 from .object_query import ObjectQueryResult, object_matches_query
 from .ability_fragments import (
+    StaticComponentSpec,
     StaticAbilityFragment,
     ability_fragment_from_dict,
     ability_fragment_to_dict,
@@ -327,6 +328,16 @@ def _apply_ability_operation(
             for candidate in state.ability_fragments
             if candidate != fragment
         ]
+        if isinstance(fragment, StaticComponentSpec):
+            # Static components are the shared layer-6 applicability identity
+            # for every typed consumer.  Removing one also removes the
+            # activation materialized from that same program; trigger and
+            # continuous discovery consult the surviving fragment directly.
+            state.activated_abilities = [
+                ability
+                for ability in state.activated_abilities
+                if ability.builtin_semantic_key != fragment.semantic_key
+            ]
     elif op == "remove_all_abilities":
         state.abilities = []
         state.ability_fragments = []

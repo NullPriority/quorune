@@ -398,6 +398,24 @@
       ]
     },
     {
+      "id": "typed-leveler-band-contract",
+      "patterns": [
+        "quorune/leveler_bands.py",
+        "quorune/compiler/leveler_context_nodes.py",
+        "mechanics/contracts/leveler-cards.json",
+        "rules/conformance-reviews/cr-711-leveler-cards.json",
+        "tests/fixtures/leveler-bands-cards.json",
+        "tests/test_leveler_bands.py"
+      ],
+      "test_modules": [
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_continuous_effect_components",
+        "test_fixed_counter_keyword_activations",
+        "test_leveler_bands"
+      ]
+    },
+    {
       "id": "attached-characteristic-closure-contract",
       "patterns": [
         "quorune/ability_fragments.py",

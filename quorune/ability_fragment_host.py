@@ -6,6 +6,7 @@ from .ability_fragments import (
     AbilityFragmentError,
     StaticAbilityFragment,
     canonical_ability_fragments,
+    static_keyword_scope_keywords,
 )
 from .carddb_characteristics import base_card_characteristics
 from .compiled_ability_fragments import (
@@ -91,6 +92,18 @@ class AbilityFragmentHostMixin:
             card,
             error_type=error_type,
         )
+        scoped_keywords = {
+            keyword.casefold()
+            for keyword in static_keyword_scope_keywords(
+                base["ability_fragments"]
+            )
+        }
+        if scoped_keywords:
+            base["keywords"] = [
+                keyword
+                for keyword in base.get("keywords", ())
+                if str(keyword).casefold() not in scoped_keywords
+            ]
         base["activated_abilities"] = compiled_activated_ability_dicts(
             self,
             card,
