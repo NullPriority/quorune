@@ -3140,6 +3140,30 @@
     {
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the command-zone Dash cast, Haste grant, delayed logical identity, owner-selected commander replacement, save/load, and exact replay through existing owners."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_offer_commit_tax_and_rollbacks",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use one advertised and committed Dash option from the command zone, add commander tax, and reject stale, unpayable, or no-longer-current choices without mutation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_delayed_return_uses_owner_and_incarnation_after_control_changes",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Return the resolved Dash incarnation to its physical owner's hand after control changes while ignoring absent or re-entered incarnations."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_modifiers_apply_to_lifecycle_total_costs",
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -3152,6 +3176,14 @@
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Offer Retrace only to the owner, select one land through the typed private cost, and reject a stale payment before mutation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Execute command-zone Dash and its owner-selected delayed commander replacement in a four-player state."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
@@ -3195,6 +3227,14 @@
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_retrace_removed_graveyard_ability_fails_closed",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suppress Retrace when an off-battlefield ability-layer change makes current component applicability unavailable instead of assuming the printed graveyard ability remains."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_fixed_cast_lifecycles_compile_source_spanned_typed_programs",
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
@@ -3211,11 +3251,35 @@
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_offer_commit_tax_and_rollbacks",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Offer and commit fixed Dash from the command zone through canonical cast authority and the ordinary commander-tax total."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project the command-zone Dash offer and delayed commander replacement only to the acting owner without exposing physical object identity."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose public Warp zone state without leaking authoritative physical object identity."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay both the command-zone Dash cast with its delayed trigger and the persisted owner-selected command-zone replacement exactly."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",

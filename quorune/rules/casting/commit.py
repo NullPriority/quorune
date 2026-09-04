@@ -1105,7 +1105,6 @@ def _revalidate_cast_contracts(
             proposed_lifecycle.kind,
         )
         expected_origin = {
-            FixedCastLifecycleKind.DASH: "hand",
             FixedCastLifecycleKind.WARP: "hand",
             FixedCastLifecycleKind.RETRACE: "graveyard",
         }.get(proposed_lifecycle.kind)

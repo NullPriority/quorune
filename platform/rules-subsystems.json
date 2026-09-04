@@ -1768,17 +1768,17 @@
             "trigger.placement.apnap",
             "zone.change.destination_replacement"
           ],
-          "shared_grammar": "ordinary fixed-mana Buyback, Dash, and Warp cast methods represented by one typed cost option, immutable cast designation, canonical spell or battlefield departure owner, and identity-pinned delayed lifecycle",
+          "shared_grammar": "ordinary fixed-mana Buyback, Dash, and Warp cast methods represented by one typed cost option, immutable cast designation, canonical current-zone cast authority, spell or battlefield departure owner, and identity-pinned delayed lifecycle",
           "estimated_implementation_hours": 8,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Generalizes the existing Flashback, Unearth, selected-face cost, destination replacement, delayed trigger, Haste, and replay owners into one reusable cast-lifecycle substrate while retaining mechanic-specific typed adapters.",
           "explicit_exclusions": [
             "Madness, Foretell, Plot, Escape, Blitz, Disturb, and other separate zone or choice lifecycles",
-            "alternative source zones other than the represented hand and later Warp exile permission",
-            "countered Buyback spells, replaced or prevented resolutions, phased-out delayed subjects, and stale object incarnations",
+            "Warp source zones other than hand, Dash source zones without independent canonical cast authority, and unsupported later-zone permissions",
             "independently unsupported spell or permanent abilities",
-            "multiple instances, cost reducers, copied or granted abilities, text changes, spell copies, and tokens",
+            "multiple instances, copied or granted abilities, text changes, spell copies, and tokens",
+            "replaced or prevented resolutions and competing delayed-lifecycle replacement families outside the canonical zone owner",
             "variable, hybrid, Phyrexian, snow, life, discard, sacrifice, random, and compound costs"
           ],
           "measurement_status": "generated_probe",
@@ -1834,8 +1834,9 @@
             "Blitz, Madness, Foretell, Plot, Escape, Rebound, Disturb, and other separate lifecycles",
             "alternative-cost combinations outside the selected fixed lifecycle option",
             "colored, variable, dynamic-count, target-relative, chosen, named, secret, capped, floored, and cost-setting modifiers",
-            "copied, granted, removed, or text-changed lifecycle abilities outside typed propagation",
+            "copied, granted, or text-changed lifecycle abilities outside typed propagation",
             "dynamic characteristic counts or type-changing predicates outside the cycle-safe cast-characteristic boundary",
+            "exact off-battlefield ability-layer additions or removals; affected lifecycle applicability fails closed until that shared characteristic owner exists",
             "tokens, spell copies, inactive faces, and independently incomplete CardPrograms",
             "variable, hybrid, Phyrexian, snow, nonmana, random, repeated, and modified lifecycle costs"
           ],
@@ -2103,28 +2104,14 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v165-fixed-token-production",
-      "compiler_version": "oracle-ir-v165",
-      "bundle_id": "bundle:fixed-token-production",
-      "candidate_ids": ["compiler:fixed-token-production"],
-      "family_ids": [
-        "activated_effect:create-token",
-        "activated_effect:unparsed-investigate",
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:create-token",
-        "effect_clause:unparsed-investigate-three-times",
-        "keyword_dependency:investigate"
-      ],
-      "capability_ids": [
-        "keyword_action.investigate.fixed",
-        "mana.activated.restricted_fixed_output",
-        "token.creation.fixed_copy",
-        "token.creation.fixed_definition",
-        "trigger.delayed.fixed_token_creation",
-        "trigger.keyword.afterlife.fixed"
-      ],
-      "measurement_id": "measurement:fixed-token-production",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v166-dash-command-zone-legality",
+      "compiler_version": "oracle-ir-v166",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Correct Dash source-zone legality and current-ability revalidation without changing compiler admission or claiming a card-support harvest."
     },
     "forecast_corrections": [
       {

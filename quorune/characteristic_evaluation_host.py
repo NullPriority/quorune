@@ -345,6 +345,24 @@ class CharacteristicEvaluationHostMixin:
     ) -> tuple[str, ...]:
         """Resolve one source through the shared layer-6 batch owner."""
 
+        if card.zone != "battlefield":
+            if card.face_down or _static_component_presence_effects(
+                active_resolution_effects(self.state, card)
+            ):
+                # The exact layer engine currently evaluates mutable ability
+                # components only for battlefield objects.  A relevant
+                # off-battlefield modification therefore makes applicability
+                # unavailable and must fail closed rather than restoring the
+                # printed component by assumption.
+                return ()
+            base = self._compiled_base_characteristics(
+                card,
+                self.card_record(card),
+                error_type=GameRuleError,
+            )
+            return static_component_keys(
+                self._declared_component_fragments(card, base)
+            )
         return self._effective_static_component_key_map().get(
             card.object_id, ()
         )
