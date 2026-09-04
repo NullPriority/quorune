@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "74890e75451563d04c04b9fd30d90e619dfd91a3f15b01b663a06a75ad41ff2c"
+verified: "59207c1f07b72c6a408e02aaeaa6ad3f03fb4c1d1e16bdfd1954b133ab5377fd"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 43 |
-| Cards | 583 |
+| Fixture files | 44 |
+| Cards | 598 |
 | Rulings | 1097 |
-| Modules inspected | 324 |
-| Static requirements | 893 |
+| Modules inspected | 325 |
+| Static requirements | 915 |
 | Declared dynamic requirements | 12 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -32,17 +32,17 @@ Overall closure: **closed**.
 
 | Shard | Modules | Status |
 | --- | ---: | --- |
-| casting-costs-mana | 47 | closed |
+| casting-costs-mana | 48 | closed |
 | combat-declarations | 21 | closed |
-| compiler-cardprogram | 53 | closed |
+| compiler-cardprogram | 54 | closed |
 | core-domain | 14 | closed |
 | counter-continuous-effects | 29 | closed |
 | deterministic-game-regressions | 5 | closed |
-| events-replacement-zone | 36 | closed |
+| events-replacement-zone | 37 | closed |
 | functional-01 | 13 | closed |
 | functional-02 | 52 | closed |
 | functional-03 | 22 | closed |
-| functional-04 | 21 | closed |
+| functional-04 | 22 | closed |
 | functional-05 | 19 | closed |
 | functional-06 | 27 | closed |
 | functional-07 | 16 | closed |
@@ -57,10 +57,10 @@ Overall closure: **closed**.
 | merge-core | 9 | closed |
 | multiplayer-commander | 9 | closed |
 | nightly-property | 3 | closed |
-| server-replay-privacy | 14 | closed |
+| server-replay-privacy | 15 | closed |
 | state-actions-damage | 17 | closed |
 | targets-choices-continuations | 28 | closed |
-| triggers-turns-exact-decks | 19 | closed |
+| triggers-turns-exact-decks | 20 | closed |
 | windows-compat | 10 | closed |
 
 The JSON companion contains canonical identities, fixture owners, source
