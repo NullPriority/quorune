@@ -58,6 +58,8 @@ from .zone_trigger_processing import (
     dispatch_zone_change_occurrence,
     semantic_event_sources,
 )
+from .day_night import synchronize_day_night
+from .permanent_transform import trusted_daybound_entry_face
 from .zone_transition_model import (
     EXILE_ZONE,
     JOURNAL_REASON_FIELD,
@@ -230,7 +232,7 @@ class ZoneTransitionOwner:
             departure,
             controller=controller,
             tapped=tapped,
-            enter_face=enter_face,
+            enter_face=plan.enter_face,
             aura_target_ref=aura_target_ref,
             zone_timestamp=zone_timestamp,
             reveal_to=tuple(reveal_to or ()),
@@ -273,6 +275,19 @@ class ZoneTransitionOwner:
     ) -> ZoneMovePlan | CardInstance:
         requested_destination = destination
         origin = card.zone
+        if destination == "battlefield":
+            record = self.host.card_record(card)
+            if (
+                enter_face is None
+                and getattr(record, "layout", None) == "transform"
+                and getattr(record, "faces", ())
+            ):
+                enter_face = str(record.faces[0].get("name") or "") or None
+            enter_face = trusted_daybound_entry_face(
+                self.host,
+                card,
+                prospective_face=enter_face,
+            )
         library_position = normalized_library_position(destination, position)
         if origin == requested_destination and origin not in {
             LIBRARY_ZONE,
@@ -375,6 +390,7 @@ class ZoneTransitionOwner:
             origin_identity_public=origin_identity_public,
             library_position=library_position,
             destination_type_line=destination_type_line,
+            enter_face=enter_face,
             prepared_replacement=replacement,
             prepared_life_payment=prepared_life_payment,
             prospective_battle_protector=prospective_protector,
@@ -463,7 +479,7 @@ class ZoneTransitionOwner:
             zone_timestamp=zone_timestamp,
         )
         card.zone = plan.destination
-        if enter_face is not None:
+        if enter_face is not None and plan.destination == "battlefield":
             card.active_face = enter_face
         if plan.destination == "battlefield":
             self._enter_battlefield(
@@ -779,6 +795,12 @@ class ZoneTransitionOwner:
             departure_source_characteristics=sources.source_characteristics,
             trigger_batch=event_triggers,
         )
+        if owns_trigger_batch and occurrence.destination == "battlefield":
+            synchronize_day_night(
+                self.host,
+                reason="bound permanent entered the battlefield",
+                trigger_batch=event_triggers,
+            )
         return occurrence, event_triggers, owns_trigger_batch
 
     def move_cards_simultaneously(
@@ -859,6 +881,12 @@ class ZoneTransitionOwner:
                 read_ahead_chapter=(
                     prepared[card.object_id].read_ahead_chapter
                 ),
+                trigger_batch=trigger_batch,
+            )
+        if any(card.zone == "battlefield" for card, _departure in snapshots):
+            synchronize_day_night(
+                self.host,
+                reason="simultaneous bound permanents entered the battlefield",
                 trigger_batch=trigger_batch,
             )
         enqueue_trigger_batch(self.host, trigger_batch)

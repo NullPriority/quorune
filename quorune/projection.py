@@ -614,6 +614,11 @@ class StateProjector:
                 "over": self.state.game_over,
                 "winner": self.state.winner,
                 "monarch": self.state.monarch,
+                **(
+                    {"day_night": self.state.day_night}
+                    if self.state.day_night is not None
+                    else {}
+                ),
             },
             "turn": turn,
             "players": players,

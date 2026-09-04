@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 139,
+  "registry_version": 140,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -220,6 +220,18 @@
         "permanent.tap.effect",
         "permanent.untap.effect",
         "permanent.untap.all_creatures"
+      ]
+    },
+    {
+      "mechanic_id": "daybound-and-nightbound",
+      "capabilities": [
+        "card_form.day_night"
+      ]
+    },
+    {
+      "mechanic_id": "fixed-previous-turn-spell-transform",
+      "capabilities": [
+        "trigger.upkeep.previous_turn_transform"
       ]
     }
   ],
@@ -6647,6 +6659,87 @@
       "dependency_fail_closed_rationale": "Blocking destination replacement, normalized zone events, or APNAP trigger placement prevents the self-zone-move node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_self_zone_move_dependency_and_compiler_mutations_fail_closed removes the closed effect production and independently blocks each dependency so no activation retains exact runtime admission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "permanent.transform.face_change",
+      "version": 1,
+      "official_rules": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Transform one source-pinned phased-in nonmodal double-faced card permanent while preserving its logical object and rejecting stale triggered instructions.",
+        "inputs": ["one represented double-faced card permanent", "current face and next permanent face", "current logical object", "captured transform count for activated or triggered instructions", "current applicable Daybound or Nightbound component"],
+        "outputs": ["opposite active face", "incremented transform count", "unchanged logical object, counters, damage, controller, attachments, and timestamp", "normalized public transform event", "ordinary trigger batching and exact replay"],
+        "exclusions": ["double-faced tokens, card copies, copied or granted characteristics, face-down or phased-out objects", "modal double-faced cards, melded or merged permanents, Convert, and instant or sorcery destination faces", "Daybound or Nightbound permanents transformed by non-bound instructions", "targeted, mass, optional, delayed, or independently unsupported transform instructions"]
+      },
+      "dependencies": ["trigger.event.normalized_public_action", "trigger.placement.apnap"],
+      "implementation_components": ["quorune.permanent_transform.transform_permanent", "quorune.permanent_transform.commit_transform_batch", "quorune.effect_runtime.objects_stack_and_tokens._apply_transform", "quorune.trigger_discovery._semantic_trigger_context", "quorune.semantic_runtime.values.resolve_semantic_value"],
+      "positive_tests": ["test_day_night_entry_untap_and_shared_component_applicability", "test_legacy_transform_intervening_identity_and_transform_count"],
+      "negative_tests": ["test_day_night_and_transform_grammar_exclusions_fail_closed", "test_transform_capability_and_compiler_mutations_fail_closed"],
+      "interaction_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "multiplayer_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "privacy_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "replay_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking normalized public events or APNAP trigger placement prevents the transform capability and each dependent card-form or upkeep trigger from receiving trusted closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused mutation test removes transform lowering or changes its source snapshot and proves the compiler withholds trusted admission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "card_form.day_night",
+      "version": 1,
+      "official_rules": ["502.2", "502.3", "502.4", "702.145", "702.145a", "702.145b", "702.145c", "702.145d", "702.145e", "702.145f", "702.145g", "731", "731.1", "731.2", "731.2a", "731.2b", "731.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Maintain the public day/night designation and paired Daybound/Nightbound faces through entry and the second untap-step action.",
+        "inputs": ["paired canonical Daybound and Nightbound faces", "shared current-ability component applicability", "previous turn active player and per-player spell counts", "current public designation", "phased-in represented double-faced card permanents"],
+        "outputs": ["unique persistent day or night designation", "night entry with the back face already up", "simultaneous bound transformations before untapping", "held untap-step transform triggers", "public projection, save/load, and exact replay"],
+        "exclusions": ["explicit effects that make it day or night", "shared-team turns", "copied, granted, text-changed, merged, modal, token, and arbitrary double-faced forms", "phasing and face-down double-faced permanents", "independently unsupported sibling abilities remain residual"]
+      },
+      "dependencies": ["permanent.transform.face_change"],
+      "implementation_components": ["quorune.compiler.day_night_nodes.day_night_keyword_node", "quorune.day_night.synchronize_day_night", "quorune.day_night.apply_untap_day_night_transition", "quorune.permanent_transform.trusted_daybound_entry_face", "quorune.turn_history.roll_turn_history", "quorune.untap_step_coordination.coordinate_untap_step", "quorune.zone_transitions.ZoneTransitionOwner"],
+      "positive_tests": ["test_compiler_lowers_paired_daybound_and_legacy_transform_nodes", "test_day_night_entry_untap_and_shared_component_applicability"],
+      "negative_tests": ["test_day_night_and_transform_grammar_exclusions_fail_closed", "test_transform_capability_and_compiler_mutations_fail_closed"],
+      "interaction_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "multiplayer_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "privacy_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "replay_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The paired keyword nodes request the day/night capability directly; its transform dependency must be trusted for either face to become exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler mutation removes paired-face lowering and proves both bound nodes and whole-card admission disappear.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.upkeep.previous_turn_transform",
+      "version": 1,
+      "official_rules": ["500.6", "503.1a", "603.3b", "603.4", "701.27f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile the two legacy each-upkeep previous-turn spell-count conditions into source-pinned self-transform triggers.",
+        "inputs": ["exact each-upkeep wording", "no spells or one player two-or-more condition", "bounded this-permanent or source-name reference", "previous-turn per-player spell counts", "source logical identity and transform-count snapshot"],
+        "outputs": ["intervening-if trigger-time and resolution-time checks", "ordinary APNAP placement", "one stale-safe transform instruction", "save/load and exact replay"],
+        "exclusions": ["your upkeep or other step wordings", "different spell thresholds, current-turn counts, teams, or aggregate variants", "targets, other permanents, optional, delayed, reflexive, compound, Convert, and nontransform bodies", "copied, granted, or text-changed triggers"]
+      },
+      "dependencies": ["permanent.transform.face_change", "trigger.placement.apnap"],
+      "implementation_components": ["quorune.compiler.spell_history_transform_nodes.previous_turn_transform_trigger_node", "quorune.spell_history_transform_model.SpellHistoryTransformSpec", "quorune.spell_history_transform.spell_history_transform_condition_holds", "quorune.turn_history.roll_turn_history", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.permanent_transform.transform_permanent"],
+      "positive_tests": ["test_compiler_lowers_paired_daybound_and_legacy_transform_nodes", "test_legacy_transform_intervening_identity_and_transform_count"],
+      "negative_tests": ["test_day_night_and_transform_grammar_exclusions_fail_closed", "test_transform_capability_and_compiler_mutations_fail_closed"],
+      "interaction_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "multiplayer_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "privacy_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "replay_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The trigger node requires both its dedicated previous-turn capability and the exact source-transform shape; blocked history, APNAP, or transform closure leaves the Oracle line material.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused mutation changes the condition or removes its transform snapshot and proves exact compiler admission fails.",
       "blockers": [],
       "status": "trusted"
     },

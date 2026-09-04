@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "daybound-and-nightbound",
+  "official_name": "Daybound, Nightbound, and Legacy Spell-History Transformations",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["502.2", "502.3", "502.4", "503.1a", "603.4", "701.27", "701.27a", "701.27c", "701.27d", "701.27f", "702.145", "702.145a", "702.145b", "702.145c", "702.145d", "702.145e", "702.145f", "702.145g", "712.9", "712.10", "712.18", "731", "731.1", "731.2", "731.2a", "731.2b", "731.2c"],
+  "glossary_references": ["day", "daybound", "night", "nightbound", "transform"],
+  "dependencies": ["double-faced cards", "handling triggered abilities", "turn structure", "untap step"],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["battlefield", "stack-to-battlefield and nonstack battlefield entry"],
+    "objects": ["paired nonmodal double-faced card with Daybound and Nightbound", "legacy nonmodal double-faced creature with one exact trigger on each face"],
+    "events": ["bound permanent enters", "second untap-step action", "beginning of each upkeep", "permanent transforms"],
+    "state_reads": ["public day/night designation", "previous turn active player", "per-player previous-turn spell counts", "current shared static-component applicability", "source logical identity and transform count"],
+    "state_writes": ["public day/night designation", "active face", "monotonic transform count", "bounded previous-turn summary"],
+    "costs": [],
+    "timing": ["day/night changes before untap selection", "untap transform triggers wait until upkeep", "legacy conditions check at trigger time and resolution"],
+    "targets": [],
+    "choices": ["ordinary per-controller trigger ordering only when a player controls multiple applicable triggers"],
+    "hidden_information": ["designation, active faces, spell counts, and triggers are public", "hands and libraries remain principal-filtered"],
+    "apnap": ["all triggers since the prior priority window use the existing APNAP batch"],
+    "layers": ["Daybound and Nightbound applicability uses the shared layer-6 static-component query", "transform changes the represented face without creating a new object or timestamp"],
+    "replacement_effects": ["Daybound selects the night face before battlefield entry characteristics and ordinary entry replacements are finalized"],
+    "copy": ["copied, granted, and text-changed bound abilities remain outside the trusted slice"],
+    "control_change": ["the public designation is global and transform preserves the current controller"],
+    "zone_change": ["a normal nonmodal double-faced card enters front face up unless represented Daybound makes it enter on the night face", "a new logical object resets its transform count"],
+    "source_leaves": ["an absent or re-entered source cannot be transformed by the old trigger"]
+  },
+  "variants": ["Daybound entry while it is night", "initial Daybound establishes day", "initial Nightbound establishes night only when no Daybound permanent exists", "day-to-night from zero spells by the previous active player", "night-to-day from two or more spells by the previous active player", "legacy no-spells by anyone", "legacy two-or-more by one player", "shortened source names", "ability removal and restoration", "simultaneous transforms, APNAP, save/load, and replay"],
+  "witness_cards": [
+    {"name": "Shady Traveler // Stalking Predator", "oracle_id": "10be1b27-bc9f-4c6e-ac85-f1fa8b2a34d6"},
+    {"name": "Village Messenger // Moonrise Intruder", "oracle_id": "f6634a84-a9ce-4bbd-bc2c-3f9179b7f16a"},
+    {"name": "Lambholt Elder // Silverpelt Werewolf", "oracle_id": "12330f42-0e3f-40e1-86f3-57a34403d143"},
+    {"name": "Ulrich of the Krallenhorde // Ulrich, Uncontested Alpha", "oracle_id": "0d397c05-a680-4274-972f-6a5f778b5133"}
+  ],
+  "rulings": [],
+  "test_ids": ["test_compiler_lowers_paired_daybound_and_legacy_transform_nodes", "test_day_night_and_transform_grammar_exclusions_fail_closed", "test_transform_capability_and_compiler_mutations_fail_closed", "test_day_night_entry_untap_and_shared_component_applicability", "test_legacy_transform_intervening_identity_and_transform_count", "test_simultaneous_transform_apnap_state_and_replay"],
+  "implementation": {
+    "component": "DayNightBoundSpec, SpellHistoryTransformSpec, bounded turn history, paired-face compiler nodes, shared component applicability, day/night coordination, permanent transform owner, zone entry, untap ordering, normalized triggers, projection, persistence, and replay",
+    "version": "spell-history-transformations-v1",
+    "capability_ids": ["card_form.day_night", "permanent.transform.face_change", "trigger.upkeep.previous_turn_transform"],
+    "supported_slice": "Paired canonical Daybound/Nightbound cards and the exact legacy each-upkeep no-spells or one-player-two-spells self-transform wordings."
+  },
+  "known_blockers": ["explicit make-day or make-night effects", "arbitrary, targeted, mass, optional, delayed, compound, Convert, and transform-into effect grammar", "shared-team turns", "copied, granted, text-changed, face-down, phased-out, modal, merged, melded, and double-faced-token forms", "independently unsupported sibling abilities retain partial whole-card status", "aggregate Transform and Day/Night coverage remains incomplete"],
+  "review_status": "reviewed"
+}

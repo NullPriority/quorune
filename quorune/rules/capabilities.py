@@ -78,6 +78,7 @@ from .monarch_capability_shapes import (
     MONARCH_DESIGNATION_CAPABILITY,
     fixed_monarch_node_capabilities,
 )
+from .transform_capability_shapes import source_transform_node_capabilities
 from .library_search_capability_shapes import (
     FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
     FIXED_LIBRARY_SEARCH_MECHANIC_ID,
@@ -1048,6 +1049,7 @@ def _targeted_effect_capabilities(
         fixed_mill_node_capabilities,
         fixed_impulse_access_node_capabilities,
         fixed_monarch_node_capabilities,
+        source_transform_node_capabilities,
         fixed_library_search_node_capabilities,
         fixed_type_to_hand_search_node_capabilities,
         fixed_library_selection_node_capabilities,

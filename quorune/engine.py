@@ -124,6 +124,7 @@ from .damage import (
 from .damage_results import (
     consume_deathtouch_damage_checks,
 )
+from .day_night import synchronize_day_night
 from .drawing import (
     begin_draw_batch,
     begin_draw_sequence,
@@ -856,6 +857,8 @@ class CommanderEngine(
             raise StateInvariantError(
                 "The monarch designation belongs to a player who is not in the game"
             )
+        if self.state.day_night not in {None, "day", "night"}:
+            raise StateInvariantError("The day/night designation is invalid")
         history = self.state.turn_history
         if history is not None:
             if history.schema_version != 1:
@@ -6710,6 +6713,10 @@ class CommanderEngine(
 
     def _synchronize_world_supertype_timestamps(self) -> None:
         """Observe simultaneous gains/losses of the World supertype."""
+
+        synchronize_day_night(
+            self, reason="continuous day/night synchronization"
+        )
 
         newly_world: list[CardInstance] = []
         for card in self.state.cards.values():

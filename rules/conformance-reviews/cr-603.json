@@ -223,6 +223,7 @@
       "reviewed": true,
       "implementation_components": ["CommanderEngine._enqueue_semantic_trigger_batch", "CommanderEngine._begin_pending_semantic_trigger_batch", "CommanderEngine._stabilize"],
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_preflight_v080.NormalizedZoneEventTests.test_simultaneous_semantic_triggers_use_apnap_and_owner_order",
         "tests.test_combat_damage_rules.CombatDamageRuleTests.test_damage_and_resulting_death_triggers_share_one_order_batch"
       ],
@@ -266,8 +267,8 @@
       "status": "passing",
       "assertion_kind": "executable_engine",
       "reviewed": true,
-      "implementation_components": ["CommanderEngine._semantic_event_condition_matches", "CommanderEngine._prepare_stack_resolution"],
-      "executable_test_ids": ["tests.test_exact_artifact_engines.ExactArtifactEngineTests.test_padeem_hexproof_and_intervening_upkeep_condition"],
+      "implementation_components": ["CommanderEngine._semantic_event_condition_matches", "CommanderEngine._prepare_stack_resolution", "quorune.spell_history_transform.spell_history_transform_condition_holds"],
+      "executable_test_ids": ["tests.test_exact_artifact_engines.ExactArtifactEngineTests.test_padeem_hexproof_and_intervening_upkeep_condition", "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count"],
       "required_scenarios": ["positive", "negative", "interaction"],
       "covered_scenarios": ["positive", "negative", "interaction"],
       "blockers": [],

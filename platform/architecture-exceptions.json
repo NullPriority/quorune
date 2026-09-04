@@ -1011,6 +1011,33 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0044",
+      "adr": "docs/adr/0092-typed-spell-history-transformations.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "c572f50d3afa9d046cbeff3b1e463669a54d01d70738c528642a6a2cab73b5ae",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, reduced engine and size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed transform operation serialized after the typed spell-history transformation harvest.",
+      "rationale": "The measured family adds one closed source-self transform operation, a bounded previous-turn spell summary, and typed day/night and face-change owners while shrinking CommanderEngine by sixteen logical lines and keeping direct and unowned GameState writes, oversized symbols, Oracle-ID literals, runtime Oracle prose, and prohibited identity dispatch flat. Existing static-component applicability, zone entry, untap, trigger batching, projection, rollback, privacy, and replay owners retain authority. The compiler corpus import policy now matches its existing semantic identity sentinel and excludes the demonstrated re-export-only runtime false dependency.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact residual identities and counts in the rebound schema-4 baseline plus transform, card_form.day_night, permanent.transform.face_change, trigger.upkeep.previous_turn_transform, the bounded prior-turn spell summary, paired bound compiler nodes, logical-object-aware face owner, and semantic_imports corpus cache policy described by ADR 0092; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, oversized-symbol growth, arbitrary callbacks, family-specific ability-presence checks, dynamic characteristic counts, explicit day/night effects, shared-team turns, arbitrary Transform or Convert grammar, copied or granted forms, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the transform and day/night owners only while exact paired and legacy grammar, shared component applicability, previous-turn player counts, source incarnation and transform-count checks, non-zone-change identity, simultaneous event timing, APNAP, privacy, rollback, and replay evidence remain enforced.",
+      "target_milestone": "capability-closed broad compiler harvest through typed face and turn-history owners",
+      "replay_implications": "CardPrograms record paired bound or exact legacy trigger descriptors; Game Record v3 preserves the public designation, bounded previous-turn counts, active faces, transform counters, source logical identities, held APNAP triggers, and final state hashes without consulting Oracle prose.",
+      "privacy_implications": "Day/night, active faces, spell-cast counts, and resulting triggers are public. Physical and logical object identities remain absent from pilot projections, and no hand or library facts are introduced by the bounded previous-turn summary.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict transform operation; malformed pairing, thresholds, source references, counts, stale or re-entered sources, already-transformed sources, copied or face-down forms, instant or sorcery destination faces, blocked dependencies, and independently unsupported siblings fail before unauthorized mutation.",
+      "tests": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_compiler_lowers_paired_daybound_and_legacy_transform_nodes",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_transform_capability_and_compiler_mutations_fail_closed",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+        "tests.test_generated_owner_cache.GeneratedOwnerCacheTests.test_repository_manifest_declares_safe_input_closures",
+        "tests.test_generated_owner_cache.GeneratedOwnerCacheTests.test_owner_identity_applies_declared_semantic_import_policy",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

@@ -60,23 +60,33 @@
       "rule_id": "502.2",
       "rule_text_sha256": "1c88a7f72180ab7048b677f4deee118b095567eebdf82dd5b201ae36144c9658",
       "classification": "behavioral",
-      "status": "blocked",
-      "assertion_kind": "unsupported_fail_closed",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
       "reviewed": true,
-      "implementation_components": [],
-      "executable_test_ids": [],
+      "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
+        "quorune.turn_history.roll_turn_history",
+        "quorune.untap_step_coordination.coordinate_untap_step"
+      ],
+      "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay"
+      ],
       "required_scenarios": [
         "positive",
         "negative",
         "interaction",
         "replay"
       ],
-      "covered_scenarios": [],
-      "blockers": [
-        "day_night_state_and_previous_turn_spell_count_not_implemented"
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
       ],
+      "blockers": [],
       "notes": [
-        "The authoritative state does not represent day/night or the previous turn's spell count for this transition. Exact-list trusted preflight excludes unresolved material day/night cards; the turn action itself remains unimplemented."
+        "The bounded previous-turn summary supplies the prior active player's spell count, the public designation changes before untap selection, and resulting transforms and held triggers replay exactly. Shared-team modification is reviewed separately in 502.2a."
       ]
     },
     {
@@ -110,11 +120,14 @@
       "assertion_kind": "unsupported_fail_closed",
       "reviewed": true,
       "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
         "CommanderEngine._untap_permanent",
         "CommanderEngine._unsupported_untap_selection_source",
         "CommanderEngine._enter_step"
       ],
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_ordinary_untap_is_stackless_and_advances_directly_to_upkeep",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_stun_and_next_untap_restrictions_precede_the_untap_batch",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_global_untap_limit_fails_closed_instead_of_untapping_all",
@@ -150,12 +163,14 @@
       "assertion_kind": "unsupported_fail_closed",
       "reviewed": true,
       "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
         "CommanderEngine._enter_step",
         "CommanderEngine._dispatch_semantic_event",
         "CommanderEngine._enqueue_semantic_trigger_batch",
         "CommanderEngine._grant_priority"
       ],
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_ordinary_untap_is_stackless_and_advances_directly_to_upkeep",
         "tests.test_untap_step_rules.UntapStepRuleTests.test_untap_trigger_waits_for_upkeep_priority_and_replays",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_untap_and_upkeep_triggers_share_one_apnap_order_batch_and_replay"
@@ -178,7 +193,7 @@
         "complete_untap_step_trigger_event_surface_not_implemented"
       ],
       "notes": [
-        "The engine grants no priority in the represented untap step, performs no stack resolution there, and carries represented triggers into the upkeep ordering/priority boundary with exact replay. The rule remains blocked because phasing, day/night, counter-removal, and arbitrary untap-trigger event production are incomplete."
+        "The engine grants no priority in the represented untap step, performs no stack resolution there, and carries represented triggers, including day/night face changes, into the upkeep ordering/priority boundary with exact replay. The rule remains blocked because phasing, counter-removal, and arbitrary untap-trigger event production are incomplete."
       ]
     }
   ]

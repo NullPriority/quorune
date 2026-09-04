@@ -1855,6 +1855,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/day_night_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/declaration_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -2830,6 +2845,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/spell_history_transform_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/static_runtime_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -3394,6 +3424,32 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/day_night.py",
+      "layer": "rules",
+      "owning_subsystem": "day_night_and_transform",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/day_night_model.py",
+      "layer": "domain",
+      "owning_subsystem": "keyword_abilities",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -4489,6 +4545,20 @@
       "file": "quorune/permanent_exile.py",
       "layer": "rules",
       "owning_subsystem": "permanent_exile",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/permanent_transform.py",
+      "layer": "rules",
+      "owning_subsystem": "day_night_and_transform",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -6048,6 +6118,20 @@
     },
     {
       "file": "quorune/rules/token_creation_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/transform_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -7880,6 +7964,32 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/spell_history_transform.py",
+      "layer": "rules",
+      "owning_subsystem": "day_night_and_transform",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/spell_history_transform_model.py",
+      "layer": "domain",
+      "owning_subsystem": "keyword_abilities",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/stack_counter.py",
       "layer": "rules",
       "owning_subsystem": "stack_counter",
@@ -8638,5 +8748,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "dcfd6b35ccfe4bd05a34aba6c5710ec792935eda8f4ead15a0208d73562a445c"
+  "fingerprint": "416cd85728cb94f63453f11c5f594636c731124946443f90682a9d93bd2e1221"
 }

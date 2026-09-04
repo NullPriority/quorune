@@ -481,6 +481,9 @@ def resolved_worktree_inputs(
         available=available,
         read_text=lambda relative: (root / relative).read_text(encoding="utf-8"),
         import_cache=import_cache,
+        traverse_package_initializers=(
+            spec.implementation_import_policy == "runtime_imports"
+        ),
     )
     return tuple(
         sorted(direct | implementation | (available & _IDENTITY_IMPLEMENTATION_PATHS))
@@ -840,6 +843,9 @@ def _resolved_ref_inputs(
         available=available,
         read_text=read_text,
         import_cache=import_cache,
+        traverse_package_initializers=(
+            spec.implementation_import_policy == "runtime_imports"
+        ),
     )
     return tuple(
         sorted(direct | implementation | (available & _IDENTITY_IMPLEMENTATION_PATHS))
@@ -1150,7 +1156,9 @@ def compiler_identity_status(
         ),
         available=current_available,
         read_text=lambda relative: (root / relative).read_text(encoding="utf-8"),
-        traverse_package_initializers=False,
+        traverse_package_initializers=(
+            spec.implementation_import_policy == "runtime_imports"
+        ),
     )
     current_implementation -= _IDENTITY_IMPLEMENTATION_PATHS
     base_entries = _ref_entries(root, base_ref)
@@ -1181,7 +1189,9 @@ def compiler_identity_status(
             ),
             available=set(base_entries),
             read_text=read_base_text,
-            traverse_package_initializers=False,
+            traverse_package_initializers=(
+                base_spec.implementation_import_policy == "runtime_imports"
+            ),
         )
         base_implementation -= _IDENTITY_IMPLEMENTATION_PATHS
     except (GeneratedOwnerCacheError, StopIteration):

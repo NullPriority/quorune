@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import json
 from pathlib import Path
 import subprocess
@@ -21,6 +22,7 @@ from scripts.generated_owner_cache import (
     propagated_affected_owner_ids,
     compiler_identity_status,
     owner_input_identity,
+    resolved_worktree_inputs,
     restore_owner_artifact,
     store_owner_artifact,
 )
@@ -216,6 +218,23 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         )
         self.assertIn("rules-source", architecture.input_groups)
         self.assertIn("rules-source", compiler_corpus.input_groups)
+        self.assertEqual(
+            "semantic_imports",
+            compiler_corpus.implementation_import_policy,
+        )
+        compiler_inputs = set(
+            resolved_worktree_inputs(
+                compiler_corpus,
+                specs=specs,
+                input_groups=groups,
+                root=ROOT,
+            )
+        )
+        self.assertIn("quorune/oracle_ir.py", compiler_inputs)
+        self.assertNotIn(
+            "quorune/characteristic_evaluation_host.py",
+            compiler_inputs,
+        )
         self.assertIn("tests-source", architecture.input_groups)
         self.assertIn("tests/**/*.json", groups.patterns("tests-source"))
         self.assertIn("tests-source", compact_dependencies.input_groups)
@@ -336,6 +355,84 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
             traverse_package_initializers=False,
         )
         self.assertIn("quorune/runtime.py", direct_semantic_closure)
+
+    def test_owner_identity_applies_declared_semantic_import_policy(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._repository(root)
+            for directory in (
+                root / "scripts",
+                root / "src",
+                root / "quorune" / "compiler",
+            ):
+                directory.mkdir(parents=True, exist_ok=True)
+            (root / "scripts" / "generate.py").write_text(
+                "from quorune.compiler.worker import compile_card\n",
+                encoding="utf-8",
+            )
+            (root / "quorune" / "compiler" / "worker.py").write_text(
+                "from quorune import public_api\n",
+                encoding="utf-8",
+            )
+            (root / "quorune" / "public_api.py").write_text(
+                "VALUE = 1\n",
+                encoding="utf-8",
+            )
+            (root / "quorune" / "__init__.py").write_text(
+                "from quorune.runtime import execute\n",
+                encoding="utf-8",
+            )
+            (root / "quorune" / "runtime.py").write_text(
+                "def execute(): pass\n",
+                encoding="utf-8",
+            )
+            (root / "src" / "policy.txt").write_text(
+                "policy\n",
+                encoding="utf-8",
+            )
+            (root / "output.txt").write_text(
+                "generated\n",
+                encoding="utf-8",
+            )
+            subprocess.run(["git", "add", "."], cwd=root, check=True)
+            subprocess.run(
+                ["git", "commit", "-qm", "semantic closure fixture"],
+                cwd=root,
+                check=True,
+            )
+            spec = GeneratorSpec(
+                id="compiler-fixture",
+                depends_on=(),
+                outputs=("output.txt",),
+                check=("scripts/generate.py", "--check"),
+                write=("scripts/generate.py", "--write"),
+                write_with_database=None,
+                write_policy="automatic",
+                input_groups=("source",),
+                implementation_inputs=("scripts/generate.py",),
+                implementation_import_policy="semantic_imports",
+                database_identity="none",
+                execution_class="corpus",
+                reuse_policy="safe",
+            )
+            groups = GeneratedArtifactInputGroups(
+                groups=(("source", ("src/**/*.txt",)),)
+            )
+            semantic = resolved_worktree_inputs(
+                spec,
+                specs=(spec,),
+                input_groups=groups,
+                root=root,
+            )
+            runtime = resolved_worktree_inputs(
+                replace(spec, implementation_import_policy="runtime_imports"),
+                specs=(spec,),
+                input_groups=groups,
+                root=root,
+            )
+        self.assertIn("quorune/__init__.py", semantic)
+        self.assertNotIn("quorune/runtime.py", semantic)
+        self.assertIn("quorune/runtime.py", runtime)
 
     def test_remote_reuse_requires_completed_same_repository_workflow(self):
         responses = {

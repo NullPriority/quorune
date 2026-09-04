@@ -99,6 +99,8 @@ class TurnPriorityDecisionOwner:
         if event.code in {
             "land.play",
             "monarch.change",
+            "game.day_night",
+            "permanent.transform",
             "token.create",
             "control.change",
             "permanent.goad",

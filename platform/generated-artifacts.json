@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "discovery": {
     "path_prefixes": [
       "coverage/",
@@ -184,6 +184,7 @@
       "implementation_inputs": [
         "scripts/update_compiler_corpus_coverage.py"
       ],
+      "implementation_import_policy": "semantic_imports",
       "database_identity": "pinned-card-database",
       "execution_class": "corpus",
       "reuse_policy": "safe"

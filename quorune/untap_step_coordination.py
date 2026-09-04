@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping, Protocol, Sequence
 
 from .model import CardInstance, StackItem
+from .day_night import apply_untap_day_night_transition
 from .semantic_runtime.untap_steps import current_untap_step_plan
 from .tap_state import (
     consume_next_untap_prohibition,
@@ -93,6 +94,11 @@ def coordinate_untap_step(
             source=phasing_source,
         )
         return
+    day_night_triggers = list(held_triggers)
+    apply_untap_day_night_transition(
+        host,
+        trigger_batch=day_night_triggers,
+    )
     plan = current_untap_step_plan(host, active_player)
     if plan.unsupported_source_object_id is not None:
         host._pause_for_unsupported_semantic(
@@ -110,7 +116,7 @@ def coordinate_untap_step(
         host,
         "step.begin",
         untap_context,
-        held_triggers=held_triggers,
+        held_triggers=day_night_triggers,
     )
     untapped_object_ids: list[str] = []
     if host.state.config.auto_untap:

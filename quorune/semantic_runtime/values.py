@@ -113,6 +113,11 @@ def resolve_semantic_value(
         ):
             return None
         return source.ref
+    if value == "$source.transform_count":
+        count = getattr(item, "context", {}).get("source_transform_count")
+        if type(count) is not int or count < 0:
+            return None
+        return count
     if value == "$source.controller":
         return explore_source_controller(item, host.state.cards)
     if value == "$card":

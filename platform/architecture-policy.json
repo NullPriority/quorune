@@ -332,6 +332,8 @@
       ,"quorune/relative_power_target.py": "typed pending-target last-known-information snapshot owner for departing relative-power sources"
       ,"quorune/zone_object_state.py": "typed object-local CR 400.7 reset owner behind the canonical zone transition"
       ,"quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner"
+      ,"quorune/day_night.py": "typed CR 731 public designation and untap synchronization owner"
+      ,"quorune/permanent_transform.py": "typed CR 701.27 active-face and transform-count mutation owner"
       ,"quorune/selection/public_choice.py": "typed represented public nontarget choice projection, continuation validation, and authoritative result coordination"
       ,"quorune/selection/exile_cast.py": "typed one-shot public exile-cast choice, continuation validation, and authoritative resolution cleanup owner"
       ,"quorune/selection/searching.py": "typed hidden-zone search projection, continuation validation, result binding, and canonical zone-transition coordination"

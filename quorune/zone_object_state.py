@@ -142,6 +142,8 @@ def reset_card_after_zone_change(
     card.monstrous_value = None
     card.renowned = False
     card.unearthed = False
+    if not stack_to_battlefield:
+        card.transform_count = 0
     card.attacking = None
     card.blocking = None
     card.attached_to = None

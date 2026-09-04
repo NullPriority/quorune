@@ -65,6 +65,7 @@
       "assertion_kind": "unsupported_fail_closed",
       "reviewed": true,
       "implementation_components": [
+        "quorune.day_night.apply_untap_day_night_transition",
         "CommanderEngine._enter_step",
         "CommanderEngine._dispatch_semantic_event",
         "CommanderEngine._delayed_trigger_stack_item",
@@ -72,6 +73,7 @@
         "CommanderEngine._stabilize"
       ],
       "executable_test_ids": [
+        "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_untap_and_upkeep_triggers_share_one_apnap_order_batch_and_replay",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_late_permanent_and_delayed_trigger_wait_for_later_upkeep",
         "tests.test_upkeep_step_rules.UpkeepStepRuleTests.test_state_actions_precede_waiting_trigger_placement_and_priority"
@@ -95,7 +97,7 @@
         "complete_cr_603_3b_two_part_trigger_ordering_not_implemented"
       ],
       "notes": [
-        "Represented beginning-of-untap, becomes-untapped, permanent upkeep, and delayed upkeep triggers wait without priority and enter one APNAP/controller-order batch. Trigger time does not constrain a controller's submitted order. The rule remains blocked because phasing, day/night, all untap replacements and trigger sources, and CR 603.3b's complete two-part process are not yet represented."
+        "Represented beginning-of-untap, day/night transform, becomes-untapped, permanent upkeep, and delayed upkeep triggers wait without priority and enter one APNAP/controller-order batch. Trigger time does not constrain a controller's submitted order. The rule remains blocked because phasing, all untap replacements and trigger sources, and CR 603.3b's complete two-part process are not yet represented."
       ]
     },
     {

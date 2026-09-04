@@ -93,16 +93,82 @@ class TurnHistory:
     schema_version: int = 1
     turn_sequence: int = 0
     events: list[TurnHistoryEvent] = field(default_factory=list)
+    # Additive summary retained across exactly one turn boundary. The live
+    # event list continues to describe only ``turn_sequence``; these fields
+    # preserve previous-turn spell counts for CR 502.2/731 and printed
+    # intervening-if triggers without retaining an unbounded event journal.
+    previous_turn_sequence: int | None = None
+    previous_active_player: str | None = None
+    previous_spell_cast_counts: dict[str, int] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.schema_version != 1 or type(self.schema_version) is not int:
+            raise ValueError("Unsupported turn-history schema version")
+        if type(self.turn_sequence) is not int or self.turn_sequence < 0:
+            raise ValueError("Turn-history sequence must be nonnegative")
+        if not isinstance(self.events, list) or any(
+            not isinstance(event, TurnHistoryEvent) for event in self.events
+        ):
+            raise ValueError("Turn-history events must be typed")
+        previous_absent = self.previous_turn_sequence is None
+        if previous_absent != (self.previous_active_player is None):
+            raise ValueError(
+                "Previous-turn sequence and active player must be paired"
+            )
+        if previous_absent:
+            if self.previous_spell_cast_counts:
+                raise ValueError(
+                    "Previous spell counts require a previous turn"
+                )
+            return
+        if (
+            type(self.previous_turn_sequence) is not int
+            or self.previous_turn_sequence < 0
+            or self.previous_turn_sequence != self.turn_sequence - 1
+            or type(self.previous_active_player) is not str
+            or not self.previous_active_player
+            or not isinstance(self.previous_spell_cast_counts, dict)
+            or any(
+                type(player) is not str
+                or not player
+                or type(count) is not int
+                or count < 0
+                for player, count in self.previous_spell_cast_counts.items()
+            )
+        ):
+            raise ValueError("Previous-turn spell history is malformed")
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "schema_version": self.schema_version,
             "turn_sequence": self.turn_sequence,
             "events": [event.to_dict() for event in self.events],
+            **(
+                {
+                    "previous_turn": {
+                        "turn_sequence": self.previous_turn_sequence,
+                        "active_player": self.previous_active_player,
+                        "spell_cast_counts": dict(
+                            sorted(self.previous_spell_cast_counts.items())
+                        ),
+                    }
+                }
+                if self.previous_turn_sequence is not None
+                else {}
+            ),
         }
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "TurnHistory":
+        previous = data.get("previous_turn")
+        if previous is not None and not isinstance(previous, dict):
+            raise ValueError("Previous-turn spell history must be an object")
+        if isinstance(previous, dict) and set(previous) != {
+            "turn_sequence",
+            "active_player",
+            "spell_cast_counts",
+        }:
+            raise ValueError("Previous-turn spell history has unknown fields")
         return cls(
             schema_version=int(data.get("schema_version", 1)),
             turn_sequence=int(data.get("turn_sequence", 0)),
@@ -110,6 +176,23 @@ class TurnHistory:
                 TurnHistoryEvent.from_dict(event)
                 for event in data.get("events", [])
             ],
+            previous_turn_sequence=(
+                previous["turn_sequence"]
+                if isinstance(previous, dict)
+                and previous.get("turn_sequence") is not None
+                else None
+            ),
+            previous_active_player=(
+                previous["active_player"]
+                if isinstance(previous, dict)
+                and previous.get("active_player") is not None
+                else None
+            ),
+            previous_spell_cast_counts=(
+                previous.get("spell_cast_counts", {})
+                if isinstance(previous, dict)
+                else {}
+            ),
         )
 
 
@@ -164,6 +247,10 @@ class CardInstance:
     tapped: bool = False
     face_down: bool = False
     active_face: str | None = None
+    # CR 701.27f pins activated/triggered transform instructions to the
+    # number of face changes observed when the ability was put on the stack.
+    # Zero is omitted from historical Game Record v3 payloads.
+    transform_count: int = 0
     phased_out: bool = False
     counters: dict[str, int] = field(default_factory=dict)
     marked_damage: int = 0
@@ -233,6 +320,8 @@ class CardInstance:
             )
         if type(self.deathtouch_damage) is not bool:
             raise ValueError("Deathtouch damage state must be a boolean")
+        if type(self.transform_count) is not int or self.transform_count < 0:
+            raise ValueError("Transform count must be a nonnegative integer")
         if (
             type(self.regeneration_shields) is not int
             or self.regeneration_shields < 0
@@ -300,6 +389,8 @@ class CardInstance:
             # Preserve historical records that predate upkeep-relative
             # control history. New battlefield acquisitions serialize it.
             payload.pop("acquired_control_timestamp")
+        if not self.transform_count:
+            payload.pop("transform_count")
         return payload
 
     @classmethod
@@ -783,6 +874,9 @@ class GameState:
     turn_history: TurnHistory | None = field(default_factory=TurnHistory)
     # CR 725 designation. ``None`` means no player has become the monarch.
     monarch: str | None = None
+    # CR 731 public game designation. ``None`` is the initial state and also
+    # preserves historical Game Record v3 payloads that predate day/night.
+    day_night: Literal["day", "night"] | None = None
     pending_trigger_batches: list[PendingTriggerBatch] = field(
         default_factory=list
     )
@@ -867,6 +961,11 @@ class GameState:
                 else {}
             ),
             "monarch": self.monarch,
+            **(
+                {"day_night": self.day_night}
+                if self.day_night is not None
+                else {}
+            ),
             "pending_trigger_batches": [
                 batch.to_dict() for batch in self.pending_trigger_batches
             ],
@@ -940,6 +1039,7 @@ class GameState:
                 else None
             ),
             monarch=data.get("monarch"),
+            day_night=data.get("day_night"),
             pending_trigger_batches=cls._pending_trigger_batches_from_dict(
                 data.get("pending_trigger_batches", [])
             ),

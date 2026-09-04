@@ -6,9 +6,9 @@
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "status_counts": {
     "partial": 67,
-    "tested": 48,
+    "tested": 49,
     "trusted": 7,
-    "unclassified": 305
+    "unclassified": 304
   },
   "total_mechanics": 427,
   "trusted_fraction": 0.016393,

@@ -38,6 +38,7 @@
     "tests/fixtures/query-power-toughness-definition-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
+    "tests/fixtures/spell-history-transformations-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/storm-cards.json",

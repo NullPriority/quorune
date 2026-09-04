@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a6acb778038f810ea79d46f2cdcdb98f4f57ec6a14699acfa82ea72d5da3a691",
-  "declaration_source_fingerprint": "5ad385ebedc6624bc6abfbf132c707ac3eb6669ab3e7604b84b6df2efbaee917",
+  "registry_fingerprint": "ed0fb4fc6d445f4fcdb9097b566c2615e145a4e1a370ddcf815f32ba8e287744",
+  "declaration_source_fingerprint": "c15d5b6e053cc7096ce1340750a5c03738d1ab0b115cbd4049ef1746a70ae67d",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -4763,6 +4763,216 @@
         "commander_review"
       ],
       "applicability_note": "Preserve the authoritative state hash when origin, ownership, object kind, or logical identity validation fails."
+    },
+    {
+      "capability_id": "card_form.day_night",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.145",
+        "702.145a",
+        "702.145b",
+        "702.145c",
+        "702.145d",
+        "702.145e",
+        "702.145f",
+        "702.145g",
+        "731",
+        "731.1",
+        "731.2",
+        "731.2a",
+        "731.2b",
+        "731.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply one designation transition before untap, transform every applicable face together, and hold all resulting triggers until upkeep."
+    },
+    {
+      "capability_id": "card_form.day_night",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.145",
+        "702.145a",
+        "702.145b",
+        "702.145c",
+        "702.145d",
+        "702.145e",
+        "702.145f",
+        "702.145g",
+        "731",
+        "731.1",
+        "731.2",
+        "731.2a",
+        "731.2b",
+        "731.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the previous turn's single active player while preserving four-player APNAP trigger placement."
+    },
+    {
+      "capability_id": "card_form.day_night",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_transform_capability_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.145",
+        "702.145a",
+        "702.145b",
+        "702.145c",
+        "702.145d",
+        "702.145e",
+        "702.145f",
+        "702.145g",
+        "731",
+        "731.1",
+        "731.2",
+        "731.2a",
+        "731.2b",
+        "731.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove paired Daybound/Nightbound lowering and require both keyword nodes and whole-card admission to fail closed."
+    },
+    {
+      "capability_id": "card_form.day_night",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed",
+      "official_rule_ids": [
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.145",
+        "702.145a",
+        "702.145b",
+        "702.145c",
+        "702.145d",
+        "702.145e",
+        "702.145f",
+        "702.145g",
+        "731",
+        "731.1",
+        "731.2",
+        "731.2a",
+        "731.2b",
+        "731.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject unpaired, misplaced, malformed, modal, copied, granted, and unsupported shared-team or arbitrary day/night forms."
+    },
+    {
+      "capability_id": "card_form.day_night",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_entry_untap_and_shared_component_applicability",
+      "official_rule_ids": [
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.145",
+        "702.145a",
+        "702.145b",
+        "702.145c",
+        "702.145d",
+        "702.145e",
+        "702.145f",
+        "702.145g",
+        "731",
+        "731.1",
+        "731.2",
+        "731.2a",
+        "731.2b",
+        "731.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Establish the designation on entry, enter on the night face when required, and transition before untapping from the previous active player's cast count."
+    },
+    {
+      "capability_id": "card_form.day_night",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.145",
+        "702.145a",
+        "702.145b",
+        "702.145c",
+        "702.145d",
+        "702.145e",
+        "702.145f",
+        "702.145g",
+        "731",
+        "731.1",
+        "731.2",
+        "731.2a",
+        "731.2b",
+        "731.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only the public designation, active faces, and public trigger stack while retaining all private zones unchanged."
+    },
+    {
+      "capability_id": "card_form.day_night",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.145",
+        "702.145a",
+        "702.145b",
+        "702.145c",
+        "702.145d",
+        "702.145e",
+        "702.145f",
+        "702.145g",
+        "731",
+        "731.1",
+        "731.2",
+        "731.2a",
+        "731.2b",
+        "731.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Persist and exactly replay previous-turn counts, designation changes, bound faces, held triggers, and public projections."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -40774,6 +40984,153 @@
       "applicability_note": "Reject a nonauthoritative option value without changing the continuation, permanent, counter, or authoritative state hash."
     },
     {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Transform multiple permanents simultaneously, preserve object-local state, and batch resulting triggers through ordinary APNAP ordering."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retain deterministic four-player APNAP placement for triggers produced by one simultaneous face-change batch."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_transform_capability_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the transform owner or remove its typed compiler production and require the legacy trigger to lose trusted admission."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject stale, non-DFC, modal, copied, face-down, phased, bound-by-other-instruction, and instant-or-sorcery destination transforms."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Transform the same logical permanent once and retain its controller, counters, damage, attachments, timestamp, and source identity."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the same public face and day/night facts to every player without exposing physical object IDs or private zones."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save, load, and exactly replay the active faces, transform counters, public designation, and resulting trigger order."
+    },
+    {
       "capability_id": "permanent.untap.all_creatures",
       "evidence_class": "interaction",
       "test_id": "tests.test_semantic_handlers.TypedSemanticHandlerTests.test_stun_counter_replaces_typed_untap_without_false_event",
@@ -51314,6 +51671,132 @@
       "applicability_note": "Replay a waiting untap trigger that is put on the stack before upkeep priority."
     },
     {
+      "capability_id": "trigger.upkeep.previous_turn_transform",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count",
+      "official_rule_ids": [
+        "500.6",
+        "503.1a",
+        "603.3b",
+        "603.4",
+        "701.27f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recheck prior-turn facts and reject an absent, re-entered, or already-transformed source when the old trigger resolves."
+    },
+    {
+      "capability_id": "trigger.upkeep.previous_turn_transform",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "500.6",
+        "503.1a",
+        "603.3b",
+        "603.4",
+        "701.27f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinguish no spells by anyone from two spells by one player and batch qualifying sources in four-player APNAP order."
+    },
+    {
+      "capability_id": "trigger.upkeep.previous_turn_transform",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_transform_capability_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "500.6",
+        "503.1a",
+        "603.3b",
+        "603.4",
+        "701.27f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the closed previous-turn transform parser and require the Oracle line to remain a material trigger residual."
+    },
+    {
+      "capability_id": "trigger.upkeep.previous_turn_transform",
+      "evidence_class": "negative",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed",
+      "official_rule_ids": [
+        "500.6",
+        "503.1a",
+        "603.3b",
+        "603.4",
+        "701.27f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject other steps, thresholds, subjects, optionality, compound bodies, Convert, and unavailable previous-turn facts."
+    },
+    {
+      "capability_id": "trigger.upkeep.previous_turn_transform",
+      "evidence_class": "positive",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_compiler_lowers_paired_daybound_and_legacy_transform_nodes",
+      "official_rule_ids": [
+        "500.6",
+        "503.1a",
+        "603.3b",
+        "603.4",
+        "701.27f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile both exact each-upkeep prior-turn spell-count wordings with typed intervening conditions and source transform snapshots."
+    },
+    {
+      "capability_id": "trigger.upkeep.previous_turn_transform",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "500.6",
+        "503.1a",
+        "603.3b",
+        "603.4",
+        "701.27f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use only public spell-cast counts and publish identical trigger choices without leaking hands or libraries."
+    },
+    {
+      "capability_id": "trigger.upkeep.previous_turn_transform",
+      "evidence_class": "replay",
+      "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
+      "official_rule_ids": [
+        "500.6",
+        "503.1a",
+        "603.3b",
+        "603.4",
+        "701.27f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save, load, and replay the previous-turn summary, intervening condition, source identity, transform snapshot, and resulting face."
+    },
+    {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepParticipationRuntimeTests.test_static_prohibition_does_not_consume_stun_and_next_step_marker_expires",
@@ -54414,5 +54897,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "f8357b607752ad2dd0b5592754f261ab6fdce27908dfbf1bd3941fe1f3ee3765"
+  "fingerprint": "a5356bcc7bd9f6e71e8c1bb93e00f662e8546deaeefef030bbfd69928bd66036"
 }

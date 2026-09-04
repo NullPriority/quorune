@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-03"
+verified: "2026-09-04"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -701,6 +701,18 @@ its existing activation owner. Class, Room, Prototype, noncreature or arbitrary
 striations, malformed ranges, variable characteristics, unsupported children,
 granted or text-changed symbols, and cycle-sensitive dynamic characteristic
 interactions remain residual or explicitly outside trust.
+
+`compiler/day_night_nodes.py` and
+`compiler/spell_history_transform_nodes.py` close one paired-face family.
+Canonical Daybound and Nightbound keywords must occupy opposite faces of a
+nonmodal double-faced card. The legacy grammar accepts only the two exact
+"beginning of each upkeep" previous-turn spell-count conditions and a bounded
+source-self reference. Both forms use the shared current-ability component
+query, one bounded previous-turn summary, and the logical-object-aware
+transform operation. Other steps or thresholds, arbitrary Transform or
+Convert instructions, explicit effects that set day or night, transform-into
+effects, copied or granted forms, and independently unsupported siblings
+remain material residuals.
 
 `compiler/token_templates.py` owns fixed-definition token creation across
 spell, triggered, and activated effects. The closed production emits one

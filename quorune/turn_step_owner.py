@@ -15,9 +15,9 @@ from .model import (
     GameState,
     StackItem,
     TurnEntry,
-    TurnHistory,
     YieldPolicy,
 )
+from .turn_history import roll_turn_history
 from .trigger_processing import (
     clear_pending_trigger_batches,
     matching_delayed_triggers,
@@ -195,14 +195,21 @@ class TurnStepOwner:
             self.begin_turn(self.select_next_turn())
             return
 
+        previous_active_player = (
+            self.state.current_turn.player
+            if self.state.current_turn is not None
+            else None
+        )
         self.state.current_turn = entry
         self.state.active_player = entry.player
         if not entry.extra:
             self.state.last_normal_turn_player = entry.player
         self.state.turn_sequence += 1
         if self.state.turn_history is not None:
-            self.state.turn_history = TurnHistory(
-                turn_sequence=self.state.turn_sequence
+            self.state.turn_history = roll_turn_history(
+                self.state.turn_history,
+                next_turn_sequence=self.state.turn_sequence,
+                previous_active_player=previous_active_player,
             )
 
         player = self.state.players[entry.player]

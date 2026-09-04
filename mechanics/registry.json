@@ -1,5 +1,5 @@
 {
-  "contract_count": 122,
+  "contract_count": 123,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -617,6 +617,12 @@
       "mechanic_id": "skulk",
       "path": "mechanics/contracts/skulk.json",
       "sha256": "739991d5a3d3e831d71776bbaab8f324aab54c6218ed6a8cae2ab812e41ee58b",
+      "version": 1
+    },
+    {
+      "mechanic_id": "daybound-and-nightbound",
+      "path": "mechanics/contracts/spell-history-transformations.json",
+      "sha256": "63ff4cc2763dcf2ae5c5004a4a515713f404674fcb3c49e93b849ec24c30c9c4",
       "version": 1
     },
     {
@@ -1592,19 +1598,37 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/spell-history-transformations.json",
+      "contract_sha256": "63ff4cc2763dcf2ae5c5004a4a515713f404674fcb3c49e93b849ec24c30c9c4",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "DayNightBoundSpec, SpellHistoryTransformSpec, bounded turn history, paired-face compiler nodes, shared component applicability, day/night coordination, permanent transform owner, zone entry, untap ordering, normalized triggers, projection, persistence, and replay",
+      "implementation_version": "spell-history-transformations-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "explicit make-day or make-night effects",
+        "arbitrary, targeted, mass, optional, delayed, compound, Convert, and transform-into effect grammar",
+        "shared-team turns",
+        "copied, granted, text-changed, face-down, phased-out, modal, merged, melded, and double-faced-token forms",
+        "independently unsupported sibling abilities retain partial whole-card status",
+        "aggregate Transform and Day/Night coverage remains incomplete"
+      ],
       "mechanic_id": "daybound-and-nightbound",
       "official_name": "Daybound and Nightbound",
       "rule_references": [
         "702.145"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_compiler_lowers_paired_daybound_and_legacy_transform_nodes",
+        "test_day_night_and_transform_grammar_exclusions_fail_closed",
+        "test_transform_capability_and_compiler_mutations_fail_closed",
+        "test_day_night_entry_untap_and_shared_component_applicability",
+        "test_legacy_transform_intervening_identity_and_transform_count",
+        "test_simultaneous_transform_apnap_state_and_replay"
+      ],
       "trust_level": "untrusted"
     },
     {

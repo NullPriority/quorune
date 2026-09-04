@@ -70,6 +70,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/entry_counter_model.py",
         "quorune/evolve.py",
         "quorune/fixed_keyword_entry_counters.py",
+        "quorune/day_night_model.py",
+        "quorune/spell_history_transform_model.py",
         "quorune/leveler_bands.py",
         "quorune/modular.py",
         "quorune/renown.py",
@@ -231,6 +233,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/permanent_exile.py",
         "quorune/public_zone_moves.py",
         "quorune/permanent_designations.py",
+        "quorune/day_night.py",
+        "quorune/permanent_transform.py",
+        "quorune/spell_history_transform.py",
         "quorune/zone_object_state.py",
         "quorune/zone_transition_journal.py",
         "quorune/zone_transition_model.py",
@@ -387,6 +392,8 @@ def _owner(relative: str, layer: str) -> str:
         return "aura_rules"
     if relative in {
         "quorune/bloodthirst.py",
+        "quorune/day_night_model.py",
+        "quorune/spell_history_transform_model.py",
         "quorune/read_ahead.py",
         "quorune/riot.py",
         "quorune/unleash.py",
@@ -562,6 +569,12 @@ def _owner(relative: str, layer: str) -> str:
     }:
         return "zones_and_object_identity"
     if relative in {
+        "quorune/day_night.py",
+        "quorune/permanent_transform.py",
+        "quorune/spell_history_transform.py",
+    }:
+        return "day_night_and_transform"
+    if relative in {
         "quorune/turn_priority_model.py",
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
@@ -709,6 +722,7 @@ def build_classifications() -> dict[str, Any]:
                             "damage_transaction.py",
                             "damage_results.py",
                             "death_return.py",
+                            "day_night.py",
                             "declaration_rule_effects.py",
                             "delayed_triggers.py",
                             "drawing/",
@@ -716,6 +730,7 @@ def build_classifications() -> dict[str, Any]:
                             "life_change.py",
                             "life_state.py",
                             "leveler_bands.py",
+                            "permanent_transform.py",
                             "mana_activation.py",
                             "mana_mode_effects.py",
                             "mana_payment_continuations.py",
@@ -743,6 +758,7 @@ def build_classifications() -> dict[str, Any]:
                             "mana_ability_runtime.py",
                             "trigger_targeting.py",
                             "untap_step",
+                            "spell_history_transform.py",
                         )
                     )
                     or relative in {

@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed generic Daybound and transform fixtures",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000073100001",
+      "name": "Sunlit Adept // Moonlit Adept",
+      "mana_cost": "{1}{G} // ",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Werewolf // Creature — Werewolf",
+      "oracle_text": "Sunlit Adept: Vigilance\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)\n//\nMoonlit Adept: Trample\nNightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": ["Daybound", "Nightbound", "Trample", "Transform", "Vigilance"],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"},
+      "card_faces": [
+        {
+          "colors": ["G"],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{G}",
+          "name": "Sunlit Adept",
+          "oracle_text": "Vigilance\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature — Human Werewolf"
+        },
+        {
+          "colors": ["G"],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Moonlit Adept",
+          "oracle_text": "Trample\nNightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature — Werewolf"
+        }
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000070127001",
+      "name": "Village Watcher // Village Ravager",
+      "mana_cost": "{2}{R} // ",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Werewolf // Creature — Werewolf",
+      "oracle_text": "Village Watcher: At the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n//\nVillage Ravager: At the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": ["Transform"],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"},
+      "card_faces": [
+        {
+          "colors": ["R"],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}",
+          "name": "Village Watcher",
+          "oracle_text": "At the beginning of each upkeep, if no spells were cast last turn, transform this creature.",
+          "power": "2",
+          "toughness": "3",
+          "type_line": "Creature — Human Werewolf"
+        },
+        {
+          "colors": ["R"],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Village Ravager",
+          "oracle_text": "At the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+          "power": "4",
+          "toughness": "5",
+          "type_line": "Creature — Werewolf"
+        }
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000070127002",
+      "name": "Arin of the Village // Arin, Unbound",
+      "mana_cost": "{3}{R} // ",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Werewolf // Legendary Creature — Werewolf",
+      "oracle_text": "Arin of the Village: At the beginning of each upkeep, if no spells were cast last turn, transform Arin of the Village.\n//\nArin, Unbound: At the beginning of each upkeep, if a player cast two or more spells last turn, transform Arin.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": ["Transform"],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"},
+      "card_faces": [
+        {
+          "colors": ["R"],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{R}",
+          "name": "Arin of the Village",
+          "oracle_text": "At the beginning of each upkeep, if no spells were cast last turn, transform Arin of the Village.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Legendary Creature — Human Werewolf"
+        },
+        {
+          "colors": ["R"],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Arin, Unbound",
+          "oracle_text": "At the beginning of each upkeep, if a player cast two or more spells last turn, transform Arin.",
+          "power": "5",
+          "toughness": "5",
+          "type_line": "Legendary Creature — Werewolf"
+        }
+      ]
+    }
+  ],
+  "rulings": []
+}
