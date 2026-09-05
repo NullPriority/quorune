@@ -2306,26 +2306,109 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "ability-word-public-event-trigger-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-public-creature-set-characteristics",
+          "member_family_ids": [
+            "activated_effect:unparsed-all-creatures-gain",
+            "activated_effect:unparsed-all-creatures-get",
+            "activated_effect:unparsed-attacking-creatures-gain",
+            "activated_effect:unparsed-attacking-creatures-get",
+            "duration:until-end-of-turn",
+            "effect_clause:draw",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unparsed-all-creatures-gain",
+            "effect_clause:unparsed-all-creatures-get",
+            "effect_clause:unparsed-attacking-creatures-gain",
+            "effect_clause:unparsed-attacking-creatures-get",
+            "effect_clause:unparsed-blocking-creatures-gain",
+            "effect_clause:unparsed-blocking-creatures-get",
+            "effect_clause:unparsed-creatures-target-player",
+            "effect_clause:unparsed-creatures-your-opponents",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "capability:state_query.permanent.public_state_predicate",
+            "capability:target.revalidate_resolution",
+            "component:quorune.compiler.fixed_public_characteristic_sets.fixed_public_characteristic_set_effect_template",
+            "component:quorune.compiler.fixed_resolution_characteristic_queries.fixed_resolution_characteristic_query_is_closed",
+            "component:quorune.continuous_effect_state.matching_battlefield_objects",
+            "component:quorune.effect_runtime.zones_and_attachments._apply_modify_all_matching_permanents_until_end_of_turn",
+            "component:quorune.object_query.object_matches_query"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "all-creatures",
+            "attacking-or-blocking-public-state",
+            "fixed-power-toughness-delta",
+            "fixed-supported-keyword-addition",
+            "opponent-controller-exclusion",
+            "optional-source-reference-exclusion",
+            "target-player-controller"
+          ],
+          "shared_dependencies": [
+            "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "state_query.permanent.public_state_predicate",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one fixed all-creature, opponent-controlled, target-player-controlled, attacking, blocking, or source-excluding attacking set receiving fixed power, toughness, supported keywords, or both until end of turn across spell, triggered, activated, loyalty, and modal contexts",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Generalizes the existing resolution-locked characteristic set owner from source-controlled predicates to closed public controller and combat-state predicates while preserving one query validator, one affected-set lock, shared layer-6 applicability, layer-7c ordering, cleanup, target revalidation, projection, and replay.",
+          "explicit_exclusions": [
+            "attachment-relative, chosen-type, counter-qualified, tapped, modified, and arbitrary public-state sets",
+            "conditional, optional, linked-result, repeated, variable-duration, and independently unsupported carrier grammar",
+            "dynamic power, toughness, amount, count, color, keyword, and same-layer characteristic predicates",
+            "effects that change type, color, control, name, text, or copy values",
+            "keywords without an exact canonical rules consumer",
+            "multiple, divided, up-to, opponent-only target, and target-permanent set grammar"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-public-characteristic-set-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v170-ability-word-public-event-triggers",
-      "compiler_version": "oracle-ir-v170",
-      "bundle_id": "bundle:ability-word-public-event-triggers",
-      "candidate_ids": ["compiler:ability-word-public-event-triggers"],
+      "transition_id": "oracle-ir-v171-fixed-public-creature-set-characteristics",
+      "compiler_version": "oracle-ir-v171",
+      "bundle_id": "bundle:fixed-public-creature-set-characteristics",
+      "candidate_ids": ["compiler:fixed-public-creature-set-characteristics"],
       "family_ids": [
+        "activated_effect:unparsed-all-creatures-gain",
+        "activated_effect:unparsed-all-creatures-get",
+        "activated_effect:unparsed-attacking-creatures-gain",
+        "activated_effect:unparsed-attacking-creatures-get",
+        "duration:until-end-of-turn",
+        "effect_clause:draw",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:unparsed-all-creatures-gain",
+        "effect_clause:unparsed-all-creatures-get",
+        "effect_clause:unparsed-attacking-creatures-gain",
+        "effect_clause:unparsed-attacking-creatures-get",
+        "effect_clause:unparsed-blocking-creatures-gain",
+        "effect_clause:unparsed-blocking-creatures-get",
+        "effect_clause:unparsed-creatures-target-player",
+        "effect_clause:unparsed-creatures-your-opponents",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "event_binding:normalized-event-binding",
+        "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_public_action",
-        "trigger.event.normalized_spell_cast",
-        "trigger.event.normalized_zone_change"
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.public_state_predicate",
+        "target.revalidate_resolution"
       ],
-      "measurement_id": "measurement:ability-word-public-event-triggers",
+      "measurement_id": "measurement:fixed-public-creature-set-characteristics",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2897,6 +2980,11 @@
         "candidate_id": "compiler:ability-word-public-event-triggers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The v169 selector has no eligible carried candidate while its raw continuous-layer leader and counter queue remain heterogeneous or lack measured broad gain. Bounded comparisons retire top-library access, remaining quoted grants, individual alternate-cast mechanics, and heterogeneous life, exile, and token families below every normal harvest floor. The selected integrated event probe instead isolates a threshold-clearing cohort of strict Heroic, Magecraft, Constellation, and Battalion carriers whose bodies already close through typed effect owners. It reuses the canonical cast, copy, zone-entry, sealed attack-transition, current layer-6 ability-applicability, APNAP, effect, projection, and replay owners; every broader event form and independently unsupported body remains fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-public-creature-set-characteristics",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The v170 selector has no eligible carried candidate while its raw continuous-layer and unparsed-effect leaders remain heterogeneous and the counter queue lacks measured broad gain. A bounded integrated comparison isolates a threshold-clearing fixed public creature-set family across spell, triggered, activated, loyalty, and modal contexts. All, opponent-controlled, target-player-controlled, attacking, blocking, and source-excluding attacking predicates reuse one public ObjectQuerySpec validator and lock one cycle-safe resolution-time set before the existing layer-6 and layer-7c owners apply fixed results. Dynamic characteristic predicates and every broader target, state, duration, condition, and effect form remain fail-closed."
       }
     ]
   },

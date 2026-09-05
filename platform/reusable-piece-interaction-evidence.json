@@ -5740,6 +5740,36 @@
       ],
       "interaction_order": 2,
       "assertion": "A fixed Madness declaration beside an unsupported target predicate remains unresolved and cannot install its typed discard replacement into trusted runtime execution."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_fixed_public_characteristic_sets_lock_multiplayer_membership",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.public_state_predicate"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "The shared public-state predicate selects current attacking and blocking creatures once before the existing resolution-created layer-6 and layer-7c journals lock their logical identities."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_target_player_characteristic_set_resolves_and_replays",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "The canonical target owner revalidates one public player before its controller identity selects and locks the represented fixed characteristic set."
     }
   ]
 }

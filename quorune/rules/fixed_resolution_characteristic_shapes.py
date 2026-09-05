@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..compiler.continuous_templates import (
-    fixed_controlled_characteristic_query_is_closed,
+from ..compiler.fixed_resolution_characteristic_queries import (
+    fixed_resolution_characteristic_query_is_closed,
 )
 from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORDS,
@@ -18,18 +18,17 @@ FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
 )
 
 
-def fixed_controlled_characteristic_set_node_capabilities(
+def fixed_resolution_characteristic_set_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Own one fixed, resolution-locked controlled-creature modifier."""
+    """Own one fixed, resolution-locked public characteristic set."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
         "cr-611-continuous-effects" not in mechanics
-        or target_schema is not None
         or len(effects) != 1
     ):
         return ()
@@ -53,7 +52,10 @@ def fixed_controlled_characteristic_set_node_capabilities(
         return ()
     if (
         dict(effect["predicate"]) != query.to_dict()
-        or not fixed_controlled_characteristic_query_is_closed(query)
+        or not fixed_resolution_characteristic_query_is_closed(
+            query,
+            target_schema=target_schema,
+        )
     ):
         return ()
     if has_keywords:
@@ -82,10 +84,17 @@ def fixed_controlled_characteristic_set_node_capabilities(
             )
         ):
             return ()
-    return (FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY,)
+    dependencies = {FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY}
+    if query.state_predicate is not None:
+        dependencies.add("state_query.permanent.public_state_predicate")
+    if target_schema is not None:
+        if "cr-115-targets" not in mechanics:
+            return ()
+        dependencies.add("target.revalidate_resolution")
+    return tuple(sorted(dependencies))
 
 
 __all__ = [
     "FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY",
-    "fixed_controlled_characteristic_set_node_capabilities",
+    "fixed_resolution_characteristic_set_node_capabilities",
 ]

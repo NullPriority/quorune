@@ -609,11 +609,17 @@
       "id": "fixed-resolution-characteristic-effect-contract",
       "patterns": [
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/fixed_public_characteristic_sets.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "quorune/continuous_effect_state.py",
         "quorune/continuous_effects.py",
         "quorune/effect_runtime/zones_and_attachments.py",
         "quorune/keyword_abilities.py",
+        "quorune/object_predicate.py",
+        "quorune/object_query.py",
         "quorune/rules/fixed_resolution_characteristic_shapes.py",
-        "quorune/semantic_runtime/continuous_components.py"
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/test_continuous_effect_duration.py"
       ],
       "test_modules": [
         "test_continuous_effect_duration",

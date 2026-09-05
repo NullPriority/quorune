@@ -21,6 +21,9 @@ from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORDS,
 )
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
+from .fixed_resolution_characteristic_queries import (
+    fixed_resolution_characteristic_query_is_closed,
+)
 from .public_state_queries import (
     controlled_creature_fixed_modifier,
     fixed_battlefield_query_subject,
@@ -1401,77 +1404,6 @@ def controlled_creature_until_end_of_turn_effect(
     )
 
 
-def fixed_controlled_characteristic_query_is_closed(
-    query: ObjectQuerySpec,
-) -> bool:
-    """Return whether one resolution-time controlled set is represented."""
-
-    if (
-        query.zones != ("battlefield",)
-        or query.owner is not None
-        or query.controller != "$controller"
-        or query.types_any
-        or query.excluded_types
-        or query.subtypes_any
-        or query.excluded_subtypes
-        or query.colors_any
-        or query.keywords_all
-        or query.tapped is not None
-        or query.include_phased_out
-        or query.known_to_actor is not None
-        or query.state_predicate is not None
-        or query.exclude_ref not in {None, "$source"}
-    ):
-        return False
-    qualifiers = sum(
-        bool(value)
-        for value in (
-            query.subtypes_all,
-            query.supertypes_all,
-            query.colors_all,
-            query.colorless is not None,
-            query.token is not None,
-        )
-    )
-    if query.subtypes_all:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and len(query.subtypes_all) == 1
-            and canonical_creature_subtype(query.subtypes_all[0])
-            == query.subtypes_all[0]
-        )
-    if query.supertypes_all:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and query.supertypes_all == ("legendary",)
-        )
-    if query.colors_all:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and len(query.colors_all) == 1
-            and query.colors_all[0] in "WUBRG"
-        )
-    if query.colorless is not None:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and query.colorless is True
-        )
-    if query.token is not None:
-        return query.types_all == ("creature",) and qualifiers == 1
-    return query.types_all in {
-        (),
-        ("artifact",),
-        ("land",),
-        ("creature",),
-        ("artifact", "creature"),
-        ("land", "creature"),
-    }
-
-
 def controlled_characteristic_until_end_of_turn_effect(
     oracle_line: str,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], tuple[str, ...]] | None:
@@ -1527,7 +1459,10 @@ def controlled_characteristic_until_end_of_turn_effect(
             ),
         }
     )
-    if not fixed_controlled_characteristic_query_is_closed(predicate):
+    if not fixed_resolution_characteristic_query_is_closed(
+        predicate,
+        target_schema=None,
+    ):
         return None
     modifier = descriptor["modifier"]
     keywords = tuple(modifier["add_abilities"])

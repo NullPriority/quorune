@@ -7937,6 +7937,14 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_public_characteristic_sets_lock_multiplayer_membership",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose controller, opponent, attacking, blocking, and source-exclusion predicates while locking one resolution-time logical-object set through layer 6 and 7c."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_resolution_and_static_ability_changes_share_layer_six_ordering",
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -7961,6 +7969,14 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_public_characteristic_sets_lock_multiplayer_membership",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Select all three opponents by controller exclusion in four-player state while retaining separate all-creature and combat-state sets."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_mass_resolution_locks_set_across_entry_control_and_zone_change",
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -7981,6 +7997,14 @@
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Block the activated producer's typed dependency gate and prove the fixed characteristic node loses exact trust."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_fixed_public_creature_set_compiler_mutant_is_killed",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the shared public-set compiler call and prove the represented all-creature effect cannot retain exact trust."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -8013,6 +8037,14 @@
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject targeted, opponent-relative, combat-state, counter-qualified, dynamic, quoted, protection, type-changing, and variable-duration lookalikes."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_fixed_public_creature_set_near_misses_remain_material",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep tapped, keyword-qualified, other-blocking, opponent-only target, dynamic, type-changing, variable-duration, and conditional forms outside the closed query."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -8064,11 +8096,27 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectModelTests.test_fixed_public_creature_sets_compile_across_shared_contexts",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed all-creature, opponent, target-player, attacking, blocking, and source-excluding attack sets across spell, triggered, activated, loyalty, and modal contexts."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose public effective characteristics without projecting the authoritative continuous-effect journal or physical object identities."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_public_characteristic_sets_lock_multiplayer_membership",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project the resulting public characteristics without exposing the locked continuous-effect journal or authoritative object identities."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -8085,6 +8133,14 @@
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Serialize and exactly replay one source-bound controlled-set power, toughness, and keyword result from authoritative commands."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_target_player_characteristic_set_resolves_and_replays",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay target-player revalidation, controller substitution, locked affected membership, layer-6 result, and four-player priority to the identical hash."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -19968,6 +20024,14 @@
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_public_characteristic_sets_lock_multiplayer_membership",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use current authoritative attacking and blocking relationships to select a resolution-time set before locking logical-object membership."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_public_state_targets_share_offer_command_and_resolution_revalidation",
       "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -20731,6 +20795,14 @@
         "commander_review"
       ],
       "applicability_note": "Revalidate the selected player immediately before committing the targeted activated ability's private draw transaction."
+    },
+    {
+      "capability_id": "target.revalidate_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_target_player_characteristic_set_resolves_and_replays",
+      "official_rule_ids": ["115.1", "608.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Revalidate one public target player and substitute that seat into the locked creature-set predicate immediately before resolution."
     },
     {
       "capability_id": "target.revalidate_resolution",
