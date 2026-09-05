@@ -4508,60 +4508,60 @@
           "classification": "rules_value",
           "file": "quorune/selection/exile_cast.py",
           "flow_id": "card-identity-flow:240c214c7065fcaba611",
-          "line": 168,
+          "line": 170,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "mapping_get",
-          "source_line": 168,
+          "source_line": 170,
           "symbol": "OneShotExileCastChoiceOwnerMixin._begin_siege_defeated_resolution"
         },
         {
           "classification": "rules_value",
           "file": "quorune/selection/exile_cast.py",
           "flow_id": "card-identity-flow:b6db7b60aad4becb02f6",
-          "line": 179,
+          "line": 181,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 179,
+          "source_line": 181,
           "symbol": "OneShotExileCastChoiceOwnerMixin._begin_siege_defeated_resolution"
         },
         {
           "classification": "rules_value",
           "file": "quorune/selection/exile_cast.py",
           "flow_id": "card-identity-flow:c34d40fbf3edcf4b0daa",
-          "line": 259,
+          "line": 261,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 259,
+          "source_line": 261,
           "symbol": "OneShotExileCastChoiceOwnerMixin._begin_siege_defeated_resolution"
         },
         {
           "classification": "rules_value",
           "file": "quorune/selection/exile_cast.py",
           "flow_id": "card-identity-flow:24f6ca1908d928c466c1",
-          "line": 323,
+          "line": 325,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 323,
+          "source_line": 325,
           "symbol": "OneShotExileCastChoiceOwnerMixin._one_shot_exile_cast_options"
         },
         {
           "classification": "rules_value",
           "file": "quorune/selection/exile_cast.py",
           "flow_id": "card-identity-flow:11cfc617c3fa5a828cf5",
-          "line": 403,
+          "line": 405,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 403,
+          "source_line": 405,
           "symbol": "OneShotExileCastChoiceOwnerMixin._madness_exile_cast_options"
         },
         {
@@ -8612,7 +8612,7 @@
           "module": "quorune.compiler.runtime_templates"
         }
       ],
-      "internal_edges": 2758,
+      "internal_edges": 2760,
       "modules": [
         {
           "fan_in": 2,
@@ -10565,12 +10565,12 @@
           "module": "quorune.rules.casting.lifecycle_costs"
         },
         {
-          "fan_in": 3,
+          "fan_in": 4,
           "fan_out": 2,
           "module": "quorune.rules.casting.model"
         },
         {
-          "fan_in": 2,
+          "fan_in": 3,
           "fan_out": 11,
           "module": "quorune.rules.casting.proposal"
         },
@@ -10836,7 +10836,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 12,
+          "fan_out": 14,
           "module": "quorune.selection.exile_cast"
         },
         {
@@ -11715,11 +11715,11 @@
       "applicable_high_risk_pairs": 275,
       "applicable_piece_pairs": 70426,
       "available": true,
-      "covered_high_risk_pairs": 264,
-      "covered_piece_pairs": 869,
+      "covered_high_risk_pairs": 275,
+      "covered_piece_pairs": 880,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "fd9020c62ae8ad99ce86e3b515987dd26699f18e9d4082080587cfffdb1634ea",
-      "uncovered_high_risk_pairs": 11
+      "source_fingerprint": "fc82016c35d3d1b679ae831519a29d00d6b63538e16d5d34cb0b779094df716b",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -12107,7 +12107,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 204162,
+      "logical_lines": 204180,
       "methods": {
         "dunder": 551,
         "private": 870,
@@ -12518,8 +12518,8 @@
           "file": "quorune/rules/casting/proposal.py",
           "functions_and_methods": 27,
           "language": "python",
-          "logical_lines": 834,
-          "physical_lines": 883
+          "logical_lines": 835,
+          "physical_lines": 884
         },
         {
           "file": "quorune/rules_scheduler.py",
@@ -12527,6 +12527,13 @@
           "language": "python",
           "logical_lines": 825,
           "physical_lines": 877
+        },
+        {
+          "file": "quorune/selection/exile_cast.py",
+          "functions_and_methods": 16,
+          "language": "python",
+          "logical_lines": 820,
+          "physical_lines": 851
         },
         {
           "file": "quorune/effect_runtime/damage_life_and_turns.py",
@@ -12541,13 +12548,6 @@
           "language": "python",
           "logical_lines": 804,
           "physical_lines": 876
-        },
-        {
-          "file": "quorune/selection/exile_cast.py",
-          "functions_and_methods": 16,
-          "language": "python",
-          "logical_lines": 803,
-          "physical_lines": 834
         },
         {
           "file": "quorune/compiler/damage_templates.py",
@@ -16881,7 +16881,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 223537,
+      "physical_lines": 223555,
       "python_file_count": 619,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -30078,7 +30078,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "14208b80bc9e4e43851fa35aae6f6093a5bdc65b56cc70871f0a95e34f538574",
+      "fingerprint": "9b4e6a201e0b440f53d892497836325d547b517c8c9d6ed30a51a5a0f3c69356",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -30936,8 +30936,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 3877,
-      "discovered_total": 7186,
+      "conventional_ast_cases": 3881,
+      "discovered_total": 7190,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 212,
