@@ -163,6 +163,34 @@ class ChangeImpactTests(unittest.TestCase):
             plan.matched_rule_ids,
         )
 
+    def test_public_query_amount_owner_selects_effect_and_interaction_contracts(self):
+        for owner in (
+            "quorune/compiler/effect_template_composition.py",
+            "quorune/compiler/public_query_effect_amounts.py",
+            "quorune/query_effect_amount_model.py",
+            "quorune/semantic_runtime/query_effect_amounts.py",
+            "quorune/semantic_runtime/values.py",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(
+                    {
+                        "test_damage_prevention_shields",
+                        "test_fixed_counter_event_triggers",
+                        "test_fixed_damage_effect_clauses",
+                        "test_fixed_player_life_effects",
+                        "test_fixed_token_creation_effects",
+                        "test_public_query_effect_amounts",
+                        "test_token_creation_replacements",
+                        "test_typed_query_self_characteristics",
+                    },
+                    set(plan.test_modules),
+                )
+                self.assertIn(
+                    "public-query-effect-amount-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_continuous_runtime_changes_select_performance_contract(self):
         for owner in (
             "quorune/card_programs/runtime.py",

@@ -2374,41 +2374,101 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-public-characteristic-set-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-query-effect-amounts",
+          "member_family_ids": [
+            "activated_effect:create-token",
+            "activated_effect:deal-damage",
+            "activated_effect:draw",
+            "activated_effect:life-change",
+            "activated_effect:ordered-effect-composition",
+            "effect_clause:create-token",
+            "effect_clause:deal-damage",
+            "effect_clause:draw",
+            "effect_clause:life-change",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "quantity_expression:dynamic-quantity",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:quantity_expression.public_query_effect_amount",
+            "component:quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+            "component:quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.query_effect_amount_model.PublicQueryAmountSpec",
+            "component:quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+            "component:quorune.semantic_runtime.values.resolve_semantic_value"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "controller-or-global-public-zone",
+            "fixed-signed-coefficient",
+            "layer-five-object-query",
+            "life-damage-draw-or-token-operation",
+            "resolution-time-count"
+          ],
+          "shared_dependencies": [
+            "damage.amount.positive",
+            "life.change.effect",
+            "quantity_expression.public_query_effect_amount",
+            "token.creation.fixed_definition",
+            "zone.draw.library_to_hand"
+          ],
+          "shared_grammar": "one standalone fixed-coefficient life, damage, draw, or fixed-token instruction whose amount is the current count of a closed controller or global battlefield, graveyard, or identity-free hand ObjectQuerySpec",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Adds one resolution-time scalar placeholder to the existing semantic-value owner, resolves it through the cycle-safe layer-5 quantity boundary using the stack object's locked controller, and feeds the ordinary fixed life, damage, draw, or token owner without another mutation or replacement path.",
+          "explicit_exclusions": [
+            "dynamic targets, coefficients, token definitions, arithmetic, comparisons, and distinct-value counts",
+            "linked-result, this-way, chosen, modal, optional, conditional, and compound sequences",
+            "quoted, granted, and text-changed abilities",
+            "source-counter, attachment-derived, opponent hidden-zone, source-excluding, ability-presence, combat-state, and tapped-state quantities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-query-effect-amount-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v171-fixed-public-creature-set-characteristics",
-      "compiler_version": "oracle-ir-v171",
-      "bundle_id": "bundle:fixed-public-creature-set-characteristics",
-      "candidate_ids": ["compiler:fixed-public-creature-set-characteristics"],
+      "transition_id": "oracle-ir-v172-public-query-effect-amounts",
+      "compiler_version": "oracle-ir-v172",
+      "bundle_id": "bundle:public-query-effect-amounts",
+      "candidate_ids": ["compiler:public-query-effect-amounts"],
       "family_ids": [
-        "activated_effect:unparsed-all-creatures-gain",
-        "activated_effect:unparsed-all-creatures-get",
-        "activated_effect:unparsed-attacking-creatures-gain",
-        "activated_effect:unparsed-attacking-creatures-get",
-        "duration:until-end-of-turn",
+        "activated_effect:create-token",
+        "activated_effect:deal-damage",
+        "activated_effect:draw",
+        "activated_effect:life-change",
+        "activated_effect:ordered-effect-composition",
+        "effect_clause:create-token",
+        "effect_clause:deal-damage",
         "effect_clause:draw",
-        "effect_clause:ordered-effect-composition",
-        "effect_clause:unparsed-all-creatures-gain",
-        "effect_clause:unparsed-all-creatures-get",
-        "effect_clause:unparsed-attacking-creatures-gain",
-        "effect_clause:unparsed-attacking-creatures-get",
-        "effect_clause:unparsed-blocking-creatures-gain",
-        "effect_clause:unparsed-blocking-creatures-get",
-        "effect_clause:unparsed-creatures-target-player",
-        "effect_clause:unparsed-creatures-your-opponents",
+        "effect_clause:life-change",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
         "event_binding:normalized-event-binding",
+        "quantity_expression:dynamic-quantity",
         "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "damage.amount.positive",
+        "damage.result.multitype_permanent",
+        "damage.result.player_life",
+        "life.change.effect",
+        "quantity_expression.public_query_effect_amount",
         "state_query.permanent.public_state_predicate",
-        "target.revalidate_resolution"
+        "target.revalidate_resolution",
+        "token.creation.fixed_definition",
+        "zone.draw.library_to_hand"
       ],
-      "measurement_id": "measurement:fixed-public-creature-set-characteristics",
+      "measurement_id": "measurement:public-query-effect-amounts",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2985,6 +3045,11 @@
         "candidate_id": "compiler:fixed-public-creature-set-characteristics",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The v170 selector has no eligible carried candidate while its raw continuous-layer and unparsed-effect leaders remain heterogeneous and the counter queue lacks measured broad gain. A bounded integrated comparison isolates a threshold-clearing fixed public creature-set family across spell, triggered, activated, loyalty, and modal contexts. All, opponent-controlled, target-player-controlled, attacking, blocking, and source-excluding attacking predicates reuse one public ObjectQuerySpec validator and lock one cycle-safe resolution-time set before the existing layer-6 and layer-7c owners apply fixed results. Dynamic characteristic predicates and every broader target, state, duration, condition, and effect form remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:public-query-effect-amounts",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The v171 selector has no eligible carried candidate while the raw continuous-layer leader remains heterogeneous and the rules queue still points to the explicitly non-foreground counter closure. A bounded integrated probe selects one threshold-clearing query-derived amount family across spell, activated, and normalized-trigger contexts. One typed resolution placeholder reuses the stack object's locked controller, the cycle-safe layer-5 CharacteristicQuantitySpec resolver, and the existing life, damage, draw, token, target, replacement, projection, and replay owners. Source-counter, attachment, hidden-zone, source-excluding, ability-presence, stateful, linked, chosen, modal, optional, conditional, compound, and open-arithmetic variants remain fail-closed; current cohort identities and measurements are generated from the current frontier."
       }
     ]
   },

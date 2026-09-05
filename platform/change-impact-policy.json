@@ -569,6 +569,33 @@
       ]
     },
     {
+      "id": "public-query-effect-amount-contract",
+      "patterns": [
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/query_effect_amount_model.py",
+        "quorune/semantic_runtime/query_effect_amounts.py",
+        "quorune/semantic_runtime/values.py",
+        "tests/test_public_query_effect_amounts.py"
+      ],
+      "test_modules": [
+        "test_activated_draw_abilities",
+        "test_damage_prevention_shields",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_damage_effect_clauses",
+        "test_fixed_player_life_effects",
+        "test_fixed_token_creation_effects",
+        "test_public_query_effect_amounts",
+        "test_token_creation_replacements",
+        "test_typed_query_self_characteristics"
+      ],
+      "test_suites": [
+        "events-replacement-zone"
+      ]
+    },
+    {
       "id": "worktree-environment-ownership",
       "patterns": [
         "AGENTS.md",

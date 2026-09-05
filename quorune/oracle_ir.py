@@ -26,8 +26,8 @@ from .compiler.fixed_public_characteristic_sets import (
 from .compiler.attached_granted_ability_nodes import (
     compile_keyword_or_attached_grant_nodes as _keyword_or_attached_grant_nodes,
 )
-from .compiler.closed_effect_programs import (
-    closed_effect_program_template,
+from .compiler.effect_template_composition import (
+    reviewed_effect_template_composition,
 )
 from .cycling_abilities import CYCLING_MECHANIC_ID
 from .compiler.activated_mana_nodes import (
@@ -51,9 +51,6 @@ from .compiler.delayed_draw_templates import (
 from .compiler.damage_templates import source_pronoun_damage_effect_template
 from .compiler.fixed_controller_effect_sequences import (
     fixed_controller_effect_sequence_template,
-)
-from .compiler.fixed_effect_clause_sequences import (
-    fixed_effect_clause_sequence_template,
 )
 from .compiler.fixed_counter_trigger_nodes import (
     fixed_typed_event_effect_trigger_node,
@@ -153,7 +150,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v171"
+ORACLE_COMPILER_VERSION = "oracle-ir-v172"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -430,38 +427,23 @@ def _reviewed_effect_template(
     Mapping[str, Any] | None,
     tuple[str, ...],
 ]:
-    atomic = _reviewed_atomic_effect_template(
+    return reviewed_effect_template_composition(
         text,
-        card_name=card_name,
-        source_is_permanent=source_is_permanent,
-        source_card_types=source_card_types,
-        source_attachment_relation=source_attachment_relation,
-    )
-    if atomic[0] is not None:
-        return atomic
-    sequence = fixed_effect_clause_sequence_template(
-        text,
-        compile_clause=partial(
+        source_name=card_name,
+        compile_atomic=partial(
             _reviewed_atomic_effect_template,
             card_name=card_name,
             source_is_permanent=source_is_permanent,
             source_card_types=source_card_types,
             source_attachment_relation=source_attachment_relation,
         ),
-    )
-    if sequence is not None:
-        return sequence.compiled()
-    program = closed_effect_program_template(
-        text,
-        compile_component=partial(
-            _reviewed_atomic_effect_template,
-            card_name=card_name,
+        compile_fixed=partial(
+            _effect_template, card_name=card_name,
             source_is_permanent=source_is_permanent,
             source_card_types=source_card_types,
             source_attachment_relation=source_attachment_relation,
         ),
     )
-    return program.compiled() if program is not None else atomic
 
 
 def _contextual_effect_templates(

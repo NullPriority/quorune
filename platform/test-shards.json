@@ -153,6 +153,7 @@
       "test_mentor_rules",
       "test_mill_rules",
       "test_optional_draw_choices",
+      "test_public_query_effect_amounts",
       "test_targeting_v070",
       "test_unearth_rules"
     ],
@@ -587,6 +588,7 @@
       "test_permanent_exile_rules",
       "test_prevention_immediate_sequencing",
       "test_prevention_trigger_stack",
+      "test_public_query_effect_amounts",
       "test_regeneration_rules",
       "test_replacement_event_ordering",
       "test_replacement_event_tree",

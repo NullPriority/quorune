@@ -9,9 +9,14 @@ from ..attachment_references import (
     resolve_source_attachment,
 )
 from ..station import StationAbilityError, station_resolution_power
+from ..query_effect_amount_model import (
+    PUBLIC_QUERY_AMOUNT_KIND,
+    PublicQueryAmountError,
+)
 
 from .context import SemanticNodeError
 from .explore import explore_source_controller
+from .query_effect_amounts import resolve_public_query_amount
 
 
 _INDEX_GROUP = "index"
@@ -84,6 +89,11 @@ def resolve_semantic_value(
         return [resolve_semantic_value(host, child, item) for child in value]
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
+    if isinstance(value, Mapping) and value.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
+        try:
+            return resolve_public_query_amount(host, value, item)
+        except PublicQueryAmountError as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, dict):
         return {
             key: resolve_semantic_value(host, child, item)

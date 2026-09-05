@@ -102,7 +102,7 @@ deployment modes, or architecture review thresholds.
 - [ADR 0085 — typed fixed homogeneous target sets](0085-typed-fixed-homogeneous-target-sets.md)
 - [ADR 0086 — typed fixed controlled characteristic effects](0086-typed-fixed-controlled-characteristic-effects.md)
 - [ADR 0087 — typed fixed public-state characteristics](0087-typed-fixed-public-state-characteristics.md)
-- [ADR 0088 — typed query-count self characteristics](0088-typed-query-self-characteristics.md)
+- [ADR 0088 — typed query-count characteristics and effect amounts](0088-typed-query-self-characteristics.md)
 - [ADR 0089 — single source-tree certification](0089-single-source-tree-certification.md)
 - [ADR 0090 — typed public event-effect triggers](0090-typed-public-event-effect-triggers.md)
 - [ADR 0091 — typed fixed library selection](0091-typed-fixed-library-selection.md)

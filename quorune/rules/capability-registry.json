@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 144,
+  "registry_version": 145,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3041,6 +3041,33 @@
       "dependency_fail_closed_rationale": "The fragment consumes a closed typed public quantity through the shared layer-5 characteristic boundary and declares each supported keyword consumer independently.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused compiler and runtime mutations remove or redirect the quantity relation, threshold, layer-5 type feed, layer-6 keyword grant, or layer-7c modifier; exact four-player, copy, projection, replay, and ordering assertions reject each survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "quantity_expression.public_query_effect_amount",
+      "version": 1,
+      "official_rules": ["608.2h", "613.1d", "613.1e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Resolve one fixed coefficient over a current public object-query count at instruction execution, then feed the resulting integer to an existing typed life, damage, draw, or token owner.",
+        "inputs": ["one standalone source-spanned effect instruction", "stack object's locked controller", "controller or global battlefield, graveyard, or identity-free hand count", "cycle-safe layer-5 types, subtypes, supertypes, colors, colorlessness, and token state", "fixed signed coefficient", "existing fixed effect operation and target schema"],
+        "outputs": ["one deterministic resolution-time integer", "unchanged typed life, damage, draw, or token instruction", "current layer-5 characteristic query", "copy-controller-correct and multiplayer-correct result", "hidden-identity-free hand count"],
+        "exclusions": ["source-counter, attachment-derived, opponent hidden-zone, source-excluding, ability-presence, combat-state, and tapped-state quantities", "linked-result, this-way, chosen, modal, optional, conditional, and compound sequences", "dynamic targets, coefficients, token definitions, arithmetic, comparisons, and distinct-value counts", "quoted, granted, and text-changed abilities"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.effect_template_composition.reviewed_effect_template_composition", "quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template", "quorune.query_effect_amount_model.PublicQueryAmountSpec", "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount", "quorune.semantic_runtime.values.resolve_semantic_value", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin"],
+      "positive_tests": ["test_compiler_lowers_public_query_amounts_across_contexts"],
+      "negative_tests": ["test_public_query_amount_grammar_and_schema_fail_closed"],
+      "interaction_tests": ["test_query_amounts_use_current_layer_five_state_and_locked_controller", "test_query_amounts_delegate_to_draw_and_token_owners", "test_query_amounts_life_use_existing_replacement_owner", "test_query_amounts_trigger_uses_normalized_event_and_apnap_owner", "test_zero_query_amount_and_stale_target_use_existing_target_owner", "test_public_query_amount_compiler_and_resolver_mutants_are_killed", "test_public_query_amount_resolver_mutant_is_killed"],
+      "multiplayer_tests": ["test_query_amount_four_player_projection_save_load_and_replay"],
+      "privacy_tests": ["test_query_amount_four_player_projection_save_load_and_replay"],
+      "replay_tests": ["test_query_amount_four_player_projection_save_load_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Every admitted node declares the amount capability in addition to its existing effect and target dependencies; blocking the shared quantity owner leaves the complete CardProgram unresolved before stack execution.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient or controller relation, or bypass the layer-5 query; exact compiler, copy-controller, multiplayer, projection, and replay assertions reject each survivor.",
       "blockers": [],
       "status": "trusted"
     },
