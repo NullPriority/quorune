@@ -161,7 +161,7 @@
       "mana_cost": "{2}{U}",
       "cmc": 3.0,
       "type_line": "Legendary Creature — Human Artificer",
-      "oracle_text": "Partner with Named Partner Beta (When this creature enters, target player may put Named Partner Beta into their hand from their library, then shuffle.)",
+      "oracle_text": "Partner with Named Partner Beta (When this creature enters, target player may put Named Partner Beta into their hand from their library, then shuffle.)\n{3}: Target player draws two cards.",
       "power": "2",
       "toughness": "3",
       "loyalty": null,

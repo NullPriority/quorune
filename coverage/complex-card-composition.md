@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "2c9221c4761c787137096197708687f90fb5a030851d17e10ac0538946579d9f"
+verified: "7affdce6dc62503c5714dd1d67eb7b046f123d7f5b751bfe11c63461c1bdbe80"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -33,7 +33,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Legend of Kuruk // Avatar Kuruk | 204 | 28 | 6 | 6 | 11 | 5 | `blocked` |
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
+| Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Ugin, Eye of the Storms | 199 | 39 | 5 | 5 | 11 | 3 | `blocked` |
+| Rowan Kenrith | 196 | 23 | 5 | 6 | 6 | 21 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
@@ -58,9 +60,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
+| Shabraz, the Skyshark | 177 | 33 | 6 | 5 | 4 | 2 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
-| The Rise of Sozin // Fire Lord Sozin | 176 | 20 | 6 | 6 | 9 | 5 | `blocked` |
-| Invasion of Fiora // Marchesa, Resolute Monarch | 175 | 17 | 5 | 7 | 6 | 17 | `blocked` |
-| Nicol Bolas, the Ravager // Nicol Bolas, the Arisen | 175 | 30 | 5 | 7 | 5 | 11 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

@@ -136,6 +136,54 @@ class CommanderPairingTests(unittest.TestCase):
         session.engine.state.priority_passes = []
         return session
 
+    def partner_draw_session(self, seed: int) -> CommanderSession:
+        deck = DeckDefinition(
+            name="Partner with draw interaction",
+            entries=[
+                DeckEntry("Named Partner Alpha", board="commander"),
+                DeckEntry("Named Partner Beta", board="commander"),
+                DeckEntry("Thrasios, Triton Hero", quantity=10),
+            ],
+            commanders=["Named Partner Alpha", "Named Partner Beta"],
+        )
+        session = CommanderSession.create(
+            self.db,
+            {seat: deck for seat in "ABCD"},
+            first_player="A",
+            seed=seed,
+            config=GameConfig(seed=seed, auto_pass_empty_priority=False),
+        )
+        while (
+            session.state.pending_decision is not None
+            and session.state.pending_decision.kind == "mulligan.declare"
+        ):
+            for principal in tuple(session.pending_principals()):
+                result = session.act(principal, {"a": "keep"})
+                self.assertTrue(result.ok, result.summary)
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        source = self._owned_card(session, "A", "Named Partner Alpha")
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            tapped=False,
+            log=False,
+        )
+        engine.state.players["A"].turns_begun = 1
+        source.acquired_control_turn_count = 0
+        engine.state.players["A"].mana_pool["C"] = 3
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine.pump()
+        return session
+
     @staticmethod
     def _owned_card(
         session: CommanderSession,
@@ -709,6 +757,80 @@ class CommanderPairingTests(unittest.TestCase):
         self.assertTrue(selected.ok, selected.summary)
         self.assertEqual("hand", partner.zone)
         self.assertEqual("C", old_source.controller)
+
+    def test_partner_with_pairing_composes_with_target_draw_and_replay(self):
+        session = self.partner_draw_session(702_124_106)
+        engine = session.engine
+        source = self._owned_card(session, "A", "Named Partner Alpha")
+        partner = self._owned_card(session, "A", "Named Partner Beta")
+        self.assertTrue(source.is_commander)
+        self.assertTrue(partner.is_commander)
+        self.assertIsNotNone(source.commander_designation_id)
+        self.assertIsNotNone(partner.commander_designation_id)
+        self.assertNotEqual(
+            source.commander_designation_id,
+            partner.commander_designation_id,
+        )
+        packet = session.packet("pilot:A", full=True)
+        actions = [
+            action
+            for action in packet["decision"]["ctx"]["legal"]["actions"]
+            if action.get("action") == "activate"
+            and action.get("source") == source.ref
+        ]
+        self.assertEqual(1, len(actions))
+        self.assertEqual(
+            {"A", "B", "C", "D"},
+            set(actions[0]["target_schema"]["legal_refs"]),
+        )
+        drawn_ids = set(engine.state.players["B"].zones["library"][-2:])
+        hand_before = len(engine.state.players["B"].zones["hand"])
+        designation_id = source.commander_designation_id
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        activated = session.act(
+            "pilot:A",
+            {"action_id": actions[0]["id"], "targets": ["B"]},
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            principals = session.pending_principals()
+            self.assertTrue(principals)
+            passed = session.act(
+                principals[0],
+                {"action_id": "pass"},
+            )
+            self.assertTrue(passed.ok, passed.summary)
+        else:
+            self.fail("Partner with draw interaction did not resolve")
+
+        self.assertEqual(
+            hand_before + 2,
+            len(engine.state.players["B"].zones["hand"]),
+        )
+        self.assertTrue(
+            drawn_ids <= set(engine.state.players["B"].zones["hand"])
+        )
+        self.assertTrue(source.is_commander)
+        self.assertEqual(designation_id, source.commander_designation_id)
+        self.assertEqual("battlefield", source.zone)
+        self.assertEqual("command", partner.zone)
+        self.assertNotIn(
+            "hand",
+            session.packet("pilot:A", full=True)["state"]["players"]["B"],
+        )
+
+        expected_hash = authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "partner-with-target-draw"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_engine_create_shares_pairing_registry_with_setup(self):
         names = ("Thrasios, Triton Hero", "Tymna the Weaver")

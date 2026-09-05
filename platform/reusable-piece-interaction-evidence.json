@@ -5565,6 +5565,21 @@
       ],
       "interaction_order": 2,
       "assertion": "The shared target-characteristic owner revalidates and destroys the selected Equipment before the same exact effect creates Junk whose later impulse activation stays independently source-bound."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_partner_with_pairing_composes_with_target_draw_and_replay",
+      "piece_ids": [
+        "capability.format.commander.pairing.partner_with",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.partner_with",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "A reciprocally designated Partner with commander retains its independent physical Commander identity while its separately compiled targeted draw activation uses the canonical private library-to-hand owner and replays exactly."
     }
   ]
 }
