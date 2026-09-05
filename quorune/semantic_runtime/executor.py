@@ -46,6 +46,7 @@ from .intents import (
     LifeChangeIntent,
     LibrarySelectionIntent,
     MoveObjectsSimultaneouslyIntent,
+    MadnessChoiceIntent,
     MovePublicZoneSetIntent,
     MoveLibraryCardsToBottomIntent,
     MillCardsIntent,
@@ -130,6 +131,8 @@ class SemanticIntentSink(
         self,
         intent: MoveObjectsSimultaneouslyIntent,
     ) -> tuple[str, ...]: ...
+
+    def madness_choice_intent(self, intent: MadnessChoiceIntent) -> None: ...
 
     def choose_one_rest_bottom_random_intent(
         self,
@@ -662,6 +665,10 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, MoveObjectsSimultaneouslyIntent):
             result = sink.move_objects_simultaneously_intent(intent)
             results.append((intent.actor, result))
+            continue
+        if isinstance(intent, MadnessChoiceIntent):
+            sink.madness_choice_intent(intent)
+            results.append((intent.source.card_ref or intent.actor, None))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):
             results.append(_execute_library_intent(sink, intent))

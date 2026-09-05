@@ -17,6 +17,7 @@ from ..action_proposals import (
     CastCostOption,
     CastProposal,
     freeze_json,
+    thaw_json,
 )
 from ..modal_selection import canonical_modes
 from .costs import CastCostHost, revalidate_convoke_payment
@@ -291,6 +292,33 @@ def _required_face_down_method_spec(
     return method_spec
 
 
+def _rules_authorized_cost_base(
+    request: CastProposalRequest,
+    method_spec: Any | None,
+) -> tuple[dict[str, Any] | None, bool]:
+    if method_spec is not None and request.authorized_cost_option is not None:
+        raise CastProposalError(
+            "A scoped cast cannot combine face-down and rules-authored costs",
+            reason="conflicting_authorized_cost",
+        )
+    if request.authorized_cost_option is not None:
+        return dict(thaw_json(request.authorized_cost_option)), True
+    if method_spec is None:
+        return None, False
+    return (
+        {
+            "id": str(request.cast_method),
+            "kind": "alternate",
+            "label": f"Cast face down using {str(request.cast_method).title()}",
+            "requirements": {
+                "GENERIC": 3,
+                **{color: 0 for color in "WUBRGC"},
+            },
+        },
+        True,
+    )
+
+
 def _cast_program_and_cost(
     host: CastProposalHost,
     request: CastProposalRequest,
@@ -362,18 +390,9 @@ def _cast_program_and_cost(
         else _spell_semantic_key(record, face)
     )
     program = None if method_spec is not None else host.semantics.get(semantic_key)
-    alternative_base = (
-        {
-            "id": str(request.cast_method),
-            "kind": "alternate",
-            "label": f"Cast face down using {str(request.cast_method).title()}",
-            "requirements": {
-                "GENERIC": 3,
-                **{color: 0 for color in "WUBRGC"},
-            },
-        }
-        if method_spec is not None
-        else None
+    alternative_base, suppress_source_costs = _rules_authorized_cost_base(
+        request,
+        method_spec,
     )
     if request.cost_option_id is None:
         advertised = tuple(
@@ -387,7 +406,7 @@ def _cast_program_and_cost(
                 force_without_mana_cost=request.force_without_mana_cost,
                 alternative_base=alternative_base,
                 cast_type_line=type_line if method_spec is not None else None,
-                suppress_source_costs=method_spec is not None,
+                suppress_source_costs=suppress_source_costs,
             )
         )
         if sum(
@@ -409,7 +428,7 @@ def _cast_program_and_cost(
             force_without_mana_cost=request.force_without_mana_cost,
             alternative_base=alternative_base,
             cast_type_line=type_line if method_spec is not None else None,
-            suppress_source_costs=method_spec is not None,
+            suppress_source_costs=suppress_source_costs,
         )
     )
     selected = _selected_cost_option(

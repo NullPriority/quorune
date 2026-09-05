@@ -118,6 +118,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/compiled_activated_abilities.py",
         "quorune/compiled_cast_costs.py",
         "quorune/compiled_cast_lifecycles.py",
+        "quorune/compiled_madness.py",
         "quorune/compiled_cast_timing.py",
         "quorune/compiled_morph.py",
         "quorune/compiled_kicker.py",

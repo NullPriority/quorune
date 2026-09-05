@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import ast
 from dataclasses import replace
+from pathlib import Path
+import pkgutil
 import unittest
 from unittest.mock import patch
 
@@ -138,6 +141,53 @@ from quorune.semantic_runtime.life_replacements import (
 )
 from quorune.targets import PUBLIC_TARGET_ZONES, TargetGroup
 from quorune.zone_trigger_events import ZoneChangeOccurrence
+
+
+class PatchTargetIntegrityTests(unittest.TestCase):
+    def test_literal_patch_targets_resolve_before_mutation_execution(self):
+        failures: list[tuple[str, int, str, str]] = []
+        checked = 0
+        for path in sorted(Path(__file__).parent.glob("test_*.py")):
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.Call) or not node.args:
+                    continue
+                name = (
+                    node.func.id
+                    if isinstance(node.func, ast.Name)
+                    else node.func.attr
+                    if isinstance(node.func, ast.Attribute)
+                    else ""
+                )
+                target = node.args[0]
+                if (
+                    name != "patch"
+                    or not isinstance(target, ast.Constant)
+                    or not isinstance(target.value, str)
+                ):
+                    continue
+                creates_target = any(
+                    keyword.arg == "create"
+                    and isinstance(keyword.value, ast.Constant)
+                    and keyword.value.value is True
+                    for keyword in node.keywords
+                )
+                if creates_target:
+                    continue
+                checked += 1
+                try:
+                    pkgutil.resolve_name(target.value)
+                except (AttributeError, ImportError, ValueError) as exc:
+                    failures.append(
+                        (
+                            path.name,
+                            node.lineno,
+                            target.value,
+                            f"{type(exc).__name__}: {exc}",
+                        )
+                    )
+        self.assertGreater(checked, 0)
+        self.assertEqual([], failures)
 
 
 def _event(*, assigned: int, dealt: int, prevented: int) -> DamageEvent:

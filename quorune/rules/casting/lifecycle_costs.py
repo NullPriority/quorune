@@ -47,7 +47,10 @@ def with_fixed_cast_lifecycle_costs(
         for value in (*optional_costs, *alternate_costs)
     }
     for spec in specs:
-        if spec.kind is FixedCastLifecycleKind.RETRACE:
+        if spec.kind in {
+            FixedCastLifecycleKind.MADNESS,
+            FixedCastLifecycleKind.RETRACE,
+        }:
             continue
         option = spec.fixed_cost_option()
         if option["id"] in existing_ids:

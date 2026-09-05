@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-09-01T15:25:00Z",
+  "observed_at": "2026-09-05T10:04:33Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -749,6 +749,86 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The leaf library-search owner still rejects every compound tail, while the integrated token-production owner now explicitly proves the promoted search-then-Investigate composition. Frontier evaluation derives its exact bounded combination count from the current family universe, and the global fail-closed witness executes every declared pair without pinning a volatile total. Existing complete compiler impact selection already includes all affected modules."
+    },
+    {
+      "id": "ci-20260905-50",
+      "run_id": 33952355256,
+      "head_sha": "9600ed4553bb366c4c001e60567597ab86234c87",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The Madness interaction correction initially promoted the canonical Aura spell-target helper from a private to a public shared name, while its implementation-mutation witness and capability component inventory still named the established private symbol.",
+      "failed_surfaces": [
+        "PR / Python / functional-07 (job 101269695626)"
+      ],
+      "regressions": [
+        "test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_aura_cast_targeting_mutant_is_killed"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Madness now delegates to the existing _aura_spell_target_schema without renaming it, preserving both the killed-mutation contract and capability identity. Complete impact selection already included the module; future shared-helper renames must search exact test and registry references before the source checkpoint."
+    },
+    {
+      "id": "ci-20260905-51",
+      "run_id": 33953752607,
+      "head_sha": "4f526660b9b8c05b4517d8ec101fb7e4b89d4dc2",
+      "category": "browser_integration",
+      "deterministic": true,
+      "summary": "The persistence-heavy four-tab lifecycle journey exceeded the suite-wide 90-second budget in two consecutive exact-head runs even though the second retained trace showed every behavioral assertion completed before metrics collection.",
+      "failed_surfaces": [
+        "PR / Browser / lifecycle (job 101273335465)"
+      ],
+      "regressions": [
+        "four-player.spec.ts: four shared-cookie browser tabs retain isolated seats through mulligans and reconnect"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The unchanged assertion-driven journey now declares a bounded 180-second test budget for four cold deck validations, durable stop/resume, four mulligan receipts, reloads, mobile inspection, and metrics cleanup. Its focused isolated headless rerun passed in 1.6 minutes; browser-full impact already selected the journey."
+    },
+    {
+      "id": "ci-20260905-52",
+      "run_id": 33955410367,
+      "head_sha": "67b7438d0e36106e879b04f430e863c5fa04cfe7",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The ci-escape-report generator read platform/ci-escape-source.json, but its safe cache identity declared only CI and Python-test input groups, so exact-head cloud validation restored a stale report for a changed incident ledger.",
+      "failed_surfaces": [
+        "Generated cloud / Foundation / ci-escape-report (job 101277912569)"
+      ],
+      "regressions": [
+        "test_generated_owner_cache.GeneratedOwnerCacheTests.test_repository_manifest_declares_safe_input_closures"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection."
+    },
+    {
+      "id": "ci-20260905-53",
+      "run_id": 33956229754,
+      "head_sha": "d7ae455e1a208890a0315e372949f97ffaa264d1",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The Madness compiler harvest replaced commit-time fixed lifecycle lookup with the shared Madness-aware owner, but one stale lifecycle rollback test still patched the removed commit-module symbol.",
+      "failed_surfaces": [
+        "PR / Windows / functional-03 (job 101280187979)"
+      ],
+      "regressions": [
+        "test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_partial_card_and_stale_lifecycle_contract_fail_closed"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint."
+    },
+    {
+      "id": "ci-20260905-54",
+      "run_id": 33957811410,
+      "head_sha": "ad3945cc4b477dd1d83482b927a2a9688f5fd1a9",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The shared multi-keyword dispatcher replaced Oracle IR's direct Partner-with compiler import, but the existing Partner-with mutation witness still patched the removed oracle_ir module attribute.",
+      "failed_surfaces": [
+        "PR / Python / functional-12 (job 101284354054)"
+      ],
+      "regressions": [
+        "test_commander_pairing.CommanderPairingTests.test_partner_with_pairing_and_compiler_mutations_fail_closed"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint."
     }
   ],
   "recent_pull_requests": [

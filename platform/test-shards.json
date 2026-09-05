@@ -216,6 +216,7 @@
       "test_interactions_v070",
       "test_intrinsic_entry_counters",
       "test_landwalk",
+      "test_madness_rules",
       "test_mana_abilities",
       "test_self_zone_move_rules",
       "test_surveil_rules",

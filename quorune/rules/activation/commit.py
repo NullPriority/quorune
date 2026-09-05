@@ -32,6 +32,7 @@ from ...activation_usage import (
 )
 from ...model import StackItem, YieldPolicy
 from ...replacement.immutable import thaw_value
+from ...zone_trigger_events import ZoneTransitionKind
 from ...station import (
     STATION_CONTEXT_KEY,
     StationAbilityError,
@@ -430,6 +431,13 @@ def _commit_source_cost(
             reason="activated ability cost",
             semantic_events=True,
             replacement_selections=tuple(selections),
+            transition_kind=(
+                ZoneTransitionKind.DISCARD
+                if ability.discard_source
+                else ZoneTransitionKind.SACRIFICE
+                if ability.sacrifice_source
+                else ZoneTransitionKind.ORDINARY
+            ),
         )
     return origin
 

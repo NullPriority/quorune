@@ -399,6 +399,31 @@ _WITNESSES = {
         "Raid — If you attacked this turn, create a Treasure token.",
         "{2}{B}",
     ),
+    "madness-conditional-choice": _Witness(
+        "Generic Madness Conditional Choice Fixture",
+        "Sorcery",
+        "Target opponent discards two cards.\n"
+        "Raid — If you attacked this turn, create a Treasure token.\n"
+        "Madness {B}",
+        "{2}{B}",
+        ("Madness",),
+    ),
+    "madness-divided-choice": _Witness(
+        "Generic Madness Divided Choice Fixture",
+        "Instant",
+        "Generic Madness Divided Choice Fixture deals 2 damage divided as you "
+        "choose among one or two targets.\nMadness {B}",
+        "{2}{B}",
+        ("Madness",),
+    ),
+    "madness-target-predicate": _Witness(
+        "Generic Madness Target Predicate Fixture",
+        "Instant",
+        "Exile target creature you control, then return that card to the "
+        "battlefield under its owner's control.\nMadness {B}",
+        "{2}{B}",
+        ("Madness",),
+    ),
     "snow-day": _Witness(
         "Snow Day",
         "Instant",
@@ -1044,6 +1069,29 @@ ZONE_AND_CHOICE_PAIRS = (
     _pair("capability.zone.move.fixed_public_set", "residual.target_or_choice.target-predicate"),
 )
 
+MADNESS_AND_CHOICE_PAIRS = (
+    _pair(
+        "capability.zone.change.destination_replacement",
+        "residual.target_or_choice.divided-damage-allocation",
+    ),
+    _pair(
+        "capability.zone.discard.typed_cause",
+        "residual.target_or_choice.conditional-effect",
+    ),
+    _pair(
+        "capability.zone.discard.typed_cause",
+        "residual.target_or_choice.divided-damage-allocation",
+    ),
+    _pair(
+        "capability.zone.discard.typed_cause",
+        "residual.target_or_choice.multiple-targets",
+    ),
+    _pair(
+        "capability.zone.discard.typed_cause",
+        "residual.target_or_choice.target-predicate",
+    ),
+)
+
 PUBLIC_SET_AND_CHOICE_PAIRS = ZONE_AND_CHOICE_PAIRS[-2:]
 
 COST_AND_REPLACEMENT_PAIRS = tuple(
@@ -1147,6 +1195,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
             *FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
             *ZONE_AND_CHOICE_PAIRS,
+            *MADNESS_AND_CHOICE_PAIRS,
             *COST_AND_REPLACEMENT_PAIRS,
             *CONTINUOUS_AND_REPLACEMENT_PAIRS,
             CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
@@ -1247,6 +1296,14 @@ _bind("bretagard-stronghold", ZONE_AND_CHOICE_PAIRS[7])
 _bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[8])
 _bind("heartless-pillage", ZONE_AND_CHOICE_PAIRS[9])
 _bind("snow-day", ZONE_AND_CHOICE_PAIRS[10])
+_bind("madness-conditional-choice", MADNESS_AND_CHOICE_PAIRS[1])
+_bind(
+    "madness-divided-choice",
+    MADNESS_AND_CHOICE_PAIRS[0],
+    MADNESS_AND_CHOICE_PAIRS[2],
+    MADNESS_AND_CHOICE_PAIRS[3],
+)
+_bind("madness-target-predicate", MADNESS_AND_CHOICE_PAIRS[4])
 _bind("descend-upon-the-sinful", PUBLIC_SET_AND_CHOICE_PAIRS[0])
 _bind("gideon-champion-of-justice", PUBLIC_SET_AND_CHOICE_PAIRS[1])
 _bind(
@@ -1476,6 +1533,7 @@ __all__ = [
     "FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS",
     "FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS",
     "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
+    "MADNESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
     "REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS",

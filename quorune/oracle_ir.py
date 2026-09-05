@@ -94,13 +94,13 @@ from .compiler.keyword_nodes import (
     fabricate_keyword_node,
     keyword_node_plans,
     modular_keyword_nodes,
-    partner_with_keyword_nodes,
     prowess_keyword_node,
     read_ahead_keyword_node, ordinary_saga_chapter_nodes,
     riot_keyword_node,
     sunburst_keyword_node,
     unleash_keyword_nodes,
 )
+from .compiler.multi_keyword_nodes import multi_keyword_nodes
 from .compiler.ir_model import (
     append_residual as _residual,
     OracleCardIR,
@@ -153,7 +153,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v168"
+ORACLE_COMPILER_VERSION = "oracle-ir-v169"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -707,8 +707,9 @@ def _keyword_nodes(
     if mechanics is None:
         return ()
 
-    partner_with = partner_with_keyword_nodes(**locals())
-    if partner_with is not None: return partner_with
+    multi_nodes = multi_keyword_nodes(**locals())
+    if multi_nodes is not None: return multi_nodes
+    if mechanics in {("madness",), ("partner with",)}: return ()
 
     plans = keyword_node_plans(
         node_id=node_id,

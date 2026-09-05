@@ -10,6 +10,7 @@ from ..semantic_runtime.intents import (
     MoveObjectsSimultaneouslyIntent,
     RecordChoiceIntent,
 )
+from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
@@ -78,6 +79,13 @@ def _intents(effect: Mapping[str, Any]) -> tuple[Any, ...]:
                 expected_zones=zones,
                 destination=destination,
                 reason=reason,
+                transition_kind=(
+                    ZoneTransitionKind.DISCARD
+                    if event_code == "choice.discard"
+                    else ZoneTransitionKind.SACRIFICE
+                    if event_code == "choice.sacrifice"
+                    else ZoneTransitionKind.ORDINARY
+                ),
             ),
         )
         if refs

@@ -32,6 +32,7 @@ from .bolster import BOLSTER_CHOICE_HANDLERS
 from .modular import MODULAR_CHOICE_HANDLERS
 from .amass import AMASS_CHOICE_HANDLERS
 from .apnap_commit import APNAP_COMMIT_CHOICE_HANDLERS
+from .madness import MADNESS_CHOICE_HANDLERS
 
 
 @lru_cache(maxsize=1)
@@ -61,5 +62,6 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *MODULAR_CHOICE_HANDLERS,
             *AMASS_CHOICE_HANDLERS,
             *APNAP_COMMIT_CHOICE_HANDLERS,
+            *MADNESS_CHOICE_HANDLERS,
         )
     ).freeze()

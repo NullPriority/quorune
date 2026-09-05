@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 702.35 — Ordinary fixed-mana Madness",
+  "cases": [
+    {
+      "rule_id": "702.35",
+      "rule_text_sha256": "1eb2dced2651481299155df1b8395d0b77a6b93c933c8fc418be1b545de553de",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["quorune.rules.capabilities.CapabilityRegistry"],
+      "executable_test_ids": ["tests.test_madness_rules.MadnessCompilerTests.test_fixed_mana_madness_compiles_typed_replacement_and_trigger"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["The keyword heading is represented by the fine-grained fixed-mana Madness and typed-discard-cause capabilities."]
+    },
+    {
+      "rule_id": "702.35a",
+      "rule_text_sha256": "d0853de768673c000970963659daee17cc0ab3b9cd37c52643389def7c3322cd",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.madness_nodes.madness_keyword_nodes", "quorune.semantic_runtime.madness.MadnessDiscardReplacementHandler", "quorune.semantic_choices.madness.MadnessCastChoiceHandler", "quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin.madness_choice_intent"],
+      "executable_test_ids": ["tests.test_madness_rules.MadnessCompilerTests.test_fixed_mana_madness_compiles_typed_replacement_and_trigger", "tests.test_madness_rules.MadnessCompilerTests.test_madness_variants_and_dependencies_fail_closed", "tests.test_madness_rules.MadnessRuntimeTests.test_madness_cast_and_decline_share_offer_commit_and_replay", "tests.test_madness_rules.MadnessRuntimeTests.test_madness_stale_payment_counter_and_current_ability_boundaries", "tests.test_madness_rules.MadnessRuntimeTests.test_simultaneous_madness_triggers_batch_in_apnap_order", "tests.test_madness_rules.MadnessRuntimeTests.test_four_player_madness_projection_and_save_load"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "blockers": [],
+      "notes": ["The first ability is a typed discard self-replacement; the second is an identity-pinned normalized trigger whose scoped cost is offered and committed by the canonical casting owner."]
+    },
+    {
+      "rule_id": "702.35b",
+      "rule_text_sha256": "874c23d1b2fe0091411270283faa7ebf1692d99ddb826086b47e151ec4b8eae3",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.cast_lifecycles.FixedCastLifecycleSpec.fixed_cost_option", "quorune.rules.casting.proposal.build_cast_proposal", "quorune.rules.casting.commit.commit_cast"],
+      "executable_test_ids": ["tests.test_madness_rules.MadnessRuntimeTests.test_madness_cast_and_decline_share_offer_commit_and_replay", "tests.test_madness_rules.MadnessRuntimeTests.test_madness_stale_payment_counter_and_current_ability_boundaries"],
+      "required_scenarios": ["positive", "negative", "interaction", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "replay"],
+      "blockers": [],
+      "notes": ["Only ordinary fixed mana is supported; every other cost form remains source-spanned residual material."]
+    },
+    {
+      "rule_id": "702.35c",
+      "rule_text_sha256": "1329431bf1e728ce7f54782de84ad2a0772b24c214353f647fc04105eccfa03d",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.zone_trigger_events.ZoneTransitionKind.DISCARD", "quorune.zone_trigger_events.normalized_zone_trigger_events", "quorune.zone_transitions.ZoneTransitionOwner"],
+      "executable_test_ids": ["tests.test_madness_rules.MadnessRuntimeTests.test_typed_discard_cause_covers_authoritative_producers_without_inference", "tests.test_madness_rules.MadnessRuntimeTests.test_discard_cause_routes_cleanup_activation_casting_and_post_draw", "tests.test_madness_rules.MadnessRuntimeTests.test_simultaneous_madness_triggers_batch_in_apnap_order", "tests.test_madness_rules.MadnessRuntimeTests.test_madness_cast_and_decline_share_offer_commit_and_replay"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "blockers": [],
+      "notes": ["A card is discarded only when an authoritative producer supplies the typed cause; an ordinary hand-to-graveyard move does not infer discard from zones."]
+    }
+  ]
+}

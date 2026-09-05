@@ -8,9 +8,18 @@ import re
 from typing import Any, Mapping, Sequence
 
 from ..cast_timing import type_line_has_card_type
+from ..cast_lifecycles import (
+    FixedCastLifecycleError,
+    FixedCastLifecycleKind,
+    FixedCastLifecycleSpec,
+)
+from ..compiled_madness import compiled_fixed_madness_spec
 from ..errors import GameRuleError, StateInvariantError
 from ..model import CardInstance, StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.casting.model import CastProposalError
+from ..rules.casting.proposal import _aura_spell_target_schema
+from ..semantic_runtime.intents import MadnessChoiceIntent
 from ..stack_resolution import complete_stack_resolution
 from ..util import stable_json
 from ..zone_transitions import ZoneTransitionOwner
@@ -363,6 +372,187 @@ class OneShotExileCastChoiceOwnerMixin:
                     public_option["target_schema"] = public_target_schema
                 result.append(public_option)
         return tuple(result)
+
+    def _madness_exile_cast_options(
+        self,
+        *,
+        actor: str,
+        card: CardInstance,
+        raw_spec: Any,
+    ) -> tuple[dict[str, Any], ...]:
+        try:
+            spec = FixedCastLifecycleSpec.from_dict(raw_spec)
+        except (FixedCastLifecycleError, TypeError):
+            return ()
+        if (
+            spec.kind is not FixedCastLifecycleKind.MADNESS
+            or card.zone != "exile"
+            or card.owner != actor
+            or compiled_fixed_madness_spec(self, card) != spec
+        ):
+            return ()
+        record = self.card_record(card)
+        if record is None:
+            return ()
+        result: list[dict[str, Any]] = []
+        for face in self._cast_faces(record, required_face=None):
+            face_name = str(face.get("name") or "") if face else None
+            type_line = (
+                str(face.get("type_line") or "") if face else record.type_line
+            )
+            if type_line_has_card_type(type_line, "land"):
+                continue
+            semantic_key = f"{record.oracle_id}:spell:{face_name or 'front'}"
+            program = self.semantics.get(semantic_key)
+            is_instant_or_sorcery = any(
+                type_line_has_card_type(type_line, card_type)
+                for card_type in ("instant", "sorcery")
+            )
+            if program is not None and not self.semantic_program_is_current_trusted(
+                program
+            ):
+                continue
+            if program is None and (
+                is_instant_or_sorcery or not self._trusted_generic_spell(record)
+            ):
+                continue
+            try:
+                aura_target_schema = _aura_spell_target_schema(
+                    type_line=type_line,
+                    enchant_spec=self._compiled_enchant_spec(
+                        card,
+                        face_name=face_name,
+                    ),
+                    reviewed_target_schema=(
+                        getattr(program, "target_schema", None)
+                    ),
+                )
+            except CastProposalError:
+                continue
+            options = self._cast_cost_options(
+                actor,
+                card,
+                program,
+                hint=True,
+                alternative_base=spec.fixed_cost_option(),
+                cast_type_line=type_line,
+                suppress_source_costs=True,
+            )
+            for option in options:
+                if option.get("id") != FixedCastLifecycleKind.MADNESS.value:
+                    continue
+                target_specification = (
+                    dict(option["target_schema"])
+                    if isinstance(option.get("target_schema"), Mapping)
+                    else dict(aura_target_schema)
+                    if aura_target_schema is not None
+                    else program.target_schema if program is not None else None
+                )
+                public_target_schema = None
+                if target_specification is not None:
+                    public_target_schema = self._public_target_schema(
+                        actor,
+                        target_specification,
+                        source_ref=card.ref,
+                    )
+                    if public_target_schema is None:
+                        continue
+                public_option = {
+                    key: copy.deepcopy(value)
+                    for key, value in option.items()
+                    if key in _PUBLIC_COST_OPTION_FIELDS
+                }
+                if face_name is not None:
+                    public_option["face"] = face_name
+                if public_target_schema is not None:
+                    public_option["target_schema"] = public_target_schema
+                result.append(public_option)
+        return tuple(result)
+
+    def madness_choice_intent(self, intent: MadnessChoiceIntent) -> None:
+        if not isinstance(intent, MadnessChoiceIntent):
+            raise GameRuleError("Madness choice intent is malformed")
+        item = next(
+            (
+                value
+                for value in self.state.stack
+                if value.ref == intent.source.stack_ref
+                and value.controller == intent.actor
+            ),
+            None,
+        )
+        card = self.state.cards.get(intent.source.object_id or "")
+        current = bool(
+            item is not None
+            and card is not None
+            and card.zone == "exile"
+            and card.ref == intent.source.card_ref
+            and card.logical_object_id == intent.source.logical_object_id
+            and card.owner == intent.actor
+        )
+        if not current:
+            if intent.choice == "cast":
+                raise GameRuleError("The Madness card incarnation changed")
+            return
+        assert item is not None and card is not None
+        options = self._madness_exile_cast_options(
+            actor=intent.actor,
+            card=card,
+            raw_spec=intent.lifecycle.to_dict(),
+        )
+        if _options_fingerprint(options) != intent.options_fingerprint:
+            raise GameRuleError("Madness cast options changed")
+        if intent.choice == "decline":
+            self.move_card(
+                card.object_id,
+                "graveyard",
+                reason="Madness cast declined",
+                semantic_events=True,
+            )
+            return
+        if not options:
+            raise GameRuleError("The Madness cast is not currently payable")
+        response = dict(thaw_value(intent.response))
+        requested_face = str(response.get("face") or "") or None
+        matches = [
+            option
+            for option in options
+            if requested_face is None or option.get("face") == requested_face
+        ]
+        if len(matches) != 1:
+            raise GameRuleError("Select one current Madness cast option")
+        before_stack_refs = {value.ref for value in self.state.stack}
+        response.update(
+            {
+                "card": card.ref,
+                "from": "exile",
+                "cost_option": FixedCastLifecycleKind.MADNESS.value,
+                "auto_pay": True,
+            }
+        )
+        if matches[0].get("face") is not None:
+            response["face"] = matches[0]["face"]
+        self._cast(
+            intent.actor,
+            response,
+            authorized_from_zone="exile",
+            authorized_cost_option=intent.lifecycle.fixed_cost_option(),
+            ignore_priority=True,
+            ignore_timing=True,
+            during_resolution=True,
+        )
+        cast_item = next(
+            (
+                value
+                for value in reversed(self.state.stack)
+                if value.ref not in before_stack_refs
+                and value.kind == "spell"
+                and value.card_object_id == card.object_id
+            ),
+            None,
+        )
+        if cast_item is None:
+            raise StateInvariantError("The Madness choice created no spell")
 
     def _begin_one_shot_exile_cast_choice(
         self,

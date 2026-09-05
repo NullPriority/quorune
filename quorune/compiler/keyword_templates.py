@@ -13,7 +13,7 @@ _FIXED_ENTRY_MECHANICS = ("fading", "graft", "vanishing")
 
 _KEYWORD_WITH_VALUE = re.compile(
     rf"^(?P<name>{re.escape(_BLOODTHIRST_MECHANIC)}|{re.escape(_RENOWN_MECHANIC)}|{re.escape(_MODULAR_MECHANIC)}|{'|'.join(map(re.escape, _FIXED_ENTRY_MECHANICS))}|ward|equip|enchant|bushido|cycling|crew|dredge|kicker|toxic|"
-    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|warp|level up|outlast|reinforce|scavenge)"
+    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|madness|warp|level up|outlast|reinforce|scavenge)"
     r"(?:\s+(?P<value>.+))?$",
     re.IGNORECASE,
 )

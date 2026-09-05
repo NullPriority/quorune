@@ -2197,18 +2197,93 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "partner-with-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-mana-madness",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:unparsed-madness-0",
+            "effect_clause:unparsed-madness-1-b",
+            "effect_clause:unparsed-madness-1-r",
+            "effect_clause:unparsed-madness-1-u",
+            "effect_clause:unparsed-madness-2-b",
+            "effect_clause:unparsed-madness-3-b",
+            "effect_clause:unparsed-madness-3-r",
+            "effect_clause:unparsed-madness-3-u",
+            "effect_clause:unparsed-madness-b",
+            "effect_clause:unparsed-madness-b-r",
+            "effect_clause:unparsed-madness-r",
+            "effect_clause:unparsed-madness-u",
+            "effect_clause:unparsed-madness-w"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.madness.fixed_mana",
+            "capability:zone.discard.typed_cause",
+            "component:quorune.compiled_madness.compiled_fixed_madness_spec",
+            "component:quorune.compiler.madness_nodes.madness_keyword_nodes",
+            "component:quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin",
+            "component:quorune.semantic_choices.madness.MadnessCastChoiceHandler",
+            "component:quorune.semantic_runtime.madness.MadnessDiscardReplacementHandler",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-ordinary-madness-mana",
+            "identity-pinned-public-exile-incarnation",
+            "scoped-cast-or-graveyard-choice",
+            "typed-hand-discard-cause"
+          ],
+          "shared_dependencies": [
+            "casting.madness.fixed_mana",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement",
+            "zone.discard.typed_cause"
+          ],
+          "shared_grammar": "one ordinary fixed-mana Madness declaration lowered into a current hand self-replacement and identity-pinned exile cast trigger after completing the typed discard-cause prerequisite across authoritative costs, effects, cleanup, post-draw actions, and simultaneous choices",
+          "estimated_implementation_hours": 7,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes every current ordinary fixed-mana Madness carrier through the existing replacement-aware zone transaction, current component query, APNAP trigger batching, canonical cast proposal and commit, principal projection, and exact replay owners.",
+          "explicit_exclusions": [
+            "competing discard replacements that require an unsupported continuation owner",
+            "copied, granted, text-changed, duplicated, or incomplete-card declarations",
+            "hybrid, Phyrexian, snow, X, nonmana, life, and compound Madness costs",
+            "nonordinary reminder text and unrelated unsupported sibling abilities",
+            "source cards that leave exile or become a new incarnation before the old trigger resolves"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-mana-madness-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v168-partner-with",
-      "compiler_version": "oracle-ir-v168",
-      "bundle_id": "bundle:partner-with",
-      "candidate_ids": ["compiler:partner-with"],
-      "family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies"],
-      "capability_ids": ["format.commander.pairing.partner_with", "library.search.partner_with_named_to_hand"],
-      "measurement_id": "measurement:partner-with",
+      "transition_id": "oracle-ir-v169-fixed-mana-madness",
+      "compiler_version": "oracle-ir-v169",
+      "bundle_id": "bundle:fixed-mana-madness",
+      "candidate_ids": ["compiler:fixed-mana-madness"],
+      "family_ids": [
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "effect_clause:unparsed-madness-0",
+        "effect_clause:unparsed-madness-1-b",
+        "effect_clause:unparsed-madness-1-r",
+        "effect_clause:unparsed-madness-1-u",
+        "effect_clause:unparsed-madness-2-b",
+        "effect_clause:unparsed-madness-3-b",
+        "effect_clause:unparsed-madness-3-r",
+        "effect_clause:unparsed-madness-3-u",
+        "effect_clause:unparsed-madness-b",
+        "effect_clause:unparsed-madness-b-r",
+        "effect_clause:unparsed-madness-r",
+        "effect_clause:unparsed-madness-u",
+        "effect_clause:unparsed-madness-w"
+      ],
+      "capability_ids": ["casting.madness.fixed_mana", "zone.discard.typed_cause"],
+      "measurement_id": "measurement:fixed-mana-madness",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2770,6 +2845,11 @@
         "candidate_id": "compiler:partner-with",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-quoted-grant selector has no eligible carried candidate while its raw continuous-layer leader remains heterogeneous. Bounded review retires public quantity life or damage and remaining dynamic anthem slices below every normal harvest floor. The generated Partner with probe instead isolates 52 current Commander-legal carriers and a conservative 104-node lower bound because the rule intrinsically contributes one typed reciprocal setup declaration and one typed targeted self-entry search per carrier. It reuses the existing Commander pairing, normalized entry-event, APNAP, target-revalidation, private library-search, destination-replacement, Commander-replacement, current layer-6 ability-applicability, and exact replay owners. Partner—named variants, Partner with itself, the choose-any-Knight variant, nonreciprocal names, compound searches, search replacement, and independently unsupported siblings remain fail-closed; current card identities and closure measurements are generated from the current frontier."
+      },
+      {
+        "candidate_id": "compiler:fixed-mana-madness",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The v168 selector has no eligible carried candidate while its raw continuous-layer leader remains heterogeneous and the rules queue still points to the previously excluded counter family. The generated bounded keyword comparison selects ordinary fixed-mana Madness as the highest-throughput coherent mechanic above the normal complete-card and exact-ability floors. The implementation first completes one reusable typed discard-cause prerequisite across authoritative activation and spell costs, effects, cleanup, specifically drawn-card actions, and simultaneous APNAP choices, then immediately harvests Madness through the existing destination-replacement, current static-component, normalized trigger, casting proposal/commit, exile choice, privacy, and replay owners. Variable X, hybrid, Phyrexian, snow, nonmana, life, compound, altered-reminder, copied, granted, incomplete-card, stale-incarnation, and unsupported competing-replacement forms remain fail-closed; current identities and measurements are generated from the current frontier."
       }
     ]
   },

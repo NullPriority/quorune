@@ -35,6 +35,7 @@ FIXED_CAST_LIFECYCLE_CONTEXT_FIELD = "fixed_cast_lifecycle"
 class FixedCastLifecycleKind(str, Enum):
     BUYBACK = "buyback"
     DASH = "dash"
+    MADNESS = "madness"
     WARP = "warp"
     RETRACE = "retrace"
 
@@ -43,7 +44,7 @@ _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
 _MANA_FIELDS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 _ORDINARY_COST = r"(?:\{(?:0|[1-9][0-9]*|[WUBRGC])\})+"
 _FIXED_LIFECYCLE = re.compile(
-    rf"^(?P<mechanic>Buyback|Dash|Warp) (?P<cost>{_ORDINARY_COST})"
+    rf"^(?P<mechanic>Buyback|Dash|Madness|Warp) (?P<cost>{_ORDINARY_COST})"
     r"(?:\s+\(.*\))?\.?$",
     re.IGNORECASE,
 )
@@ -215,9 +216,12 @@ class FixedCastLifecycleSpec:
             option["source_zone"] = "hand"
         if self.kind in {
             FixedCastLifecycleKind.DASH,
+            FixedCastLifecycleKind.MADNESS,
             FixedCastLifecycleKind.WARP,
         }:
             option["x_value_policy"] = "zero"
+        if self.kind is FixedCastLifecycleKind.MADNESS:
+            option["source_zone"] = "exile"
         return option
 
     def retrace_cost_option(
@@ -257,7 +261,7 @@ def compile_fixed_cast_lifecycle(
     oracle_line: str,
     line_index: int,
 ) -> FixedCastLifecycleSpec | None:
-    """Compile fixed Buyback, Dash, Warp, or ordinary Retrace."""
+    """Compile a fixed-mana public lifecycle or ordinary Retrace."""
 
     normalized = " ".join(material_line.strip().split())
     fixed = _FIXED_LIFECYCLE.fullmatch(normalized)

@@ -464,6 +464,10 @@ test("@browser-lifecycle four shared-cookie browser tabs retain isolated lobby s
 });
 
 test("@smoke @browser-lifecycle @reconnect @lifecycle four shared-cookie browser tabs retain isolated seats through mulligans and reconnect", async ({ browser }, testInfo) => {
+  // This journey cold-validates four full decks, persists stop/resume and four
+  // mulligan declarations, reloads shared-cookie tabs, and records metrics.
+  // Hosted filesystems can complete every assertion near the suite default.
+  test.setTimeout(180_000);
   const contexts: BrowserContext[] = [];
   const pages: Page[] = [];
   try {

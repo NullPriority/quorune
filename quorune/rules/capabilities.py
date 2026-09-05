@@ -307,7 +307,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         mechanic: ("casting.lifecycle.fixed_public",)
         for mechanic in _FIXED_CAST_LIFECYCLE_MECHANICS
     },
-    "self-zone-move": ("zone.self_move.activated",),
+    "self-zone-move": ("zone.self_move.activated",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS

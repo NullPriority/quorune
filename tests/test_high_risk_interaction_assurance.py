@@ -14,6 +14,7 @@ from high_risk_interaction_support import (
     FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
     FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
     IMPULSE_ACCESS_AND_CHOICE_PAIRS,
+    MADNESS_AND_CHOICE_PAIRS,
     PUBLIC_SET_AND_CHOICE_PAIRS,
     REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS,
     REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
@@ -74,6 +75,16 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                     "residual.target_or_choice.multiple-targets",
                 ),
             ),
+            database=self.db,
+        )
+
+    def test_madness_residual_choice_pairs_fail_closed_at_runtime_boundary(
+        self,
+    ) -> None:
+        self.assertEqual(5, len(MADNESS_AND_CHOICE_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self,
+            MADNESS_AND_CHOICE_PAIRS,
             database=self.db,
         )
 

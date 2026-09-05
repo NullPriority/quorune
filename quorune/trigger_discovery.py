@@ -885,6 +885,8 @@ def _semantic_trigger_context(
             raise GameRuleError(str(exc)) from exc
     if SPELL_HISTORY_TRANSFORM_COVERAGE in program.coverage:
         stack_context["source_transform_count"] = source.transform_count
+    if "identity_pinned_exile_cast_choice" in program.coverage:
+        stack_context["source_logical_object_id"] = source.logical_object_id
     return stack_context
 
 

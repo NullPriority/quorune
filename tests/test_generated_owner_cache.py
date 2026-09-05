@@ -212,6 +212,9 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         compiler_corpus = next(
             spec for spec in specs if spec.id == "compiler-corpus-coverage"
         )
+        ci_escape = next(
+            spec for spec in specs if spec.id == "ci-escape-report"
+        )
         self.assertIn(
             "quorune/semantic_packs/**/*.json",
             groups.patterns("rules-source"),
@@ -239,6 +242,19 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         self.assertIn("tests/**/*.json", groups.patterns("tests-source"))
         self.assertIn("tests-source", compact_dependencies.input_groups)
         self.assertIn("web/tests/**/*.ts", architecture.input_paths)
+        self.assertIn(
+            "platform/ci-escape-source.json",
+            ci_escape.input_paths,
+        )
+        self.assertIn(
+            "platform/ci-escape-source.json",
+            resolved_worktree_inputs(
+                ci_escape,
+                specs=specs,
+                input_groups=groups,
+                root=ROOT,
+            ),
+        )
 
     def test_automatic_plan_inherits_unchanged_owner_without_generation(self):
         selected = GeneratorSpec(

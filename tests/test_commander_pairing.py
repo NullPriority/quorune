@@ -1193,7 +1193,7 @@ class CommanderPairingTests(unittest.TestCase):
             validate_commander_pair(self.db, registry, records)
 
         with patch(
-            "quorune.oracle_ir.partner_with_keyword_nodes",
+            "quorune.compiler.multi_keyword_nodes.partner_with_keyword_nodes",
             return_value=None,
         ):
             ir = compile_oracle_card(

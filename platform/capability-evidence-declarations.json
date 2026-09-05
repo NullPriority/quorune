@@ -3290,6 +3290,62 @@
       "applicability_note": "Replay the fixed Warp cost, stack transition, battlefield incarnation, delayed exile, and later-turn permission exactly."
     },
     {
+      "capability_id": "casting.madness.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_madness_stale_payment_counter_and_current_ability_boundaries",
+      "official_rule_ids": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep the cast authorization bound to the discarded exile incarnation, current hand ability, exact payable cost, and ordinary countered-spell destination."
+    },
+    {
+      "capability_id": "casting.madness.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_simultaneous_madness_triggers_batch_in_apnap_order",
+      "official_rule_ids": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Batch simultaneous discarded Madness triggers in four-player APNAP order without changing their source identities."
+    },
+    {
+      "capability_id": "casting.madness.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_madness_rules.MadnessCompilerTests.test_madness_compiler_and_shape_mutations_fail_closed",
+      "official_rule_ids": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Kill removal of the indivisible two-node Madness compiler production and reject malformed handler or effect shapes."
+    },
+    {
+      "capability_id": "casting.madness.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_madness_rules.MadnessCompilerTests.test_madness_variants_and_dependencies_fail_closed",
+      "official_rule_ids": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject variable, hybrid, Phyrexian, snow, life, nonmana, compound, and altered-reminder Madness declarations and blocked dependencies."
+    },
+    {
+      "capability_id": "casting.madness.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_madness_cast_and_decline_share_offer_commit_and_replay",
+      "official_rule_ids": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Discard into exile, place the self trigger, and either cast through the rules-authored fixed cost or move the card to its graveyard."
+    },
+    {
+      "capability_id": "casting.madness.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_four_player_madness_projection_and_save_load",
+      "official_rule_ids": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose the face-up exile card publicly while projecting its cast-or-decline decision only to the controlling player."
+    },
+    {
+      "capability_id": "casting.madness.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_madness_cast_and_decline_share_offer_commit_and_replay",
+      "official_rule_ids": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay discard replacement, trigger placement, scoped cost choice, payment, stack construction, resolution, and decline exactly."
+    },
+    {
       "capability_id": "casting.megamorph.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_morph_rules.FixedManaMorphRuntimeTests.test_megamorph_counter_precedes_face_up_trigger_and_replays",
@@ -23831,6 +23887,70 @@
         "commander_review"
       ],
       "applicability_note": "Replace a represented card's proposed zone destination through the affected-object ordering boundary before committing the move."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_simultaneous_madness_triggers_batch_in_apnap_order",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the typed discard cause through simultaneous replacement preparation and resulting APNAP trigger batching."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_simultaneous_madness_triggers_batch_in_apnap_order",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Commit two seats' discards as one replacement-aware transaction and order their triggers by four-player APNAP."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_discard_cause_routes_cleanup_activation_casting_and_post_draw",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Kill removal of typed cause propagation by proving that only cause-bearing effects and producers activate the Madness replacement."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "negative",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_typed_discard_cause_covers_authoritative_producers_without_inference",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject invalid discard origins and requested destinations, and do not infer discard from an ordinary hand-to-graveyard move."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "positive",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_discard_cause_routes_cleanup_activation_casting_and_post_draw",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Route activation costs, spell additional costs, cleanup discards, and specifically drawn-card post-actions through the same typed discard cause."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "positive",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_typed_discard_cause_covers_authoritative_producers_without_inference",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Carry an explicit discard cause from authoritative producers through replacement and normalized event owners."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_four_player_madness_projection_and_save_load",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reveal only the actual public-zone discard result and keep the resulting player decision principal-scoped."
+    },
+    {
+      "capability_id": "zone.discard.typed_cause",
+      "evidence_class": "replay",
+      "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_madness_cast_and_decline_share_offer_commit_and_replay",
+      "official_rule_ids": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the typed discard cause, replaced destination, normalized trigger, and subsequent cast or decline deterministically."
     },
     {
       "capability_id": "zone.draw.library_to_hand",

@@ -1349,7 +1349,7 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
         )
         before = authoritative_state_hash(engine.state)
         with mock.patch(
-            "quorune.rules.casting.commit.compiled_fixed_cast_lifecycle_spec",
+            "quorune.rules.casting.commit.current_fixed_cast_lifecycle_spec",
             return_value=None,
         ):
             with self.assertRaisesRegex(GameRuleError, "contract changed"):
