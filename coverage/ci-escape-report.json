@@ -952,6 +952,22 @@
       "resolution": "The legacy ability-word composition table now asserts permanent.enter and the dedicated Constellation template, matching the new focused compiler and runtime witnesses. The existing complete compiler impact rule already selected this module; future event remaps must run this exact cross-owner positive table before the source checkpoint.",
       "run_id": 33969136194,
       "summary": "The ability-word public-event harvest intentionally remapped exact Constellation wording from the older specialized enchantment.enter event to the canonical permanent.enter occurrence with a sealed enchantment predicate, but one preexisting positive compiler table retained the superseded event and template identities."
+    },
+    {
+      "category": "browser_integration",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Browser / rules (job 101340227960)"
+      ],
+      "head_sha": "ec14cfc5fd70107ecbea6a846680e9b36fd568d7",
+      "id": "ci-20260905-56",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "four-player.spec.ts: an isolated-context duel presents exact turn state and Spire Garden correctly"
+      ],
+      "resolution": "The unchanged assertion-driven journey now declares a bounded 300-second budget and treats already-closed contexts as successful teardown. The same path passed its isolated headless rerun in 2.5 minutes; browser-full impact already selected the journey.",
+      "run_id": 33978769486,
+      "summary": "The persisted two-turn Spire Garden browser journey exceeded its 180-second test budget on a slower hosted runner; the retained trace showed ordinary progress through Seat B's turn-two end step rather than a behavior assertion or no-progress failure."
     }
   ],
   "known_flaky_tests": [],
@@ -959,7 +975,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-09-05T10:04:33Z",
+  "observed_at": "2026-09-05T17:27:22Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1004,13 +1020,13 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "838a257fc5973d53c8022da608f214cabb2f2c46d8a9d2c2697150e5aaf2bd3b",
+  "source_fingerprint": "3ccfa61066571ac4a7112473fe410b33376a1fab3fe1f8727257bcfc75fdf979",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
     "average_slot_b_inactive_seconds": null,
     "category_counts": {
-      "browser_integration": 4,
+      "browser_integration": 5,
       "flaky_test": 6,
       "generated_artifact_drift": 5,
       "infrastructure": 1,
@@ -1018,8 +1034,8 @@
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 50,
-    "escape_count": 55,
+    "deterministic_escape_count": 51,
+    "escape_count": 56,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [

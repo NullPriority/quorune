@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "838a257fc5973d53c8022da608f214cabb2f2c46d8a9d2c2697150e5aaf2bd3b"
+verified: "3ccfa61066571ac4a7112473fe410b33376a1fab3fe1f8727257bcfc75fdf979"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 55
-- Deterministic escapes: 50
+- Escapes: 56
+- Deterministic escapes: 51
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -81,6 +81,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260905-53` | [33956229754](https://github.com/NullPriority/quorune/actions/runs/33956229754) | `missing_affected_test` | `not_applicable` | The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint. |
 | `ci-20260905-54` | [33957811410](https://github.com/NullPriority/quorune/actions/runs/33957811410) | `missing_affected_test` | `not_applicable` | The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint. |
 | `ci-20260905-55` | [33969136194](https://github.com/NullPriority/quorune/actions/runs/33969136194) | `missing_affected_test` | `not_applicable` | The legacy ability-word composition table now asserts permanent.enter and the dedicated Constellation template, matching the new focused compiler and runtime witnesses. The existing complete compiler impact rule already selected this module; future event remaps must run this exact cross-owner positive table before the source checkpoint. |
+| `ci-20260905-56` | [33978769486](https://github.com/NullPriority/quorune/actions/runs/33978769486) | `browser_integration` | `not_applicable` | The unchanged assertion-driven journey now declares a bounded 300-second budget and treats already-closed contexts as successful teardown. The same path passed its isolated headless rerun in 2.5 minutes; browser-full impact already selected the journey. |
 
 ## Measurement limitations
 

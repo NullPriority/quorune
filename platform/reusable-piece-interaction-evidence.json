@@ -5770,6 +5770,20 @@
       ],
       "interaction_order": 2,
       "assertion": "The canonical target owner revalidates one public player before its controller identity selects and locks the represented fixed characteristic set."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_characteristic_set_with_regeneration_residual_fails_closed",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed cycling fixture compiles its all-creatures fixed characteristic trigger exactly while its separate regeneration-prohibiting mass-destruction spell remains material, so the complete CardProgram reaches but fails closed at runtime admission."
     }
   ]
 }

@@ -814,7 +814,10 @@ test("@browser-lifecycle a shared-cookie 1v1 lobby can replace rooms, remove a p
 });
 
 test("@browser-rules @turn-draw an isolated-context duel presents exact turn state and Spire Garden correctly", async ({ browser }, testInfo) => {
-  test.setTimeout(180_000);
+  // The assertion-driven journey advances two complete persisted turns. It
+  // normally finishes in about 2.4 minutes, but cold hosted storage can push
+  // the unchanged path beyond three minutes without a no-progress stall.
+  test.setTimeout(300_000);
   const hostContext = await browser.newContext();
   const opponentContext = await browser.newContext();
   const host = await hostContext.newPage();
@@ -960,7 +963,10 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await expect(host.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
   } finally {
     await annotateJourneyMetrics([host, opponent], 2, testInfo);
-    await Promise.all([hostContext.close(), opponentContext.close()]);
+    await Promise.all([
+      hostContext.close().catch(() => undefined),
+      opponentContext.close().catch(() => undefined),
+    ]);
   }
 });
 
