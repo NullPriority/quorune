@@ -914,6 +914,26 @@ family-specific layer-6 applicability check. The earlier enum fragment remains
 replay-readable only. See
 [ADR 0088](../adr/0088-typed-query-self-characteristics.md).
 
+`compiler/effect_template_composition.py` routes reviewed atomic effects into
+closed clause/program composition and gives query-derived amounts one shared
+entry point. `compiler/public_query_effect_amounts.py` reuses that same typed quantity for
+one standalone resolution instruction across spell, activated, and normalized
+trigger contexts. The compiler accepts only a fixed coefficient over a
+controller or global battlefield, graveyard, or identity-free hand query when
+replacing the amount with a positive fixed integer produces an already closed
+life, damage, draw, or token operation and target schema. It serializes the
+quantity as a semantic scalar value rather than a new effect operation.
+`semantic_runtime/query_effect_amounts.py` validates and resolves that scalar,
+and `semantic_runtime/values.py` supplies the stack object's locked controller
+to the cycle-safe layer-5 quantity evaluator immediately before the unchanged
+operation handler runs. Copies therefore use the copy's
+controller, later public type and color changes affect the count, and existing
+target revalidation, damage prevention, life replacement, draw coordination,
+token replacement, projection, and replay remain authoritative. Source-counter,
+attachment, opponent hidden-zone, source-excluding, ability-presence, stateful,
+linked, chosen, optional, modal, conditional, compound, quoted, granted, and
+open-arithmetic forms remain source-spanned residuals.
+
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed controller, type, subtype, color,

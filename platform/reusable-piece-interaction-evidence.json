@@ -5784,6 +5784,171 @@
       ],
       "interaction_order": 2,
       "assertion": "A constructed cycling fixture compiles its all-creatures fixed characteristic trigger exactly while its separate regeneration-prohibiting mass-destruction spell remains material, so the complete CardProgram reaches but fails closed at runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_use_current_layer_five_state_and_locked_controller",
+      "piece_ids": [
+        "capability.damage.amount.positive",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "damage.amount.positive",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "A current layer-5 creature count materializes the positive amount before the canonical damage transaction applies it."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_use_current_layer_five_state_and_locked_controller",
+      "piece_ids": [
+        "capability.damage.prevention.persistent_amount",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "damage.prevention.persistent_amount",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "The query-derived damage assignment enters the existing prevention transaction, consumes the fixed shield amount, and commits only the remainder."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_life_use_existing_replacement_owner",
+      "piece_ids": [
+        "capability.life.change.effect",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "life.change.effect",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "The query-derived requested gain enters the canonical life-change transaction rather than mutating a player directly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_life_use_existing_replacement_owner",
+      "piece_ids": [
+        "capability.life.gain.replacement.static_multiplier",
+        "capability.quantity_expression.public_query_effect_amount"
+      ],
+      "capability_ids": [
+        "life.gain.replacement.static_multiplier",
+        "quantity_expression.public_query_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "A static life-gain multiplier sees and doubles the materialized requested amount through the existing replacement batch."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_zero_query_amount_and_stale_target_use_existing_target_owner",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.state_query.permanent.public_state_predicate"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "An attacking-creature target remains governed by the existing public combat-state predicate while a separate current object query determines only the damage amount."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_zero_query_amount_and_stale_target_use_existing_target_owner",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "A zero query count remains a legal no-op, while a departed sole target makes the stack object fizzle through the canonical target owner before amount execution."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_delegate_to_draw_and_token_owners",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.token.creation.additional_replacement"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "token.creation.additional_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "The materialized artifact-token quantity becomes the base quantity of the existing replacement-aware token transaction before its additional token is created."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_delegate_to_draw_and_token_owners",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "A current subtype count feeds the existing fixed-definition token owner without changing its token characteristics or timestamp semantics."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_delegate_to_draw_and_token_owners",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "The current Spirit count becomes one ordinary replacement-aware private draw instruction through the existing draw coordinator."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.trigger.effect.fixed_event"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "trigger.effect.fixed_event"
+      ],
+      "interaction_order": 2,
+      "assertion": "A normalized step occurrence discovers the represented dynamic life body as one ordinary typed event effect before its current count resolves."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "The dynamic amount trigger enters the unchanged four-player APNAP batch before resolving through the shared scalar owner."
     }
   ]
 }

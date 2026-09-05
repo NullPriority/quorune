@@ -1,5 +1,5 @@
 ---
-title: "ADR 0088: typed query-count self characteristics"
+title: "ADR 0088: typed query-count characteristics and effect amounts"
 status: "ADR"
 authoritative_source: "query-count characteristic compiler and layer evaluator"
 verified: "2026-08-28"
@@ -10,7 +10,7 @@ decision_status: "accepted"
 date: "2026-08-28"
 ---
 
-# ADR 0088: typed query-count self characteristics
+# ADR 0088: typed query-count characteristics and effect amounts
 
 ## Context
 
@@ -45,6 +45,16 @@ every other in-game seat. Hand quantities read only zone cardinality.
 Historical `DynamicPowerToughnessSpec` records remain readable, but current
 compilation emits the query descriptor.
 
+The same `CharacteristicQuantitySpec` now also owns one closed resolution-time
+effect amount. A transport-safe scalar placeholder carries a fixed signed
+coefficient and a controller or global battlefield, graveyard, or raw-hand
+query. The semantic-runtime amount resolver and semantic-value owner resolve it
+using the stack object's locked
+controller and the same layer-5 evaluator immediately before the instruction
+is lowered. The resulting ordinary integer enters the existing life, damage,
+draw, or fixed-token owner, including their replacement and target paths. No
+new mutation operation or effect dispatcher is introduced.
+
 ## Alternatives
 
 - Add more legacy count enums. Rejected because each term would duplicate zone,
@@ -53,27 +63,37 @@ compilation emits the query descriptor.
   depend on the count currently being calculated.
 - Use printed or copyable types. Rejected because represented layer-4 and
   layer-5 changes are authoritative inputs to these quantities.
+- Resolve each effect family independently. Rejected because that would create
+  four competing quantity evaluators with different controller and layer
+  semantics.
 - Add a family-specific ability-removal check. Rejected because static ability
   addition and removal must share one future layer-6 applicability query.
 
 ## Consequences
 
-The represented family recomputes after control, zone, phasing, attachment,
-counter, hand-size, and layer-5 characteristic changes, composes in ordinary
-layer order, copies as typed executable data, preserves hidden identity, and
-replays exactly.
+The represented static family recomputes after control, zone, phasing,
+attachment, counter, hand-size, and layer-5 characteristic changes, composes in
+ordinary layer order, copies as typed executable data, preserves hidden
+identity, and replays exactly. Resolution-time effect amounts instead use the
+stack controller frozen by casting, activation, copying, or trigger placement;
+they observe the current layer-5 query when that instruction executes.
 
 Delirium distinct-type counts, Domain or color cardinality, chosen, named,
 modified, shared-type, top-library, secret-identity, ability-presence, dynamic-
-coefficient, comparison, attached-subject, modal, triggered, activated, and
-quoted carriers remain residual. Inverted existence wording is also excluded
-from this minimum-gate grammar. Cards with an ability-removal sibling remain
-withheld by complete-card admission until the shared layer-6 ability-presence
-owner exists.
+coefficient, comparison, and attached-subject static quantities remain
+residual. Resolution-time amounts additionally exclude source counters,
+attachments, opponent hidden zones, source exclusion, linked results,
+`this way`, optional, modal, conditional, compound, quoted, granted, dynamic-
+target, and open-arithmetic forms. Inverted existence wording is also excluded
+from the static minimum-gate grammar. Cards with an ability-removal sibling
+remain withheld by complete-card admission until the shared layer-6
+ability-presence owner exists.
 
 ## Removal condition
 
 Retire these descriptors only if a successor preserves the same closed grammar,
 cycle-safe layer-5 boundary, current-controller and multiplayer relations,
-ordinary layer ordering, copied-source identity, privacy, replay, and explicit
-ability-removal exclusion without runtime prose or card identity dispatch.
+ordinary layer ordering, locked stack-controller effect amounts, copied-source
+identity, existing replacement and target ownership, privacy, replay, and
+explicit ability-removal exclusion without runtime prose or card identity
+dispatch.

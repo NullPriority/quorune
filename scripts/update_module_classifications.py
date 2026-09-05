@@ -82,6 +82,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/target_forms.py",
         "quorune/target_numeric.py",
         "quorune/prevention_triggers.py",
+        "quorune/query_effect_amount_model.py",
         "quorune/read_ahead.py",
         "quorune/replacement/immutable.py",
         "quorune/riot.py",
@@ -295,6 +296,8 @@ def _owner(relative: str, layer: str) -> str:
     if relative.startswith("server/"):
         return "server_transport"
     if relative.startswith("quorune/semantic_runtime/"):
+        return "semantic_runtime"
+    if relative == "quorune/query_effect_amount_model.py":
         return "semantic_runtime"
     if relative.startswith("quorune/semantic_choices/"):
         return "semantic_choices"
@@ -745,6 +748,7 @@ def build_classifications() -> dict[str, Any]:
                             "mana_undo.py",
                             "object_predicate.py",
                             "object_query.py",
+                            "query_effect_amount_model.py",
                             "permanent_exile.py",
                             "replacement/",
                             "return_to_hand.py",

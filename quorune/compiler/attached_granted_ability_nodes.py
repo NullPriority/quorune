@@ -20,6 +20,7 @@ from .continuous_templates import (
     fixed_query_quoted_ability_handler,
     fixed_query_quoted_ability_text,
 )
+from .public_query_effect_amounts import contains_public_query_effect_amount
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .static_runtime_nodes import runtime_handler_node
 
@@ -103,7 +104,11 @@ def attached_granted_ability_plan(
 ) -> AttachedGrantedAbilityPlan | None:
     """Build one closed typed grant from an independently exact inner node."""
 
-    if not node.exact or node.residual_ids:
+    if (
+        not node.exact
+        or node.residual_ids
+        or contains_public_query_effect_amount(node.effects)
+    ):
         return None
     if node.kind in {"activated_ability", "mana_ability"}:
         abilities = parse_activated_abilities(

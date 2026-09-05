@@ -126,10 +126,8 @@ from ..compiler.optional_payment_templates import (
     FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,
     FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
 )
-from ..compiler.fixed_entry_return_requirements import (
-    FIXED_ENTRY_RETURN_CAPABILITY,
-    FIXED_ENTRY_RETURN_MECHANIC,
-)
+from ..compiler import fixed_entry_return_requirements as _entry
+from ..compiler import public_query_effect_amounts as _query
 from ..compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_MECHANIC,
 )
@@ -364,6 +362,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "cr-101-the-magic-golden-rules": ("life.change.effect",),
     "cr-119-life": ("life.change.effect",),
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
+    _query.PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (_query.PUBLIC_QUERY_AMOUNT_CAPABILITY,),
     FIXED_LIBRARY_SELECTION_MECHANIC: ("library.select.fixed_controller",),
     PARTNER_WITH_SEARCH_MECHANIC_ID: ("library.search.partner_with_named_to_hand",),
     "scry": ("library.scry.fixed_controller",),
@@ -1211,8 +1210,6 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    operations = {str(effect.get("op") or "") for effect in effects}
-
     if mechanics.intersection(
         {
             FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -1226,6 +1223,8 @@ def capability_dependencies_for_node(
         )
 
     all_operations = _nested_effect_operations(effects)
+    if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()
+    shape_effects, shape_mechanics = shape_context
     dependencies: set[str] = set()
     dependencies.update(
         fixed_alternative_additional_cost_node_capabilities(
@@ -1297,9 +1296,9 @@ def capability_dependencies_for_node(
     schema = dict(target_schema or {})
     dependencies.update(
         _targeted_effect_capabilities(
-            effects=effects,
+            effects=shape_effects,
             target_schema=target_schema,
-            mechanics=mechanics,
+            mechanics=shape_mechanics,
         )
     )
     if (
@@ -1428,9 +1427,9 @@ def _return_to_hand_covered_mechanics(supplied: set[str]) -> set[str]:
         }
     ):
         covered.add("return-to-owner-hand")
-    if FIXED_ENTRY_RETURN_CAPABILITY in supplied:
+    if _entry.FIXED_ENTRY_RETURN_CAPABILITY in supplied:
         covered.update(
-            {FIXED_ENTRY_RETURN_MECHANIC, "return-to-owner-hand"}
+            {_entry.FIXED_ENTRY_RETURN_MECHANIC, "return-to-owner-hand"}
         )
     return covered
 

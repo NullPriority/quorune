@@ -436,7 +436,8 @@ class ClosedEffectProgramCompilerTests(unittest.TestCase):
             trust_level="provisional",
         )
         with patch(
-            "quorune.oracle_ir.closed_effect_program_template",
+            "quorune.compiler.effect_template_composition."
+            "closed_effect_program_template",
             return_value=None,
         ):
             mutated_ir = self.compile(record)
