@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "731312f15eafbc844efd0116cf87ae41edd90546ca14d2329ecb5cd955ad4a5b",
-  "declaration_source_fingerprint": "14e51400b294fd7416e5379bd17658f8c99b6b907977bd9e460f29c54f1c825b",
+  "registry_fingerprint": "a30eb1cec44957e53143e564bc5f3c151bd01d452a6fabb5ea3f4f1f68a36fbe",
+  "declaration_source_fingerprint": "781aee9ccb9c850c0b3fca4cfad87050f953b3eebc33066d6859e9d260cfcf11",
   "declarations": [
     {
       "capability_id": "activation.counter_keyword.fixed",
@@ -35689,6 +35689,102 @@
       "applicability_note": "Round-trip all eight public physical commander designations without changing their setup identities."
     },
     {
+      "capability_id": "format.commander.pairing.partner_with",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pairing_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "702.124a",
+        "702.124f",
+        "702.124j",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the current typed declaration or compiler producer and prove reciprocal names or broad Partner metadata cannot authorize setup."
+    },
+    {
+      "capability_id": "format.commander.pairing.partner_with",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pair_is_designated_and_requires_reciprocal_names",
+      "official_rule_ids": [
+        "702.124a",
+        "702.124f",
+        "702.124j",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accept reciprocal Partner with declarations for four seats and preserve two independent public Commander designations per seat."
+    },
+    {
+      "capability_id": "format.commander.pairing.partner_with",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pairing_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "702.124a",
+        "702.124f",
+        "702.124j",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of either the registered pairing declaration or the only typed two-node Partner with compiler production."
+    },
+    {
+      "capability_id": "format.commander.pairing.partner_with",
+      "evidence_class": "negative",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pair_is_designated_and_requires_reciprocal_names",
+      "official_rule_ids": [
+        "702.124a",
+        "702.124f",
+        "702.124j",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject one-way, missing, mixed ordinary-Partner, and nonreciprocal names before Commander state construction."
+    },
+    {
+      "capability_id": "format.commander.pairing.partner_with",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pair_is_designated_and_requires_reciprocal_names",
+      "official_rule_ids": [
+        "702.124a",
+        "702.124f",
+        "702.124j",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Consume two current reciprocal typed Partner with declarations through the canonical Commander setup owner."
+    },
+    {
+      "capability_id": "format.commander.pairing.partner_with",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pair_is_designated_and_requires_reciprocal_names",
+      "official_rule_ids": [
+        "702.124a",
+        "702.124f",
+        "702.124j",
+        "903.3"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Round-trip all reciprocal Partner with Commander designations through the canonical serialized game state."
+    },
+    {
       "capability_id": "keyword_action.adapt.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_counter_keyword_actions.PermanentDesignationTests.test_adapt_uses_canonical_counter_replacement_and_replays",
@@ -37167,6 +37263,167 @@
         "commander_review"
       ],
       "applicability_note": "Replay the identity-pinned selection, replacement-aware hand move, public reveal, and deterministic shuffle to the same authoritative hash."
+    },
+    {
+      "capability_id": "library.search.partner_with_named_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_entry_triggers_follow_current_ability_and_apnap",
+      "official_rule_ids": [
+        "115.1",
+        "603.6a",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "702.124j",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the shared layer-6 ability-presence query at entry, preserve APNAP trigger placement, and let an already-created trigger survive a source incarnation change."
+    },
+    {
+      "capability_id": "library.search.partner_with_named_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_target_search_is_private_revalidates_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.6a",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "702.124j",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Let the trigger controller select any legal seat while the targeted seat alone receives the hidden-library decision."
+    },
+    {
+      "capability_id": "library.search.partner_with_named_to_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_shape_dependencies_and_variants_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "603.6a",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "702.124j",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block each direct or transitive capability and reject mutations of the exact targeted named-search node shape."
+    },
+    {
+      "capability_id": "library.search.partner_with_named_to_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_shape_dependencies_and_variants_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "603.6a",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "702.124j",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep empty, quoted, compound-tail, and named Partner variants outside the exact Partner with grammar and trusted capability shape."
+    },
+    {
+      "capability_id": "library.search.partner_with_named_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_compiles_exact_pairing_and_entry_search",
+      "official_rule_ids": [
+        "115.1",
+        "603.6a",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "702.124j",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile reminder-bearing and reminderless Partner with lines into one exact self-entry trigger targeting a player and searching only for its typed partner name."
+    },
+    {
+      "capability_id": "library.search.partner_with_named_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_target_search_is_private_revalidates_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.6a",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "702.124j",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose the matching candidate identity only to the targeted player and reveal no unselected library identities to the other three seats."
+    },
+    {
+      "capability_id": "library.search.partner_with_named_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_target_search_is_private_revalidates_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.6a",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "702.124j",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay target selection, private named selection, replacement-aware hand move, and deterministic shuffle to the same authoritative hash."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -55921,5 +56178,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "a1302ea7441ac036e38346a78512f5583a7f458bb9280c1f951abb08bd0dff70"
+  "fingerprint": "7cb062a361d79cacfe865ac391f157f92da947ae57a7d6e8ac3414d45df133ea"
 }

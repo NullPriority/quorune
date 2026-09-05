@@ -75466,7 +75466,7 @@
         "quorune.rules.capabilities.CapabilityRegistry"
       ],
       "notes": [
-        "Keyword heading; three fine-grained setup capabilities cover the bounded ordinary Partner, Choose a Background, and Doctor's companion declarations."
+        "Keyword heading; four fine-grained setup capabilities cover the bounded ordinary Partner, Partner with, Choose a Background, and Doctor's companion declarations."
       ],
       "required_scenarios": [],
       "reviewed": true,
@@ -75483,7 +75483,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "Partner followed by named text and Partner with remain separate unsupported declaration grammars"
+        "Partner followed by named variant text remains a separate unsupported declaration grammar"
       ],
       "case_id": "cr-702.124a",
       "case_version": 1,
@@ -75674,7 +75674,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "unsupported Partner-with and named Partner variants are rejected rather than positively modeled"
+        "unsupported named Partner variants are rejected rather than positively modeled"
       ],
       "case_id": "cr-702.124f",
       "case_version": 1,
@@ -75840,33 +75840,45 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "unsupported_fail_closed",
-      "blockers": [
-        "named mutual pairing and its enters-the-battlefield search need separate typed declaration and trigger owners"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-702.124j",
       "case_version": 1,
       "classification": "behavioral",
       "covered_scenarios": [
-        "negative"
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
       ],
       "dependency_rule_ids": [
         "702.124"
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
-        "tests.test_commander_pairing.CommanderPairingTests.test_pairing_keywords_compile_as_exact_typed_setup_declarations",
-        "tests.test_commander_pairing.CommanderPairingTests.test_unsupported_or_mismatched_pairings_fail_closed_without_mutation"
+        "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_compiles_exact_pairing_and_entry_search",
+        "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pair_is_designated_and_requires_reciprocal_names",
+        "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_shape_dependencies_and_variants_fail_closed",
+        "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_target_search_is_private_revalidates_and_replays",
+        "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_entry_triggers_follow_current_ability_and_apnap",
+        "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pairing_and_compiler_mutations_fail_closed"
       ],
       "implementation_components": [
-        "quorune.compiler.commander_pairing_nodes.commander_pairing_keyword_node",
-        "quorune.commander_pairing.validate_commander_pair"
+        "quorune.compiler.commander_pairing_nodes.partner_with_keyword_nodes",
+        "quorune.commander_pairing.validate_commander_pair",
+        "quorune.selection.searching.HiddenSearchOwnerMixin",
+        "quorune.zone_transitions.ZoneTransitionOwner"
       ],
       "notes": [
-        "Partner with cards cannot acquire ordinary Partner setup authority from broad keyword metadata."
+        "The exact declaration lowers to separate typed setup and self-entry search abilities; setup requires reciprocal names, while the targeted search uses the canonical private search, replacement-aware zone transition, APNAP, current-ability, and replay owners."
       ],
       "required_scenarios": [
-        "negative"
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
       ],
       "reviewed": true,
       "rule_id": "702.124j",
@@ -75877,7 +75889,7 @@
         "end_line": 4927,
         "start_line": 4926
       },
-      "status": "blocked"
+      "status": "passing"
     },
     {
       "assertion_kind": "executable_engine",

@@ -51,6 +51,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative in {
         "quorune/additional_cost_vocabulary.py",
         "quorune/activated_ability_descriptor.py",
+        "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
         "quorune/bloodthirst.py",
         "quorune/cast_cost_modifiers.py",

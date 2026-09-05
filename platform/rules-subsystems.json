@@ -2149,18 +2149,66 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "typed-quoted-ability-grant-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:partner-with",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:format.commander.pairing.partner_with",
+            "capability:library.search.partner_with_named_to_hand",
+            "component:quorune.ability_fragment_primitives.PartnerWithSpec",
+            "component:quorune.commander_pairing.validate_commander_pair",
+            "component:quorune.compiler.commander_pairing_nodes.partner_with_keyword_nodes",
+            "component:quorune.selection.searching.HiddenSearchOwnerMixin",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "exact-reciprocal-partner-name",
+            "one-target-player",
+            "target-player-hand-destination",
+            "zero-or-one-named-library-card"
+          ],
+          "shared_dependencies": [
+            "format.commander.pairing.partner_with",
+            "library.search.partner_with_named_to_hand",
+            "target.revalidate_resolution",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "variant.commander.zone_return",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one exact Partner with declaration lowered atomically into its reciprocal Commander setup rule and targeted named-library-search self-entry trigger through the existing typed pairing, normalized trigger, private search, replacement-aware zone, and replay owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes all current ordinary named Partner with carriers through one typed two-ability production without granting ordinary Partner authority or introducing another setup, trigger, search, or zone-transition path.",
+          "explicit_exclusions": [
+            "Partner with itself and the choose-any-legendary-Knight variant",
+            "Partner—named variants such as Friends forever, Doctors, Survivors, Character select, and Father and son",
+            "independently unsupported sibling abilities",
+            "multiple names, compound tails, alternative destinations, nonlibrary searches, and search-replacement effects",
+            "nonreciprocal, missing, duplicate, copied, granted, removed, or text-changed setup declarations"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "partner-with-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v167-typed-quoted-ability-grants",
-      "compiler_version": "oracle-ir-v167",
-      "bundle_id": "bundle:typed-quoted-ability-grants",
-      "candidate_ids": ["compiler:typed-quoted-ability-grants"],
+      "transition_id": "oracle-ir-v168-partner-with",
+      "compiler_version": "oracle-ir-v168",
+      "bundle_id": "bundle:partner-with",
+      "candidate_ids": ["compiler:partner-with"],
       "family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies"],
-      "capability_ids": ["continuous.ability.fixed_query_grant", "continuous.attached.fixed_characteristics"],
-      "measurement_id": "measurement:typed-quoted-ability-grants",
+      "capability_ids": ["format.commander.pairing.partner_with", "library.search.partner_with_named_to_hand"],
+      "measurement_id": "measurement:partner-with",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2717,6 +2765,11 @@
         "candidate_id": "compiler:fixed-token-production",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-transformation selector has no eligible carried candidate while its raw token and continuous-layer leaders remain heterogeneous. A bounded integrated probe selects one threshold-clearing fixed token-production family across spell, triggered, activated, keyword-action, keyword-trigger, target-copy, and delayed contexts. It reuses the replacement-aware token transaction, direct-target revalidation, normalized permanent-graveyard LKI, APNAP placement, typed characteristic fragments, fixed mana restrictions, and replay owners. Variable, Incubate, Role, attached, attacking, source-LKI, modified-copy, linked, arbitrary quoted-ability, unsupported keyword, conditional, and independently incomplete forms remain fail-closed; current cohort identities and counts are generated rather than policy-maintained."
+      },
+      {
+        "candidate_id": "compiler:partner-with",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-quoted-grant selector has no eligible carried candidate while its raw continuous-layer leader remains heterogeneous. Bounded review retires public quantity life or damage and remaining dynamic anthem slices below every normal harvest floor. The generated Partner with probe instead isolates 52 current Commander-legal carriers and a conservative 104-node lower bound because the rule intrinsically contributes one typed reciprocal setup declaration and one typed targeted self-entry search per carrier. It reuses the existing Commander pairing, normalized entry-event, APNAP, target-revalidation, private library-search, destination-replacement, Commander-replacement, current layer-6 ability-applicability, and exact replay owners. Partner—named variants, Partner with itself, the choose-any-Knight variant, nonreciprocal names, compound searches, search replacement, and independently unsupported siblings remain fail-closed; current card identities and closure measurements are generated from the current frontier."
       }
     ]
   },

@@ -7,6 +7,7 @@ from typing import Any, Mapping
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..bloodthirst import BLOODTHIRST_MECHANIC, BloodthirstSpec
 from ..cast_timing import PRINTED_FLASH_MECHANIC
+from ..commander_pairing import CommanderPairingKind
 from ..semantic_runtime.cast_costs import (
     convoke_handler_descriptor,
 )
@@ -44,7 +45,10 @@ from .cumulative_upkeep_nodes import (
     fixed_mana_cumulative_upkeep_node,
 )
 from .saga_chapter_nodes import ordinary_saga_chapter_nodes
-from .commander_pairing_nodes import commander_pairing_keyword_node
+from .commander_pairing_nodes import (
+    commander_pairing_keyword_node,
+    partner_with_keyword_nodes,
+)
 from .cascade_nodes import CASCADE_MECHANIC_ID, cascade_keyword_node
 from .storm_nodes import STORM_MECHANIC_ID, storm_keyword_node
 from .bestow_nodes import fixed_mana_bestow_keyword_node
@@ -343,6 +347,11 @@ def closed_special_keyword_node(
     )
     if characteristic_definition is not None:
         return characteristic_definition
+    # Partner with is one indivisible two-ability production.  If its owner
+    # declines the complete grammar, do not admit only the setup half through
+    # the ordinary pairing fallback.
+    if mechanics == (CommanderPairingKind.PARTNER_WITH.value,):
+        return None
     commander_pairing = commander_pairing_keyword_node(**values)
     if commander_pairing is not None:
         return commander_pairing
@@ -1495,6 +1504,7 @@ __all__ = [
     "fabricate_keyword_node",
     "keyword_node_plans",
     "modular_keyword_nodes",
+    "partner_with_keyword_nodes",
     "ordinary_affinity_keyword_node",
     "ordinary_convoke_keyword_node",
     "prowess_keyword_node",

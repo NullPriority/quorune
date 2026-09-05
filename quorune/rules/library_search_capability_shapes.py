@@ -6,6 +6,10 @@ from ..compiler.library_search_templates import (
     FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
     FIXED_LIBRARY_SEARCH_MECHANIC_ID,
 )
+from ..commander_pairing import (
+    PARTNER_WITH_SEARCH_CAPABILITY_ID,
+    PARTNER_WITH_SEARCH_MECHANIC_ID,
+)
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 
 
@@ -160,10 +164,71 @@ def fixed_type_to_hand_search_node_capabilities(
     return (FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID,)
 
 
+def partner_with_search_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, object]],
+    target_schema: Mapping[str, object] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    """Recognize the optional named search intrinsic to Partner with."""
+
+    mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (
+        PARTNER_WITH_SEARCH_MECHANIC_ID not in mechanics
+        or target_schema
+        != {
+            "zones": ["player"],
+            "categories": ["player"],
+            "player_relation": "any",
+            "count": 1,
+        }
+        or len(effects) != 1
+    ):
+        return ()
+    effect = effects[0]
+    if set(effect) != {
+        "op",
+        "searching_player",
+        "zone",
+        "selector",
+        "count",
+        "destination",
+        "optional",
+        "shuffle_after",
+    }:
+        return ()
+    selector = effect.get("selector")
+    names = selector.get("names") if isinstance(selector, Mapping) else None
+    if (
+        effect.get("op") != "search"
+        or effect.get("searching_player") != "$target.0"
+        or effect.get("zone") != "library"
+        or not isinstance(selector, Mapping)
+        or set(selector) != {"names"}
+        or not isinstance(names, list)
+        or len(names) != 1
+        or type(names[0]) is not str
+        or not names[0].strip()
+        or names[0] != names[0].strip()
+        or effect.get("count") != {"minimum": 0, "maximum": 1}
+        or effect.get("destination") != "hand"
+        or effect.get("optional") is not True
+        or effect.get("shuffle_after") is not True
+    ):
+        return ()
+    return (
+        PARTNER_WITH_SEARCH_CAPABILITY_ID,
+        "target.revalidate_resolution",
+    )
+
+
 __all__ = [
     "FIXED_LIBRARY_SEARCH_CAPABILITY_ID",
     "FIXED_LIBRARY_SEARCH_MECHANIC_ID",
     "FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID",
+    "PARTNER_WITH_SEARCH_CAPABILITY_ID",
+    "PARTNER_WITH_SEARCH_MECHANIC_ID",
     "fixed_library_search_node_capabilities",
     "fixed_type_to_hand_search_node_capabilities",
+    "partner_with_search_node_capabilities",
 ]

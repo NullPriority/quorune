@@ -3,8 +3,15 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import dataclass
 from enum import Enum
+import re
 from typing import TYPE_CHECKING, Protocol
 
+from .ability_fragments import (
+    AbilityFragmentError,
+    PARTNER_WITH_FRAGMENT_HANDLER_ID,
+    PartnerWithSpec,
+    ability_fragment_from_dict,
+)
 from .characteristic_evaluation import type_parts
 
 if TYPE_CHECKING:
@@ -16,16 +23,23 @@ if TYPE_CHECKING:
 COMMANDER_PAIRING_TEMPLATE_ID = "commander-pairing-eligibility-v1"
 COMMANDER_PAIRING_EVENT = "game.setup"
 COMMANDER_PAIRING_COVERAGE = "commander_pairing_eligibility"
+PARTNER_WITH_SEARCH_CAPABILITY_ID = "library.search.partner_with_named_to_hand"
+PARTNER_WITH_SEARCH_MECHANIC_ID = "partner-with-entry-search"
+PARTNER_WITH_SEARCH_TEMPLATE_ID = "partner-with-entry-search-v1"
 
 
 class CommanderPairingKind(str, Enum):
     PARTNER = "partner"
+    PARTNER_WITH = "partner with"
     CHOOSE_A_BACKGROUND = "choose a background"
     DOCTORS_COMPANION = "doctor's companion"
 
 
 PAIRING_CAPABILITY_BY_KIND = {
     CommanderPairingKind.PARTNER: "format.commander.pairing.partner",
+    CommanderPairingKind.PARTNER_WITH: (
+        "format.commander.pairing.partner_with"
+    ),
     CommanderPairingKind.CHOOSE_A_BACKGROUND: (
         "format.commander.pairing.choose_background"
     ),
@@ -56,14 +70,41 @@ class CommanderPairingDeclaration:
     kind: CommanderPairingKind
     capability_id: str
     program_key: str
+    partner_name: str | None = None
+
+
+def partner_with_spec_for_material_line(
+    material_line: str,
+) -> PartnerWithSpec | None:
+    """Parse one complete Partner with declaration without reminder prose."""
+
+    match = re.fullmatch(
+        (
+            r"Partner with (?P<partner>[A-Za-z0-9]"
+            r"[A-Za-z0-9 ,&'’-]*[A-Za-z0-9])\.?"
+        ),
+        material_line.strip(),
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    partner_name = match.group("partner").strip()
+    if partner_name.casefold() in {"itself", "knight"}:
+        return None
+    try:
+        return PartnerWithSpec(partner_name)
+    except AbilityFragmentError:
+        return None
 
 
 def pairing_kind_for_material_line(
     material_line: str,
 ) -> CommanderPairingKind | None:
-    """Recognize only the three exact ordinary setup declarations."""
+    """Recognize one exact supported Commander pairing declaration."""
 
     normalized = material_line.strip().rstrip(".").casefold()
+    if partner_with_spec_for_material_line(material_line) is not None:
+        return CommanderPairingKind.PARTNER_WITH
     try:
         return CommanderPairingKind(normalized)
     except ValueError:
@@ -91,7 +132,6 @@ def _program_pairing_kind(
         or program.provenance.get("template_id")
         != COMMANDER_PAIRING_TEMPLATE_ID
         or program.effects
-        or program.handlers
         or program.target_schema is not None
         or program.cost_schema is not None
         or program.event_condition is not None
@@ -103,7 +143,40 @@ def _program_pairing_kind(
         or closure.get("blockers") != []
     ):
         return None
+    if kind is CommanderPairingKind.PARTNER_WITH:
+        if len(program.handlers) != 1:
+            return None
+        descriptor = program.handlers[0]
+        if (
+            not isinstance(descriptor, dict)
+            or set(descriptor)
+            != {"handler_id", "schema_version", "event", "fragment"}
+            or descriptor.get("handler_id")
+            != PARTNER_WITH_FRAGMENT_HANDLER_ID
+            or descriptor.get("schema_version") != 1
+            or descriptor.get("event") != COMMANDER_PAIRING_EVENT
+        ):
+            return None
+        try:
+            fragment = ability_fragment_from_dict(descriptor["fragment"])
+        except (AbilityFragmentError, TypeError):
+            return None
+        if not isinstance(fragment, PartnerWithSpec):
+            return None
+    elif program.handlers:
+        return None
     return kind
+
+
+def _program_partner_name(
+    program: "SemanticProgram",
+    kind: CommanderPairingKind,
+) -> str | None:
+    if kind is not CommanderPairingKind.PARTNER_WITH:
+        return None
+    fragment = ability_fragment_from_dict(program.handlers[0]["fragment"])
+    assert isinstance(fragment, PartnerWithSpec)
+    return fragment.partner_name
 
 
 def commander_pairing_declaration(
@@ -144,6 +217,7 @@ def commander_pairing_declaration(
         kind=kind,
         capability_id=PAIRING_CAPABILITY_BY_KIND[kind],
         program_key=program.key,
+        partner_name=_program_partner_name(program, kind),
     )
 
 
@@ -180,7 +254,7 @@ def validate_commander_pair(
     registry: PairingProgramRegistry | None,
     commanders: tuple["CardRecord", "CardRecord"],
 ) -> tuple[CommanderPairingDeclaration | None, ...]:
-    """Validate CR 702.124h/k/m through one shared typed setup owner."""
+    """Validate CR 702.124h/j/k/m through one shared typed setup owner."""
 
     first, second = commanders
     if first.oracle_id == second.oracle_id:
@@ -205,6 +279,25 @@ def validate_commander_pair(
         CommanderPairingKind.PARTNER,
     ) and all(_is_legendary_creature(card) for card in commanders):
         return declarations
+    if kinds == (
+        CommanderPairingKind.PARTNER_WITH,
+        CommanderPairingKind.PARTNER_WITH,
+    ) and all(_is_legendary_creature(card) for card in commanders):
+        try:
+            named = tuple(
+                card_db.lookup(declaration.partner_name, fuzzy=False)
+                for declaration in declarations
+                if declaration is not None
+                and declaration.partner_name is not None
+            )
+        except KeyError:
+            named = ()
+        if (
+            len(named) == 2
+            and named[0].oracle_id == second.oracle_id
+            and named[1].oracle_id == first.oracle_id
+        ):
+            return declarations
     if (
         kinds[0] == CommanderPairingKind.CHOOSE_A_BACKGROUND
         and _is_background(second)
@@ -224,8 +317,8 @@ def validate_commander_pair(
     ):
         return declarations
     raise CommanderPairingError(
-        "Two commanders require matching typed Partner, Choose a Background, "
-        "or Doctor's companion setup declarations"
+        "Two commanders require matching typed Partner, Partner with, Choose "
+        "a Background, or Doctor's companion setup declarations"
     )
 
 
@@ -280,8 +373,12 @@ __all__ = [
     "CommanderPairingError",
     "CommanderPairingKind",
     "PAIRING_CAPABILITY_BY_KIND",
+    "PARTNER_WITH_SEARCH_CAPABILITY_ID",
+    "PARTNER_WITH_SEARCH_MECHANIC_ID",
+    "PARTNER_WITH_SEARCH_TEMPLATE_ID",
     "commander_pairing_declaration",
     "pairing_kind_for_material_line",
+    "partner_with_spec_for_material_line",
     "validate_commander_pair",
     "validated_commander_counts",
 ]

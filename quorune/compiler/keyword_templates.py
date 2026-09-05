@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from typing import Sequence
 
+from ..commander_pairing import partner_with_spec_for_material_line
+
 
 _BLOODTHIRST_MECHANIC = "bloodthirst"
 _RENOWN_MECHANIC = "renown"
@@ -55,6 +57,11 @@ def keyword_mechanics(
         # the whole printed ability for the typed Flashback grammar to accept
         # or reject as one source-spanned node.
         return ("flashback",)
+    if (
+        "partner with" in known
+        and partner_with_spec_for_material_line(material) is not None
+    ):
+        return ("partner with",)
     parts = [part.strip() for part in re.split(r"[,;]", material)]
     if not parts:
         return None

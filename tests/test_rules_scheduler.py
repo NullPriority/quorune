@@ -65,6 +65,7 @@ from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
     _fixed_activation_zone_change_predicate_measurement,
     _fixed_entry_return_requirement_measurement,
+    _partner_with_measurement,
     _fixed_token_production_measurement,
     _typed_quoted_ability_grant_measurement,
     _matches_probe,
@@ -2560,6 +2561,85 @@ class RulesSchedulerTests(unittest.TestCase):
                 frontier=frontier,
                 bundle_id="bundle:typed-quoted-ability-grants",
                 probe_id="typed-quoted-ability-grant-existing-owner-v1",
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 2,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(2, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+        self.assertEqual(
+            1,
+            measurement["candidate_accounting"]["affected_oracle_carriers"],
+        )
+
+    def test_partner_with_probe_counts_both_typed_abilities_per_carrier(self):
+        source = "Partner with Named Partner Beta"
+        record = SimpleNamespace(
+            oracle_id="fixture:partner-with",
+            name="Named Partner Alpha",
+            oracle_text=source,
+            type_line="Legendary Creature — Human",
+            faces=(),
+        )
+        family = "continuous_layer:continuous-effect-layers-and-dependencies"
+        ability = {
+            "ability_id": "front:n1",
+            "face_id": "front",
+            "source_line": 1,
+            "status": "unresolved",
+            "blockers": {"canonical_family_ids": [family]},
+            "residuals": [{"residual_id": "r1"}],
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "unresolved",
+                    "exact_ability_count": 0,
+                    "minimum_known_blocker_set": [family],
+                    "abilities": [ability],
+                }
+            ]
+        }
+        pairing = SimpleNamespace(
+            exact=True,
+            template_id="commander-pairing-eligibility-v1",
+            span=SimpleNamespace(line=1),
+        )
+        search = SimpleNamespace(
+            exact=True,
+            template_id="partner-with-entry-search-v1",
+            span=SimpleNamespace(line=1),
+        )
+        compiled = SimpleNamespace(
+            faces=(
+                SimpleNamespace(face_id="front", nodes=(pairing, search)),
+            ),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _partner_with_measurement(
+                frontier=frontier,
+                bundle_id="bundle:partner-with",
+                probe_id="partner-with-existing-owner-v1",
                 cards_by_oracle_id={record.oracle_id: record},
                 coverage={
                     "minimum_complete_card_gain": 1,

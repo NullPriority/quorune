@@ -89,9 +89,9 @@ from .monarch_capability_shapes import (
 from .transform_capability_shapes import source_transform_node_capabilities
 from .library_search_capability_shapes import (
     FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
-    FIXED_LIBRARY_SEARCH_MECHANIC_ID,
+    FIXED_LIBRARY_SEARCH_MECHANIC_ID, PARTNER_WITH_SEARCH_MECHANIC_ID,
     fixed_library_search_node_capabilities,
-    fixed_type_to_hand_search_node_capabilities,
+    fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
 )
 from .library_selection_capability_shapes import (
     fixed_library_selection_node_capabilities,
@@ -364,9 +364,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "cr-101-the-magic-golden-rules": ("life.change.effect",),
     "cr-119-life": ("life.change.effect",),
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
-    FIXED_LIBRARY_SELECTION_MECHANIC: (
-        "library.select.fixed_controller",
-    ),
+    FIXED_LIBRARY_SELECTION_MECHANIC: ("library.select.fixed_controller",),
+    PARTNER_WITH_SEARCH_MECHANIC_ID: ("library.search.partner_with_named_to_hand",),
     "scry": ("library.scry.fixed_controller",),
     "surveil": ("library.surveil.fixed_controller",),
     "infect": ("damage.result.infect",),
@@ -454,7 +453,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_MECHANIC,
         FIXED_NEXT_TURN_DRAW_MECHANIC,
-        IMPULSE_ACCESS_MECHANIC_ID,
+        IMPULSE_ACCESS_MECHANIC_ID, PARTNER_WITH_SEARCH_MECHANIC_ID,
         "adapt",
         "monstrosity",
         "bolster",
@@ -1061,7 +1060,7 @@ def _targeted_effect_capabilities(
         fixed_monarch_node_capabilities,
         source_transform_node_capabilities,
         fixed_library_search_node_capabilities,
-        fixed_type_to_hand_search_node_capabilities,
+        fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
         fixed_library_selection_node_capabilities,
         fixed_life_node_capabilities,
         fixed_controller_effect_sequence_node_capabilities,

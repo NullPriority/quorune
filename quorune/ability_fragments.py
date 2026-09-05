@@ -6,6 +6,13 @@ import hashlib
 import re
 from typing import Any, Iterable, Mapping, TypeAlias
 
+from .ability_fragment_primitives import (
+    AbilityFragmentError,
+    PARTNER_WITH_FRAGMENT_HANDLER_ID,
+    PartnerWithSpec,
+    TOXIC_ABILITY_FRAGMENT_KIND,
+    ToxicSpec,
+)
 from .enchant_spec import (
     EnchantSpec,
     LinkedGraveyardCreatureEnchantSpec,
@@ -36,10 +43,6 @@ from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
 from .replacement.immutable import thaw_value
 from .util import stable_json
-
-
-class AbilityFragmentError(ValueError):
-    """A typed executable ability fragment is malformed or unsupported."""
 
 
 class ProtectionQualityKind(str, Enum):
@@ -81,7 +84,6 @@ CURRENT_ABILITY_FRAGMENT_COVERAGE = "current_ability_fragment_required"
 STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID = (
     "ability.static.component-scope.v1"
 )
-TOXIC_ABILITY_FRAGMENT_KIND = "toxic"
 
 
 _COLOR_NAMES = {
@@ -886,39 +888,6 @@ class DamageKeywordTriggerSpec:
 
 
 @dataclass(frozen=True, slots=True)
-class ToxicSpec:
-    """One executable instance of the printed CR 702.164 Toxic ability."""
-
-    value: int
-    schema_version: int = 1
-
-    def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
-            raise AbilityFragmentError(
-                "Unsupported Toxic fragment schema version"
-            )
-        if type(self.value) is not int or self.value <= 0:
-            raise AbilityFragmentError(
-                "Toxic values must be positive integers"
-            )
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "schema_version": self.schema_version,
-            "value": self.value,
-        }
-
-    @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "ToxicSpec":
-        expected = {"schema_version", "value"}
-        if not isinstance(value, Mapping) or set(value) != expected:
-            raise AbilityFragmentError(
-                "Toxic fragments have a closed schema"
-            )
-        return cls(**dict(value))
-
-
-@dataclass(frozen=True, slots=True)
 class StaticComponentSpec:
     """One trusted static CardProgram component present in layer 6."""
 
@@ -1054,6 +1023,7 @@ StaticAbilityFragment: TypeAlias = (
     | DamageKeywordTriggerSpec
     | SpellCastKeywordTriggerSpec
     | ToxicSpec
+    | PartnerWithSpec
     | StaticComponentSpec
     | StaticComponentScopeSpec
     | CounterMaximumSpec
@@ -1094,6 +1064,8 @@ def ability_fragment_to_dict(
         kind = "spell_cast_keyword_trigger"
     elif isinstance(fragment, ToxicSpec):
         kind = TOXIC_ABILITY_FRAGMENT_KIND
+    elif isinstance(fragment, PartnerWithSpec):
+        kind = "partner_with"
     elif isinstance(fragment, StaticComponentSpec):
         kind = "static_component"
     elif isinstance(fragment, StaticComponentScopeSpec):
@@ -1163,6 +1135,8 @@ def ability_fragment_from_dict(
         return SpellCastKeywordTriggerSpec.from_dict(value["value"])
     if value["kind"] == TOXIC_ABILITY_FRAGMENT_KIND:
         return ToxicSpec.from_dict(value["value"])
+    if value["kind"] == "partner_with":
+        return PartnerWithSpec.from_dict(value["value"])
     if value["kind"] == "static_component":
         return StaticComponentSpec.from_dict(value["value"])
     if value["kind"] == "static_component_scope":
@@ -1248,6 +1222,7 @@ def canonical_ability_fragments(
                 DamageKeywordTriggerSpec,
                 SpellCastKeywordTriggerSpec,
                 ToxicSpec,
+                PartnerWithSpec,
                 StaticComponentSpec,
                 StaticComponentScopeSpec,
                 CounterMaximumSpec,
@@ -1622,6 +1597,8 @@ __all__ = [
     "DeclarationRestrictionTemplate",
     "GrantedActivatedAbilitySpec",
     "GrantedTriggeredAbilitySpec",
+    "PartnerWithSpec",
+    "PARTNER_WITH_FRAGMENT_HANDLER_ID",
     "ProtectionQualityKind",
     "ProtectionSourcePredicateSpec",
     "ProtectionSpec",

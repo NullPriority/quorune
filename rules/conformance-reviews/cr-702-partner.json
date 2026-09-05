@@ -16,7 +16,7 @@
       "required_scenarios": [],
       "covered_scenarios": [],
       "blockers": [],
-      "notes": ["Keyword heading; three fine-grained setup capabilities cover the bounded ordinary Partner, Choose a Background, and Doctor's companion declarations."]
+      "notes": ["Keyword heading; four fine-grained setup capabilities cover the bounded ordinary Partner, Partner with, Choose a Background, and Doctor's companion declarations."]
     },
     {
       "rule_id": "702.124a",
@@ -29,7 +29,7 @@
       "executable_test_ids": ["tests.test_commander_pairing.CommanderPairingTests.test_pairing_keywords_compile_as_exact_typed_setup_declarations", "tests.test_commander_pairing.CommanderPairingTests.test_unsupported_or_mismatched_pairings_fail_closed_without_mutation"],
       "required_scenarios": ["positive", "negative"],
       "covered_scenarios": ["positive", "negative"],
-      "blockers": ["Partner followed by named text and Partner with remain separate unsupported declaration grammars"],
+      "blockers": ["Partner followed by named variant text remains a separate unsupported declaration grammar"],
       "notes": ["The represented declarations function only at authoritative game setup and are never reconstructed from runtime Oracle prose or broad keyword metadata."]
     },
     {
@@ -99,7 +99,7 @@
       "executable_test_ids": ["tests.test_commander_pairing.CommanderPairingTests.test_unsupported_or_mismatched_pairings_fail_closed_without_mutation"],
       "required_scenarios": ["negative", "interaction"],
       "covered_scenarios": ["negative", "interaction"],
-      "blockers": ["unsupported Partner-with and named Partner variants are rejected rather than positively modeled"],
+      "blockers": ["unsupported named Partner variants are rejected rather than positively modeled"],
       "notes": ["Every represented cross-variant combination fails before state construction."]
     },
     {
@@ -148,15 +148,15 @@
       "rule_id": "702.124j",
       "rule_text_sha256": "3842530fd5c5b7308f8ccdc261b12044ccf9e838d38439a51a89927e45a83889",
       "classification": "behavioral",
-      "status": "blocked",
-      "assertion_kind": "unsupported_fail_closed",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
       "reviewed": true,
-      "implementation_components": ["quorune.compiler.commander_pairing_nodes.commander_pairing_keyword_node", "quorune.commander_pairing.validate_commander_pair"],
-      "executable_test_ids": ["tests.test_commander_pairing.CommanderPairingTests.test_pairing_keywords_compile_as_exact_typed_setup_declarations", "tests.test_commander_pairing.CommanderPairingTests.test_unsupported_or_mismatched_pairings_fail_closed_without_mutation"],
-      "required_scenarios": ["negative"],
-      "covered_scenarios": ["negative"],
-      "blockers": ["named mutual pairing and its enters-the-battlefield search need separate typed declaration and trigger owners"],
-      "notes": ["Partner with cards cannot acquire ordinary Partner setup authority from broad keyword metadata."]
+      "implementation_components": ["quorune.compiler.commander_pairing_nodes.partner_with_keyword_nodes", "quorune.commander_pairing.validate_commander_pair", "quorune.selection.searching.HiddenSearchOwnerMixin", "quorune.zone_transitions.ZoneTransitionOwner"],
+      "executable_test_ids": ["tests.test_commander_pairing.CommanderPairingTests.test_partner_with_compiles_exact_pairing_and_entry_search", "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pair_is_designated_and_requires_reciprocal_names", "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_shape_dependencies_and_variants_fail_closed", "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_target_search_is_private_revalidates_and_replays", "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_entry_triggers_follow_current_ability_and_apnap", "tests.test_commander_pairing.CommanderPairingTests.test_partner_with_pairing_and_compiler_mutations_fail_closed"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "blockers": [],
+      "notes": ["The exact declaration lowers to separate typed setup and self-entry search abilities; setup requires reciprocal names, while the targeted search uses the canonical private search, replacement-aware zone transition, APNAP, current-ability, and replay owners."]
     },
     {
       "rule_id": "702.124k",
