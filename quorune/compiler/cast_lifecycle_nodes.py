@@ -70,6 +70,8 @@ def fixed_cast_lifecycle_keyword_node(
             mechanics=mechanics,
             residual_ids=(residual_id,),
         )
+    if spec.kind is FixedCastLifecycleKind.MADNESS:
+        return None
     dependencies = (
         FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
         *(

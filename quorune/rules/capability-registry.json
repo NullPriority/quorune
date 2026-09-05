@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 143,
+  "registry_version": 144,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1583,6 +1583,33 @@
       "dependency_fail_closed_rationale": "This bounded descriptor has no capability dependencies beyond the shared replacement subsystem.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_zone_replacement_snapshot_mutant_is_killed reverses and then mutates the captured source candidates; canonical equality and state-independent preparation reject source-order and live-source rediscovery mutants.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.discard.typed_cause",
+      "version": 1,
+      "official_rules": ["400.7k", "701.8", "701.8a", "701.8b", "701.8c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Distinguish authoritative discard procedures from ordinary hand-to-graveyard moves through one typed zone-transition cause used by costs, effects, cleanup, post-draw actions, and simultaneous choices.",
+        "inputs": ["one requested hand-to-graveyard card move", "one typed discard cause supplied by an authoritative producer", "current replacement snapshot and source incarnation"],
+        "outputs": ["one cause-preserving replacement event", "one normalized card.discarded occurrence after the actual destination commits", "simultaneous APNAP trigger batching", "exact replay"],
+        "exclusions": ["ordinary hand-to-graveyard moves that are not discards", "cards moved from zones other than a hand", "requested destinations other than a graveyard before replacement", "random, chosen, or effect-specific discard selection grammar outside its existing owner", "historical records that contain no typed discard cause"]
+      },
+      "dependencies": ["zone.change.destination_replacement"],
+      "implementation_components": ["quorune.zone_trigger_events.ZoneTransitionKind.DISCARD", "quorune.zone_transitions.ZoneTransitionOwner", "quorune.semantic_runtime.zone_replacements.prepare_zone_change_replacement_snapshot", "quorune.zone_trigger_events.normalized_zone_trigger_events"],
+      "positive_tests": ["test_typed_discard_cause_covers_authoritative_producers_without_inference", "test_discard_cause_routes_cleanup_activation_casting_and_post_draw"],
+      "negative_tests": ["test_typed_discard_cause_covers_authoritative_producers_without_inference"],
+      "interaction_tests": ["test_simultaneous_madness_triggers_batch_in_apnap_order"],
+      "multiplayer_tests": ["test_simultaneous_madness_triggers_batch_in_apnap_order"],
+      "privacy_tests": ["test_four_player_madness_projection_and_save_load"],
+      "replay_tests": ["test_madness_cast_and_decline_share_offer_commit_and_replay", "test_four_player_madness_projection_and_save_load"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking destination replacement prevents a typed discard event from receiving trusted closure, and an invalid cause, origin, destination, or stale prepared cause fails before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused mutations remove the typed cause from cleanup, costs, effects, post-draw actions, and simultaneous commits; cause-specific event and Madness replacement assertions reject every survivor.",
       "blockers": [],
       "status": "trusted"
     },
@@ -6686,6 +6713,33 @@
       "dependency_fail_closed_rationale": "Blocking typed discard, zone-object Haste, attack consumption, APNAP delayed placement, normalized zone transitions, commander replacement, or destination replacement removes trusted lifecycle closure; complete-card admission, shared current-component applicability, canonical cast authority, and exact source-zone fingerprints independently fail closed.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused compiler, complete-card lookup, cost-option, commit-revalidation, delayed-identity, and permission-duration mutations are rejected by exact compilation and behavioral assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.madness.fixed_mana",
+      "version": 1,
+      "official_rules": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and resolve ordinary fixed-mana Madness as a typed discard self-replacement followed by an identity-pinned cast-or-graveyard trigger using the canonical casting and one-shot exile-choice owners.",
+        "inputs": ["one complete-card fixed ordinary-mana Madness declaration", "one current hand ability at the typed discard replacement boundary", "the resulting public exile incarnation", "one current payable rules-authored casting option"],
+        "outputs": ["mandatory discard into exile replacement", "one normalized self-discard trigger", "one public cast-or-decline choice", "canonical target, total-cost, payment, and stack construction", "graveyard movement on decline", "APNAP placement, privacy-safe projection, and exact replay"],
+        "exclusions": ["X, hybrid, Phyrexian, snow, nonmana, life, or compound Madness costs", "Madness followed by nonordinary reminder text", "copied, granted, text-changed, duplicated, or incomplete-card declarations", "off-battlefield ability changes outside the shared current-component boundary", "competing discard replacements that require an unsupported continuation owner", "cards that leave exile or become a new incarnation before the old trigger resolves"]
+      },
+      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement", "zone.discard.typed_cause"],
+      "implementation_components": ["quorune.compiler.madness_nodes.madness_keyword_nodes", "quorune.semantic_runtime.madness.MadnessDiscardReplacementHandler", "quorune.semantic_choices.madness.MadnessCastChoiceHandler", "quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin.madness_choice_intent", "quorune.rules.casting.proposal.build_cast_proposal", "quorune.rules.casting.commit.commit_cast"],
+      "positive_tests": ["test_fixed_mana_madness_compiles_typed_replacement_and_trigger", "test_madness_cast_and_decline_share_offer_commit_and_replay"],
+      "negative_tests": ["test_madness_variants_and_dependencies_fail_closed", "test_madness_stale_payment_counter_and_current_ability_boundaries"],
+      "interaction_tests": ["test_madness_stale_payment_counter_and_current_ability_boundaries", "test_simultaneous_madness_triggers_batch_in_apnap_order"],
+      "multiplayer_tests": ["test_simultaneous_madness_triggers_batch_in_apnap_order", "test_four_player_madness_projection_and_save_load"],
+      "privacy_tests": ["test_four_player_madness_projection_and_save_load"],
+      "replay_tests": ["test_madness_cast_and_decline_share_offer_commit_and_replay", "test_four_player_madness_projection_and_save_load"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking typed discard cause, destination replacement, normalized zone events, or APNAP placement prevents either Madness ability from becoming trusted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused mutations remove either compiler node, discard cause, replacement, source-incarnation pin, cast-option fingerprint, or canonical cast commit; compiler and runtime assertions reject every survivor.",
       "blockers": [],
       "status": "trusted"
     },

@@ -26,6 +26,7 @@ class ZoneTransitionKind(str, Enum):
 
     ORDINARY = "ordinary"
     COUNTERED_SPELL = "countered_spell"
+    DISCARD = "discard"
     SACRIFICE = _SACRIFICE_TRANSITION_KIND
 
 
@@ -61,6 +62,12 @@ def validate_zone_transition_request(
         raise GameRuleError(
             "Only a battlefield permanent can use the sacrifice transition"
         )
+    if transition_kind is ZoneTransitionKind.DISCARD and (
+        card.zone != "hand" or destination != "graveyard"
+    ):
+        raise GameRuleError(
+            "Only a requested hand-to-graveyard move can use the discard transition"
+        )
     return card
 
 
@@ -80,6 +87,22 @@ def normalized_transition_kind_map(
             "Simultaneous transition kinds must be typed and name changed objects"
         )
     return result
+
+
+def cost_transition_kind(log_kind: str) -> ZoneTransitionKind:
+    return {
+        "discard": ZoneTransitionKind.DISCARD,
+        "sacrifice": ZoneTransitionKind.SACRIFICE,
+    }.get(str(log_kind), ZoneTransitionKind.ORDINARY)
+
+
+def uniform_transition_kind_map(
+    object_ids: Sequence[str],
+    kind: ZoneTransitionKind,
+) -> dict[str, ZoneTransitionKind]:
+    if not isinstance(kind, ZoneTransitionKind):
+        raise GameRuleError("Uniform zone transition kind must be typed")
+    return {str(object_id): kind for object_id in object_ids}
 
 
 def normalized_library_position(
@@ -263,8 +286,8 @@ class ZoneChangeOccurrence:
             "tapped": self.tapped,
             "cause": self.cause,
         }
-        # Preserve ordinary occurrence fingerprints while making the corrected
-        # counter path explicit and replay-stable.
+        # Preserve historical ordinary occurrence fingerprints while making
+        # semantic transition causes explicit and replay-stable.
         if self.transition_kind is not ZoneTransitionKind.ORDINARY:
             result["transition_kind"] = self.transition_kind.value
         if self.read_ahead_chapter is not None:
@@ -432,7 +455,7 @@ def normalized_zone_trigger_events(
                 "card.leave_graveyard", "after", FrozenMap(common)
             )
         )
-    if occurrence.origin == "hand" and occurrence.destination == "graveyard":
+    if occurrence.transition_kind is ZoneTransitionKind.DISCARD:
         result.append(
             NormalizedZoneTriggerEvent(
                 "card.discarded", "after", FrozenMap(common)
@@ -471,6 +494,8 @@ __all__ = [
     "NormalizedZoneTriggerEvent",
     "ZoneChangeOccurrence",
     "ZoneTransitionKind",
+    "cost_transition_kind",
+    "uniform_transition_kind_map",
     "ZoneTriggerEventError",
     "normalized_library_position",
     "normalized_transition_kind_map",

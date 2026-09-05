@@ -504,6 +504,10 @@ class SemanticChoiceIntentHostMixin:
             reason=intent.reason,
             log=False,
             replacement_selections=intent.replacement_selections,
+            transition_kinds={
+                card.object_id: intent.transition_kind
+                for card in cards
+            },
         )
         return tuple(card.ref for card in cards)
 

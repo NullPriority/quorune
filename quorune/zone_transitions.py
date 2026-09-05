@@ -217,6 +217,7 @@ class ZoneTransitionOwner:
             log=log,
             replacement_selections=replacement_selections,
             prepared_replacement=prepared_replacement,
+            transition_kind=transition_kind,
         )
         if isinstance(plan_or_card, CardInstance):
             return plan_or_card
@@ -272,6 +273,7 @@ class ZoneTransitionOwner:
         log: bool,
         replacement_selections: Sequence[str | None | Mapping[str, Any]],
         prepared_replacement: PreparedZoneChange | None,
+        transition_kind: ZoneTransitionKind,
     ) -> ZoneMovePlan | CardInstance:
         requested_destination = destination
         origin = card.zone
@@ -332,6 +334,7 @@ class ZoneTransitionOwner:
             entry_characteristics=entry_characteristics,
             requested_tapped=bool(tapped) if tapped is not None else False,
             entry_pay_life=entry_pay_life,
+            transition_kind=transition_kind,
             selections=tuple(replacement_selections),
             prepared=prepared_replacement,
             error_type=GameRuleError,
@@ -833,6 +836,7 @@ class ZoneTransitionOwner:
             sources=sources,
             source_zones=source_snapshot.source_zones,
             selections=tuple(replacement_selections),
+            transition_kinds=kinds,
             error_type=GameRuleError,
         )
         snapshots = tuple(

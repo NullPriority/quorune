@@ -79,6 +79,8 @@ class CostRulesQuery(Protocol):
         requirements: Mapping[str, int],
     ) -> bool: ...
 
+    def authorized_cast_options(self) -> tuple[Mapping[str, Any], ...]: ...
+
 
 class SemanticChoiceQuery(
     ObjectRulesQuery,
@@ -134,6 +136,7 @@ class SnapshotSemanticChoiceQuery:
     libraries_by_seat: FrozenMap = field(default_factory=FrozenMap)
     mana_by_seat: FrozenMap = field(default_factory=FrozenMap)
     affordable_costs: frozenset[str] = frozenset()
+    authorized_cast_option_rows: tuple[FrozenMap, ...] = ()
     canonical_names: FrozenMap = field(default_factory=FrozenMap)
     target_schemas: FrozenMap = field(default_factory=FrozenMap)
     validated_targets: FrozenMap = field(default_factory=FrozenMap)
@@ -160,6 +163,14 @@ class SnapshotSemanticChoiceQuery:
             value = getattr(self, field_name)
             if not isinstance(value, FrozenMap):
                 object.__setattr__(self, field_name, FrozenMap(value))
+        object.__setattr__(
+            self,
+            "authorized_cast_option_rows",
+            tuple(
+                value if isinstance(value, FrozenMap) else FrozenMap(value)
+                for value in self.authorized_cast_option_rows
+            ),
+        )
 
     @property
     def seats(self) -> tuple[str, ...]:
@@ -202,6 +213,9 @@ class SnapshotSemanticChoiceQuery:
             ),
             None,
         )
+
+    def authorized_cast_options(self) -> tuple[Mapping[str, Any], ...]:
+        return tuple(self.authorized_cast_option_rows)
 
     def stack_object(
         self,

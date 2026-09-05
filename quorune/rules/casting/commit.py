@@ -19,7 +19,7 @@ from ...counter_placement import (
 )
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
-from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec
+from ...compiled_madness import current_fixed_cast_lifecycle_spec
 from ...cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
@@ -50,6 +50,7 @@ from ...zone_object_state import (
 from ...stack_counter import oracle_has_intrinsic_counter_prohibition
 from ...tap_state import set_permanent_tapped
 from ...trigger_processing import collect_ward_occurrences, enqueue_trigger_batch
+from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
 from ..casting_additional_costs import (
     AdditionalCostError,
@@ -131,7 +132,16 @@ class CastCommitHost(Protocol):
 @dataclass(slots=True)
 class _AdditionalCostCommit:
     deferred_events: list[
-        tuple[Any, str, str, str, dict[str, Any], list[str], str]
+        tuple[
+            Any,
+            str,
+            str,
+            str,
+            dict[str, Any],
+            list[str],
+            str,
+            ZoneTransitionKind,
+        ]
     ]
     source_snapshots: list[Any]
     source_zones: dict[str, str]
@@ -658,12 +668,20 @@ def _commit_additional_costs(
         destination,
         replacement_selections,
     ) in changes:
+        transition_kind = (
+            ZoneTransitionKind.DISCARD
+            if kind == "discard"
+            else ZoneTransitionKind.SACRIFICE
+            if kind == "sacrifice"
+            else ZoneTransitionKind.ORDINARY
+        )
         host.move_card(
             paid.object_id,
             destination,
             reason=f"{card.printed_name} {kind} cost",
             semantic_events=False,
             replacement_selections=replacement_selections,
+            transition_kind=transition_kind,
         )
         result.paid_refs.append(paid.ref)
         result.deferred_events.append(
@@ -675,6 +693,7 @@ def _commit_additional_costs(
                 data,
                 attachments,
                 paid.zone,
+                transition_kind,
             )
         )
         host._log(
@@ -960,6 +979,7 @@ def _dispatch_cast_events(
         data,
         attachments,
         destination,
+        transition_kind,
     ) in costs.deferred_events:
         host._dispatch_zone_change_events(
             paid,
@@ -975,6 +995,7 @@ def _dispatch_cast_events(
                 costs.source_characteristics
             ),
             reason=f"{card.printed_name} additional cost",
+            transition_kind=transition_kind,
             trigger_batch=trigger_batch,
         )
     cast_types, cast_subtypes, cast_supertypes = host._type_parts(
@@ -1099,12 +1120,13 @@ def _revalidate_cast_contracts(
                 str(exc),
                 reason="stale_fixed_cast_lifecycle_contract",
             ) from exc
-        current_lifecycle = compiled_fixed_cast_lifecycle_spec(
+        current_lifecycle = current_fixed_cast_lifecycle_spec(
             host,
             card,
             proposed_lifecycle.kind,
         )
         expected_origin = {
+            FixedCastLifecycleKind.MADNESS: "exile",
             FixedCastLifecycleKind.WARP: "hand",
             FixedCastLifecycleKind.RETRACE: "graveyard",
         }.get(proposed_lifecycle.kind)

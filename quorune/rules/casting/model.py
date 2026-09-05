@@ -51,6 +51,7 @@ class CastProposalRequest:
     cost_option_id: str | None = None
     submission: FrozenJson = field(default_factory=FrozenObject)
     authorized_from_zone: str | None = None
+    authorized_cost_option: FrozenJson | None = None
     required_face: str | None = None
     force_without_mana_cost: bool = False
     ignore_priority: bool = False
@@ -81,6 +82,26 @@ class CastProposalRequest:
             object.__setattr__(self, "submission", freeze_json(self.submission))
         if not isinstance(self.submission, FrozenObject):
             raise CastProposalError("Cast submission must be an object")
+        if self.authorized_cost_option is not None and not isinstance(
+            self.authorized_cost_option, FrozenObject
+        ):
+            object.__setattr__(
+                self,
+                "authorized_cost_option",
+                freeze_json(self.authorized_cost_option),
+            )
+        if self.authorized_cost_option is not None and not isinstance(
+            self.authorized_cost_option, FrozenObject
+        ):
+            raise CastProposalError(
+                "Authorized cast-cost options must be typed objects"
+            )
+        if self.authorized_cost_option is not None and (
+            self.authorized_from_zone is None or not self.during_resolution
+        ):
+            raise CastProposalError(
+                "Authorized cast costs require a scoped resolution zone"
+            )
 
     @classmethod
     def from_submission(
@@ -89,6 +110,7 @@ class CastProposalRequest:
         response: Mapping[str, Any],
         *,
         authorized_from_zone: str | None = None,
+        authorized_cost_option: Mapping[str, Any] | None = None,
         required_face: str | None = None,
         force_without_mana_cost: bool = False,
         ignore_priority: bool = False,
@@ -138,6 +160,11 @@ class CastProposalRequest:
             ),
             submission=freeze_json(dict(response)),
             authorized_from_zone=authorized_from_zone,
+            authorized_cost_option=(
+                freeze_json(authorized_cost_option)
+                if authorized_cost_option is not None
+                else None
+            ),
             required_face=required_face,
             force_without_mana_cost=force_without_mana_cost,
             ignore_priority=ignore_priority,

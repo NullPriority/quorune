@@ -7,7 +7,7 @@ from ..errors import GameRuleError
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
 from ..object_query import object_query_result
-from ..replacement.immutable import thaw_value
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
 from ..semantic_runtime import (
     IntentPlan,
@@ -343,6 +343,35 @@ class SemanticChoiceCoordinationMixin:
             }
         )
 
+    def _semantic_choice_authorized_cast_options(
+        self,
+        actor: str,
+        effect: Mapping[str, Any],
+        source_ref: str | None,
+    ) -> tuple[Mapping[str, Any], ...]:
+        if (
+            str(effect.get("op") or "") != "madness_cast_choice"
+            or source_ref is None
+        ):
+            return ()
+        card = next(
+            (
+                value
+                for value in self.state.cards.values()
+                if value.ref == source_ref
+            ),
+            None,
+        )
+        if card is None:
+            return ()
+        return tuple(
+            self._madness_exile_cast_options(
+                actor=actor,
+                card=card,
+                raw_spec=effect.get("madness"),
+            )
+        )
+
     def _semantic_choice_query(
         self,
         actor: str,
@@ -383,6 +412,14 @@ class SemanticChoiceCoordinationMixin:
             },
             affordable_costs=self._semantic_choice_affordable_costs(
                 actor, choice_effect, object_rows
+            ),
+            authorized_cast_option_rows=tuple(
+                FrozenMap(value)
+                for value in self._semantic_choice_authorized_cast_options(
+                    actor,
+                    choice_effect,
+                    source_ref,
+                )
             ),
             canonical_names=self._semantic_choice_canonical_names(response),
             target_schemas=target_schemas,

@@ -13,6 +13,7 @@ from ..replacement_effects import (
     ReplacementEventBatch,
     ReplacementSelection,
 )
+from ..zone_trigger_events import ZoneTransitionKind
 _EXILE_ZONE = "exile"
 _LIBRARY_ZONE = "library"
 SUPPORTED_ZONE_DESTINATIONS = frozenset(
@@ -119,6 +120,7 @@ class ZoneChangeSubjectSnapshot:
     entry_face_id: str
     object_types: tuple[str, ...]
     is_card_object: bool
+    transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY
     is_commander: bool = False
     commander_designation_id: str | None = None
     requested_tapped: bool = False
@@ -205,6 +207,10 @@ class ZoneChangeSubjectSnapshot:
         if type(self.is_card_object) is not bool:
             raise ZoneReplacementError(
                 "Zone replacement card-object state must be boolean"
+            )
+        if not isinstance(self.transition_kind, ZoneTransitionKind):
+            raise ZoneReplacementError(
+                "Zone replacement transition kind must be typed"
             )
         if type(self.requested_tapped) is not bool:
             raise ZoneReplacementError(
@@ -346,6 +352,7 @@ class PreparedZoneChange:
     state_revision: int
     event_sequence: int
     destination: str
+    transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY
     requested_tapped: bool = False
     requested_entry_pay_life: bool | None = None
     entry_tapped: bool = False
@@ -373,6 +380,10 @@ class PreparedZoneChange:
         if self.destination_controller == "":
             raise ZoneReplacementError(
                 "Prepared zone-change controllers cannot be empty"
+            )
+        if not isinstance(self.transition_kind, ZoneTransitionKind):
+            raise ZoneReplacementError(
+                "Prepared zone-change transition kind must be typed"
             )
         if (
             type(self.state_revision) is not int

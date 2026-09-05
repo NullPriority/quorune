@@ -28,6 +28,7 @@ from ..milling import mill_cards, MillRequest
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
 from ..util import unique_preserving_order
+from ..zone_trigger_events import ZoneTransitionKind
 
 _EXILE_ZONE = "exile"
 
@@ -89,6 +90,13 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         ),
         reason=reason,
         semantic_events=True,
+        transition_kind=(
+            ZoneTransitionKind.DISCARD
+            if op == "discard"
+            else ZoneTransitionKind.SACRIFICE
+            if op == "sacrifice"
+            else ZoneTransitionKind.ORDINARY
+        ),
         replacement_selections=tuple(
             effect.get("_replacement_selections") or ()
         ),

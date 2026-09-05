@@ -642,14 +642,19 @@
       "rule_id": "400.7k",
       "rule_text_sha256": "340b337886070c6e1b92d95edaee3ece2887c8ddb288716ae92455d9cc743b44",
       "classification": "behavioral",
-      "status": "blocked",
-      "assertion_kind": "unsupported_fail_closed",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
       "reviewed": true,
       "implementation_components": [
-        "semantic preflight"
+        "quorune.zone_trigger_events.ZoneTransitionKind.DISCARD",
+        "quorune.semantic_runtime.madness.MadnessDiscardReplacementHandler",
+        "quorune.semantic_choices.madness.MadnessCastChoiceHandler",
+        "quorune.rules.casting.commit.commit_cast"
       ],
       "executable_test_ids": [
-        "tests.test_zone_general_rules.ZoneGeneralRuleTests.test_contract_traces_every_cr_400_rule"
+        "tests.test_madness_rules.MadnessRuntimeTests.test_typed_discard_cause_covers_authoritative_producers_without_inference",
+        "tests.test_madness_rules.MadnessRuntimeTests.test_madness_cast_and_decline_share_offer_commit_and_replay",
+        "tests.test_madness_rules.MadnessRuntimeTests.test_madness_stale_payment_counter_and_current_ability_boundaries"
       ],
       "required_scenarios": [
         "positive",
@@ -657,13 +662,13 @@
         "interaction"
       ],
       "covered_scenarios": [
-        "negative"
+        "positive",
+        "negative",
+        "interaction"
       ],
-      "blockers": [
-        "madness_action_and_post_resolution_continuation_not_implemented"
-      ],
+      "blockers": [],
       "notes": [
-        "Madness and its discarded-card continuation are not represented and remain unavailable under semantic preflight."
+        "Ordinary fixed-mana Madness preserves the discarded card's public exile incarnation through its typed cast-or-graveyard continuation; unsupported costs remain fail closed."
       ]
     },
     {

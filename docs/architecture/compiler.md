@@ -816,6 +816,19 @@ lifecycle unavailable rather than assuming its printed ability remains. That
 fail-closed boundary applies equally to Retrace and is not a general graveyard
 characteristic layer.
 
+Ordinary fixed-mana `Madness` lowers as two source-spanned abilities. Its
+static hand component replaces only a typed discard's requested graveyard
+destination with exile; ordinary hand moves cannot acquire discard authority
+from their zones. The resulting normalized self-discard event creates an
+identity-pinned cast-or-graveyard trigger. Its public choice derives one scoped
+alternative cost from the ordinary casting proposal and commit owner, so cost
+modification, target legality, payment rollback, stack construction, and
+countering retain their canonical paths. Activation and spell costs, effects,
+cleanup, specifically drawn-card actions, and simultaneous APNAP choices all
+share the same typed discard cause. Variable, hybrid, Phyrexian, snow, life,
+nonmana, compound, altered-reminder, copied, granted, and incomplete-card
+Madness forms remain fail closed.
+
 Printed `Sunburst` lowers as one source-spanned `zone.change` descriptor per
 instance. The descriptor contains the counter kind derived from the printed
 selected-face card types, never a runtime type query. Cast commit separately

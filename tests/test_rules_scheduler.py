@@ -65,6 +65,7 @@ from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
     _fixed_activation_zone_change_predicate_measurement,
     _fixed_entry_return_requirement_measurement,
+    _fixed_mana_madness_measurement,
     _partner_with_measurement,
     _fixed_token_production_measurement,
     _typed_quoted_ability_grant_measurement,
@@ -2657,6 +2658,85 @@ class RulesSchedulerTests(unittest.TestCase):
             1,
             measurement["candidate_accounting"]["affected_oracle_carriers"],
         )
+
+    def test_fixed_mana_madness_probe_counts_both_rules_abilities(self):
+        source = "Madness {B}"
+        record = SimpleNamespace(
+            oracle_id="fixture:fixed-mana-madness",
+            name="Fixed Madness fixture",
+            oracle_text=source,
+            type_line="Sorcery",
+            keywords=("Madness",),
+            faces=(),
+        )
+        family = "continuous_layer:continuous-effect-layers-and-dependencies"
+        ability = {
+            "ability_id": "front:n1",
+            "face_id": "front",
+            "source_line": 1,
+            "status": "unresolved",
+            "blockers": {"canonical_family_ids": [family]},
+            "residuals": [{"residual_id": "r1"}],
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "unresolved",
+                    "exact_ability_count": 0,
+                    "minimum_known_blocker_set": [family],
+                    "abilities": [ability],
+                }
+            ]
+        }
+        replacement = SimpleNamespace(
+            exact=True,
+            template_id="madness-discard-replacement-v1",
+            span=SimpleNamespace(line=1),
+        )
+        trigger = SimpleNamespace(
+            exact=True,
+            template_id="madness-cast-trigger-v1",
+            span=SimpleNamespace(line=1),
+        )
+        compiled = SimpleNamespace(
+            faces=(
+                SimpleNamespace(
+                    face_id="front",
+                    nodes=(replacement, trigger),
+                ),
+            ),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _fixed_mana_madness_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-mana-madness",
+                probe_id="fixed-mana-madness-existing-owner-v1",
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 2,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(2, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
 
     def test_transition_measurement_reuse_requires_current_semantic_inputs(self):
         receipt = {

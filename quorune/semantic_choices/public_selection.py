@@ -14,6 +14,7 @@ from ..semantic_runtime.intents import (
     ProliferateSubject,
     RecordChoiceIntent,
 )
+from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
@@ -180,6 +181,11 @@ class PublicObjectChoiceHandler:
                             else str(next_effect.get("destination") or "graveyard")
                         ),
                         reason=reason,
+                        transition_kind=(
+                            ZoneTransitionKind.SACRIFICE
+                            if next_op == "sacrifice_selected"
+                            else ZoneTransitionKind.ORDINARY
+                        ),
                     )
                 )
             elif next_op == "add_counter_selected":

@@ -6,6 +6,7 @@ from typing import Any, Protocol, Sequence
 from ..cast_timing import type_line_has_card_type
 from ..model import CardInstance, GameState
 from ..player_result_events import CardDrawEvent, dispatch_card_draw_event
+from ..zone_trigger_events import ZoneTransitionKind
 from .model import (
     DiscardDrawnCardUnlessType,
     DrawError,
@@ -301,6 +302,7 @@ def _apply_drawn_card_actions(
                 "graveyard",
                 reason="discard specifically drawn nonland card",
                 semantic_events=True,
+                transition_kind=ZoneTransitionKind.DISCARD,
             )
             host._log(
                 resolution.player,

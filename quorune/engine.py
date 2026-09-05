@@ -151,6 +151,8 @@ from .trigger_discovery import (
     semantic_event_value,
 )
 from .zone_trigger_events import (
+    cost_transition_kind,
+    uniform_transition_kind_map,
     ZoneChangeOccurrence,
     ZoneTransitionKind,
 )
@@ -2811,6 +2813,7 @@ class CommanderEngine(
         response: Mapping[str, Any],
         *,
         authorized_from_zone: str | None = None,
+        authorized_cost_option: Mapping[str, Any] | None = None,
         required_face: str | None = None,
         force_without_mana_cost: bool = False,
         ignore_priority: bool = False,
@@ -2821,6 +2824,7 @@ class CommanderEngine(
             seat,
             response,
             authorized_from_zone=authorized_from_zone,
+            authorized_cost_option=authorized_cost_option,
             required_face=required_face,
             force_without_mana_cost=force_without_mana_cost,
             ignore_priority=ignore_priority,
@@ -2943,6 +2947,11 @@ class CommanderEngine(
                     reason="activated ability cost",
                     semantic_events=True,
                     replacement_selections=tuple(selections),
+                    transition_kind=cost_transition_kind(
+                        typed_cost.log_kind
+                        if typed_cost is not None
+                        else choice.kind
+                    ),
                 )
         return used
 
@@ -6583,6 +6592,9 @@ class CommanderEngine(
             [(object_id, "graveyard") for object_id in objects],
             reason="cleanup discard",
             log=False,
+            transition_kinds=uniform_transition_kind_map(
+                objects, ZoneTransitionKind.DISCARD
+            ),
         )
         self._log(seat, "cleanup.discard", f"{seat} discarded {len(objects)} card(s) to maximum hand size.", {"objects": [self.state.cards[oid].ref for oid in objects]}, importance=1, changed_objects=objects, changed_players=[seat])
         self._finish_cleanup()

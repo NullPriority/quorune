@@ -66,6 +66,11 @@ from quorune.morph import (
     DISGUISE_CAST_METHOD,
     MEGAMORPH_CAST_METHOD,
 )
+from quorune.madness import (
+    fixed_madness_spec,
+    MADNESS_REPLACEMENT_TEMPLATE_ID,
+    MADNESS_TRIGGER_TEMPLATE_ID,
+)
 from quorune.read_ahead import saga_chapter_line
 from quorune.compiler.continuous_templates import (
     attached_fixed_characteristics_handler,
@@ -197,6 +202,7 @@ _PROBE_TYPED_QUOTED_ABILITY_GRANT = (
     "typed-quoted-ability-grant-existing-owner-v1"
 )
 _PROBE_PARTNER_WITH = "partner-with-existing-owner-v1"
+_PROBE_FIXED_MANA_MADNESS = "fixed-mana-madness-existing-owner-v1"
 _FIXED_TOKEN_PRODUCTION_FAMILIES = frozenset(
     {
         "activated_effect:create-token",
@@ -208,6 +214,24 @@ _FIXED_TOKEN_PRODUCTION_FAMILIES = frozenset(
 )
 _CONTINUOUS_LAYER_FAMILY = (
     "continuous_layer:continuous-effect-layers-and-dependencies"
+)
+_FIXED_MANA_MADNESS_FAMILIES = frozenset(
+    {
+        _CONTINUOUS_LAYER_FAMILY,
+        "effect_clause:unparsed-madness-0",
+        "effect_clause:unparsed-madness-1-b",
+        "effect_clause:unparsed-madness-1-r",
+        "effect_clause:unparsed-madness-1-u",
+        "effect_clause:unparsed-madness-2-b",
+        "effect_clause:unparsed-madness-3-b",
+        "effect_clause:unparsed-madness-3-r",
+        "effect_clause:unparsed-madness-3-u",
+        "effect_clause:unparsed-madness-b",
+        "effect_clause:unparsed-madness-b-r",
+        "effect_clause:unparsed-madness-r",
+        "effect_clause:unparsed-madness-u",
+        "effect_clause:unparsed-madness-w",
+    }
 )
 _ATTACHED_GRANT_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
     {
@@ -243,6 +267,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_TOKEN_PRODUCTION,
     _PROBE_TYPED_QUOTED_ABILITY_GRANT,
     _PROBE_PARTNER_WITH,
+    _PROBE_FIXED_MANA_MADNESS,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY,
@@ -834,6 +859,16 @@ def _matches_probe(
         return (
             partner_with_spec_for_material_line(
                 _without_parenthetical_reminder(source)
+            )
+            is not None
+        )
+    if probe_id == _PROBE_FIXED_MANA_MADNESS:
+        material = _without_parenthetical_reminder(source)
+        return (
+            fixed_madness_spec(
+                material_line=material,
+                oracle_line=source,
+                line_index=0,
             )
             is not None
         )
@@ -2380,6 +2415,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_FIXED_MANA_MADNESS:
+        return _fixed_mana_madness_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_SELF_SPELL_COST_REDUCTION:
         return _self_spell_cost_reduction_measurement(
             frontier=frontier,
@@ -3645,6 +3689,176 @@ def _partner_with_measurement(
             "cards_excluded_by_unsupported_sibling": (
                 unsupported_sibling_cards
             ),
+            "cards_excluded_by_unsupported_grammar": len(
+                unsupported_grammar_cards
+            ),
+        },
+    }
+
+
+def _fixed_mana_madness_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure the two-ability fixed-mana Madness lifecycle."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    affected_carriers = 0
+    exact_ability_gain = 0
+    expected_residual_reduction = 0
+    existing_exact_sibling_nodes = 0
+    remaining_residual_sibling_nodes = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    templates = {
+        MADNESS_REPLACEMENT_TEMPLATE_ID,
+        MADNESS_TRIGGER_TEMPLATE_ID,
+    }
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        residual_abilities = [
+            ability
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        ]
+        madness_abilities = [
+            ability
+            for ability in residual_abilities
+            if _source_line(record, ability).strip().casefold().startswith(
+                "madness"
+            )
+        ]
+        candidates = [
+            ability
+            for ability in madness_abilities
+            if _FIXED_MANA_MADNESS_FAMILIES.intersection(
+                {
+                str(value)
+                for value in ability.get("blockers", {}).get(
+                    "canonical_family_ids", ()
+                )
+                }
+            )
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if madness_abilities and not candidates:
+            unsupported_grammar_cards.add(oracle_id)
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented = 0
+        for ability in candidates:
+            face_id = str(ability.get("face_id") or "front")
+            source_line = int(ability.get("source_line") or 0)
+            face = next(
+                (
+                    value
+                    for value in compiled.faces
+                    if value.face_id == face_id
+                ),
+                None,
+            )
+            nodes = (
+                [
+                    node
+                    for node in face.nodes
+                    if node.span.line == source_line
+                    and node.exact
+                    and node.template_id in templates
+                ]
+                if face is not None
+                else []
+            )
+            if len(nodes) == 2 and {node.template_id for node in nodes} == templates:
+                represented += 1
+        if not represented:
+            unsupported_grammar_cards.add(oracle_id)
+            continue
+        if represented != len(candidates):
+            unsupported_grammar_cards.add(oracle_id)
+        previous_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in residual_abilities
+        )
+        residual_reduction = max(
+            0,
+            previous_residuals - len(compiled.material_residuals),
+        )
+        remaining = len(compiled.material_residuals)
+        matched_cards[oracle_id] = remaining
+        affected_carriers += represented
+        exact_ability_gain += represented * 2
+        expected_residual_reduction += residual_reduction
+        existing_exact_sibling_nodes += int(card.get("exact_ability_count", 0))
+        remaining_residual_sibling_nodes += remaining
+        if card.get("oracle_ir_status") != "exact" and compiled.status == "exact":
+            complete_cards.add(oracle_id)
+        else:
+            unsupported_sibling_cards += 1
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": affected_carriers,
+            "existing_exact_sibling_nodes": existing_exact_sibling_nodes,
+            "remaining_residual_sibling_nodes": (
+                remaining_residual_sibling_nodes
+            ),
+            "trusted_program_transitions": len(complete_cards),
+            "unresolved_program_transitions": (
+                len(matched_cards) - len(complete_cards)
+            ),
+            "expected_oracle_residual_reduction": expected_residual_reduction,
+            "expected_card_program_residual_reduction": (
+                expected_residual_reduction
+            ),
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": unsupported_sibling_cards,
             "cards_excluded_by_unsupported_grammar": len(
                 unsupported_grammar_cards
             ),

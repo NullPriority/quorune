@@ -35,6 +35,7 @@ from ..rules.library_selection import (
     LibrarySelectionError,
     LibrarySelectionObjectIdentity,
 )
+from ..zone_trigger_events import ZoneTransitionKind
 from .model import SemanticChoiceError
 
 
@@ -106,6 +107,9 @@ _SIMULTANEOUS_MOVE_FIELDS = {
     _REASON_FIELD,
     "owned_only",
     "controlled_only",
+}
+_SIMULTANEOUS_MOVE_TRANSITION_FIELDS = _SIMULTANEOUS_MOVE_FIELDS | {
+    "transition_kind"
 }
 _PROLIFERATE_FIELDS = {
     "actor",
@@ -282,18 +286,18 @@ def _library_selection_intent_identity(
 def _simultaneous_move_intent_identity(
     intent: MoveObjectsSimultaneouslyIntent,
 ) -> tuple[str, dict[str, Any]]:
-    return (
-        "move_objects_simultaneously",
-        {
-            "actor": intent.actor,
-            "object_refs": list(intent.object_refs),
-            "expected_zones": list(intent.expected_zones),
-            "destination": intent.destination,
-            _REASON_FIELD: intent.reason,
-            "owned_only": intent.owned_only,
-            "controlled_only": intent.controlled_only,
-        },
-    )
+    identity = {
+        "actor": intent.actor,
+        "object_refs": list(intent.object_refs),
+        "expected_zones": list(intent.expected_zones),
+        "destination": intent.destination,
+        _REASON_FIELD: intent.reason,
+        "owned_only": intent.owned_only,
+        "controlled_only": intent.controlled_only,
+    }
+    if intent.transition_kind is not ZoneTransitionKind.ORDINARY:
+        identity["transition_kind"] = intent.transition_kind.value
+    return "move_objects_simultaneously", identity
 
 
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
@@ -842,7 +846,10 @@ def validate_semantic_intent_identity(
 def _validate_simultaneous_move_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) != _SIMULTANEOUS_MOVE_FIELDS:
+    if not isinstance(value, Mapping) or set(value) not in {
+        frozenset(_SIMULTANEOUS_MOVE_FIELDS),
+        frozenset(_SIMULTANEOUS_MOVE_TRANSITION_FIELDS),
+    }:
         raise SemanticChoiceError(
             "Simultaneous-move intent identity fields are malformed"
         )
@@ -855,6 +862,9 @@ def _validate_simultaneous_move_intent_identity(
             reason=value[_REASON_FIELD],
             owned_only=value["owned_only"],
             controlled_only=value["controlled_only"],
+            transition_kind=ZoneTransitionKind(
+                value.get("transition_kind", ZoneTransitionKind.ORDINARY.value)
+            ),
         )
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(

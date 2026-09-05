@@ -22,7 +22,9 @@ from ..zone_object_keyword_model import (
     ZoneObjectKeywordGrantError,
     normalized_zone_object_keyword,
 )
+from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticSourceContext
+from .madness_intent import MadnessChoiceIntent
 
 
 _EXPLORE_LABEL = "Explore"
@@ -680,6 +682,7 @@ class MoveObjectsSimultaneouslyIntent:
     expected_zones: tuple[str, ...]
     destination: str
     reason: str
+    transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY
     owned_only: bool = False
     controlled_only: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
@@ -702,6 +705,7 @@ class MoveObjectsSimultaneouslyIntent:
             or not self.destination
             or type(self.reason) is not str
             or not self.reason
+            or not isinstance(self.transition_kind, ZoneTransitionKind)
             or type(self.owned_only) is not bool
             or type(self.controlled_only) is not bool
         ):
@@ -1591,6 +1595,7 @@ SemanticIntent: TypeAlias = (
     | RecordChoiceIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
+    | MadnessChoiceIntent
     | ChooseOneRestBottomRandomIntent
     | ShuffleLibraryIntent
     | ReturnCardsToLibraryTopIntent

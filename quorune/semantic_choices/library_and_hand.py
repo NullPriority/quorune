@@ -16,6 +16,7 @@ from ..semantic_runtime.intents import (
     RevealLibraryCardsIntent,
     ZoneMoveIntent,
 )
+from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
@@ -477,6 +478,7 @@ class DiscardDrawChoiceHandler:
                     expected_zones=("hand",),
                     destination="graveyard",
                     reason=str(effect["_stack_label"]),
+                    transition_kind=ZoneTransitionKind.DISCARD,
                     owned_only=True,
                 )
             )
