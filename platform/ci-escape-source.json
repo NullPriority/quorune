@@ -829,6 +829,23 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint."
+    },
+    {
+      "id": "ci-20260905-55",
+      "run_id": 33969136194,
+      "head_sha": "c918e7abc38357befa8fec998b1714b70785f232",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The ability-word public-event harvest intentionally remapped exact Constellation wording from the older specialized enchantment.enter event to the canonical permanent.enter occurrence with a sealed enchantment predicate, but one preexisting positive compiler table retained the superseded event and template identities.",
+      "failed_surfaces": [
+        "PR / Python / functional-02 (job 101314629247)",
+        "PR / Windows / functional-02 (job 101314629162)"
+      ],
+      "regressions": [
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_trigger_ability_words_reuse_existing_typed_owners[Constellation]"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The legacy ability-word composition table now asserts permanent.enter and the dedicated Constellation template, matching the new focused compiler and runtime witnesses. The existing complete compiler impact rule already selected this module; future event remaps must run this exact cross-owner positive table before the source checkpoint."
     }
   ],
   "recent_pull_requests": [

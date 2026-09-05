@@ -336,8 +336,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "Constellation — Whenever an enchantment you control enters, "
                 "tap target creature an opponent controls.",
                 "Creature — Unicorn",
-                "enchantment.enter",
-                "fixed-typed-effect-enchantment-entry-trigger-v1",
+                "permanent.enter",
+                "fixed-typed-effect-constellation-entry-trigger-v1",
             ),
         )
         for text, type_line, event, template_id in cases:
