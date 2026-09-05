@@ -20,6 +20,7 @@ from quorune.compiler.cast_cost_modifier_templates import (
 )
 from quorune.compiler.exile_templates import targeted_exile_effect_template
 from quorune.compiler.damage_templates import source_pronoun_damage_effect_template
+from quorune.compiler.draw_templates import trigger_ability_word_material_line
 from quorune.compiler.fixed_all_damage_prevention import (
     fixed_all_damage_prevention_specs,
 )
@@ -114,6 +115,9 @@ _PROBE_EXILE = "fixed-exile-existing-owner-v1"
 _PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
 _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER = (
     "typed-public-event-effect-trigger-existing-owner-v1"
+)
+_PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER = (
+    "ability-word-public-event-trigger-existing-owner-v1"
 )
 _PROBE_OPTIONAL_MANA_PAYMENT = (
     "fixed-optional-mana-payment-trigger-existing-owner-v1"
@@ -256,6 +260,7 @@ _ATTACHED_GRANT_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
 )
 _PROBE_IDS = {
     _PROBE_ATTACHED_QUOTED_ABILITY_GRANT,
+    _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER,
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
     _PROBE_FIXED_CAST_LIFECYCLES,
@@ -714,6 +719,26 @@ def _matches_typed_public_event_effect_trigger_probe(
     return bool(node is not None and node.exact and not residuals)
 
 
+def _matches_ability_word_public_event_trigger_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    material = _without_parenthetical_reminder(source)
+    if not re.fullmatch(
+        r"(?:Heroic|Magecraft|Constellation|Battalion)\s+[—-]\s+.+",
+        material,
+        re.IGNORECASE,
+    ):
+        return False
+    return _matches_typed_public_event_effect_trigger_probe(
+        trigger_ability_word_material_line(material),
+        card_record=card_record,
+        ability=ability,
+    )
+
+
 @lru_cache(maxsize=1)
 def _spell_cast_probe_capability_registry():
     return load_default_capability_registry()
@@ -946,6 +971,16 @@ def _matches_probe(
                 "Typed public-event measurement requires card context"
             )
         return _matches_typed_public_event_effect_trigger_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
+        )
+    if probe_id == _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Ability-word public-event measurement requires card context"
+            )
+        return _matches_ability_word_public_event_trigger_probe(
             source,
             card_record=card_record,
             ability=ability,

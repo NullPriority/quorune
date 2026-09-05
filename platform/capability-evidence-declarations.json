@@ -9441,6 +9441,14 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_battalion_uses_sealed_three_attacker_transition",
+      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Feed the exact Battalion threshold into ordinary trigger placement and the canonical counter transaction."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_source_named_artifact_entry_player_counter_trigger_compiles_exactly",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -9605,6 +9613,14 @@
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep the single-subtype entry span material when normalized zone events, APNAP placement, quantity replacement, or the subtype grammar is unavailable."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_four_strict_ability_word_bindings_compile_through_shared_owner",
+      "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose Heroic and Battalion event predicates with the existing replacement-aware fixed counter body owner."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -21634,6 +21650,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_triggers_heroic_and_magecraft_in_one_batch",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose two distinct strict predicates and typed bodies over one committed cast without duplicating trigger placement."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21690,6 +21714,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Place the strict Heroic trigger through an ordinary four-player trigger and priority boundary."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21734,6 +21766,14 @@
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill removal of the single generic composition call before any represented event-bound effect can retain exact trust."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_adjacent_event_and_body_grammar_remain_material",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject broadened caster, target, spell-kind, entry-count, attack-count, and independently unsupported body forms."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -21786,6 +21826,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "positive",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_four_strict_ability_word_bindings_compile_through_shared_owner",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower exact Heroic, Magecraft, Constellation, and Battalion carriers through the existing typed event-effect or counter body owner."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_closed_cast_and_source_attack_bindings_compile_exactly",
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21826,6 +21874,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose only public source and target references for the resulting trigger to all four seats."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21854,6 +21910,14 @@
       "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Evaluate every selected predicate from public committed cast facts and source-relative identities without reading hidden Oracle prose or private zones in the v4 event."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["115.1", "120.4", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the event predicate, source-current ability component, and trigger placement to the identical authoritative hash."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -22074,6 +22138,14 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_battalion_uses_sealed_three_attacker_transition",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Match Battalion only when its source and at least two other creatures occur in the same sealed attack transition."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
       "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -22102,6 +22174,14 @@
       "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Place the source-self occurrence through ordinary four-player trigger and priority handling."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_spell_copy_dispatch_mutant_is_killed",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suppress the canonical spell-copy occurrence adapter and prove no competing Magecraft trigger path survives."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -22138,6 +22218,22 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "positive",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_magecraft_uses_canonical_ordinary_spell_copy_occurrence",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Emit one strict public Magecraft occurrence after the canonical ordinary stack-copy owner creates a spell copy."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_magecraft_uses_canonical_storm_spell_copy_occurrence",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Route Storm-created spell copies through the same normalized copy occurrence adapter as ordinary copy effects."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_trigger_bindings_compile_exactly",
       "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -22150,6 +22246,14 @@
       "official_rule_ids": ["116.2b","508.1","508.1m","509.1","509.1h","602.2","603.2","603.3","701.8a","701.34","702.29","702.37e","702.168b"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Compile the source-self face-up grammar to one permanent.turned_face_up event and card-reference predicate."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_magecraft_uses_canonical_ordinary_spell_copy_occurrence",
+      "official_rule_ids": ["116.2b", "508.1", "508.1m", "509.1", "509.1h", "602.2", "603.2", "603.3", "701.8a", "701.34", "702.29", "702.37e", "702.168b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project public copy and trigger references to all four seats without exposing the copy object's physical or logical identity."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -22242,6 +22346,14 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_triggers_heroic_and_magecraft_in_one_batch",
+      "official_rule_ids": ["601.2i", "603.2", "603.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Dispatch one committed targeted instant to distinct Heroic and Magecraft predicates in the same ordinary trigger batch."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": ["601.2i", "603.2", "603.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -22278,6 +22390,14 @@
         "commander_review"
       ],
       "applicability_note": "Dispatch every represented trigger from one immutable committed spell-cast event and one ordinary APNAP batch."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2i", "603.2", "603.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the schema-v5 targeted-cast occurrence and its trigger in a four-player authoritative state."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",
@@ -22354,6 +22474,14 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "positive",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_spell_cast_and_copy_receipts_are_strict_and_round_trip",
+      "official_rule_ids": ["601.2i", "603.2", "603.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Seal ordered public target references in schema-v5 cast facts while reading historical schema-v4 events without reinterpretation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "positive",
       "test_id": "tests.test_prowess_rules.ProwessCompilerTests.test_spell_cast_event_is_strict_canonical_and_round_trips",
       "official_rule_ids": [
         "601.2i",
@@ -22410,6 +22538,14 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "privacy",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2i", "603.2", "603.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project public target references to every seat without exposing authoritative physical or logical object identities."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": ["601.2i", "603.2", "603.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -22430,6 +22566,14 @@
         "commander_review"
       ],
       "applicability_note": "Expose public spell and trigger facts without leaking another seat's unrelated hidden hand cards."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2i", "603.2", "603.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the committed cast, sealed target list, Heroic match, and ordinary trigger placement to the identical state hash."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",

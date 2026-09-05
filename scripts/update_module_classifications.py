@@ -457,6 +457,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/trigger_participation.py",
         "quorune/trigger_processing.py",
         "quorune/trigger_targeting.py",
+        "quorune/spell_copy_engine_adapter.py",
     }:
         return "trigger_processing"
     if relative == "quorune/tap_state.py":
@@ -691,6 +692,7 @@ def build_classifications() -> dict[str, Any]:
                             "attachments.py",
                             "attack_transition",
                             "block_transition",
+                            "spell_copy_engine_adapter.py",
                             "ability_fragment_host.py",
                             "ability_fragments.py",
                             "characteristic_fragments.py",

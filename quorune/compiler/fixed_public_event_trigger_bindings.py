@@ -7,6 +7,7 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..rules.source_references import SourceReferenceSpec
 from .fixed_entry_return_requirements import (
     fixed_entry_return_requirement_spec,
 )
@@ -51,6 +52,25 @@ _SOURCE_FACE_UP_TRIGGER = re.compile(
 )
 _OPPONENT_CARD_DRAW_TRIGGER = re.compile(
     r"^Whenever an opponent draws a card, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_HEROIC_TRIGGER = re.compile(
+    r"^Whenever you cast a spell that targets (?P<subject>.+?), "
+    r"(?P<body>.+)$",
+    re.IGNORECASE,
+)
+_MAGECRAFT_TRIGGER = re.compile(
+    r"^Whenever you cast or copy an instant or sorcery spell, "
+    r"(?P<body>.+)$",
+    re.IGNORECASE,
+)
+_CONSTELLATION_TRIGGER = re.compile(
+    r"^Whenever (?P<subject>.+?) enters, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_BATTALION_TRIGGER = re.compile(
+    r"^Whenever (?P<subject>.+?) and at least two other creatures attack, "
+    r"(?P<body>.+)$",
     re.IGNORECASE,
 )
 
@@ -155,6 +175,151 @@ def _spec(
         mechanic=mechanic,
         condition=condition,
         active_zone=active_zone,
+    )
+
+
+def _source_subject(subject: str, *, card_name: str | None) -> bool:
+    normalized = " ".join(subject.casefold().split())
+    return normalized == "this creature" or bool(
+        card_name and SourceReferenceSpec(card_name).matches(subject)
+    )
+
+
+def _public_spell_action_spec(
+    material_line: str,
+    *,
+    card_name: str | None,
+) -> FixedPublicEventBindingSpec | None:
+    heroic = _HEROIC_TRIGGER.fullmatch(material_line)
+    if heroic is not None and _source_subject(
+        heroic.group("subject"),
+        card_name=card_name,
+    ):
+        return _spec(
+            "spell.cast",
+            "heroic_source_targeted",
+            heroic.group("body"),
+            "fixed-counter-heroic-spell-cast-trigger-v1",
+            "trigger-event-normalized-spell-cast",
+            condition=_all_conditions(
+                {
+                    "field": "controller",
+                    "op": "eq",
+                    "value": "$source.controller",
+                },
+                {
+                    "field": "targets",
+                    "op": "contains_any",
+                    "value": ["$source.ref"],
+                },
+            ),
+        )
+    magecraft = _MAGECRAFT_TRIGGER.fullmatch(material_line)
+    if magecraft is not None:
+        return _spec(
+            "spell.cast_or_copy",
+            "magecraft_instant_or_sorcery",
+            magecraft.group("body"),
+            "fixed-counter-magecraft-spell-action-trigger-v1",
+            "trigger-event-normalized-spell-action",
+            condition=_all_conditions(
+                {
+                    "field": "controller",
+                    "op": "eq",
+                    "value": "$source.controller",
+                },
+                {
+                    "field": "types",
+                    "op": "contains_any",
+                    "value": ["instant", "sorcery"],
+                },
+            ),
+        )
+    return None
+
+
+def _constellation_spec(
+    material_line: str,
+    *,
+    card_name: str | None,
+) -> FixedPublicEventBindingSpec | None:
+    match = _CONSTELLATION_TRIGGER.fullmatch(material_line)
+    if match is None:
+        return None
+    subject = " ".join(match.group("subject").casefold().split())
+    ordinary = subject == "an enchantment you control"
+    source_or_other = False
+    suffix = " or another enchantment you control"
+    if subject.endswith(suffix):
+        source_subject = subject[: -len(suffix)]
+        source_or_other = source_subject in {
+            "this creature",
+            "this enchantment",
+        } or bool(
+            card_name and SourceReferenceSpec(card_name).matches(source_subject)
+        )
+    if not ordinary and not source_or_other:
+        return None
+    controlled_enchantment = _all_conditions(
+        {
+            "field": "controller",
+            "op": "eq",
+            "value": "$source.controller",
+        },
+        {
+            "field": "types",
+            "op": "contains_any",
+            "value": ["enchantment"],
+        },
+    )
+    return _spec(
+        "permanent.enter",
+        (
+            "constellation_source_or_controlled_enchantment"
+            if source_or_other
+            else "constellation_controlled_enchantment"
+        ),
+        match.group("body"),
+        "fixed-counter-constellation-entry-trigger-v1",
+        "trigger-event-normalized-zone-change",
+        condition=(
+            {
+                "any": [
+                    {
+                        "field": "card",
+                        "op": "eq",
+                        "value": "$source.ref",
+                    },
+                    controlled_enchantment,
+                ]
+            }
+            if source_or_other
+            else controlled_enchantment
+        ),
+    )
+
+
+def _battalion_spec(
+    material_line: str,
+    *,
+    card_name: str | None,
+) -> FixedPublicEventBindingSpec | None:
+    match = _BATTALION_TRIGGER.fullmatch(material_line)
+    if match is None or not _source_subject(
+        match.group("subject"),
+        card_name=card_name,
+    ):
+        return None
+    return _spec(
+        "creature.attacks",
+        "battalion_source_and_two_others_attack",
+        match.group("body"),
+        "fixed-counter-battalion-attack-trigger-v1",
+        "trigger-event-normalized-public-action",
+        condition=_all_conditions(
+            {"field": "card", "op": "eq", "value": "$source.ref"},
+            {"field": "attacker_count", "op": "gte", "value": 3},
+        ),
     )
 
 
@@ -566,7 +731,10 @@ def fixed_public_event_binding_spec(
     """Parse one bounded public occurrence without compiling its effect body."""
 
     return (
-        _public_zone_spec(material_line, card_name=card_name)
+        _public_spell_action_spec(material_line, card_name=card_name)
+        or _constellation_spec(material_line, card_name=card_name)
+        or _battalion_spec(material_line, card_name=card_name)
+        or _public_zone_spec(material_line, card_name=card_name)
         or _public_damage_spec(material_line, card_name=card_name)
         or _public_attack_spec(material_line)
         or _public_block_spec(material_line)

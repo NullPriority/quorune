@@ -1011,7 +1011,7 @@ def _dispatch_cast_events(
         types=cast_types,
     )
     context = SpellCastEvent(
-        schema_version=4,
+        schema_version=5,
         card_ref=card.ref,
         object_id=card.object_id,
         logical_object_id=card.logical_object_id,
@@ -1035,12 +1035,19 @@ def _dispatch_cast_events(
         == "adventure",
         keywords=tuple(effective_spell.get("keywords") or ()),
         phase=host.state.phase,
+        targets=proposal.targets,
     ).to_context()
     event_sources = list(host._semantic_event_sources())
     if all(source.object_id != card.object_id for source in event_sources):
         event_sources.append(card)
     host._dispatch_semantic_event(
         "spell.cast",
+        context,
+        sources=event_sources,
+        trigger_batch=trigger_batch,
+    )
+    host._dispatch_semantic_event(
+        "spell.cast_or_copy",
         context,
         sources=event_sources,
         trigger_batch=trigger_batch,

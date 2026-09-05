@@ -211,6 +211,7 @@ from .stack_resolution import (
     complete_stack_resolution,
     trusted_generic_empty_resolution,
 )
+from . import spell_copy_engine_adapter as copy_events
 from .model import (
     CardInstance,
     CombatState,
@@ -3952,9 +3953,7 @@ class CommanderEngine(
         """Create an independent stack copy without copying paid costs."""
 
         ref = self._next_ref("S")
-        original_card = self.state.cards.get(
-            target.card_object_id or ""
-        )
+        original_card = self.state.cards.get(target.card_object_id or "")
         original_data = (
             self._copyable_characteristics(original_card)
             if original_card is not None
@@ -4033,6 +4032,7 @@ class CommanderEngine(
             },
         )
         self.state.stack.append(copied)
+        copy_events.dispatch_normalized_spell_copy_event(self, copied, target.ref)
         self._log(
             controller,
             "stack.copy",

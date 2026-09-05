@@ -3647,7 +3647,8 @@ class FixedCounterEventTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(programs, {item.semantic_key for item in items})
         self.assertEqual(3, len(items))
         for item in items:
-            self.assertEqual(4, item.context["schema_version"])
+            self.assertEqual(5, item.context["schema_version"])
+            self.assertEqual([], item.context["targets"])
             self.assertEqual("precombat_main", item.context["phase"])
             self.assertEqual(2.0, item.context["mana_value"])
             self.assertEqual(2, item.context["caster_spell_number"])

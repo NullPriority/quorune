@@ -17,6 +17,7 @@
   ],
   "primary_shards": {
     "functional-01": [
+      "test_ability_word_event_triggers",
       "test_card_program_v2",
       "test_casting_activation_proposal_equivalence",
       "test_cleanup_step_rules",

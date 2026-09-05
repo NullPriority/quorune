@@ -124,6 +124,7 @@
     "quorune/attack_counter_triggers.py",
     "quorune/cascade.py",
     "quorune/storm.py",
+    "quorune/spell_copy_engine_adapter.py",
     "quorune/choice_forms.py",
     "quorune/combat.py",
     "quorune/combat_constraints.py",
@@ -363,6 +364,7 @@
       ,"quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners"
       ,"quorune/cascade.py": "typed Cascade trigger and resolution coordinator delegating casting, zone movement, choice, and cleanup mutation to canonical owners"
       ,"quorune/storm.py": "read-only typed Storm descriptor discovery and immutable APNAP-placeable trigger factory"
+      ,"quorune/spell_copy_engine_adapter.py": "read-only normalized spell-copy occurrence coordinator over canonical stack-copy commits"
       ,"quorune/semantic_runtime/action_permissions.py": "read-only trusted static action-permission discovery over active battlefield sources"
       ,"quorune/semantic_runtime/casting_activation_metadata.py": "read-only trusted casting-permission and loyalty-cost metadata discovery over current source-pinned programs"
       ,"quorune/semantic_runtime/untap_steps.py": "read-only trusted untap-step participation discovery over current effective characteristics"

@@ -915,15 +915,19 @@ Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed controller, type, subtype, color,
 token, and integer-power facts; damage and draw use committed result events;
-spell-cast schema v4 adds the active phase. Completed attack, block, Cycling,
-and face-up actions share one public-action occurrence capability and the
-ordinary APNAP batch. Block declarations emit one blocks occurrence per
-assignment but only one becomes-blocked occurrence per attacker. Attachment-
-relative, aggregate, combined, chosen, history-relative, targeted-event,
-tapped-event, counter-placement-event, secret, dynamic-comparison, and
-declaration-replacement grammar remains residual. Discard and sacrifice event
-bindings remain residual until all authoritative producers carry their typed
-causes rather than requiring inference from a zone pair. See
+spell-cast schema v5 adds committed public target references while retaining
+historical schemas. Completed attack, block, Cycling, face-up, and spell-copy
+actions share one public-action occurrence capability and the ordinary APNAP
+batch. Ordinary and Storm copies dispatch through one normalized spell-copy
+adapter. Strict Heroic, Magecraft, Constellation, and Battalion carriers reuse
+these events, the shared current layer-6 ability query, and independently exact
+effect bodies. Block declarations emit one blocks occurrence per assignment but
+only one becomes-blocked occurrence per attacker. Attachment-relative,
+aggregate outside exact Battalion, combined outside exact Magecraft, chosen,
+history-relative, other targeted-event, tapped-event, counter-placement-event,
+secret, dynamic-comparison, and declaration-replacement grammar remains
+residual. Discard and sacrifice bindings outside their typed cause owners also
+remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
 
 `compiler/fixed_source_combat_growth.py` owns the narrower source-self combat

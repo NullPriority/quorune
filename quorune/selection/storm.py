@@ -9,6 +9,7 @@ from typing import Any, Mapping, Protocol
 from ..errors import GameRuleError
 from ..model import StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..spell_copy_engine_adapter import dispatch_normalized_spell_copy_event
 from ..storm import STORM_SEMANTIC_KEY, validated_storm_trigger
 from .model import (
     SelectionContinuation,
@@ -340,6 +341,17 @@ class StormTargetChoiceOwnerMixin:
             copy_item.card_object_id = copy_object.object_id
         self.state.stack.remove(trigger)
         self.state.stack.extend(copies)
+        source_spell_ref = str(template.get("source_spell_ref") or "")
+        semantic_trigger_refs: list[str] = []
+        if source_spell_ref:
+            for copy_item in copies:
+                semantic_trigger_refs.extend(
+                    dispatch_normalized_spell_copy_event(
+                        self,
+                        copy_item,
+                        copied_from_stack_ref=source_spell_ref,
+                    )
+                )
         self._log(
             seat,
             "stack.storm.copy",
@@ -354,7 +366,8 @@ class StormTargetChoiceOwnerMixin:
             },
             importance=2,
         )
-        self._grant_priority(self.state.active_player)
+        if not semantic_trigger_refs:
+            self._grant_priority(self.state.active_player)
 
     def _complete_storm_choice(self, decision: Any) -> None:
         context = self._storm_completion_context(decision)
