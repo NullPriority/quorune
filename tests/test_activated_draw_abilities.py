@@ -17,6 +17,7 @@ from quorune.record import (
     checkpoint_envelope,
     replay_record,
 )
+from quorune.query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY
 from quorune.rules.capabilities import (
     capability_dependencies_for_node,
     load_default_capability_registry,
@@ -280,10 +281,18 @@ class ActivatedDrawCompilerTests(unittest.TestCase):
         )
         self.assertIn(DRAW_CAPABILITY, node.capability_dependencies)
 
-    def test_dynamic_and_noncanonical_draw_wording_remains_residual(self):
+    def test_query_derived_draw_is_exact_but_open_forms_remain_residual(self):
+        query_derived = self.compile(
+            "{T}: Draw a card for each creature you control."
+        )
+        self.assertEqual("exact", query_derived.status)
+        self.assertIn(
+            PUBLIC_QUERY_AMOUNT_CAPABILITY,
+            query_derived.faces[0].nodes[0].capability_dependencies,
+        )
+
         for text in (
             "{T}: Draw X cards.",
-            "{T}: Draw a card for each creature you control.",
             "{T}: Draw a card and reveal it.",
         ):
             with self.subTest(text=text):
