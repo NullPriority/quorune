@@ -30078,7 +30078,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "956bc2ca23ef3336bd658a5899e0363c286f55650e22174ff8fad49d9edd279b",
+      "fingerprint": "cf96e789243305b9bb26f02957b6ff7649830156d2afdc33bf004090ee328c75",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -30936,8 +30936,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 3881,
-      "discovered_total": 7190,
+      "conventional_ast_cases": 3882,
+      "discovered_total": 7191,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 212,

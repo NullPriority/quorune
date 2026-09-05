@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-09-05T09:06:42Z",
+  "observed_at": "2026-09-05T10:04:33Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -813,6 +813,22 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint."
+    },
+    {
+      "id": "ci-20260905-54",
+      "run_id": 33957811410,
+      "head_sha": "ad3945cc4b477dd1d83482b927a2a9688f5fd1a9",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The shared multi-keyword dispatcher replaced Oracle IR's direct Partner-with compiler import, but the existing Partner-with mutation witness still patched the removed oracle_ir module attribute.",
+      "failed_surfaces": [
+        "PR / Python / functional-12 (job 101284354054)"
+      ],
+      "regressions": [
+        "test_commander_pairing.CommanderPairingTests.test_partner_with_pairing_and_compiler_mutations_fail_closed"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint."
     }
   ],
   "recent_pull_requests": [

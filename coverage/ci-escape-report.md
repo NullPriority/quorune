@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "7b2c3f8e7b8f5d4d856950cfe188942638ce26a1cc61381fdca7f6b69989a9d1"
+verified: "8a49700c94637ef6eadf5258180690310299a5b138eb6b41ce4d3f9b5f950f5d"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 53
-- Deterministic escapes: 48
+- Escapes: 54
+- Deterministic escapes: 49
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -79,6 +79,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260905-51` | [33953752607](https://github.com/NullPriority/quorune/actions/runs/33953752607) | `browser_integration` | `not_applicable` | The unchanged assertion-driven journey now declares a bounded 180-second test budget for four cold deck validations, durable stop/resume, four mulligan receipts, reloads, mobile inspection, and metrics cleanup. Its focused isolated headless rerun passed in 1.6 minutes; browser-full impact already selected the journey. |
 | `ci-20260905-52` | [33955410367](https://github.com/NullPriority/quorune/actions/runs/33955410367) | `generated_artifact_drift` | `added` | The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection. |
 | `ci-20260905-53` | [33956229754](https://github.com/NullPriority/quorune/actions/runs/33956229754) | `missing_affected_test` | `not_applicable` | The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint. |
+| `ci-20260905-54` | [33957811410](https://github.com/NullPriority/quorune/actions/runs/33957811410) | `missing_affected_test` | `not_applicable` | The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint. |
 
 ## Measurement limitations
 

@@ -919,6 +919,22 @@
       "resolution": "The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint.",
       "run_id": 33956229754,
       "summary": "The Madness compiler harvest replaced commit-time fixed lifecycle lookup with the shared Madness-aware owner, but one stale lifecycle rollback test still patched the removed commit-module symbol."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-12 (job 101284354054)"
+      ],
+      "head_sha": "ad3945cc4b477dd1d83482b927a2a9688f5fd1a9",
+      "id": "ci-20260905-54",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_commander_pairing.CommanderPairingTests.test_partner_with_pairing_and_compiler_mutations_fail_closed"
+      ],
+      "resolution": "The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint.",
+      "run_id": 33957811410,
+      "summary": "The shared multi-keyword dispatcher replaced Oracle IR's direct Partner-with compiler import, but the existing Partner-with mutation witness still patched the removed oracle_ir module attribute."
     }
   ],
   "known_flaky_tests": [],
@@ -926,7 +942,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-09-05T09:06:42Z",
+  "observed_at": "2026-09-05T10:04:33Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -971,7 +987,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "7b2c3f8e7b8f5d4d856950cfe188942638ce26a1cc61381fdca7f6b69989a9d1",
+  "source_fingerprint": "8a49700c94637ef6eadf5258180690310299a5b138eb6b41ce4d3f9b5f950f5d",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -981,12 +997,12 @@
       "flaky_test": 6,
       "generated_artifact_drift": 5,
       "infrastructure": 1,
-      "missing_affected_test": 20,
+      "missing_affected_test": 21,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 48,
-    "escape_count": 53,
+    "deterministic_escape_count": 49,
+    "escape_count": 54,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [
