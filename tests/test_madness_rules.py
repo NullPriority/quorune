@@ -266,6 +266,10 @@ class MadnessRuntimeTests(unittest.TestCase):
                 DeckEntry("Generic Madness Creature Fixture", quantity=2),
                 DeckEntry("Generic Discard Outlet Fixture"),
                 DeckEntry("Generic Discard Cost Spell Fixture"),
+                DeckEntry("Generic Simple Madness Aura Fixture"),
+                DeckEntry("Generic Typed Madness Aura Fixture"),
+                DeckEntry("Generic Targeted Madness Destroy Fixture"),
+                DeckEntry("Generic Any Target Madness Fixture"),
             ],
             commanders=["Thrasios, Triton Hero"],
         )
@@ -317,14 +321,12 @@ class MadnessRuntimeTests(unittest.TestCase):
         *,
         seat: str = "A",
         mana: int = 1,
+        card_name: str = "Generic Madness Life Fixture",
     ):
         engine = session.engine
-        card = self.card(
-            session,
-            seat,
-            "Generic Madness Life Fixture",
-            zone="hand",
-        )
+        card = self.card(session, seat, card_name)
+        if card.zone != "hand":
+            engine.move_card(card.object_id, "hand", log=False)
         engine.state.players[seat].mana_pool["B"] = mana
         engine.state.active_player = "A"
         engine.state.started = True
@@ -678,6 +680,137 @@ class MadnessRuntimeTests(unittest.TestCase):
             session.state.to_dict(),
             GameState.from_dict(session.state.to_dict()).to_dict(),
         )
+
+    def test_madness_aura_casts_compose_with_typed_discard_and_replacement(self):
+        simple = self.session(702_035_016)
+        simple_target = self.card(
+            simple,
+            "A",
+            "Generic Madness Creature Fixture",
+        )
+        simple.engine.move_card(
+            simple_target.object_id,
+            "battlefield",
+            log=False,
+        )
+        simple_aura = self.begin_madness_choice(
+            simple,
+            card_name="Generic Simple Madness Aura Fixture",
+        )
+        simple_options = simple.packet("pilot:A", full=True)["decision"]["ctx"][
+            "cast_options"
+        ]
+        self.assertIn(
+            simple_target.ref,
+            simple_options[0]["target_schema"]["legal_refs"],
+        )
+        result = simple.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choice": "cast",
+                "targets": [simple_target.ref],
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.pass_until(simple, lambda: not simple.state.stack)
+        self.assertEqual("battlefield", simple_aura.zone)
+        self.assertEqual(simple_target.object_id, simple_aura.attached_to)
+
+        typed = self.session(702_035_017)
+        typed_target = self.card(
+            typed,
+            "A",
+            "Generic Discard Outlet Fixture",
+        )
+        typed.engine.move_card(
+            typed_target.object_id,
+            "battlefield",
+            log=False,
+        )
+        typed_aura = self.begin_madness_choice(
+            typed,
+            card_name="Generic Typed Madness Aura Fixture",
+        )
+        typed_options = typed.packet("pilot:A", full=True)["decision"]["ctx"][
+            "cast_options"
+        ]
+        self.assertIn(
+            typed_target.ref,
+            typed_options[0]["target_schema"]["legal_refs"],
+        )
+        result = typed.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choice": "cast",
+                "targets": [typed_target.ref],
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.pass_until(typed, lambda: not typed.state.stack)
+        self.assertEqual("battlefield", typed_aura.zone)
+        self.assertEqual(typed_target.object_id, typed_aura.attached_to)
+
+    def test_targeted_madness_revalidates_characteristic_target_after_discard(self):
+        session = self.session(702_035_018)
+        target = self.card(
+            session,
+            "B",
+            "Generic Madness Creature Fixture",
+        )
+        session.engine.move_card(target.object_id, "battlefield", log=False)
+        spell = self.begin_madness_choice(
+            session,
+            card_name="Generic Targeted Madness Destroy Fixture",
+        )
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"][
+            "cast_options"
+        ]
+        self.assertIn(target.ref, options[0]["target_schema"]["legal_refs"])
+        result = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choice": "cast",
+                "targets": [target.ref],
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        cast_item = next(
+            item
+            for item in session.state.stack
+            if item.card_object_id == spell.object_id
+        )
+        self.assertEqual([target.ref], cast_item.targets)
+        session.engine.move_card(target.object_id, "hand", log=False)
+        self.pass_until(session, lambda: not session.state.stack)
+        self.assertEqual("hand", target.zone)
+        self.assertEqual("graveyard", spell.zone)
+
+    def test_any_target_madness_composes_with_typed_discard(self):
+        session = self.session(702_035_019)
+        life_before = session.state.players["B"].life
+        spell = self.begin_madness_choice(
+            session,
+            card_name="Generic Any Target Madness Fixture",
+        )
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"][
+            "cast_options"
+        ]
+        self.assertIn("B", options[0]["target_schema"]["legal_refs"])
+        result = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choice": "cast",
+                "targets": ["B"],
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.pass_until(session, lambda: not session.state.stack)
+        self.assertEqual(life_before - 2, session.state.players["B"].life)
+        self.assertEqual("graveyard", spell.zone)
 
 
 if __name__ == "__main__":

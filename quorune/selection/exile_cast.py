@@ -17,6 +17,8 @@ from ..compiled_madness import compiled_fixed_madness_spec
 from ..errors import GameRuleError, StateInvariantError
 from ..model import CardInstance, StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..rules.casting.model import CastProposalError
+from ..rules.casting.proposal import aura_spell_target_schema
 from ..semantic_runtime.intents import MadnessChoiceIntent
 from ..stack_resolution import complete_stack_resolution
 from ..util import stable_json
@@ -414,6 +416,19 @@ class OneShotExileCastChoiceOwnerMixin:
                 is_instant_or_sorcery or not self._trusted_generic_spell(record)
             ):
                 continue
+            try:
+                aura_target_schema = aura_spell_target_schema(
+                    type_line=type_line,
+                    enchant_spec=self._compiled_enchant_spec(
+                        card,
+                        face_name=face_name,
+                    ),
+                    reviewed_target_schema=(
+                        getattr(program, "target_schema", None)
+                    ),
+                )
+            except CastProposalError:
+                continue
             options = self._cast_cost_options(
                 actor,
                 card,
@@ -429,6 +444,8 @@ class OneShotExileCastChoiceOwnerMixin:
                 target_specification = (
                     dict(option["target_schema"])
                     if isinstance(option.get("target_schema"), Mapping)
+                    else dict(aura_target_schema)
+                    if aura_target_schema is not None
                     else program.target_schema if program is not None else None
                 )
                 public_target_schema = None

@@ -689,6 +689,7 @@
     {
       "id": "fixed-mana-madness-contract",
       "patterns": [
+        "platform/reusable-piece-interaction-evidence.json",
         "quorune/cast_lifecycles.py",
         "quorune/compiled_madness.py",
         "quorune/compiler/cast_lifecycle_nodes.py",
@@ -730,6 +731,8 @@
         "rules/conformance-reviews/cr-400.json",
         "rules/conformance-reviews/cr-702-madness.json",
         "tests/fixtures/madness-cards.json",
+        "tests/high_risk_interaction_support.py",
+        "tests/test_high_risk_interaction_assurance.py",
         "tests/test_madness_rules.py"
       ],
       "test_modules": [
@@ -739,6 +742,7 @@
         "test_fixed_casting_surface",
         "test_fixed_zone_change_additional_costs",
         "test_game_record_v3",
+        "test_high_risk_interaction_assurance",
         "test_madness_rules",
         "test_semantic_choice_model",
         "test_single_object_zone_transition",
