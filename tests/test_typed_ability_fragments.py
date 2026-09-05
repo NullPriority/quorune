@@ -11,6 +11,7 @@ from quorune.ability_fragments import (
     DamageKeywordTriggerSpec,
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
+    PartnerWithSpec,
     ProtectionQualityKind,
     ProtectionSourcePredicateSpec,
     ProtectionSpec,
@@ -163,6 +164,7 @@ class AbilityFragmentModelTests(unittest.TestCase):
                 amount=2,
             ),
             ToxicSpec(value=2),
+            PartnerWithSpec("Named Partner Beta"),
             StaticComponentSpec(
                 "fixture:static:characteristics.evaluate"
             ),
@@ -194,6 +196,10 @@ class AbilityFragmentModelTests(unittest.TestCase):
         )
         self.assertEqual(duplicated, reordered)
         self.assertEqual(2, duplicated.count(values[2]))
+        for partner_name in ("", " Named Partner Beta", "Named\nPartner"):
+            with self.subTest(partner_name=partner_name):
+                with self.assertRaises(AbilityFragmentError):
+                    PartnerWithSpec(partner_name)
 
     def test_extended_granted_activation_costs_round_trip_strictly(self):
         spec = GrantedActivatedAbilitySpec(
@@ -279,6 +285,12 @@ class AbilityFragmentModelTests(unittest.TestCase):
                     LinkedGraveyardCreatureEnchantSpec("linked_creature")
                 ),
             },
+            {
+                "handler_id": "ability.static.partner-with.v1",
+                "schema_version": 1,
+                "event": "game.setup",
+                "fragment": wrapped(PartnerWithSpec("Named Partner Beta")),
+            },
         ]
         self.assertEqual(
             canonical_ability_fragments(
@@ -286,6 +298,7 @@ class AbilityFragmentModelTests(unittest.TestCase):
                     SimpleEnchantSpec("creature"),
                     ProtectionSpec(ProtectionQualityKind.COLOR, "U"),
                     LinkedGraveyardCreatureEnchantSpec("linked_creature"),
+                    PartnerWithSpec("Named Partner Beta"),
                 )
             ),
             canonical_ability_fragments(
@@ -299,6 +312,7 @@ class AbilityFragmentModelTests(unittest.TestCase):
             {
                 "ability.static.conditional-keyword.v1",
                 "ability.static.dynamic-power-toughness.v1",
+                "ability.static.partner-with.v1",
             }.issubset(handler_ids)
         )
         with self.assertRaisesRegex(ValueError, "unknown"):

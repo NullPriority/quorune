@@ -489,6 +489,7 @@
       "id": "attached-characteristic-closure-contract",
       "patterns": [
         "quorune/ability_fragments.py",
+        "quorune/ability_fragment_primitives.py",
         "quorune/card_programs/runtime.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/characteristic_fragments.py",
@@ -518,6 +519,7 @@
       "id": "typed-quoted-ability-grant-contract",
       "patterns": [
         "quorune/ability_fragments.py",
+        "quorune/ability_fragment_primitives.py",
         "quorune/compiler/attached_granted_ability_nodes.py",
         "quorune/compiler/continuous_templates.py",
         "quorune/rules/activation/query.py",
@@ -539,6 +541,7 @@
       "id": "typed-query-self-characteristic-contract",
       "patterns": [
         "quorune/ability_fragments.py",
+        "quorune/ability_fragment_primitives.py",
         "quorune/characteristic_evaluation.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/characteristic_fragments.py",
@@ -930,6 +933,7 @@
         "quorune/enchant_spec.py",
         "quorune/aura/**",
         "quorune/ability_fragments.py",
+        "quorune/ability_fragment_primitives.py",
         "quorune/compiled_ability_fragments.py"
       ],
       "test_suites": [

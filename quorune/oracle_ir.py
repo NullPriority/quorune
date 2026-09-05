@@ -94,6 +94,7 @@ from .compiler.keyword_nodes import (
     fabricate_keyword_node,
     keyword_node_plans,
     modular_keyword_nodes,
+    partner_with_keyword_nodes,
     prowess_keyword_node,
     read_ahead_keyword_node, ordinary_saga_chapter_nodes,
     riot_keyword_node,
@@ -152,7 +153,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v167"
+ORACLE_COMPILER_VERSION = "oracle-ir-v168"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -705,6 +706,9 @@ def _keyword_nodes(
     ) or _fallback_keyword_mechanics(material_line, keywords)
     if mechanics is None:
         return ()
+
+    partner_with = partner_with_keyword_nodes(**locals())
+    if partner_with is not None: return partner_with
 
     plans = keyword_node_plans(
         node_id=node_id,

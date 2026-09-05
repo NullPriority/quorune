@@ -117,6 +117,7 @@
   "protected_rules_modules": [
     "quorune/abilities.py",
     "quorune/activation_usage.py",
+    "quorune/ability_fragment_primitives.py",
     "quorune/ability_fragments.py",
     "quorune/aerial_blocking.py",
     "quorune/attack_counter_triggers.py",

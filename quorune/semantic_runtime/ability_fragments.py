@@ -21,6 +21,8 @@ from ..ability_fragments import (
     QueryCharacteristicModifierSpec,
     QueryPowerToughnessDefinitionSpec,
     ProtectionSpec,
+    PARTNER_WITH_FRAGMENT_HANDLER_ID,
+    PartnerWithSpec,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
     STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID,
@@ -211,6 +213,34 @@ class ProtectionAbilityFragmentHandler:
             handler_id=self.handler_id,
             event=self.event,
             expected_type=ProtectionSpec,
+        )
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class PartnerWithAbilityFragmentHandler:
+    handler_id: str = PARTNER_WITH_FRAGMENT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "ability.static.partner_with"
+    event: str = "game.setup"
+    rule_references: tuple[str, ...] = ("702.124j",)
+    capability_dependencies: tuple[str, ...] = (
+        "format.commander.pairing.partner_with",
+    )
+
+    def validate(self, descriptor: Mapping[str, Any]) -> PartnerWithSpec:
+        return _fragment(
+            descriptor,
+            handler_id=self.handler_id,
+            event=self.event,
+            expected_type=PartnerWithSpec,
         )
 
     def lower(
@@ -1167,6 +1197,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             MeleeAbilityFragmentHandler(),
             MentorAbilityFragmentHandler(),
             ProtectionAbilityFragmentHandler(),
+            PartnerWithAbilityFragmentHandler(),
             ProwessAbilityFragmentHandler(),
             RenownAbilityFragmentHandler(),
             StormAbilityFragmentHandler(),
@@ -1256,6 +1287,8 @@ __all__ = [
     "ToxicAbilityFragmentHandler",
     "WardAbilityFragmentHandler",
     "ProtectionAbilityFragmentHandler",
+    "PARTNER_WITH_FRAGMENT_HANDLER_ID",
+    "PartnerWithAbilityFragmentHandler",
     "AbilityFragmentRegistry",
     "default_ability_fragment_registry",
     "fragments_from_descriptors",

@@ -64,6 +64,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/ability_fragment_primitives.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/ability_fragments.py",
       "layer": "domain",
       "owning_subsystem": "ability_fragments",
@@ -8804,5 +8816,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a7c2e675d4d01f1f976040708e674d2cf24b0a9cdd15b946818549153d7ff18e"
+  "fingerprint": "6aa84410ca29ca4aad9ada09cc3fc15bc6af192e99b5deb77844123915cbff14"
 }

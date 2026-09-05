@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 142,
+  "registry_version": 143,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1178,6 +1178,33 @@
       "dependency_fail_closed_rationale": "Blocking destination replacement or the Commander hand/library replacement prevents the Typecycling node from receiving trusted closure, and malformed or stale private search continuations fail before a card moves or the library shuffles.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_typecycling_compiler_mutant_is_killed removes the only typed producer of this search shape, and exact compiler plus authoritative runtime assertions reject the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "library.search.partner_with_named_to_hand",
+      "version": 1,
+      "official_rules": ["115.1", "603.6a", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "702.124j", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Resolve the named search intrinsic to one exact Partner with entry trigger for its targeted player through the shared private restrictive-search and replacement-aware hand-move owners.",
+        "inputs": ["one exact Partner with entry-search node", "one legal target player at trigger placement and resolution", "one immutable typed partner name", "that targeted player's current hidden library identities", "current destination replacements"],
+        "outputs": ["one target-private matching candidate set", "a rules-permitted zero-or-one selection", "one identity-pinned replacement-aware move to that player's hand", "one exact deterministic shuffle", "privacy-safe public result projection", "exact replay"],
+        "exclusions": ["named Partner variants other than Partner with", "more than one name or selected card", "searches of a zone other than the targeted player's library", "destinations other than that player's hand", "additional clauses around the intrinsic search", "search-limiting or search-replacement effects under CR 701.23f", "text-changed or duplicated declarations", "untrusted hidden-characteristic or destination-replacement interactions outside capability closure"]
+      },
+      "dependencies": ["variant.commander.zone_return", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.compiler.commander_pairing_nodes.partner_with_keyword_nodes", "quorune.rules.library_search_capability_shapes.partner_with_search_node_capabilities", "quorune.selection.searching.HiddenSearchOwnerMixin", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously", "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library"],
+      "positive_tests": ["test_partner_with_compiles_exact_pairing_and_entry_search", "test_partner_with_target_search_is_private_revalidates_and_replays"],
+      "negative_tests": ["test_partner_with_shape_dependencies_and_variants_fail_closed", "test_partner_with_pair_is_designated_and_requires_reciprocal_names"],
+      "interaction_tests": ["test_partner_with_target_search_is_private_revalidates_and_replays", "test_partner_with_entry_triggers_follow_current_ability_and_apnap"],
+      "multiplayer_tests": ["test_partner_with_target_search_is_private_revalidates_and_replays", "test_partner_with_entry_triggers_follow_current_ability_and_apnap"],
+      "privacy_tests": ["test_partner_with_target_search_is_private_revalidates_and_replays"],
+      "replay_tests": ["test_partner_with_target_search_is_private_revalidates_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking target revalidation, normalized entry events, APNAP placement, destination replacement, or Commander destination replacement prevents the Partner with entry-search node from receiving trusted closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler and shape mutations remove either typed Partner with ability, alter the target/name/count/destination contract, or block a dependency; exact compilation and authoritative search assertions reject every survivor.",
       "blockers": [],
       "status": "trusted"
     },
@@ -6227,6 +6254,33 @@
       "dependency_fail_closed_rationale": "The ordinary Partner declaration has no downstream capability dependency; its own trusted declaration, current source, and canonical CardProgram membership are checked directly.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_pairing_program_and_compiler_mutations_fail_closed removes or corrupts each typed declaration and proves arbitrary two-commander setup remains rejected.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "format.commander.pairing.partner_with",
+      "version": 1,
+      "official_rules": ["702.124a", "702.124f", "702.124j", "903.3"],
+      "supported_profiles": ["commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Allow exactly two distinct legendary commanders when each carries a current compiler-certified Partner with declaration that names the other card.",
+        "inputs": ["two distinct legendary creature cards", "one current trusted typed Partner with declaration on each card", "two reciprocal partner names resolved through the pinned card database", "Commander game setup"],
+        "outputs": ["one accepted reciprocal two-commander designation", "two independent public commander designation identities"],
+        "exclusions": ["one-way or mismatched names", "ordinary Partner or named Partner variants", "multiple pairing declarations", "granted, copied, removed, or text-changed Partner with", "provisional, stale, duplicated, or noncanonical declarations"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.commander_pairing.validate_commander_pair", "quorune.compiler.commander_pairing_nodes.partner_with_keyword_nodes", "quorune.commander.initial_commander_state"],
+      "positive_tests": ["test_partner_with_compiles_exact_pairing_and_entry_search", "test_partner_with_pair_is_designated_and_requires_reciprocal_names"],
+      "negative_tests": ["test_partner_with_shape_dependencies_and_variants_fail_closed", "test_partner_with_pair_is_designated_and_requires_reciprocal_names"],
+      "interaction_tests": ["test_partner_with_pairing_and_compiler_mutations_fail_closed"],
+      "multiplayer_tests": ["test_partner_with_pair_is_designated_and_requires_reciprocal_names"],
+      "privacy_tests": [],
+      "replay_tests": ["test_partner_with_pair_is_designated_and_requires_reciprocal_names"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The setup owner consumes the current typed reciprocal declarations and cycle-safe printed legendary creature types directly; its own trusted declarations are the authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused mutations remove, duplicate, rename, or corrupt either typed reciprocal declaration and authoritative setup remains rejected.",
       "blockers": [],
       "status": "trusted"
     },

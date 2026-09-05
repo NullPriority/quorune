@@ -74,13 +74,15 @@ their trusted semantic program. Token reminder or Oracle text is never used
 to discover the trigger.
 
 Commander pairing is also a CardProgram declaration boundary. Exact ordinary
-`Partner`, `Choose a Background`, and `Doctor's companion` lines compile to
-distinct trusted `game.setup` capabilities. One setup owner checks the current
-canonical declaration plus the printed legendary, Background, or exact Doctor
-type predicate before it creates any state. Broad keyword metadata and Oracle
-prose have no setup authority. `Partner with`, named Partner variants, granted
-or changed abilities, and stale or duplicate declarations fail closed until
-their distinct typed owners are implemented.
+  `Partner`, `Partner with`, `Choose a Background`, and `Doctor's companion`
+  lines compile to distinct trusted `game.setup` capabilities. `Partner with`
+  also compiles its separate self-entry targeted named search through the shared
+  private library-search and normalized trigger owners. One setup owner checks
+  the current canonical declaration plus the printed legendary, Background,
+  exact Doctor, or reciprocal named-partner predicate before it creates any
+  state. Broad keyword metadata and Oracle prose have no setup authority. Named
+  Partner variants, granted or changed setup abilities, and stale or duplicate
+  declarations fail closed until their distinct typed owners are implemented.
 
 ## Inspection and extension
 
