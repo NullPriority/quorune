@@ -2278,11 +2278,11 @@
           ],
           "source_contexts": ["triggered"],
           "normalized_literal_parameters": [
-            "source-targeted-controller-spell-cast",
-            "controller-instant-or-sorcery-cast-or-copy",
             "controlled-enchantment-entry",
+            "controller-instant-or-sorcery-cast-or-copy",
+            "one-independently-exact-typed-effect",
             "source-and-two-other-creatures-attack",
-            "one-independently-exact-typed-effect"
+            "source-targeted-controller-spell-cast"
           ],
           "shared_dependencies": [
             "trigger.effect.fixed_event",
@@ -2298,11 +2298,11 @@
           "expected_downstream_closure": "Adds immutable cast targets, canonical spell-copy occurrences, controlled-enchantment entry predicates, and sealed attacker counts to the existing typed public-event trigger owner without duplicating casting, copying, zone, combat, trigger, or effect execution.",
           "explicit_exclusions": [
             "ability words other than Heroic, Magecraft, Constellation, and Battalion",
-            "target events other than the exact spell-cast Heroic source predicate",
-            "copy events outside canonical spell-copy creation",
             "aggregate attack wording other than the exact source-and-two-others Battalion predicate",
+            "copy events outside canonical spell-copy creation",
+            "independently unsupported effect bodies, copied or granted abilities, and unsupported layer-6 ability changes",
             "intervening-if, reflexive, delayed, optional-event, conditional-event, and combined variants outside the four exact bindings",
-            "independently unsupported effect bodies, copied or granted abilities, and unsupported layer-6 ability changes"
+            "target events other than the exact spell-cast Heroic source predicate"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "ability-word-public-event-trigger-existing-owner-v1"
