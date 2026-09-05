@@ -2257,33 +2257,75 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-mana-madness-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:ability-word-public-event-triggers",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.event.normalized_spell_cast",
+            "capability:trigger.event.normalized_zone_change",
+            "component:quorune.attack_transition_engine_adapter.attack_transition_stack_items",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+            "component:quorune.rules.casting.commit._dispatch_cast_events",
+            "component:quorune.spell_copy_engine_adapter.dispatch_normalized_spell_copy_event",
+            "component:quorune.trigger_discovery.dispatch_semantic_event"
+          ],
+          "source_contexts": ["triggered"],
+          "normalized_literal_parameters": [
+            "controlled-enchantment-entry",
+            "controller-instant-or-sorcery-cast-or-copy",
+            "one-independently-exact-typed-effect",
+            "source-and-two-other-creatures-attack",
+            "source-targeted-controller-spell-cast"
+          ],
+          "shared_dependencies": [
+            "trigger.effect.fixed_event",
+            "trigger.event.normalized_public_action",
+            "trigger.event.normalized_spell_cast",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "strict Heroic, Magecraft, Constellation, and Battalion ability-word triggers lowered through one public event-binding and independently exact typed-effect composition owner",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Adds immutable cast targets, canonical spell-copy occurrences, controlled-enchantment entry predicates, and sealed attacker counts to the existing typed public-event trigger owner without duplicating casting, copying, zone, combat, trigger, or effect execution.",
+          "explicit_exclusions": [
+            "ability words other than Heroic, Magecraft, Constellation, and Battalion",
+            "aggregate attack wording other than the exact source-and-two-others Battalion predicate",
+            "copy events outside canonical spell-copy creation",
+            "independently unsupported effect bodies, copied or granted abilities, and unsupported layer-6 ability changes",
+            "intervening-if, reflexive, delayed, optional-event, conditional-event, and combined variants outside the four exact bindings",
+            "target events other than the exact spell-cast Heroic source predicate"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "ability-word-public-event-trigger-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v169-fixed-mana-madness",
-      "compiler_version": "oracle-ir-v169",
-      "bundle_id": "bundle:fixed-mana-madness",
-      "candidate_ids": ["compiler:fixed-mana-madness"],
+      "transition_id": "oracle-ir-v170-ability-word-public-event-triggers",
+      "compiler_version": "oracle-ir-v170",
+      "bundle_id": "bundle:ability-word-public-event-triggers",
+      "candidate_ids": ["compiler:ability-word-public-event-triggers"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:unparsed-madness-0",
-        "effect_clause:unparsed-madness-1-b",
-        "effect_clause:unparsed-madness-1-r",
-        "effect_clause:unparsed-madness-1-u",
-        "effect_clause:unparsed-madness-2-b",
-        "effect_clause:unparsed-madness-3-b",
-        "effect_clause:unparsed-madness-3-r",
-        "effect_clause:unparsed-madness-3-u",
-        "effect_clause:unparsed-madness-b",
-        "effect_clause:unparsed-madness-b-r",
-        "effect_clause:unparsed-madness-r",
-        "effect_clause:unparsed-madness-u",
-        "effect_clause:unparsed-madness-w"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
-      "capability_ids": ["casting.madness.fixed_mana", "zone.discard.typed_cause"],
-      "measurement_id": "measurement:fixed-mana-madness",
+      "capability_ids": [
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_public_action",
+        "trigger.event.normalized_spell_cast",
+        "trigger.event.normalized_zone_change"
+      ],
+      "measurement_id": "measurement:ability-word-public-event-triggers",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -2850,6 +2892,11 @@
         "candidate_id": "compiler:fixed-mana-madness",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The v168 selector has no eligible carried candidate while its raw continuous-layer leader remains heterogeneous and the rules queue still points to the previously excluded counter family. The generated bounded keyword comparison selects ordinary fixed-mana Madness as the highest-throughput coherent mechanic above the normal complete-card and exact-ability floors. The implementation first completes one reusable typed discard-cause prerequisite across authoritative activation and spell costs, effects, cleanup, specifically drawn-card actions, and simultaneous APNAP choices, then immediately harvests Madness through the existing destination-replacement, current static-component, normalized trigger, casting proposal/commit, exile choice, privacy, and replay owners. Variable X, hybrid, Phyrexian, snow, nonmana, life, compound, altered-reminder, copied, granted, incomplete-card, stale-incarnation, and unsupported competing-replacement forms remain fail-closed; current identities and measurements are generated from the current frontier."
+      },
+      {
+        "candidate_id": "compiler:ability-word-public-event-triggers",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The v169 selector has no eligible carried candidate while its raw continuous-layer leader and counter queue remain heterogeneous or lack measured broad gain. Bounded comparisons retire top-library access, remaining quoted grants, individual alternate-cast mechanics, and heterogeneous life, exile, and token families below every normal harvest floor. The selected integrated event probe instead isolates a threshold-clearing cohort of strict Heroic, Magecraft, Constellation, and Battalion carriers whose bodies already close through typed effect owners. It reuses the canonical cast, copy, zone-entry, sealed attack-transition, current layer-6 ability-applicability, APNAP, effect, projection, and replay owners; every broader event form and independently unsupported body remains fail-closed."
       }
     ]
   },

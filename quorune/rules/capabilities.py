@@ -375,8 +375,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-normalized-zone-change": (
         "trigger.event.normalized_zone_change",
     ),
-    "trigger-event-normalized-spell-cast": (
-        "trigger.event.normalized_spell_cast",
+    "trigger-event-normalized-spell-cast": ("trigger.event.normalized_spell_cast",),
+    "trigger-event-normalized-spell-action": (
+        "trigger.event.normalized_spell_cast", "trigger.event.normalized_public_action",
     ),
     "trigger-event-spell-cast-fixed-characteristics": (
         "trigger.event.normalized_spell_cast",
@@ -384,9 +385,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-normalized-self-attack": (
         "trigger.event.normalized_self_attack",
     ),
-    "trigger-event-normalized-public-action": (
-        "trigger.event.normalized_public_action",
-    ),
+    "trigger-event-normalized-public-action": ("trigger.event.normalized_public_action",),
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
     ),

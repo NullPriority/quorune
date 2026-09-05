@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "8a49700c94637ef6eadf5258180690310299a5b138eb6b41ce4d3f9b5f950f5d"
+verified: "838a257fc5973d53c8022da608f214cabb2f2c46d8a9d2c2697150e5aaf2bd3b"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 54
-- Deterministic escapes: 49
+- Escapes: 55
+- Deterministic escapes: 50
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -80,6 +80,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260905-52` | [33955410367](https://github.com/NullPriority/quorune/actions/runs/33955410367) | `generated_artifact_drift` | `added` | The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection. |
 | `ci-20260905-53` | [33956229754](https://github.com/NullPriority/quorune/actions/runs/33956229754) | `missing_affected_test` | `not_applicable` | The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint. |
 | `ci-20260905-54` | [33957811410](https://github.com/NullPriority/quorune/actions/runs/33957811410) | `missing_affected_test` | `not_applicable` | The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint. |
+| `ci-20260905-55` | [33969136194](https://github.com/NullPriority/quorune/actions/runs/33969136194) | `missing_affected_test` | `not_applicable` | The legacy ability-word composition table now asserts permanent.enter and the dedicated Constellation template, matching the new focused compiler and runtime witnesses. The existing complete compiler impact rule already selected this module; future event remaps must run this exact cross-owner positive table before the source checkpoint. |
 
 ## Measurement limitations
 

@@ -318,6 +318,7 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                             ].keywords
                         ),
                         "attacking_alone": len(event.assignments) == 1,
+                        "attacker_count": len(event.assignments),
                         "attack_transition": event.to_dict(),
                     },
                     sources=semantic_sources,

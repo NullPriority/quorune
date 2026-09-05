@@ -8151,6 +8151,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/spell_copy_engine_adapter.py",
+      "layer": "rules",
+      "owning_subsystem": "trigger_processing",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/spell_history_transform.py",
       "layer": "rules",
       "owning_subsystem": "day_night_and_transform",
@@ -8935,5 +8949,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b2b3488281101cda1053e38b53bffb227fbd70cab3ff63159bb136f7cd967058"
+  "fingerprint": "52d93f781dcbf9d095ae792ed70b695394c77cac392536203d21046f8d0006be"
 }

@@ -70,6 +70,10 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-public-face-up-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
         "fixed-counter-entry-return-public-zone-trigger-v1",
+        "fixed-counter-heroic-spell-cast-trigger-v1",
+        "fixed-counter-magecraft-spell-action-trigger-v1",
+        "fixed-counter-constellation-entry-trigger-v1",
+        "fixed-counter-battalion-attack-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(
@@ -92,6 +96,15 @@ _COUNTER_PLACEMENT_OPERATIONS = frozenset(
         "place_counters_on_set",
         "place_counters_on_targets",
         "place_player_counters",
+    }
+)
+_ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
+    {
+        "heroic_source_targeted",
+        "magecraft_instant_or_sorcery",
+        "constellation_controlled_enchantment",
+        "constellation_source_or_controlled_enchantment",
+        "battalion_source_and_two_others_attack",
     }
 )
 _SCHEDULED_TRIGGER = re.compile(
@@ -187,6 +200,7 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_CYCLED = "card.cycled.self"
     PERMANENT_TURNED_FACE_UP = "permanent.turned_face_up"
     OPPONENT_CARD_DRAW = "card.drawn"
+    SPELL_CAST_OR_COPY = "spell.cast_or_copy"
 
 
 class FixedCounterZoneController(str, Enum):
@@ -363,11 +377,18 @@ class FixedCounterTriggerBinding:
             raise ValueError(
                 "Fixed counter zone-change events require exactly one typed subject"
             )
-        if (
-            self.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST
-        ) != (self.spell_subject is not None):
+        if self.public_mechanic is None and (
+            (
+                self.event is FixedCounterTriggerEvent.CONTROLLER_SPELL_CAST
+            )
+            != (self.spell_subject is not None)
+        ):
             raise ValueError(
                 "Fixed spell-cast events require exactly one typed subject"
+            )
+        if self.public_mechanic is not None and self.spell_subject is not None:
+            raise ValueError(
+                "Public event triggers cannot carry a parallel spell subject"
             )
         if self.public_mechanic is not None:
             if not self.public_mechanic or not self.public_template_id:
@@ -1053,6 +1074,7 @@ def fixed_counter_event_trigger_node(
         runtime_coverage=(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
             if requires_current_ability
+            or binding.variant in _ABILITY_WORD_PUBLIC_EVENT_VARIANTS
             else ()
         ),
         mechanics=mechanics,
@@ -1174,11 +1196,14 @@ def fixed_typed_event_effect_trigger_node(
         target_schema=target_schema,
         runtime_coverage=(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if requires_current_ability
-            and (
-                template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
-                or binding.variant == "fixed_entry_return_requirement"
+            if (
+                requires_current_ability
+                and (
+                    template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
+                    or binding.variant == "fixed_entry_return_requirement"
+                )
             )
+            or binding.variant in _ABILITY_WORD_PUBLIC_EVENT_VARIANTS
             else ()
         ),
         mechanics=mechanics,

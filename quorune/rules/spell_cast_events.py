@@ -58,6 +58,12 @@ def _colors(values: Iterable[str]) -> tuple[str, ...]:
     return tuple(color for color in "WUBRG" if color in normalized)
 
 
+def _references(values: Iterable[str], *, field: str) -> tuple[str, ...]:
+    if isinstance(values, (str, bytes)):
+        raise SpellCastEventError(f"Spell {field} must be an iterable of strings")
+    return tuple(_identity(value, field=field) for value in values)
+
+
 @dataclass(frozen=True, slots=True)
 class SpellCastEvent:
     """Immutable facts captured when CR 601.2i makes a spell cast."""
@@ -81,12 +87,13 @@ class SpellCastEvent:
     has_adventure: bool | None = None
     keywords: tuple[str, ...] | None = None
     phase: str | None = None
+    targets: tuple[str, ...] | None = None
     schema_version: int = 2
 
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3, 4}
+            or self.schema_version not in {1, 2, 3, 4, 5}
         ):
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
@@ -136,6 +143,7 @@ class SpellCastEvent:
             self.has_adventure,
             self.keywords,
             self.phase,
+            self.targets,
         )
         if self.schema_version in {1, 2}:
             if any(value is not None for value in extended):
@@ -193,6 +201,21 @@ class SpellCastEvent:
                     "Normalized spell-cast phase is unsupported"
                 )
             object.__setattr__(self, "phase", phase)
+        if self.schema_version in {1, 2, 3, 4}:
+            if self.targets is not None:
+                raise SpellCastEventError(
+                    "Legacy cast events cannot carry selected targets"
+                )
+        else:
+            if self.targets is None:
+                raise SpellCastEventError(
+                    "Spell targets must be present in v5 cast facts"
+                )
+            object.__setattr__(
+                self,
+                "targets",
+                _references(self.targets, field="targets"),
+            )
 
     def to_context(self) -> dict[str, Any]:
         context = {
@@ -207,7 +230,7 @@ class SpellCastEvent:
             "types": list(self.types),
             "stack": self.stack_ref,
         }
-        if self.schema_version in {2, 3, 4}:
+        if self.schema_version in {2, 3, 4, 5}:
             context.update(
                 {
                     "subtypes": list(self.subtypes),
@@ -215,7 +238,7 @@ class SpellCastEvent:
                     "colors": list(self.colors),
                 }
             )
-        if self.schema_version in {3, 4}:
+        if self.schema_version in {3, 4, 5}:
             context.update(
                 {
                     "mana_value": self.mana_value,
@@ -228,7 +251,12 @@ class SpellCastEvent:
                     "keywords": list(self.keywords or ()),
                     **(
                         {"phase": self.phase}
-                        if self.schema_version == 4
+                        if self.schema_version in {4, 5}
+                        else {}
+                    ),
+                    **(
+                        {"targets": list(self.targets or ())}
+                        if self.schema_version == 5
                         else {}
                     ),
                 }
@@ -254,9 +282,9 @@ class SpellCastEvent:
             "types",
             "stack",
         }
-        if version in {2, 3, 4}:
+        if version in {2, 3, 4, 5}:
             expected.update({"subtypes", "supertypes", "colors"})
-        if version in {3, 4}:
+        if version in {3, 4, 5}:
             expected.update(
                 {
                     "mana_value",
@@ -269,8 +297,10 @@ class SpellCastEvent:
                     "keywords",
                 }
             )
-            if version == 4:
+            if version in {4, 5}:
                 expected.add("phase")
+            if version == 5:
+                expected.add("targets")
         elif version not in {1, 2}:
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
@@ -293,6 +323,7 @@ class SpellCastEvent:
             "supertypes": value.get("supertypes", ()),
             "colors": value.get("colors", ()),
             "keywords": value.get("keywords", ()),
+            "targets": value.get("targets", ()),
         }
         if any(not isinstance(item, (list, tuple)) for item in arrays.values()):
             raise SpellCastEventError(
@@ -319,10 +350,15 @@ class SpellCastEvent:
             has_adventure=value.get("has_adventure"),
             keywords=(
                 tuple(arrays["keywords"])
-                if version in {3, 4}
+                if version in {3, 4, 5}
                 else None
             ),
             phase=value.get("phase"),
+            targets=(
+                tuple(arrays["targets"])
+                if version == 5
+                else None
+            ),
         )
 
     @property
@@ -332,4 +368,116 @@ class SpellCastEvent:
         ).hexdigest()
 
 
-__all__ = ["SpellCastEvent", "SpellCastEventError"]
+@dataclass(frozen=True, slots=True)
+class SpellCopyEvent:
+    """Immutable public facts captured when a spell copy is created."""
+
+    card_ref: str
+    object_id: str
+    logical_object_id: str
+    controller: str
+    stack_ref: str
+    copied_from_stack_ref: str
+    types: tuple[str, ...]
+    targets: tuple[str, ...] = ()
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise SpellCastEventError(
+                "Unsupported normalized spell-copy event schema version"
+            )
+        for field in (
+            "card_ref",
+            "object_id",
+            "logical_object_id",
+            "controller",
+            "stack_ref",
+            "copied_from_stack_ref",
+        ):
+            object.__setattr__(
+                self,
+                field,
+                _identity(getattr(self, field), field=field),
+            )
+        object.__setattr__(
+            self,
+            "types",
+            _terms(self.types, field="copy card types", required=True),
+        )
+        object.__setattr__(
+            self,
+            "targets",
+            _references(self.targets, field="copy targets"),
+        )
+
+    def to_context(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "card": self.card_ref,
+            "object_id": self.object_id,
+            "logical_object_id": self.logical_object_id,
+            "controller": self.controller,
+            "player": self.controller,
+            "from": "stack",
+            "to": "stack",
+            "types": list(self.types),
+            "targets": list(self.targets),
+            "stack": self.stack_ref,
+            "copied_from_stack": self.copied_from_stack_ref,
+        }
+
+    @classmethod
+    def from_context(cls, value: Mapping[str, Any]) -> "SpellCopyEvent":
+        expected = {
+            "schema_version",
+            "card",
+            "object_id",
+            "logical_object_id",
+            "controller",
+            "player",
+            "from",
+            "to",
+            "types",
+            "targets",
+            "stack",
+            "copied_from_stack",
+        }
+        if not isinstance(value, Mapping) or set(value) != expected:
+            raise SpellCastEventError(
+                "Normalized spell-copy events have a closed schema"
+            )
+        if value["player"] != value["controller"]:
+            raise SpellCastEventError(
+                "Spell-copy player and controller must agree"
+            )
+        if value["from"] != "stack" or value["to"] != "stack":
+            raise SpellCastEventError(
+                "Normalized spell-copy events must describe stack creation"
+            )
+        if not isinstance(value["types"], (list, tuple)) or not isinstance(
+            value["targets"], (list, tuple)
+        ):
+            raise SpellCastEventError(
+                "Spell-copy types and targets must be arrays"
+            )
+        return cls(
+            schema_version=value["schema_version"],
+            card_ref=value["card"],
+            object_id=value["object_id"],
+            logical_object_id=value["logical_object_id"],
+            controller=value["controller"],
+            stack_ref=value["stack"],
+            copied_from_stack_ref=value["copied_from_stack"],
+            types=tuple(value["types"]),
+            targets=tuple(value["targets"]),
+        )
+
+    @property
+    def fingerprint(self) -> str:
+        return hashlib.sha256(
+            stable_json(self.to_context()).encode("utf-8")
+        ).hexdigest()
+
+
+__all__ = ["SpellCastEvent", "SpellCastEventError", "SpellCopyEvent"]

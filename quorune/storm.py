@@ -107,6 +107,7 @@ def storm_trigger_items(
     )
     template = {
         "label": spell.label,
+        "source_spell_ref": spell.ref,
         "controller": spell.controller,
         "card_object_id": spell.card_object_id,
         "semantic_key": spell.semantic_key,

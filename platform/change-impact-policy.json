@@ -842,21 +842,30 @@
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/fixed_public_event_trigger_bindings.py",
         "quorune/compiler/spell_cast_predicates.py",
+        "quorune/engine.py",
         "quorune/rules/activation/commit.py",
         "quorune/rules/casting/commit.py",
         "quorune/rules/morph_actions.py",
         "quorune/rules/spell_cast_events.py",
+        "quorune/selection/storm.py",
+        "quorune/spell_copy_engine_adapter.py",
+        "quorune/storm.py",
         "quorune/zone_trigger_events.py",
-        "tests/fixtures/fixed-typed-event-trigger-cards.json"
+        "tests/fixtures/ability-word-event-trigger-cards.json",
+        "tests/fixtures/fixed-typed-event-trigger-cards.json",
+        "tests/test_ability_word_event_triggers.py"
       ],
       "test_modules": [
+        "test_ability_word_event_triggers",
         "test_attack_transitions",
         "test_block_transitions",
+        "test_copy_objects",
         "test_fixed_counter_event_triggers",
         "test_morph_rules",
         "test_ordinary_cycling",
         "test_prowess_rules",
-        "test_rules_scheduler"
+        "test_rules_scheduler",
+        "test_storm_rules"
       ]
     },
     {
