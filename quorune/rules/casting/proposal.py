@@ -536,7 +536,7 @@ def _cast_targets_and_tap_costs(
     )
 
 
-def aura_spell_target_schema(
+def _aura_spell_target_schema(
     *,
     type_line: str,
     enchant_spec: EnchantSpec | None,
@@ -590,7 +590,7 @@ def build_cast_proposal(
         card,
         face_name=(str(face.get("name") or "") if face else None),
     )
-    aura_target_schema = aura_spell_target_schema(
+    aura_target_schema = _aura_spell_target_schema(
         type_line=type_line,
         enchant_spec=enchant_spec,
         reviewed_target_schema=(
@@ -793,7 +793,7 @@ def build_cast_offer(
         ),
     )
     try:
-        aura_target_schema = aura_spell_target_schema(
+        aura_target_schema = _aura_spell_target_schema(
             type_line=type_line,
             enchant_spec=enchant_spec,
             reviewed_target_schema=getattr(
@@ -877,7 +877,6 @@ def build_cast_offer(
 
 
 __all__ = [
-    "aura_spell_target_schema",
     "CastProposalHost",
     "build_cast_offer",
     "build_cast_proposal",

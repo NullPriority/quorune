@@ -12107,7 +12107,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 204180,
+      "logical_lines": 204179,
       "methods": {
         "dunder": 551,
         "private": 870,
@@ -12518,8 +12518,8 @@
           "file": "quorune/rules/casting/proposal.py",
           "functions_and_methods": 27,
           "language": "python",
-          "logical_lines": 835,
-          "physical_lines": 884
+          "logical_lines": 834,
+          "physical_lines": 883
         },
         {
           "file": "quorune/rules_scheduler.py",
@@ -16881,7 +16881,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 223555,
+      "physical_lines": 223554,
       "python_file_count": 619,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -30078,7 +30078,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "21f30542323c0dd38810a11981c7790684f280caa43b7f871d392bba928e5b07",
+      "fingerprint": "956bc2ca23ef3336bd658a5899e0363c286f55650e22174ff8fad49d9edd279b",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

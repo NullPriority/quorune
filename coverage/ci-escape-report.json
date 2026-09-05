@@ -868,9 +868,9 @@
       "regressions": [
         "test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_aura_cast_targeting_mutant_is_killed"
       ],
-      "resolution": "The witness now invokes and mutates aura_spell_target_schema, preserving the killed-mutation contract. Complete impact selection already included the module; future shared-helper renames must search exact test references before the source checkpoint.",
+      "resolution": "Madness now delegates to the existing _aura_spell_target_schema without renaming it, preserving both the killed-mutation contract and capability identity. Complete impact selection already included the module; future shared-helper renames must search exact test and registry references before the source checkpoint.",
       "run_id": 33952355256,
-      "summary": "The Madness interaction correction promoted the canonical Aura spell-target helper from a private to a public shared name, while its implementation-mutation witness still invoked and patched the removed private symbol."
+      "summary": "The Madness interaction correction initially promoted the canonical Aura spell-target helper from a private to a public shared name, while its implementation-mutation witness and capability component inventory still named the established private symbol."
     },
     {
       "category": "browser_integration",
@@ -903,6 +903,22 @@
       "resolution": "The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection.",
       "run_id": 33955410367,
       "summary": "The ci-escape-report generator read platform/ci-escape-source.json, but its safe cache identity declared only CI and Python-test input groups, so exact-head cloud validation restored a stale report for a changed incident ledger."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Windows / functional-03 (job 101280187979)"
+      ],
+      "head_sha": "d7ae455e1a208890a0315e372949f97ffaa264d1",
+      "id": "ci-20260905-53",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_partial_card_and_stale_lifecycle_contract_fail_closed"
+      ],
+      "resolution": "The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint.",
+      "run_id": 33956229754,
+      "summary": "The Madness compiler harvest replaced commit-time fixed lifecycle lookup with the shared Madness-aware owner, but one stale lifecycle rollback test still patched the removed commit-module symbol."
     }
   ],
   "known_flaky_tests": [],
@@ -910,7 +926,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-09-05T08:33:27Z",
+  "observed_at": "2026-09-05T09:06:42Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -955,7 +971,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "748437933b15c55f7581c822cf91d38a93e78aa2291e38713d0d1e61c67d92eb",
+  "source_fingerprint": "7b2c3f8e7b8f5d4d856950cfe188942638ce26a1cc61381fdca7f6b69989a9d1",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -965,12 +981,12 @@
       "flaky_test": 6,
       "generated_artifact_drift": 5,
       "infrastructure": 1,
-      "missing_affected_test": 19,
+      "missing_affected_test": 20,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 47,
-    "escape_count": 52,
+    "deterministic_escape_count": 48,
+    "escape_count": 53,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [

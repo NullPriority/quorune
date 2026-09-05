@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-09-05T08:33:27Z",
+  "observed_at": "2026-09-05T09:06:42Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -756,7 +756,7 @@
       "head_sha": "9600ed4553bb366c4c001e60567597ab86234c87",
       "category": "missing_affected_test",
       "deterministic": true,
-      "summary": "The Madness interaction correction promoted the canonical Aura spell-target helper from a private to a public shared name, while its implementation-mutation witness still invoked and patched the removed private symbol.",
+      "summary": "The Madness interaction correction initially promoted the canonical Aura spell-target helper from a private to a public shared name, while its implementation-mutation witness and capability component inventory still named the established private symbol.",
       "failed_surfaces": [
         "PR / Python / functional-07 (job 101269695626)"
       ],
@@ -764,7 +764,7 @@
         "test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_aura_cast_targeting_mutant_is_killed"
       ],
       "impact_edge_status": "not_applicable",
-      "resolution": "The witness now invokes and mutates aura_spell_target_schema, preserving the killed-mutation contract. Complete impact selection already included the module; future shared-helper renames must search exact test references before the source checkpoint."
+      "resolution": "Madness now delegates to the existing _aura_spell_target_schema without renaming it, preserving both the killed-mutation contract and capability identity. Complete impact selection already included the module; future shared-helper renames must search exact test and registry references before the source checkpoint."
     },
     {
       "id": "ci-20260905-51",
@@ -797,6 +797,22 @@
       ],
       "impact_edge_status": "added",
       "resolution": "The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection."
+    },
+    {
+      "id": "ci-20260905-53",
+      "run_id": 33956229754,
+      "head_sha": "d7ae455e1a208890a0315e372949f97ffaa264d1",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The Madness compiler harvest replaced commit-time fixed lifecycle lookup with the shared Madness-aware owner, but one stale lifecycle rollback test still patched the removed commit-module symbol.",
+      "failed_surfaces": [
+        "PR / Windows / functional-03 (job 101280187979)"
+      ],
+      "regressions": [
+        "test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_partial_card_and_stale_lifecycle_contract_fail_closed"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint."
     }
   ],
   "recent_pull_requests": [

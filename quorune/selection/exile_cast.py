@@ -18,7 +18,7 @@ from ..errors import GameRuleError, StateInvariantError
 from ..model import CardInstance, StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.casting.model import CastProposalError
-from ..rules.casting.proposal import aura_spell_target_schema
+from ..rules.casting.proposal import _aura_spell_target_schema
 from ..semantic_runtime.intents import MadnessChoiceIntent
 from ..stack_resolution import complete_stack_resolution
 from ..util import stable_json
@@ -417,7 +417,7 @@ class OneShotExileCastChoiceOwnerMixin:
             ):
                 continue
             try:
-                aura_target_schema = aura_spell_target_schema(
+                aura_target_schema = _aura_spell_target_schema(
                     type_line=type_line,
                     enchant_spec=self._compiled_enchant_spec(
                         card,

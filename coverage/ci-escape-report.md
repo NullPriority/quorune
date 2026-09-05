@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "748437933b15c55f7581c822cf91d38a93e78aa2291e38713d0d1e61c67d92eb"
+verified: "7b2c3f8e7b8f5d4d856950cfe188942638ce26a1cc61381fdca7f6b69989a9d1"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 52
-- Deterministic escapes: 47
+- Escapes: 53
+- Deterministic escapes: 48
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -75,9 +75,10 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260831-47` | [33366100343](https://github.com/NullPriority/quorune/actions/runs/33366100343) | `missing_affected_test` | `added` | The shared compiler-activated-cost-expectations rule now routes every activation-cost owner to the counter-placement consumer inventory, capability mutations, modal and target composition expectations, and high-risk interaction assurance. The stale Dreadmobile row is a positive exact assertion. |
 | `ci-20260901-48` | [33523463031](https://github.com/NullPriority/quorune/actions/runs/33523463031) | `missing_affected_test` | `not_applicable` | The promoted prevention incidences are removed from the residual fail-closed pair inventory, while the generated scheduler witness reads the content-bound pre-harvest transition measurement and separately permits the post-harvest current cohort to retire. Existing impact rules already selected both modules; future harvest pre-cloud evidence must run these exact adjacent methods. |
 | `ci-20260904-49` | [33878325617](https://github.com/NullPriority/quorune/actions/runs/33878325617) | `missing_affected_test` | `not_applicable` | The leaf library-search owner still rejects every compound tail, while the integrated token-production owner now explicitly proves the promoted search-then-Investigate composition. Frontier evaluation derives its exact bounded combination count from the current family universe, and the global fail-closed witness executes every declared pair without pinning a volatile total. Existing complete compiler impact selection already includes all affected modules. |
-| `ci-20260905-50` | [33952355256](https://github.com/NullPriority/quorune/actions/runs/33952355256) | `missing_affected_test` | `not_applicable` | The witness now invokes and mutates aura_spell_target_schema, preserving the killed-mutation contract. Complete impact selection already included the module; future shared-helper renames must search exact test references before the source checkpoint. |
+| `ci-20260905-50` | [33952355256](https://github.com/NullPriority/quorune/actions/runs/33952355256) | `missing_affected_test` | `not_applicable` | Madness now delegates to the existing _aura_spell_target_schema without renaming it, preserving both the killed-mutation contract and capability identity. Complete impact selection already included the module; future shared-helper renames must search exact test and registry references before the source checkpoint. |
 | `ci-20260905-51` | [33953752607](https://github.com/NullPriority/quorune/actions/runs/33953752607) | `browser_integration` | `not_applicable` | The unchanged assertion-driven journey now declares a bounded 180-second test budget for four cold deck validations, durable stop/resume, four mulligan receipts, reloads, mobile inspection, and metrics cleanup. Its focused isolated headless rerun passed in 1.6 minutes; browser-full impact already selected the journey. |
 | `ci-20260905-52` | [33955410367](https://github.com/NullPriority/quorune/actions/runs/33955410367) | `generated_artifact_drift` | `added` | The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection. |
+| `ci-20260905-53` | [33956229754](https://github.com/NullPriority/quorune/actions/runs/33956229754) | `missing_affected_test` | `not_applicable` | The rollback witness now patches current_fixed_cast_lifecycle_spec and again proves stale lifecycle contracts fail before mutation. Complete impact selection already included the module; semantic owner substitutions must search every removed import name across focused tests before the source checkpoint. |
 
 ## Measurement limitations
 
