@@ -237,7 +237,7 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
 
     def test_aura_cast_targeting_mutant_is_killed(self):
         def assert_mandatory_aura_target() -> None:
-            schema = casting_proposal._aura_spell_target_schema(
+            schema = casting_proposal.aura_spell_target_schema(
                 type_line="Enchantment — Aura",
                 enchant_spec=SimpleEnchantSpec("creature"),
             )
@@ -247,7 +247,7 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
         assert_mandatory_aura_target()
         with patch.object(
             casting_proposal,
-            "_aura_spell_target_schema",
+            "aura_spell_target_schema",
             return_value=None,
         ):
             with self.assertRaises(AssertionError):
