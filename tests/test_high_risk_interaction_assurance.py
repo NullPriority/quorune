@@ -9,6 +9,7 @@ from high_risk_interaction_support import (
     CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
     DESTROY_DAMAGE_PREVENTION_PAIR,
     DESTROY_REGENERATION_PAIR,
+    FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR,
     FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
     FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
     FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
@@ -105,6 +106,15 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
+            database=self.db,
+        )
+
+    def test_fixed_characteristic_set_with_regeneration_residual_fails_closed(
+        self,
+    ) -> None:
+        assert_high_risk_boundary_pairs(
+            self,
+            (FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR,),
             database=self.db,
         )
 

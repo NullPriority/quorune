@@ -19,7 +19,7 @@ from .counter_removal_capabilities import (
 )
 from .fixed_controller_effect_shapes import fixed_life_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
-    fixed_controlled_characteristic_set_node_capabilities,
+    fixed_resolution_characteristic_set_node_capabilities,
 )
 from .graveyard_card_targets import (
     targeted_own_graveyard_return_node_capabilities,
@@ -97,7 +97,7 @@ _COMPONENT_RESOLVERS = (
     fixed_target_characteristics_node_capabilities,
     temporary_declaration_restriction_node_capabilities,
     fixed_damage_node_capabilities,
-    fixed_controlled_characteristic_set_node_capabilities,
+    fixed_resolution_characteristic_set_node_capabilities,
     mass_destruction_node_capabilities,
     fixed_draw_node_capabilities,
     fixed_life_node_capabilities,

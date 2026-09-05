@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-09-05T10:04:33Z",
+  "observed_at": "2026-09-05T17:27:22Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -846,6 +846,22 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The legacy ability-word composition table now asserts permanent.enter and the dedicated Constellation template, matching the new focused compiler and runtime witnesses. The existing complete compiler impact rule already selected this module; future event remaps must run this exact cross-owner positive table before the source checkpoint."
+    },
+    {
+      "id": "ci-20260905-56",
+      "run_id": 33978769486,
+      "head_sha": "ec14cfc5fd70107ecbea6a846680e9b36fd568d7",
+      "category": "browser_integration",
+      "deterministic": true,
+      "summary": "The persisted two-turn Spire Garden browser journey exceeded its 180-second test budget on a slower hosted runner; the retained trace showed ordinary progress through Seat B's turn-two end step rather than a behavior assertion or no-progress failure.",
+      "failed_surfaces": [
+        "PR / Browser / rules (job 101340227960)"
+      ],
+      "regressions": [
+        "four-player.spec.ts: an isolated-context duel presents exact turn state and Spire Garden correctly"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The unchanged assertion-driven journey now declares a bounded 300-second budget and treats already-closed contexts as successful teardown. The same path passed its isolated headless rerun in 2.5 minutes; browser-full impact already selected the journey."
     }
   ],
   "recent_pull_requests": [

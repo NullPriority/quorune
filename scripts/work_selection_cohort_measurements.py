@@ -138,6 +138,9 @@ _PROBE_FIXED_LIBRARY_SELECTION = (
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
 )
+_PROBE_FIXED_PUBLIC_CHARACTERISTIC_SET = (
+    "fixed-public-characteristic-set-existing-owner-v1"
+)
 _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC = (
     "fixed-public-state-characteristic-existing-owner-v1"
 )
@@ -263,6 +266,7 @@ _PROBE_IDS = {
     _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER,
     _PROBE_EXILE,
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
+    _PROBE_FIXED_PUBLIC_CHARACTERISTIC_SET,
     _PROBE_FIXED_CAST_LIFECYCLES,
     _PROBE_FIXED_CASTING_SURFACE,
     _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS,
@@ -2539,6 +2543,16 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_FIXED_PUBLIC_CHARACTERISTIC_SET:
+        return _fixed_public_characteristic_set_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC:
         return _fixed_public_state_characteristic_measurement(
             frontier=frontier,
@@ -4744,6 +4758,126 @@ def _fixed_controlled_characteristic_measurement(
             and _contains_fixed_controlled_characteristic_effect(
                 node.to_dict()
             )
+            for ability in candidates
+            for node in (nodes.get(str(ability.get("ability_id") or "")),)
+        )
+        if not card_matches:
+            continue
+        matched_abilities += card_matches
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+_FIXED_PUBLIC_CHARACTERISTIC_SCOPE = re.compile(
+    r"(?:All creatures|Creatures your opponents control|"
+    r"Creatures target player controls|Attacking creatures(?: you control)?|"
+    r"Blocking creatures(?: you control)?|Other attacking creatures|"
+    r"Each other attacking creature) (?:get|gets|gain|gains) .+ "
+    r"until end of turn\.?(?:\s*\([^)]*\))?$",
+    re.IGNORECASE,
+)
+
+
+def _contains_fixed_public_characteristic_effect(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        if (
+            value.get("op")
+            == "modify_all_matching_permanents_until_end_of_turn"
+            and type(value.get("power")) is int
+            and type(value.get("toughness")) is int
+            and isinstance(value.get("predicate"), Mapping)
+        ):
+            return True
+        return any(
+            _contains_fixed_public_characteristic_effect(child)
+            for child in value.values()
+        )
+    if isinstance(value, (list, tuple)):
+        return any(
+            _contains_fixed_public_characteristic_effect(child)
+            for child in value
+        )
+    return False
+
+
+def _fixed_public_characteristic_set_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact public creature-set modifiers through the shared owner."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+            and _FIXED_PUBLIC_CHARACTERISTIC_SCOPE.search(
+                _without_parenthetical_reminder(_source_line(record, ability))
+            )
+        ]
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        card_matches = sum(
+            node is not None
+            and node.exact
+            and _contains_fixed_public_characteristic_effect(node.to_dict())
             for ability in candidates
             for node in (nodes.get(str(ability.get("ability_id") or "")),)
         )

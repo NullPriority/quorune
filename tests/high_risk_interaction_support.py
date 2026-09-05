@@ -39,6 +39,16 @@ _WITNESSES = {
         'Lands you control have "{T}: Add two mana of any one color."',
         "{2}",
     ),
+    "fixed-characteristic-set-regeneration": _Witness(
+        "Generic Fixed Characteristic Set Regeneration Boundary Fixture",
+        "Sorcery",
+        "Destroy all creatures. They can't be regenerated. Draw a card for "
+        "each creature destroyed this way.\n"
+        "Cycling {3}{B}{B}\n"
+        "When you cycle this card, all creatures get -2/-2 until end of turn.",
+        "{6}{B}{B}",
+        ("Cycling",),
+    ),
     "saga-chapter-boundary": _Witness(
         "Generic Saga Chapter Boundary Fixture",
         "Enchantment — Saga",
@@ -1035,6 +1045,11 @@ FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS = (
     ),
 )
 
+FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR = _pair(
+    "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+    "residual.replacement.regeneration",
+)
+
 FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS = tuple(
     _pair(capability, "residual.replacement.regeneration")
     for capability in (
@@ -1192,6 +1207,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
             *EFFECT_AND_REPLACEMENT_PAIRS,
             *FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
+            FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR,
             *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
             *FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
             *ZONE_AND_CHOICE_PAIRS,
@@ -1256,6 +1272,10 @@ _bind("prismatic-circle", *EFFECT_AND_REPLACEMENT_PAIRS[:3])
 _bind(
     "fixed-query-grant-entry-replacement",
     *FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
+)
+_bind(
+    "fixed-characteristic-set-regeneration",
+    FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR,
 )
 _bind("serras-hymn", EFFECT_AND_REPLACEMENT_PAIRS[3])
 _bind("tekuthal", *EFFECT_AND_REPLACEMENT_PAIRS[4:6])
@@ -1528,6 +1548,7 @@ __all__ = [
     "DESTROY_DAMAGE_PREVENTION_PAIR",
     "DESTROY_REGENERATION_PAIR",
     "EFFECT_AND_REPLACEMENT_PAIRS",
+    "FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR",
     "FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS",
     "FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS",
     "FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS",

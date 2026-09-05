@@ -20,8 +20,8 @@ from .compiler.corpus_reporting import (
     explain_oracle_ir,
     oracle_corpus_coverage,
 )
-from .compiler.continuous_templates import (
-    controlled_characteristic_until_end_of_turn_effect,
+from .compiler.fixed_public_characteristic_sets import (
+    fixed_public_characteristic_set_effect_template,
 )
 from .compiler.attached_granted_ability_nodes import (
     compile_keyword_or_attached_grant_nodes as _keyword_or_attached_grant_nodes,
@@ -153,7 +153,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v170"
+ORACLE_COMPILER_VERSION = "oracle-ir-v171"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -386,12 +386,11 @@ def _reviewed_atomic_effect_template(
     Mapping[str, Any] | None,
     tuple[str, ...],
 ]:
-    temporary_modifier = controlled_characteristic_until_end_of_turn_effect(
+    temporary_modifier = fixed_public_characteristic_set_effect_template(
         text.strip()
     )
     if temporary_modifier is not None:
-        template, effects, mechanics = temporary_modifier
-        return template, effects, None, mechanics
+        return temporary_modifier
     prevention = fixed_prevention_effect_template(
         text.strip(),
         card_name=card_name,

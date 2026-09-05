@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-04"
+verified: "2026-09-05"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -161,18 +161,21 @@ battlefield returns, and unsupported characteristic dependencies remain
 source-spanned residuals.
 
 `compiler/public_state_queries.py`, consumed by
-`compiler/continuous_templates.py`, also lowers fixed controlled permanent sets
-that gain supported keywords, or gain fixed power/toughness and supported
-keywords, until end of turn. It reuses the static fixed-query grammar only to
-derive one closed `ObjectQuerySpec`; resolution evaluates current effective
-type, subtype, color, supertype, and token facts, then locks the matching
-logical objects. The runtime sends ability additions through shared layer 6
-and power/toughness changes through layer 7c over that same locked set. The
-source leaving or changing controller does not end the effect, later entrants
-do not join it, returned objects are new logical objects, and cleanup expires
-both layers. Targeted, opponent-relative, combat-state, counter-qualified,
-dynamic, chosen, conditional, quoted, Protection, type-changing, and variable-duration
-forms remain source-spanned residuals.
+`compiler/continuous_templates.py`, lowers fixed controlled permanent sets that
+gain supported keywords, or gain fixed power/toughness and supported keywords,
+until end of turn. `compiler/fixed_public_characteristic_sets.py` extends that
+resolution owner to all creatures, creatures opponents or one target player
+control, current attacking or blocking creatures, and source-excluding attacking
+creatures. Both grammars feed one closed query validator. Resolution evaluates
+only cycle-safe current type, subtype, color, supertype, token, controller, and
+public combat-state facts, then locks the matching logical objects. The runtime
+sends ability additions through shared layer 6 and power/toughness changes
+through layer 7c over that same locked set. The source leaving or changing
+controller does not end the effect, later entrants do not join it, returned
+objects are new logical objects, and cleanup expires both layers. Multiple or
+opponent-only targets, attachment-relative, chosen, counter-qualified, tapped,
+modified, keyword-qualified, dynamic, conditional, quoted, Protection,
+type-changing, and variable-duration forms remain source-spanned residuals.
 
 The existing attached-characteristic handler in
 `compiler/continuous_templates.py` lowers closed enchanted, equipped, and

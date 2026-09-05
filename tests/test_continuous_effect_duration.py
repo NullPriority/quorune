@@ -16,6 +16,13 @@ from quorune.compiler.continuous_templates import (
     controlled_creature_until_end_of_turn_effect,
     fixed_power_toughness_anthem_handler,
 )
+from quorune.compiler.fixed_public_characteristic_sets import (
+    FIXED_PUBLIC_CHARACTERISTIC_SET_TEMPLATE_ID,
+    fixed_public_characteristic_set_effect_template,
+)
+from quorune.compiler.fixed_resolution_characteristic_queries import (
+    fixed_resolution_characteristic_query_is_closed,
+)
 from quorune.compiler.dependency_gate import DependencyGate
 from quorune.characteristic_evaluation import (
     evaluate_card_characteristics,
@@ -35,8 +42,8 @@ from quorune.continuous_effects import (
     Layer,
     evaluate_continuous_effects,
 )
-from quorune.model import CardInstance, GameState, StackItem
-from quorune.object_predicate import ObjectQuerySpec
+from quorune.model import CardInstance, CombatState, GameState, StackItem
+from quorune.object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.projection import StateProjector
 from quorune.record import checkpoint_envelope, replay_record
@@ -651,8 +658,6 @@ class ContinuousEffectModelTests(unittest.TestCase):
 
         unsupported = (
             "Target creature you control gains flying until end of turn.",
-            "Attacking creatures you control gain flying until end of turn.",
-            "Creatures your opponents control gain flying until end of turn.",
             "Creatures you control with a +1/+1 counter on them gain trample until end of turn.",
             "Creatures you control get +X/+X until end of turn.",
             "Creatures you control gain protection from red until end of turn.",
@@ -665,6 +670,202 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 self.assertIsNone(
                     controlled_characteristic_until_end_of_turn_effect(text)
                 )
+
+    def test_fixed_public_creature_sets_compile_across_shared_contexts(self):
+        registry = load_default_capability_registry()
+        cases = (
+            (
+                "spell-all",
+                "All creatures get -2/-2 until end of turn.",
+                "Sorcery",
+                None,
+                None,
+                None,
+            ),
+            (
+                "spell-opponents",
+                "Creatures your opponents control get -1/-1 until end of turn.",
+                "Instant",
+                None,
+                ["$controller"],
+                None,
+            ),
+            (
+                "spell-target-player",
+                "Creatures target player controls get +2/+0 until end of turn.",
+                "Sorcery",
+                "$target.0",
+                None,
+                None,
+            ),
+            (
+                "activated-attacking",
+                "{2}: Attacking creatures gain trample until end of turn.",
+                "Artifact",
+                None,
+                None,
+                "attacking",
+            ),
+            (
+                "loyalty-blocking",
+                "+1: Blocking creatures get +0/+3 until end of turn.",
+                "Legendary Planeswalker — Test",
+                None,
+                None,
+                "blocking",
+            ),
+            (
+                "triggered-other-attacking",
+                "Whenever this creature attacks, other attacking creatures "
+                "get +1/+0 until end of turn.",
+                "Creature — Soldier",
+                None,
+                None,
+                "attacking",
+            ),
+            (
+                "modal",
+                "Choose one —\n"
+                "• Advance — Attacking creatures get +1/+0 until end of turn.\n"
+                "• Recover — You gain 3 life.",
+                "Sorcery",
+                None,
+                None,
+                "attacking",
+            ),
+        )
+        for index, (
+            context,
+            text,
+            type_line,
+            controller,
+            excluded_controllers,
+            state_field,
+        ) in enumerate(cases):
+            with self.subTest(context=context):
+                ir = compile_oracle_card(
+                    characteristic_card(
+                        text,
+                        type_line=type_line,
+                        name=f"Public set {context}",
+                        oracle_suffix=611_300 + index,
+                    ),
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                if context == "modal":
+                    self.assertIn(
+                        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                        ir.faces[0].nodes[0].capability_dependencies,
+                    )
+                    continue
+                nodes = [
+                    node
+                    for node in ir.faces[0].nodes
+                    if any(
+                        effect.get("op")
+                        == "modify_all_matching_permanents_until_end_of_turn"
+                        for effect in node.effects
+                    )
+                ]
+                self.assertEqual(1, len(nodes))
+                if context not in {"triggered-other-attacking", "modal"}:
+                    self.assertEqual(
+                        FIXED_PUBLIC_CHARACTERISTIC_SET_TEMPLATE_ID,
+                        nodes[0].template_id,
+                    )
+                effect = next(
+                    effect
+                    for effect in nodes[0].effects
+                    if effect.get("op")
+                    == "modify_all_matching_permanents_until_end_of_turn"
+                )
+                predicate = effect["predicate"]
+                self.assertTrue(
+                    fixed_resolution_characteristic_query_is_closed(
+                        ObjectQuerySpec.from_dict(predicate),
+                        target_schema=nodes[0].target_schema,
+                    )
+                )
+                self.assertEqual(controller, predicate["controller"])
+                self.assertEqual(
+                    excluded_controllers or [],
+                    predicate.get("excluded_controllers", []),
+                )
+                state = predicate.get("state_predicate")
+                if state_field is not None:
+                    self.assertTrue(state[state_field])
+                if context == "triggered-other-attacking":
+                    self.assertEqual("$source", predicate["exclude_ref"])
+                if context == "spell-target-player":
+                    self.assertEqual(
+                        {
+                            "zones": ["player"],
+                            "categories": ["player"],
+                            "player_relation": "any",
+                            "count": 1,
+                        },
+                        nodes[0].target_schema,
+                    )
+                else:
+                    self.assertIsNone(nodes[0].target_schema)
+
+    def test_fixed_public_creature_set_near_misses_remain_material(self):
+        registry = load_default_capability_registry()
+        cases = (
+            "Tapped creatures get -1/-1 until end of turn.",
+            "Attacking creatures with flying get +1/+1 until end of turn.",
+            "Other blocking creatures get +1/+1 until end of turn.",
+            "Creatures target opponent controls get -1/-1 until end of turn.",
+            "Creatures your opponents control get +X/+X until end of turn.",
+            "All creatures become artifacts until end of turn.",
+            "All creatures get -1/-1 until your next turn.",
+            "If you attacked, attacking creatures get +1/+0 until end of turn.",
+        )
+        for index, text in enumerate(cases):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(
+                    characteristic_card(
+                        text,
+                        type_line="Instant",
+                        name="Public set near miss",
+                        oracle_suffix=611_320 + index,
+                    ),
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_fixed_public_creature_set_compiler_mutant_is_killed(self):
+        record = characteristic_card(
+            "All creatures get -1/-1 until end of turn.",
+            type_line="Sorcery",
+            name="Public set mutation",
+            oracle_suffix=611_340,
+        )
+        registry = load_default_capability_registry()
+        self.assertEqual(
+            "exact",
+            compile_oracle_card(
+                record,
+                capability_registry=registry,
+                capability_profile="commander_review",
+            ).status,
+        )
+        with patch(
+            "quorune.oracle_ir.fixed_public_characteristic_set_effect_template",
+            return_value=None,
+        ):
+            self.assertNotEqual(
+                "exact",
+                compile_oracle_card(
+                    record,
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                ).status,
+            )
 
     def test_fixed_resolution_characteristic_shape_excludes_dynamic_queries(self):
         template = controlled_creature_until_end_of_turn_effect(
@@ -1117,6 +1318,184 @@ class ContinuousEffectEngineTests(unittest.TestCase):
         self.assertNotIn(
             "Flying", engine._effective_card_data(artifact)["keywords"]
         )
+
+    def test_fixed_public_characteristic_sets_lock_multiplayer_membership(self):
+        session = self.session(6112020, players=4)
+        engine = session.engine
+        source = self.creature(engine, "A", "Source")
+        ally = self.creature(engine, "A", "Ally")
+        opponent_b = self.creature(engine, "B", "Opponent B")
+        opponent_c = self.creature(engine, "C", "Opponent C")
+        opponent_d = self.creature(engine, "D", "Opponent D")
+        engine.state.combat = CombatState(
+            attackers={source.object_id: "B", ally.object_id: "B"},
+            blockers={source.object_id: [opponent_b.object_id]},
+        )
+        source.attacking = "B"
+        ally.attacking = "B"
+        opponent_b.blocking = source.object_id
+        effects = (
+            (
+                ObjectQuerySpec(
+                    zones=("battlefield",),
+                    types_all=("creature",),
+                ),
+                "Flying",
+            ),
+            (
+                ObjectQuerySpec(
+                    zones=("battlefield",),
+                    excluded_controllers=("A",),
+                    types_all=("creature",),
+                ),
+                "Menace",
+            ),
+            (
+                ObjectQuerySpec(
+                    zones=("battlefield",),
+                    types_all=("creature",),
+                    state_predicate=PermanentStatePredicateSpec(attacking=True),
+                ),
+                "Trample",
+            ),
+            (
+                ObjectQuerySpec(
+                    zones=("battlefield",),
+                    types_all=("creature",),
+                    state_predicate=PermanentStatePredicateSpec(blocking=True),
+                ),
+                "Vigilance",
+            ),
+            (
+                ObjectQuerySpec(
+                    zones=("battlefield",),
+                    types_all=("creature",),
+                    exclude_ref=source.ref,
+                    state_predicate=PermanentStatePredicateSpec(attacking=True),
+                ),
+                "First Strike",
+            ),
+        )
+        for predicate, keyword in effects:
+            engine.apply_effect(
+                {
+                    "op": "modify_all_matching_permanents_until_end_of_turn",
+                    "predicate": predicate.to_dict(),
+                    "power": 0,
+                    "toughness": 0,
+                    "keywords": [keyword],
+                },
+                actor="A",
+            )
+        later = self.creature(engine, "B", "Later")
+
+        source_keywords = set(engine._effective_card_data(source)["keywords"])
+        ally_keywords = set(engine._effective_card_data(ally)["keywords"])
+        b_keywords = set(engine._effective_card_data(opponent_b)["keywords"])
+        c_keywords = set(engine._effective_card_data(opponent_c)["keywords"])
+        d_keywords = set(engine._effective_card_data(opponent_d)["keywords"])
+        self.assertGreaterEqual(source_keywords, {"Flying", "Trample"})
+        self.assertNotIn("First Strike", source_keywords)
+        self.assertGreaterEqual(
+            ally_keywords,
+            {"Flying", "Trample", "First Strike"},
+        )
+        self.assertGreaterEqual(b_keywords, {"Flying", "Menace", "Vigilance"})
+        self.assertGreaterEqual(c_keywords, {"Flying", "Menace"})
+        self.assertGreaterEqual(d_keywords, {"Flying", "Menace"})
+        self.assertFalse(
+            {"Flying", "Menace", "Trample", "Vigilance", "First Strike"}
+            .intersection(engine._effective_card_data(later)["keywords"])
+        )
+
+        engine.change_control(ally.object_id, "B", reason="locked public set")
+        self.assertIn("First Strike", engine._effective_card_data(ally)["keywords"])
+        engine.move_card(source.object_id, "graveyard", reason="source departure")
+        self.assertIn("Menace", engine._effective_card_data(opponent_c)["keywords"])
+        engine.move_card(ally.object_id, "graveyard", reason="identity reset")
+        engine.move_card(ally.object_id, "battlefield", controller="B", reason="identity reset")
+        self.assertNotIn("First Strike", engine._effective_card_data(ally)["keywords"])
+
+        rendered = json.dumps(
+            StateProjector(self.db, engine.state)._snapshot("pilot:D"),
+            sort_keys=True,
+        )
+        self.assertNotIn(opponent_c.object_id, rendered)
+        self.assertNotIn("continuous_effects", rendered)
+        self.assertGreater(expire_end_of_turn_continuous_effects(engine.state), 0)
+        self.assertNotIn("Menace", engine._effective_card_data(opponent_c)["keywords"])
+
+    def test_target_player_characteristic_set_resolves_and_replays(self):
+        session = self.session(6112021, players=4)
+        engine = session.engine
+        source = self.creature(engine, "A", "Source")
+        controlled_b = self.creature(engine, "B", "Controlled B")
+        controlled_c = self.creature(engine, "C", "Controlled C")
+        compiled = fixed_public_characteristic_set_effect_template(
+            "Creatures target player controls gain lifelink until end of turn."
+        )
+        self.assertIsNotNone(compiled)
+        assert compiled is not None
+        template_id, effects, target_schema, _mechanics = compiled
+        program = SemanticProgram(
+            key="test:target-player-public-characteristics",
+            label="Target player public characteristics",
+            effects=list(effects),
+            target_schema=target_schema,
+            trust_level="provisional",
+        )
+        engine.semantics.put(program)
+        engine.state.stack.append(
+            StackItem(
+                stack_id="target-player-public-characteristics",
+                ref="S-target-player-public-characteristics",
+                kind="spell",
+                controller="A",
+                label=program.label,
+                semantic_key=program.key,
+                source_object_id=source.object_id,
+                targets=["B"],
+                visibility=list(engine.seats),
+                context={
+                    "source_logical_object_id": source.logical_object_id,
+                    "target_groups": {"target_0": ["B"]},
+                    "target_snapshots": {"B": engine._target_snapshot("B")},
+                    "targets_revalidated": False,
+                    "targets_chosen_at_creation": True,
+                    "public_characteristic_template": template_id,
+                },
+            )
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        for principal in ("pilot:A", "pilot:B", "pilot:C", "pilot:D"):
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+
+        self.assertIn(
+            "Lifelink",
+            engine._effective_card_data(controlled_b)["keywords"],
+        )
+        self.assertNotIn(
+            "Lifelink",
+            engine._effective_card_data(controlled_c)["keywords"],
+        )
+        rendered = json.dumps(session.packet("pilot:D", full=True), sort_keys=True)
+        self.assertNotIn(controlled_b.object_id, rendered)
+        self.assertNotIn(controlled_b.logical_object_id, rendered)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "target-player-characteristic-record"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(4, replay["commands"])
 
     def test_malformed_fixed_characteristic_keywords_roll_back(self):
         for index, keywords in enumerate(
