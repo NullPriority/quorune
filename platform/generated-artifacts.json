@@ -404,7 +404,9 @@
         "ci-source",
         "tests-source"
       ],
-      "input_paths": [],
+      "input_paths": [
+        "platform/ci-escape-source.json"
+      ],
       "implementation_inputs": [
         "scripts/update_ci_escape_report.py"
       ],

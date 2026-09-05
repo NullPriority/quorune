@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "observed_at": "2026-09-05T08:16:34Z",
+  "observed_at": "2026-09-05T08:33:27Z",
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -781,6 +781,22 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The unchanged assertion-driven journey now declares a bounded 180-second test budget for four cold deck validations, durable stop/resume, four mulligan receipts, reloads, mobile inspection, and metrics cleanup. Its focused isolated headless rerun passed in 1.6 minutes; browser-full impact already selected the journey."
+    },
+    {
+      "id": "ci-20260905-52",
+      "run_id": 33955410367,
+      "head_sha": "67b7438d0e36106e879b04f430e863c5fa04cfe7",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The ci-escape-report generator read platform/ci-escape-source.json, but its safe cache identity declared only CI and Python-test input groups, so exact-head cloud validation restored a stale report for a changed incident ledger.",
+      "failed_surfaces": [
+        "Generated cloud / Foundation / ci-escape-report (job 101277912569)"
+      ],
+      "regressions": [
+        "test_generated_owner_cache.GeneratedOwnerCacheTests.test_repository_manifest_declares_safe_input_closures"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection."
     }
   ],
   "recent_pull_requests": [

@@ -887,6 +887,22 @@
       "resolution": "The unchanged assertion-driven journey now declares a bounded 180-second test budget for four cold deck validations, durable stop/resume, four mulligan receipts, reloads, mobile inspection, and metrics cleanup. Its focused isolated headless rerun passed in 1.6 minutes; browser-full impact already selected the journey.",
       "run_id": 33953752607,
       "summary": "The persistence-heavy four-tab lifecycle journey exceeded the suite-wide 90-second budget in two consecutive exact-head runs even though the second retained trace showed every behavioral assertion completed before metrics collection."
+    },
+    {
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Foundation / ci-escape-report (job 101277912569)"
+      ],
+      "head_sha": "67b7438d0e36106e879b04f430e863c5fa04cfe7",
+      "id": "ci-20260905-52",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_generated_owner_cache.GeneratedOwnerCacheTests.test_repository_manifest_declares_safe_input_closures"
+      ],
+      "resolution": "The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection.",
+      "run_id": 33955410367,
+      "summary": "The ci-escape-report generator read platform/ci-escape-source.json, but its safe cache identity declared only CI and Python-test input groups, so exact-head cloud validation restored a stale report for a changed incident ledger."
     }
   ],
   "known_flaky_tests": [],
@@ -894,7 +910,7 @@
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   },
-  "observed_at": "2026-09-05T08:16:34Z",
+  "observed_at": "2026-09-05T08:33:27Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -939,7 +955,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 1,
-  "source_fingerprint": "27acf04a75044334c45223ce4117e4c2f521302f31357900a4afe418f9b95f14",
+  "source_fingerprint": "748437933b15c55f7581c822cf91d38a93e78aa2291e38713d0d1e61c67d92eb",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -947,14 +963,14 @@
     "category_counts": {
       "browser_integration": 4,
       "flaky_test": 6,
-      "generated_artifact_drift": 4,
+      "generated_artifact_drift": 5,
       "infrastructure": 1,
       "missing_affected_test": 19,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 46,
-    "escape_count": 51,
+    "deterministic_escape_count": 47,
+    "escape_count": 52,
     "exact_head_pass_rate": 1.0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [

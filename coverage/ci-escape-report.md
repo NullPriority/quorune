@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "27acf04a75044334c45223ce4117e4c2f521302f31357900a4afe418f9b95f14"
+verified: "748437933b15c55f7581c822cf91d38a93e78aa2291e38713d0d1e61c67d92eb"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,8 +13,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
-- Escapes: 51
-- Deterministic escapes: 46
+- Escapes: 52
+- Deterministic escapes: 47
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: None
@@ -77,6 +77,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260904-49` | [33878325617](https://github.com/NullPriority/quorune/actions/runs/33878325617) | `missing_affected_test` | `not_applicable` | The leaf library-search owner still rejects every compound tail, while the integrated token-production owner now explicitly proves the promoted search-then-Investigate composition. Frontier evaluation derives its exact bounded combination count from the current family universe, and the global fail-closed witness executes every declared pair without pinning a volatile total. Existing complete compiler impact selection already includes all affected modules. |
 | `ci-20260905-50` | [33952355256](https://github.com/NullPriority/quorune/actions/runs/33952355256) | `missing_affected_test` | `not_applicable` | The witness now invokes and mutates aura_spell_target_schema, preserving the killed-mutation contract. Complete impact selection already included the module; future shared-helper renames must search exact test references before the source checkpoint. |
 | `ci-20260905-51` | [33953752607](https://github.com/NullPriority/quorune/actions/runs/33953752607) | `browser_integration` | `not_applicable` | The unchanged assertion-driven journey now declares a bounded 180-second test budget for four cold deck validations, durable stop/resume, four mulligan receipts, reloads, mobile inspection, and metrics cleanup. Its focused isolated headless rerun passed in 1.6 minutes; browser-full impact already selected the journey. |
+| `ci-20260905-52` | [33955410367](https://github.com/NullPriority/quorune/actions/runs/33955410367) | `generated_artifact_drift` | `added` | The registered owner now explicitly includes platform/ci-escape-source.json in its content identity, and the manifest regression requires that resolved input before a safe cache can be restored. Cache-identity manifest changes remain excluded from semantic corpus selection. |
 
 ## Measurement limitations
 
