@@ -421,7 +421,8 @@ class FixedEffectClauseSequenceCompilerTests(unittest.TestCase):
             trust_level="provisional",
         )
         with patch(
-            "quorune.oracle_ir.fixed_effect_clause_sequence_template",
+            "quorune.compiler.effect_template_composition."
+            "fixed_effect_clause_sequence_template",
             return_value=None,
         ):
             mutated_ir = self.compile(record)
