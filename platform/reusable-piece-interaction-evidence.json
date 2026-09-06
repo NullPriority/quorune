@@ -1982,7 +1982,7 @@
       "piece_ids": ["capability.damage.prevention.persistent_amount", "residual.replacement.damage-prevention"],
       "capability_ids": ["damage.prevention.persistent_amount"],
       "interaction_order": 2,
-      "assertion": "Hallowed Healer compiles its ordinary fixed shield while the separate Threshold prevention ability remains residual, and strict runtime admission rejects the incomplete CardProgram."
+      "assertion": "Shieldmage Elder compiles its first selected-Cleric prevention ability while its target-spell prevention ability remains residual, and strict runtime admission rejects the incomplete CardProgram."
     },
     {
       "evidence_class": "interaction",
