@@ -124,7 +124,11 @@ def fixed_resolution_characteristic_query_is_closed(
         or query.state_predicate is not None
     ):
         return False
-    return bool(query.types_all or qualifier_groups)
+    return bool(
+        query.types_all
+        or qualifier_groups
+        or query.controller is not None
+    )
 
 
 __all__ = ["fixed_resolution_characteristic_query_is_closed"]

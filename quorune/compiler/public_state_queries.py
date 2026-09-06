@@ -217,7 +217,11 @@ def _public_query_qualifiers(
     subject: str,
 ) -> tuple[str, str, bool, str | None, dict[str, Any]] | None:
     text = " ".join(subject.strip().split())
-    prefix = re.match(r"^(?:(?P<each>Each) )?(?P<other>Other )?", text)
+    prefix = re.match(
+        r"^(?:(?P<each>Each) )?(?P<other>Other )?",
+        text,
+        re.IGNORECASE,
+    )
     assert prefix is not None
     exclude_source = bool(prefix.group("other"))
     text = text[prefix.end() :]

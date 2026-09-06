@@ -645,6 +645,8 @@ class ContinuousEffectModelTests(unittest.TestCase):
             "Artifacts you control gain indestructible until end of turn.",
             "Lands you control gain hexproof until end of turn.",
             "Until end of turn, permanents you control gain shroud.",
+            "Creatures you control with a +1/+1 counter on them gain "
+            "trample until end of turn.",
         )
         for text in supported:
             with self.subTest(text=text):
@@ -658,7 +660,6 @@ class ContinuousEffectModelTests(unittest.TestCase):
 
         unsupported = (
             "Target creature you control gains flying until end of turn.",
-            "Creatures you control with a +1/+1 counter on them gain trample until end of turn.",
             "Creatures you control get +X/+X until end of turn.",
             "Creatures you control gain protection from red until end of turn.",
             "Creatures you control gain \"{T}: Add {G}.\" until end of turn.",
