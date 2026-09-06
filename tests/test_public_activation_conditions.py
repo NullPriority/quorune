@@ -748,6 +748,71 @@ class PublicActivationConditionRuntimeTests(unittest.TestCase):
             pass_current(life_session)
         self.assertEqual(life_before + 4, engine.state.players["A"].life)
 
+    def test_tapped_entry_gates_public_any_target_activation(self):
+        session = self.session(
+            "Tapped Threshold Spark",
+            seed=173_010_009,
+            players=2,
+        )
+        engine = session.engine
+        source = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A"
+            and card.printed_name == "Tapped Threshold Spark"
+        )
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        self.assertTrue(source.tapped)
+
+        for object_id in tuple(engine.state.players["A"].zones["hand"]):
+            engine.move_card(object_id, "graveyard", log=False)
+        target_ref = engine.create_token(
+            "B",
+            name="Tapped Entry Damage Target",
+            characteristics={
+                "type_line": "Token Creature — Citizen",
+                "power": "3",
+                "toughness": "3",
+            },
+            reason="tapped entry and public target interaction fixture",
+        )[0]
+        target = engine._resolve_object(
+            "B",
+            target_ref,
+            zones={"battlefield"},
+        )
+        engine.state.players["A"].mana_pool["C"] = 1
+        self.set_priority(engine, phase="precombat_main", step="main")
+        ability = engine._activated_abilities(source)[0]
+        action_id = f"activate:{source.ref}:{ability.ability_id}"
+        engine.pump()
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"][
+            "legal"
+        ]["actions"]
+        self.assertNotIn(action_id, {action["id"] for action in actions})
+
+        source.tapped = False
+        self.set_priority(engine, phase="precombat_main", step="main")
+        offer = self.activation_offer(session, source, ability)
+        self.assertIn(target.ref, offer["target_schema"]["legal_refs"])
+        self.assertIn("B", offer["target_schema"]["legal_refs"])
+        result = session.act(
+            "pilot:A",
+            {"action_id": offer["id"], "targets": [target.ref]},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(source.tapped)
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual(1, target.marked_damage)
+
     def test_public_hand_and_graveyard_queries_preserve_privacy_and_replay(self):
         privacy = self.session("Public Query Lens", seed=173_010_004)
         engine = privacy.engine

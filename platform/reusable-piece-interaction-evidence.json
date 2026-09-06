@@ -1752,6 +1752,15 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_tapped_entry_gates_public_any_target_activation",
+      "piece_ids": ["capability.target.public.player_or_damageable_permanent", "capability.zone.entry.tapped_state"],
+      "capability_ids": ["target.public.player_or_damageable_permanent", "zone.entry.tapped_state"],
+      "interaction_order": 2,
+      "assertion": "A generic land's typed entry program makes it enter tapped and withholds its public any-target tap activation; after it becomes untapped, the shared offer and commit path advertises both player and permanent targets, pays the tap cost, and resolves damage through the canonical target and damage owners."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_strictest_current_grant_combines_with_opposing_pair_removal",
       "piece_ids": ["capability.counter.removal.rule_generated", "capability.state_based.counter_maximum.fixed_self", "mechanic.cr-704-state-based-actions"],

@@ -135,6 +135,25 @@
       "layout": "normal",
       "released_at": "2026-09-05",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "17300000-0000-4000-8000-000000000008",
+      "name": "Tapped Threshold Spark",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped.\n{1}, {T}: This land deals 1 damage to any target. Activate only if you have no cards in hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": ["R"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-05",
+      "legalities": {"commander": "legal"}
     }
   ],
   "rulings": []
