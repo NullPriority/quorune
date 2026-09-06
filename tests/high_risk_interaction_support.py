@@ -64,6 +64,8 @@ _WITNESSES = {
         "X — Return target creature to its owner's hand.\n"
         "Creatures you control have flying.\n"
         "Creatures you control with no abilities get +1/+1.\n"
+        "As long as you've drawn two or more cards this turn, creatures "
+        "you control get +1/+1.\n"
         "If one or more tokens would be created under your control, twice "
         "that many of those tokens are created instead.",
         "{2}",
@@ -889,6 +891,14 @@ IMPULSE_ACCESS_AND_CHOICE_PAIRS = (
 
 SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS = (
     _pair(
+        "capability.continuous.characteristics.fixed_public_state",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.continuous.power_toughness.fixed_anthem",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
         "capability.continuous.ability.fixed_query_keyword_grant",
         "residual.card_form.ordinary-saga-chapter-event-binding",
     ),
@@ -1252,16 +1262,16 @@ _bind("starforged-sword", *ATTACHMENT_AND_CONTINUOUS_PAIRS[6:8])
 _bind("junk-jet", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
 _bind(
     "saga-chapter-boundary",
-    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[0],
-    *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[3:-1],
+    *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[:3],
+    *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[5:-1],
 )
 _bind(
     "saga-attached-boundary",
-    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[1],
+    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[3],
 )
 _bind(
     "saga-query-boundary",
-    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[2],
+    SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[4],
 )
 _bind(
     "changeling-saga-boundary",

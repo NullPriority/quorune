@@ -9,11 +9,19 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
+from quorune.ability_fragments import (
+    StaticComponentSpec,
+    ability_fragment_to_dict,
+)
 from quorune.card_programs import (
     bind_card_program_runtime,
     compile_card_program,
 )
 from quorune.carddb import CardDatabase
+from quorune.characteristic_fragments import (
+    CharacteristicQuantityScope,
+    CharacteristicQuantitySpec,
+)
 from quorune.compiler.continuous_templates import (
     fixed_public_state_characteristics_handler,
 )
@@ -30,6 +38,7 @@ from quorune.continuous_effects import (
     evaluate_continuous_effects,
 )
 from quorune.deck import DeckLoader
+from quorune.engine import CommanderEngine
 from quorune.model import CardInstance
 from quorune.object_predicate import (
     ObjectQuerySpec,
@@ -37,7 +46,11 @@ from quorune.object_predicate import (
 )
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import checkpoint_envelope, replay_record
-from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.capabilities import (
+    CapabilityRegistry,
+    load_default_capability_registry,
+)
+from quorune.semantics import SemanticProgram
 from quorune.semantic_runtime import (
     ContinuousEffectSourceContext,
     default_continuous_effect_component_registry,
@@ -83,6 +96,15 @@ def source_context(
     turn_sequence: int = 4,
     entered_turn_sequence: int = 1,
     counters: tuple[tuple[str, int], ...] = (),
+    draw_count: int = 0,
+    spell_count: int = 0,
+    noncreature_spell_count: int = 0,
+    instant_sorcery_count: int = 0,
+    opponent_poison: tuple[int, ...] = (),
+    controller_is_monarch: bool = False,
+    source_query_matches: bool | None = None,
+    attached_query_matches: bool | None = None,
+    condition_quantity: int | None = None,
 ) -> ContinuousEffectSourceContext:
     return ContinuousEffectSourceContext(
         source_object_id="public-state-source",
@@ -103,6 +125,17 @@ def source_context(
                 entered_turn_sequence
             ),
             source_counters=counters,
+            controller_draw_count=draw_count,
+            controller_spell_cast_count=spell_count,
+            controller_noncreature_spell_cast_count=(
+                noncreature_spell_count
+            ),
+            controller_instant_sorcery_cast_count=instant_sorcery_count,
+            opponent_poison_counter_counts=opponent_poison,
+            controller_is_monarch=controller_is_monarch,
+            source_query_matches=source_query_matches,
+            attached_query_matches=attached_query_matches,
+            condition_quantity=condition_quantity,
         ),
     )
 
@@ -227,6 +260,259 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                 default_continuous_effect_component_registry().validate(
                     descriptor
                 )
+
+    def test_fixed_public_condition_queries_compile_across_authoritative_facts(self):
+        base = self.db.lookup("Fresh-Faced Recruit")
+        cases = (
+            (
+                "This creature has first strike as long as it's attacking.",
+                "source_matches_query",
+            ),
+            (
+                "As long as this enchantment has seven or more quest "
+                "counters on it, creatures you control get +5/+5.",
+                "source_counter_at_least",
+            ),
+            (
+                "As long as you control another multicolored permanent, "
+                "this creature gets +1/+1 and has flying.",
+                "query_count_at_least",
+            ),
+            (
+                "As long as you control no untapped lands, this creature "
+                "gets +2/+1.",
+                "query_count_at_most",
+            ),
+            (
+                "This creature gets +3/+3 as long as there is a land card "
+                "in your graveyard.",
+                "query_count_at_least",
+            ),
+            (
+                "As long as you have seven or more cards in hand, this "
+                "creature has first strike.",
+                "controller_hand_count_at_least",
+            ),
+            (
+                "As long as you've drawn two or more cards this turn, this "
+                "creature has lifelink.",
+                "controller_draw_count_at_least",
+            ),
+            (
+                "As long as you've cast two or more noncreature spells this "
+                "turn, this creature has double strike.",
+                "controller_noncreature_spell_cast_count_at_least",
+            ),
+            (
+                "As long as you've cast two or more spells this turn, this "
+                "creature gets +2/+0.",
+                "controller_spell_cast_count_at_least",
+            ),
+            (
+                "This creature has flying as long as you've cast an instant "
+                "or sorcery spell this turn.",
+                "controller_instant_sorcery_cast_count_at_least",
+            ),
+            (
+                "This creature has deathtouch as long as an opponent has "
+                "three or more poison counters.",
+                "opponent_poison_counter_at_least",
+            ),
+            (
+                "As long as you're the monarch, permanents you control have "
+                "hexproof.",
+                "controller_is_monarch",
+            ),
+        )
+        for index, (text, expected_kind) in enumerate(cases):
+            with self.subTest(text=text):
+                record = replace(
+                    base,
+                    oracle_id=(
+                        f"00000000-0000-4000-8000-{118_240_000 + index:012d}"
+                    ),
+                    name=f"Public Condition Query {index}",
+                    type_line="Creature — Fixture",
+                    oracle_text=text,
+                    keywords=(),
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(TEMPLATE_ID, node.template_id)
+                condition = node.handlers[0]["source_condition"]
+                self.assertEqual(expected_kind, condition["kind"])
+                if expected_kind == "controller_is_monarch":
+                    self.assertIn(
+                        "variant.monarch.designate",
+                        node.capability_dependencies,
+                    )
+                default_continuous_effect_component_registry().validate(
+                    node.handlers[0]
+                )
+
+        attached_state = fixed_public_state_characteristics_handler(
+            "Enchanted creature has shroud as long as it's untapped.",
+            source_name="Attached Condition Query",
+        )
+        self.assertIsNotNone(attached_state)
+        self.assertEqual(
+            "attached_matches_query",
+            attached_state[1]["source_condition"]["kind"],
+        )
+        attached_color = fixed_public_state_characteristics_handler(
+            "Enchanted creature gets +1/+2 as long as it's white.",
+            source_name="Attached Color Query",
+        )
+        self.assertIsNotNone(attached_color)
+        self.assertEqual(
+            ["W"],
+            attached_color[1]["source_condition"]["predicate"]["colors_all"],
+        )
+        attached_opponent = fixed_public_state_characteristics_handler(
+            "Enchanted creature gets +2/+2 as long as an opponent controls "
+            "a black permanent.",
+            source_name="Attached Opponent Query",
+        )
+        self.assertIsNotNone(attached_opponent)
+        assert attached_opponent is not None
+        opponent_condition = attached_opponent[1]["source_condition"]
+        self.assertEqual(
+            ("query_count_at_least", 1, "opponent_zones", ["B"]),
+            (
+                opponent_condition["kind"],
+                opponent_condition["amount"],
+                opponent_condition["quantity"]["scope"],
+                opponent_condition["quantity"]["query"]["colors_all"],
+            ),
+        )
+        self.assertEqual(
+            ("attached", ["creature"]),
+            (
+                attached_opponent[1]["target"]["kind"],
+                attached_opponent[1]["target"]["types_all"],
+            ),
+        )
+
+    def test_fixed_public_condition_models_use_closed_current_facts(self):
+        cases = (
+            (
+                FixedPublicStateConditionSpec(
+                    FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_LEAST,
+                    amount=7,
+                ),
+                source_context(hand_count=7).public_state,
+            ),
+            (
+                FixedPublicStateConditionSpec(
+                    FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST,
+                    amount=2,
+                ),
+                source_context(draw_count=2).public_state,
+            ),
+            (
+                FixedPublicStateConditionSpec(
+                    FixedPublicStateConditionKind
+                    .CONTROLLER_NONCREATURE_SPELL_CAST_COUNT_AT_LEAST,
+                    amount=2,
+                ),
+                source_context(noncreature_spell_count=2).public_state,
+            ),
+            (
+                FixedPublicStateConditionSpec(
+                    FixedPublicStateConditionKind.OPPONENT_POISON_COUNTER_AT_LEAST,
+                    amount=3,
+                ),
+                source_context(opponent_poison=(0, 3, 1)).public_state,
+            ),
+            (
+                FixedPublicStateConditionSpec(
+                    FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH,
+                ),
+                source_context(controller_is_monarch=True).public_state,
+            ),
+            (
+                FixedPublicStateConditionSpec(
+                    FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
+                    amount=0,
+                    quantity=CharacteristicQuantitySpec(
+                        scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+                        query=ObjectQuerySpec(zones=("battlefield",)),
+                    ),
+                    schema_version=2,
+                ),
+                source_context(condition_quantity=0).public_state,
+            ),
+        )
+        for condition, snapshot in cases:
+            with self.subTest(kind=condition.kind):
+                assert snapshot is not None
+                self.assertTrue(condition.matches(snapshot))
+                self.assertFalse(
+                    condition.matches(
+                        replace(
+                            snapshot,
+                            controller_hand_count=0,
+                            controller_draw_count=0,
+                            controller_noncreature_spell_cast_count=0,
+                            opponent_poison_counter_counts=(),
+                            controller_is_monarch=False,
+                            condition_quantity=1,
+                        )
+                    )
+                )
+
+    def test_fixed_public_condition_dependencies_fail_closed(self):
+        registry_value = json.loads(
+            (
+                ROOT
+                / "quorune"
+                / "rules"
+                / "capability-registry.json"
+            ).read_text(encoding="utf-8")
+        )
+        base = self.db.lookup("Fresh-Faced Recruit")
+        cases = (
+            (
+                "state_query.permanent.public_state_predicate",
+                "As long as you control another multicolored permanent, "
+                "this creature gets +1/+1.",
+            ),
+            (
+                "variant.monarch.designate",
+                "As long as you're the monarch, this creature gets +1/+1.",
+            ),
+        )
+        for index, (blocked_id, text) in enumerate(cases):
+            with self.subTest(blocked_id=blocked_id):
+                mutated = copy.deepcopy(registry_value)
+                blocked = next(
+                    row
+                    for row in mutated["capabilities"]
+                    if row["id"] == blocked_id
+                )
+                blocked["status"] = "blocked"
+                blocked["blockers"] = ["focused public-condition mutation"]
+                record = replace(
+                    base,
+                    oracle_id=(
+                        f"00000000-0000-4000-8000-{118_250_000 + index:012d}"
+                    ),
+                    name=f"Blocked Public Condition {index}",
+                    type_line="Creature — Fixture",
+                    oracle_text=text,
+                    keywords=(),
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=CapabilityRegistry(mutated),
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
 
         kindred_condition = fixed_public_state_characteristics_handler(
             "As long as enchanted permanent is a Goblin, it gets +1/+1.",
@@ -376,7 +662,6 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "This creature gets +X/+X during your turn.",
             "During your turn, this creature has ward {2}.",
             "During your turn, this creature has \"{T}: Draw a card.\"",
-            "This creature gets +2/+0 as long as it's attacking.",
             "As long as this creature is equipped, it has ward {2}.",
             "Creatures you control have flying as long as you control an "
             "artifact with flying.",
@@ -384,6 +669,14 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "artifacts.",
             "Artifacts you control have shroud as long as an opponent "
             "controls two or more artifacts.",
+            "As long as you control a creature with flying, this creature "
+            "gets +1/+1.",
+            "As long as an opponent has eight or more cards in their "
+            "graveyard, creatures you control have flying.",
+            "As long as there are five or more mana values among cards in "
+            "your graveyard, this creature gets +1/+1.",
+            "As long as this Equipment has four or more counters on it, "
+            "equipped creature has double strike.",
         )
         for index, text in enumerate(unsupported):
             with self.subTest(text=text):
@@ -575,6 +868,52 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         engine.state.cards[card.object_id] = card
         engine.state.players[seat].zones[zone].append(card.object_id)
         return card
+
+    def add_constructed_condition_source(
+        self,
+        session,
+        *,
+        ref: str,
+        texts: tuple[str, ...],
+    ) -> CardInstance:
+        engine = session.engine
+        source = self.creature(
+            engine,
+            seat="A",
+            name=f"Condition Source {ref}",
+        )
+        characteristics = (
+            source.annotations.get("object_characteristics")
+            or source.annotations["token_characteristics"]
+        )
+        fragments = characteristics.setdefault(
+            "ability_fragments",
+            [],
+        )
+        for index, text in enumerate(texts):
+            compiled = fixed_public_state_characteristics_handler(
+                text,
+                source_name=source.printed_name,
+            )
+            self.assertIsNotNone(compiled)
+            assert compiled is not None
+            key = f"test:public-condition:{ref}:{index}"
+            engine.semantics.put(
+                SemanticProgram(
+                    key=key,
+                    label=f"Public condition {ref} {index}",
+                    oracle_id=source.oracle_id,
+                    ability_id=f"static:{key}",
+                    active_zone="battlefield",
+                    event="characteristics.evaluate",
+                    handlers=[compiled[1]],
+                    trust_level="provisional",
+                )
+            )
+            fragments.append(
+                ability_fragment_to_dict(StaticComponentSpec(key))
+            )
+        return source
 
     @staticmethod
     def resolve_top(engine) -> None:
@@ -797,6 +1136,232 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
 
+    def test_public_condition_queries_follow_authoritative_history_and_control(self):
+        session = self.session(118_220_007)
+        engine = session.engine
+        source = self.add_constructed_condition_source(
+            session,
+            ref="HISTORY-QUERY",
+            texts=(
+                "This creature gets +2/+0 as long as you've drawn two or "
+                "more cards this turn.",
+                "This creature gets +0/+2 as long as you've cast two or "
+                "more noncreature spells this turn.",
+                "As long as you control another multicolored permanent, "
+                "this creature gets +1/+1 and has vigilance.",
+            ),
+        )
+        status_source = self.add_constructed_condition_source(
+            session,
+            ref="PLAYER-STATUS",
+            texts=(
+                "This creature gets +1/+0 as long as an opponent has three "
+                "or more poison counters.",
+                "This creature gets +0/+1 as long as you're the monarch.",
+            ),
+        )
+        absence_source = self.add_constructed_condition_source(
+            session,
+            ref="ABSENCE-QUERY",
+            texts=(
+                "This creature gets +1/+1 as long as you control no untapped "
+                "lands.",
+            ),
+        )
+
+        def stats() -> tuple[int, int, set[str]]:
+            with mock.patch.object(
+                CommanderEngine,
+                "semantic_program_is_current_trusted",
+                return_value=True,
+            ):
+                current = engine._effective_card_data(source)
+            return (
+                int(current["power"]),
+                int(current["toughness"]),
+                set(current["keywords"]),
+            )
+
+        self.assertEqual((3, 3, set()), stats())
+        with mock.patch.object(
+            CommanderEngine,
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            absent = engine._effective_card_data(absence_source)
+        self.assertEqual((4, 4), (int(absent["power"]), int(absent["toughness"])))
+        land_ref = engine.create_token(
+            "A",
+            name="Condition Land",
+            characteristics={"type_line": "Token Land — Forest"},
+            reason="public condition tapped-state quantity",
+        )[0]
+        land = engine._resolve_object("A", land_ref, zones={"battlefield"})
+        with mock.patch.object(
+            CommanderEngine,
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            present = engine._effective_card_data(absence_source)
+        self.assertEqual(
+            (3, 3),
+            (int(present["power"]), int(present["toughness"])),
+        )
+        land.tapped = True
+        with mock.patch.object(
+            CommanderEngine,
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            tapped = engine._effective_card_data(absence_source)
+        self.assertEqual((4, 4), (int(tapped["power"]), int(tapped["toughness"])))
+        engine.state.players["B"].poison = 3
+        engine.become_monarch("A", reason="condition status fixture")
+        with mock.patch.object(
+            CommanderEngine,
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            status = engine._effective_card_data(status_source)
+        self.assertEqual((4, 4), (int(status["power"]), int(status["toughness"])))
+        engine.state.players["B"].poison = 0
+        engine.become_monarch("B", reason="condition status fixture")
+        with mock.patch.object(
+            CommanderEngine,
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            inactive_status = engine._effective_card_data(status_source)
+        self.assertEqual(
+            (3, 3),
+            (int(inactive_status["power"]), int(inactive_status["toughness"])),
+        )
+        multicolor = self.creature(
+            engine,
+            seat="A",
+            name="Multicolor Condition Witness",
+            colors=("R", "W"),
+        )
+        self.assertEqual((4, 4, {"Vigilance"}), stats())
+
+        engine.apply_effect(
+            {"op": "draw", "player": "A", "count": 2},
+            actor="A",
+        )
+        self.assertEqual((6, 4, {"Vigilance"}), stats())
+        engine._record_turn_history("spell_cast", actor="A", types=("creature",))
+        self.assertEqual((6, 4, {"Vigilance"}), stats())
+        engine._record_turn_history("spell_cast", actor="A", types=("instant",))
+        engine._record_turn_history("spell_cast", actor="A", types=("sorcery",))
+        self.assertEqual((6, 6, {"Vigilance"}), stats())
+
+        projected = session.projector._snapshot("pilot:B")
+        rendered = json.dumps(projected, sort_keys=True)
+        for object_id in engine.state.players["A"].zones["hand"]:
+            hidden = engine.state.cards[object_id]
+            self.assertNotIn(hidden.object_id, rendered)
+            self.assertNotIn(hidden.ref, rendered)
+
+        engine.change_control(source.object_id, "B", reason="condition owner")
+        self.assertEqual((3, 3, set()), stats())
+        engine.change_control(source.object_id, "A", reason="condition owner")
+        source.annotations["token_characteristics"]["colors"] = ["R", "W"]
+        engine.move_card(multicolor.object_id, "graveyard", log=False)
+        self.assertEqual((5, 5, set()), stats())
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine._grant_priority("D")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act(
+            "pilot:D",
+            {
+                "action_id": "concede",
+                "choices": {"confirm_concede": True},
+                "plan": "REPLAY_PUBLIC_CONDITION_QUERIES",
+                "reason": "Verify public condition facts from checkpoint.",
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        with tempfile.TemporaryDirectory() as directory:
+            record_dir = Path(directory) / "public-condition-query-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_unrelated_fixed_conditions_do_not_scan_turn_history(self):
+        session = self.session(118_220_008)
+        engine = session.engine
+        source = self.add_constructed_condition_source(
+            session,
+            ref="NO-HISTORY-SCAN",
+            texts=("During your turn, this creature gets +2/+0.",),
+        )
+        engine.state.active_player = "A"
+
+        with (
+            mock.patch.object(
+                CommanderEngine,
+                "semantic_program_is_current_trusted",
+                return_value=True,
+            ),
+            mock.patch(
+                "quorune.card_programs.runtime.drawn_this_turn",
+                side_effect=AssertionError("unexpected draw-history scan"),
+            ),
+            mock.patch(
+                "quorune.card_programs.runtime.current_turn_history_events",
+                side_effect=AssertionError("unexpected cast-history scan"),
+            ),
+        ):
+            current = engine._effective_card_data(source)
+
+        self.assertEqual(
+            (5, 3),
+            (int(current["power"]), int(current["toughness"])),
+        )
+
+    def test_opponent_color_existence_uses_live_public_query(self):
+        session = self.session(118_220_009)
+        engine = session.engine
+        source = self.add_constructed_condition_source(
+            session,
+            ref="OPPONENT-COLOR",
+            texts=(
+                "This creature gets +2/+2 as long as an opponent controls "
+                "a black permanent.",
+            ),
+        )
+
+        def stats() -> tuple[int, int]:
+            with mock.patch.object(
+                CommanderEngine,
+                "semantic_program_is_current_trusted",
+                return_value=True,
+            ):
+                current = engine._effective_card_data(source)
+            return int(current["power"]), int(current["toughness"])
+
+        self.assertEqual((3, 3), stats())
+        black_permanent = self.creature(
+            engine,
+            seat="B",
+            name="Opponent Color Witness",
+            colors=("B",),
+        )
+        self.assertEqual((5, 5), stats())
+        engine.change_control(
+            black_permanent.object_id,
+            "A",
+            reason="opponent public-query relation witness",
+        )
+        self.assertEqual((3, 3), stats())
+
     def test_public_state_conditions_recompute_layer_six_and_seven_results(self):
         registry = default_continuous_effect_component_registry()
         descriptor = fixed_public_state_characteristics_handler(
@@ -904,6 +1469,24 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
                     source_context(counters=(("+1/+1", 1),)),
                 )
             ),
+        )
+
+        attached_pronoun = fixed_public_state_characteristics_handler(
+            "Enchanted creature has shroud as long as it's untapped.",
+            source_name="Attached Pronoun Source",
+        )[1]
+        attached_condition = FixedPublicStateConditionSpec.from_dict(
+            attached_pronoun["source_condition"]
+        )
+        self.assertFalse(
+            attached_condition.matches(
+                source_context(attached_query_matches=False).public_state
+            )
+        )
+        self.assertTrue(
+            attached_condition.matches(
+                source_context(attached_query_matches=True).public_state
+            )
         )
 
         opponent_anthem = fixed_public_state_characteristics_handler(

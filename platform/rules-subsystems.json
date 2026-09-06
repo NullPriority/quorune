@@ -2597,28 +2597,70 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "shared-public-battlefield-query-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-public-condition-queries",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.fixed_public_state",
+            "capability:state_query.permanent.public_state_predicate",
+            "capability:variant.monarch.designate",
+            "component:quorune.card_programs.runtime._FixedPublicStateSnapshotResolver",
+            "component:quorune.compiler.public_state_queries.fixed_public_state_parts",
+            "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+            "component:quorune.drawing.restrictions.drawn_this_turn",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.turn_history.current_turn_history_events"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "controller-current-turn-draw-or-spell-cast-threshold",
+            "controller-hand-or-public-zone-count-bound",
+            "controller-or-opponent-battlefield-query-bound",
+            "controller-public-monarch-or-opponent-poison-status",
+            "source-characteristic-state-or-named-counter-bound"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.fixed_public_state",
+            "state_query.permanent.public_state_predicate",
+            "variant.monarch.designate"
+          ],
+          "shared_grammar": "one fixed public condition gating an otherwise exact static layer-6 or layer-7c characteristic component through the existing immutable condition, snapshot, query, current-turn history, and characteristic owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends one typed public-state condition owner across source state and named counters, cycle-safe controller battlefield or graveyard quantities, fixed hand counts, canonical current-turn draw and spell-cast counts, opponent poison, and monarch state without a parallel conditional-effect path.",
+          "explicit_exclusions": [
+            "ability-presence, dynamic characteristic-count, distinct-value, most-common, and hidden-identity quantities",
+            "city's blessing, dungeon, initiative, max-speed, sticker, attraction-visit, crime, sacrifice, and other unowned history or designation predicates",
+            "compound, disjunctive, otherwise, chosen, named-card, source-zone, and per-opponent aggregate conditions outside the closed grammar",
+            "conditional bodies with dynamic amounts, base-setting, type, color, ability removal, quoted text, Protection, Ward, or unsupported keywords",
+            "exact attachment counts and attachment-relative pronouns without one explicit attached-object antecedent"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-public-condition-query-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v175-shared-public-battlefield-queries",
-      "compiler_version": "oracle-ir-v175",
-      "bundle_id": "bundle:shared-public-battlefield-queries",
-      "candidate_ids": ["compiler:shared-public-battlefield-queries"],
+      "transition_id": "oracle-ir-v176-fixed-public-condition-queries",
+      "compiler_version": "oracle-ir-v176",
+      "bundle_id": "bundle:fixed-public-condition-queries",
+      "candidate_ids": ["compiler:fixed-public-condition-queries"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "continuous.ability.fixed_query_grant",
-        "continuous.ability.fixed_query_keyword_grant",
         "continuous.characteristics.fixed_public_state",
-        "continuous.power_toughness.fixed_anthem",
-        "continuous.resolution.fixed_characteristics_until_end_of_turn",
         "state_query.permanent.public_state_predicate",
-        "untap.step.static_participation"
+        "variant.monarch.designate"
       ],
-      "measurement_id": "measurement:shared-public-battlefield-queries",
+      "measurement_id": "measurement:fixed-public-condition-queries",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "d6a24739c1b027e09ee8e368161c836a1c2cd8a2c8cfa8bfccd53c2621d7bf64"
+verified: "f500f1faad69609216fa24d45cf80b8cd484d97ebfc07d883aebdd758632400f"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -22,8 +22,8 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 - Material abilities classified: 59,482
 - Unclassified material spans: 0
 - Mapped pinned rules: 980 / 3,309
-- Applicable piece pairs: 72,122
-- Covered piece pairs: 919
+- Applicable piece pairs: 72,241
+- Covered piece pairs: 923
 
 ## Ontology classes
 
@@ -67,7 +67,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 5,226 | 2,268 | 2,268 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 5,140 | 2,204 | 2,204 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,287 | 195 | 195 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,826 | 126 | 126 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
