@@ -352,6 +352,14 @@ public permanent-state predicates such as a named counter minimum. Historical
 schema-v1 through schema-v3 payloads retain their original field sets so Game
 Record v3 replay does not silently rewrite old descriptors.
 
+The public battlefield compiler uses that same query for live layer-6 and
+layer-7c applicability, public-state-gated targets, resolution-time set locks,
+typed queried ability grants, and untap participation. Positive ability
+presence is evaluated after generic same-layer additions and removals of the
+required ability. Resolution-time characteristic selection deliberately stops
+at layer 5 and rejects ability-qualified sets rather than claiming a cyclic
+characteristic boundary.
+
 ## Visibility and replay
 
 The kernel holds authoritative information but never builds network responses.

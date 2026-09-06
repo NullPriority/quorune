@@ -38,12 +38,19 @@ from quorune.compiler.continuous_templates import (
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
+from quorune.compiler.fixed_public_characteristic_sets import (
+    fixed_public_characteristic_set_effect_template,
+)
+from quorune.compiler.public_state_queries import (
+    fixed_characteristic_battlefield_query_subject,
+)
 from quorune.continuous_effects import (
     CharacteristicState,
     ContinuousEffect,
     ContinuousOperation,
     Layer,
     evaluate_continuous_effects,
+    order_continuous_effects,
 )
 from quorune.counter_placement import (
     CounterPlacementRequest,
@@ -56,9 +63,13 @@ from quorune.haste import (
 )
 from quorune.menace import current_menace_restriction
 from quorune.model import CardInstance
+from quorune.object_predicate import ObjectQuerySpec
 from quorune.oracle_ir import register_generated_programs
 from quorune.record import checkpoint_envelope, replay_record
-from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.capabilities import (
+    CapabilityRegistry,
+    load_default_capability_registry,
+)
 from quorune.semantic_runtime import (
     ContinuousEffectSourceContext,
     default_continuous_effect_component_registry,
@@ -553,6 +564,218 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 for field, value in predicate_fields.items():
                     self.assertEqual(value, condition["predicate"][field])
 
+    def test_shared_public_set_query_fans_into_layers_and_resolution(self):
+        cases = (
+            (
+                "Other Demons, Devils, Imps, and Tieflings you control",
+                "source_controller",
+                True,
+                {
+                    "subtypes_any": [
+                        "demon",
+                        "devil",
+                        "imp",
+                        "tiefling",
+                    ]
+                },
+            ),
+            (
+                "Eldrazi Spawn creatures you control",
+                "source_controller",
+                False,
+                {"subtypes_all": ["eldrazi", "spawn"]},
+            ),
+            (
+                "Creature tokens",
+                "any",
+                False,
+                {"token": True},
+            ),
+            (
+                "Other nontoken creatures you control",
+                "source_controller",
+                True,
+                {"token": False},
+            ),
+            (
+                "Attacking non-Human creatures you control",
+                "source_controller",
+                False,
+                {
+                    "excluded_subtypes": ["human"],
+                    "state_predicate": {
+                        "entered_this_turn": False,
+                        "tapped": None,
+                        "counter_name": None,
+                        "minimum_counter_count": None,
+                        "attacking": True,
+                        "blocking": None,
+                        "enchanted": None,
+                        "equipped": None,
+                        "modified": None,
+                        "monstrous": None,
+                    },
+                },
+            ),
+            (
+                "Creatures with +1/+1 counters on them",
+                "any",
+                False,
+                {
+                    "state_predicate": {
+                        "entered_this_turn": False,
+                        "tapped": None,
+                        "counter_name": "+1/+1",
+                        "minimum_counter_count": 1,
+                    },
+                },
+            ),
+            (
+                "Creatures you control that are enchanted",
+                "source_controller",
+                False,
+                {
+                    "state_predicate": {
+                        "entered_this_turn": False,
+                        "tapped": None,
+                        "counter_name": None,
+                        "minimum_counter_count": None,
+                        "attacking": None,
+                        "blocking": None,
+                        "enchanted": True,
+                        "equipped": None,
+                        "modified": None,
+                        "monstrous": None,
+                    },
+                },
+            ),
+            (
+                "Legendary Humans you control",
+                "source_controller",
+                False,
+                {
+                    "subtypes_all": ["human"],
+                    "supertypes_all": ["legendary"],
+                },
+            ),
+            (
+                "Outlaws you control",
+                "source_controller",
+                False,
+                {
+                    "subtypes_any": [
+                        "assassin",
+                        "mercenary",
+                        "pirate",
+                        "rogue",
+                        "warlock",
+                    ]
+                },
+            ),
+        )
+        for subject, relation, excluded, expected in cases:
+            with self.subTest(subject=subject):
+                parsed = fixed_characteristic_battlefield_query_subject(
+                    subject
+                )
+                self.assertIsNotNone(parsed)
+                assert parsed is not None
+                actual_relation, predicate, exclude_source = parsed
+                self.assertEqual(relation, actual_relation)
+                self.assertEqual(excluded, exclude_source)
+                self.assertEqual(("creature",), predicate.types_all[-1:])
+                serialized = predicate.to_dict()
+                for field, value in expected.items():
+                    self.assertEqual(value, serialized[field])
+
+                static = fixed_power_toughness_anthem_handler(
+                    f"{subject} get +1/+1."
+                )
+                self.assertIsNotNone(static)
+                assert static is not None
+                self.assertEqual(
+                    serialized,
+                    static[1]["condition"]["predicate"],
+                )
+
+                temporary = fixed_public_characteristic_set_effect_template(
+                    f"{subject} get +1/+1 until end of turn."
+                )
+                self.assertIsNotNone(temporary)
+
+        ability_qualified = fixed_characteristic_battlefield_query_subject(
+            "Other creatures you control with flying"
+        )
+        self.assertIsNotNone(ability_qualified)
+        assert ability_qualified is not None
+        self.assertEqual(
+            ("flying",),
+            ability_qualified[1].keywords_all,
+        )
+        self.assertIsNotNone(
+            fixed_power_toughness_anthem_handler(
+                "Other creatures you control with flying get +1/+1."
+            )
+        )
+        self.assertIsNone(
+            fixed_public_characteristic_set_effect_template(
+                "Other creatures you control with flying get +1/+1 "
+                "until end of turn."
+            )
+        )
+
+        type_union = fixed_characteristic_battlefield_query_subject(
+            "Artifacts and enchantments you control"
+        )
+        self.assertIsNotNone(type_union)
+        assert type_union is not None
+        self.assertEqual("source_controller", type_union[0])
+        self.assertEqual(
+            ("artifact", "enchantment"),
+            type_union[1].types_any,
+        )
+        self.assertIsNotNone(
+            fixed_query_keyword_grant_handler(
+                "Artifacts and enchantments you control have shroud."
+            )
+        )
+        self.assertIsNone(
+            fixed_power_toughness_anthem_handler(
+                "Artifacts and enchantments you control get +1/+1."
+            )
+        )
+        modified_type_union = fixed_characteristic_battlefield_query_subject(
+            "Modified artifacts and enchantments you control"
+        )
+        self.assertIsNotNone(modified_type_union)
+        assert modified_type_union is not None
+        self.assertEqual(
+            ("artifact", "enchantment"),
+            modified_type_union[1].types_any,
+        )
+        assert modified_type_union[1].state_predicate is not None
+        self.assertTrue(modified_type_union[1].state_predicate.modified)
+
+        for unsupported in (
+            "Creatures without flying",
+            "Creatures with no abilities",
+            "Commander creatures you control",
+            "Creatures that share a color with equipped creature",
+            "Artifacts and enchantments with flying",
+            "Enchanted permanent",
+            "Enchanted creature",
+            "Enchanted artifact",
+            "Enchanted land",
+            "Equipped creature",
+            "Fortified land",
+        ):
+            with self.subTest(unsupported=unsupported):
+                self.assertIsNone(
+                    fixed_characteristic_battlefield_query_subject(
+                        unsupported
+                    )
+                )
+
     def test_multicolor_query_observes_the_cycle_safe_layer_five_boundary(self):
         compiled = fixed_query_keyword_grant_handler(
             "Multicolored creatures you control have flying."
@@ -600,7 +823,6 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
 
     def test_open_or_unsupported_queries_remain_material_residuals(self):
         unsupported = (
-            "Creatures with a +1/+1 counter on them have trample.",
             "Attacking tapped creatures you control have flying.",
             "Attacking creatures you control with a +1/+1 counter on them "
             "have trample.",
@@ -629,6 +851,52 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                         for descriptor in ability.handlers
                     )
                 )
+
+    def test_shared_public_query_dependency_fails_closed_across_consumers(self):
+        root = Path(__file__).resolve().parents[1]
+        value = json.loads(
+            (root / "quorune" / "rules" / "capability-registry.json")
+            .read_text(encoding="utf-8")
+        )
+        query = next(
+            row
+            for row in value["capabilities"]
+            if row["id"] == "state_query.permanent.public_state_predicate"
+        )
+        query["status"] = "blocked"
+        query["blockers"] = ["focused shared-query dependency mutation"]
+        blocked = CapabilityRegistry(value)
+        cases = (
+            (
+                "Creatures with flying get +1/+1.",
+                "Enchantment",
+            ),
+            (
+                "Creatures with +1/+1 counters on them gain trample until "
+                "end of turn.",
+                "Instant",
+            ),
+            (
+                "Islands don't untap during their controllers' untap steps.",
+                "Enchantment",
+            ),
+        )
+        for index, (text, type_line) in enumerate(cases):
+            with self.subTest(text=text):
+                record = _permanent(
+                    text,
+                    suffix=119_100_000 + index,
+                    name=f"Blocked shared query {index}",
+                    type_line=type_line,
+                )
+                program = compile_card_program(
+                    _NoRulingsDatabase(),
+                    record,
+                    capability_registry=blocked,
+                    capability_profile="commander_review",
+                    trust_level="provisional",
+                )
+                self.assertTrue(program.residuals)
 
     def test_level_gated_class_keyword_grant_remains_residual(self):
         program = self.compile(
@@ -849,6 +1117,224 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
             controller
         ].turns_begun
         return card
+
+    def test_subtype_union_recomputes_after_layer_four_and_excludes_source(self):
+        compiled = fixed_query_characteristic_grant_handler(
+            "Other Robot and Construct creatures you control get +2/+2 and "
+            "have menace."
+        )
+        self.assertIsNotNone(compiled)
+        assert compiled is not None
+        query_effects = default_continuous_effect_component_registry().lower(
+            compiled[1],
+            ContinuousEffectSourceContext(
+                source_object_id="shared-query-source",
+                source_ref="SHARED-QUERY-SOURCE",
+                source_controller="A",
+                source_timestamp=2,
+                component_id="shared-query:0",
+            ),
+        )
+        add_construct = ContinuousEffect(
+            effect_id="shared-query-add-construct",
+            source_id="type-source",
+            layer=Layer.TYPE,
+            sublayer="4",
+            timestamp=1,
+            operations=(
+                ContinuousOperation(
+                    "add_types",
+                    ["Construct"],
+                    field="subtypes",
+                ),
+            ),
+        )
+        base = CharacteristicState(
+            name="Shared Query Recipient",
+            controller="A",
+            card_types={"Creature"},
+            subtypes={"Human"},
+            power=1,
+            toughness=1,
+        )
+        context = {
+            "object_id": "shared-query-recipient",
+            "logical_object_id": "shared-query-recipient@0",
+            "ref": "SHARED-QUERY-RECIPIENT",
+            "zone": "battlefield",
+            "owner": "A",
+            "controller": "A",
+        }
+        before = evaluate_continuous_effects(base, query_effects, context=context)
+        self.assertEqual(1, before.characteristics["power"])
+        after = evaluate_continuous_effects(
+            base,
+            (add_construct, *query_effects),
+            context=context,
+        )
+        self.assertEqual(3, after.characteristics["power"])
+        self.assertEqual(3, after.characteristics["toughness"])
+        self.assertIn("Menace", after.characteristics["abilities"])
+        source = evaluate_continuous_effects(
+            CharacteristicState(
+                name="Shared Query Source",
+                controller="A",
+                card_types={"Creature"},
+                subtypes={"Robot"},
+                power=2,
+                toughness=2,
+            ),
+            query_effects,
+            context={
+                **context,
+                "object_id": "shared-query-source",
+                "ref": "SHARED-QUERY-SOURCE",
+            },
+        )
+        self.assertEqual(2, source.characteristics["power"])
+        self.assertNotIn("Menace", source.characteristics["abilities"])
+
+    def test_ability_presence_query_uses_shared_layer_six_dependency_order(self):
+        compiled = fixed_query_keyword_grant_handler(
+            "Creatures with flying have menace."
+        )
+        self.assertIsNotNone(compiled)
+        assert compiled is not None
+        conditional = default_continuous_effect_component_registry().lower(
+            compiled[1],
+            ContinuousEffectSourceContext(
+                source_object_id="conditional-source",
+                source_ref="CONDITIONAL-SOURCE",
+                source_controller="A",
+                source_timestamp=1,
+                component_id="conditional-source:0",
+            ),
+        )[0]
+        creature_query = ObjectQuerySpec(
+            zones=("battlefield",),
+            types_all=("creature",),
+        )
+        flying_grant = ContinuousEffect(
+            effect_id="later-flying-grant",
+            source_id="flying-source",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=2,
+            applies=creature_query,
+            operations=(ContinuousOperation("add_ability", "Flying"),),
+        )
+        context = {
+            "object_id": "ability-query-recipient",
+            "logical_object_id": "ability-query-recipient@0",
+            "ref": "ABILITY-QUERY-RECIPIENT",
+            "zone": "battlefield",
+            "owner": "A",
+            "controller": "A",
+        }
+        base = CharacteristicState(
+            name="Ability Query Recipient",
+            controller="A",
+            card_types={"Creature"},
+            power=2,
+            toughness=2,
+        )
+        granted = evaluate_continuous_effects(
+            base,
+            (conditional, flying_grant),
+            context=context,
+        )
+        self.assertGreaterEqual(
+            set(granted.characteristics["abilities"]),
+            {"Flying", "Menace"},
+        )
+
+        flying_removal = ContinuousEffect(
+            effect_id="later-flying-removal",
+            source_id="removal-source",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=2,
+            applies=creature_query,
+            operations=(ContinuousOperation("remove_ability", "Flying"),),
+        )
+        removed = evaluate_continuous_effects(
+            CharacteristicState(
+                name="Ability Query Recipient",
+                controller="A",
+                card_types={"Creature"},
+                abilities=["Flying"],
+                power=2,
+                toughness=2,
+            ),
+            (conditional, flying_removal),
+            context=context,
+        )
+        self.assertNotIn("Flying", removed.characteristics["abilities"])
+        self.assertNotIn("Menace", removed.characteristics["abilities"])
+
+        unrelated_grant = ContinuousEffect(
+            effect_id="later-unrelated-grant",
+            source_id="unrelated-source",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=2,
+            applies=creature_query,
+            operations=(ContinuousOperation("add_ability", "Trample"),),
+        )
+        ordered, unrelated_cycles = order_continuous_effects(
+            (conditional, unrelated_grant)
+        )
+        self.assertEqual(
+            [
+                "conditional-source:conditional-source:0",
+                "later-unrelated-grant",
+            ],
+            [effect.effect_id for effect in ordered],
+        )
+        self.assertFalse(unrelated_cycles)
+
+        menace_condition = ContinuousEffect(
+            effect_id="menace-condition",
+            source_id="cycle-source-a",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=1,
+            applies=ObjectQuerySpec(
+                zones=("battlefield",),
+                types_all=("creature",),
+                keywords_all=("menace",),
+            ),
+            operations=(ContinuousOperation("add_ability", "Flying"),),
+        )
+        flying_condition = ContinuousEffect(
+            effect_id="flying-condition",
+            source_id="cycle-source-b",
+            layer=Layer.ABILITY,
+            sublayer="6",
+            timestamp=2,
+            applies=ObjectQuerySpec(
+                zones=("battlefield",),
+                types_all=("creature",),
+                keywords_all=("flying",),
+            ),
+            operations=(ContinuousOperation("add_ability", "Menace"),),
+        )
+        cycle = evaluate_continuous_effects(
+            CharacteristicState(
+                name="Ability Query Cycle Recipient",
+                controller="A",
+                card_types={"Creature"},
+                power=2,
+                toughness=2,
+            ),
+            (menace_condition, flying_condition),
+            context=context,
+        )
+        self.assertEqual(
+            (("menace-condition", "flying-condition"),),
+            cycle.dependency_cycles,
+        )
+        self.assertFalse(cycle.characteristics["abilities"])
 
     def test_measured_50_card_lower_bound_is_capability_closed(self):
         self.assertEqual(50, len(COMPLETE_CARD_LOWER_BOUND))

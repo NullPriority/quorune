@@ -8,11 +8,13 @@ from pathlib import Path
 
 from common import keep_all, load_assets, make_session
 from quorune.compiler.untap_step_templates import (
+    static_untap_step_handler,
     static_untap_step_limit_handler,
 )
 from quorune.engine import CommanderEngine, TURN_STEPS
 from quorune.record import checkpoint_envelope, replay_record
 from quorune.semantics import SemanticProgram
+from quorune.semantic_runtime import default_untap_step_component_registry
 
 
 class UntapStepRuleTests(unittest.TestCase):
@@ -62,13 +64,14 @@ class UntapStepRuleTests(unittest.TestCase):
         tapped: bool = False,
         oracle_text: str = "",
         keywords: list[str] | None = None,
+        type_line: str = "Token Creature — Construct",
     ):
         ref = engine.create_token(
             controller,
             name=name,
             tapped=tapped,
             characteristics={
-                "type_line": "Token Creature — Construct",
+                "type_line": type_line,
                 "oracle_text": oracle_text,
                 "power": "2",
                 "toughness": "2",
@@ -342,6 +345,116 @@ class UntapStepRuleTests(unittest.TestCase):
         self.assertIsNone(inactive_engine._semantic_pause_annotation())
         self.assertTrue(inactive_limiter.tapped)
         self.assertTrue(all(not card.tapped for card in unrestricted))
+
+    def test_shared_public_queries_govern_untap_participation(self):
+        cases = (
+            (
+                "Islands don't untap during their controllers' untap steps.",
+                "prohibition",
+                "any",
+                {"types_all": ["land"], "subtypes_all": ["island"]},
+            ),
+            (
+                "Snow permanents don't untap during their controllers' untap steps.",
+                "prohibition",
+                "any",
+                {"supertypes_all": ["snow"]},
+            ),
+            (
+                "Nonland permanents don't untap during their controllers' untap steps.",
+                "prohibition",
+                "any",
+                {"excluded_types": ["land"]},
+            ),
+            (
+                "Untap all artifacts you control during each other player's untap step.",
+                "additional",
+                "source_controller",
+                {"types_all": ["artifact"]},
+            ),
+        )
+        registry = default_untap_step_component_registry()
+        for index, (text, kind, relation, predicate_fields) in enumerate(cases):
+            with self.subTest(text=text):
+                compiled = static_untap_step_handler(
+                    text,
+                    source_name=f"Untap Query Source {index}",
+                )
+                self.assertIsNotNone(compiled)
+                assert compiled is not None
+                _template_id, descriptor, _capability = compiled
+                registry.validate(descriptor)
+                self.assertEqual(kind, descriptor["instruction"]["kind"])
+                self.assertEqual(
+                    relation,
+                    descriptor["subject"]["controller_relation"],
+                )
+                for field, value in predicate_fields.items():
+                    self.assertEqual(
+                        value,
+                        descriptor["subject"]["predicate"][field],
+                    )
+
+        session = self.make_session(50207)
+        engine = session.engine
+        source = self.card(session, "A", "Sai, Master Thopterist")
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        island = self.token(
+            engine,
+            "A",
+            "Island Witness",
+            tapped=True,
+            type_line="Token Land — Island",
+        )
+        forest = self.token(
+            engine,
+            "A",
+            "Forest Witness",
+            tapped=True,
+            type_line="Token Land — Forest",
+        )
+        compiled = static_untap_step_handler(
+            "Islands don't untap during their controllers' untap steps.",
+            source_name=source.printed_name,
+        )
+        assert compiled is not None
+        engine.semantics.put(
+            SemanticProgram(
+                key="test:shared-island-untap-query",
+                label="Shared Island untap query",
+                oracle_id=source.oracle_id,
+                ability_id="static:test:shared-island-untap-query",
+                active_zone="battlefield",
+                event="untap.step",
+                handlers=[compiled[1]],
+                trust_level="provisional",
+            )
+        )
+        with mock.patch.object(
+            CommanderEngine,
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            self.enter_untap(session)
+        self.assertTrue(island.tapped)
+        self.assertFalse(forest.tapped)
+
+        engine.move_card(source.object_id, "graveyard", log=False)
+        island.tapped = True
+        forest.tapped = True
+        with mock.patch.object(
+            CommanderEngine,
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            self.enter_untap(session)
+        self.assertFalse(island.tapped)
+        self.assertFalse(forest.tapped)
 
     def test_untap_trigger_waits_for_upkeep_priority_and_replays(
         self,

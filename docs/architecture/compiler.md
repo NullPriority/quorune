@@ -515,21 +515,25 @@ producer adds no family-specific ability-presence check and performs no dynamic
 characteristic count.
 
 `compiler/public_state_queries.py` owns the shared fixed battlefield-query and
-public-state condition grammar consumed by `compiler/continuous_templates.py`.
-It accepts only live battlefield sets representable by `ObjectQuerySpec` over
-a source-controller, source-opponent, or global relation. Closed predicates
-cover type, pinned creature subtype, color, multicolor cardinality, supertype,
-token and subtype-token identity, the presence of a named +1/+1 counter, or
-attacking, blocking, tapped, untapped, enchanted, equipped, and modified state.
-The fixed power/toughness and supported-keyword parsers reuse that same query,
-including combined layer-6 and layer-7c wording. Every emitted keyword node
-declares both the layer-6 grant capability and each keyword's existing combat,
-damage, destruction, or targeting consumer capability. Ability-qualified,
-compound state-and-counter, dynamically counted, open conditional, temporary,
-chosen, hidden-zone, and unsupported-keyword forms remain source-spanned
-residuals. Matching Class lines also remain residual until level applicability
-has a typed owner. The grammar performs no dynamic characteristic counts and
-does not claim ability-removal composition.
+public-state condition grammar consumed by continuous characteristics, typed
+queried ability grants, resolution-locked characteristic sets, and untap-step
+participation. It accepts only battlefield sets representable by one immutable
+`ObjectQuerySpec` over a source-controller, source-opponent, or global relation.
+Closed predicates cover card-type unions, pinned creature-subtype conjunctions
+and unions, the defined Outlaw group, color and multicolor cardinality,
+supertype, token identity, a named +1/+1 counter, attacking, blocking, tapped,
+untapped, enchanted, equipped, modified state, and positive supported-ability
+presence. Fixed layer-6 and layer-7c components reuse that same query, including
+combined wording. Ability-presence applicability gains generic dependencies on
+same-layer additions or removals of the required ability; unrelated abilities
+do not create false dependencies, and cycles retain the ordinary deterministic
+fallback. Resolution-locked queries stop at the cycle-safe layer-5 boundary and
+therefore reject ability-presence predicates. Every emitted keyword node still
+declares each existing combat, damage, destruction, or targeting consumer.
+Singular attachment-relative, negative or absent ability, compound state-and-
+counter, dynamically counted, open conditional, chosen, hidden-zone, and
+unsupported-keyword forms remain source-spanned residuals. Matching Class lines
+also remain residual until level applicability has a typed owner.
 
 Printed and fixed layer-6 Protection productions share `ProtectionSpec` and
 the existing `protection.typed.debt` capability. The closed v2 source predicate

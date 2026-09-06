@@ -8,6 +8,7 @@ from typing import Any, Mapping
 from ..object_predicate import ObjectQuerySpec
 from ..untap_step import UntapInstruction
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from .public_state_queries import fixed_battlefield_query_subject
 
 
 UntapStepHandlerTemplate = tuple[str, Mapping[str, Any], str]
@@ -29,6 +30,16 @@ _OTHER_PLAYER_UNTAP = re.compile(
     r"each other player['’]s untap step\.?$",
     re.IGNORECASE,
 )
+_QUERY_PROHIBITION = re.compile(
+    r"^(?P<subject>.+?) don['’]t untap during their "
+    r"controllers['’] untap steps?\.?$",
+    re.IGNORECASE,
+)
+_QUERY_OTHER_PLAYER_UNTAP = re.compile(
+    r"^Untap (?:all|each) (?P<subject>.+?) during "
+    r"each other player['’]s untap step\.?$",
+    re.IGNORECASE,
+)
 
 
 def _predicate(*, creature: bool) -> dict[str, Any]:
@@ -47,6 +58,7 @@ def _descriptor(
     turn_relation: str,
     source_state: str = "any",
     maximum: int | None = None,
+    predicate: ObjectQuerySpec | None = None,
 ) -> dict[str, Any]:
     return {
         "handler_id": "participation.untap-step.static.v1",
@@ -59,7 +71,11 @@ def _descriptor(
         "subject": {
             "relation": subject_relation,
             "controller_relation": controller_relation,
-            "predicate": _predicate(creature=creature),
+            "predicate": (
+                predicate.canonical_dict()
+                if predicate is not None
+                else _predicate(creature=creature)
+            ),
         },
         "instruction": {
             "kind": instruction,
@@ -126,6 +142,52 @@ def static_untap_step_handler(
             ),
             "untap.step.static_participation",
         )
+
+    query_prohibition = _QUERY_PROHIBITION.fullmatch(normalized)
+    if query_prohibition is not None:
+        parsed = fixed_battlefield_query_subject(
+            query_prohibition.group("subject")
+        )
+        if (
+            parsed is not None
+            and parsed[0] in {"any", "source_controller"}
+            and not parsed[2]
+        ):
+            relation, predicate, exclude_source = parsed
+            assert not exclude_source
+            return (
+                "untap-step-prohibit-fixed-query-v1",
+                _descriptor(
+                    instruction=UntapInstruction.PROHIBIT.value,
+                    subject_relation="query",
+                    controller_relation=relation,
+                    creature=False,
+                    turn_relation="subject_controller",
+                    predicate=predicate,
+                ),
+                "untap.step.static_participation",
+            )
+
+    query_other_player = _QUERY_OTHER_PLAYER_UNTAP.fullmatch(normalized)
+    if query_other_player is not None:
+        parsed = fixed_battlefield_query_subject(
+            query_other_player.group("subject")
+        )
+        if parsed is not None:
+            relation, predicate, exclude_source = parsed
+            if relation == "source_controller" and not exclude_source:
+                return (
+                    "untap-step-additional-other-player-fixed-query-v1",
+                    _descriptor(
+                        instruction=UntapInstruction.ADDITIONAL.value,
+                        subject_relation="query",
+                        controller_relation=relation,
+                        creature=False,
+                        turn_relation="other_player",
+                        predicate=predicate,
+                    ),
+                    "untap.step.static_participation",
+                )
 
     if type(source_name) is not str or not source_name:
         return None

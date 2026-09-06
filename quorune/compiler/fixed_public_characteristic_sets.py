@@ -2,13 +2,17 @@ from __future__ import annotations
 
 """Fixed resolution-locked public creature-set characteristic grammar."""
 
+from dataclasses import replace
 import re
 from typing import Any, Mapping
 
-from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..object_predicate import ObjectQuerySpec
 from .continuous_templates import controlled_characteristic_until_end_of_turn_effect
 from .fixed_resolution_characteristic_queries import (
     fixed_resolution_characteristic_query_is_closed,
+)
+from .public_state_queries import (
+    fixed_characteristic_battlefield_query_subject,
 )
 
 
@@ -17,10 +21,7 @@ FIXED_PUBLIC_CHARACTERISTIC_SET_TEMPLATE_ID = (
 )
 _TRAILING_REMINDER = re.compile(r"\s*\([^()]*(?:\([^()]*\)[^()]*)*\)\s*$")
 _PUBLIC_CREATURE_SET = re.compile(
-    r"^(?P<subject>All creatures|Creatures your opponents control|"
-    r"Creatures target player controls|Attacking creatures(?: you control)?|"
-    r"Blocking creatures(?: you control)?|Other attacking creatures|"
-    r"Each other attacking creature) "
+    r"^(?P<subject>.+?) "
     r"(?P<verb>get|gets|gain|gains) (?P<result>.+)$",
     re.IGNORECASE,
 )
@@ -48,39 +49,43 @@ def _until_end_of_turn_body(text: str) -> str | None:
     return match.group("body").rstrip(".") if match is not None else None
 
 
-def _public_query(subject: str) -> tuple[ObjectQuerySpec, Mapping[str, Any] | None]:
+def _public_query(
+    subject: str,
+) -> tuple[ObjectQuerySpec, Mapping[str, Any] | None] | None:
     normalized = " ".join(subject.casefold().split())
-    fields: dict[str, Any] = {
-        "zones": ("battlefield",),
-        "types_all": ("creature",),
-    }
-    target_schema: Mapping[str, Any] | None = None
-    if normalized == "creatures your opponents control":
-        fields["excluded_controllers"] = ("$controller",)
-    elif normalized == "creatures target player controls":
-        fields["controller"] = "$target.0"
-        target_schema = dict(_PLAYER_TARGET_SCHEMA)
-    elif normalized in {
-        "attacking creatures you control",
-        "blocking creatures you control",
-    }:
-        fields["controller"] = "$controller"
-    if "attacking" in normalized:
-        fields["state_predicate"] = PermanentStatePredicateSpec(attacking=True)
-    elif "blocking" in normalized:
-        fields["state_predicate"] = PermanentStatePredicateSpec(blocking=True)
-    if normalized in {
-        "other attacking creatures",
-        "each other attacking creature",
-    }:
-        fields["exclude_ref"] = "$source"
-    query = ObjectQuerySpec(**fields)
+    if normalized == "creatures target player controls":
+        return (
+            ObjectQuerySpec(
+                zones=("battlefield",),
+                controller="$target.0",
+                types_all=("creature",),
+            ),
+            dict(_PLAYER_TARGET_SCHEMA),
+        )
+    parsed = fixed_characteristic_battlefield_query_subject(subject)
+    if parsed is None:
+        return None
+    relation, predicate, exclude_source = parsed
+    if "creature" not in predicate.types_all:
+        return None
+    query = predicate
+    if relation == "source_controller":
+        query = replace(query, controller="$controller")
+    elif relation == "source_opponents":
+        query = replace(
+            query,
+            excluded_controllers=("$controller",),
+        )
+    elif relation != "any":
+        return None
+    if exclude_source:
+        query = replace(query, exclude_ref="$source")
     if not fixed_resolution_characteristic_query_is_closed(
         query,
-        target_schema=target_schema,
+        target_schema=None,
     ):
-        raise ValueError("Public characteristic-set query is not closed")
-    return query, target_schema
+        return None
+    return query, None
 
 
 def fixed_public_characteristic_set_effect_template(
@@ -112,7 +117,10 @@ def fixed_public_characteristic_set_effect_template(
     if represented is None:
         return None
     _template_id, effects, mechanics = represented
-    query, target_schema = _public_query(match.group("subject"))
+    query_result = _public_query(match.group("subject"))
+    if query_result is None:
+        return None
+    query, target_schema = query_result
     effect = {
         **dict(effects[0]),
         "predicate": query.to_dict(),

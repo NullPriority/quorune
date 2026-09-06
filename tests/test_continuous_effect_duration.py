@@ -724,6 +724,14 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 "attacking",
             ),
             (
+                "spell-other-blocking",
+                "Other blocking creatures get +1/+1 until end of turn.",
+                "Instant",
+                None,
+                None,
+                "blocking",
+            ),
+            (
                 "modal",
                 "Choose one —\n"
                 "• Advance — Attacking creatures get +1/+0 until end of turn.\n"
@@ -796,7 +804,10 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 state = predicate.get("state_predicate")
                 if state_field is not None:
                     self.assertTrue(state[state_field])
-                if context == "triggered-other-attacking":
+                if context in {
+                    "spell-other-blocking",
+                    "triggered-other-attacking",
+                }:
                     self.assertEqual("$source", predicate["exclude_ref"])
                 if context == "spell-target-player":
                     self.assertEqual(
@@ -816,7 +827,6 @@ class ContinuousEffectModelTests(unittest.TestCase):
         cases = (
             "Tapped creatures get -1/-1 until end of turn.",
             "Attacking creatures with flying get +1/+1 until end of turn.",
-            "Other blocking creatures get +1/+1 until end of turn.",
             "Creatures target opponent controls get -1/-1 until end of turn.",
             "Creatures your opponents control get +X/+X until end of turn.",
             "All creatures become artifacts until end of turn.",

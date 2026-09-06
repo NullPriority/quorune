@@ -82,9 +82,10 @@ counts, per-opponent thresholds above existence, top-library predicates, chosen
 or secret contents, historical-action, compound state-and-counter, and exact-
 attachment-count predicates, quoted abilities, type or color changes, ability
 removal, Class levels, Protection, Ward, and unsupported keywords remain source-
-spanned residuals. This owner does not introduce an ability-presence-specific
-layer-6 check; future ability addition and removal must continue through one
-shared applicability boundary.
+spanned residuals. Positive ability-presence target queries now use the shared
+public `ObjectQuerySpec` applicability boundary and derive generic dependencies
+from both additions and removals of the required layer-6 ability; no family-
+specific ability check was added.
 
 ## Removal condition
 
