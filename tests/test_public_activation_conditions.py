@@ -29,6 +29,9 @@ from quorune.continuous_effects import (
     Layer,
 )
 from quorune.deck import DeckLoader
+from quorune.compiler.target_effect_corpus_assurance import (
+    TargetEffectCorpusCollector,
+)
 from quorune.object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from quorune.oracle_ir import compile_oracle_card
 from quorune.projection import StateProjector
@@ -320,6 +323,20 @@ class PublicActivationConditionCompilerTests(unittest.TestCase):
             )
             self.assertNotEqual("exact", oracle.status)
             self.assertTrue(oracle.material_residuals)
+
+    def test_target_effect_assurance_accepts_public_activation_restriction(self):
+        record = condition_record(
+            "{1}: Target creature gets +2/+2 until end of turn. Activate only "
+            "during your turn, before attackers are declared.",
+            suffix=173_004_001,
+        )
+        oracle = compile_oracle_card(
+            record,
+            capability_registry=self.registry,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", oracle.status, oracle.material_residuals)
+        TargetEffectCorpusCollector().observe(record, oracle)
 
 
 class PublicActivationConditionRuntimeTests(unittest.TestCase):

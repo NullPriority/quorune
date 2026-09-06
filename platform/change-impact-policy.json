@@ -602,6 +602,7 @@
         "quorune/activation_condition_model.py",
         "quorune/compiler/activated_costs.py",
         "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/target_effect_corpus_assurance.py",
         "quorune/rules/activation/commit.py",
         "quorune/rules/activation/conditions.py",
         "tests/fixtures/public-activation-condition-cards.json",
