@@ -110,19 +110,67 @@ class _FixedPublicStateSnapshotResolver:
         condition: FixedPublicStateConditionSpec,
     ) -> FixedPublicStateConditionSnapshot:
         controller = self.state.players[source.controller]
+        kind = condition.kind
         turn_sequence = max(0, int(getattr(self.state, "turn_sequence", 0)))
-        cast_events = tuple(
-            event
-            for event in current_turn_history_events(
-                getattr(self.state, "turn_history", None),
-                turn_sequence=turn_sequence,
-                kind="spell_cast",
-            )
-            if event.actor == source.controller
+        controller_draw_count = (
+            drawn_this_turn(self, source.controller)
+            if kind
+            is FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST
+            else 0
         )
+        controller_spell_cast_count = 0
+        controller_noncreature_spell_cast_count = 0
+        controller_instant_sorcery_cast_count = 0
+        if kind in {
+            FixedPublicStateConditionKind.CONTROLLER_SPELL_CAST_COUNT_AT_LEAST,
+            FixedPublicStateConditionKind
+            .CONTROLLER_NONCREATURE_SPELL_CAST_COUNT_AT_LEAST,
+            FixedPublicStateConditionKind
+            .CONTROLLER_INSTANT_SORCERY_CAST_COUNT_AT_LEAST,
+        }:
+            cast_events = (
+                event
+                for event in current_turn_history_events(
+                    getattr(self.state, "turn_history", None),
+                    turn_sequence=turn_sequence,
+                    kind="spell_cast",
+                )
+                if event.actor == source.controller
+            )
+            if kind is (
+                FixedPublicStateConditionKind.CONTROLLER_SPELL_CAST_COUNT_AT_LEAST
+            ):
+                controller_spell_cast_count = sum(1 for _event in cast_events)
+            elif kind is (
+                FixedPublicStateConditionKind
+                .CONTROLLER_NONCREATURE_SPELL_CAST_COUNT_AT_LEAST
+            ):
+                controller_noncreature_spell_cast_count = sum(
+                    "creature" not in event.types for event in cast_events
+                )
+            else:
+                controller_instant_sorcery_cast_count = sum(
+                    bool({"instant", "sorcery"}.intersection(event.types))
+                    for event in cast_events
+                )
+        opponent_poison_counter_counts = (
+            tuple(
+                max(0, int(getattr(self.state.players[other], "poison", 0)))
+                for other in self.state.turn_order
+                if other != source.controller
+                and self.state.players[other].in_game
+            )
+            if kind
+            is FixedPublicStateConditionKind.OPPONENT_POISON_COUNTER_AT_LEAST
+            else ()
+        )
+        controller_is_monarch = kind is (
+            FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
+        ) and getattr(self.state, "monarch", None) == source.controller
         attached = (
             self.state.cards.get(source.attached_to)
-            if getattr(source, "attached_to", None)
+            if kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY
+            and getattr(source, "attached_to", None)
             else None
         )
         return FixedPublicStateConditionSnapshot(
@@ -156,27 +204,16 @@ class _FixedPublicStateSnapshotResolver:
                     for name, amount in source.counters.items()
                 )
             ),
-            controller_draw_count=drawn_this_turn(
-                self,
-                source.controller,
+            controller_draw_count=controller_draw_count,
+            controller_spell_cast_count=controller_spell_cast_count,
+            controller_noncreature_spell_cast_count=(
+                controller_noncreature_spell_cast_count
             ),
-            controller_spell_cast_count=len(cast_events),
-            controller_noncreature_spell_cast_count=sum(
-                "creature" not in event.types for event in cast_events
+            controller_instant_sorcery_cast_count=(
+                controller_instant_sorcery_cast_count
             ),
-            controller_instant_sorcery_cast_count=sum(
-                bool({"instant", "sorcery"}.intersection(event.types))
-                for event in cast_events
-            ),
-            opponent_poison_counter_counts=tuple(
-                max(0, int(getattr(self.state.players[other], "poison", 0)))
-                for other in self.state.turn_order
-                if other != source.controller
-                and self.state.players[other].in_game
-            ),
-            controller_is_monarch=(
-                getattr(self.state, "monarch", None) == source.controller
-            ),
+            opponent_poison_counter_counts=opponent_poison_counter_counts,
+            controller_is_monarch=controller_is_monarch,
             source_query_matches=(
                 self._query_matches(source, condition)
                 if condition.kind

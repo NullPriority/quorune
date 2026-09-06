@@ -1270,6 +1270,38 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
 
+    def test_unrelated_fixed_conditions_do_not_scan_turn_history(self):
+        session = self.session(118_220_008)
+        engine = session.engine
+        source = self.add_constructed_condition_source(
+            session,
+            ref="NO-HISTORY-SCAN",
+            texts=("During your turn, this creature gets +2/+0.",),
+        )
+        engine.state.active_player = "A"
+
+        with (
+            mock.patch.object(
+                CommanderEngine,
+                "semantic_program_is_current_trusted",
+                return_value=True,
+            ),
+            mock.patch(
+                "quorune.card_programs.runtime.drawn_this_turn",
+                side_effect=AssertionError("unexpected draw-history scan"),
+            ),
+            mock.patch(
+                "quorune.card_programs.runtime.current_turn_history_events",
+                side_effect=AssertionError("unexpected cast-history scan"),
+            ),
+        ):
+            current = engine._effective_card_data(source)
+
+        self.assertEqual(
+            (5, 3),
+            (int(current["power"]), int(current["toughness"])),
+        )
+
     def test_public_state_conditions_recompute_layer_six_and_seven_results(self):
         registry = default_continuous_effect_component_registry()
         descriptor = fixed_public_state_characteristics_handler(
