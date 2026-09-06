@@ -7,10 +7,9 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..activation_usage import ActivationLimit
+from ..activation_condition_model import activation_restriction_spec
 from ..abilities import (
     ActivatedAbility,
-    ActivationCondition,
-    ActivationConditionKind,
     parse_activated_abilities,
 )
 from ..color_set_mana_abilities import (
@@ -86,6 +85,8 @@ def fixed_activated_mana_node(
     ]
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
+    capabilities.extend(activated_ability_cost_capabilities(ability))
+    capabilities = list(dict.fromkeys(capabilities))
     gate = explicit_capabilities_gate(
         capabilities,
         capability_registry=capability_registry,
@@ -158,6 +159,8 @@ def color_set_activated_mana_node(
     capabilities = ["mana.activated.color_set"]
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
+    capabilities.extend(activated_ability_cost_capabilities(ability))
+    capabilities = list(dict.fromkeys(capabilities))
     gate = explicit_capabilities_gate(
         capabilities,
         capability_registry=capability_registry,
@@ -462,84 +465,6 @@ _ACTIVATION_RESTRICTION_PREFIX = re.compile(
     r"^(?P<effect>.+?)\.?\s+activate only ",
     re.IGNORECASE,
 )
-_CONTROLS_TYPE_RESTRICTION = re.compile(
-    r"if you control "
-    r"(?:(?P<count>\d+|one|two|three|four|five|six|seven|eight|nine|ten) "
-    r"or more |an? )?(?P<kind>artifacts?|creatures?|lands?)\.?$",
-    re.IGNORECASE,
-)
-_ACTIVATION_NUMBER_WORDS = {
-    "one": 1,
-    "two": 2,
-    "three": 3,
-    "four": 4,
-    "five": 5,
-    "six": 6,
-    "seven": 7,
-    "eight": 8,
-    "nine": 9,
-    "ten": 10,
-}
-
-
-def _represented_activation_restriction(
-    restriction: str,
-) -> tuple[
-    bool,
-    ActivationLimit | None,
-    tuple[ActivationCondition, ...],
-] | None:
-    normalized = " ".join(restriction.casefold().rstrip(".").split())
-    once = " and only once each turn"
-    if normalized == "as a sorcery":
-        return True, None, ()
-    if normalized == f"as a sorcery{once}":
-        return True, ActivationLimit.ONCE_PER_TURN, ()
-    if normalized == "during your turn":
-        return False, None, (
-            ActivationCondition(ActivationConditionKind.CONTROLLERS_TURN),
-        )
-    if normalized == f"during your turn{once}":
-        return False, ActivationLimit.ONCE_PER_TURN, (
-            ActivationCondition(ActivationConditionKind.CONTROLLERS_TURN),
-        )
-    if normalized == "once each turn":
-        return False, ActivationLimit.ONCE_PER_TURN, ()
-    condition_kinds = {
-        "if it's not your turn": ActivationConditionKind.NOT_CONTROLLERS_TURN,
-        "if you created a token this turn": (
-            ActivationConditionKind.TOKEN_CREATED_THIS_TURN
-        ),
-    }
-    if normalized in condition_kinds:
-        return False, None, (ActivationCondition(condition_kinds[normalized]),)
-    if normalized == (
-        "if there are four or more card types among cards in your graveyard"
-    ):
-        return False, None, (
-            ActivationCondition(
-                ActivationConditionKind.GRAVEYARD_DISTINCT_TYPES,
-                minimum=4,
-            ),
-        )
-    controlled = _CONTROLS_TYPE_RESTRICTION.fullmatch(normalized)
-    if controlled is None:
-        return None
-    raw_count = controlled.group("count") or "one"
-    count = (
-        int(raw_count)
-        if raw_count.isdigit()
-        else _ACTIVATION_NUMBER_WORDS[raw_count]
-    )
-    return False, None, (
-        ActivationCondition(
-            ActivationConditionKind.CONTROLS_TYPE,
-            minimum=count,
-            card_type=controlled.group("kind").casefold().removesuffix("s"),
-        ),
-    )
-
-
 def _activated_effect_material(ability: ActivatedAbility) -> str:
     """Remove only a complete restriction already present in typed metadata."""
 
@@ -547,16 +472,15 @@ def _activated_effect_material(ability: ActivatedAbility) -> str:
     prefix = _ACTIVATION_RESTRICTION_PREFIX.match(material)
     if prefix is None:
         return material
-    represented = _represented_activation_restriction(
+    represented = activation_restriction_spec(
         material[prefix.end() :]
     )
     if represented is None:
         return material
-    sorcery_speed, activation_limit, activation_conditions = represented
     if (
-        ability.sorcery_speed is not sorcery_speed
-        or ability.activation_limit is not activation_limit
-        or ability.activation_conditions != activation_conditions
+        ability.sorcery_speed is not represented.sorcery_speed
+        or ability.activation_limit is not represented.activation_limit
+        or ability.activation_conditions != represented.conditions
     ):
         return material
     return prefix.group("effect").strip()

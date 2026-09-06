@@ -100,6 +100,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/activation_condition_model.py",
+      "layer": "rules",
+      "owning_subsystem": "activated_abilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/activation_usage.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -9036,5 +9050,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "6c9eca4e25ec17a28f22231bb62876ace66fc649be6c3a544961f774acbf3d51"
+  "fingerprint": "7327e2f72b05992fd6bc6f18ab2b42f97baa6e26efcc83803503e6fe1c58066e"
 }

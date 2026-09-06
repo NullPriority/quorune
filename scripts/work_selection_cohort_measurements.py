@@ -5,7 +5,11 @@ import re
 from typing import Any, Mapping, Sequence
 
 from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-from quorune.abilities import parse_activated_abilities
+from quorune.abilities import ActivationConditionKind, parse_activated_abilities
+from quorune.activation_condition_model import (
+    ACTIVATION_PHASE_CONDITION_CAPABILITY,
+    ACTIVATION_PUBLIC_QUERY_CAPABILITY,
+)
 from quorune.characteristic_evaluation import type_parts
 from quorune.commander_pairing import (
     COMMANDER_PAIRING_TEMPLATE_ID,
@@ -143,6 +147,9 @@ _PROBE_FIXED_PUBLIC_CHARACTERISTIC_SET = (
 )
 _PROBE_PUBLIC_QUERY_EFFECT_AMOUNT = (
     "public-query-effect-amount-existing-owner-v1"
+)
+_PROBE_PUBLIC_ACTIVATION_CONDITIONS = (
+    "public-activation-condition-existing-owner-v1"
 )
 _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC = (
     "fixed-public-state-characteristic-existing-owner-v1"
@@ -298,6 +305,7 @@ _PROBE_IDS = {
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
+    _PROBE_PUBLIC_ACTIVATION_CONDITIONS,
     _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS,
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
@@ -2559,6 +2567,15 @@ def _measurement(
         )
     if probe_id == _PROBE_PUBLIC_QUERY_EFFECT_AMOUNT:
         return _public_query_effect_amount_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_PUBLIC_ACTIVATION_CONDITIONS:
+        return _public_activation_condition_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
@@ -5019,6 +5036,140 @@ def _public_query_effect_amount_measurement(
                 is not None
                 and node.exact
                 and _contains_public_query_effect_amount(node.to_dict())
+            )
+        }
+        if not matched_ids:
+            continue
+        matched_abilities += len(matched_ids)
+        matched_residuals += sum(
+            len(ability.get("residuals", ()))
+            for ability in candidates
+            if (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            )
+            in matched_ids
+        )
+        remaining = sum(
+            ability.get("status") != "exact"
+            and (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            )
+            not in matched_ids
+            for ability in card.get("abilities", [])
+        )
+        matched_cards[oracle_id] = remaining
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_residuals
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_residuals,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _public_activation_condition_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure typed phase and public-query activation restrictions."""
+
+    registry = load_default_capability_registry()
+    new_kinds = {
+        ActivationConditionKind.CONTROLLERS_UPKEEP,
+        ActivationConditionKind.CONTROLLERS_TURN_BEFORE_ATTACKERS,
+        ActivationConditionKind.PUBLIC_QUERY_COUNT,
+    }
+    new_capabilities = {
+        ACTIVATION_PHASE_CONDITION_CAPABILITY,
+        ACTIVATION_PUBLIC_QUERY_CAPABILITY,
+    }
+    matched_abilities = 0
+    matched_residuals = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = []
+        for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
+            source_name = _source_face_context(record, ability)[0]
+            parsed = parse_activated_abilities(
+                card_name=source_name,
+                oracle_text=_source_line(record, ability),
+                keywords=record.keywords,
+            )
+            if any(
+                condition.kind in new_kinds
+                for activated in parsed
+                for condition in activated.activation_conditions
+            ):
+                candidates.append(ability)
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            (face.face_id, node.node_id): node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        matched_ids = {
+            (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            )
+            for ability in candidates
+            if (
+                (
+                    node := nodes.get(
+                        (
+                            str(ability.get("face_id") or "front"),
+                            str(ability.get("ability_id") or ""),
+                        )
+                    )
+                )
+                is not None
+                and node.exact
+                and new_capabilities.intersection(node.capability_dependencies)
             )
         }
         if not matched_ids:

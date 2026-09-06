@@ -3,6 +3,11 @@ from __future__ import annotations
 from typing import Any
 
 from ..abilities import ActivatedAbility, ActivationLimit
+from ..activation_condition_model import (
+    ACTIVATION_PHASE_CONDITION_CAPABILITY,
+    ACTIVATION_PUBLIC_QUERY_CAPABILITY,
+    ActivationConditionKind,
+)
 
 
 def activated_ability_cost_capabilities(
@@ -15,6 +20,18 @@ def activated_ability_cost_capabilities(
         additional.append("activation.loyalty.positive_counter_cost")
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         additional.append("activation.exhaust.once_per_object")
+    condition_kinds = {
+        condition.kind for condition in ability.activation_conditions
+    }
+    if condition_kinds.intersection(
+        {
+            ActivationConditionKind.CONTROLLERS_UPKEEP,
+            ActivationConditionKind.CONTROLLERS_TURN_BEFORE_ATTACKERS,
+        }
+    ):
+        additional.append(ACTIVATION_PHASE_CONDITION_CAPABILITY)
+    if ActivationConditionKind.PUBLIC_QUERY_COUNT in condition_kinds:
+        additional.append(ACTIVATION_PUBLIC_QUERY_CAPABILITY)
     if not ability.mana_ability and (
         ability.discard_source
         or ability.sacrifice_source
@@ -30,7 +47,7 @@ def activated_ability_cost_capabilities(
         choice.fixed_tap_cost() is not None for choice in ability.choices
     ):
         additional.append("activation.selected_tap.fixed")
-    return tuple(additional)
+    return tuple(dict.fromkeys(additional))
 
 
 def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:

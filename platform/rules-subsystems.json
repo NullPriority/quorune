@@ -2433,42 +2433,88 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-query-effect-amount-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-activation-conditions",
+          "member_family_ids": [
+            "activated_effect:counter",
+            "activated_effect:deal-damage",
+            "activated_effect:draw",
+            "activated_effect:life-change",
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:put-counter",
+            "activated_effect:return",
+            "activated_effect:scry",
+            "activated_effect:tap-state",
+            "quantity_expression:dynamic-quantity"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.condition.phase_window",
+            "capability:activation.condition.public_query",
+            "component:quorune.abilities.parse_activated_abilities",
+            "component:quorune.activation_condition_model.ActivationCondition",
+            "component:quorune.activation_condition_model.activation_restriction_spec",
+            "component:quorune.compiler.activated_mana_nodes._activated_effect_material",
+            "component:quorune.object_query.object_matches_query",
+            "component:quorune.rules.activation.commit._revalidate_activation",
+            "component:quorune.rules.activation.conditions.activation_condition_status"
+          ],
+          "source_contexts": [
+            "activated"
+          ],
+          "normalized_literal_parameters": [
+            "controller-battlefield-graveyard-or-hand-query",
+            "controller-upkeep-or-preattack-window",
+            "fixed-inclusive-count-range",
+            "full-current-characteristics",
+            "identity-free-hidden-zone-count"
+          ],
+          "shared_dependencies": [
+            "activation.condition.phase_window",
+            "activation.condition.public_query",
+            "state_query.permanent.public_state_predicate"
+          ],
+          "shared_grammar": "one complete controller-upkeep or controller-turn-before-attackers activation window, or one fixed-range controller battlefield, graveyard, or identity-free hand ObjectQuerySpec restriction, across otherwise exact activated effects",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing typed ActivationCondition descriptor and canonical activation availability owner so action offers and commits share current phase, step, type, color, supertype, subtype, ability, graveyard, and identity-free hand predicates before any cost mutation.",
+          "explicit_exclusions": [
+            "attachment, counter, tapped, combat, modified, chosen, named-card, same-name, distinct-value, total-power, and arbitrary ability predicates",
+            "chosen-player, opponent, target-player, arbitrary upkeep, combat-step, end-step, postcombat, extra-turn, and delayed windows",
+            "compound, disjunctive, source-relative, historical, and independently unsupported effect grammar",
+            "once-ever, nonstandard activation limits, and copied, granted, removed, or text-changing restrictions outside current typed ability discovery",
+            "opponent or target-player zones and hidden identity predicates"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-activation-condition-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v172-public-query-effect-amounts",
-      "compiler_version": "oracle-ir-v172",
-      "bundle_id": "bundle:public-query-effect-amounts",
-      "candidate_ids": ["compiler:public-query-effect-amounts"],
+      "transition_id": "oracle-ir-v173-public-activation-conditions",
+      "compiler_version": "oracle-ir-v173",
+      "bundle_id": "bundle:public-activation-conditions",
+      "candidate_ids": ["compiler:public-activation-conditions"],
       "family_ids": [
-        "activated_effect:create-token",
+        "activated_effect:counter",
         "activated_effect:deal-damage",
         "activated_effect:draw",
         "activated_effect:life-change",
         "activated_effect:ordered-effect-composition",
-        "effect_clause:create-token",
-        "effect_clause:deal-damage",
-        "effect_clause:draw",
-        "effect_clause:life-change",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "quantity_expression:dynamic-quantity",
-        "target_or_choice:target-predicate"
+        "activated_effect:put-counter",
+        "activated_effect:return",
+        "activated_effect:scry",
+        "activated_effect:tap-state",
+        "quantity_expression:dynamic-quantity"
       ],
       "capability_ids": [
-        "damage.amount.positive",
-        "damage.result.multitype_permanent",
-        "damage.result.player_life",
-        "life.change.effect",
-        "quantity_expression.public_query_effect_amount",
-        "state_query.permanent.public_state_predicate",
-        "target.revalidate_resolution",
-        "token.creation.fixed_definition",
-        "zone.draw.library_to_hand"
+        "activation.condition.phase_window",
+        "activation.condition.public_query",
+        "state_query.permanent.public_state_predicate"
       ],
-      "measurement_id": "measurement:public-query-effect-amounts",
+      "measurement_id": "measurement:public-activation-conditions",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -3050,6 +3096,11 @@
         "candidate_id": "compiler:public-query-effect-amounts",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The v171 selector has no eligible carried candidate while the raw continuous-layer leader remains heterogeneous and the rules queue still points to the explicitly non-foreground counter closure. A bounded integrated probe selects one threshold-clearing query-derived amount family across spell, activated, and normalized-trigger contexts. One typed resolution placeholder reuses the stack object's locked controller, the cycle-safe layer-5 CharacteristicQuantitySpec resolver, and the existing life, damage, draw, token, target, replacement, projection, and replay owners. Source-counter, attachment, hidden-zone, source-excluding, ability-presence, stateful, linked, chosen, modal, optional, conditional, compound, and open-arithmetic variants remain fail-closed; current cohort identities and measurements are generated from the current frontier."
+      },
+      {
+        "candidate_id": "compiler:public-activation-conditions",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The v172 selector has no eligible carried candidate while the raw continuous-layer aggregate remains heterogeneous and every retained measured bundle is complete or below the normal floor. Bounded comparisons retire new public step-trigger schedules at 8 complete cards, activation timing windows alone at 29, and public activation queries alone at 25. Their shared typed ActivationCondition owner forms one coherent activation-legality family across otherwise exact effect bodies, with a conservative 54-card and 63-ability lower bound. Controller upkeep, pre-attack turn windows, current controller battlefield/graveyard queries, and identity-free hand counts reuse the existing offer, commit, characteristic, projection, and replay owners; opponent, source-relative, stateful, historical, compound, and independently unsupported effect forms remain fail-closed."
       }
     ]
   },

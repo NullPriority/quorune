@@ -53,6 +53,7 @@ from ...cycling_abilities import (
 )
 from ..action_proposals import ActivationProposal, thaw_json
 from .model import ActivationProposalError
+from .conditions import activation_condition_status
 
 
 class ActivationCommitHost(Protocol):
@@ -142,6 +143,22 @@ def _revalidate_activation(
         raise ActivationProposalError(
             "The selected ability is no longer available",
             reason="stale_ability",
+        )
+    condition_status, condition_reason = activation_condition_status(
+        host,
+        proposal.seat,
+        ability,
+        source,
+    )
+    if condition_status != "payable":
+        raise ActivationProposalError(
+            "The activation condition changed after proposal construction",
+            status=(
+                "unresolved"
+                if condition_status == "unresolved"
+                else "unpayable"
+            ),
+            reason=condition_reason or "stale_activation_condition",
         )
     return source, ability
 

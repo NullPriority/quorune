@@ -14,6 +14,7 @@ from ...activation_usage import (
     ActivationUsageError,
     activation_usage_verdict,
 )
+from ...object_query import object_matches_query, object_query_result
 
 
 class ActivationConditionHost(Protocol):
@@ -56,6 +57,50 @@ def _effective_card_types(
     return frozenset(value.casefold() for value in card_types)
 
 
+def _public_query_count(
+    host: ActivationConditionHost,
+    seat: str,
+    condition: ActivationCondition,
+) -> int | None:
+    query = condition.query
+    if query is None:
+        return None
+    zone = query.zones[0]
+    try:
+        object_ids = tuple(host.state.players[seat].zones[zone])
+    except (AttributeError, KeyError, TypeError):
+        return None
+    if zone == "hand":
+        return len(object_ids)
+    count = 0
+    for object_id in object_ids:
+        try:
+            card = host.state.cards[object_id]
+            if zone == "battlefield" and (
+                card.controller != seat or card.phased_out
+            ):
+                continue
+            effective = host._effective_card_data(card)
+            type_parts = host._type_parts(
+                str(effective.get("type_line") or "")
+            )
+            attached = host.state.cards.get(card.attached_to or "")
+            row = object_query_result(
+                card,
+                effective,
+                type_parts=type_parts,
+                known_to_actor=True,
+                attached_to_ref=(
+                    attached.ref if attached is not None else None
+                ),
+            )
+        except (AttributeError, KeyError, TypeError, ValueError):
+            return None
+        if object_matches_query(row, query):
+            count += 1
+    return count
+
+
 def _typed_condition_status(
     host: ActivationConditionHost,
     seat: str,
@@ -67,6 +112,30 @@ def _typed_condition_status(
             ("payable", None)
             if host.state.active_player == seat
             else ("unavailable", "only_during_your_turn")
+        )
+    if kind is ActivationConditionKind.CONTROLLERS_UPKEEP:
+        return (
+            ("payable", None)
+            if (
+                host.state.active_player == seat
+                and host.state.phase == "beginning"
+                and host.state.step == "upkeep"
+            )
+            else ("unavailable", "only_during_your_upkeep")
+        )
+    if kind is ActivationConditionKind.CONTROLLERS_TURN_BEFORE_ATTACKERS:
+        before_attackers = (
+            (host.state.phase == "beginning")
+            or (host.state.phase, host.state.step)
+            in {
+                ("precombat_main", "main"),
+                ("combat", "beginning_combat"),
+            }
+        )
+        return (
+            ("payable", None)
+            if host.state.active_player == seat and before_attackers
+            else ("unavailable", "only_before_attackers_are_declared")
         )
     if kind is ActivationConditionKind.NOT_CONTROLLERS_TURN:
         return (
@@ -116,6 +185,17 @@ def _typed_condition_status(
             ("payable", None)
             if len(card_types) >= int(condition.minimum or 0)
             else ("unavailable", "requires_delirium")
+        )
+    if kind is ActivationConditionKind.PUBLIC_QUERY_COUNT:
+        count = _public_query_count(host, seat, condition)
+        if count is None:
+            return "unresolved", "malformed_public_activation_query"
+        minimum = int(condition.minimum or 0)
+        maximum = condition.maximum
+        return (
+            ("payable", None)
+            if count >= minimum and (maximum is None or count <= maximum)
+            else ("unavailable", "requires_public_activation_query")
         )
     return "unresolved", "unresolved_activation_condition"
 

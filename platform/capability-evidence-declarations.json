@@ -2,6 +2,182 @@
   "schema_version": 1,
   "declarations": [
     {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_conditions_gate_existing_effect_and_replacement_owners",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Gate a replacement-aware counter placement during upkeep before delegating the accepted activation to the existing counter transaction."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_phase_windows_share_offer_and_commit_revalidation",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Evaluate controller upkeep and pre-attack turn windows through the same typed activation condition used by action advertisement and commit revalidation."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_stale_public_query_offer_rolls_back_before_cost_mutation",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Revalidate typed conditions at commit before tapping the source, spending mana, or placing a stack object."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_activation_condition_mutants_are_killed",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Bypass commit-time condition revalidation and require the stale proposal assertion to reject the survivor."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionCompilerTests.test_public_activation_condition_grammar_and_schema_fail_closed",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep opponent, arbitrary upkeep, combat-step, historical, source-state, and compound timing restrictions outside the closed phase-window grammar."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_stale_public_query_offer_rolls_back_before_cost_mutation",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject a condition that changes after proposal creation before any activation resource mutates."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionCompilerTests.test_public_activation_conditions_compile_across_effect_families",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile controller-upkeep and before-attackers restrictions across draw, life, and counter effect bodies with exact capability closure."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_conditions_gate_existing_effect_and_replacement_owners",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Accept an upkeep-gated activation and delegate its fixed counter effect to the existing replacement-aware owner."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_phase_windows_share_offer_and_commit_revalidation",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Accept upkeep and pre-attack controller windows at their exact phase-step boundaries and execute one advertised draw activation."
+    },
+    {
+      "capability_id": "activation.condition.phase_window",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_hand_and_graveyard_queries_preserve_privacy_and_replay",
+      "official_rule_ids": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Activate the upkeep-window fixture, consume its once-per-turn use, resolve its typed effect, and exactly replay the resulting state."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_conditions_gate_existing_effect_and_replacement_owners",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Gate ordinary target damage and life effects on current controller graveyard counts before delegating mutation to their existing owners."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_queries_use_current_type_color_and_ability_characteristics",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Count current layer-4 type changes and layer-6 keyword addition/removal through one public query before deciding activation availability."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_stale_public_query_offer_rolls_back_before_cost_mutation",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Invalidate an empty-hand query after proposal creation and reject commit before mana, tap, stack, or source state mutates."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_hand_and_graveyard_queries_preserve_privacy_and_replay",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Evaluate the controller's typed hand-count condition in four-player state while preserving ordinary action ownership."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_activation_condition_mutants_are_killed",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the shared restriction parser and corrupt the current query count; exact compiler and availability assertions reject both survivors."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionCompilerTests.test_public_activation_condition_grammar_and_schema_fail_closed",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject opponent, hidden-identity, source-relative, stateful, same-name, distinct-power, disjunctive, compound, and malformed public queries."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_stale_public_query_offer_rolls_back_before_cost_mutation",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject an empty-hand condition after a card enters hand and preserve mana, tap, source, and stack state."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionCompilerTests.test_public_activation_conditions_compile_across_effect_families",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile closed controller battlefield, graveyard, and identity-free hand count restrictions across draw, life, Scry, and counter effects."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_conditions_gate_existing_effect_and_replacement_owners",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Accept threshold-style controller graveyard counts before existing damage and life effects execute."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_queries_use_current_type_color_and_ability_characteristics",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Accept current controller type, color, and represented keyword queries, including control changes and layer-4/layer-6 updates."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_hand_and_graveyard_queries_preserve_privacy_and_replay",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use only an identity-free hand count and prove another principal's four-player projection contains none of the controller's hidden card references."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_hand_and_graveyard_queries_preserve_privacy_and_replay",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Persist and exactly replay the typed activation descriptor, condition result, cost payment, once-per-turn state, and resolved effect."
+    },
+    {
       "capability_id": "activation.counter_keyword.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_keyword_activations.FixedCounterKeywordRuntimeTests.test_counter_keyword_quantity_replacement_suspends_and_replays",

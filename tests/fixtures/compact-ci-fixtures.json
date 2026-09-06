@@ -34,6 +34,7 @@
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/prowess-cards.json",
+    "tests/fixtures/public-activation-condition-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",
     "tests/fixtures/query-gated-self-characteristics-cards.json",
     "tests/fixtures/query-power-toughness-definition-cards.json",
