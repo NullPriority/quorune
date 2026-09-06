@@ -251,11 +251,12 @@ class FixedEntryConditionCompilerTests(unittest.TestCase):
     def test_residual_entry_condition_siblings_remain_fail_closed(self):
         variants = (
             (
-                "Rivendell",
-                "Rivendell enters tapped unless you control a legendary creature.\n"
-                "{T}: Add {U}.\n"
-                "{1}{U}, {T}: Scry 2. Activate only if you control a legendary creature.",
-                "Activate only if you control a legendary creature",
+                "Mines of Moria",
+                "Mines of Moria enters tapped unless you control a legendary creature.\n"
+                "{T}: Add {R}.\n"
+                "{3}{R}, {T}, Exile three cards from your graveyard: Create "
+                "two Treasure tokens.",
+                "Exile three cards from your graveyard",
             ),
             (
                 "Fire Nation Palace",
