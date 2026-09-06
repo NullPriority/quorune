@@ -360,7 +360,16 @@ def _snow_payment_option(
     snow_required: int,
 ) -> dict[str, int] | None:
     if not snow_required:
-        return normalize_mana_bundle(None)
+        return (
+            normalize_mana_bundle(None)
+            if _ordinary_payment_sufficient(
+                pool,
+                fixed_need,
+                generic_need,
+                reserve,
+            )
+            else None
+        )
     option = normalize_mana_bundle(None)
     order = tuple(
         sorted(

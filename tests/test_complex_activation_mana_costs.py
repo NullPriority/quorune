@@ -236,6 +236,15 @@ class ComplexActivationManaCompilerTests(unittest.TestCase):
 
     def test_snow_allocation_does_not_double_spend_colored_mana(self):
         with self.assertRaises(ManaPlanError):
+            auto_plan_payment({"R": 1}, (), starting_pool={})
+        ordinary = auto_plan_payment(
+            {"R": 1},
+            (),
+            starting_pool={"R": 1},
+        )
+        self.assertEqual(1, ordinary.payment["R"])
+
+        with self.assertRaises(ManaPlanError):
             auto_plan_payment(
                 {"R": 1},
                 (),
@@ -934,7 +943,7 @@ class ComplexActivationManaRuntimeTests(unittest.TestCase):
             {action["id"] for action in self.offers(session)},
         )
         with mock.patch(
-            "quorune.engine.snow_mana_pool",
+            "quorune.mana_provenance.snow_mana_pool",
             return_value={key: 0 for key in "WUBRGC"},
         ):
             self.assertNotEqual(
