@@ -4794,6 +4794,24 @@
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.continuous.characteristics.fixed_public_state", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["continuous.characteristics.fixed_public_state"],
+      "interaction_order": 2,
+      "assertion": "A generic Saga may carry an exact draw-gated fixed public-state anthem beside an independently inexact chapter, but strict and compatible runtime admission reject the residual CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.continuous.power_toughness.fixed_anthem", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["continuous.power_toughness.fixed_anthem"],
+      "interaction_order": 2,
+      "assertion": "The typed fixed anthem nested under a public-state condition cannot authorize the generic Saga while any sibling chapter remains unresolved."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_saga_chapter_residual_pairs_fail_closed_at_runtime_boundary",
       "piece_ids": ["capability.continuous.ability.fixed_query_keyword_grant", "residual.card_form.ordinary-saga-chapter-event-binding"],
       "capability_ids": ["continuous.ability.fixed_query_keyword_grant"],
       "interaction_order": 2,
