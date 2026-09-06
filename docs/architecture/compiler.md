@@ -200,6 +200,19 @@ Multiple quotes, quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
 material residuals.
 
+`activation_condition_model.py` owns complete trailing activation
+restrictions shared by the compiler-pinned catalog and activation lowering.
+It represents controller upkeep and pre-attack turn windows plus fixed-range
+controller battlefield, graveyard, and identity-free hand queries. The
+runtime activation-condition owner evaluates battlefield queries against full
+current effective characteristics, including the common layer-6 ability
+applicability path, while hand conditions inspect only zone size. Offer and
+commit call the same condition owner, and commit revalidation occurs before
+mana, tap, usage, source movement, or stack mutation. Opponent, target-player,
+attachment, counter, tapped/combat, chosen, named-card, distinct-value,
+total-power, source-relative, historical, compound, and unsupported timing
+forms remain source-spanned residuals.
+
 The same compiler owner separately lowers fixed static characteristic bodies
 gated by one closed public-state condition. A versioned descriptor combines a
 source-controller turn, raw graveyard or hand count, life-total, current-turn

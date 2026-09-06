@@ -713,17 +713,16 @@ _WITNESSES = {
         "Creatures of the chosen color without flying can't attack you.",
         "{3}{W}{U}",
     ),
-    "hallowed-healer": _Witness(
-        "Hallowed Healer",
-        "Creature — Human Cleric",
-        "{T}: Prevent the next 2 damage that would be dealt to any target "
-        "this turn.\n"
-        "Threshold — {T}: Prevent the next 4 damage that would be dealt to "
-        "any target this turn. Activate only if there are seven or more "
-        "cards in your graveyard.",
-        "{2}{W}",
-        power="1",
-        toughness="1",
+    "shieldmage-elder": _Witness(
+        "Shieldmage Elder",
+        "Creature — Human Cleric Wizard",
+        "Tap two untapped Clerics you control: Prevent all damage target "
+        "creature would deal this turn.\n"
+        "Tap two untapped Wizards you control: Prevent all damage target "
+        "spell would deal this turn.",
+        "{5}{W}",
+        power="2",
+        toughness="3",
     ),
     "winds-of-qal-sisma": _Witness(
         "Winds of Qal Sisma",
@@ -1357,7 +1356,7 @@ _bind("ovinomancer", TRIGGER_AND_REPLACEMENT_PAIRS[1], TRIGGER_AND_REPLACEMENT_P
 _bind("kindred-discovery", *TRIGGER_AND_REPLACEMENT_PAIRS[2:4])
 _bind("kindred-discovery", *TRIGGER_AND_REPLACEMENT_PAIRS[6:8])
 _bind("teferis-moat", *DECLARATION_AND_REPLACEMENT_PAIRS)
-_bind("hallowed-healer", PREVENTION_AND_REPLACEMENT_PAIRS[0])
+_bind("shieldmage-elder", PREVENTION_AND_REPLACEMENT_PAIRS[0])
 _bind("winds-of-qal-sisma", *PREVENTION_AND_REPLACEMENT_PAIRS[1:])
 _bind("gideon-ally-of-zendikar", TOKEN_AND_DAMAGE_PREVENTION_PAIR)
 _bind("rasputin", FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS[0])

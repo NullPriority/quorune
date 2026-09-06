@@ -20,6 +20,7 @@ from .attached_granted_ability_nodes import (
     GRANTED_ACTIVATED_ABILITY_KIND,
     GRANTED_TRIGGERED_ABILITY_KIND,
 )
+from .activated_mana_nodes import _activated_effect_material
 from .fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
@@ -73,12 +74,6 @@ REJECTION_CATEGORIES = (
 _ABILITY_WORD = re.compile(
     r"^(?P<word>[A-Za-z][A-Za-z ']+)\s+[—-]\s+(?P<body>.+)$"
 )
-_SORCERY_ONLY = re.compile(
-    r"\.?\s*activate only as a sorcery\.?$",
-    re.IGNORECASE,
-)
-
-
 class TargetEffectAssuranceError(ValueError):
     """The promoted fixed-target compiler corpus is not closed."""
 
@@ -556,7 +551,7 @@ def _resolution_body(
         )
         if len(abilities) != 1:
             return None
-        return _SORCERY_ONLY.sub("", abilities[0].effect_text).strip()
+        return _activated_effect_material(abilities[0])
     return None
 
 

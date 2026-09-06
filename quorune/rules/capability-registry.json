@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 145,
+  "registry_version": 146,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -314,6 +314,60 @@
       "dependency_fail_closed_rationale": "The focused compiler dependency test blocks either the source-zone payment owner or the private typed search-to-hand owner and proves the Typecycling node remains inexact rather than falling back to reminder text or a generic activation.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_typecycling_compiler_mutant_is_killed removes the typed Typecycling production, while the exact source-spanned compiler assertion rejects the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.condition.phase_window",
+      "version": 1,
+      "official_rules": ["117.1b", "602.1", "602.1b", "602.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile controller-upkeep and controller-turn-before-attackers activation windows into typed phase/step predicates evaluated by the same availability owner for offers and committed actions.",
+        "inputs": ["one source-spanned complete activation restriction", "current active player", "current phase and step", "current typed ability and source incarnation"],
+        "outputs": ["one closed activation-condition descriptor", "offer and commit parity", "stale-condition rejection before cost mutation", "exact replay"],
+        "exclusions": ["any-player, opponent, arbitrary upkeep, combat, declare-blockers, end-step, postcombat, extra-turn, delayed, and chosen-player windows", "conditional turn history, attack history, source combat state, and compound timing predicates", "once-ever and nonstandard activation limits", "copied, granted, removed, and text-changing restrictions outside current typed ability discovery"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.activation_condition_model.activation_restriction_spec", "quorune.abilities.parse_activated_abilities", "quorune.compiler.activated_mana_nodes._activated_effect_material", "quorune.rules.activation.conditions.activation_condition_status", "quorune.rules.activation.availability.activation_availability", "quorune.rules.activation.commit._revalidate_activation"],
+      "positive_tests": ["test_public_activation_conditions_compile_across_effect_families", "test_phase_windows_share_offer_and_commit_revalidation", "test_conditions_gate_existing_effect_and_replacement_owners"],
+      "negative_tests": ["test_public_activation_condition_grammar_and_schema_fail_closed", "test_stale_public_query_offer_rolls_back_before_cost_mutation"],
+      "interaction_tests": ["test_phase_windows_share_offer_and_commit_revalidation", "test_stale_public_query_offer_rolls_back_before_cost_mutation", "test_conditions_gate_existing_effect_and_replacement_owners"],
+      "multiplayer_tests": [],
+      "privacy_tests": [],
+      "replay_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The focused dependency test blocks the phase-window capability and proves only the affected source-spanned activation remains inexact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused parser and commit-revalidation mutations remove or bypass the typed phase predicate; exact compiler and stale-offer assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.condition.public_query",
+      "version": 1,
+      "official_rules": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile one controller battlefield, graveyard, or identity-free hand count restriction into a typed ObjectQuerySpec and evaluate current characteristics through the canonical activation availability and commit-revalidation path.",
+        "inputs": ["one source-spanned complete activation restriction", "one closed controller-zone ObjectQuerySpec", "one fixed inclusive count range", "current effective public characteristics", "current typed ability and source incarnation"],
+        "outputs": ["one closed activation-condition descriptor", "current public count without hidden identity exposure", "offer and commit parity", "stale-condition rejection before cost mutation", "exact replay"],
+        "exclusions": ["opponent or target-player zones", "hidden identity predicates", "attachment, counter, tapped, combat, modified, chosen, named-card, same-name, distinct-value, total-power, and arbitrary ability predicates", "disjunctions and compound conditions", "source-relative and historical queries", "copied, granted, removed, and text-changing restrictions outside current typed ability discovery"]
+      },
+      "dependencies": ["state_query.permanent.public_state_predicate"],
+      "implementation_components": ["quorune.activation_condition_model.ActivationCondition", "quorune.activation_condition_model.activation_restriction_spec", "quorune.abilities.parse_activated_abilities", "quorune.rules.activation.conditions.activation_condition_status", "quorune.rules.activation.availability.activation_availability", "quorune.rules.activation.commit._revalidate_activation", "quorune.object_predicate.ObjectQuerySpec", "quorune.object_query.object_matches_query"],
+      "positive_tests": ["test_public_activation_conditions_compile_across_effect_families", "test_public_queries_use_current_type_color_and_ability_characteristics", "test_conditions_gate_existing_effect_and_replacement_owners"],
+      "negative_tests": ["test_public_activation_condition_grammar_and_schema_fail_closed", "test_stale_public_query_offer_rolls_back_before_cost_mutation"],
+      "interaction_tests": ["test_public_queries_use_current_type_color_and_ability_characteristics", "test_stale_public_query_offer_rolls_back_before_cost_mutation", "test_conditions_gate_existing_effect_and_replacement_owners"],
+      "multiplayer_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
+      "privacy_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
+      "replay_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The focused dependency test blocks the public-query capability and proves only the affected source-spanned activation remains inexact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused parser and query-evaluator mutations remove or corrupt the typed condition; exact compiler and current-state assertions reject both survivors.",
       "blockers": [],
       "status": "trusted"
     },

@@ -362,6 +362,12 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
             ),
             "Activate only if you control an artifact.",
             "Activate only if you control three or more creatures.",
+            "Activate only during your upkeep.",
+            "Activate only during your upkeep and only once each turn.",
+            "Activate only during your turn, before attackers are declared.",
+            "Activate only if you have no cards in hand.",
+            "Activate only if there are seven or more cards in your graveyard.",
+            "Activate only if you control a legendary creature.",
         )
         for restriction in restrictions:
             with self.subTest(restriction=restriction):
@@ -379,7 +385,6 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
 
     def test_unrepresented_activation_restriction_tails_remain_residual(self):
         variants = (
-            "Activate only during your upkeep.",
             "Activate only during any upkeep step.",
             "Activate only once.",
             "Activate only during the declare blockers step.",

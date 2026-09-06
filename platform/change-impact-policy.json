@@ -596,6 +596,30 @@
       ]
     },
     {
+      "id": "public-activation-condition-contract",
+      "patterns": [
+        "quorune/abilities.py",
+        "quorune/activation_condition_model.py",
+        "quorune/compiler/activated_costs.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/target_effect_corpus_assurance.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/activation/conditions.py",
+        "tests/fixtures/public-activation-condition-cards.json",
+        "tests/test_public_activation_conditions.py"
+      ],
+      "test_modules": [
+        "test_activation_conditions",
+        "test_casting_activation_proposal_equivalence",
+        "test_fixed_counter_placement_effects",
+        "test_public_activation_conditions",
+        "test_typed_activated_ability_catalog"
+      ],
+      "test_suites": [
+        "casting-costs-mana"
+      ]
+    },
+    {
       "id": "worktree-environment-ownership",
       "patterns": [
         "AGENTS.md",

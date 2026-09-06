@@ -191,6 +191,29 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_public_activation_condition_owner_selects_legality_contract(self):
+        for owner in (
+            "quorune/activation_condition_model.py",
+            "quorune/rules/activation/conditions.py",
+            "tests/test_public_activation_conditions.py",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(
+                    {
+                        "test_activation_conditions",
+                        "test_casting_activation_proposal_equivalence",
+                        "test_fixed_counter_placement_effects",
+                        "test_public_activation_conditions",
+                        "test_typed_activated_ability_catalog",
+                    },
+                    set(plan.test_modules),
+                )
+                self.assertIn(
+                    "public-activation-condition-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_continuous_runtime_changes_select_performance_contract(self):
         for owner in (
             "quorune/card_programs/runtime.py",

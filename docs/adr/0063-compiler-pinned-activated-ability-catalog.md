@@ -2,7 +2,7 @@
 title: "ADR 0063: compiler-pinned activated-ability catalog"
 status: "ADR"
 authoritative_source: "CardProgram activated-ability compilation and runtime discovery boundary"
-verified: "2026-08-11"
+verified: "2026-09-05"
 audience: "compiler, rules, replay, and architecture contributors"
 maintenance: "hand-maintained"
 adr_id: "0063"
@@ -55,6 +55,23 @@ Oracle text, card identity, or mutable state reference. The registered
 operation is therefore part of the exact architecture allowance bound to this
 ADR; widening its payload requires a new review and baseline.
 
+Activation restrictions are parsed once into the same pinned ability value.
+The closed public family includes controller upkeep, the controller's turn
+before attackers are declared, fixed controller battlefield or graveyard
+queries, and identity-free controller hand counts. Battlefield queries use
+current effective type, subtype, supertype, color, and represented keyword
+facts, including the shared layer-6 applicability path; hidden-zone queries
+count objects without inspecting identity. The canonical activation
+availability owner evaluates the descriptor both for an advertised action and
+again at commit before mana, tap, usage, source-zone, or stack mutation.
+
+Opponent and target-player zones, hidden identity, attachments, counters,
+combat or tapped state, chosen or named cards, same-name and distinct-value
+queries, total power, source-relative or historical facts, disjunctions,
+compound conditions, arbitrary timing windows, and once-ever limits remain
+residual. This family does not create an effect-specific activation check or a
+second query/commit path.
+
 Historical Game Record v3 data may use its isolated compatibility adapter to
 reconstruct legacy descriptors. Current games cannot use that adapter. The
 runtime never calls the Oracle activation parser, and malformed or conflicting
@@ -76,6 +93,8 @@ catalog descriptors fail closed before action exposure.
 
 - Activation advertisement and acceptance consume the same immutable ability
   value.
+- A condition that changes after proposal construction rejects the commit
+  before any activation cost mutates state.
 - Copy, typed grant, token construction, removal, replay, and source validation
   share one versioned serialization.
 - Parser changes affect newly compiled CardPrograms, not an in-progress game.

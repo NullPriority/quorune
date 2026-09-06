@@ -15,6 +15,11 @@ import re
 from typing import Any, Iterable, Mapping, Sequence
 
 from .activation_usage import ActivationLimit
+from .activation_condition_model import (
+    ActivationCondition,
+    ActivationConditionKind,
+    activation_restriction_spec,
+)
 from .activated_ability_descriptor import validate_activated_ability_descriptor
 from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
@@ -220,70 +225,6 @@ class CostChoice:
                 if "predicate" in value
                 else None
             ),
-        )
-
-
-class ActivationConditionKind(str, Enum):
-    CONTROLLERS_TURN = "controllers_turn"
-    NOT_CONTROLLERS_TURN = "not_controllers_turn"
-    TOKEN_CREATED_THIS_TURN = "token_created_this_turn"
-    CONTROLS_TYPE = "controls_type"
-    GRAVEYARD_DISTINCT_TYPES = "graveyard_distinct_types"
-    UNSUPPORTED = "unsupported"
-
-
-@dataclass(frozen=True, slots=True)
-class ActivationCondition:
-    """Closed compiler-pinned predicate evaluated before activation."""
-
-    kind: ActivationConditionKind
-    minimum: int | None = None
-    card_type: str | None = None
-
-    def __post_init__(self) -> None:
-        if not isinstance(self.kind, ActivationConditionKind):
-            try:
-                object.__setattr__(self, "kind", ActivationConditionKind(self.kind))
-            except (TypeError, ValueError) as exc:
-                raise ValueError("unsupported activation condition kind") from exc
-        if self.minimum is not None and (
-            type(self.minimum) is not int or self.minimum < 1
-        ):
-            raise ValueError("activation condition minimum must be positive")
-        if self.card_type is not None and (
-            not isinstance(self.card_type, str) or not self.card_type.strip()
-        ):
-            raise ValueError("activation condition card_type must be nonempty")
-        if self.card_type is not None:
-            object.__setattr__(self, "card_type", self.card_type.casefold().strip())
-        if self.kind is ActivationConditionKind.CONTROLS_TYPE:
-            if self.minimum is None or self.card_type not in {
-                "artifact", "creature", "land"
-            }:
-                raise ValueError("controls-type conditions require a supported type and minimum")
-        elif self.kind is ActivationConditionKind.GRAVEYARD_DISTINCT_TYPES:
-            if self.minimum is None or self.card_type is not None:
-                raise ValueError("graveyard-type conditions require only a minimum")
-        elif self.minimum is not None or self.card_type is not None:
-            raise ValueError("this activation condition takes no parameters")
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "kind": self.kind.value,
-            "minimum": self.minimum,
-            "card_type": self.card_type,
-        }
-
-    @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "ActivationCondition":
-        if not isinstance(value, Mapping) or set(value) != {
-            "kind", "minimum", "card_type"
-        }:
-            raise ValueError("activation conditions use a closed schema")
-        return cls(
-            kind=value["kind"],
-            minimum=value["minimum"],
-            card_type=value["card_type"],
         )
 
 
@@ -1069,6 +1010,12 @@ def _normalized_ability_line(raw_line: str) -> tuple[str, str | None]:
 
 def _activation_conditions(effect_text: str) -> tuple[ActivationCondition, ...]:
     lower = " ".join(effect_text.casefold().split())
+    marker = "activate only "
+    if marker in lower:
+        restriction = lower.rsplit(marker, 1)[1]
+        represented = activation_restriction_spec(restriction)
+        if represented is not None:
+            return represented.conditions
     result: list[ActivationCondition] = []
     if "activate only during your turn" in lower:
         result.append(ActivationCondition(ActivationConditionKind.CONTROLLERS_TURN))
