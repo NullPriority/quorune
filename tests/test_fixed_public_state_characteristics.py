@@ -373,6 +373,30 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             ["W"],
             attached_color[1]["source_condition"]["predicate"]["colors_all"],
         )
+        attached_opponent = fixed_public_state_characteristics_handler(
+            "Enchanted creature gets +2/+2 as long as an opponent controls "
+            "a black permanent.",
+            source_name="Attached Opponent Query",
+        )
+        self.assertIsNotNone(attached_opponent)
+        assert attached_opponent is not None
+        opponent_condition = attached_opponent[1]["source_condition"]
+        self.assertEqual(
+            ("query_count_at_least", 1, "opponent_zones", ["B"]),
+            (
+                opponent_condition["kind"],
+                opponent_condition["amount"],
+                opponent_condition["quantity"]["scope"],
+                opponent_condition["quantity"]["query"]["colors_all"],
+            ),
+        )
+        self.assertEqual(
+            ("attached", ["creature"]),
+            (
+                attached_opponent[1]["target"]["kind"],
+                attached_opponent[1]["target"]["types_all"],
+            ),
+        )
 
     def test_fixed_public_condition_models_use_closed_current_facts(self):
         cases = (
@@ -1301,6 +1325,42 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             (5, 3),
             (int(current["power"]), int(current["toughness"])),
         )
+
+    def test_opponent_color_existence_uses_live_public_query(self):
+        session = self.session(118_220_009)
+        engine = session.engine
+        source = self.add_constructed_condition_source(
+            session,
+            ref="OPPONENT-COLOR",
+            texts=(
+                "This creature gets +2/+2 as long as an opponent controls "
+                "a black permanent.",
+            ),
+        )
+
+        def stats() -> tuple[int, int]:
+            with mock.patch.object(
+                CommanderEngine,
+                "semantic_program_is_current_trusted",
+                return_value=True,
+            ):
+                current = engine._effective_card_data(source)
+            return int(current["power"]), int(current["toughness"])
+
+        self.assertEqual((3, 3), stats())
+        black_permanent = self.creature(
+            engine,
+            seat="B",
+            name="Opponent Color Witness",
+            colors=("B",),
+        )
+        self.assertEqual((5, 5), stats())
+        engine.change_control(
+            black_permanent.object_id,
+            "A",
+            reason="opponent public-query relation witness",
+        )
+        self.assertEqual((3, 3), stats())
 
     def test_public_state_conditions_recompute_layer_six_and_seven_results(self):
         registry = default_continuous_effect_component_registry()

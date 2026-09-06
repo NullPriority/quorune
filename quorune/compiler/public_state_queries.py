@@ -905,9 +905,26 @@ def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | 
     parsed = fixed_characteristic_battlefield_query_subject(
         f"{material} you control"
     )
-    if parsed is None or parsed[0] != "source_controller":
+    if parsed is not None and parsed[0] == "source_controller":
+        return parsed[1], parsed[2]
+    legacy = re.fullmatch(
+        r"(?P<quality>black|blue|green|red|white) "
+        r"(?P<subject>artifacts?|creatures?|enchantments?|lands?|permanents?)"
+        r"|(?P<equipment>Equipment)",
+        material,
+        re.IGNORECASE,
+    )
+    if legacy is None:
         return None
-    return parsed[1], parsed[2]
+    query = (
+        _fixed_condition_object_query("artifact", "equipment")
+        if legacy.group("equipment")
+        else _fixed_condition_object_query(
+            legacy.group("subject").casefold().removesuffix("s"),
+            legacy.group("quality"),
+        )
+    )
+    return (query, False) if query is not None else None
 
 
 def _controller_query_count_condition(
