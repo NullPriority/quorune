@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "4c2eb1cf324ed9491a6fbcc6cb2d060137a751312c2be47c02e40f5c56f69504"
+verified: "6203c7dc25ff6b2b5ebec3aec797c69b238d3704ca220b3380efee9f4181f244"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -19,11 +19,11 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Urabrask // The Great Work | 228 | 28 | 8 | 7 | 13 | 4 | `blocked` |
 | Terra, Magical Adept // Esper Terra | 224 | 22 | 8 | 6 | 12 | 14 | `blocked` |
 | Jin-Gitaxias // The Great Synthesis | 223 | 28 | 7 | 7 | 11 | 6 | `blocked` |
+| Jugan Defends the Temple // Remnant of the Rising Star | 223 | 29 | 8 | 7 | 8 | 9 | `blocked` |
 | Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 222 | 24 | 8 | 6 | 12 | 10 | `blocked` |
 | Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 217 | 18 | 7 | 5 | 12 | 21 | `blocked` |
 | The Kami War // O-Kagachi Made Manifest | 216 | 28 | 8 | 7 | 9 | 6 | `blocked` |
 | Vorinclex // The Grand Evolution | 214 | 24 | 8 | 7 | 12 | 4 | `blocked` |
-| Jugan Defends the Temple // Remnant of the Rising Star | 213 | 25 | 8 | 7 | 9 | 9 | `blocked` |
 | Sheoldred // The True Scriptures | 213 | 23 | 8 | 7 | 13 | 4 | `blocked` |
 | Teachings of the Kirin // Kirin-Touched Orochi | 211 | 28 | 7 | 7 | 9 | 6 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
@@ -51,6 +51,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Cleric Class | 183 | 22 | 6 | 6 | 7 | 12 | `blocked` |
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
+| Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Ojer Axonil, Deepest Might // Temple of Power | 183 | 23 | 7 | 6 | 9 | 6 | `blocked` |
 | Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
 | Tribute to Horobi // Echo of Death's Wail | 181 | 20 | 7 | 6 | 8 | 6 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Tolvada // The Broken Sky | 178 | 21 | 6 | 4 | 5 | 17 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
-| Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
