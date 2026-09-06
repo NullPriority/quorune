@@ -267,11 +267,8 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
 
     def test_unsupported_qualities_remain_residual(self):
         unsupported = (
-            "Token creatures you control get +1/+1.",
-            "Nontoken creatures you control get +1/+1.",
             "Snow creatures you control get +1/+1.",
             "Commander creatures you control get +1/+1.",
-            "Attacking token creatures you control get +1/+1.",
             "Nonwhite creatures you control get +1/+1.",
             "Artifact token creatures you control get +1/+1.",
         )
@@ -284,6 +281,18 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                 )
                 self.assertIsNone(fixed_power_toughness_anthem_handler(text))
 
+    def test_shared_query_qualities_compile_through_the_typed_anthem(self):
+        for text in (
+            "Token creatures you control get +1/+1.",
+            "Nontoken creatures you control get +1/+1.",
+            "Attacking token creatures you control get +1/+1.",
+            "Eldrazi Spawn creatures you control get +2/+1.",
+            "Land creatures you control get +1/+1.",
+            "Colorless creatures you control get +2/+2.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNotNone(fixed_power_toughness_anthem_handler(text))
+
     def test_unsupported_qualities_preserve_the_exact_oracle_residual(self):
         db, _, _ = load_assets()
         try:
@@ -291,10 +300,8 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
             capabilities = load_default_capability_registry()
             for index, text in enumerate(
                 (
-                    "Token creatures you control get +1/+1.",
                     "Snow creatures you control get +1/+1.",
                     "Commander creatures you control get +1/+1.",
-                    "Attacking token creatures you control get +1/+1.",
                     "Nonwhite creatures you control get +1/+1.",
                     "Artifact token creatures you control get +1/+1.",
                 )
@@ -348,17 +355,8 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                 "Battle Frenzy": (
                     "Nongreen creatures you control get +1/+0 until end of turn."
                 ),
-                "Broodwarden": (
-                    "Eldrazi Spawn creatures you control get +2/+1."
-                ),
                 "Flowering of the White Tree": (
                     "Nonlegendary creatures you control get +1/+1."
-                ),
-                "Blossoming Tortoise": (
-                    "Land creatures you control get +1/+1."
-                ),
-                "Forsaken Monument": (
-                    "Colorless creatures you control get +2/+2."
                 ),
                 "Secret Plans": (
                     "Face-down creatures you control get +0/+1."
