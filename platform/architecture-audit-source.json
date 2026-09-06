@@ -54,6 +54,7 @@
       "quorune/stack_counter.py",
       "quorune/token_creation.py"
       ,"quorune/mana_activation.py"
+      ,"quorune/mana_provenance.py"
       ,"quorune/semantic_choices/intent_host.py"
       ,"quorune/effect_runtime/state_and_permissions.py"
       ,"quorune/effect_runtime/zones_and_attachments.py"
@@ -227,8 +228,10 @@
       "owners": [
         "quorune/engine.py",
         "quorune/abilities.py",
+        "quorune/activation_mana_cost.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",
+        "quorune/mana_provenance.py",
         "quorune/rules/action_catalog.py",
         "quorune/rules/casting",
         "quorune/rules/activation",

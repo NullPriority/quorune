@@ -19,6 +19,9 @@ from quorune.commander_pairing import (
 from quorune.compiler.activated_zone_change_costs import (
     fixed_activated_zone_change_cost,
 )
+from quorune.compiler.activation_mana_costs import (
+    fixed_complex_activation_mana_cost,
+)
 from quorune.compiler.cast_cost_modifier_templates import (
     self_spell_cost_reduction_handler,
 )
@@ -150,6 +153,9 @@ _PROBE_PUBLIC_QUERY_EFFECT_AMOUNT = (
 )
 _PROBE_PUBLIC_ACTIVATION_CONDITIONS = (
     "public-activation-condition-existing-owner-v1"
+)
+_PROBE_COMPLEX_ACTIVATION_MANA = (
+    "complex-activation-mana-existing-owner-v1"
 )
 _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC = (
     "fixed-public-state-characteristic-existing-owner-v1"
@@ -306,6 +312,7 @@ _PROBE_IDS = {
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
     _PROBE_PUBLIC_ACTIVATION_CONDITIONS,
+    _PROBE_COMPLEX_ACTIVATION_MANA,
     _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS,
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
@@ -2576,6 +2583,15 @@ def _measurement(
         )
     if probe_id == _PROBE_PUBLIC_ACTIVATION_CONDITIONS:
         return _public_activation_condition_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_COMPLEX_ACTIVATION_MANA:
+        return _complex_activation_mana_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
@@ -5223,6 +5239,159 @@ def _public_activation_condition_measurement(
             else "retired_below_harvest_floor"
         ),
         "grants_gameplay_trust": False,
+    }
+
+
+def _complex_activation_mana_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure fixed hybrid, Phyrexian, and snow activation costs."""
+
+    registry = load_default_capability_registry()
+    capability = "activation.mana_cost.fixed_complex"
+    matched_abilities = 0
+    matched_residuals = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    broad_complex_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = []
+        for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
+            source_name = _source_face_context(record, ability)[0]
+            parsed = parse_activated_abilities(
+                card_name=source_name,
+                oracle_text=_source_line(record, ability),
+                keywords=record.keywords,
+            )
+            if any(value.complex_symbols for value in parsed):
+                broad_complex_cards.add(oracle_id)
+            represented = tuple(
+                fixed_complex_activation_mana_cost(value)
+                for value in parsed
+            )
+            if any(value.mana_cost_options for value in represented):
+                candidates.append(ability)
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            (face.face_id, node.node_id): node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        matched_ids = {
+            (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            )
+            for ability in candidates
+            if (
+                (
+                    node := nodes.get(
+                        (
+                            str(ability.get("face_id") or "front"),
+                            str(ability.get("ability_id") or ""),
+                        )
+                    )
+                )
+                is not None
+                and node.exact
+                and capability in node.capability_dependencies
+            )
+        }
+        if not matched_ids:
+            continue
+        matched_abilities += len(matched_ids)
+        base_residuals = sum(
+            len(ability.get("residuals", ()))
+            for ability in card.get("abilities", [])
+        )
+        matched_residuals += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+        remaining = sum(
+            ability.get("status") != "exact"
+            and (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            )
+            not in matched_ids
+            for ability in card.get("abilities", [])
+        )
+        matched_cards[oracle_id] = remaining
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_residuals
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_residuals,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": matched_abilities,
+            "existing_exact_sibling_nodes": sum(
+                ability.get("status") == "exact"
+                for card in frontier.get("cards", [])
+                if str(card.get("oracle_id") or "") in matched_cards
+                for ability in card.get("abilities", [])
+            ),
+            "remaining_residual_sibling_nodes": sum(
+                matched_cards.values()
+            ),
+            "trusted_program_transitions": len(complete_cards),
+            "unresolved_program_transitions": (
+                len(matched_cards) - len(complete_cards)
+            ),
+            "expected_oracle_residual_reduction": matched_residuals,
+            "expected_card_program_residual_reduction": matched_residuals,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": sum(
+                count > 0 for count in matched_cards.values()
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                broad_complex_cards - set(matched_cards)
+            ),
+        },
     }
 
 

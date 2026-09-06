@@ -32,6 +32,8 @@ def activated_ability_cost_capabilities(
         additional.append(ACTIVATION_PHASE_CONDITION_CAPABILITY)
     if ActivationConditionKind.PUBLIC_QUERY_COUNT in condition_kinds:
         additional.append(ACTIVATION_PUBLIC_QUERY_CAPABILITY)
+    if ability.mana_cost_options:
+        additional.append("activation.mana_cost.fixed_complex")
     if not ability.mana_ability and (
         ability.discard_source
         or ability.sacrifice_source
@@ -68,6 +70,10 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
         "choices": [choice.compact() for choice in ability.choices],
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
+    if ability.mana_cost_options:
+        result["mana_cost_options"] = [
+            option.to_dict() for option in ability.mana_cost_options
+        ]
     if ability.activation_limit is not None:
         result["activation_limit"] = ability.activation_limit.value
     if ability.crew_threshold is not None:

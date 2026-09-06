@@ -5,6 +5,10 @@ from dataclasses import replace
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility, choose_ability, reduced_requirements
+from ...activation_mana_cost import (
+    payable_activation_mana_options,
+    select_activation_mana_option,
+)
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
 from ...station import station_candidates, station_cost_choice
@@ -288,10 +292,30 @@ def build_activation_proposal(
     )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     context = host._fetch_context(request.actor, ability, response)
-    requirements = reduced_requirements(
-        ability,
-        legendary_creatures=host._legendary_creatures_controlled(request.actor),
-    )
+    mana_option = None
+    if ability.mana_cost_options:
+        try:
+            mana_option = select_activation_mana_option(
+                host,
+                request.actor,
+                source,
+                ability,
+                response.get("cost_option"),
+            )
+        except ValueError as exc:
+            raise ActivationProposalError(
+                str(exc),
+                status="unpayable",
+                reason="activation_mana_cost_option",
+            ) from exc
+        requirements = dict(mana_option.requirements)
+    else:
+        requirements = reduced_requirements(
+            ability,
+            legendary_creatures=host._legendary_creatures_controlled(
+                request.actor
+            ),
+        )
     proposal = ActivationProposal(
         seat=request.actor,
         source_ref=source.ref,
@@ -309,10 +333,33 @@ def build_activation_proposal(
                 "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
                 "builtin_context": context,
+                **(
+                    {
+                        "mana_cost_option": mana_option.to_dict(),
+                    }
+                    if mana_option is not None
+                    else {}
+                ),
             }
         ),
     )
     return proposal
+
+
+def _activation_mana_option_label(option: Any) -> str:
+    parts = []
+    generic = int(option.requirements.get("GENERIC", 0))
+    mana = (f"{{{generic}}}" if generic else "") + "".join(
+        f"{{{color}}}" * int(option.requirements.get(color, 0))
+        for color in "WUBRGC"
+    )
+    if mana:
+        parts.append(mana)
+    if option.life_payment:
+        parts.append(f"{option.life_payment} life")
+    if option.snow_payment:
+        parts.append(f"{option.snow_payment} snow mana")
+    return "Pay " + ", ".join(parts)
 
 
 def _activation_choice_schema(
@@ -397,6 +444,16 @@ def build_activation_offer(
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")
     hint = selected.compact(source_ref=source.ref, zone=source.zone)
+    if selected.mana_cost_options:
+        hint["mana_options"] = [
+            option.compact()
+            for option in payable_activation_mana_options(
+                host,
+                seat,
+                source,
+                selected,
+            )
+        ]
     if selected.choices:
         hint["choose_cost"] = [
             {
@@ -456,9 +513,23 @@ def build_activation_offer(
                 "discard_self",
                 "exile_self",
                 "choose_cost",
+                "mana_options",
             }
         },
     }
+    if selected.mana_cost_options:
+        payload["cost_options"] = [
+            {
+                **option.to_dict(),
+                "label": _activation_mana_option_label(option),
+            }
+            for option in payable_activation_mana_options(
+                host,
+                seat,
+                source,
+                selected,
+            )
+        ]
     if selected.mana_ability:
         payload["mana_ability"] = True
     choice_schema = _activation_choice_schema(

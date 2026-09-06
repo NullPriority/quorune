@@ -6,7 +6,10 @@ from typing import Any, Iterable, Mapping
 
 from .carddb import CardRecord
 from .intrinsic_basic_land_mana import BASIC_LAND_MANA
-from .util import mana_cost_to_vector, normalize_mana_bundle
+from .util import (
+    mana_cost_to_vector,
+    normalize_mana_bundle,
+)
 
 MANA_COLORS = ("W", "U", "B", "R", "G", "C")
 SYMBOL_RE = re.compile(r"\{([WUBRGC])\}")
@@ -51,15 +54,26 @@ class ManaSource:
     ref: str
     name: str
     modes: tuple[ManaMode, ...]
+    snow: bool = False
 
     def to_compact(self) -> dict[str, Any]:
-        return {"id": self.ref, "n": self.name, "modes": [mode.to_compact() for mode in self.modes]}
+        result = {
+            "id": self.ref,
+            "n": self.name,
+            "modes": [mode.to_compact() for mode in self.modes],
+        }
+        if self.snow:
+            result["snow"] = True
+        return result
 
 
 @dataclass(slots=True)
 class ManaPlan:
     activations: list[dict[str, Any]] = field(default_factory=list)
     payment: dict[str, int] = field(default_factory=lambda: normalize_mana_bundle(None))
+    snow_payment: dict[str, int] = field(
+        default_factory=lambda: normalize_mana_bundle(None)
+    )
     warnings: list[str] = field(default_factory=list)
 
 
@@ -321,6 +335,160 @@ def parsed_cost(cost: str, commander_tax: int = 0) -> dict[str, int]:
     return requirements
 
 
+def _ordinary_payment_sufficient(
+    pool: Mapping[str, int],
+    fixed_need: Mapping[str, int],
+    generic_need: int,
+    reserve: Mapping[str, int],
+) -> bool:
+    remaining = dict(pool)
+    for color in MANA_COLORS:
+        needed = fixed_need[color] + reserve[color]
+        if remaining[color] < needed:
+            return False
+        remaining[color] -= fixed_need[color]
+    return sum(remaining.values()) >= generic_need + sum(reserve.values())
+
+
+def _snow_payment_option(
+    pool: Mapping[str, int],
+    snow_pool: Mapping[str, int],
+    *,
+    fixed_need: Mapping[str, int],
+    generic_need: int,
+    reserve: Mapping[str, int],
+    snow_required: int,
+) -> dict[str, int] | None:
+    if not snow_required:
+        return (
+            normalize_mana_bundle(None)
+            if _ordinary_payment_sufficient(
+                pool,
+                fixed_need,
+                generic_need,
+                reserve,
+            )
+            else None
+        )
+    option = normalize_mana_bundle(None)
+    order = tuple(
+        sorted(
+            MANA_COLORS,
+            key=lambda color: (
+                pool[color] - fixed_need[color] - reserve[color],
+                color == "C",
+                color,
+            ),
+            reverse=True,
+        )
+    )
+
+    def choose(index: int, remaining: int) -> dict[str, int] | None:
+        if remaining == 0:
+            after = dict(pool)
+            for color in MANA_COLORS:
+                after[color] -= option[color]
+            return (
+                dict(option)
+                if _ordinary_payment_sufficient(
+                    after,
+                    fixed_need,
+                    generic_need,
+                    reserve,
+                )
+                else None
+            )
+        if index >= len(order):
+            return None
+        color = order[index]
+        maximum = min(remaining, snow_pool[color], pool[color])
+        for amount in range(maximum, -1, -1):
+            option[color] = amount
+            found = choose(index + 1, remaining - amount)
+            if found is not None:
+                return found
+        option[color] = 0
+        return None
+
+    return choose(0, snow_required)
+
+
+def _select_payment_sources(
+    grouped: Sequence[tuple[ManaSource, Sequence[ManaMode]]],
+    *,
+    starting_pool: Mapping[str, int],
+    starting_snow_pool: Mapping[str, int],
+    fixed_need: Mapping[str, int],
+    generic_need: int,
+    reserve: Mapping[str, int],
+    snow_required: int,
+) -> list[tuple[ManaSource, ManaMode]] | None:
+    target_total = (
+        sum(fixed_need.values())
+        + generic_need
+        + snow_required
+        + sum(reserve.values())
+    )
+    suffix_capacity = [0] * (len(grouped) + 1)
+    for index in range(len(grouped) - 1, -1, -1):
+        suffix_capacity[index] = suffix_capacity[index + 1] + max(
+            mode.total for mode in grouped[index][1]
+        )
+    best: list[tuple[ManaSource, ManaMode]] | None = None
+
+    def dfs(
+        index: int,
+        pool: dict[str, int],
+        snow_pool: dict[str, int],
+        chosen: list[tuple[ManaSource, ManaMode]],
+    ) -> None:
+        nonlocal best
+        if best is not None and len(chosen) >= len(best):
+            return
+        if _snow_payment_option(
+            pool,
+            snow_pool,
+            fixed_need=fixed_need,
+            generic_need=generic_need,
+            reserve=reserve,
+            snow_required=snow_required,
+        ) is not None:
+            best = list(chosen)
+            return
+        if index >= len(grouped):
+            return
+        if sum(pool.values()) + suffix_capacity[index] < target_total:
+            return
+        source, modes = grouped[index]
+        scored = sorted(
+            modes,
+            key=lambda mode: (
+                -sum(
+                    min(mode.bundle[color], fixed_need[color])
+                    for color in MANA_COLORS
+                ),
+                -mode.total,
+                mode.conditional,
+            ),
+        )
+        for mode in scored:
+            next_pool = dict(pool)
+            next_snow_pool = dict(snow_pool)
+            for color, amount in mode.bundle.items():
+                next_pool[color] = next_pool.get(color, 0) + amount
+                if source.snow:
+                    next_snow_pool[color] = (
+                        next_snow_pool.get(color, 0) + amount
+                    )
+            chosen.append((source, mode))
+            dfs(index + 1, next_pool, next_snow_pool, chosen)
+            chosen.pop()
+        dfs(index + 1, pool, snow_pool, chosen)
+
+    dfs(0, dict(starting_pool), dict(starting_snow_pool), [])
+    return best
+
+
 def auto_plan_payment(
     requirements: dict[str, int],
     sources: Iterable[ManaSource],
@@ -328,6 +496,8 @@ def auto_plan_payment(
     allow_conditional: bool = False,
     reserve: dict[str, int] | None = None,
     starting_pool: dict[str, int] | None = None,
+    snow_required: int = 0,
+    starting_snow_pool: dict[str, int] | None = None,
 ) -> ManaPlan:
     """Find a deterministic one-activation-per-source payment plan.
 
@@ -339,23 +509,23 @@ def auto_plan_payment(
 
     reserve = normalize_mana_bundle(reserve)
     starting_pool = normalize_mana_bundle(starting_pool)
+    starting_snow_pool = normalize_mana_bundle(starting_snow_pool)
+    if type(snow_required) is not int or snow_required < 0:
+        raise ManaPlanError("Snow-mana requirement must be nonnegative")
+    if any(
+        starting_snow_pool[color] > starting_pool[color]
+        for color in MANA_COLORS
+    ):
+        raise ManaPlanError("Snow-mana provenance exceeds the starting pool")
     fixed_need = normalize_mana_bundle(None)
     for color in MANA_COLORS:
         fixed_need[color] = int(requirements.get(color, 0))
     generic_need = int(requirements.get("GENERIC", 0))
 
-    source_list = list(sources)
-    usable: list[tuple[ManaSource, ManaMode]] = []
-    for source in source_list:
-        for mode in source.modes:
-            if mode.requires_choice or (mode.conditional and not allow_conditional):
-                continue
-            usable.append((source, mode))
-
     # DFS chooses at most one mode per source.  Commander boards are small enough
     # for this bounded search; pruning keeps it practical.
     grouped: list[tuple[ManaSource, list[ManaMode]]] = []
-    for source in source_list:
+    for source in sources:
         modes = [
             mode
             for mode in source.modes
@@ -365,61 +535,26 @@ def auto_plan_payment(
             grouped.append((source, modes))
     grouped.sort(key=lambda pair: (len(pair[1]), -max(mode.total for mode in pair[1]), pair[0].ref))
 
-    target_total = sum(fixed_need.values()) + generic_need + sum(reserve.values())
-    suffix_capacity = [0] * (len(grouped) + 1)
-    for index in range(len(grouped) - 1, -1, -1):
-        suffix_capacity[index] = suffix_capacity[index + 1] + max(mode.total for mode in grouped[index][1])
-
-    best: list[tuple[ManaSource, ManaMode]] | None = None
-
-    def sufficient(pool: dict[str, int]) -> bool:
-        remaining = dict(pool)
-        for color in MANA_COLORS:
-            needed = fixed_need[color] + reserve[color]
-            if remaining[color] < needed:
-                return False
-            remaining[color] -= fixed_need[color]
-        return sum(remaining.values()) >= generic_need + sum(reserve.values())
-
-    def dfs(index: int, pool: dict[str, int], chosen: list[tuple[ManaSource, ManaMode]]) -> None:
-        nonlocal best
-        if best is not None and len(chosen) >= len(best):
-            return
-        if sufficient(pool):
-            best = list(chosen)
-            return
-        if index >= len(grouped):
-            return
-        if sum(pool.values()) + suffix_capacity[index] < target_total:
-            return
-        source, modes = grouped[index]
-        # Try useful modes first, then skip the source.
-        scored = sorted(
-            modes,
-            key=lambda mode: (
-                -sum(min(mode.bundle[c], fixed_need[c]) for c in MANA_COLORS),
-                -mode.total,
-                mode.conditional,
-            ),
-        )
-        for mode in scored:
-            next_pool = dict(pool)
-            for color, amount in mode.bundle.items():
-                next_pool[color] = next_pool.get(color, 0) + amount
-            chosen.append((source, mode))
-            dfs(index + 1, next_pool, chosen)
-            chosen.pop()
-        dfs(index + 1, pool, chosen)
-
-    dfs(0, starting_pool, [])
+    best = _select_payment_sources(
+        grouped,
+        starting_pool=starting_pool,
+        starting_snow_pool=starting_snow_pool,
+        fixed_need=fixed_need,
+        generic_need=generic_need,
+        reserve=reserve,
+        snow_required=snow_required,
+    )
     if best is None:
         raise ManaPlanError("No conservative mana plan can satisfy the declared cost")
 
     pool = normalize_mana_bundle(starting_pool)
+    snow_pool = normalize_mana_bundle(starting_snow_pool)
     activations: list[dict[str, Any]] = []
     for source, mode in best:
         for color, amount in mode.bundle.items():
             pool[color] += amount
+            if source.snow:
+                snow_pool[color] += amount
         activations.append(
             {
                 "source": source.object_id,
@@ -431,6 +566,18 @@ def auto_plan_payment(
             }
         )
 
+    snow_payment = _snow_payment_option(
+        pool,
+        snow_pool,
+        fixed_need=fixed_need,
+        generic_need=generic_need,
+        reserve=reserve,
+        snow_required=snow_required,
+    )
+    if snow_payment is None:
+        raise ManaPlanError("Planner could not assign required snow mana")
+    for color in MANA_COLORS:
+        pool[color] -= snow_payment[color]
     payment = normalize_mana_bundle(None)
     # Pay fixed symbols first.
     for color in MANA_COLORS:
@@ -450,4 +597,8 @@ def auto_plan_payment(
         pool[color] -= 1
         payment[color] += 1
 
-    return ManaPlan(activations=activations, payment=payment)
+    return ManaPlan(
+        activations=activations,
+        payment=payment,
+        snow_payment=snow_payment,
+    )

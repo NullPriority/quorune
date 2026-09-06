@@ -83,7 +83,9 @@ def available_mana_sources(
         if card.controller != seat or card.tapped or card.phased_out:
             continue
         data = host._effective_card_data(card)
-        card_types, _, _ = host._type_parts(str(data.get("type_line") or ""))
+        card_types, _, supertypes = host._type_parts(
+            str(data.get("type_line") or "")
+        )
         if (
             "creature" in card_types
             and summoning_sickness_prohibits_tap_or_untap_cost(
@@ -105,6 +107,7 @@ def available_mana_sources(
                         card.ref,
                         host.display_name(object_id),
                         tuple(compiled_modes),
+                        snow="snow" in supertypes,
                     )
                 )
             continue
@@ -144,6 +147,7 @@ def available_mana_sources(
                     card.ref,
                     host.display_name(object_id),
                     modes,
+                    snow="snow" in supertypes,
                 )
             )
     return sources

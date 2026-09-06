@@ -366,6 +366,19 @@ exile-self transaction through the same continuation identity. Variable,
 multiple, optional, random, repeated, linked, dynamic, mana-ability, and
 cost-ordering forms remain source-spanned residuals.
 
+`compiler/activation_mana_costs.py` owns fixed complex mana symbols on
+otherwise typed nonmana activated abilities. It expands colored hybrid,
+two-brid, and Phyrexian choices into immutable mana/life options and retains a
+fixed snow-mana count without consulting game state. The source-pinned catalog
+serializes those options; offer, proposal, and commit use the same currently
+payable option set. `mana_provenance.py` extends the existing mana owner with
+compact jointly tagged Snow-source and spending-restriction lots, while
+ordinary unrestricted mana retains the historical aggregate pool. X, energy,
+half, infinity, chaos, selected-object and other choice costs, open or untyped
+nonmana costs, complex-cost mana abilities, reductions combined with complex
+symbols, and independently unsupported effects remain source-spanned
+residuals.
+
 `compiler/activated_tap_costs.py` owns one separate fixed selected-permanent
 tap-cost grammar. It accepts a positive fixed count of untapped permanents the
 activator controls when one current effective permanent card type or pinned

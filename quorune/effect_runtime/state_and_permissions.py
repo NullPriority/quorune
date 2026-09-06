@@ -260,7 +260,15 @@ def _apply_mana(
     amount = int(effect.get("amount", 1))
     if color not in "WUBRGC" or len(color) != 1 or amount < 0:
         raise GameRuleError("Invalid semantic mana effect")
-    host.state.players[seat].mana_pool[color] += amount
+    source_ref = str(effect.get("source") or "")
+    host._add_mana_to_pool(
+        seat,
+        {color: amount},
+        snow_source=(
+            bool(source_ref)
+            and bool(host._mana_source_is_snow(source_ref))
+        ),
+    )
     host._log(
         actor,
         "mana.semantic",

@@ -165,6 +165,16 @@ replacement continuation as casting costs: a competing choice rolls the
 complete priority action back, keeps the continuation private to the affected
 activator, and resumes the exact source-pinned action before stack placement.
 
+Fixed complex activation mana costs remain inside that same catalog and action
+path. One typed option records the selected colored-hybrid or two-brid vector,
+the selected Phyrexian life alternative, and any required snow-mana count.
+Mana production records a compact provenance lot only when the source is Snow
+or the mana has a spending restriction; a unit carrying both facts stays in
+one lot. Offer and commit therefore agree on current mana, life, Snow-source,
+and restriction payability, and a stale option rejects before source tap, mana
+spend, life payment, or stack placement. The lot journal is authoritative
+checkpoint state but is not projected as mana-source identity.
+
 Ordinary printed `Crew N` is compiled once into a source-spanned activated-
 ability descriptor. `crew.py` owns the immutable current-characteristic
 candidate set and aggregate-power cost plan; activation offers and commits use

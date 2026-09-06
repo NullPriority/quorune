@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility, reduced_requirements
+from ...activation_mana_cost import payable_activation_mana_options
 from ...crew import available_crew_power
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...station import (
@@ -23,6 +24,10 @@ class ActivationAvailabilityHost(Protocol):
 
     def _effective_card_data(self, card: Any) -> dict[str, Any]: ...
 
+    def _type_parts(
+        self, type_line: str
+    ) -> tuple[set[str], set[str], set[str]]: ...
+
     def _may_activate_creature_as_haste(self, seat: str, card: Any) -> bool: ...
 
     def _ability_choice_payable(
@@ -41,6 +46,8 @@ class ActivationAvailabilityHost(Protocol):
         requirements: dict[str, int],
         *,
         exclude_sources: set[str] | None = None,
+        spend_context: str | None = None,
+        snow_required: int = 0,
     ) -> bool: ...
 
 
@@ -95,15 +102,19 @@ def activation_availability(
         host._crew_candidates(seat, card)
     ) < crew_threshold:
         return "unpayable", "insufficient_crew_power"
-    requirements = reduced_requirements(
-        ability,
-        legendary_creatures=host._legendary_creatures_controlled(seat),
-    )
-    excluded = {card.object_id} if ability.tap_source else set()
-    if sum(requirements.values()) and not host._cost_is_affordable(
-        seat, requirements, exclude_sources=excluded
-    ):
-        return "unpayable", "insufficient_mana"
+    if ability.mana_cost_options:
+        if not payable_activation_mana_options(host, seat, card, ability):
+            return "unpayable", "complex_mana_cost_unpayable"
+    else:
+        requirements = reduced_requirements(
+            ability,
+            legendary_creatures=host._legendary_creatures_controlled(seat),
+        )
+        excluded = {card.object_id} if ability.tap_source else set()
+        if sum(requirements.values()) and not host._cost_is_affordable(
+            seat, requirements, exclude_sources=excluded
+        ):
+            return "unpayable", "insufficient_mana"
     return "payable", None
 
 

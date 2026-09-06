@@ -65,9 +65,10 @@ def execute_shortcut(
         ]
         if sequence != expected:
             raise ValueError("Shortcut sequence does not match the demonstrated legal iteration")
-        if engine.state.players[seat].mana_pool["B"] < 1:
+        spend_context = "creature_spell"
+        if engine._spendable_mana_pool(seat, spend_context)["B"] < 1:
             raise ValueError("The first Gravecrawler cast requires one available black mana")
-        engine.state.players[seat].mana_pool["B"] -= 1
+        engine._apply_mana_spend(seat, {"B": 1}, spend_context)
         for opponent in opponents:
             engine.state.players[opponent].life -= repeat_count
         # Soultrader's life payment and Zulaport's gain cancel for the

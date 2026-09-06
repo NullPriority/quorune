@@ -14,6 +14,7 @@
     "tests/fixtures/classified-interaction-assurance-cards.json",
     "tests/fixtures/closed-effect-program-cards.json",
     "tests/fixtures/combat-goad-prohibition-cards.json",
+    "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/counter-replacement-cards.json",
     "tests/fixtures/damage-result-cards.json",

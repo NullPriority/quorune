@@ -145,6 +145,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
             "quorune/selection/",
         )
     ) or relative in {
+        "quorune/activation_mana_cost.py",
         "quorune/activation_usage.py",
         "quorune/activation_condition_model.py",
         "quorune/abilities.py",
@@ -220,6 +221,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/landwalk.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",
+        "quorune/mana_provenance.py",
         "quorune/mana_restrictions.py",
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
@@ -480,8 +482,10 @@ def _owner(relative: str, layer: str) -> str:
     if relative == "quorune/creature_subtypes.py":
         return "card_characteristics"
     if relative in {
+        "quorune/activation_mana_cost.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",
+        "quorune/mana_provenance.py",
         "quorune/mana_restrictions.py",
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
@@ -745,6 +749,7 @@ def build_classifications() -> dict[str, Any]:
                             "leveler_bands.py",
                             "permanent_transform.py",
                             "mana_activation.py",
+                            "mana_provenance.py",
                             "mana_mode_effects.py",
                             "mana_payment_continuations.py",
                             "mana_undo.py",

@@ -294,6 +294,10 @@ selected measurement as a content-fingerprinted transition receipt before the
 new corpus frontier retires that completed cohort. Later writes preserve only
 the still-declared transition receipt; policy stores its stable measurement ID,
 not its observed counts or frontier fingerprint.
+The cloud job publishes and restores this safe owner's content-keyed receipt
+across commits just like the other reusable owners. A generated-output-only
+follow-up therefore reuses the source checkpoint's cohort measurement instead
+of repeating the database-backed probe.
 The rules-scheduler owner also maintains
 `coverage/harvest-outcome-history.json`. Existing historical rows retain their
 immutable Git provenance, while new semantic transitions use base and head

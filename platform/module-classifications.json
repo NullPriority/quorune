@@ -114,6 +114,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/activation_mana_cost.py",
+      "layer": "rules",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/activation_usage.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -1387,6 +1401,21 @@
     },
     {
       "file": "quorune/compiler/activated_zone_change_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/activation_mana_costs.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -4547,6 +4576,20 @@
         "semantics"
       ],
       "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/mana_provenance.py",
+      "layer": "rules",
+      "owning_subsystem": "mana_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "mutable_owner",
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
@@ -9050,5 +9093,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "7327e2f72b05992fd6bc6f18ab2b42f97baa6e26efcc83803503e6fe1c58066e"
+  "fingerprint": "b1a64fc8a3403f29fbb4242da88db283232d80998b7559f94e41970f812ca31e"
 }
