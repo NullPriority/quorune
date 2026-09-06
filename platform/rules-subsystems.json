@@ -2539,28 +2539,86 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "complex-activation-mana-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:shared-public-battlefield-queries",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.ability.fixed_query_grant",
+            "capability:continuous.ability.fixed_query_keyword_grant",
+            "capability:continuous.characteristics.fixed_public_state",
+            "capability:continuous.power_toughness.fixed_anthem",
+            "capability:continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "capability:state_query.permanent.public_state_predicate",
+            "capability:untap.step.static_participation",
+            "component:quorune.compiler.fixed_public_characteristic_sets.fixed_public_characteristic_set_effect_template",
+            "component:quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject",
+            "component:quorune.compiler.untap_step_templates.static_untap_step_handler",
+            "component:quorune.continuous_effects.evaluate_continuous_effects",
+            "component:quorune.object_query.object_matches_query"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-card-type-or-creature-subtype-conjunction-or-union",
+            "fixed-positive-ability-presence",
+            "fixed-public-combat-attachment-modified-token-or-counter-state",
+            "fixed-source-controller-source-opponent-or-global-relation",
+            "resolution-locked-or-live-query-consumer",
+            "untap-prohibition-or-other-player-additional-untap"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_grant",
+            "continuous.ability.fixed_query_keyword_grant",
+            "continuous.characteristics.fixed_public_state",
+            "continuous.power_toughness.fixed_anthem",
+            "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "state_query.permanent.public_state_predicate",
+            "untap.step.static_participation"
+          ],
+          "shared_grammar": "one canonical public battlefield ObjectQuerySpec shared by live layer-6 and layer-7c characteristics, public-state-gated characteristics, resolution-locked characteristic sets, typed granted abilities, and untap-step participation",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing typed query owner across fixed type unions, subtype conjunctions and unions, defined Outlaw membership, token and public-state predicates, and positive ability presence while using generic same-layer dependency derivation for ability addition and removal.",
+          "explicit_exclusions": [
+            "conditional, variable, copied, granted, or text-changing grammar outside the existing typed carrier owners",
+            "dynamic numeric characteristics, quantities, and counts outside the cycle-safe layer-5 boundary",
+            "negative or absent ability predicates, generic counter presence, compound state-and-counter predicates, and unsupported keyword consumers",
+            "resolution-time ability-qualified locked sets because that owner intentionally stops at the layer-5 characteristic boundary",
+            "singular attachment-relative, chosen, named-card, commander-designation, team, shared-characteristic-relative, and hidden-zone sets"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "shared-public-battlefield-query-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v174-complex-activation-mana-costs",
-      "compiler_version": "oracle-ir-v174",
-      "bundle_id": "bundle:complex-activation-mana-costs",
-      "candidate_ids": ["compiler:complex-activation-mana-costs"],
+      "transition_id": "oracle-ir-v175-shared-public-battlefield-queries",
+      "compiler_version": "oracle-ir-v175",
+      "bundle_id": "bundle:shared-public-battlefield-queries",
+      "candidate_ids": ["compiler:shared-public-battlefield-queries"],
       "family_ids": [
-        "activated_cost:complete-alternate-additional-cost-grammar",
-        "activated_cost:restricted-payment-predicates"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "activation.mana_cost.fixed_complex",
-        "activation.tap_untap_cost.haste",
-        "mana.activated.color_set",
-        "mana.activated.fixed_output",
-        "mana.activated.restricted_fixed_output",
-        "mana.intrinsic.basic_land_type"
+        "continuous.ability.fixed_query_grant",
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.characteristics.fixed_public_state",
+        "continuous.power_toughness.fixed_anthem",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.public_state_predicate",
+        "untap.step.static_participation"
       ],
-      "measurement_id": "measurement:complex-activation-mana-costs",
+      "measurement_id": "measurement:shared-public-battlefield-queries",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

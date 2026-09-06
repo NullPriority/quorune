@@ -6243,6 +6243,51 @@
       ],
       "interaction_order": 2,
       "assertion": "After one hybrid payment and source-sacrifice transaction reaches the stack, the existing draw owner moves exactly two cards from library to hand."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_live_query_recomputes_control_entry_source_and_layer_six",
+      "piece_ids": ["capability.continuous.ability.fixed_query_grant", "capability.state_query.permanent.public_state_predicate"],
+      "capability_ids": ["continuous.ability.fixed_query_grant", "state_query.permanent.public_state_predicate"],
+      "interaction_order": 2,
+      "assertion": "Typed queried ability grants consume the shared current public battlefield query across control, entry, source, and layer-6 changes."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_ability_presence_query_uses_shared_layer_six_dependency_order",
+      "piece_ids": ["capability.continuous.ability.fixed_query_keyword_grant", "capability.state_query.permanent.public_state_predicate"],
+      "capability_ids": ["continuous.ability.fixed_query_keyword_grant", "state_query.permanent.public_state_predicate"],
+      "interaction_order": 2,
+      "assertion": "One positive ability-presence query orders a keyword grant after relevant same-layer ability additions and removals."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_live_public_object_state_and_layer_five_queries_recompute",
+      "piece_ids": ["capability.continuous.characteristics.fixed_public_state", "capability.state_query.permanent.public_state_predicate"],
+      "capability_ids": ["continuous.characteristics.fixed_public_state", "state_query.permanent.public_state_predicate"],
+      "interaction_order": 2,
+      "assertion": "Public-state-gated characteristics reuse the shared query for live layer-5 target applicability and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+      "piece_ids": ["capability.continuous.power_toughness.fixed_anthem", "capability.state_query.permanent.public_state_predicate"],
+      "capability_ids": ["continuous.power_toughness.fixed_anthem", "state_query.permanent.public_state_predicate"],
+      "interaction_order": 2,
+      "assertion": "The shared public subtype union observes current layer-4 types before applying the layer-7c anthem and preserves source exclusion."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_shared_public_queries_govern_untap_participation",
+      "piece_ids": ["capability.state_query.permanent.public_state_predicate", "capability.untap.step.static_participation"],
+      "capability_ids": ["state_query.permanent.public_state_predicate", "untap.step.static_participation"],
+      "interaction_order": 2,
+      "assertion": "The untap owner consumes current Island, Snow, nonland, and controlled artifact membership from the shared public query."
     }
   ]
 }

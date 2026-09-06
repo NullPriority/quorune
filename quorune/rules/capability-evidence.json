@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d1ed2cedef442f0dda2c36874fab5552499fffb1f2556db94908c11e0a420606",
-  "declaration_source_fingerprint": "005cdeff98e805ce119dd5616cbf6b754402cdff4d5610e9eb95b02a9efda800",
+  "registry_fingerprint": "3d18edfdbf599388ef87517c05281c99194b40335beff0e2500ec320aa669615",
+  "declaration_source_fingerprint": "243a67519cc8176221e72b628a4bdb812e7c3d257d42b1c30408ae8153cc333e",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -16544,6 +16544,25 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute one shared subtype-union query after a layer-4 type change and preserve source exclusion."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_extended_granted_costs_reach_canonical_activation_owners",
       "official_rule_ids": [
         "604.1",
@@ -16677,6 +16696,25 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the shared public-query capability and keep typed queried ability grants out of exact runtime admission."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantCompilerTests.test_group_quote_grammar_and_inner_behavior_fail_closed",
       "official_rule_ids": [
         "604.1",
@@ -16711,6 +16749,25 @@
         "commander_review"
       ],
       "applicability_note": "Discover and execute every fixed color mode of the granted token mana ability through the ordinary activation owner."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile subtype conjunctions and unions through the shared public battlefield query without an attachment-relative fallback."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -16848,6 +16905,25 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_ability_presence_query_uses_shared_layer_six_dependency_order",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Order positive ability-presence applicability after relevant layer-6 additions and removals while preserving deterministic cycle fallback."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_aura_attachment_and_query_grant_execute_from_one_exact_card",
       "official_rule_ids": [
         "604.1",
@@ -16920,6 +16996,25 @@
         "commander_review"
       ],
       "applicability_note": "Execute Pulmonic Sliver's exact global Flying grant while its independent replacement applicability and self-replacement ordering spans remain residual and strict runtime admission stays closed."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply the identical subtype-union query to both layer-6 and layer-7c operations after current type changes."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -17090,7 +17185,26 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Keep combat-state, unscoped counter-qualified, temporary, unsupported-keyword, and widened-Hexproof sentences material and residual."
+      "applicability_note": "Keep compound combat-state-and-counter, temporary, unsupported-keyword, and widened-Hexproof sentences material and residual."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the shared query dependency and retain the affected static keyword ability as a material residual."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -17186,6 +17300,25 @@
         "commander_review"
       ],
       "applicability_note": "Compile source-controller, source-opponent, and global fixed battlefield sets into one canonical ObjectQuerySpec shared by layer-6 and layer-7c components."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed type, subtype, Outlaw, token, state, and positive ability predicates through one layer-6 query owner."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -18763,6 +18896,27 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the shared target-query dependency before a public-state-gated characteristic component can become exact."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_closed_public_state_grammar_compiles_capability_closed",
       "official_rule_ids": [
@@ -18802,6 +18956,27 @@
         "commander_review"
       ],
       "applicability_note": "Compile direct public-state affected sets plus source, attached-object, and cycle-safe fixed object-count conditions through the existing typed characteristic owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reuse the same public target query under a separately typed source-state condition."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -19585,6 +19760,25 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_ability_presence_query_uses_shared_layer_six_dependency_order",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate an ability-qualified layer-7c anthem only after relevant layer-6 additions and removals."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_live_fixed_queries_track_relations_source_identity_and_phasing",
       "official_rule_ids": [
         "604.1",
@@ -19600,6 +19794,25 @@
         "commander_review"
       ],
       "applicability_note": "Apply source-controller and source-opponent modifiers to distinct live sets, exclude the source from its own Other set, and expire both when it phases or leaves."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute subtype-union membership after layer 4 before applying the fixed layer-7c modifier."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -19679,6 +19892,25 @@
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the shared public query and retain the affected anthem as a source-spanned material residual."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_registered_anthem_component_replaces_name_dispatch",
       "official_rule_ids": [
@@ -19733,6 +19965,25 @@
         "commander_review"
       ],
       "applicability_note": "Compile global subtype, source-opponent, multicolor, and shared combined layer-6/layer-7c fixed queries into the existing anthem owner."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed public type, subtype, token, state, and positive ability sets into the existing layer-7c owner."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -20426,6 +20677,25 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the shared public query and keep a matching resolution-locked set outside exact admission."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "positive",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": [
@@ -20518,6 +20788,25 @@
         "commander_review"
       ],
       "applicability_note": "Compile fixed all-creature, opponent, target-player, attacking, blocking, and source-excluding attack sets across spell, triggered, activated, loyalty, and modal contexts."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile the same bounded public query into the existing resolution-time membership lock while excluding ability-qualified sets."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -47485,6 +47774,56 @@
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_ability_presence_query_uses_shared_layer_six_dependency_order",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use one positive ability-presence predicate for both relevant layer-6 additions and removals without family-specific checks."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Match a public subtype union from current layer-4 characteristics while preserving source-reference exclusion."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_permanent_exile_rules.PermanentExileRuleTests.test_compiled_tapped_exile_filters_and_revalidates_target",
       "official_rule_ids": [
         "110.5",
@@ -47506,6 +47845,31 @@
         "commander_review"
       ],
       "applicability_note": "Use one shared tapped-state predicate for exile target offers, submitted-command validation, and resolution revalidation."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the shared query to select current Island, Snow, nonland, and controlled artifact untap participants."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -47609,6 +47973,31 @@
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the shared query capability and prevent every affected typed consumer from becoming exact."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "positive",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateCompilerTests.test_public_state_direct_targets_compile_typed_predicates",
       "official_rule_ids": [
@@ -47681,6 +48070,56 @@
         "commander_review"
       ],
       "applicability_note": "Lower attacking, blocking, and attacking-or-blocking direct targets to one canonical immutable combat-state descriptor."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonicalize fixed type, subtype, Outlaw, token, state, and positive ability set grammar into one ObjectQuerySpec."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
+      "official_rule_ids": [
+        "110.5",
+        "115.1",
+        "115.2",
+        "115.6",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "506.4",
+        "508.1",
+        "509.1",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile public land, Snow, nonland, and artifact query shapes for the untap owner."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -54764,6 +55203,22 @@
     },
     {
       "capability_id": "untap.step.static_participation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
+      "official_rule_ids": [
+        "502.3",
+        "604.1",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Select current shared-query members during untap and remove the prohibition immediately when its source leaves."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepParticipationRuntimeTests.test_global_and_other_player_participation_compose_in_four_players",
       "official_rule_ids": [
@@ -54797,6 +55252,22 @@
     {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
+      "official_rule_ids": [
+        "502.3",
+        "604.1",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block the shared public query and keep the affected untap participation ability residual."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepCompilerTests.test_unsupported_untap_step_wording_remains_residual",
       "official_rule_ids": [
         "502.3",
@@ -54825,6 +55296,22 @@
         "commander_review"
       ],
       "applicability_note": "Compile the closed global, source, attached-object, and other-player families to one source-spanned typed runtime descriptor."
+    },
+    {
+      "capability_id": "untap.step.static_participation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_shared_public_queries_govern_untap_participation",
+      "official_rule_ids": [
+        "502.3",
+        "604.1",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile Island, Snow, nonland, and source-controlled artifact subjects into the existing untap-step descriptor."
     },
     {
       "capability_id": "untap.step.static_participation",
@@ -57991,5 +58478,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "9cef70c057590c696f59ed6555dec3f446083485400b93f107c8c3d94139254d"
+  "fingerprint": "994f25bfb5be52c9bb56ec6814ba66e0d7bdd840b95c5b74cf0a094f23225970"
 }

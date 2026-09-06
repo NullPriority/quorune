@@ -21,10 +21,18 @@ def _public_state_is_closed(
 ) -> bool:
     if state is None:
         return True
-    return state.to_dict() in (
-        PermanentStatePredicateSpec(attacking=True).to_dict(),
-        PermanentStatePredicateSpec(blocking=True).to_dict(),
+    supported = (
+        PermanentStatePredicateSpec(attacking=True),
+        PermanentStatePredicateSpec(blocking=True),
+        PermanentStatePredicateSpec(enchanted=True),
+        PermanentStatePredicateSpec(equipped=True),
+        PermanentStatePredicateSpec(modified=True),
+        PermanentStatePredicateSpec(
+            counter_name="+1/+1",
+            minimum_counter_count=1,
+        ),
     )
+    return state.to_dict() in tuple(value.to_dict() for value in supported)
 
 
 def _target_schema_is_closed(
@@ -46,9 +54,6 @@ def fixed_resolution_characteristic_query_is_closed(
         query.zones != ("battlefield",)
         or query.owner is not None
         or query.types_any
-        or query.excluded_types
-        or query.subtypes_any
-        or query.excluded_subtypes
         or query.colors_any
         or query.keywords_all
         or query.tapped is not None
@@ -75,68 +80,55 @@ def fixed_resolution_characteristic_query_is_closed(
     else:
         return False
 
-    qualifiers = sum(
+    if any(
+        canonical_creature_subtype(value) != value
+        for value in (
+            *query.subtypes_all,
+            *query.subtypes_any,
+            *query.excluded_subtypes,
+        )
+    ):
+        return False
+    if (
+        not set(query.types_all)
+        <= {"artifact", "creature", "enchantment", "land", "planeswalker"}
+        or not set(query.excluded_types)
+        <= {"artifact", "creature", "enchantment", "land", "planeswalker"}
+        or not set(query.supertypes_all) <= {"legendary", "snow"}
+        or any(value not in "WUBRG" for value in query.colors_all)
+        or any(value not in "WUBRG" for value in query.colors_any)
+        or query.minimum_color_count not in {None, 2}
+        or query.colorless not in {None, True}
+    ):
+        return False
+    qualifier_groups = sum(
         bool(value)
         for value in (
+            query.excluded_types,
             query.subtypes_all,
+            query.subtypes_any,
+            query.excluded_subtypes,
             query.supertypes_all,
             query.colors_all,
+            query.colors_any,
+            query.minimum_color_count is not None,
             query.colorless is not None,
             query.token is not None,
+            query.state_predicate is not None,
         )
     )
-    if query.state_predicate is not None:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 0
-            and (
-                query.exclude_ref is None
-                or query.state_predicate.attacking is True
-            )
-        )
-    if query.controller != "$controller":
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 0
-            and query.exclude_ref is None
-        )
-    if query.subtypes_all:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and len(query.subtypes_all) == 1
-            and canonical_creature_subtype(query.subtypes_all[0])
-            == query.subtypes_all[0]
-        )
-    if query.supertypes_all:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and query.supertypes_all == ("legendary",)
-        )
-    if query.colors_all:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and len(query.colors_all) == 1
-            and query.colors_all[0] in "WUBRG"
-        )
-    if query.colorless is not None:
-        return (
-            query.types_all == ("creature",)
-            and qualifiers == 1
-            and query.colorless is True
-        )
-    if query.token is not None:
-        return query.types_all == ("creature",) and qualifiers == 1
-    return query.types_all in {
-        (),
-        ("artifact",),
-        ("land",),
-        ("creature",),
-        ("artifact", "creature"),
-        ("land", "creature"),
-    }
+    if qualifier_groups > 2:
+        return False
+    if query.exclude_ref is not None and not (
+        query.controller == "$controller"
+        or query.state_predicate is not None
+    ):
+        return False
+    return bool(
+        query.types_all
+        or qualifier_groups
+        or query.controller is not None
+    )
 
 
 __all__ = ["fixed_resolution_characteristic_query_is_closed"]

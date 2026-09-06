@@ -69,6 +69,10 @@ from quorune.compiler.fixed_source_combat_growth import (
 from quorune.compiler.fixed_library_selection_templates import (
     fixed_library_selection_effect_template,
 )
+from quorune.compiler.fixed_public_characteristic_sets import (
+    fixed_public_characteristic_set_effect_template,
+)
+from quorune.compiler.untap_step_templates import static_untap_step_handler
 from quorune.morph import (
     compile_fixed_mana_face_down_method,
     DISGUISE_CAST_METHOD,
@@ -156,6 +160,9 @@ _PROBE_PUBLIC_ACTIVATION_CONDITIONS = (
 )
 _PROBE_COMPLEX_ACTIVATION_MANA = (
     "complex-activation-mana-existing-owner-v1"
+)
+_PROBE_SHARED_PUBLIC_BATTLEFIELD_QUERY = (
+    "shared-public-battlefield-query-existing-owner-v1"
 )
 _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC = (
     "fixed-public-state-characteristic-existing-owner-v1"
@@ -313,6 +320,7 @@ _PROBE_IDS = {
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
     _PROBE_PUBLIC_ACTIVATION_CONDITIONS,
     _PROBE_COMPLEX_ACTIVATION_MANA,
+    _PROBE_SHARED_PUBLIC_BATTLEFIELD_QUERY,
     _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS,
     _PROBE_REGENERATION,
     _PROBE_SPELL_CAST_CHARACTERISTIC,
@@ -2599,6 +2607,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_SHARED_PUBLIC_BATTLEFIELD_QUERY:
+        return _shared_public_battlefield_query_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC:
         return _fixed_public_state_characteristic_measurement(
             frontier=frontier,
@@ -3569,7 +3586,10 @@ def _typed_quoted_ability_grant_measurement(
         expected_residual_reduction += residual_reduction
         existing_exact_sibling_nodes += int(card.get("exact_ability_count", 0))
         remaining_residual_sibling_nodes += remaining
-        if card.get("oracle_ir_status") != "exact" and compiled.status == "exact":
+        if (
+            card.get("oracle_ir_status") != "exact"
+            and compiled.status == "exact"
+        ):
             complete_cards.add(oracle_id)
         else:
             unsupported_sibling_cards += 1
@@ -5479,6 +5499,133 @@ def _fixed_public_state_characteristic_measurement(
         ),
         "exact_ability_gain": matched_abilities,
         "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _shared_public_battlefield_query_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure one shared public-set query across its typed consumers."""
+
+    registry = load_default_capability_registry()
+    template_ids = {
+        "continuous-fixed-public-state-characteristics-v1",
+        "continuous-fixed-query-anthem-v2",
+        "continuous-fixed-query-characteristic-grant-v1",
+        "continuous-fixed-query-granted-ability-v1",
+        "continuous-fixed-query-keyword-grant-v2",
+        "modify-controlled-fixed-characteristics-eot-v2",
+        "modify-public-creature-set-fixed-characteristics-eot-v1",
+        "untap-step-additional-other-player-fixed-query-v1",
+        "untap-step-prohibit-fixed-query-v1",
+    }
+    matched_abilities = 0
+    matched_residuals = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = []
+        for ability in card.get("abilities", []):
+            if ability.get("status") == "exact":
+                continue
+            source = _source_line(record, ability)
+            source_name, _source_is_permanent, _attachment = (
+                _source_face_context(record, ability)
+            )
+            represented = (
+                fixed_query_characteristic_grant_handler(source)
+                or fixed_power_toughness_anthem_handler(source)
+                or fixed_query_keyword_grant_handler(source)
+                or fixed_public_characteristic_set_effect_template(source)
+                or static_untap_step_handler(
+                    source,
+                    source_name=source_name,
+                )
+                or fixed_query_quoted_ability_text(source)
+                or fixed_public_state_characteristics_handler(
+                    source,
+                    source_name=source_name,
+                )
+            )
+            if represented is not None:
+                candidates.append(ability)
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            (face.face_id, node.node_id): node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        matched = tuple(
+            ability
+            for ability in candidates
+            if (
+                (
+                    node := nodes.get(
+                        (
+                            str(ability.get("face_id") or "front"),
+                            str(ability.get("ability_id") or ""),
+                        )
+                    )
+                )
+                is not None
+                and node.exact
+                and node.template_id in template_ids
+            )
+        )
+        if not matched:
+            continue
+        matched_abilities += len(matched)
+        matched_residuals += sum(
+            len(ability.get("residuals", ())) for ability in matched
+        )
+        matched_cards[oracle_id] = len(compiled.material_residuals)
+        if card.get("oracle_ir_status") != "exact" and compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_residuals
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_residuals,
         "decision": (
             "bounded_executable"
             if reaches_floor

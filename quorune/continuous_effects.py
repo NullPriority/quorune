@@ -136,6 +136,34 @@ def _matches(
     return object_matches_query(row, condition)
 
 
+def _ability_presence_dependency_ids(
+    effect: ContinuousEffect,
+    candidates: Sequence[ContinuousEffect],
+) -> frozenset[str]:
+    """Order one ability-qualified component after same-layer ability changes."""
+
+    if not effect.applies.keywords_all:
+        return frozenset()
+    required = {value.casefold() for value in effect.applies.keywords_all}
+
+    def changes_required_ability(candidate: ContinuousEffect) -> bool:
+        return any(
+            operation.op == "remove_all_abilities"
+            or (
+                operation.op in {"add_ability", "remove_ability"}
+                and str(operation.value).casefold() in required
+            )
+            for operation in candidate.operations
+        )
+
+    return frozenset(
+        candidate.effect_id
+        for candidate in candidates
+        if candidate.effect_id != effect.effect_id
+        and changes_required_ability(candidate)
+    )
+
+
 def _dependency_order(
     effects: Sequence[ContinuousEffect],
 ) -> tuple[list[ContinuousEffect], list[tuple[str, ...]]]:
@@ -154,7 +182,15 @@ def _dependency_order(
             by_id[effect_id]
             for effect_id in remaining
             if not (
-                set(by_id[effect_id].depends_on).intersection(remaining)
+                (
+                    set(by_id[effect_id].depends_on)
+                    | set(
+                        _ability_presence_dependency_ids(
+                            by_id[effect_id],
+                            tuple(by_id.values()),
+                        )
+                    )
+                ).intersection(remaining)
             )
         ]
         if ready:

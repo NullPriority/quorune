@@ -13,6 +13,7 @@ from ..continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
 
@@ -35,7 +36,8 @@ _IRREGULAR_CREATURE_PLURALS = dict(
     for value in (
         "aetherborn:aetherborn|allies:ally|dwarves:dwarf|elves:elf|"
         "faeries:faerie|heroes:hero|kithkin:kithkin|merfolk:merfolk|"
-        "mice:mouse|myr:myr|phyrexians:phyrexian|treefolk:treefolk|"
+        "mice:mouse|myr:myr|oxen:ox|pegasi:pegasus|"
+        "phyrexians:phyrexian|treefolk:treefolk|"
         "wolves:wolf"
     ).split("|")
 )
@@ -71,9 +73,10 @@ _CONTROLLED_SUBTYPE_TOKENS = re.compile(
 )
 _CONTROLLED_SUBJECT = re.compile(
     r"^(?P<other>Other )?"
-    r"(?:(?P<quality>Artifact|Black|Blue|Colorless|Green|Land|Legendary|"
+    r"(?:(?P<quality>Artifact|Black|Blue|Colorless|Enchantment|Green|Land|Legendary|"
     r"Nontoken|Red|Token|White) )?"
-    r"(?P<subject>creatures|permanents|artifacts|lands) you control$",
+    r"(?P<subject>creatures|permanents|artifacts|enchantments|lands|"
+    r"planeswalkers) you control$",
     re.IGNORECASE,
 )
 _CONTROLLED_SUBTYPE_CREATURES = re.compile(
@@ -86,7 +89,8 @@ _CONTROLLED_PLURAL_SUBJECT = re.compile(
 _GLOBAL_SUBJECT = re.compile(
     r"^(?P<other>Other )?(?:All )?"
     r"(?:(?P<quality>Black|Blue|Green|Red|White) )?"
-    r"(?P<subject>creatures|artifacts|lands)$",
+    r"(?P<subject>creatures|artifacts|enchantments|lands|permanents|"
+    r"planeswalkers)$",
     re.IGNORECASE,
 )
 _GLOBAL_SUBTYPE_CREATURES = re.compile(
@@ -133,11 +137,345 @@ _CONDITION_NUMBER_WORDS = {
 
 def _singular_creature_subtype(plural: str) -> str | None:
     value = plural.casefold()
+    if direct := canonical_creature_subtype(value):
+        return direct
     if value in _IRREGULAR_CREATURE_PLURALS:
         return canonical_creature_subtype(_IRREGULAR_CREATURE_PLURALS[value])
     if value.endswith("s") and not value.endswith("ss") and len(value) > 2:
         return canonical_creature_subtype(value[:-1])
     return None
+
+
+def _canonical_subtype_terms(
+    text: str,
+) -> tuple[tuple[str, ...], bool] | None:
+    """Return canonical public subtype terms and whether they form a union."""
+
+    normalized = " ".join(text.strip().split())
+    union = bool(re.search(r",|\b(?:and|or)\b", normalized, re.IGNORECASE))
+    raw_terms = (
+        tuple(
+            value.strip()
+            for value in re.split(
+                r"\s*,\s*(?:and\s+|or\s+)?|\s+(?:and|or)\s+",
+                normalized,
+                flags=re.IGNORECASE,
+            )
+            if value.strip()
+        )
+        if union
+        else (normalized,)
+    )
+    result: list[str] = []
+    for raw in raw_terms:
+        term = re.sub(r"^(?:a|an)\s+", "", raw, flags=re.IGNORECASE)
+        subtype = _singular_creature_subtype(term) or canonical_creature_subtype(
+            term
+        )
+        if subtype is not None:
+            result.append(subtype)
+            continue
+        # Oracle sometimes writes two simultaneously required subtypes without
+        # a conjunction, for example "Eldrazi Spawn creatures".
+        simultaneous = tuple(
+            canonical_creature_subtype(value)
+            for value in term.split()
+        )
+        if union or not simultaneous or any(
+            value is None for value in simultaneous
+        ):
+            return None
+        result.extend(str(value) for value in simultaneous)
+    canonical = tuple(sorted(set(result)))
+    if not canonical or len(canonical) != len(result):
+        return None
+    return canonical, union
+
+
+def _controller_relation_suffix(
+    text: str,
+    relation: str,
+) -> tuple[str, str] | None:
+    suffix = re.search(
+        r" (?P<relation>you control|your opponents control)$",
+        text,
+        re.IGNORECASE,
+    )
+    if suffix is None:
+        return text, relation
+    parsed = (
+        "source_controller"
+        if suffix.group("relation").casefold() == "you control"
+        else "source_opponents"
+    )
+    if relation not in {"any", parsed}:
+        return None
+    return text[: suffix.start()], parsed
+
+
+def _public_query_qualifiers(
+    subject: str,
+) -> tuple[str, str, bool, str | None, dict[str, Any]] | None:
+    text = " ".join(subject.strip().split())
+    prefix = re.match(
+        r"^(?:(?P<each>Each) )?(?P<other>Other )?",
+        text,
+        re.IGNORECASE,
+    )
+    assert prefix is not None
+    exclude_source = bool(prefix.group("other"))
+    text = text[prefix.end() :]
+    relation = "any"
+
+    stripped = _controller_relation_suffix(text, relation)
+    if stripped is None:
+        return None
+    text, relation = stripped
+    ability_qualifier = re.fullmatch(
+        r"(?P<body>.+?) with (?P<ability>[A-Za-z][A-Za-z ]+)",
+        text,
+        re.IGNORECASE,
+    )
+    required_ability = None
+    if ability_qualifier is not None:
+        candidate = " ".join(
+            ability_qualifier.group("ability").casefold().split()
+        )
+        if candidate.title() not in FIXED_CHARACTERISTIC_KEYWORDS:
+            return None
+        required_ability = candidate
+        text = ability_qualifier.group("body")
+
+    state_fields: dict[str, Any] = {}
+    state_match = re.fullmatch(
+        r"(?P<body>.+?) that are (?P<state>enchanted|equipped|modified)",
+        text,
+        re.IGNORECASE,
+    )
+    if state_match is not None:
+        text = state_match.group("body")
+        state_fields[state_match.group("state").casefold()] = True
+    counter_match = re.fullmatch(
+        r"(?P<body>.+?) with (?:a )?\+1/\+1 counters? on (?:it|them)",
+        text,
+        re.IGNORECASE,
+    )
+    if counter_match is not None:
+        if state_fields:
+            return None
+        text = counter_match.group("body")
+        state_fields.update(
+            counter_name="+1/+1",
+            minimum_counter_count=1,
+        )
+    state_prefix = re.fullmatch(
+        r"(?P<state>Attacking|Blocking) (?P<body>.+)",
+        text,
+        re.IGNORECASE,
+    )
+    if state_prefix is not None:
+        if state_fields:
+            return None
+        text = state_prefix.group("body")
+        state_fields[state_prefix.group("state").casefold()] = True
+    stripped = _controller_relation_suffix(text, relation)
+    if stripped is None:
+        return None
+    text, relation = stripped
+    return text, relation, exclude_source, required_ability, state_fields
+
+
+def _public_query_primary_fields(text: str) -> dict[str, Any] | None:
+    fields: dict[str, Any] = {"zones": ("battlefield",)}
+    normalized = text.casefold()
+    basic_land_types = {
+        "plains": "plains",
+        "islands": "island",
+        "swamps": "swamp",
+        "mountains": "mountain",
+        "forests": "forest",
+    }
+    if normalized in {"creature", "creatures"}:
+        fields["types_all"] = ("creature",)
+    elif normalized in {"artifact", "artifacts"}:
+        fields["types_all"] = ("artifact",)
+    elif normalized in {"land", "lands"}:
+        fields["types_all"] = ("land",)
+    elif normalized in {"permanent", "permanents"}:
+        pass
+    elif normalized in {
+        "battle",
+        "battles",
+        "enchantment",
+        "enchantments",
+        "planeswalker",
+        "planeswalkers",
+    }:
+        fields["types_all"] = (normalized.removesuffix("s"),)
+    elif normalized in basic_land_types:
+        fields.update(
+            types_all=("land",),
+            subtypes_all=(basic_land_types[normalized],),
+        )
+    elif normalized == "snow permanents":
+        fields["supertypes_all"] = ("snow",)
+    elif normalized == "nonland permanents":
+        fields["excluded_types"] = ("land",)
+    elif normalized == "creature tokens":
+        fields.update(types_all=("creature",), token=True)
+    elif normalized == "nontoken creatures":
+        fields.update(types_all=("creature",), token=False)
+    elif normalized == "colorless creatures":
+        fields.update(types_all=("creature",), colorless=True)
+    elif normalized == "nonartifact creatures":
+        fields.update(
+            types_all=("creature",),
+            excluded_types=("artifact",),
+        )
+    elif (
+        excluded_subtype_match := re.fullmatch(
+            r"non-(?P<subtype>[A-Za-z][A-Za-z'-]*) creatures",
+            text,
+            re.IGNORECASE,
+        )
+    ) is not None:
+        subtype = canonical_creature_subtype(
+            excluded_subtype_match.group("subtype")
+        )
+        if subtype is None:
+            return None
+        fields.update(
+            types_all=("creature",),
+            excluded_subtypes=(subtype,),
+        )
+    elif normalized == "artifact creatures":
+        fields.update(types_all=("artifact", "creature"))
+    elif normalized == "enchantment creatures":
+        fields.update(types_all=("creature", "enchantment"))
+    elif normalized == "outlaws":
+        fields.update(
+            types_all=("creature",),
+            subtypes_any=(
+                "assassin",
+                "mercenary",
+                "pirate",
+                "rogue",
+                "warlock",
+            ),
+        )
+    else:
+        return None
+    return fields
+
+
+def _public_query_characteristic_fields(
+    text: str,
+) -> tuple[dict[str, Any], str | None] | None:
+    primary = _public_query_primary_fields(text)
+    if primary is not None:
+        return primary, None
+    fields: dict[str, Any] = {"zones": ("battlefield",)}
+    relation_override: str | None = None
+    relative_subtypes = re.fullmatch(
+        r"creature(?P<controlled> you control)? that['’]s "
+        r"(?:a |an )?(?P<terms>.+)",
+        text,
+        re.IGNORECASE,
+    )
+    if relative_subtypes is not None:
+        subtype_material: str | None = relative_subtypes.group("terms")
+        relation_override = (
+            "source_controller"
+            if relative_subtypes.group("controlled")
+            else None
+        )
+    else:
+        type_union = re.fullmatch(
+            r"(?P<left>artifacts?|battles?|creatures?|enchantments?|"
+            r"lands?|planeswalkers?) (?:and|or) "
+            r"(?P<right>artifacts?|battles?|creatures?|enchantments?|"
+            r"lands?|planeswalkers?)",
+            text,
+            re.IGNORECASE,
+        )
+        if type_union is not None:
+            canonical_types = {
+                value.casefold().removesuffix("s")
+                for value in (
+                    type_union.group("left"),
+                    type_union.group("right"),
+                )
+            }
+            if len(canonical_types) != 2:
+                return None
+            fields["types_any"] = tuple(sorted(canonical_types))
+            subtype_material = None
+        else:
+            legendary_subtypes = re.fullmatch(
+                r"Legendary (?P<terms>[A-Za-z][A-Za-z' -]+)",
+                text,
+                re.IGNORECASE,
+            )
+            if legendary_subtypes is not None:
+                subtype_material = legendary_subtypes.group("terms")
+                fields["supertypes_all"] = ("legendary",)
+            else:
+                subtype_match = re.fullmatch(
+                    r"(?P<terms>.+?) creatures?",
+                    text,
+                    re.IGNORECASE,
+                )
+                if subtype_match is None:
+                    subtype_match = (
+                        re.fullmatch(
+                            r"(?P<terms>[A-Za-z][A-Za-z' ,\-]+)",
+                            text,
+                            re.IGNORECASE,
+                        )
+                        if re.search(
+                            r",|\b(?:and|or)\b",
+                            text,
+                            re.IGNORECASE,
+                        )
+                        else None
+                    )
+                if subtype_match is None:
+                    return None
+                subtype_material = subtype_match.group("terms")
+    if subtype_material is not None:
+        subtypes = _canonical_subtype_terms(subtype_material)
+        if subtypes is None:
+            return None
+        values, union = subtypes
+        fields["types_all"] = ("creature",)
+        fields["subtypes_any" if union else "subtypes_all"] = values
+    return fields, relation_override
+
+
+def _extended_public_battlefield_query(
+    subject: str,
+) -> tuple[str, ObjectQuerySpec, bool] | None:
+    """Parse one conjunctive public set omitted by the legacy surface grammar."""
+
+    qualified = _public_query_qualifiers(subject)
+    if qualified is None:
+        return None
+    text, relation, exclude_source, required_ability, state_fields = qualified
+    parsed = _public_query_characteristic_fields(text)
+    if parsed is None:
+        return None
+    fields, relation_override = parsed
+    if relation_override is not None:
+        if relation not in {"any", relation_override}:
+            return None
+        relation = relation_override
+    if state_fields:
+        fields["state_predicate"] = PermanentStatePredicateSpec(**state_fields)
+    if required_ability is not None:
+        if "creature" not in fields.get("types_all", ()):
+            return None
+        fields["keywords_all"] = (required_ability,)
+    return relation, ObjectQuerySpec(**fields), exclude_source
 
 
 def _state_qualified_battlefield_query(
@@ -221,7 +559,7 @@ def _controlled_battlefield_query(
             return None
         if subject_kind != "permanents":
             fields["types_all"] = (subject_kind.removesuffix("s"),)
-        if quality in {"artifact", "land"}:
+        if quality in {"artifact", "enchantment", "land"}:
             fields["types_all"] = (quality, "creature")
         elif quality in _COLOR_SYMBOLS:
             fields.update(
@@ -329,7 +667,38 @@ def fixed_battlefield_query_subject(
     controlled = _controlled_battlefield_query(text)
     if controlled is not None:
         return controlled
-    return _global_battlefield_query(text)
+    global_query = _global_battlefield_query(text)
+    if global_query is not None:
+        return global_query
+    return _extended_public_battlefield_query(text)
+
+
+def fixed_characteristic_battlefield_query_subject(
+    subject: str,
+) -> tuple[str, ObjectQuerySpec, bool] | None:
+    """Return the one shared live query admitted by layer-6 and layer-7c owners."""
+
+    if re.fullmatch(
+        r"(?:enchanted|equipped) "
+        r"(?:artifact|battle|creature|enchantment|land|permanent|planeswalker)"
+        r"|fortified land",
+        " ".join(subject.casefold().split()),
+    ):
+        # Singular attachment-relative subjects are owned by the attachment
+        # reference grammar, not by a public battlefield-set query.
+        return None
+    parsed = fixed_battlefield_query_subject(subject)
+    if parsed is None:
+        return None
+    _relation, predicate, _exclude_source = parsed
+    if (
+        predicate.zones != ("battlefield",)
+        or predicate.tapped is not None
+        or predicate.include_phased_out
+        or predicate.known_to_actor is not None
+    ):
+        return None
+    return parsed
 
 
 def controlled_creature_fixed_modifier(
@@ -384,38 +753,11 @@ def fixed_power_toughness_battlefield_query(
 ) -> tuple[str, ObjectQuerySpec, bool] | None:
     """Apply the closed layer-7c subject policy before parsing its query."""
 
-    existing = controlled_creature_fixed_modifier(
-        oracle_line,
-        until_end_of_turn=False,
-    )
-    stateful = _STATE_QUALIFIED_BATTLEFIELD_SUBJECT.fullmatch(subject)
-    policy_subject = (
-        ("Other " if stateful.group("other") else "")
-        + stateful.group("subject")
-        if stateful is not None
-        else subject
-    )
-    controlled = (
-        controlled_creature_fixed_modifier(
-            f"{policy_subject} get +0/+0.",
-            until_end_of_turn=False,
-        )
-        if stateful is not None
-        else existing
-    )
-    global_subject = _GLOBAL_SUBJECT.fullmatch(policy_subject)
-    if controlled is None and not (
-        _CONTROLLED_MULTICOLORED_CREATURES.fullmatch(policy_subject)
-        or _OPPONENT_CONTROLLED_CREATURES.fullmatch(policy_subject)
-        or (
-            global_subject is not None
-            and global_subject.group("subject").casefold() == "creatures"
-        )
-        or _GLOBAL_SUBTYPE_CREATURES.fullmatch(policy_subject)
-        or _GLOBAL_PLURAL_SUBJECT.fullmatch(policy_subject)
-    ):
+    del oracle_line
+    parsed = fixed_characteristic_battlefield_query_subject(subject)
+    if parsed is None or "creature" not in parsed[1].types_all:
         return None
-    return fixed_battlefield_query_subject(subject)
+    return parsed
 
 
 def _self_subject_pattern(source_name: str) -> str:
@@ -760,6 +1102,7 @@ def fixed_public_state_parts(
 __all__ = [
     "controlled_creature_fixed_modifier",
     "fixed_battlefield_query_subject",
+    "fixed_characteristic_battlefield_query_subject",
     "fixed_power_toughness_battlefield_query",
     "fixed_public_state_parts",
 ]

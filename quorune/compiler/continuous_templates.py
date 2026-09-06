@@ -26,7 +26,7 @@ from .fixed_resolution_characteristic_queries import (
 )
 from .public_state_queries import (
     controlled_creature_fixed_modifier,
-    fixed_battlefield_query_subject,
+    fixed_characteristic_battlefield_query_subject,
     fixed_power_toughness_battlefield_query,
     fixed_public_state_parts,
 )
@@ -273,7 +273,9 @@ def fixed_query_keyword_grant_handler(
     )
     if match is None:
         return None
-    parsed = fixed_battlefield_query_subject(match.group("subject"))
+    parsed = fixed_characteristic_battlefield_query_subject(
+        match.group("subject")
+    )
     if parsed is None:
         return None
     relation, predicate, exclude_source = parsed

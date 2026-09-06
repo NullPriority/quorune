@@ -332,6 +332,9 @@ class UntapStepParticipationModelTests(unittest.TestCase):
         with mock.patch(
             "quorune.compiler.untap_step_templates._GLOBAL_PROHIBITION",
             disabled_pattern,
+        ), mock.patch(
+            "quorune.compiler.untap_step_templates._QUERY_PROHIBITION",
+            disabled_pattern,
         ):
             with self.assertRaises(AssertionError):
                 assert_compiler_boundary()

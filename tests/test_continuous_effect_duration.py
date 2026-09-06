@@ -645,6 +645,8 @@ class ContinuousEffectModelTests(unittest.TestCase):
             "Artifacts you control gain indestructible until end of turn.",
             "Lands you control gain hexproof until end of turn.",
             "Until end of turn, permanents you control gain shroud.",
+            "Creatures you control with a +1/+1 counter on them gain "
+            "trample until end of turn.",
         )
         for text in supported:
             with self.subTest(text=text):
@@ -658,7 +660,6 @@ class ContinuousEffectModelTests(unittest.TestCase):
 
         unsupported = (
             "Target creature you control gains flying until end of turn.",
-            "Creatures you control with a +1/+1 counter on them gain trample until end of turn.",
             "Creatures you control get +X/+X until end of turn.",
             "Creatures you control gain protection from red until end of turn.",
             "Creatures you control gain \"{T}: Add {G}.\" until end of turn.",
@@ -722,6 +723,14 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 None,
                 None,
                 "attacking",
+            ),
+            (
+                "spell-other-blocking",
+                "Other blocking creatures get +1/+1 until end of turn.",
+                "Instant",
+                None,
+                None,
+                "blocking",
             ),
             (
                 "modal",
@@ -796,7 +805,10 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 state = predicate.get("state_predicate")
                 if state_field is not None:
                     self.assertTrue(state[state_field])
-                if context == "triggered-other-attacking":
+                if context in {
+                    "spell-other-blocking",
+                    "triggered-other-attacking",
+                }:
                     self.assertEqual("$source", predicate["exclude_ref"])
                 if context == "spell-target-player":
                     self.assertEqual(
@@ -816,7 +828,6 @@ class ContinuousEffectModelTests(unittest.TestCase):
         cases = (
             "Tapped creatures get -1/-1 until end of turn.",
             "Attacking creatures with flying get +1/+1 until end of turn.",
-            "Other blocking creatures get +1/+1 until end of turn.",
             "Creatures target opponent controls get -1/-1 until end of turn.",
             "Creatures your opponents control get +X/+X until end of turn.",
             "All creatures become artifacts until end of turn.",

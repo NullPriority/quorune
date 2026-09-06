@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "e60683af89593975cbe19aa835ee8160cef4b4d10e83064ff34fa64d2d4ae867"
+verified: "4c2eb1cf324ed9491a6fbcc6cb2d060137a751312c2be47c02e40f5c56f69504"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -59,8 +59,8 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Huatli, Poet of Unity // Roar of the Fifth People | 178 | 27 | 6 | 6 | 8 | 1 | `blocked` |
+| Invasion of Tolvada // The Broken Sky | 178 | 21 | 6 | 4 | 5 | 17 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
-| The Rise of Sozin // Fire Lord Sozin | 176 | 20 | 6 | 6 | 9 | 5 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
