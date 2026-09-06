@@ -214,6 +214,30 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_complex_activation_mana_owner_selects_payment_contract(self):
+        for owner in (
+            "quorune/activation_mana_cost.py",
+            "quorune/mana_provenance.py",
+            "quorune/compiler/activation_mana_costs.py",
+            "tests/fixtures/complex-activation-mana-cards.json",
+            "tests/test_complex_activation_mana_costs.py",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(
+                    {
+                        "test_complex_activation_mana_costs",
+                        "test_fixed_token_production",
+                        "test_mana_abilities",
+                        "test_typed_activated_ability_catalog",
+                    },
+                    set(plan.test_modules),
+                )
+                self.assertIn(
+                    "complex-activation-mana-cost-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_continuous_runtime_changes_select_performance_contract(self):
         for owner in (
             "quorune/card_programs/runtime.py",

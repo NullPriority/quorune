@@ -1122,6 +1122,23 @@ class CiPipelineTests(unittest.TestCase):
             self.assertIn("filter: blob:none", sections[name])
         self.assertIn("fetch-depth: 0", sections["bundle"])
         self.assertNotIn("filter: blob:none", sections["bundle"])
+        reusable = sections["reusable"]
+        for marker in (
+            "id: cohort-key",
+            "id: cohort-cache",
+            "id: cohort-remote-cache",
+            "generated-owner-v1-work-selection-cohort-measurements-",
+            "generated-owner-cache-v1-work-selection-cohort-measurements-",
+            "steps.cohort-cache.outputs.cache-hit",
+            "steps.cohort-remote-cache.outputs.run_id",
+        ):
+            self.assertIn(marker, reusable)
+        self.assertLess(
+            reusable.index("id: cohort-key"),
+            reusable.index(
+                "Generate current work-selection cohort measurements"
+            ),
+        )
 
 
 if __name__ == "__main__":

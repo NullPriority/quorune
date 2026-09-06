@@ -35,8 +35,13 @@ class ManaActivationHost(Protocol):
         self, seat: str, source: Any, ability: ActivatedAbility
     ) -> tuple[ManaMode, ...]: ...
 
-    def _add_restricted_mana(
-        self, seat: str, restriction: str, bundle: Mapping[str, int]
+    def _add_mana_to_pool(
+        self,
+        seat: str,
+        bundle: Mapping[str, int],
+        *,
+        restriction: str | None = None,
+        snow_source: bool = False,
     ) -> None: ...
 
     def _log(self, *args: Any, **kwargs: Any) -> Any: ...
@@ -78,12 +83,18 @@ def complete_mana_activation(
     origin: str,
     paid_objects: Sequence[str],
     payment_activations: Sequence[Mapping[str, Any]],
+    source_was_snow: bool,
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
     bundle = host._mana_output_for_ability(seat, source, ability, response)
-    for color, amount in bundle.items():
-        host.state.players[seat].mana_pool[color] += amount
+    restriction = ability.mana_spend_restriction
+    host._add_mana_to_pool(
+        seat,
+        bundle,
+        restriction=restriction,
+        snow_source=source_was_snow,
+    )
     selected_mode = next(
         (
             mode
@@ -117,9 +128,6 @@ def complete_mana_activation(
                 else None
             ),
         )
-    restriction = ability.mana_spend_restriction
-    if restriction:
-        host._add_restricted_mana(seat, restriction, bundle)
     host._log(
         seat,
         "mana.ability",
@@ -155,6 +163,7 @@ def complete_mana_activation(
                 paid_objects,
                 payment_activations,
                 restriction,
+                source_was_snow,
                 selected_mode is not None and bool(selected_mode.side_effects),
             )
         )
@@ -286,6 +295,7 @@ def _commit_plan_mode(
     mode: ManaMode,
     bundle: Mapping[str, int],
     restriction: str | None,
+    snow_source: bool,
     *,
     payment_id: str | None,
     replacement_selections_by_event: Mapping[str, Any] | None,
@@ -314,10 +324,12 @@ def _commit_plan_mode(
         payment_id=payment_id,
         replacement_selections_by_event=replacement_selections_by_event,
     )
-    for color, amount in bundle.items():
-        host.state.players[seat].mana_pool[color] += amount
-    if restriction:
-        host._add_restricted_mana(seat, restriction, bundle)
+    host._add_mana_to_pool(
+        seat,
+        bundle,
+        restriction=restriction,
+        snow_source=snow_source,
+    )
     apply_mana_mode_effects(
         host,
         seat,
@@ -359,7 +371,9 @@ def complete_mana_plan_activations(
         if card.tapped:
             raise GameRuleError(f"{card.ref} is already tapped")
         data = host._effective_card_data(card)
-        card_types = host._type_parts(str(data.get("type_line") or ""))[0]
+        card_types, _subtypes, supertypes = host._type_parts(
+            str(data.get("type_line") or "")
+        )
         if (
             "creature" in card_types
             and summoning_sickness_prohibits_tap_or_untap_cost(
@@ -389,6 +403,7 @@ def complete_mana_plan_activations(
             mode,
             bundle,
             restriction,
+            "snow" in supertypes,
             payment_id=payment_id,
             replacement_selections_by_event=replacement_selections_by_event,
         )

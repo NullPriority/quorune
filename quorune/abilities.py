@@ -15,6 +15,7 @@ import re
 from typing import Any, Iterable, Mapping, Sequence
 
 from .activation_usage import ActivationLimit
+from .activation_mana_cost import ActivationManaCostOption
 from .activation_condition_model import (
     ActivationCondition,
     ActivationConditionKind,
@@ -250,6 +251,7 @@ class ActivatedAbility:
     zones: tuple[str, ...]
     mana: Mapping[str, int]
     complex_symbols: tuple[str, ...] = ()
+    mana_cost_options: tuple[ActivationManaCostOption, ...] = ()
     tap_source: bool = False
     untap_source: bool = False
     discard_source: bool = False
@@ -281,7 +283,7 @@ class ActivatedAbility:
         _validate_ability_closed_vocabulary(self)
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "schema_version": 1,
             "ability_id": self.ability_id,
             "line_index": self.line_index,
@@ -333,6 +335,11 @@ class ActivatedAbility:
             "dynamic_mana_output": self.dynamic_mana_output,
             "mana_spend_restriction": self.mana_spend_restriction,
         }
+        if self.mana_cost_options:
+            result["mana_cost_options"] = [
+                option.to_dict() for option in self.mana_cost_options
+            ]
+        return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ActivatedAbility":
@@ -346,6 +353,10 @@ class ActivatedAbility:
             zones=tuple(value["zones"]),
             mana=FrozenMap(value["mana"]),
             complex_symbols=tuple(value["complex_symbols"]),
+            mana_cost_options=tuple(
+                ActivationManaCostOption.from_dict(option)
+                for option in value.get("mana_cost_options", ())
+            ),
             tap_source=value["tap_source"],
             untap_source=value["untap_source"],
             discard_source=value["discard_source"],
@@ -405,6 +416,10 @@ class ActivatedAbility:
         mana = {key: value for key, value in self.mana.items() if value}
         if mana:
             result["m"] = mana
+        if self.mana_cost_options:
+            result["mana_options"] = [
+                option.compact() for option in self.mana_cost_options
+            ]
         if self.tap_source:
             result["tap"] = 1
         if self.discard_source:
@@ -498,6 +513,23 @@ def _validate_ability_sequences_and_scalars(ability: ActivatedAbility) -> None:
         not isinstance(choice, CostChoice) for choice in ability.choices
     ):
         raise ValueError("activated ability choices must be typed")
+    if not isinstance(ability.mana_cost_options, tuple) or any(
+        not isinstance(option, ActivationManaCostOption)
+        for option in ability.mana_cost_options
+    ):
+        raise ValueError(
+            "activated ability mana_cost_options must contain typed options"
+        )
+    option_ids = [option.option_id for option in ability.mana_cost_options]
+    if len(option_ids) != len(set(option_ids)):
+        raise ValueError("activation mana-cost option ids must be unique")
+    if ability.mana_cost_options and (
+        ability.complex_symbols or ability.mana_ability
+    ):
+        raise ValueError(
+            "typed activation mana-cost options cannot retain complex symbols "
+            "or describe a mana ability"
+        )
     if not isinstance(ability.activation_conditions, tuple) or any(
         not isinstance(condition, ActivationCondition)
         for condition in ability.activation_conditions

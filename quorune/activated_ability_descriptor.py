@@ -47,6 +47,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
         "mana_spend_restriction",
     }
 )
+_OPTIONAL_DESCRIPTOR_FIELDS = frozenset({"mana_cost_options"})
 
 _SEQUENCE_FIELDS = (
     "zones",
@@ -72,7 +73,10 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
     not make domain validation depend on a particular immutable container.
     """
 
-    if not isinstance(value, Mapping) or set(value) != ACTIVATED_ABILITY_DESCRIPTOR_FIELDS:
+    if not isinstance(value, Mapping) or set(value) not in {
+        ACTIVATED_ABILITY_DESCRIPTOR_FIELDS,
+        ACTIVATED_ABILITY_DESCRIPTOR_FIELDS | _OPTIONAL_DESCRIPTOR_FIELDS,
+    }:
         raise ValueError("activated abilities use a closed schema")
     if value["schema_version"] != 1:
         raise ValueError("unsupported activated ability schema version")
@@ -96,4 +100,12 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         for entry in value[field]
     ):
         raise ValueError("activated ability typed entries must be objects")
+    if "mana_cost_options" in value and (
+        not isinstance(value["mana_cost_options"], list)
+        or any(
+            not isinstance(entry, Mapping)
+            for entry in value["mana_cost_options"]
+        )
+    ):
+        raise ValueError("activation mana-cost options must be objects")
     return value

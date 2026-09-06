@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 146,
+  "registry_version": 147,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -368,6 +368,33 @@
       "dependency_fail_closed_rationale": "The focused dependency test blocks the public-query capability and proves only the affected source-spanned activation remains inexact.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The focused parser and query-evaluator mutations remove or corrupt the typed condition; exact compiler and current-state assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.mana_cost.fixed_complex",
+      "version": 1,
+      "official_rules": ["106.3", "107.4e", "107.4f", "107.4g", "107.4h", "118.3", "118.7", "602.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile fixed colored-hybrid, two-brid, Phyrexian, and snow symbols on otherwise typed nonmana activated abilities into immutable payment options consumed by the canonical activation offer, commit, mana, life, and provenance owners.",
+        "inputs": ["one source-spanned nonmana activated ability", "fixed ordinary, colored-hybrid, two-brid, Phyrexian, or snow mana symbols", "current payable mana sources and pool", "current life total", "source-pinned typed effect and other cost descriptors"],
+        "outputs": ["one closed set of immutable activation mana-cost options", "principal-visible currently payable option choices", "atomic selected mana, snow-mana, and life payment", "current source ability and option revalidation", "exact replay without raw mana-source identity projection"],
+        "exclusions": ["X, energy, half, infinity, chaos, and other open or nonmana symbols", "selected-object, untyped, random, optional, alternative, repeated, or independently unsupported choice costs", "generic cost reductions combined with complex symbols", "mana abilities whose own activation consumes complex mana", "copied or granted costs outside the compiler-pinned catalog", "dynamic snow-source characteristics and delayed mana whose source identity is unavailable"]
+      },
+      "dependencies": ["activation.tap_untap_cost.haste", "mana.activated.fixed_output", "mana.activated.restricted_fixed_output", "mana.activated.color_set", "mana.intrinsic.basic_land_type"],
+      "implementation_components": ["quorune.activation_mana_cost.ActivationManaCostOption", "quorune.compiler.activation_mana_costs.fixed_complex_activation_mana_cost", "quorune.rules.activation.availability.activation_availability", "quorune.rules.activation.proposal.build_activation_offer", "quorune.rules.activation.proposal.build_activation_proposal", "quorune.rules.activation.commit._revalidate_activation", "quorune.mana_provenance.ManaProvenanceLot", "quorune.mana_provenance.ManaProvenanceHostMixin", "quorune.mana.auto_plan_payment", "CommanderEngine._pay_for_cost"],
+      "positive_tests": ["test_closed_complex_symbols_compile_to_typed_options", "test_hybrid_offer_commit_and_stale_option_are_atomic", "test_phyrexian_options_share_mana_and_life_owners", "test_snow_payment_uses_current_source_provenance_and_replays", "test_two_brid_offer_and_commit_preserve_the_unspent_color"],
+      "negative_tests": ["test_option_model_and_unsupported_symbols_fail_closed", "test_current_ability_removal_rejects_option_before_mutation", "test_provenance_journal_rejects_a_stale_restriction_summary", "test_snow_allocation_does_not_double_spend_colored_mana", "test_stale_snow_provenance_rolls_back_before_tap"],
+      "interaction_tests": ["test_hybrid_locket_output_pays_sibling_complex_activation", "test_hybrid_offer_commit_and_stale_option_are_atomic", "test_hybrid_payment_and_source_sacrifice_share_one_transaction", "test_hybrid_payment_and_untap_symbol_commit_atomically", "test_hybrid_target_revalidates_after_departure", "test_mixed_option_commits_hybrid_life_and_snow_as_one_cost", "test_phyrexian_options_share_mana_and_life_owners", "test_restricted_snow_overlap_and_projection_preserve_only_aggregates"],
+      "multiplayer_tests": ["test_restricted_snow_overlap_and_projection_preserve_only_aggregates"],
+      "privacy_tests": ["test_restricted_snow_overlap_and_projection_preserve_only_aggregates"],
+      "replay_tests": ["test_snow_payment_uses_current_source_provenance_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The focused capability mutation blocks the complex activation-cost capability and proves the source-spanned ability remains inexact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler mutation removes option lowering and the snow-provenance mutation removes the only payable snow source; exact compiler and runtime offer assertions reject both survivors.",
       "blockers": [],
       "status": "trusted"
     },

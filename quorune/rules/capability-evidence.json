@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3fe73ef8e0a0030b802776468ec43cba73cf0b96a9d0850406b6014d44948b1a",
-  "declaration_source_fingerprint": "b2a924fa25f63a5fec405046e1a09b3b8ed557192fdc0df42608d490a9d0274f",
+  "registry_fingerprint": "d1ed2cedef442f0dda2c36874fab5552499fffb1f2556db94908c11e0a420606",
+  "declaration_source_fingerprint": "005cdeff98e805ce119dd5616cbf6b754402cdff4d5610e9eb95b02a9efda800",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -1669,6 +1669,405 @@
         "commander_review"
       ],
       "applicability_note": "Checkpoint and replay the same activation result after the typed loyalty-cost modifier becomes inactive through phasing."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_hybrid_locket_output_pays_sibling_complex_activation",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use one source-pinned fixed-output mana ability to pay a sibling permanent's selected hybrid activation cost through the same catalog and mana owner."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_hybrid_offer_commit_and_stale_option_are_atomic",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Advertise only current hybrid choices, reject a selected color after its mana disappears, and commit the chosen alternative atomically."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_hybrid_payment_and_source_sacrifice_share_one_transaction",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commit one selected hybrid payment, source tap, and source sacrifice atomically before the existing draw effect resolves from the stack."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_hybrid_payment_and_untap_symbol_commit_atomically",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commit one selected hybrid payment and the canonical untap-symbol source cost together before the existing draw effect resolves."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_hybrid_target_revalidates_after_departure",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commit a selected hybrid cost, then revalidate the public damage target at resolution after its battlefield departure."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_mixed_option_commits_hybrid_life_and_snow_as_one_cost",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commit one selected mixed option through colored-hybrid mana, Phyrexian life, snow-source mana, source tap, and the resolved effect as one atomic activation."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_phyrexian_options_share_mana_and_life_owners",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Route the selected Phyrexian alternative through either the canonical colored-mana spend or life-payment owner without changing the resolved effect."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate a snow payment in four-player state while preserving the ordinary owner of the activation and restricted mana."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_compiler_and_snow_provenance_mutants_are_killed",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove compiler option lowering or erase current snow provenance and require exact compilation or action availability to reject the survivor."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaCompilerTests.test_option_model_and_unsupported_symbols_fail_closed",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject malformed option descriptors plus X, energy, untyped choice, and other nonclosed activation-cost grammar."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaCompilerTests.test_provenance_journal_rejects_a_stale_restriction_summary",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a checkpoint whose jointly tagged provenance lots and projected restricted-mana compatibility summary disagree."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaCompilerTests.test_snow_allocation_does_not_double_spend_colored_mana",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reserve each physical snow-source mana unit for only one selected snow, colored, or generic requirement and reject any allocation that would spend it twice."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_current_ability_removal_rejects_option_before_mutation",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the current source ability after proposal construction and reject its pinned cost option before mana, tap, life, or stack mutation."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "negative",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_stale_snow_provenance_rolls_back_before_tap",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replace pooled snow provenance with ordinary mana after proposal construction and reject before source tap, mana spend, or stack mutation."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaCompilerTests.test_closed_complex_symbols_compile_to_typed_options",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed hybrid, two-brid, Phyrexian, snow, and mixed activation symbols into immutable source-spanned options with exact capability closure."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_snow_payment_uses_current_source_provenance_and_replays",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use a current Snow permanent's typed mana ability to pay one snow symbol while an otherwise identical nonsnow source remains ineligible."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "positive",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_two_brid_offer_and_commit_preserve_the_unspent_color",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer both payable branches of a two-brid activation cost, commit the selected two-generic branch, and preserve the colored mana not selected for payment."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_restricted_snow_overlap_and_projection_preserve_only_aggregates",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the provenance lot journal out of another principal's projection while exposing only ordinary public mana aggregates and legal actions."
+    },
+    {
+      "capability_id": "activation.mana_cost.fixed_complex",
+      "evidence_class": "replay",
+      "test_id": "tests.test_complex_activation_mana_costs.ComplexActivationManaRuntimeTests.test_snow_payment_uses_current_source_provenance_and_replays",
+      "official_rule_ids": [
+        "106.3",
+        "107.4e",
+        "107.4f",
+        "107.4g",
+        "107.4h",
+        "118.3",
+        "118.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Persist and exactly replay the snow-source mana activation, provenance consumption, source tap cost, stack placement, and resolved life effect."
     },
     {
       "capability_id": "activation.permission.controlled_creature_as_haste",
@@ -57592,5 +57991,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "1e98772c993172061658a1723b95230c02d0e81c203826c09918cc0437e1185f"
+  "fingerprint": "9cef70c057590c696f59ed6555dec3f446083485400b93f107c8c3d94139254d"
 }

@@ -192,6 +192,12 @@ from .mana_restrictions import (
     mana_restriction_allows,
     spell_mana_spend_context,
 )
+from .mana_provenance import (
+    clear_mana_provenance,
+    mana_provenance_lots,
+    ManaProvenanceError,
+    ManaProvenanceHostMixin,
+)
 from .mana_activation import complete_mana_activation, complete_mana_plan_activations
 from .mana_ability_runtime import (
     mana_modes_for_ability,
@@ -394,6 +400,7 @@ class CommanderEngine(
     AbilityFragmentHostMixin,
     CharacteristicEvaluationHostMixin,
     CastingCostHostMixin,
+    ManaProvenanceHostMixin,
     TriggerProcessingHostMixin,
     TargetSelectionOwnerMixin,
     HiddenSearchOwnerMixin,
@@ -898,6 +905,12 @@ class CommanderEngine(
         for player in self.state.players.values():
             if any(value < 0 for value in player.mana_pool.values()):
                 raise StateInvariantError(f"Negative mana in {player.seat}'s pool")
+            try:
+                mana_provenance_lots(player)
+            except ManaProvenanceError as exc:
+                raise StateInvariantError(
+                    f"Invalid mana provenance for {player.seat}: {exc}"
+                ) from exc
 
     def card_record(self, value: str | CardInstance) -> CardRecord | None:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
@@ -1858,8 +1871,8 @@ class CommanderEngine(
             if any(player.mana_pool.values()):
                 lost = dict(player.mana_pool)
                 player.mana_pool = normalize_mana_bundle(None)
-                player.stats.pop("restricted_mana", None)
                 self._log(seat, "mana.empty", f"{seat}'s mana pool emptied.", {"lost": lost, "reason": reason}, importance=0, changed_players=[seat])
+            clear_mana_provenance(player.stats)
 
     def _enter_step(
         self,
@@ -2361,101 +2374,6 @@ class CommanderEngine(
     def _spell_mana_spend_context(self, type_line: str) -> str:
         return spell_mana_spend_context(type_line)
 
-    def _restricted_mana(self, seat: str) -> dict[str, dict[str, int]]:
-        raw = self.state.players[seat].stats.setdefault(
-            "restricted_mana",
-            {},
-        )
-        return {
-            str(key): normalize_mana_bundle(value)
-            for key, value in dict(raw).items()
-        }
-
-    def _store_restricted_mana(
-        self,
-        seat: str,
-        values: Mapping[str, Mapping[str, int]],
-    ) -> None:
-        compact = {
-            key: {
-                color: amount
-                for color, amount in normalize_mana_bundle(bundle).items()
-                if amount
-            }
-            for key, bundle in values.items()
-            if sum(normalize_mana_bundle(bundle).values())
-        }
-        if compact:
-            self.state.players[seat].stats["restricted_mana"] = compact
-        else:
-            self.state.players[seat].stats.pop("restricted_mana", None)
-
-    def _add_restricted_mana(
-        self,
-        seat: str,
-        restriction: str,
-        bundle: Mapping[str, int],
-    ) -> None:
-        values = self._restricted_mana(seat)
-        current = values.setdefault(
-            restriction,
-            normalize_mana_bundle(None),
-        )
-        for color, amount in normalize_mana_bundle(bundle).items():
-            current[color] += amount
-        self._store_restricted_mana(seat, values)
-
-    def _spendable_mana_pool(
-        self,
-        seat: str,
-        spend_context: str | None,
-    ) -> dict[str, int]:
-        pool = normalize_mana_bundle(self.state.players[seat].mana_pool)
-        for restriction, bundle in self._restricted_mana(seat).items():
-            if self._mana_restriction_allows(restriction, spend_context):
-                continue
-            for color, amount in bundle.items():
-                pool[color] = max(0, pool[color] - amount)
-        return pool
-
-    def _apply_mana_spend(
-        self,
-        seat: str,
-        spent: Mapping[str, int],
-        spend_context: str | None,
-    ) -> None:
-        pool = normalize_mana_bundle(self.state.players[seat].mana_pool)
-        restricted = self._restricted_mana(seat)
-        for color, raw_amount in normalize_mana_bundle(spent).items():
-            remaining = raw_amount
-            for restriction in sorted(restricted):
-                if not self._mana_restriction_allows(
-                    restriction,
-                    spend_context,
-                ):
-                    continue
-                restricted_amount = restricted[restriction][color]
-                use = min(remaining, restricted_amount)
-                restricted[restriction][color] -= use
-                if (
-                    use
-                    and restriction
-                    == "legendary_spell_uncounterable"
-                ):
-                    self.state.players[seat].stats[
-                        "next_spell_uncounterable"
-                    ] = True
-                remaining -= use
-                if not remaining:
-                    break
-            pool[color] -= raw_amount
-            if pool[color] < 0:
-                raise GameRuleError(
-                    "Mana payment exceeded the authoritative pool"
-                )
-        self.state.players[seat].mana_pool = pool
-        self._store_restricted_mana(seat, restricted)
-
     def available_mana_sources(
         self,
         seat: str,
@@ -2494,6 +2412,7 @@ class CommanderEngine(
         *,
         exclude_sources: set[str] | None = None,
         spend_context: str | None = None,
+        snow_required: int = 0,
     ) -> tuple[dict[str, int], list[dict[str, Any]]]:
         activations: list[dict[str, Any]] = []
         pay_mode = response.get("pay", "auto")
@@ -2517,6 +2436,11 @@ class CommanderEngine(
                     seat,
                     spend_context,
                 ),
+                snow_required=snow_required,
+                starting_snow_pool=self._snow_mana_pool(
+                    seat,
+                    spend_context,
+                ),
             )
             activations = plan.activations
             self._activate_mana_plan(
@@ -2533,6 +2457,7 @@ class CommanderEngine(
                 ),
             )
             payment = plan.payment
+            snow_payment = plan.snow_payment
         else:
             activations = [dict(item) for item in response.get("mana") or []]
             self._activate_mana_plan(
@@ -2549,20 +2474,40 @@ class CommanderEngine(
                 ),
             )
             payment = normalize_mana_bundle(response.get("payment"))
+            snow_payment = normalize_mana_bundle(
+                response.get("snow_payment")
+            )
+        if sum(snow_payment.values()) != snow_required:
+            raise GameRuleError(
+                f"Mana payment requires exactly {snow_required} snow mana"
+            )
+        snow_pool = self._snow_mana_pool(seat, spend_context)
+        if any(
+            snow_payment[color] > snow_pool[color]
+            for color in "WUBRGC"
+        ):
+            raise GameRuleError("Declared snow mana is not available")
+        ordinary_pool = self._spendable_mana_pool(seat, spend_context)
+        for color in "WUBRGC":
+            ordinary_pool[color] -= snow_payment[color]
         try:
             _, spent = pay_mana_from_pool(
-                self._spendable_mana_pool(seat, spend_context),
+                ordinary_pool,
                 requirements,
                 payment=payment,
             )
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
+        combined = normalize_mana_bundle(spent)
+        for color in "WUBRGC":
+            combined[color] += snow_payment[color]
         self._apply_mana_spend(
             seat,
-            spent,
+            combined,
             spend_context,
+            snow_payment=snow_payment,
         )
-        return spent, activations
+        return combined, activations
 
     def _check_priority(self, seat: str) -> None:
         if self.state.priority_player != seat:
@@ -3147,17 +3092,8 @@ class CommanderEngine(
         *,
         exclude_sources: set[str] | None = None,
         spend_context: str | None = None,
+        snow_required: int = 0,
     ) -> bool:
-        remaining = {key: int(requirements.get(key, 0)) for key in ("GENERIC", "W", "U", "B", "R", "G", "C")}
-        pool = self._spendable_mana_pool(seat, spend_context)
-        for color in "WUBRGC":
-            paid = min(pool[color], remaining[color])
-            pool[color] -= paid
-            remaining[color] -= paid
-        generic_paid = min(sum(pool.values()), remaining["GENERIC"])
-        remaining["GENERIC"] -= generic_paid
-        if not sum(remaining.values()):
-            return True
         try:
             sources = [
                 source
@@ -3167,7 +3103,30 @@ class CommanderEngine(
                 )
                 if source.object_id not in (exclude_sources or set())
             ]
-            auto_plan_payment(remaining, sources)
+            auto_plan_payment(
+                {
+                    key: int(requirements.get(key, 0))
+                    for key in (
+                        "GENERIC",
+                        "W",
+                        "U",
+                        "B",
+                        "R",
+                        "G",
+                        "C",
+                    )
+                },
+                sources,
+                starting_pool=self._spendable_mana_pool(
+                    seat,
+                    spend_context,
+                ),
+                snow_required=snow_required,
+                starting_snow_pool=self._snow_mana_pool(
+                    seat,
+                    spend_context,
+                ),
+            )
             return True
         except ManaPlanError:
             return False

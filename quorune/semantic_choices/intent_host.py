@@ -264,6 +264,7 @@ class SemanticChoiceIntentHostMixin:
                     "player": intent.player,
                     "color": intent.color,
                     "amount": intent.amount,
+                    "source": intent.source_ref,
                 },
                 actor=intent.actor,
                 operation="mana",

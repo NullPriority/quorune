@@ -5,6 +5,10 @@ import copy
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility
+from ...activation_mana_cost import (
+    ActivationManaCostOption,
+    select_activation_mana_option,
+)
 from ...attachment_references import (
     SourceAttachmentSnapshot,
     capture_source_attachment_snapshot,
@@ -117,7 +121,7 @@ class ActivationCommitHost(Protocol):
 
 def _revalidate_activation(
     host: ActivationCommitHost, proposal: ActivationProposal
-) -> tuple[Any, ActivatedAbility]:
+) -> tuple[Any, ActivatedAbility, ActivationManaCostOption | None]:
     source = host._resolve_object(
         proposal.seat,
         proposal.source_ref,
@@ -160,7 +164,45 @@ def _revalidate_activation(
             ),
             reason=condition_reason or "stale_activation_condition",
         )
-    return source, ability
+    details = thaw_json(proposal.details)
+    raw_option = details.get("mana_cost_option")
+    mana_option = None
+    if ability.mana_cost_options:
+        if not isinstance(raw_option, Mapping):
+            raise ActivationProposalError(
+                "The activation mana cost changed after proposal construction",
+                reason="stale_activation_mana_cost",
+            )
+        try:
+            proposed = ActivationManaCostOption.from_dict(raw_option)
+            mana_option = select_activation_mana_option(
+                host,
+                proposal.seat,
+                source,
+                ability,
+                proposed.option_id,
+            )
+        except ValueError as exc:
+            raise ActivationProposalError(
+                "The activation mana cost is no longer payable",
+                status="unpayable",
+                reason="stale_activation_mana_cost",
+            ) from exc
+        if (
+            mana_option.to_dict() != proposed.to_dict()
+            or dict(mana_option.requirements)
+            != dict(thaw_json(proposal.requirements))
+        ):
+            raise ActivationProposalError(
+                "The activation mana cost changed after proposal construction",
+                reason="stale_activation_mana_cost",
+            )
+    elif raw_option is not None:
+        raise ActivationProposalError(
+            "The selected ability no longer has a complex mana cost",
+            reason="stale_activation_mana_cost",
+        )
+    return source, ability, mana_option
 
 
 def _commit_symbol_costs(
@@ -196,6 +238,7 @@ def _commit_resource_costs(
     source: Any,
     ability: ActivatedAbility,
     response: Mapping[str, Any],
+    mana_option: ActivationManaCostOption | None,
 ) -> None:
     loyalty_prepared = None
     loyalty_event_id = ""
@@ -240,9 +283,12 @@ def _commit_resource_costs(
             raise ActivationProposalError(
                 str(exc), reason="loyalty_cost_placement"
             ) from exc
-    if ability.life_payment:
+    life_payment = ability.life_payment + (
+        mana_option.life_payment if mana_option is not None else 0
+    )
+    if life_payment:
         try:
-            pay_life_cost(host, proposal.seat, ability.life_payment)
+            pay_life_cost(host, proposal.seat, life_payment)
         except LifeStateError as exc:
             raise ActivationProposalError(
                 "Cannot pay more life than the player has",
@@ -376,9 +422,19 @@ def _pay_object_and_mana_costs(
         )
         special_cost_context = None
     requirements = dict(thaw_json(proposal.requirements))
+    details = thaw_json(proposal.details)
+    raw_mana_option = details.get("mana_cost_option")
+    mana_option = (
+        ActivationManaCostOption.from_dict(raw_mana_option)
+        if isinstance(raw_mana_option, Mapping)
+        else None
+    )
+    snow_required = (
+        mana_option.snow_payment if mana_option is not None else 0
+    )
     spent: dict[str, int] = {}
     activations: list[dict[str, Any]] = []
-    if sum(requirements.values()):
+    if sum(requirements.values()) or snow_required:
         source_types = host._type_parts(
             str(host._effective_card_data(source).get("type_line") or "")
         )[0]
@@ -389,6 +445,7 @@ def _pay_object_and_mana_costs(
             spend_context=(
                 "artifact_ability" if "artifact" in source_types else "ability"
             ),
+            snow_required=snow_required,
         )
     return paid_objects, activations, spent, special_cost_context
 
@@ -612,8 +669,11 @@ def commit_activation(
 ) -> None:
     """Commit one revalidated activation proposal through typed state owners."""
 
-    source, ability = _revalidate_activation(host, proposal)
+    source, ability, mana_option = _revalidate_activation(host, proposal)
     source_logical_object_id = source.logical_object_id
+    source_was_snow = "snow" in host._type_parts(
+        str(host._effective_card_data(source).get("type_line") or "")
+    )[2]
     program = host.semantics.get(proposal.semantic_key)
     cycling_snapshot = _cycling_event_snapshot(
         host,
@@ -643,7 +703,14 @@ def commit_activation(
             host, proposal, source, ability, response
         )
     )
-    _commit_resource_costs(host, proposal, source, ability, response)
+    _commit_resource_costs(
+        host,
+        proposal,
+        source,
+        ability,
+        response,
+        mana_option,
+    )
     try:
         commit_activation_usage(
             source,
@@ -673,6 +740,7 @@ def commit_activation(
             origin=origin,
             paid_objects=paid_objects,
             payment_activations=activations,
+            source_was_snow=source_was_snow,
         )
         return
     item = _activation_stack_item(
@@ -711,7 +779,9 @@ def commit_activation(
             ],
             "targets": item.targets,
             "modes": item.modes,
-            "life_paid": ability.life_payment,
+            "life_paid": ability.life_payment + (
+                mana_option.life_payment if mana_option is not None else 0
+            ),
             "energy_paid": ability.energy_payment,
         },
         importance=2,

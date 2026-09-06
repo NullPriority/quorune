@@ -117,6 +117,7 @@
   },
   "protected_rules_modules": [
     "quorune/abilities.py",
+    "quorune/activation_mana_cost.py",
     "quorune/activation_usage.py",
     "quorune/ability_fragment_primitives.py",
     "quorune/ability_fragments.py",
@@ -175,6 +176,7 @@
     "quorune/landwalk.py",
     "quorune/mana.py",
     "quorune/mana_activation.py",
+    "quorune/mana_provenance.py",
     "quorune/mana_mode_effects.py",
     "quorune/mana_payment_continuations.py",
     "quorune/mana_undo.py",
@@ -323,6 +325,7 @@
       ,"quorune/turn_priority_owner.py": "typed priority grant/pass, yield invalidation, action-opportunity audit, and deterministic pump owner"
       ,"quorune/turn_step_owner.py": "typed turn selection, phase/step progression, cleanup iteration, and end-turn coordination owner"
       ,"quorune/mana_activation.py": "activated mana ability and reversible activation transaction owner"
+      ,"quorune/mana_provenance.py": "typed snow-source and spending-restriction mana provenance mutation owner"
       ,"quorune/semantic_choices/intent_host.py": "typed semantic-choice intent application behind the immutable choice registry"
       ,"quorune/effect_runtime/state_and_permissions.py": "registry-owned state and permission effect family"
       ,"quorune/effect_runtime/zones_and_attachments.py": "registry-owned zone and attachment effect family"

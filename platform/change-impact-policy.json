@@ -620,6 +620,39 @@
       ]
     },
     {
+      "id": "complex-activation-mana-cost-contract",
+      "patterns": [
+        "quorune/activation_mana_cost.py",
+        "quorune/activated_ability_descriptor.py",
+        "quorune/compiler/activation_mana_costs.py",
+        "quorune/mana.py",
+        "quorune/mana_activation.py",
+        "quorune/mana_provenance.py",
+        "quorune/mana_source_discovery.py",
+        "quorune/rules/activation/availability.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/activation/proposal.py",
+        "tests/fixtures/complex-activation-mana-cards.json",
+        "tests/test_complex_activation_mana_costs.py"
+      ],
+      "test_modules": [
+        "test_action_proposals",
+        "test_casting_activation_proposal_equivalence",
+        "test_complex_activation_mana_costs",
+        "test_fixed_token_production",
+        "test_mana_abilities",
+        "test_native_v3_slice",
+        "test_semantic_choice_characterization",
+        "test_typed_activated_ability_catalog"
+      ],
+      "test_suites": [
+        "casting-costs-mana"
+      ],
+      "browser_focuses": [
+        "mana-action"
+      ]
+    },
+    {
       "id": "worktree-environment-ownership",
       "patterns": [
         "AGENTS.md",

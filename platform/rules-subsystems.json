@@ -2488,33 +2488,79 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-activation-condition-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:complex-activation-mana-costs",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.mana_cost.fixed_complex",
+            "component:quorune.activation_mana_cost.ActivationManaCostOption",
+            "component:quorune.compiler.activation_mana_costs.fixed_complex_activation_mana_cost",
+            "component:quorune.mana.auto_plan_payment",
+            "component:quorune.mana_provenance.ManaProvenanceHostMixin",
+            "component:quorune.mana_provenance.ManaProvenanceLot",
+            "component:quorune.mana_source_discovery.available_mana_sources",
+            "component:quorune.rules.activation.availability.activation_availability",
+            "component:quorune.rules.activation.commit._revalidate_activation",
+            "component:quorune.rules.activation.proposal.build_activation_proposal"
+          ],
+          "source_contexts": [
+            "activated"
+          ],
+          "normalized_literal_parameters": [
+            "colored-hybrid-two-brid-phyrexian-or-snow-symbol",
+            "current-life-and-mana-payability",
+            "current-snow-source-provenance",
+            "fixed-finite-payment-options",
+            "nonmana-activated-ability"
+          ],
+          "shared_dependencies": [
+            "activation.mana_cost.fixed_complex",
+            "activation.tap_untap_cost.haste",
+            "mana.activated.color_set",
+            "mana.activated.fixed_output",
+            "mana.activated.restricted_fixed_output",
+            "mana.intrinsic.basic_land_type"
+          ],
+          "shared_grammar": "one fixed colored-hybrid, two-brid, Phyrexian, snow, or mixed mana cost on an otherwise exact nonmana activated ability",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Adds one immutable activation mana-cost option descriptor and one provenance-aware mana-lot boundary so the existing action offer, proposal, commit, life payment, mana-source discovery, restricted-mana, replay, and projection owners can execute the selected cost without another activation or payment path.",
+          "explicit_exclusions": [
+            "X, energy, half, infinity, chaos, and other open or nonmana symbols",
+            "copied, granted, removed, or text-changing costs outside the current compiler-pinned catalog",
+            "dynamic snow-source characteristics and delayed mana without a retained typed source identity",
+            "generic reductions combined with complex symbols and mana abilities that consume complex mana",
+            "selected-object, untyped, random, optional, alternative, repeated, and independently unsupported choice costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "complex-activation-mana-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v173-public-activation-conditions",
-      "compiler_version": "oracle-ir-v173",
-      "bundle_id": "bundle:public-activation-conditions",
-      "candidate_ids": ["compiler:public-activation-conditions"],
+      "transition_id": "oracle-ir-v174-complex-activation-mana-costs",
+      "compiler_version": "oracle-ir-v174",
+      "bundle_id": "bundle:complex-activation-mana-costs",
+      "candidate_ids": ["compiler:complex-activation-mana-costs"],
       "family_ids": [
-        "activated_effect:counter",
-        "activated_effect:deal-damage",
-        "activated_effect:draw",
-        "activated_effect:life-change",
-        "activated_effect:ordered-effect-composition",
-        "activated_effect:put-counter",
-        "activated_effect:return",
-        "activated_effect:scry",
-        "activated_effect:tap-state",
-        "quantity_expression:dynamic-quantity"
+        "activated_cost:complete-alternate-additional-cost-grammar",
+        "activated_cost:restricted-payment-predicates"
       ],
       "capability_ids": [
-        "activation.condition.phase_window",
-        "activation.condition.public_query",
-        "state_query.permanent.public_state_predicate"
+        "activation.mana_cost.fixed_complex",
+        "activation.tap_untap_cost.haste",
+        "mana.activated.color_set",
+        "mana.activated.fixed_output",
+        "mana.activated.restricted_fixed_output",
+        "mana.intrinsic.basic_land_type"
       ],
-      "measurement_id": "measurement:public-activation-conditions",
+      "measurement_id": "measurement:complex-activation-mana-costs",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

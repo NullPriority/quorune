@@ -65,6 +65,17 @@ count objects without inspecting identity. The canonical activation
 availability owner evaluates the descriptor both for an advertised action and
 again at commit before mana, tap, usage, source-zone, or stack mutation.
 
+Fixed colored-hybrid, two-brid, Phyrexian, and snow activation mana symbols use
+an additive immutable option list in that same catalog. Each option pins its
+ordinary mana vector, Phyrexian life payment, and snow-mana count. Action forms
+expose only currently payable options, proposal construction pins the selected
+option, and commit revalidates the same option before any cost mutates state.
+The canonical mana owner retains a compact lot journal only for mana whose Snow
+source or spend restriction matters. A jointly Snow and restricted unit remains
+one lot, so checking a snow cost cannot accidentally bypass its spending
+restriction. Ordinary unrestricted mana keeps the historical aggregate pool,
+and existing catalog descriptors omit the additive option field byte-for-byte.
+
 Opponent and target-player zones, hidden identity, attachments, counters,
 combat or tapped state, chosen or named cards, same-name and distinct-value
 queries, total power, source-relative or historical facts, disjunctions,
@@ -93,6 +104,9 @@ catalog descriptors fail closed before action exposure.
 
 - Activation advertisement and acceptance consume the same immutable ability
   value.
+- Hybrid, Phyrexian, and snow activation payments share one selected option and
+  the existing mana and life owners; snow provenance survives save/load and is
+  consumed atomically with overlapping mana restrictions.
 - A condition that changes after proposal construction rejects the commit
   before any activation cost mutates state.
 - Copy, typed grant, token construction, removal, replay, and source validation
