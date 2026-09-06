@@ -14,6 +14,7 @@ from ..continuous_conditions import (
 )
 from ..continuous_effects import Layer
 from ..characteristic_fragments import CharacteristicQuantitySpec
+from ..drawing.restrictions import drawn_this_turn
 from ..object_query import ObjectQueryResult, object_matches_query
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime import (
@@ -21,6 +22,7 @@ from ..semantic_runtime import (
     ContinuousEffectSourceContext,
     default_continuous_effect_component_registry,
 )
+from ..turn_history import current_turn_history_events
 
 if TYPE_CHECKING:
     from ..semantics import SemanticRegistry
@@ -108,6 +110,16 @@ class _FixedPublicStateSnapshotResolver:
         condition: FixedPublicStateConditionSpec,
     ) -> FixedPublicStateConditionSnapshot:
         controller = self.state.players[source.controller]
+        turn_sequence = max(0, int(getattr(self.state, "turn_sequence", 0)))
+        cast_events = tuple(
+            event
+            for event in current_turn_history_events(
+                getattr(self.state, "turn_history", None),
+                turn_sequence=turn_sequence,
+                kind="spell_cast",
+            )
+            if event.actor == source.controller
+        )
         attached = (
             self.state.cards.get(source.attached_to)
             if getattr(source, "attached_to", None)
@@ -127,9 +139,7 @@ class _FixedPublicStateSnapshotResolver:
                 if other != source.controller
                 and self.state.players[other].in_game
             ),
-            turn_sequence=max(
-                0, int(getattr(self.state, "turn_sequence", 0))
-            ),
+            turn_sequence=turn_sequence,
             source_entered_battlefield_turn_sequence=max(
                 0,
                 int(
@@ -145,6 +155,27 @@ class _FixedPublicStateSnapshotResolver:
                     (str(name), int(amount))
                     for name, amount in source.counters.items()
                 )
+            ),
+            controller_draw_count=drawn_this_turn(
+                self,
+                source.controller,
+            ),
+            controller_spell_cast_count=len(cast_events),
+            controller_noncreature_spell_cast_count=sum(
+                "creature" not in event.types for event in cast_events
+            ),
+            controller_instant_sorcery_cast_count=sum(
+                bool({"instant", "sorcery"}.intersection(event.types))
+                for event in cast_events
+            ),
+            opponent_poison_counter_counts=tuple(
+                max(0, int(getattr(self.state.players[other], "poison", 0)))
+                for other in self.state.turn_order
+                if other != source.controller
+                and self.state.players[other].in_game
+            ),
+            controller_is_monarch=(
+                getattr(self.state, "monarch", None) == source.controller
             ),
             source_query_matches=(
                 self._query_matches(source, condition)

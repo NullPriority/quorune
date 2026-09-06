@@ -360,6 +360,14 @@ required ability. Resolution-time characteristic selection deliberately stops
 at layer 5 and rejects ability-qualified sets rather than claiming a cyclic
 characteristic boundary.
 
+Fixed public static conditions snapshot the same layer-5 query boundary along
+with canonical aggregate hand/draw counts, typed current-turn spell-cast
+history, named source and player counters, and the public monarch designation.
+The snapshot contains no hidden object identity and is recomputed under the
+source's current controller. Query counts may use authoritative tap,
+attachment, counter, and modified state, but never later-layer ability presence
+or dynamic power/toughness.
+
 ## Visibility and replay
 
 The kernel holds authoritative information but never builds network responses.

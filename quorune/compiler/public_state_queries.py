@@ -327,6 +327,29 @@ def _public_query_primary_fields(text: str) -> dict[str, Any] | None:
         fields.update(types_all=("creature",), token=False)
     elif normalized == "colorless creatures":
         fields.update(types_all=("creature",), colorless=True)
+    elif normalized in {"multicolored permanent", "multicolored permanents"}:
+        fields["minimum_color_count"] = 2
+    elif (
+        color_union := re.fullmatch(
+            r"(?P<first>black|blue|green|red|white) or "
+            r"(?P<second>black|blue|green|red|white) "
+            r"(?P<kind>creatures?|permanents?)",
+            normalized,
+        )
+    ) is not None:
+        colors = tuple(
+            sorted(
+                {
+                    _COLOR_SYMBOLS[color_union.group("first")],
+                    _COLOR_SYMBOLS[color_union.group("second")],
+                }
+            )
+        )
+        if len(colors) != 2:
+            return None
+        fields["colors_any"] = colors
+        if color_union.group("kind").startswith("creature"):
+            fields["types_all"] = ("creature",)
     elif normalized == "nonartifact creatures":
         fields.update(
             types_all=("creature",),
@@ -362,6 +385,16 @@ def _public_query_primary_fields(text: str) -> dict[str, Any] | None:
                 "rogue",
                 "warlock",
             ),
+        )
+    elif normalized in {"attraction", "attractions"}:
+        fields.update(
+            types_all=("artifact",),
+            subtypes_all=("attraction",),
+        )
+    elif normalized == "equipment":
+        fields.update(
+            types_all=("artifact",),
+            subtypes_all=("equipment",),
         )
     else:
         return None
@@ -765,6 +798,15 @@ def _self_subject_pattern(source_name: str) -> str:
     return rf"(?:This creature|This permanent|This token|{source})"
 
 
+def _condition_source_subject_pattern(source_name: str) -> str:
+    source = SourceReferenceSpec(source_name).regex_pattern
+    return (
+        rf"(?:it|This artifact|This battle|This creature|This enchantment|"
+        rf"This Equipment|This land|This permanent|This planeswalker|"
+        rf"This token|{source})"
+    )
+
+
 def _fixed_condition_amount(value: str) -> int | None:
     normalized = value.strip().casefold()
     if normalized.isdigit():
@@ -838,63 +880,258 @@ def _fixed_condition_object_query(
     return ObjectQuerySpec(**fields)
 
 
-def _fixed_public_query_count_condition(
-    text: str,
+def _query_count_condition(
+    *,
+    kind: FixedPublicStateConditionKind,
+    amount: int,
+    scope: CharacteristicQuantityScope,
+    query: ObjectQuerySpec,
+    exclude_source: bool = False,
+) -> FixedPublicStateConditionSpec:
+    return FixedPublicStateConditionSpec(
+        kind,
+        amount=amount,
+        quantity=CharacteristicQuantitySpec(
+            scope=scope,
+            query=query,
+            exclude_source=exclude_source,
+        ),
+        schema_version=2,
+    )
+
+
+def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | None:
+    material = " ".join(subject.strip().split())
+    parsed = fixed_characteristic_battlefield_query_subject(
+        f"{material} you control"
+    )
+    if parsed is None or parsed[0] != "source_controller":
+        return None
+    return parsed[1], parsed[2]
+
+
+def _controller_query_count_condition(
+    normalized: str,
 ) -> FixedPublicStateConditionSpec | None:
-    normalized = text.strip().rstrip(".")
     match = re.fullmatch(
-        r"(?P<relation>you control|an opponent controls) "
-        r"(?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)"
-        r"(?P<minimum> or more)? "
-        r"(?P<quality>black |blue |green |red |white |basic )?"
-        r"(?P<subject>artifacts?|creatures?|enchantments?|lands?|"
-        r"permanents?|Equipment)",
+        r"you control (?:(?P<at_least>at least) )?"
+        r"(?P<count>another|a|an|one|two|three|four|five|six|seven|eight|"
+        r"nine|ten|[0-9]+)(?P<minimum> or more)? "
+        r"(?P<other>other )?(?P<subject>.+)",
         normalized,
         re.IGNORECASE,
     )
     if match is None:
         return None
+    count_text = match.group("count").casefold()
+    amount = 1 if count_text == "another" else _fixed_condition_amount(count_text)
+    if amount is None or amount <= 0:
+        return None
+    if (
+        count_text not in {"a", "an", "another"}
+        and not match.group("minimum")
+        and not match.group("at_least")
+    ):
+        return None
+    subject = (
+        ("Other " if count_text == "another" or match.group("other") else "")
+        + match.group("subject")
+    )
+    parsed = _controller_condition_query(subject)
+    if parsed is None:
+        return None
+    query, exclude_source = parsed
+    if query.keywords_all:
+        # Dynamic set counts stop at the cycle-safe layer-5 boundary.
+        return None
+    return _query_count_condition(
+        kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+        amount=amount,
+        scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+        query=query,
+        exclude_source=exclude_source,
+    )
+
+
+def _opponent_query_existence_condition(
+    normalized: str,
+) -> FixedPublicStateConditionSpec | None:
+    match = re.fullmatch(
+        r"an opponent controls (?:a|an) (?P<subject>.+)",
+        normalized,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    parsed = _controller_condition_query(match.group("subject"))
+    if parsed is None or parsed[1]:
+        return None
+    return _query_count_condition(
+        kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+        amount=1,
+        scope=CharacteristicQuantityScope.OPPONENT_ZONES,
+        query=parsed[0],
+    )
+
+
+def _absence_query_count_condition(
+    normalized: str,
+) -> FixedPublicStateConditionSpec | None:
+    controlled = re.fullmatch(r"you control no (?P<subject>.+)", normalized)
+    opponents = re.fullmatch(
+        r"(?:your opponents control no|no opponent controls (?:a|an)?) "
+        r"(?P<subject>.+)",
+        normalized,
+    )
+    match = controlled or opponents
+    if match is None:
+        return None
+    subject = match.group("subject")
+    parsed = fixed_characteristic_battlefield_query_subject(
+        f"{subject} you control"
+    )
+    if parsed is None or parsed[0] != "source_controller" or parsed[2]:
+        return None
+    return _query_count_condition(
+        kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
+        amount=0,
+        scope=(
+            CharacteristicQuantityScope.CONTROLLER_ZONE
+            if controlled is not None
+            else CharacteristicQuantityScope.OPPONENT_ZONES
+        ),
+        query=parsed[1],
+    )
+
+
+def _graveyard_query_count_condition(
+    normalized: str,
+) -> FixedPublicStateConditionSpec | None:
+    presence = re.fullmatch(
+        r"there (?:is|are|'s) (?:a|an) (?P<quality>[A-Za-z][A-Za-z'/-]*) "
+        r"card in your graveyard",
+        normalized,
+        re.IGNORECASE,
+    )
+    typed_count = re.fullmatch(
+        r"there are (?P<count>two|three|four|five|six|seven|eight|nine|ten|"
+        r"[0-9]+) or more (?P<quality>instant and/or sorcery )?cards in "
+        r"your graveyard",
+        normalized,
+        re.IGNORECASE,
+    )
+    if presence is None and typed_count is None:
+        return None
+    amount = (
+        1
+        if presence is not None
+        else _fixed_condition_amount(typed_count.group("count"))
+    )
+    assert amount is not None and amount > 0
+    quality = ((presence or typed_count).group("quality") or "").casefold()
+    fields: dict[str, Any] = {"zones": ("graveyard",)}
+    if quality == "instant and/or sorcery ":
+        fields["types_any"] = ("instant", "sorcery")
+    elif quality in _CARD_TYPE_WORDS:
+        fields["types_all"] = (quality,)
+    elif quality:
+        fields["subtypes_all"] = (quality,)
+    return _query_count_condition(
+        kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+        amount=amount,
+        scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+        query=ObjectQuerySpec(**fields),
+    )
+
+
+def _fixed_public_query_count_condition(
+    text: str,
+) -> FixedPublicStateConditionSpec | None:
+    normalized = " ".join(text.strip().rstrip(".").split())
+    for compiler in (
+        _controller_query_count_condition,
+        _opponent_query_existence_condition,
+        _absence_query_count_condition,
+        _graveyard_query_count_condition,
+    ):
+        condition = compiler(normalized)
+        if condition is not None:
+            return condition
+    return None
+
+
+def _fixed_hand_or_turn_event_condition(
+    normalized: str,
+) -> FixedPublicStateConditionSpec | None:
+    hand = re.fullmatch(
+        r"you have (?P<count>two|three|four|five|six|seven|eight|nine|ten|"
+        r"[0-9]+) or more cards in hand",
+        normalized,
+        re.IGNORECASE,
+    )
+    draw = re.fullmatch(
+        r"you['’]ve drawn (?P<count>two|three|four|five|six|seven|eight|"
+        r"nine|ten|[0-9]+) or more cards this turn",
+        normalized,
+        re.IGNORECASE,
+    )
+    cast = re.fullmatch(
+        r"you['’]ve cast (?P<count>a|an|one|two|three|four|five|six|seven|"
+        r"eight|nine|ten|[0-9]+)(?: or more)? "
+        r"(?P<quality>noncreature |instant or sorcery )?spells? this turn",
+        normalized,
+        re.IGNORECASE,
+    )
+    match = hand or draw or cast
+    if match is None:
+        return None
     amount = _fixed_condition_amount(match.group("count"))
     if amount is None or amount <= 0:
         return None
-    if match.group("minimum") is None and match.group("count").casefold() not in {
-        "a",
-        "an",
-    }:
-        return None
-    opponent_relation = match.group("relation").casefold() == (
-        "an opponent controls"
-    )
-    if opponent_relation and amount != 1:
-        # The shared opponent-zone quantity is aggregate. Only existence has
-        # the same meaning as Oracle's per-opponent condition.
-        return None
-    raw_subject = match.group("subject").casefold()
-    if raw_subject == "equipment":
-        query = ObjectQuerySpec(
-            zones=("battlefield",),
-            types_all=("artifact",),
-            subtypes_all=("equipment",),
-        )
+    if hand is not None:
+        kind = FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_LEAST
+    elif draw is not None:
+        kind = FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST
     else:
-        query = _fixed_condition_object_query(
-            raw_subject.removesuffix("s"),
-            (match.group("quality") or "").strip(),
-        )
-    if query is None:
-        return None
-    return FixedPublicStateConditionSpec(
-        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
-        amount=amount,
-        quantity=CharacteristicQuantitySpec(
-            scope=(
-                CharacteristicQuantityScope.CONTROLLER_ZONE
-                if not opponent_relation
-                else CharacteristicQuantityScope.OPPONENT_ZONES
+        quality = (cast.group("quality") or "").casefold()
+        kind = {
+            "": FixedPublicStateConditionKind.CONTROLLER_SPELL_CAST_COUNT_AT_LEAST,
+            "noncreature ": (
+                FixedPublicStateConditionKind
+                .CONTROLLER_NONCREATURE_SPELL_CAST_COUNT_AT_LEAST
             ),
-            query=query,
-        ),
-        schema_version=2,
+            "instant or sorcery ": (
+                FixedPublicStateConditionKind
+                .CONTROLLER_INSTANT_SORCERY_CAST_COUNT_AT_LEAST
+            ),
+        }[quality]
+    return FixedPublicStateConditionSpec(kind, amount=amount)
+
+
+def _fixed_player_status_condition(
+    normalized: str,
+) -> FixedPublicStateConditionSpec | None:
+    if normalized.casefold() in {"you're the monarch", "you are the monarch"}:
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
+        )
+    poisoned = re.fullmatch(
+        r"an opponent (?:is poisoned|has (?P<count>three|[0-9]+) or more "
+        r"poison counters)",
+        normalized,
+        re.IGNORECASE,
+    )
+    if poisoned is None:
+        return None
+    amount = (
+        _fixed_condition_amount(poisoned.group("count"))
+        if poisoned.group("count")
+        else 1
+    )
+    assert amount is not None and amount > 0
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.OPPONENT_POISON_COUNTER_AT_LEAST,
+        amount=amount,
     )
 
 
@@ -910,6 +1147,12 @@ def _legacy_public_state_condition(
         return FixedPublicStateConditionSpec(
             FixedPublicStateConditionKind.OTHER_TURN
         )
+    extended = _fixed_hand_or_turn_event_condition(normalized)
+    if extended is not None:
+        return extended
+    player_status = _fixed_player_status_condition(normalized)
+    if player_status is not None:
+        return player_status
     if lower == "there are seven or more cards in your graveyard":
         return FixedPublicStateConditionSpec(
             FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
@@ -957,9 +1200,9 @@ def _object_public_state_condition(
     *,
     source_name: str,
 ) -> FixedPublicStateConditionSpec | None:
-    subject = _self_subject_pattern(source_name)
+    subject = _condition_source_subject_pattern(source_name)
     source_state = re.fullmatch(
-        rf"(?:it|{subject}) is (?P<state>attacking|blocking|enchanted|"
+        rf"(?:it['’]s|{subject} is) (?P<state>attacking|blocking|enchanted|"
         r"equipped|modified|monstrous|tapped|untapped)",
         normalized,
         re.IGNORECASE,
@@ -979,6 +1222,23 @@ def _object_public_state_condition(
             ),
             schema_version=2,
         )
+    source_quality = re.fullmatch(
+        rf"(?:it['’]s|{subject} is) (?P<quality>(?:a |an )?"
+        r"[A-Za-z][A-Za-z' -]+)",
+        normalized,
+        re.IGNORECASE,
+    )
+    if source_quality is not None:
+        predicate = _fixed_condition_object_query(
+            "permanent",
+            source_quality.group("quality"),
+        )
+        if predicate is not None:
+            return FixedPublicStateConditionSpec(
+                FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+                predicate=predicate,
+                schema_version=2,
+            )
     attached_state = re.fullmatch(
         r"(?P<relation>enchanted|equipped) "
         r"(?P<subject>creature|permanent|land) is (?P<quality>.+)",
@@ -987,10 +1247,37 @@ def _object_public_state_condition(
     )
     if attached_state is None:
         return _fixed_public_query_count_condition(normalized)
-    predicate = _fixed_condition_object_query(
-        attached_state.group("subject"),
-        attached_state.group("quality"),
-    )
+    attached_quality = attached_state.group("quality").casefold()
+    if attached_quality in {
+        "attacking",
+        "blocking",
+        "enchanted",
+        "equipped",
+        "modified",
+        "monstrous",
+        "tapped",
+        "untapped",
+    }:
+        attached_subject = attached_state.group("subject").casefold()
+        state_fields = (
+            {"tapped": attached_quality == "tapped"}
+            if attached_quality in {"tapped", "untapped"}
+            else {attached_quality: True}
+        )
+        predicate = ObjectQuerySpec(
+            zones=("battlefield",),
+            types_all=(
+                ()
+                if attached_subject == "permanent"
+                else (attached_subject,)
+            ),
+            state_predicate=PermanentStatePredicateSpec(**state_fields),
+        )
+    else:
+        predicate = _fixed_condition_object_query(
+            attached_state.group("subject"),
+            attached_state.group("quality"),
+        )
     if predicate is None:
         return None
     return FixedPublicStateConditionSpec(
@@ -1005,22 +1292,32 @@ def _source_history_public_state_condition(
     *,
     source_name: str,
 ) -> FixedPublicStateConditionSpec | None:
-    subject = _self_subject_pattern(source_name)
+    subject = _condition_source_subject_pattern(source_name)
     if re.fullmatch(
-        rf"(?:it|{subject}) entered this turn",
+        rf"{subject} entered this turn",
         normalized,
         re.IGNORECASE,
     ) is not None:
         return FixedPublicStateConditionSpec(
             FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN
         )
-    counter = re.fullmatch(
-        rf"(?:it|{subject}) has (?P<count>a|an|one|two|three|four|five|six|"
+    direct_counter = re.fullmatch(
+        rf"{subject} has (?P<count>a|an|one|two|three|four|five|six|"
         r"seven|eight|nine|ten|[0-9]+)(?: or more)? "
-        r"(?P<counter>[A-Za-z0-9+/-]+) counters? on it",
+        r"(?P<counter>(?!more\b)[A-Za-z0-9+/-]+) counters? on it",
         normalized,
         re.IGNORECASE,
     )
+    inverse_counter = re.fullmatch(
+        r"there (?:is|are) (?P<count>a|an|one|two|three|four|five|six|"
+        r"seven|eight|nine|ten|[0-9]+)(?: or more)? "
+        r"(?P<counter>(?!more\b)[A-Za-z0-9+/-]+) counters? on "
+        r"this (?:artifact|battle|creature|enchantment|equipment|land|"
+        r"permanent|planeswalker|token)",
+        normalized,
+        re.IGNORECASE,
+    )
+    counter = direct_counter or inverse_counter
     if counter is None:
         return None
     amount = _fixed_condition_amount(counter.group("count"))
@@ -1054,6 +1351,23 @@ def _fixed_public_state_condition(
     )
 
 
+def _explicit_condition_subject(condition: str, body: str) -> str:
+    contraction = re.fullmatch(
+        r"it['’]s (?P<quality>.+)",
+        condition.strip(),
+        re.IGNORECASE,
+    )
+    attached = re.match(
+        r"(?P<subject>Enchanted (?:creature|land|permanent)|"
+        r"Equipped creature)\b",
+        body.strip(),
+        re.IGNORECASE,
+    )
+    if contraction is None or attached is None:
+        return condition
+    return f"{attached.group('subject')} is {contraction.group('quality')}"
+
+
 def fixed_public_state_parts(
     oracle_line: str,
     *,
@@ -1074,7 +1388,10 @@ def fixed_public_state_parts(
     )
     if during is not None:
         condition = _fixed_public_state_condition(
-            during.group("condition"),
+            _explicit_condition_subject(
+                during.group("condition"),
+                during.group("body"),
+            ),
             source_name=source_name,
         )
         return (condition, during.group("body")) if condition else None
@@ -1085,18 +1402,25 @@ def fixed_public_state_parts(
     )
     if prefix is not None:
         condition = _fixed_public_state_condition(
-            prefix.group("condition"),
+            _explicit_condition_subject(
+                prefix.group("condition"),
+                prefix.group("body"),
+            ),
             source_name=source_name,
         )
         return (condition, prefix.group("body")) if condition else None
     marker = text.casefold().rfind(" as long as ")
     if marker <= 0:
         return None
+    body = text[:marker]
     condition = _fixed_public_state_condition(
-        text[marker + len(" as long as ") :],
+        _explicit_condition_subject(
+            text[marker + len(" as long as ") :],
+            body,
+        ),
         source_name=source_name,
     )
-    return (condition, text[:marker]) if condition else None
+    return (condition, body) if condition else None
 
 
 __all__ = [

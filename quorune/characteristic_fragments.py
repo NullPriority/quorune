@@ -99,8 +99,6 @@ class CharacteristicQuantitySpec:
             or query.exclude_ref is not None
             or query.known_to_actor is not None
             or query.keywords_all
-            or query.tapped is not None
-            or query.state_predicate is not None
             or query.include_phased_out
         ):
             raise CharacteristicFragmentError(

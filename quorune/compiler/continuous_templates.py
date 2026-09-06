@@ -1354,6 +1354,12 @@ def fixed_public_state_characteristics_handler(
     if compiled is None:
         return None
     target, modifier, body_capabilities = compiled
+    condition_capabilities = (
+        ("variant.monarch.designate",)
+        if source_condition.kind
+        is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
+        else ()
+    )
     return (
         "continuous-fixed-public-state-characteristics-v1",
         {
@@ -1368,6 +1374,7 @@ def fixed_public_state_characteristics_handler(
             sorted(
                 {
                     "continuous.characteristics.fixed_public_state",
+                    *condition_capabilities,
                     *body_capabilities,
                 }
             )

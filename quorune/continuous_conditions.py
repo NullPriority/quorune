@@ -27,15 +27,29 @@ class FixedPublicStateConditionKind(StrEnum):
     CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST = (
         "controller_graveyard_card_count_at_least"
     )
+    CONTROLLER_HAND_COUNT_AT_LEAST = "controller_hand_count_at_least"
     CONTROLLER_HAND_COUNT_AT_MOST = "controller_hand_count_at_most"
+    CONTROLLER_DRAW_COUNT_AT_LEAST = "controller_draw_count_at_least"
+    CONTROLLER_SPELL_CAST_COUNT_AT_LEAST = (
+        "controller_spell_cast_count_at_least"
+    )
+    CONTROLLER_NONCREATURE_SPELL_CAST_COUNT_AT_LEAST = (
+        "controller_noncreature_spell_cast_count_at_least"
+    )
+    CONTROLLER_INSTANT_SORCERY_CAST_COUNT_AT_LEAST = (
+        "controller_instant_sorcery_cast_count_at_least"
+    )
     CONTROLLER_LIFE_AT_LEAST = "controller_life_at_least"
     CONTROLLER_LIFE_AT_MOST = "controller_life_at_most"
     OPPONENT_LIFE_AT_MOST = "opponent_life_at_most"
+    OPPONENT_POISON_COUNTER_AT_LEAST = "opponent_poison_counter_at_least"
+    CONTROLLER_IS_MONARCH = "controller_is_monarch"
     SOURCE_ENTERED_THIS_TURN = "source_entered_this_turn"
     SOURCE_COUNTER_AT_LEAST = "source_counter_at_least"
     SOURCE_MATCHES_QUERY = "source_matches_query"
     ATTACHED_MATCHES_QUERY = "attached_matches_query"
     QUERY_COUNT_AT_LEAST = "query_count_at_least"
+    QUERY_COUNT_AT_MOST = "query_count_at_most"
 
 
 @dataclass(frozen=True, slots=True)
@@ -51,6 +65,12 @@ class FixedPublicStateConditionSnapshot:
     turn_sequence: int
     source_entered_battlefield_turn_sequence: int
     source_counters: tuple[tuple[str, int], ...]
+    controller_draw_count: int = 0
+    controller_spell_cast_count: int = 0
+    controller_noncreature_spell_cast_count: int = 0
+    controller_instant_sorcery_cast_count: int = 0
+    opponent_poison_counter_counts: tuple[int, ...] = ()
+    controller_is_monarch: bool = False
     source_query_matches: bool | None = None
     attached_query_matches: bool | None = None
     condition_quantity: int | None = None
@@ -71,6 +91,10 @@ class FixedPublicStateConditionSnapshot:
             "controller_graveyard_card_count",
             "turn_sequence",
             "source_entered_battlefield_turn_sequence",
+            "controller_draw_count",
+            "controller_spell_cast_count",
+            "controller_noncreature_spell_cast_count",
+            "controller_instant_sorcery_cast_count",
         ):
             value = getattr(self, field_name)
             if type(value) is not int or value < 0:
@@ -84,6 +108,17 @@ class FixedPublicStateConditionSnapshot:
         if any(type(value) is not int for value in self.opponent_life_totals):
             raise FixedPublicStateConditionError(
                 "Opponent life totals must be integers"
+            )
+        if any(
+            type(value) is not int or value < 0
+            for value in self.opponent_poison_counter_counts
+        ):
+            raise FixedPublicStateConditionError(
+                "Opponent poison-counter counts must be nonnegative integers"
+            )
+        if type(self.controller_is_monarch) is not bool:
+            raise FixedPublicStateConditionError(
+                "Controller monarch status must be boolean"
             )
         normalized: list[tuple[str, int]] = []
         for raw_name, amount in self.source_counters:
@@ -141,6 +176,7 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
             FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+            FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
         }
         if type(self.schema_version) is not int or self.schema_version not in {
             1,
@@ -151,12 +187,25 @@ class FixedPublicStateConditionSpec:
             )
         amount_kinds = {
             FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
+            FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_LEAST,
             FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_MOST,
+            FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST,
+            FixedPublicStateConditionKind.CONTROLLER_SPELL_CAST_COUNT_AT_LEAST,
+            (
+                FixedPublicStateConditionKind
+                .CONTROLLER_NONCREATURE_SPELL_CAST_COUNT_AT_LEAST
+            ),
+            (
+                FixedPublicStateConditionKind
+                .CONTROLLER_INSTANT_SORCERY_CAST_COUNT_AT_LEAST
+            ),
             FixedPublicStateConditionKind.CONTROLLER_LIFE_AT_LEAST,
             FixedPublicStateConditionKind.CONTROLLER_LIFE_AT_MOST,
             FixedPublicStateConditionKind.OPPONENT_LIFE_AT_MOST,
+            FixedPublicStateConditionKind.OPPONENT_POISON_COUNTER_AT_LEAST,
             FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
             FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+            FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
         }
         if self.kind in amount_kinds:
             if type(self.amount) is not int or self.amount < 0:
@@ -202,12 +251,18 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Only object-state conditions may carry a predicate"
             )
-        if self.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST:
+        if self.kind in {
+            FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+            FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
+        }:
             if not isinstance(self.quantity, CharacteristicQuantitySpec):
                 raise FixedPublicStateConditionError(
                     "Query-count conditions require one typed quantity"
                 )
-            if self.amount == 0:
+            if (
+                self.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST
+                and self.amount == 0
+            ):
                 raise FixedPublicStateConditionError(
                     "Query-count conditions require a positive threshold"
                 )
@@ -315,14 +370,40 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
             FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+            FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH,
         }
         if (
             self.kind
             is FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST
         ):
             return snapshot.controller_graveyard_card_count >= int(self.amount)
+        if self.kind is FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_LEAST:
+            return snapshot.controller_hand_count >= int(self.amount)
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_MOST:
             return snapshot.controller_hand_count <= int(self.amount)
+        if self.kind is FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST:
+            return snapshot.controller_draw_count >= int(self.amount)
+        if (
+            self.kind
+            is FixedPublicStateConditionKind.CONTROLLER_SPELL_CAST_COUNT_AT_LEAST
+        ):
+            return snapshot.controller_spell_cast_count >= int(self.amount)
+        if (
+            self.kind
+            is FixedPublicStateConditionKind
+            .CONTROLLER_NONCREATURE_SPELL_CAST_COUNT_AT_LEAST
+        ):
+            return snapshot.controller_noncreature_spell_cast_count >= int(
+                self.amount
+            )
+        if (
+            self.kind
+            is FixedPublicStateConditionKind
+            .CONTROLLER_INSTANT_SORCERY_CAST_COUNT_AT_LEAST
+        ):
+            return snapshot.controller_instant_sorcery_cast_count >= int(
+                self.amount
+            )
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_LIFE_AT_LEAST:
             return snapshot.controller_life >= int(self.amount)
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_LIFE_AT_MOST:
@@ -332,6 +413,16 @@ class FixedPublicStateConditionSpec:
                 life <= int(self.amount)
                 for life in snapshot.opponent_life_totals
             )
+        if (
+            self.kind
+            is FixedPublicStateConditionKind.OPPONENT_POISON_COUNTER_AT_LEAST
+        ):
+            return any(
+                amount >= int(self.amount)
+                for amount in snapshot.opponent_poison_counter_counts
+            )
+        if self.kind is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH:
+            return snapshot.controller_is_monarch
         if self.kind is FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN:
             return (
                 snapshot.turn_sequence > 0
@@ -349,6 +440,11 @@ class FixedPublicStateConditionSpec:
             return (
                 snapshot.condition_quantity is not None
                 and snapshot.condition_quantity >= int(self.amount)
+            )
+        if self.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST:
+            return (
+                snapshot.condition_quantity is not None
+                and snapshot.condition_quantity <= int(self.amount)
             )
         raise FixedPublicStateConditionError(
             "Unsupported fixed public-state condition kind"

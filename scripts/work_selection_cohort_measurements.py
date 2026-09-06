@@ -167,6 +167,9 @@ _PROBE_SHARED_PUBLIC_BATTLEFIELD_QUERY = (
 _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC = (
     "fixed-public-state-characteristic-existing-owner-v1"
 )
+_PROBE_FIXED_PUBLIC_CONDITION_QUERY = (
+    "fixed-public-condition-query-existing-owner-v1"
+)
 _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY = (
     "typed-public-state-characteristic-query-existing-owner-v1"
 )
@@ -303,6 +306,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_MANA_MADNESS,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
+    _PROBE_FIXED_PUBLIC_CONDITION_QUERY,
     _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY,
     _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER,
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
@@ -2616,7 +2620,10 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
-    if probe_id == _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC:
+    if probe_id in {
+        _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
+        _PROBE_FIXED_PUBLIC_CONDITION_QUERY,
+    }:
         return _fixed_public_state_characteristic_measurement(
             frontier=frontier,
             bundle_id=bundle_id,

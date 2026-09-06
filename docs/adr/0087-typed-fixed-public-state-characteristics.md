@@ -33,13 +33,16 @@ during the current turn; and a fixed minimum of one canonical named counter on
 the source.
 
 The additive v2 condition schema also admits a source or attached-object
-`ObjectQuerySpec`, and a fixed minimum over the existing typed public quantity.
-Source state is limited to attacking, blocking, tapped, untapped, enchanted,
-equipped, modified, or monstrous. Attached-object conditions use effective
-type, subtype, supertype, and color through layer 5. Fixed battlefield counts
-reuse `CharacteristicQuantitySpec` and the existing layer-5 count resolver, so
-type-changing effects participate without recursing into the layer-6 or
-layer-7c result being gated.
+`ObjectQuerySpec`, and a fixed minimum or zero upper bound over the existing
+typed public quantity. Source and attached-object state includes attacking,
+blocking, tapped, untapped, enchanted, equipped, modified, or monstrous;
+explicit attachment antecedents own following “it” pronouns. Fixed controller
+and opponent battlefield or graveyard counts reuse `CharacteristicQuantitySpec`
+and the existing layer-5 resolver, so type-changing effects and authoritative
+public state participate without recursing into the layer-6 or layer-7c result.
+The same immutable condition owner also carries fixed aggregate hand, current-
+turn draw, typed spell-cast, opponent poison, and controller-monarch facts from
+their canonical state owners.
 
 The CardProgram runtime derives a typed public snapshot from authoritative
 state for each active battlefield source. Runtime query evaluation remains in
@@ -69,20 +72,22 @@ owners.
 
 ## Consequences
 
-The family continuously recomputes when turns, zones, hand counts, life totals,
-control, counters, combat participation, tap state, monstrous designation,
-effective layer-5 characteristics, attachment identity, or source presence
-change. A creature is modified when it has a counter, is equipped, or is
-enchanted by an Aura controlled by that creature's controller. Projection
-exposes effective public characteristics without exposing hidden card identity,
-and replay pins the typed condition and source identity.
+The family continuously recomputes when turns, zones, hand or draw counts,
+spell-cast history, life totals, control, source or player counters, monarch
+designation, combat participation, tap state, monstrous designation, effective
+layer-5 characteristics, attachment identity, or source presence change. A
+creature is modified when it has a counter, is equipped, or is enchanted by an
+Aura controlled by that creature's controller. Projection exposes effective
+public characteristics without exposing hidden card identity, and replay pins
+the typed condition and source identity.
 
-Delirium, distinct-type and dynamic quantities, dynamic amounts, unmarked exact
-counts, per-opponent thresholds above existence, top-library predicates, chosen
-or secret contents, historical-action, compound state-and-counter, and exact-
-attachment-count predicates, quoted abilities, type or color changes, ability
-removal, Class levels, Protection, Ward, and unsupported keywords remain source-
-spanned residuals. Positive ability-presence target queries now use the shared
+Delirium, distinct-type or mana-value and other dynamic quantities, dynamic
+amounts, most-common comparisons, per-opponent aggregate thresholds above
+existence, top-library predicates, chosen or secret contents, unowned history
+and designations, compound state, and exact-attachment-count predicates, quoted
+abilities, type or color changes, ability removal, Class levels, Protection,
+Ward, and unsupported keywords remain source-spanned residuals. Positive
+ability-presence target queries now use the shared
 public `ObjectQuerySpec` applicability boundary and derive generic dependencies
 from both additions and removals of the required layer-6 ability; no family-
 specific ability check was added.

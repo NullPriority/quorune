@@ -215,19 +215,22 @@ forms remain source-spanned residuals.
 
 The same compiler owner separately lowers fixed static characteristic bodies
 gated by one closed public-state condition. A versioned descriptor combines a
-source-controller turn, raw graveyard or hand count, life-total, current-turn
-entry, named-counter predicate, source public state, attached-object layer-5
-characteristic query, or fixed layer-5 public object-count query with the
-existing source, attached-object, or fixed-query target grammar. Runtime
-evaluates the typed condition once and sends paired ability additions and
-power/toughness modifiers through the same layer applicability. The fixed-query
-owners use that shared permanent-state predicate for attacking, blocking,
-tapped, untapped, enchanted, equipped, and modified affected sets. Delirium,
-distinct-type or dynamic quantities, dynamic amounts, top-library, chosen,
-secret-content, historical, exact-attachment-count, unmarked exact-count,
-multi-opponent-threshold, compound-state, quoted-ability, type, color, ability-
-removal, Class-level, Protection, Ward, and unsupported-keyword forms remain
-source-spanned residuals. See
+source-controller turn, fixed public hand or graveyard query, life total,
+current-turn entry, named source counter, source or attached-object public
+state, cycle-safe controller or opponent layer-5 quantity, canonical current-
+turn draw or spell-cast count, opponent poison count, or controller monarch
+designation with the existing source, attached-object, or fixed-query target
+grammar. Runtime snapshots only authoritative state through the shared query,
+draw, turn-history, player-counter, and designation owners, then sends paired
+ability additions and power/toughness modifiers through the same applicability
+path. Attachment-relative “it” binds to the explicit enchanted or equipped
+object; other source pronouns remain source-bound. Public state may participate
+in layer-5 quantities, but positive ability presence remains excluded from
+counts. Delirium, distinct-type or mana-value counts, most-common comparisons,
+dynamic amounts, top-library, chosen, hidden-identity, per-opponent aggregate,
+unowned history/designation, compound, exact-attachment-count, quoted-ability,
+type, color, ability-removal, Class-level, Protection, Ward, and unsupported-
+keyword forms remain source-spanned residuals. See
 [ADR 0087](../adr/0087-typed-fixed-public-state-characteristics.md).
 
 `compiler/closed_effect_programs.py` owns the broader bounded composition

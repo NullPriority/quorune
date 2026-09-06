@@ -7628,10 +7628,26 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute fixed characteristic conditions from canonical draw and cast history, current controller query membership, player counters, monarch state, and control changes."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_state_conditions_recompute_layer_six_and_seven_results",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute the same typed public-state predicate for paired layer-6 ability grants and layer-7c fixed power/toughness modifiers."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Evaluate controller-relative history and query conditions against the correct seat while opponent poison and monarch facts remain public in four-player state."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -7648,6 +7664,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a controller-turn to other-turn condition mutant by requiring the enclosing CardProgram fingerprint to change."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_dependencies_fail_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the shared public-query or monarch capability and retain the affected static condition as a source-spanned residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -7684,6 +7708,22 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_models_use_closed_current_facts",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Validate immutable fixed thresholds for hand, draw, cast, poison, monarch, and query-count snapshots."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_queries_compile_across_authoritative_facts",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile the bounded source, zone-query, current-turn, player-counter, and designation condition grammar into one existing typed static component."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -7707,6 +7747,14 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use only aggregate hand and history counts while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
@@ -7720,6 +7768,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Pin schema-v2 source, attached-object, and layer-5 count conditions into a checkpoint and replay the following authoritative command exactly."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save and replay authoritative draw, cast, control, query, player-counter, and monarch facts from the exact checkpoint."
     },
     {
       "capability_id": "continuous.characteristics.leveler_bands",
@@ -20600,6 +20656,14 @@
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute a controller-relative multicolored-permanent quantity through current layer-5 characteristics and source exclusion."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_ability_presence_query_uses_shared_layer_six_dependency_order",
       "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -20664,6 +20728,14 @@
     {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_dependencies_fail_closed",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the shared query capability and prevent a query-gated fixed characteristic node from becoming exact."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
       "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -20692,6 +20764,14 @@
       "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower attacking, blocking, and attacking-or-blocking direct targets to one canonical immutable combat-state descriptor."
+    },
+    {
+      "capability_id": "state_query.permanent.public_state_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_queries_compile_across_authoritative_facts",
+      "official_rule_ids": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile public color unions, multicolor cardinality, subtype, token, tap, and modified condition quantities into the shared query."
     },
     {
       "capability_id": "state_query.permanent.public_state_predicate",
@@ -24334,6 +24414,14 @@
     {
       "capability_id": "variant.monarch.designate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
+      "official_rule_ids": ["725.1", "725.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Feed the canonical public monarch designation into a controller-relative static characteristic condition and remove it after designation transfer."
+    },
+    {
+      "capability_id": "variant.monarch.designate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_monarch_rules.MonarchRuleTests.test_creature_combat_damage_transfers_only_on_trigger_resolution",
       "official_rule_ids": [
         "725.1",
@@ -24375,6 +24463,14 @@
         "commander_review"
       ],
       "applicability_note": "Remove the canonical designation commit and require the authoritative monarch state assertion to reject the survivor."
+    },
+    {
+      "capability_id": "variant.monarch.designate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_dependencies_fail_closed",
+      "official_rule_ids": ["725.1", "725.2"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block monarch designation capability and keep a monarch-gated static characteristic node out of exact admission."
     },
     {
       "capability_id": "variant.monarch.designate",
