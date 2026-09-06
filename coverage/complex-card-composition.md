@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "31be3e36baee74604b031fb33d48f1575a3e85d7609c337753a63d9ea19b9058"
+verified: "e60683af89593975cbe19aa835ee8160cef4b4d10e83064ff34fa64d2d4ae867"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -47,7 +47,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Okiba Reckoner Raid // Nezumi Road Captain | 189 | 24 | 7 | 6 | 6 | 6 | `blocked` |
 | Conqueror's Galleon // Conqueror's Foothold | 187 | 28 | 5 | 7 | 3 | 14 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
-| Huatli, Poet of Unity // Roar of the Fifth People | 185 | 28 | 6 | 6 | 10 | 1 | `blocked` |
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Cleric Class | 183 | 22 | 6 | 6 | 7 | 12 | `blocked` |
@@ -59,8 +58,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Era of Enlightenment // Hand of Enlightenment | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
+| Huatli, Poet of Unity // Roar of the Fifth People | 178 | 27 | 6 | 6 | 8 | 1 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
-| Shabraz, the Skyshark | 177 | 33 | 6 | 5 | 4 | 2 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
+| The Rise of Sozin // Fire Lord Sozin | 176 | 20 | 6 | 6 | 9 | 5 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
