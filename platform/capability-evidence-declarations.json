@@ -6116,10 +6116,42 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_characteristics_and_requirement_end_with_attachment",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Consume an attachment-granted requirement while its source exists and remove it immediately when the attachment ends."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_compound_self_restrictions_enforce_every_conjunct",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose both exact restrictions from one source line and enforce each through the shared blocker-domain solver."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "interaction",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_global_maximum_constrains_requirement_solver",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose a typed global declaration maximum with the shared if-able requirement solver."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_declaration_grant_uses_offer_commit_authority",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Consume a query-granted attack requirement through the same projected and accepted declaration problem."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_restriction_revalidates_and_obeys_ability_removal",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Revalidate a live query-granted restriction at command time and remove it through the shared current-ability boundary."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -6188,6 +6220,22 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_declaration_grant_dependencies_fail_closed",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the declaration capability beneath either continuous grant path and reject exact admission."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep temporary, malformed, dynamic, and unsupported query or attachment declaration grammar residual."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "negative",
       "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionTemplateTests.test_open_temporary_declaration_restriction_grammar_stays_residual",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6212,6 +6260,14 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_compound_self_restrictions_enforce_every_conjunct",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower two exact source-local declaration fragments without losing either conjunct."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "positive",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_declaration_components_are_closed_typed_fragments",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6224,6 +6280,14 @@
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply a typed quantified declaration restriction to the complete simultaneous declaration problem."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
+      "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile exact declaration requirements and restrictions as query- or attachment-granted typed fragments."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -6684,6 +6748,22 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_declaration_grant_uses_offer_commit_authority",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant an exact attack requirement through the live public query and enforce the same typed declaration problem at offer and commit."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_restriction_revalidates_and_obeys_ability_removal",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Recompute a queried declaration restriction after a live color change and stop granting it when the source's current static component is removed."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_exact_zimone_closure.ExactZimoneClosureTests.test_insidious_roots_batches_graveyard_departures_and_grants_token_mana",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6748,6 +6828,22 @@
     {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_declaration_grant_dependencies_fail_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block either the public query grant or declaration capability and keep the combined node out of exact admission."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject enchanted-player, temporary, malformed, and independently unsupported declaration-grant grammar."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_fixed_query_ability_grant_rejects_malformed_descriptors",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6768,6 +6864,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep multiple quotes, static prose, external or named sources, hidden recipients, and unsupported activation costs residual."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile exact attack, block, prohibition, and filtered-evasion fragments behind the shared public battlefield query."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -6824,6 +6928,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the source-sacrifice stack object and last-known recipient program through exact resolution."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_declaration_grant_uses_offer_commit_authority",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant a fixed keyword and typed declaration fragment over one live public query, then enforce the fragment at offer and commit."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -6940,6 +7052,14 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_declaration_grant_dependencies_fail_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the keyword, declaration, or shared public-query capability beneath a combined descriptor and keep exact admission closed."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_descriptors_fail_closed_and_rejection_has_no_state_effect",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -6984,6 +7104,14 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Leave identical visible rules prose inert when its trusted typed component is absent."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile a fixed query keyword grant beside exact declaration fragments without duplicating the query owner."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -7156,6 +7284,14 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_characteristics_and_requirement_end_with_attachment",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose one fixed attached characteristic modifier with a typed attack requirement and end both immediately when the attachment source departs."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_exact_continuous_effects_compose_while_replacements_stay_residual",
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -7211,6 +7347,22 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_declaration_grant_dependencies_fail_closed",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block either the attached-characteristic or declaration capability and keep the combined node out of exact admission."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject temporary, malformed, and unsupported attached declaration bodies rather than widening the characteristic shell."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_compiler_lowers_attached_quoted_abilities_to_typed_programs",
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
@@ -7248,6 +7400,14 @@
       "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply generic Aura and bestowed fixed modifiers through live relations."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
+      "official_rule_ids": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile exact attached declaration fragments alone or beside a fixed characteristic modifier through one source-bound layer-6 owner."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -26251,5 +26411,5 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
-]
+  ]
 }

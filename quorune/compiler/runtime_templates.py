@@ -27,6 +27,7 @@ from .continuous_templates import (
     fixed_query_keyword_grant_handler,
     fixed_power_toughness_anthem_handler,
 )
+from .declaration_nodes import fixed_static_declaration_grant_handler
 from .query_characteristic_templates import (
     query_power_toughness_definition_handler,
     query_self_characteristics_handler,
@@ -289,6 +290,28 @@ def _query_definition_static_runtime_template(
     )
 
 
+def _static_declaration_runtime_template(
+    text: str,
+    *,
+    source_name: str | None,
+) -> StaticRuntimeTemplate | None:
+    declaration_grant = fixed_static_declaration_grant_handler(
+        text,
+        source_name=source_name or "source",
+    )
+    if declaration_grant is not None:
+        return StaticRuntimeTemplate(
+            compiled=declaration_grant,
+            kind="static_ability",
+            event="characteristics.evaluate",
+            dependency_reason=(
+                "queried declaration rules require their continuous ability "
+                "grant and combat declaration capabilities"
+            ),
+        )
+    return None
+
+
 def _continuous_static_runtime_template(
     text: str,
     *,
@@ -296,6 +319,13 @@ def _continuous_static_runtime_template(
     source_is_class: bool,
 ) -> StaticRuntimeTemplate | None:
     """Select one closed continuous-characteristic production."""
+
+    declaration_grant = _static_declaration_runtime_template(
+        text,
+        source_name=source_name,
+    )
+    if declaration_grant is not None:
+        return declaration_grant
 
     attached_characteristics = attached_fixed_characteristics_handler(
         text,

@@ -61,8 +61,10 @@ day/night designation and bounded previous-turn summary remain Game Record
 state rather than CardProgram data.
 
 Combat declaration grammar is compiler-only. Exact costs, restrictions, and
-if-able requirements lower to registered static-ability fragments;
-declaration queries consume the one current effective layer-6 fragment
+if-able requirements lower to registered static-ability fragments. Closed
+two-fragment source conjunctions retain both handlers, while exact public-query
+and attachment characteristics may grant those same fragments in layer 6.
+Declaration queries consume the one current effective layer-6 fragment
 snapshot. This keeps copied, removed, and granted abilities on the shared
 characteristic boundary and gives raw Oracle or token display text no
 declaration authority.

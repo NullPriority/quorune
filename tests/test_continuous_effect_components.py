@@ -227,6 +227,41 @@ class ContinuousEffectComponentTests(unittest.TestCase):
         self.assertIsNone(trigger_effect.applies.controller)
         self.assertEqual((), trigger_effect.applies.excluded_controllers)
 
+        declaration = ability_grant_descriptor()
+        declaration["modifier"]["add_ability_fragments"] = [
+            {
+                "kind": "declaration_requirement",
+                "value": {
+                    "template_id": "intrinsic-attack-each-combat-if-able-v1",
+                    "declaration": "attack",
+                    "kind": "attack_each_combat",
+                },
+            }
+        ]
+        declaration_effect = handler.lower(declaration, context)[0]
+        self.assertEqual(
+            "declaration_requirement",
+            declaration_effect.operations[0].value["kind"],
+        )
+
+        combined = ability_grant_descriptor()
+        combined["modifier"] = {
+            "add_abilities": ["Double Strike"],
+            "add_ability_fragments": list(
+                declaration["modifier"]["add_ability_fragments"]
+            ),
+        }
+        combined_effect = handler.lower(combined, context)[0]
+        self.assertEqual(
+            ("add_ability", "add_ability_fragment"),
+            tuple(operation.op for operation in combined_effect.operations),
+        )
+        self.assertEqual("Double Strike", combined_effect.operations[0].value)
+        self.assertEqual(
+            "declaration_requirement",
+            combined_effect.operations[1].value["kind"],
+        )
+
     def test_fixed_query_ability_grant_rejects_malformed_descriptors(self):
         handler = FixedQueryAbilityGrantHandler()
         empty = ability_grant_descriptor()
@@ -256,9 +291,14 @@ class ContinuousEffectComponentTests(unittest.TestCase):
         ]
         with self.assertRaisesRegex(
             SemanticNodeError,
-            "activated or triggered",
+            "declaration, activated, or triggered",
         ):
             handler.validate(unsupported_fragment)
+
+        unsupported_keyword = ability_grant_descriptor()
+        unsupported_keyword["modifier"]["add_abilities"] = ["Horsemanship"]
+        with self.assertRaisesRegex(SemanticNodeError, "supported keywords"):
+            handler.validate(unsupported_keyword)
 
     def test_multiple_anthem_components_stack_and_respect_control(self):
         session = self.session(1250602)
