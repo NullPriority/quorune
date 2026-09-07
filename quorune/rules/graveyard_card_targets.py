@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..creature_subtypes import canonical_creature_subtype
+
 
 class GraveyardCardTargetError(ValueError):
     """A graveyard-card target descriptor is outside the represented grammar."""
@@ -221,17 +223,163 @@ def _canonical_types(values: Sequence[str], *, field: str) -> tuple[str, ...]:
 class OwnGraveyardCardTargetSpec:
     """One immutable target predicate for a card in the actor's graveyard."""
 
-    kind: GraveyardCardTargetKind
+    kind: GraveyardCardTargetKind | None
+    types_any: tuple[str, ...] = ()
+    types_all: tuple[str, ...] = ()
+    types_none: tuple[str, ...] = ()
+    subtypes_any: tuple[str, ...] = ()
+    supertypes_any: tuple[str, ...] = ()
+    supertypes_none: tuple[str, ...] = ()
+    colors_any: tuple[str, ...] = ()
+    colors_none: tuple[str, ...] = ()
+    color_count_min: int | None = None
+    color_count_equal: int | None = None
 
     def __post_init__(self) -> None:
-        if not isinstance(self.kind, GraveyardCardTargetKind):
+        term_fields = (
+            "types_any",
+            "types_all",
+            "types_none",
+            "subtypes_any",
+            "supertypes_any",
+            "supertypes_none",
+        )
+        for field in term_fields:
+            object.__setattr__(
+                self,
+                field,
+                _canonical_types(getattr(self, field), field=field),
+            )
+        for field in ("colors_any", "colors_none"):
+            values = getattr(self, field)
+            if not isinstance(values, (list, tuple)):
+                raise GraveyardCardTargetError(
+                    f"Graveyard target {field} must be an array"
+                )
+            normalized = tuple(sorted(str(value).upper() for value in values))
+            if (
+                any(type(value) is not str or not value for value in values)
+                or len(normalized) != len(set(normalized))
+                or not set(normalized).issubset({"W", "U", "B", "R", "G"})
+            ):
+                raise GraveyardCardTargetError(
+                    f"Graveyard target {field} values are unsupported"
+                )
+            object.__setattr__(self, field, normalized)
+
+        predicate_values = (
+            *(getattr(self, field) for field in term_fields),
+            self.colors_any,
+            self.colors_none,
+            self.color_count_min,
+            self.color_count_equal,
+        )
+        if self.kind is not None:
+            if not isinstance(self.kind, GraveyardCardTargetKind) or any(
+                predicate_values
+            ):
+                raise GraveyardCardTargetError(
+                    "Graveyard target kind cannot mix a characteristic predicate"
+                )
+            return
+        if not any(predicate_values):
             raise GraveyardCardTargetError(
-                "Graveyard target kind must be a supported typed value"
+                "Graveyard target requires a supported typed value or predicate"
+            )
+        allowed_types = {
+            "artifact",
+            "battle",
+            "creature",
+            "enchantment",
+            "instant",
+            "kindred",
+            "land",
+            "planeswalker",
+            "sorcery",
+        }
+        if (
+            (self.types_any and self.types_all)
+            or len(self.types_any) > 4
+            or len(self.types_all) > 2
+            or len(self.types_none) > 2
+            or not set((*self.types_any, *self.types_all, *self.types_none))
+            <= allowed_types
+            or set((*self.types_any, *self.types_all)).intersection(
+                self.types_none
+            )
+        ):
+            raise GraveyardCardTargetError(
+                "Graveyard target card-type predicate is unsupported"
+            )
+        if len(self.subtypes_any) > 8 or any(
+            canonical_creature_subtype(value) is None
+            and value not in {"arcane", "aura", "equipment", "vehicle"}
+            for value in self.subtypes_any
+        ):
+            raise GraveyardCardTargetError(
+                "Graveyard target subtype predicate is unsupported"
+            )
+        if (
+            len(self.supertypes_any) > 1
+            or len(self.supertypes_none) > 1
+            or not set((*self.supertypes_any, *self.supertypes_none))
+            <= {"basic", "legendary", "snow"}
+            or set(self.supertypes_any).intersection(self.supertypes_none)
+        ):
+            raise GraveyardCardTargetError(
+                "Graveyard target supertype predicate is unsupported"
+            )
+        color_predicates = sum(
+            bool(value)
+            for value in (
+                self.colors_any,
+                self.colors_none,
+                self.color_count_min is not None,
+                self.color_count_equal is not None,
+            )
+        )
+        if (
+            len(self.colors_any) > 2
+            or len(self.colors_none) > 1
+            or color_predicates > 1
+            or any(
+                value is not None
+                and (type(value) is not int or not 1 <= value <= 5)
+                for value in (self.color_count_min, self.color_count_equal)
+            )
+        ):
+            raise GraveyardCardTargetError(
+                "Graveyard target color predicate is unsupported"
             )
 
     @property
     def slug(self) -> str:
-        return self.kind.value.replace(" or ", "-or-").replace(" ", "-")
+        if self.kind is not None:
+            return self.kind.value.replace(" or ", "-or-").replace(" ", "-")
+        parts: list[str] = []
+        for prefix, values, separator in (
+            ("any-", self.types_any, "-or-"),
+            ("all-", self.types_all, "-and-"),
+            ("non-", self.types_none, "-and-"),
+            ("subtype-", self.subtypes_any, "-or-"),
+            ("super-", self.supertypes_any, "-and-"),
+            ("non-super-", self.supertypes_none, "-and-"),
+            ("color-", self.colors_any, "-or-"),
+            ("non-color-", self.colors_none, "-and-"),
+        ):
+            if values:
+                parts.append(
+                    prefix
+                    + separator.join(
+                        value.casefold() if "color" in prefix else value
+                        for value in values
+                    )
+                )
+        if self.color_count_min is not None:
+            parts.append(f"at-least-{self.color_count_min}-colors")
+        if self.color_count_equal is not None:
+            parts.append(f"exactly-{self.color_count_equal}-colors")
+        return "-".join(parts) + "-card"
 
     def to_target_schema(self) -> dict[str, Any]:
         schema: dict[str, Any] = {
@@ -240,10 +388,29 @@ class OwnGraveyardCardTargetSpec:
             "owner_relation": "you",
             "count": 1,
         }
-        if self.kind.types_any:
-            schema["types_any"] = list(self.kind.types_any)
-        if self.kind.types_none:
-            schema["types_none"] = list(self.kind.types_none)
+        if self.kind is not None:
+            if self.kind.types_any:
+                schema["types_any"] = list(self.kind.types_any)
+            if self.kind.types_none:
+                schema["types_none"] = list(self.kind.types_none)
+            return schema
+        for field in (
+            "types_any",
+            "types_all",
+            "types_none",
+            "subtypes_any",
+            "supertypes_any",
+            "supertypes_none",
+            "colors_any",
+            "colors_none",
+        ):
+            value = getattr(self, field)
+            if value:
+                schema[field] = list(value)
+        for field in ("color_count_min", "color_count_equal"):
+            value = getattr(self, field)
+            if value is not None:
+                schema[field] = value
         return schema
 
     @classmethod
@@ -262,7 +429,15 @@ class OwnGraveyardCardTargetSpec:
             "owner_relation",
             "count",
             "types_any",
+            "types_all",
             "types_none",
+            "subtypes_any",
+            "supertypes_any",
+            "supertypes_none",
+            "colors_any",
+            "colors_none",
+            "color_count_min",
+            "color_count_equal",
         }
         if set(schema) - allowed:
             raise GraveyardCardTargetError(
@@ -287,11 +462,30 @@ class OwnGraveyardCardTargetSpec:
             for kind in GraveyardCardTargetKind
             if kind.types_any == types_any and kind.types_none == types_none
         )
-        if len(matches) != 1:
-            raise GraveyardCardTargetError(
-                "Graveyard target type predicate is unsupported"
+        spec = (
+            cls(matches[0])
+            if len(matches) == 1 and set(schema) <= {
+                "zones",
+                "categories",
+                "owner_relation",
+                "count",
+                "types_any",
+                "types_none",
+            }
+            else cls(
+                None,
+                types_any=types_any,
+                types_all=tuple(schema.get("types_all", ())),
+                types_none=types_none,
+                subtypes_any=tuple(schema.get("subtypes_any", ())),
+                supertypes_any=tuple(schema.get("supertypes_any", ())),
+                supertypes_none=tuple(schema.get("supertypes_none", ())),
+                colors_any=tuple(schema.get("colors_any", ())),
+                colors_none=tuple(schema.get("colors_none", ())),
+                color_count_min=schema.get("color_count_min"),
+                color_count_equal=schema.get("color_count_equal"),
             )
-        spec = cls(matches[0])
+        )
         if spec.to_target_schema() != schema:
             raise GraveyardCardTargetError(
                 "Graveyard target schema is not canonical"

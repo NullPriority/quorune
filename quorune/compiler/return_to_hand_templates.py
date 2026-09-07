@@ -47,11 +47,10 @@ class TargetedReturnToHandEffectTemplate:
             raise ValueError("Return-to-hand target domain is unsupported")
         if self.target_spec is not None and (
             not isinstance(self.target_spec, DirectPermanentTargetSpec)
-            or self.target_spec.combat_state is None
-            or self.target is not ReturnToHandTarget.CREATURE
+            or self.target is not ReturnToHandTarget.PERMANENT
         ):
             raise ValueError(
-                "Return-to-hand direct target requires one combat-state creature"
+                "Return-to-hand direct target requires one closed permanent predicate"
             )
 
     @property
@@ -109,16 +108,29 @@ class TargetedReturnToHandEffectTemplate:
 class TargetedOwnGraveyardReturnToHandEffectTemplate:
     """Closed lowering for one mandatory own-graveyard card return."""
 
-    target: GraveyardCardTargetKind
+    target: GraveyardCardTargetKind | OwnGraveyardCardTargetSpec
 
     def __post_init__(self) -> None:
-        if not isinstance(self.target, GraveyardCardTargetKind):
+        if not isinstance(
+            self.target,
+            (GraveyardCardTargetKind, OwnGraveyardCardTargetSpec),
+        ):
             raise ValueError("Graveyard return target domain is unsupported")
 
     @property
+    def target_spec(self) -> OwnGraveyardCardTargetSpec:
+        return (
+            self.target
+            if isinstance(self.target, OwnGraveyardCardTargetSpec)
+            else OwnGraveyardCardTargetSpec(self.target)
+        )
+
+    @property
     def template_id(self) -> str:
-        slug = OwnGraveyardCardTargetSpec(self.target).slug
-        return f"return-target-{slug}-from-own-graveyard-v1"
+        version = 1 if isinstance(self.target, GraveyardCardTargetKind) else 2
+        return (
+            f"return-target-{self.target_spec.slug}-from-own-graveyard-v{version}"
+        )
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
@@ -129,7 +141,7 @@ class TargetedOwnGraveyardReturnToHandEffectTemplate:
 
     @property
     def target_schema(self) -> Mapping[str, Any]:
-        return OwnGraveyardCardTargetSpec(self.target).to_target_schema()
+        return self.target_spec.to_target_schema()
 
     @property
     def mechanics(self) -> tuple[str, ...]:
@@ -163,17 +175,18 @@ def targeted_return_to_hand_effect_template(
     )
     if match is None:
         direct = re.fullmatch(
-            r"return (?P<subject>target .+) to its owner['’]s hand\.?",
+            r"return (?P<subject>(?:another )?target .+) to "
+            r"(?:its|their) owner['’]s hand\.?",
             text.strip(),
             re.IGNORECASE,
         )
         if direct is None:
             return None
         target_spec = direct_permanent_target_spec(direct.group("subject"))
-        if target_spec is None or target_spec.combat_state is None:
+        if target_spec is None:
             return None
         return TargetedReturnToHandEffectTemplate(
-            ReturnToHandTarget.CREATURE,
+            ReturnToHandTarget.PERMANENT,
             target_spec=target_spec,
         )
     return TargetedReturnToHandEffectTemplate(
@@ -193,11 +206,91 @@ def targeted_own_graveyard_return_to_hand_effect_template(
         text.strip(),
         re.IGNORECASE,
     )
-    if match is None:
-        return None
-    return TargetedOwnGraveyardReturnToHandEffectTemplate(
-        GraveyardCardTargetKind(match.group("target").casefold())
+    if match is not None:
+        return TargetedOwnGraveyardReturnToHandEffectTemplate(
+            GraveyardCardTargetKind(match.group("target").casefold())
+        )
+    expanded = re.fullmatch(
+        r"return target (?P<target>.+?) card from your graveyard to your "
+        r"hand\.?",
+        text.strip(),
+        re.IGNORECASE,
     )
+    if expanded is None:
+        return None
+    target_spec = _own_graveyard_characteristic_target(
+        expanded.group("target")
+    )
+    return (
+        TargetedOwnGraveyardReturnToHandEffectTemplate(target_spec)
+        if target_spec is not None
+        else None
+    )
+
+
+def _own_graveyard_characteristic_target(
+    description: str,
+) -> OwnGraveyardCardTargetSpec | None:
+    """Reuse the closed direct characteristic grammar for an owned card."""
+
+    normalized = " ".join(description.casefold().split())
+    special: dict[str, dict[str, Any]] = {
+        "green": {"colors_any": ("G",)},
+        "multicolored": {"color_count_min": 2},
+        "noncreature, nonland": {
+            "types_none": ("creature", "land"),
+        },
+        "aura or equipment": {
+            "subtypes_any": ("aura", "equipment"),
+        },
+        "equipment or vehicle": {
+            "subtypes_any": ("equipment", "vehicle"),
+        },
+    }
+    fields = special.get(normalized)
+    if fields is not None:
+        try:
+            return OwnGraveyardCardTargetSpec(None, **fields)
+        except (TypeError, ValueError):
+            return None
+
+    direct = direct_permanent_target_spec(f"target {description}")
+    if direct is None or any(
+        (
+            direct.controller_relation != "any",
+            direct.source_exclusion,
+            direct.state_predicate is not None,
+            direct.subtypes_none,
+            direct.keywords_all,
+            direct.keywords_none,
+            direct.colorless is not None,
+            direct.token is not None,
+            direct.commander is not None,
+            direct.combat_state is not None,
+            direct.damage_history is not None,
+            direct.numeric_characteristic is not None,
+            direct.mana_value_min is not None,
+            direct.mana_value_max is not None,
+            direct.mana_value_equal is not None,
+        )
+    ):
+        return None
+    try:
+        return OwnGraveyardCardTargetSpec(
+            None,
+            types_any=direct.types_any,
+            types_all=direct.types_all,
+            types_none=direct.types_none,
+            subtypes_any=direct.subtypes_any,
+            supertypes_any=direct.supertypes_any,
+            supertypes_none=direct.supertypes_none,
+            colors_any=direct.colors_any,
+            colors_none=direct.colors_none,
+            color_count_min=direct.color_count_min,
+            color_count_equal=direct.color_count_equal,
+        )
+    except (TypeError, ValueError):
+        return None
 
 
 __all__ = [

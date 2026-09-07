@@ -475,13 +475,24 @@ class CommanderEngine:
         for path in (
             "quorune/compiler/direct_target.py",
             "quorune/compiler/return_to_hand_templates.py",
+            "quorune/rules/graveyard_card_targets.py",
             "quorune/rules/node_capability_shapes.py",
+            "tests/fixtures/targeted-graveyard-return-cards.json",
+            "tests/fixtures/targeted-return-to-hand-cards.json",
         ):
             with self.subTest(path=path):
                 plan = classify_changes([path])
-                self.assertIn(
-                    "test_targeted_return_to_hand_effect_clauses",
-                    plan.test_modules,
+                self.assertLessEqual(
+                    {
+                        "test_fixed_homogeneous_target_sets",
+                        "test_fixed_optional_effect_choices",
+                        "test_graveyard_return_rules",
+                        "test_return_to_hand_rules",
+                        "test_rules_scheduler",
+                        "test_targeted_graveyard_return_effect_clauses",
+                        "test_targeted_return_to_hand_effect_clauses",
+                    },
+                    set(plan.test_modules),
                 )
                 self.assertIn(
                     "targeted-return-capability-contract",

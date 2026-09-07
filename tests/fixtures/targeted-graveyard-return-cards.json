@@ -37,10 +37,48 @@
       "released_at": "2023-08-04",
       "toughness": "2",
       "type_line": "Legendary Creature — Human Artificer"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": ["B"],
+      "colors": ["B"],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Expanded Graveyard Return Fixture",
+      "oracle_id": "00000000-0000-4000-8000-000000703011",
+      "oracle_text": "Return target Goblin card from your graveyard to your hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": ["R"],
+      "colors": ["R"],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"},
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Graveyard Goblin Target Fixture",
+      "oracle_id": "00000000-0000-4000-8000-000000703012",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "toughness": "2",
+      "type_line": "Creature — Goblin"
     }
   ],
   "fixture_kind": "focused_targeted_graveyard_return_cards",
   "rulings": [],
   "schema_version": 1,
-  "source": "Pinned Scryfall witnesses for focused compiler/runtime tests"
+  "source": "Pinned Scryfall witnesses and constructed generic compiler/runtime fixtures"
 }

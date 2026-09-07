@@ -153,12 +153,15 @@ parenthetical-boundary, and larger sequences remain source-spanned residuals.
 destroy, exile, tap, untap, battlefield-return, own-graveyard-return, or public-
 graveyard-exile clause into one interchangeable public target set. The grammar
 accepts exact counts from two through six, one-or-two, and up-to one through
-six. It reuses the scalar predicate and operation capability, adds one shared
-count and resolution-revalidation capability, and supports a single-graveyard
-constraint through target ownership. Heterogeneous roles, divided or dynamic
-quantities, linked results, compound or conditional tails, hidden zones,
-battlefield returns, and unsupported characteristic dependencies remain
-source-spanned residuals.
+six. Battlefield returns reuse every closed direct-permanent predicate;
+own-graveyard returns reuse fixed card types, type intersections and unions,
+subtypes, supertypes, colors, and color cardinality. The owner adds only one
+shared count and resolution-revalidation capability, and supports a single-
+graveyard constraint through target ownership. The same scalar leaves also feed
+the existing optional and closed-sequence compilers. Heterogeneous roles,
+divided or dynamic quantities, linked results, compound or conditional tails,
+other players' graveyards, non-owner-hand destinations, and unsupported
+characteristic dependencies remain source-spanned residuals.
 
 `compiler/public_state_queries.py`, consumed by
 `compiler/continuous_templates.py`, lowers fixed controlled permanent sets that
