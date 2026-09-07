@@ -326,6 +326,8 @@
         "quorune/compiler/runtime_templates.py"
       ],
       "test_modules": [
+        "test_combat_declaration_restrictions",
+        "test_continuous_effect_components",
         "test_fixed_query_keyword_grants",
         "test_indestructible_rules",
         "test_rules_scheduler",
@@ -393,6 +395,7 @@
         "tests/test_object_query.py"
       ],
       "test_modules": [
+        "test_combat_declaration_restrictions",
         "test_continuous_compiler_hardening",
         "test_continuous_effect_components",
         "test_continuous_effect_duration",
@@ -533,6 +536,7 @@
       "test_modules": [
         "test_attached_static_characteristics",
         "test_card_program_trust",
+        "test_combat_declaration_restrictions",
         "test_combat_evasion_restrictions",
         "test_continuous_effect_components",
         "test_query_power_toughness_definitions",
@@ -1200,6 +1204,7 @@
     {
       "id": "combat-declarations-suite",
       "patterns": [
+        "quorune/compiler/declaration_nodes.py",
         "quorune/declaration_*.py",
         "quorune/combat_constraints.py"
       ],

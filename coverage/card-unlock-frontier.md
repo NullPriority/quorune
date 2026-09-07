@@ -2,7 +2,7 @@
 title: "Commander card-unlock frontier"
 status: "generated"
 authoritative_source: "coverage/card-unlock-frontier.json.gz"
-verified: "e385f80ed8e888f3c2bd0025c0bc32b0af7e199779bf0f0757bc2efc8bf4dc57"
+verified: "1ae59bde680787b912d9c560974c602a8e25923c986d69ccdb3a723faeede7f2"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,16 +14,16 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 ## Snapshot
 
 - Cards considered: 31,623
-- Oracle states: `{"exact":9403,"partial":11210,"unresolved":11010}`
-- CardProgram states: `{"residual":22220,"trusted":9403}`
+- Oracle states: `{"exact":9453,"partial":11180,"unresolved":10990}`
+- CardProgram states: `{"residual":22170,"trusted":9453}`
 - Hard construction failures: 0
-- Frontier fingerprint: `e385f80ed8e888f3c2bd0025c0bc32b0af7e199779bf0f0757bc2efc8bf4dc57`
+- Frontier fingerprint: `1ae59bde680787b912d9c560974c602a8e25923c986d69ccdb3a723faeede7f2`
 
 ## Highest-leverage single families
 
 | Family | Occurrences | Cards | Sole-blocker cards | Exact abilities | Readiness | Risk |
 |---|---:|---:|---:|---:|---|---|
-| `continuous_layer:continuous-effect-layers-and-dependencies` | 5,140 | 4,307 | 2,204 | 5,140 | missing_lowering | very_high |
+| `continuous_layer:continuous-effect-layers-and-dependencies` | 5,090 | 4,264 | 2,173 | 5,090 | missing_lowering | very_high |
 | `keyword_dependency:banding` | 24 | 24 | 19 | 24 | missing_contract | medium |
 | `effect_clause:typed-spell-additional-cost-clause` | 106 | 106 | 18 | 18 | missing_lowering | high |
 | `effect_clause:life-change` | 479 | 477 | 16 | 43 | missing_lowering | high |
@@ -32,8 +32,8 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 | `keyword_dependency:start-your-engines` | 40 | 40 | 14 | 40 | missing_contract | medium |
 | `effect_clause:create-token` | 544 | 529 | 13 | 73 | missing_lowering | high |
 | `replacement:damage-prevention` | 140 | 138 | 13 | 28 | missing_lowering | very_high |
+| `keyword_dependency:equip` | 25 | 25 | 13 | 25 | missing_contract | medium |
 | `activated_effect:create-token` | 283 | 276 | 12 | 48 | missing_lowering | high |
-| `keyword_dependency:equip` | 25 | 25 | 12 | 25 | missing_contract | medium |
 | `effect_clause:unparsed-splice-onto-arcane` | 22 | 22 | 12 | 22 | missing_lowering | high |
 | `keyword_dependency:living-weapon` | 19 | 19 | 12 | 19 | missing_contract | medium |
 | `effect_clause:sacrifice` | 110 | 110 | 11 | 34 | missing_lowering | high |
@@ -53,26 +53,26 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 
 | Families | Exact cards | Exact abilities | Residuals |
 |---|---:|---:|---:|
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:start-your-engines` | 2,246 | 5,204 | 5,204 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:create-token` | 2,244 | 5,228 | 5,237 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:equip` | 2,244 | 5,205 | 5,205 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:start-your-engines` | 2,244 | 5,198 | 5,286 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:put-onto-battlefield, keyword_dependency:start-your-engines` | 2,243 | 5,213 | 5,213 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:life-change, keyword_dependency:start-your-engines` | 2,242 | 5,223 | 5,223 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:create-token` | 2,242 | 5,212 | 5,221 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:myriad` | 2,242 | 5,203 | 5,203 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:equip` | 2,242 | 5,189 | 5,189 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:typed-spell-additional-cost-clause` | 2,242 | 5,182 | 5,270 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:put-onto-battlefield` | 2,241 | 5,197 | 5,197 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:exile, keyword_dependency:start-your-engines` | 2,240 | 5,253 | 5,253 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:equip` | 2,240 | 5,213 | 5,222 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:life-change` | 2,240 | 5,207 | 5,207 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 2,240 | 5,206 | 5,303 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:living-weapon` | 2,240 | 5,199 | 5,199 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:myriad` | 2,240 | 5,187 | 5,187 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:equip` | 2,240 | 5,183 | 5,271 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, effect_clause:create-token` | 2,239 | 5,253 | 5,253 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:put-onto-battlefield, activated_effect:create-token` | 2,239 | 5,221 | 5,230 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:start-your-engines` | 2,215 | 5,154 | 5,154 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:create-token` | 2,213 | 5,178 | 5,187 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:equip` | 2,213 | 5,155 | 5,155 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:start-your-engines` | 2,213 | 5,148 | 5,236 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:put-onto-battlefield, keyword_dependency:start-your-engines` | 2,212 | 5,163 | 5,163 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:life-change, keyword_dependency:start-your-engines` | 2,211 | 5,173 | 5,173 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:create-token` | 2,211 | 5,162 | 5,171 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:myriad` | 2,211 | 5,153 | 5,153 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:equip` | 2,211 | 5,139 | 5,139 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:typed-spell-additional-cost-clause` | 2,211 | 5,132 | 5,220 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:put-onto-battlefield` | 2,210 | 5,147 | 5,147 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:exile, keyword_dependency:start-your-engines` | 2,209 | 5,203 | 5,203 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:equip, activated_effect:create-token` | 2,209 | 5,163 | 5,172 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:life-change` | 2,209 | 5,157 | 5,157 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 2,209 | 5,156 | 5,253 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:living-weapon` | 2,209 | 5,149 | 5,149 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:myriad` | 2,209 | 5,137 | 5,137 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:equip` | 2,209 | 5,133 | 5,221 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, effect_clause:create-token` | 2,208 | 5,203 | 5,203 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:put-onto-battlefield, activated_effect:create-token` | 2,208 | 5,171 | 5,180 |
 
 ## Hard construction failures
 

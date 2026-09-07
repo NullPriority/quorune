@@ -354,11 +354,13 @@ Record v3 replay does not silently rewrite old descriptors.
 
 The public battlefield compiler uses that same query for live layer-6 and
 layer-7c applicability, public-state-gated targets, resolution-time set locks,
-typed queried ability grants, and untap participation. Positive ability
-presence is evaluated after generic same-layer additions and removals of the
-required ability. Resolution-time characteristic selection deliberately stops
-at layer 5 and rejects ability-qualified sets rather than claiming a cyclic
-characteristic boundary.
+typed queried ability and declaration-fragment grants, and untap participation.
+One descriptor may add fixed keywords and declaration fragments over the same
+query without duplicating applicability. Positive ability presence is evaluated
+after generic same-layer additions and removals of the required ability.
+Resolution-time characteristic selection deliberately stops at layer 5 and
+rejects ability-qualified sets rather than claiming a cyclic characteristic
+boundary.
 
 Fixed public static conditions snapshot the same layer-5 query boundary along
 with canonical aggregate hand/draw counts, typed current-turn spell-cast

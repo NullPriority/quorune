@@ -2643,24 +2643,73 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-public-condition-query-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-static-declaration-composition",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:combat.declaration.typed_components",
+            "capability:continuous.ability.fixed_query_grant",
+            "capability:continuous.ability.fixed_query_keyword_grant",
+            "capability:continuous.attached.fixed_characteristics",
+            "component:quorune.compiler.declaration_nodes.declaration_static_node",
+            "component:quorune.compiler.declaration_nodes.fixed_declaration_fragment_sequence",
+            "component:quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler",
+            "component:quorune.declaration_requirements.parse_declaration_requirement_line",
+            "component:quorune.declaration_restrictions.parse_declaration_restriction_line",
+            "component:quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "attached-or-public-battlefield-query-recipient",
+            "closed-one-or-two-fragment-source-conjunction",
+            "fixed-attack-or-block-requirement",
+            "fixed-declaration-restriction-or-filtered-evasion",
+            "optional-fixed-attached-characteristic-or-public-keyword-prefix"
+          ],
+          "shared_dependencies": [
+            "combat.declaration.typed_components",
+            "continuous.ability.fixed_query_grant",
+            "continuous.ability.fixed_query_keyword_grant",
+            "continuous.attached.fixed_characteristics",
+            "state_query.permanent.public_state_predicate"
+          ],
+          "shared_grammar": "one or two existing exact declaration requirement or restriction fragments printed on the source or granted in layer 6 to an attached creature or live public battlefield query, optionally composed with an exact fixed attached characteristic or public keyword modifier",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Composes the existing declaration-fragment parser and solver across source-local conjunctions plus reusable static query and attachment consumers without another combat validator, allowing fixed attack requirements, block requirements, prohibitions, and filtered evasion to follow live characteristics, attachment, control, phasing, and ability removal.",
+          "explicit_exclusions": [
+            "declaration costs, banding, rampage, provoke, myriad, goad creation, and independently unsupported characteristic or keyword bodies",
+            "dynamic attachment counts, variable quantities, chosen values, unsupported public predicates, enchanted-player relations, and two-object source-relative rules",
+            "multiple-block capacity, optional combat-damage assignment, defender suppression, toughness-based damage assignment, and combat participation changes",
+            "temporary, resolution-created, copied, quoted, triggered, ability-word, keyword-reminder, or card-name-bound declaration text"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-static-declaration-composition-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v176-fixed-public-condition-queries",
-      "compiler_version": "oracle-ir-v176",
-      "bundle_id": "bundle:fixed-public-condition-queries",
-      "candidate_ids": ["compiler:fixed-public-condition-queries"],
+      "transition_id": "oracle-ir-v177-fixed-static-declaration-composition",
+      "compiler_version": "oracle-ir-v177",
+      "bundle_id": "bundle:fixed-static-declaration-composition",
+      "candidate_ids": ["compiler:fixed-static-declaration-composition"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "continuous.characteristics.fixed_public_state",
-        "state_query.permanent.public_state_predicate",
-        "variant.monarch.designate"
+        "combat.declaration.typed_components",
+        "continuous.ability.fixed_query_grant",
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.attached.fixed_characteristics"
       ],
-      "measurement_id": "measurement:fixed-public-condition-queries",
+      "measurement_id": "measurement:fixed-static-declaration-composition",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

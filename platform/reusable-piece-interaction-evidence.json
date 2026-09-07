@@ -2177,7 +2177,7 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_simple_enchant_declaration_residual_pairs_fail_closed",
         "piece_ids": [
             "capability.attachment.aura.simple_object",
             "residual.static_clause.broader-evasion-and-group-constraints"
@@ -2191,7 +2191,7 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_simple_enchant_declaration_residual_pairs_fail_closed",
         "piece_ids": [
             "capability.attachment.aura.simple_object",
             "residual.static_clause.conditional-declaration-predicates"
@@ -2205,7 +2205,7 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_simple_enchant_declaration_residual_pairs_fail_closed",
         "piece_ids": [
             "capability.attachment.aura.simple_object",
             "residual.static_clause.temporary-declaration-restrictions"
@@ -6324,6 +6324,51 @@
       "capability_ids": ["continuous.characteristics.fixed_public_state", "zone.draw.library_to_hand"],
       "interaction_order": 2,
       "assertion": "Canonical draws update the public current-turn count consumed by the fixed characteristic condition without exposing hidden hand identities."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_static_query_restriction_revalidates_and_obeys_ability_removal",
+      "piece_ids": ["capability.combat.declaration.typed_components", "capability.continuous.ability.fixed_query_grant"],
+      "capability_ids": ["combat.declaration.typed_components", "continuous.ability.fixed_query_grant"],
+      "interaction_order": 2,
+      "assertion": "A declaration restriction granted through the shared public battlefield query changes the projected attack domain, revalidates after a live characteristic change, and disappears through the common layer-6 source-ability removal boundary."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_static_query_declaration_grant_uses_offer_commit_authority",
+      "piece_ids": ["capability.combat.declaration.typed_components", "capability.continuous.ability.fixed_query_keyword_grant"],
+      "capability_ids": ["combat.declaration.typed_components", "continuous.ability.fixed_query_keyword_grant"],
+      "interaction_order": 2,
+      "assertion": "One live public query grants a fixed keyword beside an attack requirement, and the same recipient must satisfy that requirement at offer and commit."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_attached_characteristics_and_requirement_end_with_attachment",
+      "piece_ids": ["capability.combat.declaration.typed_components", "capability.continuous.attached.fixed_characteristics"],
+      "capability_ids": ["combat.declaration.typed_components", "continuous.attached.fixed_characteristics"],
+      "interaction_order": 2,
+      "assertion": "One attached continuous descriptor grants fixed power and toughness together with a typed attack requirement, and both effects end immediately when the source attachment leaves."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_static_query_declaration_grant_uses_offer_commit_authority",
+      "piece_ids": ["capability.continuous.ability.fixed_query_grant", "capability.continuous.ability.fixed_query_keyword_grant"],
+      "capability_ids": ["continuous.ability.fixed_query_grant", "continuous.ability.fixed_query_keyword_grant"],
+      "interaction_order": 2,
+      "assertion": "The shared layer-6 query materializes both a supported keyword and a typed declaration fragment for the same live recipient set."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_attached_characteristic_with_residual_damage_prevention_fails_closed",
+      "piece_ids": ["capability.continuous.attached.fixed_characteristics", "residual.replacement.damage-prevention"],
+      "capability_ids": ["continuous.attached.fixed_characteristics"],
+      "interaction_order": 2,
+      "assertion": "A constructed Aura compiles its exact attached declaration fragment beside an unsupported damage-prevention activation, and the incomplete CardProgram remains unavailable at strict runtime admission."
     }
   ]
 }

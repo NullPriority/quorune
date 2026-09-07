@@ -182,12 +182,14 @@ The existing attached-characteristic handler in
 fortified subject wording into one versioned live-relation descriptor. The
 grammar covers fixed and typed public-query power/toughness, base-setting,
 type, subtype, color, and supported keyword addition or removal; compound
-forms remain one descriptor so canonical layer ordering is preserved. Typed
-quantities reuse `query_characteristic_quantity()` and the cycle-safe layer-5
-object query. Name and rules-text changes, conditions, declaration
-restrictions, target-relative attachment or controller facts, chosen values,
-and untrusted granted abilities remain source-spanned residuals. Witness
-Protection and Retro-Mutation are explicit examples of those exclusions.
+forms remain one descriptor so canonical layer ordering is preserved. The same
+descriptor may append one or two already-exact declaration requirement or
+restriction fragments, including beside a fixed attached modifier and keyword.
+Typed quantities reuse `query_characteristic_quantity()` and the cycle-safe
+layer-5 object query. Name and rules-text changes, conditions, declaration
+costs, target-relative attachment or controller facts, chosen values, and
+untrusted granted abilities remain source-spanned residuals. Witness Protection
+and Retro-Mutation are explicit examples of those exclusions.
 
 The quoted-ability compiler also accepts one independently exact activated,
 fixed-output mana, or triggered body behind a closed live battlefield query.
@@ -199,6 +201,18 @@ payment, selected public objects, and the represented restricted-mana profile.
 Multiple quotes, quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
 material residuals.
+
+Fixed static declaration composition reuses the declaration requirement and
+restriction parsers rather than adding a combat validator. A source-local line
+may contain either one exact fragment or one of the closed two-fragment
+conjunctions. Public-query and attached forms grant the same fragments through
+their existing layer-6 owners, optionally beside an exact public keyword or
+fixed attached characteristic prefix. Offer and commit therefore consume the
+same current fragment snapshot, and source departure, detachment, phasing, and
+ability removal end applicability through the ordinary continuous-effect
+boundary. Costs, dynamic or temporary conditions, defender suppression,
+multiple-block capacity, combat-damage assignment, and independently inexact
+clauses remain material residuals.
 
 `activation_condition_model.py` owns complete trailing activation
 restrictions shared by the compiler-pinned catalog and activation lowering.

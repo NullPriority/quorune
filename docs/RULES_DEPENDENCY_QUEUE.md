@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "3945dc3c6af1f04e903a4ad1b5fa65fdbff967f9fc7584329b90c8961c6fc55d"
+verified: "efdc5656380cc276ad14a02060e549b8b3c2b747845063a10e65caa880e2cf77"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `cbdf9ddaa5b48a6b507f8bd1fa8775de94abe61a7ff41583ba5ed63828e51050`
+Source fingerprint: `f10055aa082b2d4a9b6cd21df219494544d9745d5038288a418541baa96d2449`
 
 ## Current top-level state
 
@@ -40,7 +40,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 49 |
 | 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 2204 | 5140 | 36.131148 | 0 | 0 |
+| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 2173 | 5090 | 35.622951 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 10 | blocked | implementation | false | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |

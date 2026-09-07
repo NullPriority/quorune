@@ -3,11 +3,14 @@ from __future__ import annotations
 from typing import Iterable
 
 from ..rules.capabilities import CapabilityRegistry
-from .declaration_nodes import declaration_static_node
+from .declaration_nodes import (
+    declaration_static_node,
+    fixed_static_declaration_grant_handler,
+)
 from .intrinsic_counter_nodes import intrinsic_counter_prohibition_node
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .kicker_nodes import fixed_kicked_entry_node
-from .static_runtime_nodes import static_runtime_node
+from .static_runtime_nodes import runtime_handler_node, static_runtime_node
 
 
 def closed_static_or_replacement_node(
@@ -48,6 +51,27 @@ def closed_static_or_replacement_node(
     )
     if kicked_entry is not None:
         return kicked_entry
+    declaration_grant = fixed_static_declaration_grant_handler(
+        material_line,
+        source_name=source_name,
+    )
+    if declaration_grant is not None:
+        return runtime_handler_node(
+            node_id=node_id,
+            line=line,
+            span=span,
+            compiled=declaration_grant,
+            kind="static_ability",
+            event="characteristics.evaluate",
+            runtime_coverage=("fixed_static_declaration_grant",),
+            dependency_reason=(
+                "queried declaration rules require their continuous ability "
+                "grant and combat declaration capabilities"
+            ),
+            capability_registry=capability_registry,
+            capability_profile=capability_profile,
+            residuals=residuals,
+        )
     declaration = declaration_static_node(
         node_id=node_id,
         line=line,

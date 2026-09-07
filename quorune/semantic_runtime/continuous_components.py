@@ -31,6 +31,10 @@ from ..leveler_bands import (
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..continuous_conditions import FixedPublicStateConditionSnapshot
+from ..declaration_fragments import (
+    DeclarationRequirementTemplate,
+    DeclarationRestrictionTemplate,
+)
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
     RuntimeComponentRegistry,
@@ -84,6 +88,7 @@ class FixedQueryAbilityGrantNode:
     target_controller: str
     predicate: ObjectQuerySpec
     exclude_source: bool
+    abilities: tuple[str, ...]
     fragments: tuple[StaticAbilityFragment, ...]
 
 
@@ -690,11 +695,30 @@ class FixedQueryAbilityGrantHandler:
         modifier = descriptor["modifier"]
         if not isinstance(modifier, Mapping):
             raise SemanticNodeError("runtime handler modifier must be an object")
-        exact_fields(
-            modifier,
+        modifier_fields = set(modifier)
+        if modifier_fields not in (
             {"add_ability_fragments"},
-            field="runtime handler modifier",
-        )
+            {"add_abilities", "add_ability_fragments"},
+        ):
+            raise SemanticNodeError(
+                "fixed query ability grants have a closed modifier schema"
+            )
+        abilities: tuple[str, ...] = ()
+        if "add_abilities" in modifier:
+            abilities = nonempty_strings(
+                modifier["add_abilities"],
+                field="modifier.add_abilities",
+            )
+            if (
+                len(set(abilities)) != len(abilities)
+                or any(
+                    ability not in FIXED_CHARACTERISTIC_KEYWORDS
+                    for ability in abilities
+                )
+            ):
+                raise SemanticNodeError(
+                    "fixed query ability grants require unique supported keywords"
+                )
         raw_fragments = modifier["add_ability_fragments"]
         if not isinstance(raw_fragments, list) or not raw_fragments:
             raise SemanticNodeError(
@@ -711,17 +735,24 @@ class FixedQueryAbilityGrantHandler:
         if any(
             not isinstance(
                 fragment,
-                (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec),
+                (
+                    DeclarationRequirementTemplate,
+                    DeclarationRestrictionTemplate,
+                    GrantedActivatedAbilitySpec,
+                    GrantedTriggeredAbilitySpec,
+                ),
             )
             for fragment in fragments
         ):
             raise SemanticNodeError(
-                "fixed query ability grants require typed activated or triggered abilities"
+                "fixed query ability grants require typed declaration, activated, "
+                "or triggered abilities"
             )
         return FixedQueryAbilityGrantNode(
             target_controller=condition["target_controller"],
             predicate=predicate,
             exclude_source=condition["exclude_source"],
+            abilities=abilities,
             fragments=fragments,
         )
 
@@ -744,12 +775,18 @@ class FixedQueryAbilityGrantHandler:
                 layer=Layer.ABILITY,
                 sublayer="6",
                 timestamp=context.source_timestamp,
-                operations=tuple(
-                    ContinuousOperation(
-                        "add_ability_fragment",
-                        ability_fragment_to_dict(fragment),
-                    )
-                    for fragment in node.fragments
+                operations=(
+                    *(
+                        ContinuousOperation("add_ability", ability)
+                        for ability in node.abilities
+                    ),
+                    *(
+                        ContinuousOperation(
+                            "add_ability_fragment",
+                            ability_fragment_to_dict(fragment),
+                        )
+                        for fragment in node.fragments
+                    ),
                 ),
                 origin=ContinuousEffectOrigin.STATIC_ABILITY,
                 applies=predicate,

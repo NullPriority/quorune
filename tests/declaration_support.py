@@ -10,6 +10,9 @@ from quorune.declaration_requirements import (
 from quorune.declaration_restrictions import (
     parse_declaration_restriction_line,
 )
+from quorune.compiler.declaration_nodes import (
+    fixed_declaration_fragment_sequence,
+)
 
 
 def compiled_declaration_fragments(
@@ -20,6 +23,15 @@ def compiled_declaration_fragments(
 
     fragments: list[dict[str, object]] = []
     for line in str(oracle_text).splitlines():
+        sequence = fixed_declaration_fragment_sequence(
+            line,
+            card_name=card_name,
+        )
+        if len(sequence) > 1:
+            fragments.extend(
+                ability_fragment_to_dict(fragment) for fragment in sequence
+            )
+            continue
         requirement = parse_declaration_requirement_line(
             line,
             card_name=card_name,

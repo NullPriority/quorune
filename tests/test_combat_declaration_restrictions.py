@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import json
+import re
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -9,6 +11,7 @@ from pathlib import Path
 from common import keep_all, load_assets, make_session
 from declaration_support import compiled_declaration_fragments
 from quorune.ability_fragments import (
+    StaticComponentSpec,
     ability_fragment_from_dict,
     ability_fragment_to_dict,
 )
@@ -16,13 +19,36 @@ from quorune.aura import SimpleEnchantSpec
 from quorune.characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
 )
+from quorune.carddb import CardRecord
+from quorune.compiler.declaration_nodes import (
+    fixed_static_declaration_grant_handler,
+)
+from quorune.compiler.continuous_templates import (
+    attached_fixed_characteristics_handler,
+    fixed_query_keyword_grant_handler,
+)
+from quorune.continuous_effect_state import commit_continuous_effect
+from quorune.continuous_effects import (
+    ContinuousEffect,
+    ContinuousEffectDuration,
+    ContinuousEffectOrigin,
+    ContinuousObjectIdentity,
+    ContinuousOperation,
+    Layer,
+)
 from quorune.declaration_restrictions import (
     parse_declaration_restriction_line,
 )
+from quorune.declaration_requirements import parse_declaration_requirement_line
+from quorune.declaration_fragments import DeclarationRestrictionTemplate
 from quorune.semantic_runtime.context import SemanticNodeError
 from quorune.model import CombatState
 from quorune.oracle_ir import compile_oracle_card
-from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.capabilities import (
+    CapabilityRegistry,
+    load_default_capability_registry,
+)
+from quorune.semantics import SemanticProgram
 from quorune.semantic_runtime.ability_fragments import (
     DECLARATION_COST_FRAGMENT_HANDLER_ID,
     DECLARATION_REQUIREMENT_FRAGMENT_HANDLER_ID,
@@ -159,6 +185,58 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
         )
         for card, defender in attackers:
             card.attacking = defender
+
+    def compiled_static_grant_source(
+        self,
+        engine,
+        *,
+        seat: str,
+        name: str,
+        text: str,
+        aura_target_ref: str | None = None,
+    ):
+        compiled = fixed_static_declaration_grant_handler(
+            text,
+            source_name=name,
+        )
+        self.assertIsNotNone(compiled)
+        assert compiled is not None
+        semantic_key = "test:static-declaration-grant:" + re.sub(
+            r"[^a-z0-9]+",
+            "-",
+            name.casefold(),
+        ).strip("-")
+        source = self.permanent(
+            engine,
+            seat,
+            name,
+            type_line="Token Enchantment",
+            ability_fragments=[
+                ability_fragment_to_dict(StaticComponentSpec(semantic_key))
+            ],
+        )
+        if aura_target_ref is not None:
+            target = next(
+                card
+                for card in engine.state.cards.values()
+                if card.ref == aura_target_ref
+                and card.zone == "battlefield"
+            )
+            source.attached_to = target.object_id
+            target.attachments.append(source.object_id)
+        engine.semantics.put(
+            SemanticProgram(
+                key=semantic_key,
+                label=name,
+                oracle_id=source.oracle_id,
+                ability_id=f"static:{semantic_key}",
+                active_zone="battlefield",
+                event="characteristics.evaluate",
+                handlers=[compiled[1]],
+                trust_level="provisional",
+            )
+        )
+        return source
 
     def test_shared_parser_is_anchored_and_classifies_exact_families(self):
         cases = {
@@ -2009,6 +2087,539 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 }
             ),
         )
+
+    def test_static_query_and_attachment_declaration_grants_compile_closed(self):
+        cases = (
+            (
+                "All creatures attack each combat if able.",
+                "continuous-fixed-query-declaration-grant-v1",
+                "declaration_requirement",
+                (),
+            ),
+            (
+                "Black creatures can't attack or block.",
+                "continuous-fixed-query-declaration-grant-v1",
+                "declaration_restriction",
+                (),
+            ),
+            (
+                "Equipped creature can't be blocked except by Walls.",
+                "continuous-attached-declaration-grant-v1",
+                "declaration_restriction",
+                (),
+            ),
+            (
+                "Enchanted creature gets +2/+2 and attacks each combat if able.",
+                "continuous-attached-characteristics-declaration-grant-v1",
+                "declaration_requirement",
+                (),
+            ),
+            (
+                "All creatures have double strike and attack each combat if able.",
+                "continuous-fixed-query-keywords-declaration-grant-v1",
+                "declaration_requirement",
+                ("Double Strike",),
+            ),
+            (
+                "Equipped creature gets +1/+2, has reach, and can't be blocked "
+                "by more than one creature.",
+                "continuous-attached-characteristics-declaration-grant-v1",
+                "declaration_restriction",
+                ("Reach",),
+            ),
+        )
+        for index, (
+            text,
+            template_id,
+            fragment_kind,
+            keywords,
+        ) in enumerate(cases):
+            with self.subTest(text=text):
+                record = CardRecord(
+                    oracle_id=(
+                        f"00000000-0000-4000-8000-{508_020_000 + index:012d}"
+                    ),
+                    name="Static Declaration Grant Fixture",
+                    mana_cost="{2}",
+                    mana_value=2.0,
+                    type_line="Enchantment — Aura",
+                    oracle_text=text,
+                    power=None,
+                    toughness=None,
+                    loyalty=None,
+                    defense=None,
+                    colors=(),
+                    color_identity=(),
+                    keywords=(),
+                    produced_mana=(),
+                    layout="normal",
+                    released_at="2026-01-01",
+                    legalities={"commander": "legal"},
+                    faces=(),
+                    raw={},
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(template_id, node.template_id)
+                self.assertEqual(
+                    fragment_kind,
+                    node.handlers[0]["modifier"]["add_ability_fragments"][0][
+                        "kind"
+                    ],
+                )
+                self.assertEqual(
+                    list(keywords),
+                    node.handlers[0]["modifier"].get("add_abilities", []),
+                )
+                self.assertIn(
+                    "combat.declaration.typed_components",
+                    node.capability_dependencies,
+                )
+
+        self.assertIsNone(
+            fixed_query_keyword_grant_handler(
+                "All creatures have double strike and attack each combat if able."
+            )
+        )
+        self.assertIsNone(
+            attached_fixed_characteristics_handler(
+                "Equipped creature gets +1/+2, has reach, and can't be blocked "
+                "by more than one creature."
+            )
+        )
+
+        for index, (text, fragment_kinds) in enumerate(
+            (
+                (
+                    "This creature can't block and can't be blocked.",
+                    ("declaration_restriction", "declaration_restriction"),
+                ),
+                (
+                    "This creature attacks or blocks each combat if able.",
+                    ("declaration_requirement", "declaration_requirement"),
+                ),
+            )
+        ):
+            with self.subTest(compound=text):
+                record = CardRecord(
+                    oracle_id=(
+                        f"00000000-0000-4000-8000-{508_020_100 + index:012d}"
+                    ),
+                    name="Compound Declaration Fixture",
+                    mana_cost="{2}",
+                    mana_value=2.0,
+                    type_line="Creature — Test",
+                    oracle_text=text,
+                    power="2",
+                    toughness="2",
+                    loyalty=None,
+                    defense=None,
+                    colors=(),
+                    color_identity=(),
+                    keywords=(),
+                    produced_mana=(),
+                    layout="normal",
+                    released_at="2026-01-01",
+                    legalities={"commander": "legal"},
+                    faces=(),
+                    raw={},
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(
+                    "intrinsic-compound-declaration-fragments-v1",
+                    node.template_id,
+                )
+                self.assertEqual(
+                    fragment_kinds,
+                    tuple(handler["fragment"]["kind"] for handler in node.handlers),
+                )
+
+        self.assertFalse(
+            parse_declaration_restriction_line(
+                "This creature can't block and can't be blocked."
+            ).exact
+        )
+        self.assertIsNone(
+            parse_declaration_requirement_line(
+                "This creature attacks or blocks each combat if able."
+            )
+        )
+
+        single = compile_oracle_card(
+            replace(
+                record,
+                oracle_text="This creature can't attack alone.",
+            ),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", single.status, single.material_residuals)
+        self.assertEqual(
+            "intrinsic-attack-not-alone-v1",
+            single.faces[0].nodes[0].template_id,
+        )
+
+        for text in (
+            "Creatures enchanted player controls attack each combat if able.",
+            "Black creatures attack each combat if able this turn.",
+            "Enchanted creature gets +2/+2 and attacks if able.",
+        ):
+            with self.subTest(unsupported=text):
+                self.assertIsNone(
+                    fixed_static_declaration_grant_handler(
+                        text,
+                        source_name="Static Declaration Grant Fixture",
+                    )
+                )
+
+    def test_static_declaration_grant_dependencies_fail_closed(self):
+        registry_value = json.loads(
+            (
+                Path(__file__).resolve().parents[1]
+                / "quorune"
+                / "rules"
+                / "capability-registry.json"
+            ).read_text(encoding="utf-8")
+        )
+        cases = (
+            (
+                "All creatures attack each combat if able.",
+                {
+                    "combat.declaration.typed_components",
+                    "continuous.ability.fixed_query_grant",
+                },
+            ),
+            (
+                "Enchanted creature gets +2/+2 and attacks each combat if able.",
+                {
+                    "combat.declaration.typed_components",
+                    "continuous.attached.fixed_characteristics",
+                },
+            ),
+            (
+                (
+                    "All creatures have double strike and attack each combat "
+                    "if able."
+                ),
+                {
+                    "combat.damage.participation.strike_steps",
+                    "combat.declaration.typed_components",
+                    "continuous.ability.fixed_query_grant",
+                    "continuous.ability.fixed_query_keyword_grant",
+                },
+            ),
+        )
+        for case_index, (text, dependencies) in enumerate(cases):
+            record = CardRecord(
+                oracle_id=(
+                    f"00000000-0000-4000-8000-{508_021_000 + case_index:012d}"
+                ),
+                name="Static Declaration Dependency Fixture",
+                mana_cost="{2}",
+                mana_value=2.0,
+                type_line="Enchantment — Aura",
+                oracle_text=text,
+                power=None,
+                toughness=None,
+                loyalty=None,
+                defense=None,
+                colors=(),
+                color_identity=(),
+                keywords=(),
+                produced_mana=(),
+                layout="normal",
+                released_at="2026-01-01",
+                legalities={"commander": "legal"},
+                faces=(),
+                raw={},
+            )
+            baseline = compile_oracle_card(
+                record,
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            )
+            self.assertEqual("exact", baseline.status)
+            self.assertGreaterEqual(
+                set(baseline.faces[0].nodes[0].capability_dependencies),
+                dependencies,
+            )
+            for capability_id in dependencies:
+                with self.subTest(text=text, capability_id=capability_id):
+                    mutated = json.loads(json.dumps(registry_value))
+                    row = next(
+                        item
+                        for item in mutated["capabilities"]
+                        if item["id"] == capability_id
+                    )
+                    row["status"] = "blocked"
+                    row["blockers"] = ["focused dependency mutation"]
+                    registry = CapabilityRegistry(mutated)
+                    registry.mark_evidence_verified("0" * 64)
+                    result = compile_oracle_card(
+                        record,
+                        capability_registry=registry,
+                        capability_profile="commander_review",
+                    )
+                    self.assertNotEqual("exact", result.status)
+                    self.assertTrue(result.material_residuals)
+
+    def test_compound_self_restrictions_enforce_every_conjunct(self):
+        session = self.make_combat_session(508_020_002, players=2)
+        engine = session.engine
+        compound = self.creature(
+            engine,
+            "A",
+            "Compound Restriction Creature",
+            oracle_text="This creature can't block and can't be blocked.",
+            keywords=("Haste",),
+        )
+        ordinary_attacker = self.creature(
+            engine,
+            "A",
+            "Ordinary Attacker",
+            keywords=("Haste",),
+        )
+        defending_blocker = self.creature(engine, "B", "Defending Blocker")
+
+        self.set_block_step(
+            engine,
+            [(compound, "B"), (ordinary_attacker, "B")],
+        )
+        engine._issue_next_blocker()
+        domains = engine.state.pending_decision.payload_by_actor["B"][
+            "declaration_constraints"
+        ]["domains"]
+        self.assertEqual([ordinary_attacker.ref], domains[defending_blocker.ref])
+
+        engine.state.pending_decision = None
+        engine.state.combat = CombatState()
+        compound.attacking = None
+        ordinary_attacker.attacking = None
+        opposing_attacker = self.creature(
+            engine,
+            "B",
+            "Opposing Attacker",
+            keywords=("Haste",),
+        )
+        ordinary_blocker = self.creature(engine, "A", "Ordinary Blocker")
+        engine.state.active_player = "B"
+        self.set_block_step(engine, [(opposing_attacker, "A")])
+        engine._issue_next_blocker()
+        domains = engine.state.pending_decision.payload_by_actor["A"][
+            "declaration_constraints"
+        ]["domains"]
+        self.assertNotIn(compound.ref, domains)
+        self.assertEqual([opposing_attacker.ref], domains[ordinary_blocker.ref])
+
+    def test_static_query_declaration_grant_uses_offer_commit_authority(self):
+        session = self.make_combat_session(508_020_003, players=2)
+        engine = session.engine
+        compiled = fixed_static_declaration_grant_handler(
+            (
+                "All creatures have double strike and attack each combat "
+                "if able."
+            ),
+            source_name="Global Requirement Fixture",
+        )
+        self.assertIsNotNone(compiled)
+        assert compiled is not None
+        semantic_key = "test:static-declaration-grant:global"
+        engine.semantics.put(
+            SemanticProgram(
+                key=semantic_key,
+                label="Global attack requirement",
+                oracle_id="test:static-declaration-grant",
+                ability_id=f"static:{semantic_key}",
+                active_zone="battlefield",
+                event="characteristics.evaluate",
+                handlers=[compiled[1]],
+                trust_level="provisional",
+            )
+        )
+        self.permanent(
+            engine,
+            "B",
+            "Global Requirement Fixture",
+            type_line="Token Enchantment",
+            ability_fragments=[
+                ability_fragment_to_dict(StaticComponentSpec(semantic_key))
+            ],
+        )
+        required = self.creature(
+            engine,
+            "A",
+            "Granted Requirement Attacker",
+            keywords=("Haste",),
+        )
+
+        with patch.object(
+            type(engine),
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            self.assertIn(
+                "Double Strike",
+                engine._effective_card_data(required)["keywords"],
+            )
+            engine._issue_attackers()
+            constraints = engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]
+            self.assertEqual(1, constraints["maximum_requirements"])
+            self.assertEqual(
+                required.ref,
+                constraints["requirements"][0]["variable"],
+            )
+            before = authoritative_state_hash(engine.state)
+            rejected = session.act("pilot:A", {"a": "attack", "atk": {}})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+            accepted = session.act(
+                "pilot:A",
+                {"a": "attack", "atk": {required.ref: "B"}},
+            )
+            self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_static_query_restriction_revalidates_and_obeys_ability_removal(self):
+        session = self.make_combat_session(508_020_004, players=2)
+        engine = session.engine
+        source = self.compiled_static_grant_source(
+            engine,
+            seat="B",
+            name="Global Black Restriction Fixture",
+            text="Black creatures can't attack or block.",
+        )
+        attacker = self.creature(
+            engine,
+            "A",
+            "Live Query Attacker",
+            keywords=("Haste",),
+        )
+
+        with patch.object(
+            type(engine),
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            engine._issue_attackers()
+            domains = engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]["domains"]
+            self.assertIn(attacker.ref, domains)
+
+            attacker.annotations["copy_overrides"] = {"colors": ["B"]}
+            self.assertEqual(
+                ["B"],
+                engine._effective_card_data(attacker)["colors"],
+            )
+            self.assertTrue(
+                any(
+                    isinstance(fragment, DeclarationRestrictionTemplate)
+                    for fragment in engine._effective_ability_fragments(
+                        attacker,
+                        error_type=AssertionError,
+                    )
+                )
+            )
+            before = authoritative_state_hash(engine.state)
+            rejected = session.act(
+                "pilot:A",
+                {"a": "attack", "atk": {attacker.ref: "B"}},
+            )
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+
+            commit_continuous_effect(
+                engine.state,
+                ContinuousEffect(
+                    effect_id="test:remove-global-restriction-source",
+                    source_id="test:remove-global-restriction-source",
+                    layer=Layer.ABILITY,
+                    sublayer="6",
+                    timestamp=engine._next_zone_timestamp(),
+                    operations=(
+                        ContinuousOperation("remove_all_abilities"),
+                    ),
+                    origin=ContinuousEffectOrigin.RESOLUTION,
+                    duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                    locked_objects=(
+                        ContinuousObjectIdentity(
+                            object_id=source.object_id,
+                            logical_object_id=source.logical_object_id,
+                        ),
+                    ),
+                ),
+            )
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            engine.state.combat = CombatState()
+            engine._issue_attackers()
+            refreshed = engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]["domains"]
+            self.assertIn(attacker.ref, refreshed)
+            accepted = session.act(
+                "pilot:A",
+                {"a": "attack", "atk": {attacker.ref: "B"}},
+            )
+            self.assertTrue(accepted.ok, accepted.summary)
+
+    def test_attached_characteristics_and_requirement_end_with_attachment(self):
+        session = self.make_combat_session(508_020_005, players=2)
+        engine = session.engine
+        attacker = self.creature(
+            engine,
+            "A",
+            "Attached Requirement Attacker",
+            keywords=("Haste",),
+        )
+        aura = self.compiled_static_grant_source(
+            engine,
+            seat="B",
+            name="Attached Requirement Fixture",
+            text=(
+                "Enchanted creature gets +2/+2 and attacks each combat "
+                "if able."
+            ),
+            aura_target_ref=attacker.ref,
+        )
+
+        with patch.object(
+            type(engine),
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            enhanced = engine._effective_card_data(attacker)
+            self.assertEqual((4, 4), (int(enhanced["power"]), int(enhanced["toughness"])))
+            engine._issue_attackers()
+            constraints = engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]
+            self.assertEqual(1, constraints["maximum_requirements"])
+            rejected = session.act("pilot:A", {"a": "attack", "atk": {}})
+            self.assertFalse(rejected.ok)
+
+            engine.move_card(aura.object_id, "graveyard", log=False)
+            self.assertEqual(
+                (2, 2),
+                (
+                    int(engine._effective_card_data(attacker)["power"]),
+                    int(engine._effective_card_data(attacker)["toughness"]),
+                ),
+            )
+            accepted = session.act("pilot:A", {"a": "attack", "atk": {}})
+            self.assertTrue(accepted.ok, accepted.summary)
 
     def test_declaration_component_descriptors_reject_malformed_values(self):
         fragments = compiled_declaration_fragments(
