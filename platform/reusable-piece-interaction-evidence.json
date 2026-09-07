@@ -6360,6 +6360,15 @@
       "capability_ids": ["continuous.ability.fixed_query_grant", "continuous.ability.fixed_query_keyword_grant"],
       "interaction_order": 2,
       "assertion": "The shared layer-6 query materializes both a supported keyword and a typed declaration fragment for the same live recipient set."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_attached_characteristic_with_residual_damage_prevention_fails_closed",
+      "piece_ids": ["capability.continuous.attached.fixed_characteristics", "residual.replacement.damage-prevention"],
+      "capability_ids": ["continuous.attached.fixed_characteristics"],
+      "interaction_order": 2,
+      "assertion": "A constructed Aura compiles its exact attached declaration fragment beside an unsupported damage-prevention activation, and the incomplete CardProgram remains unavailable at strict runtime admission."
     }
   ]
 }

@@ -152,6 +152,17 @@ _WITNESSES = {
         "{1}{U}",
         ("Enchant",),
     ),
+    "attached-declaration-damage-prevention": _Witness(
+        "Generic Attached Declaration Damage Prevention Boundary Fixture",
+        "Enchantment — Aura",
+        "Enchant creature\n"
+        "Enchanted creature can't be blocked by creatures with power 3 or "
+        "greater.\n"
+        "Sacrifice this Aura: The next time a source of your choice would "
+        "deal damage to enchanted creature this turn, prevent that damage.",
+        "{1}{W}",
+        ("Enchant",),
+    ),
     "starforged-sword": _Witness(
         "Starforged Sword",
         "Artifact — Equipment",
@@ -1054,6 +1065,11 @@ FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS = (
     ),
 )
 
+ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR = _pair(
+    "capability.continuous.attached.fixed_characteristics",
+    "residual.replacement.damage-prevention",
+)
+
 FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR = _pair(
     "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
     "residual.replacement.regeneration",
@@ -1215,6 +1231,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *ATTACHMENT_AND_CONTINUOUS_PAIRS,
             *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
             *EFFECT_AND_REPLACEMENT_PAIRS,
+            ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
             *FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
             FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR,
             *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
@@ -1250,6 +1267,10 @@ def _bind(witness: str, *pairs: Pair) -> None:
 
 _bind("floating-shield", *ATTACHMENT_AND_CONTINUOUS_PAIRS[:3])
 _bind("aether-tunnel", *ATTACHMENT_AND_CONTINUOUS_PAIRS[3:6])
+_bind(
+    "attached-declaration-damage-prevention",
+    ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
+)
 _bind(
     "typed-floating-shield",
     *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS[:3],
@@ -1548,6 +1569,7 @@ def assert_high_risk_boundary_pairs(
 
 __all__ = [
     "ALL_HIGH_RISK_BOUNDARY_PAIRS",
+    "ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR",
     "CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR",
     "CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR",
     "ATTACHMENT_AND_CONTINUOUS_PAIRS",

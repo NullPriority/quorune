@@ -5,6 +5,7 @@ import unittest
 from common import DB_PATH
 from high_risk_interaction_support import (
     ALL_HIGH_RISK_BOUNDARY_PAIRS,
+    ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
     CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,
     CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
     DESTROY_DAMAGE_PREVENTION_PAIR,
@@ -106,6 +107,15 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
+            database=self.db,
+        )
+
+    def test_attached_characteristic_with_residual_damage_prevention_fails_closed(
+        self,
+    ) -> None:
+        assert_high_risk_boundary_pairs(
+            self,
+            (ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,),
             database=self.db,
         )
 
