@@ -124,11 +124,11 @@ _WITNESSES = {
         'that say "destroy" don\'t destroy it.)',
         "{1}{W}{B}",
     ),
-    "aether-tunnel": _Witness(
-        "Aether Tunnel",
+    "simple-aura-declaration-boundary": _Witness(
+        "Generic Simple Aura Declaration Boundary Fixture",
         "Enchantment — Aura",
         "Enchant creature\n"
-        "Enchanted creature gets +1/+0 and can't be blocked.",
+        "Enchanted creature can't be blocked by creatures with deathtouch.",
         "{1}{U}",
         ("Enchant",),
     ),
@@ -144,11 +144,11 @@ _WITNESSES = {
         "{2}{W}",
         ("Enchant",),
     ),
-    "typed-aether-tunnel": _Witness(
-        "Typed Aether Tunnel Fixture",
+    "typed-aura-declaration-boundary": _Witness(
+        "Generic Typed Aura Declaration Boundary Fixture",
         "Enchantment — Aura",
         "Enchant creature or Vehicle\n"
-        "Enchanted creature gets +1/+0 and can't be blocked.",
+        "Enchanted creature can't be blocked by creatures with deathtouch.",
         "{1}{U}",
         ("Enchant",),
     ),
@@ -1266,7 +1266,10 @@ def _bind(witness: str, *pairs: Pair) -> None:
 
 
 _bind("floating-shield", *ATTACHMENT_AND_CONTINUOUS_PAIRS[:3])
-_bind("aether-tunnel", *ATTACHMENT_AND_CONTINUOUS_PAIRS[3:6])
+_bind(
+    "simple-aura-declaration-boundary",
+    *ATTACHMENT_AND_CONTINUOUS_PAIRS[3:6],
+)
 _bind(
     "attached-declaration-damage-prevention",
     ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
@@ -1276,7 +1279,7 @@ _bind(
     *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS[:3],
 )
 _bind(
-    "typed-aether-tunnel",
+    "typed-aura-declaration-boundary",
     *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS[3:],
 )
 _bind("starforged-sword", *ATTACHMENT_AND_CONTINUOUS_PAIRS[6:8])

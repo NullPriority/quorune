@@ -2177,7 +2177,7 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_simple_enchant_declaration_residual_pairs_fail_closed",
         "piece_ids": [
             "capability.attachment.aura.simple_object",
             "residual.static_clause.broader-evasion-and-group-constraints"
@@ -2191,7 +2191,7 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_simple_enchant_declaration_residual_pairs_fail_closed",
         "piece_ids": [
             "capability.attachment.aura.simple_object",
             "residual.static_clause.conditional-declaration-predicates"
@@ -2205,7 +2205,7 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
+        "test_id": "test_simple_enchant_declaration_residual_pairs_fail_closed",
         "piece_ids": [
             "capability.attachment.aura.simple_object",
             "residual.static_clause.temporary-declaration-restrictions"

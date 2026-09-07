@@ -5,6 +5,7 @@ import unittest
 from common import DB_PATH
 from high_risk_interaction_support import (
     ALL_HIGH_RISK_BOUNDARY_PAIRS,
+    ATTACHMENT_AND_CONTINUOUS_PAIRS,
     ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
     CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,
     CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
@@ -145,6 +146,17 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
+            database=self.db,
+        )
+
+    def test_simple_enchant_declaration_residual_pairs_fail_closed(
+        self,
+    ) -> None:
+        pairs = ATTACHMENT_AND_CONTINUOUS_PAIRS[3:6]
+        self.assertEqual(3, len(pairs))
+        assert_high_risk_boundary_pairs(
+            self,
+            pairs,
             database=self.db,
         )
 
