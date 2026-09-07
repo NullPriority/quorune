@@ -313,6 +313,20 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
                 "bounce",
             ),
             (
+                "You may return target tapped creature an opponent controls "
+                "to its owner's hand.",
+                "Instant",
+                OPTIONAL_EFFECT_OPERATION,
+                "bounce",
+            ),
+            (
+                "You may return target Goblin card from your graveyard to "
+                "your hand.",
+                "Sorcery",
+                OPTIONAL_EFFECT_OPERATION,
+                "return_graveyard_card_to_owner_hand",
+            ),
+            (
                 "You may exile target creature.",
                 "Instant",
                 OPTIONAL_EFFECT_OPERATION,

@@ -58,7 +58,10 @@ retains the stable public source reference. Exile,
 return, and public-set movement share the closed
 `rules/single_object_zone_transition.py` typed-origin preparation, stale-plan
 validation, and the canonical simultaneous zone-transition substrate while
-retaining distinct results and journals. Destruction
+retaining distinct results and journals. Expanded battlefield and own-graveyard
+return predicates remain compiler-owned target schemas; their optional,
+sequence, and homogeneous carriers cannot introduce a dependency from the
+runtime zone owner back into Oracle text or compiler modules. Destruction
 remains a separate disposition family. These transaction owners delegate
 authoritative counter or zone writes to existing canonical owners. Direct stack-counter intents route to
 `quorune/stack_counter.py`, which owns counterability, stack removal,

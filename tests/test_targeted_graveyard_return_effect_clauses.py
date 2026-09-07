@@ -84,12 +84,50 @@ class OwnGraveyardCardTargetTests(unittest.TestCase):
             {**base, "count": True},
             {**base, "types_any": ["creature", "goblin"]},
             {**base, "types_any": ["Creature"]},
-            {**base, "subtypes_any": ["goblin"]},
+            {**base, "subtypes_any": ["not-a-subtype"]},
+            {**base, "colors_any": ["P"]},
+            {**base, "color_count_min": 0},
         )
         for schema in malformed:
             with self.subTest(schema=schema):
                 with self.assertRaises(GraveyardCardTargetError):
                     OwnGraveyardCardTargetSpec.from_target_schema(schema)
+
+    def test_characteristic_target_spec_is_canonical_and_round_trips(self):
+        cases = (
+            OwnGraveyardCardTargetSpec(None, subtypes_any=("Goblin",)),
+            OwnGraveyardCardTargetSpec(
+                None,
+                types_all=("Artifact", "Creature"),
+            ),
+            OwnGraveyardCardTargetSpec(
+                None,
+                types_any=("Creature",),
+                colors_any=("U", "R"),
+            ),
+            OwnGraveyardCardTargetSpec(
+                None,
+                types_any=("Land",),
+                supertypes_any=("Basic",),
+            ),
+            OwnGraveyardCardTargetSpec(None, color_count_min=2),
+        )
+        for spec in cases:
+            with self.subTest(spec=spec):
+                schema = spec.to_target_schema()
+                self.assertEqual(
+                    spec,
+                    OwnGraveyardCardTargetSpec.from_target_schema(schema),
+                )
+                self.assertEqual("you", schema["owner_relation"])
+        with self.assertRaisesRegex(
+            GraveyardCardTargetError,
+            "cannot mix",
+        ):
+            OwnGraveyardCardTargetSpec(
+                GraveyardCardTargetKind.CREATURE_CARD,
+                subtypes_any=("Goblin",),
+            )
 
     def test_type_predicates_use_the_shared_target_matcher(self):
         permanent = TargetGroup.from_mapping(
@@ -140,14 +178,42 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
                 self.assertIsNotNone(template)
                 assert template is not None
                 self.assertEqual(kind, template.target)
+        for text, expected in (
+            (
+                "Return target Goblin card from your graveyard to your hand.",
+                {"subtypes_any": ["goblin"]},
+            ),
+            (
+                "Return target artifact creature card from your graveyard to your hand.",
+                {"types_all": ["artifact", "creature"]},
+            ),
+            (
+                "Return target green card from your graveyard to your hand.",
+                {"colors_any": ["G"]},
+            ),
+            (
+                "Return target basic land card from your graveyard to your hand.",
+                {"types_any": ["land"], "supertypes_any": ["basic"]},
+            ),
+        ):
+            with self.subTest(text=text):
+                template = targeted_own_graveyard_return_to_hand_effect_template(
+                    text
+                )
+                self.assertIsNotNone(template)
+                assert template is not None
+                for field, value in expected.items():
+                    self.assertEqual(value, template.target_schema[field])
         for text in (
             "Return up to one target card from your graveyard to your hand.",
             "You may return target card from your graveyard to your hand.",
-            "Return target Goblin card from your graveyard to your hand.",
-            "Return target green card from your graveyard to your hand.",
             "Return target card from a graveyard to its owner's hand.",
             "Return target card from an opponent's graveyard to your hand.",
             "Return target creature card from your graveyard to the battlefield.",
+            "Return target historic card from your graveyard to your hand.",
+            "Return target colorless creature card from your graveyard to your hand.",
+            "Return target creature card with flying from your graveyard to your hand.",
+            "Return target creature card with mana value 2 from your graveyard to your hand.",
             "Return two target cards from your graveyard to your hand.",
             "Return target card from your graveyard to your hand, then draw a card.",
         ):
@@ -176,6 +242,24 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
                 "activated_ability",
                 "return-target-artifact-or-enchantment-card-from-own-graveyard-v1",
             ),
+            (
+                "Return target Goblin card from your graveyard to your hand.",
+                "Sorcery",
+                "spell_ability",
+                "return-target-subtype-goblin-card-from-own-graveyard-v2",
+            ),
+            (
+                "When this creature enters, return target artifact creature card from your graveyard to your hand.",
+                "Creature — Test",
+                "triggered_ability",
+                "return-target-all-artifact-and-creature-card-from-own-graveyard-v2",
+            ),
+            (
+                "{G}, {T}: Return target basic land card from your graveyard to your hand.",
+                "Creature — Test",
+                "activated_ability",
+                "return-target-any-land-super-basic-card-from-own-graveyard-v2",
+            ),
         )
         for text, type_line, kind, template_id in contexts:
             with self.subTest(kind=kind):
@@ -200,10 +284,13 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
 
     def test_unsupported_graveyard_return_variants_remain_material_residuals(self):
         for text in (
-            "Return target Goblin card from your graveyard to your hand.",
             "Return target card from a graveyard to its owner's hand.",
             "Return target card from an opponent's graveyard to your hand.",
             "Return target creature card from your graveyard to the battlefield.",
+            "Return target historic card from your graveyard to your hand.",
+            "Return target colorless creature card from your graveyard to your hand.",
+            "Return target creature card with flying from your graveyard to your hand.",
+            "Return target creature card with mana value 2 from your graveyard to your hand.",
         ):
             with self.subTest(text=text):
                 ir = self.compile(text)
@@ -267,16 +354,20 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
                 )
 
     def test_compiler_mutant_is_killed(self):
-        text = "Return target card from your graveyard to your hand."
-        self.assertEqual("exact", self.compile(text).status)
-        with patch(
-            "quorune.compiler.resolution_effect_templates."
-            "targeted_own_graveyard_return_to_hand_effect_template",
-            return_value=None,
+        for text in (
+            "Return target card from your graveyard to your hand.",
+            "Return target Goblin card from your graveyard to your hand.",
         ):
-            mutated = self.compile(text)
-        self.assertNotEqual("exact", mutated.status)
-        self.assertTrue(mutated.material_residuals)
+            with self.subTest(text=text):
+                self.assertEqual("exact", self.compile(text).status)
+                with patch(
+                    "quorune.compiler.resolution_effect_templates."
+                    "targeted_own_graveyard_return_to_hand_effect_template",
+                    return_value=None,
+                ):
+                    mutated = self.compile(text)
+                self.assertNotEqual("exact", mutated.status)
+                self.assertTrue(mutated.material_residuals)
 
     def test_generated_regrowth_program_is_capability_closed(self):
         with tempfile.TemporaryDirectory() as temporary:

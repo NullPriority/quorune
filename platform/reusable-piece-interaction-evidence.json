@@ -729,6 +729,24 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_expanded_target_offer_commit_revalidation_and_replay",
+      "piece_ids": ["capability.permanent.return.owner_hand", "capability.state_query.permanent.public_state_predicate", "capability.target.revalidate_resolution"],
+      "capability_ids": ["permanent.return.owner_hand", "state_query.permanent.public_state_predicate", "target.revalidate_resolution"],
+      "interaction_order": 3,
+      "assertion": "The shared tapped-and-opponent permanent predicate controls both advertised and committed targets, becomes stale before payment without mutation, and then composes a fresh return through owner-hand movement and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_characteristic_target_offer_commit_and_replay",
+      "piece_ids": ["capability.card.return.own_graveyard_to_owner_hand", "capability.target.revalidate_resolution"],
+      "capability_ids": ["card.return.own_graveyard_to_owner_hand", "target.revalidate_resolution"],
+      "interaction_order": 2,
+      "assertion": "The fixed subtype predicate advertises only the matching card in the resolving controller's graveyard, rejects a departed target atomically, and preserves owner-hand privacy and exact replay on a fresh cast."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_counter_target_that_leaves_stack_invalidates_resolution",
       "piece_ids": ["capability.stack.counter.effect", "capability.target.revalidate_resolution", "mechanic.counter"],
