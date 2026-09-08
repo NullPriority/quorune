@@ -1,10 +1,18 @@
 from __future__ import annotations
 
+from pathlib import Path
+import tempfile
 import unittest
 
 from common import advance_fixture_turn, keep_all, load_assets
 from quorune import CommanderSession, GameConfig
 from quorune.model import StackItem
+from quorune.record import (
+    authoritative_state_hash,
+    checkpoint_envelope,
+    replay_record,
+)
+from quorune.turn_step_owner import TURN_STEPS
 
 
 class InteractionKernelTests(unittest.TestCase):
@@ -464,6 +472,107 @@ class InteractionKernelTests(unittest.TestCase):
         self.assertEqual(
             0, sum(engine.state.players["A"].mana_pool.values())
         )
+
+    def test_active_player_pact_loss_skips_draw_and_replays_in_four_players(self):
+        session = CommanderSession.create(
+            self.db,
+            {
+                "A": self.zimone,
+                "B": self.mishra,
+                "C": self.zimone,
+                "D": self.mishra,
+            },
+            first_player="A",
+            seed=7182,
+            config=GameConfig(
+                seed=7182,
+                profile="commander_multiplayer",
+                semantic_policy="trusted_only",
+                auto_pass_empty_priority=True,
+            ),
+        )
+        keep_all(session)
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        pact = self.card(engine, "Pact of Negation", "A")
+        target = self.put_spell_on_stack(
+            engine,
+            "Panharmonicon",
+            owner="B",
+            ref="S-four-player-pact-target",
+        )
+        engine.move_card(pact.object_id, "hand")
+        self.set_window(engine, "A")
+        engine._cast("A", {"card": pact.ref, "targets": [target.ref]})
+        self.resolve_top(engine)
+        delayed = next(
+            trigger
+            for trigger in engine.state.delayed_triggers
+            if trigger.label == "Pact of Negation delayed payment"
+        )
+        advance_fixture_turn(engine)
+        engine.state.active_player = "A"
+        engine.state.phase_index = TURN_STEPS.index(("beginning", "upkeep"))
+        engine.state.phase = "beginning"
+        engine.state.step = "upkeep"
+        matches = engine._matching_delayed_triggers(
+            "step.begin",
+            {
+                "player": "A",
+                "phase": "beginning",
+                "step": "upkeep",
+            },
+        )
+        self.assertEqual([delayed.ref], [trigger.ref for trigger in matches])
+        engine._start_trigger_batch(matches, after="grant_priority")
+        self.resolve_top(engine)
+        self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        result = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "pay": False,
+                "plan": "ACCEPT_LOSS",
+                "reason": "The delayed Pact payment is not payable.",
+            },
+        )
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(engine.state.players["A"].in_game)
+        self.assertFalse(engine.state.game_over)
+        elimination = next(
+            event
+            for event in engine.state.events
+            if event.code == "player.eliminated" and event.actor == "A"
+        )
+        skipped_draw = next(
+            event
+            for event in engine.state.events
+            if event.code == "draw.skip"
+            and event.actor == "A"
+            and event.details.get("reason") == "active_player_left_game"
+        )
+        self.assertGreater(skipped_draw.event_id, elimination.event_id)
+        self.assertFalse(
+            any(
+                event.code == "card.draw.private"
+                and event.actor == "A"
+                and event.event_id > elimination.event_id
+                for event in engine.state.events
+            )
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "four-player-active-pact-loss"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_pithing_needle_name_and_ability_suppression(self):
         session = self.make_session(719)

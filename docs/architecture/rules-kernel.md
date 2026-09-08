@@ -122,6 +122,13 @@ command is transactional. Legal alternatives are currently payable, hidden
 information is projected separately, and state stabilization precedes the next
 priority decision.
 
+`turn_step_owner.py` retains the physical active-player identity when that
+player leaves during their multiplayer turn, as required by CR 800.4j. Later
+steps still occur and priority moves to an active seat, but the departed player
+does not perform turn-based actions: in particular, draw-step entry records an
+explicit skipped draw instead of submitting an inactive affected player to the
+strict draw and replacement owners.
+
 ## Casting, activation, and action offers
 
 `rules/action_catalog.py` composes executable offers from the same pure casting
