@@ -2015,22 +2015,7 @@ class CommanderEngine(
             return
 
         if step == "draw":
-            first_turn = self.state.turn_sequence == 1
-            should_draw = not first_turn or self.state.config.effective_first_player_draws(len(self.seats))
-            if self.state.config.auto_draw and should_draw:
-                self._begin_draw_sequence(
-                    active,
-                    1,
-                    reason="turn-based draw",
-                    continuation={
-                        "kind": "turn_draw",
-                        "seat": active,
-                    },
-                )
-                return
-            elif not should_draw:
-                self._log(active, "draw.skip", f"{active} skipped the first-turn draw.", importance=0)
-            self._complete_draw_step_entry(active)
+            self.turn_steps.enter_draw_step(active)
             return
 
         if not turn_counter_coordination.complete_ordinary_priority_step_entry(

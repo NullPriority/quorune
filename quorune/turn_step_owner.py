@@ -95,6 +95,17 @@ class TurnStepHost(Protocol):
         active: str | None = None,
     ) -> None: ...
 
+    def _begin_draw_sequence(
+        self,
+        seat: str,
+        count: int,
+        *,
+        reason: str,
+        continuation: Mapping[str, Any] | None = None,
+    ) -> None: ...
+
+    def _complete_draw_step_entry(self, active: str) -> None: ...
+
     def _log(
         self,
         actor: str | None,
@@ -308,6 +319,43 @@ class TurnStepOwner:
             step=step,
             active=active,
         )
+
+    def enter_draw_step(self, active: str) -> None:
+        """Perform CR 504's turn-based draw for the retained active player."""
+
+        if active not in self._host.active_seats:
+            self._host._log(
+                active,
+                "draw.skip",
+                f"{active} left the game and did not take the turn-based draw.",
+                {"reason": "active_player_left_game"},
+                importance=0,
+            )
+            self._host._complete_draw_step_entry(active)
+            return
+        first_turn = self.state.turn_sequence == 1
+        should_draw = (
+            not first_turn
+            or self.state.config.effective_first_player_draws(
+                len(self.state.turn_order)
+            )
+        )
+        if self.state.config.auto_draw and should_draw:
+            self._host._begin_draw_sequence(
+                active,
+                1,
+                reason="turn-based draw",
+                continuation={"kind": "turn_draw", "seat": active},
+            )
+            return
+        if not should_draw:
+            self._host._log(
+                active,
+                "draw.skip",
+                f"{active} skipped the first-turn draw.",
+                importance=0,
+            )
+        self._host._complete_draw_step_entry(active)
 
     def advance_step(
         self,
