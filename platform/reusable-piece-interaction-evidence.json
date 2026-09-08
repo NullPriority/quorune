@@ -729,7 +729,7 @@
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "runtime_composition",
+      "assurance_kind": "pair_derived",
       "test_id": "test_expanded_target_offer_commit_revalidation_and_replay",
       "piece_ids": ["capability.permanent.return.owner_hand", "capability.state_query.permanent.public_state_predicate", "capability.target.revalidate_resolution"],
       "capability_ids": ["permanent.return.owner_hand", "state_query.permanent.public_state_predicate", "target.revalidate_resolution"],

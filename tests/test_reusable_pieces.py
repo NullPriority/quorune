@@ -324,6 +324,15 @@ class ReusablePieceInventoryTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_interaction_evidence(invalid)
 
+    def test_tracked_interaction_evidence_has_closed_explicit_semantics(
+        self,
+    ) -> None:
+        evidence = json.loads(
+            (ROOT / "platform" / "reusable-piece-interaction-evidence.json")
+            .read_text(encoding="utf-8")
+        )
+        validate_interaction_evidence(evidence)
+
     def test_reusable_piece_inventory_classifies_every_material_ability(self) -> None:
         artifacts = _artifacts()
         validate_reusable_piece_artifacts(
