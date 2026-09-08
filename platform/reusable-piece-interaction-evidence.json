@@ -4086,6 +4086,33 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_rivendell_is_a_positive_cross_owner_integration",
+      "piece_ids": [
+        "capability.activation.condition.public_query",
+        "capability.zone.entry.tapped_state.fixed_condition"
+      ],
+      "capability_ids": [
+        "activation.condition.public_query",
+        "zone.entry.tapped_state.fixed_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Rivendell compiles its fixed entry condition, mana ability, Scry effect, and current public-query activation condition into one capability-closed CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_residual_entry_condition_siblings_remain_fail_closed",
+      "piece_ids": [
+        "capability.zone.entry.tapped_state.fixed_condition",
+        "residual.activated_cost.complete-alternate-additional-cost-grammar"
+      ],
+      "capability_ids": ["zone.entry.tapped_state.fixed_condition"],
+      "interaction_order": 2,
+      "assertion": "A deliberately constructed land retains its exact fixed entry condition while an unsupported graveyard-exile activation cost keeps the complete CardProgram unresolved and unavailable to trusted runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_residual_entry_condition_siblings_remain_fail_closed",
       "piece_ids": [
@@ -4094,7 +4121,7 @@
       ],
       "capability_ids": ["zone.entry.tapped_state.fixed_condition"],
       "interaction_order": 2,
-      "assertion": "Rivendell retains its exact fixed entry condition while its unsupported conditional Scry activation keeps the complete CardProgram unresolved and unavailable to trusted runtime admission."
+      "assertion": "Minas Tirith retains its exact fixed entry condition while its unsupported two-or-more-creature attack-history activation condition keeps the complete CardProgram unresolved and unavailable to trusted runtime admission."
     },
     {
       "evidence_class": "interaction",

@@ -214,6 +214,23 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_public_activation_promotion_selects_entry_condition_consumer(self):
+        historical_change = (
+            "quorune/compiler/activated_costs.py",
+            "quorune/compiler/activated_mana_nodes.py",
+            "quorune/compiler/target_effect_corpus_assurance.py",
+            "quorune/activation_condition_model.py",
+            "quorune/rules/activation/conditions.py",
+        )
+
+        plan = classify_changes(historical_change)
+
+        self.assertIn("test_fixed_entry_conditions", plan.test_modules)
+        self.assertIn(
+            "public-activation-condition-contract",
+            plan.matched_rule_ids,
+        )
+
     def test_complex_activation_mana_owner_selects_payment_contract(self):
         for owner in (
             "quorune/activation_mana_cost.py",

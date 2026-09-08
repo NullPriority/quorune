@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "3ccfa61066571ac4a7112473fe410b33376a1fab3fe1f8727257bcfc75fdf979"
+verified: "dce438c0e5157696fdacf7c5282e044ba646d50e4a48e52b1907833eff70dcbc"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -13,14 +13,17 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Summary
 
+- Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
+- Observed population: tracked recent pull requests (n=4)
 - Escapes: 56
 - Deterministic escapes: 51
 - Current missing impact edges: 0
 - Known flaky tests: 0
-- Average pushes per merged PR: None
-- Exact-head pass rate: 1.0
+- Average pushes per merged PR: null
+- First eligible-head certification pass rate: null (n=0)
+- Eventual final-head certification pass rate: 1.0 (n=4)
 - Average observed critical path: 181.25 seconds
-- Average Slot B inactive time: None
+- Average Slot B inactive time: null
 
 ## Escapes
 
@@ -85,5 +88,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 ## Measurement limitations
 
+- First eligible-head certification: The tracked sample records only each pull request's eventual final head, so first eligible-head certification remains null rather than being inferred from workflow-run counts.
+- Active development hours: GitHub timestamps do not distinguish active development from unattended elapsed time, so active development hours remain null rather than estimated.
 - Average pushes per merged PR: GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.
 - Slot B inactive time: GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated.

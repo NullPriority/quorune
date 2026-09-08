@@ -9,8 +9,14 @@ from scripts.update_ci_escape_report import build_report, markdown
 
 def source() -> dict:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "observed_at": "2026-08-04T00:00:00Z",
+        "measurement_window": {
+            "started_at": "2026-08-01T00:00:00Z",
+            "ended_at": "2026-08-04T00:00:00Z",
+            "population": "tracked recent pull requests",
+            "sample_size": 1,
+        },
         "repository": "example/repository",
         "escapes": [
             {
@@ -52,7 +58,9 @@ def source() -> dict:
         ],
         "known_flaky_tests": [],
         "limitations": {
+            "active_development_hours": "Unavailable.",
             "average_pushes_per_merged_pr": "Unavailable.",
+            "first_eligible_head_certification": "Unavailable.",
             "slot_b_inactive_seconds": "Unavailable.",
         },
     }
@@ -67,8 +75,19 @@ class CiEscapeReportTests(unittest.TestCase):
         self.assertEqual(["escape-2"], summary["current_missing_impact_edges"])
         self.assertIsNone(summary["average_pushes_per_merged_pr"])
         self.assertIsNone(summary["average_slot_b_inactive_seconds"])
-        self.assertEqual(1.0, summary["exact_head_pass_rate"])
-        self.assertIn("Null measurements", markdown(report))
+        self.assertIsNone(
+            summary["first_eligible_head_certification_pass_rate"]
+        )
+        self.assertEqual(0, summary["first_eligible_head_certification_sample_size"])
+        self.assertEqual(
+            1.0,
+            summary["eventual_final_head_certification_pass_rate"],
+        )
+        self.assertEqual(1, summary["eventual_final_head_certification_sample_size"])
+        rendered = markdown(report)
+        self.assertIn("Null measurements", rendered)
+        self.assertIn("null (n=0)", rendered)
+        self.assertIn("n=1", rendered)
 
     def test_unknown_fields_and_categories_fail_closed(self):
         value = source()
@@ -78,6 +97,10 @@ class CiEscapeReportTests(unittest.TestCase):
         value = source()
         value["escapes"][0]["category"] = "guess"
         with self.assertRaisesRegex(ValueError, "unsupported"):
+            build_report(value)
+        value = source()
+        value["measurement_window"]["sample_size"] = 2
+        with self.assertRaisesRegex(ValueError, "must match"):
             build_report(value)
 
     def test_tracked_report_matches_authoritative_source(self):

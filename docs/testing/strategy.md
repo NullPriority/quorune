@@ -35,6 +35,46 @@ evidence. The tap-state family additionally characterizes CR 122.1d stun
 replacement, effective creature types, phased-out objects, and no-op event
 suppression while retaining honest blockers for the broader systems.
 
+Compiler expectations identify one of three purposes:
+
+- isolated leaf-parser acceptance or rejection;
+- whole-card rejection caused by a specifically named unsupported sibling; or
+- real-Oracle integration under the current supported semantics.
+
+When integration makes a real card supported, convert its expectation to a
+positive witness. Preserve a remaining exclusion with a deliberately
+constructed boundary fixture or another independently justified case. Do not
+derive expected support from the compiler under test or repeatedly substitute
+an unrelated real card without naming the blocker being protected.
+
+For a semantic scope expansion, select the reachable boundaries that can change
+the result. Bounded stateful or property exploration should cover meaningful
+sequences around control changes, ability removal and restoration, source
+departure and reentry, replacement choices, save/load, and rollback where
+applicable. Retain a minimized failing sequence as a readable regression. The
+[rules assurance model](../rules/assurance-model.md) owns the expected-behavior
+contract and semantic distinctions; the
+[interaction guide](interaction-coverage.md) owns composition selection.
+
+## Bounded match readiness
+
+Match readiness is a separate incremental milestone, not an inference from card
+closure. Its small source-controlled reference set uses existing format, trust-
+closure, deck, server-session, browser-soak, and replay owners and labels each
+scenario as reviewed-compatible or strict capability-only readiness. A scenario
+covers natural completion, supported legal-action availability, private choices
+and principal-correct projection, reconnect or save/load during a pending
+decision, exact replay, and classification of every unsupported-rule stop.
+
+An expected declared unsupported interaction is a coverage limitation. An
+unexpected failure inside a claimed supported scenario is a defect even when
+mutation failed closed. The reference set grows independently of the corpus;
+neither every card nor every deck must satisfy the milestone before the next
+safe rules harvest. Until the reference scenarios are populated and pass, the
+existing incomplete format-capability inventory continues to block strict match-
+readiness claims as described by the
+[trust-closure contract](../architecture/trust-closure.md).
+
 During iteration, run the new/focused tests and adjacent impacted modules. The
 deterministic `scripts/quick_gate.py` classifier includes both committed and
 working-tree changes and selects the relevant modules, functional shards, and

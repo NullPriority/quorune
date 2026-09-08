@@ -36,6 +36,19 @@ fine-grained trust graph for migrated slices; current mechanic contracts and
 conformance cases remain migration inputs where fine-grained capability
 mappings do not yet exist.
 
+Zero uncovered high-risk debt is always relative to the currently modeled,
+applicable interaction set. Reports distinguish successful supported
+composition, demonstrated fail-closed rejection of an explicitly unsupported
+composition, and unknown or unmodeled composition. A rejection witness must not
+be reported as successful playability of the pair.
+
+Every semantic scope expansion reviews newly reachable ambient interactions,
+even when no capability ID changes. An unchanged denominator is acceptable only
+with a reason grounded in existing evidence. Select stateful and higher-order
+cases by reachable behavior, failure history, shared authority, and risk rather
+than attempting every pair or three-way combination. Relevant official rulings
+inform the expected result; their presence alone is not conformance evidence.
+
 The matrix includes both printed-card co-occurrence and cross-card composition.
 `platform/reusable-piece-policy.json` declares bounded ambient high-risk piece
 pairs whose interaction is reachable even when no single card prints both

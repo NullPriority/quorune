@@ -78,11 +78,25 @@ Useful status entry points:
 - Do not infer provider/model identity, completion, rules fidelity or matchup
   evidence from partial or duplicated fixtures.
 
+- Keep card representation, capability closure, successful supported
+  composition, safe rejection, and match readiness as separate claims. Generated
+  inventories and certification prove scoped consistency and provenance, not
+  rules correctness or universal playability.
+
 ## Rules and architecture changes
 
 The repository is incrementally extracting coherent rules ownership from the
 central engine. Do not perform a big-bang rewrite and do not move code merely to
 reduce a line count.
+
+Before editing production behavior, establish the changed family's independent
+expected-behavior contract through the
+[rules assurance model](docs/rules/assurance-model.md). Use the pinned rules,
+Oracle text, and relevant rulings rather than deriving the expected answer from
+the implementation, compiler output, support classification, or replay under
+test. The testing strategy owns the applicable semantic distinctions, action-
+completeness boundary, and temporal evidence; link to it instead of copying a
+family-specific checklist here.
 
 A valid rules family:
 
@@ -382,13 +396,14 @@ machine-readable inventory; never pin a volatile queue, capability, contract,
 card, or residual total as an independent expected literal. Stable pinned-source
 totals are allowed only when the count itself is the contract being tested.
 
-When a compiler composition layer begins accepting complete syntax that leaf
-compilers intentionally reject in isolation, audit the affected leaf compiler
-negative suites before pushing. Preserve leaf parser rejection where it remains
-correct, remove stale integrated residual expectations, and add every promoted
-form to the composition owner's positive regression table. This cross-leaf
-audit is part of the focused compiler check; do not wait for separate CI shards
-to discover the promoted forms one at a time.
+When a compiler composition layer promotes syntax that leaf compilers still
+reject in isolation, its source paths must select the affected whole-card and
+real-Oracle consumer expectations through
+`platform/change-impact-policy.json`. Preserve correct leaf rejection, convert
+promoted integration cases to positive witnesses, and use a deliberately
+constructed boundary when an exclusion still needs protection. The
+[testing strategy](docs/testing/strategy.md) owns these three test purposes; do
+not churn unrelated real cards through a generic "unsupported" slot.
 
 Push the coherent exact head and let public pull-request CI run the fail-closed
 impact-selected Python, generated, package, platform and headless-browser
@@ -447,11 +462,15 @@ with the base revision and rejects newly written volatile provenance; the
 historical CI escape ledger remains the explicit owner for observed workflow
 incidents. Never create a follow-up commit solely to reconcile squash-merge
 identity. Metrics run through a separate nonblocking completed-workflow
-observer and never delay or invalidate the receipt. Main smoke then runs only
-the merge-specific receipt/fingerprint check and compact deterministic
-replay/server integration. `Main / Broad regression` preserves the complete
-Ubuntu, Windows, package, generated, interaction and browser inventory for
-every exact main SHA. A completed red broad run blocks later automatic merges;
+observer and never delay or invalidate the receipt. Cross-run reports
+distinguish first eligible-head success from eventual final-head success,
+publish observation windows and denominators, and keep unavailable values null;
+GitHub timestamps must not be presented as active development hours. Main smoke
+then runs only the merge-specific receipt/fingerprint check and compact
+deterministic replay/server integration. `Main / Broad regression` preserves
+the complete Ubuntu, Windows, package, generated, interaction and browser
+inventory for every exact main SHA. A completed red broad run blocks later
+automatic merges;
 `main-red-recovery` may narrow only a provenance-verified nonsemantic Python
 fixture or browser test-driver repair, while `main-red-fix-forward` admits an
 exact-failed-base PR only through the complete high-risk gate. Neither label
@@ -485,9 +504,12 @@ surface in several jobs.
 
 Classify each root cause as one of:
 
-- implementation or rules correctness;
+- semantic or rules correctness;
+- stale behavioral expectation;
+- incomplete affected-test selection;
 - omitted deterministic repository command;
 - stale generated or status artifact;
+- cache-input or generated-owner dependency omission;
 - missing documentation update;
 - missing fixture, manifest, registry, or consumer update;
 - package, platform, server, protocol, or browser integration;
