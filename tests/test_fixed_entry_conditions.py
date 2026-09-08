@@ -287,6 +287,14 @@ class FixedEntryConditionCompilerTests(unittest.TestCase):
                 "Exile three cards from your graveyard",
             ),
             (
+                "Minas Tirith",
+                "Minas Tirith enters tapped unless you control a legendary creature.\n"
+                "{T}: Add {W}.\n"
+                "{1}{W}, {T}: Draw a card. Activate only if you attacked with "
+                "two or more creatures this turn.",
+                "Activate only if you attacked with two or more creatures",
+            ),
+            (
                 "Fire Nation Palace",
                 "This land enters tapped unless you control a basic land.\n"
                 "{T}: Add {R}.\n"
