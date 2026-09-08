@@ -466,10 +466,11 @@ observer and never delay or invalidate the receipt. Cross-run reports
 distinguish first eligible-head success from eventual final-head success,
 publish observation windows and denominators, and keep unavailable values null;
 GitHub timestamps must not be presented as active development hours. Main smoke
-then runs only the merge-specific receipt/fingerprint check and compact deterministic
-replay/server integration. `Main / Broad regression` preserves the complete
-Ubuntu, Windows, package, generated, interaction and browser inventory for
-every exact main SHA. A completed red broad run blocks later automatic merges;
+then runs only the merge-specific receipt/fingerprint check and compact
+deterministic replay/server integration. `Main / Broad regression` preserves
+the complete Ubuntu, Windows, package, generated, interaction and browser
+inventory for every exact main SHA. A completed red broad run blocks later
+automatic merges;
 `main-red-recovery` may narrow only a provenance-verified nonsemantic Python
 fixture or browser test-driver repair, while `main-red-fix-forward` admits an
 exact-failed-base PR only through the complete high-risk gate. Neither label

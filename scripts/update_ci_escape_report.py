@@ -242,6 +242,10 @@ def build_report(source: Mapping) -> dict:
     }
 
 
+def _measurement(value: object) -> str:
+    return "null" if value is None else str(value)
+
+
 def markdown(report: Mapping) -> str:
     summary = report["summary"]
     lines = [
@@ -266,15 +270,17 @@ def markdown(report: Mapping) -> str:
         f'- Deterministic escapes: {summary["deterministic_escape_count"]}',
         f'- Current missing impact edges: {len(summary["current_missing_impact_edges"])}',
         f'- Known flaky tests: {summary["known_flaky_test_count"]}',
-        f'- Average pushes per merged PR: {summary["average_pushes_per_merged_pr"]}',
+        "- Average pushes per merged PR: "
+        f'{_measurement(summary["average_pushes_per_merged_pr"])}',
         "- First eligible-head certification pass rate: "
-        f'{summary["first_eligible_head_certification_pass_rate"]} '
+        f'{_measurement(summary["first_eligible_head_certification_pass_rate"])} '
         f'(n={summary["first_eligible_head_certification_sample_size"]})',
         "- Eventual final-head certification pass rate: "
-        f'{summary["eventual_final_head_certification_pass_rate"]} '
+        f'{_measurement(summary["eventual_final_head_certification_pass_rate"])} '
         f'(n={summary["eventual_final_head_certification_sample_size"]})',
         f'- Average observed critical path: {summary["average_critical_path_seconds"]} seconds',
-        f'- Average Slot B inactive time: {summary["average_slot_b_inactive_seconds"]}',
+        "- Average Slot B inactive time: "
+        f'{_measurement(summary["average_slot_b_inactive_seconds"])}',
         "",
         "## Escapes",
         "",

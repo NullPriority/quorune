@@ -84,8 +84,10 @@ class CiEscapeReportTests(unittest.TestCase):
             summary["eventual_final_head_certification_pass_rate"],
         )
         self.assertEqual(1, summary["eventual_final_head_certification_sample_size"])
-        self.assertIn("Null measurements", markdown(report))
-        self.assertIn("n=1", markdown(report))
+        rendered = markdown(report)
+        self.assertIn("Null measurements", rendered)
+        self.assertIn("null (n=0)", rendered)
+        self.assertIn("n=1", rendered)
 
     def test_unknown_fields_and_categories_fail_closed(self):
         value = source()
