@@ -76,12 +76,25 @@ class GraveyardReturnRuleTests(unittest.TestCase):
         cls.db.close()
         cls.temporary.cleanup()
 
-    def session(self, seed: int, *, regrowth: bool = False):
+    def session(
+        self,
+        seed: int,
+        *,
+        regrowth: bool = False,
+        expanded_return: bool = False,
+    ):
         mishra = copy.deepcopy(self.mishra)
-        if regrowth:
-            next(
+        if regrowth or expanded_return:
+            entries = [
                 entry for entry in mishra.entries if entry.board == "mainboard"
-            ).name = "Regrowth"
+            ]
+            entries[0].name = (
+                "Expanded Graveyard Return Fixture"
+                if expanded_return
+                else "Regrowth"
+            )
+            if expanded_return:
+                entries[1].name = "Graveyard Goblin Target Fixture"
         session = make_session(
             self.db,
             mishra,
@@ -434,6 +447,91 @@ class GraveyardReturnRuleTests(unittest.TestCase):
         }
         self.assertTrue(all(ref not in serialized_c for ref in private_refs))
         self.assert_replays(session, "targeted-graveyard-return-record")
+
+    def test_characteristic_target_offer_commit_and_replay(self):
+        def setup(seed: int):
+            session = self.session(seed, expanded_return=True)
+            engine = session.engine
+            source = next(
+                card
+                for card in engine.state.cards.values()
+                if card.owner == "A"
+                and card.printed_name == "Expanded Graveyard Return Fixture"
+            )
+            target = next(
+                card
+                for card in engine.state.cards.values()
+                if card.owner == "A"
+                and card.printed_name == "Graveyard Goblin Target Fixture"
+            )
+            nonmatching = next(
+                card
+                for card in engine.state.cards.values()
+                if card.owner == "A"
+                and card.object_id not in {source.object_id, target.object_id}
+                and card.zone != "command"
+                and "goblin"
+                not in str(
+                    engine._effective_card_data(card).get("type_line") or ""
+                ).casefold()
+            )
+            engine.move_card(source.object_id, "hand", log=False)
+            engine.move_card(target.object_id, "graveyard", log=False)
+            engine.move_card(nonmatching.object_id, "graveyard", log=False)
+            engine.state.players["A"].mana_pool["C"] = 1
+            engine.state.players["A"].mana_pool["B"] = 1
+            engine.state.active_player = "A"
+            engine.state.phase = "precombat_main"
+            engine.state.step = "main"
+            engine.state.priority_player = "A"
+            hints = engine._priority_action_hints("A")
+            action = next(
+                row for row in hints["actions"] if row.get("card") == source.ref
+            )
+            self.assertEqual([target.ref], action["target_schema"]["legal_refs"])
+            self.assertNotIn(
+                nonmatching.ref,
+                action["target_schema"]["legal_refs"],
+            )
+            engine._issue_priority("A", hints)
+            return session, source, target, action
+
+        stale, stale_source, stale_target, stale_action = setup(703_011_001)
+        stale.engine.move_card(stale_target.object_id, "exile", log=False)
+        before = authoritative_state_hash(stale.state)
+        rejected = stale.act(
+            "pilot:A",
+            {
+                "action_id": stale_action["id"],
+                "targets": [stale_target.ref],
+                "pay": "manual",
+                "payment": {"B": 1, "C": 1},
+            },
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(stale.state))
+        self.assertEqual("hand", stale_source.zone)
+
+        session, source, target, action = setup(703_011_002)
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+        accepted = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"B": 1, "C": 1},
+            },
+        )
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.pass_stack(session)
+        self.assertEqual("hand", target.zone)
+        self.assertEqual("graveyard", source.zone)
+        projected = StateProjector(self.db, session.state)._snapshot("pilot:C")
+        self.assertNotIn("hand", projected["players"]["A"])
+        self.assert_replays(session, "expanded-graveyard-return-record")
 
     def test_graveyard_return_transaction_mutant_is_killed(self):
         session = self.session(7030105)

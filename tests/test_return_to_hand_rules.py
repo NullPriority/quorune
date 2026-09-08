@@ -73,12 +73,23 @@ class ReturnToOwnerHandRuleTests(unittest.TestCase):
         cls.db.close()
         cls.temporary.cleanup()
 
-    def session(self, seed: int, *, players: int = 4, unsummon: bool = False):
+    def session(
+        self,
+        seed: int,
+        *,
+        players: int = 4,
+        unsummon: bool = False,
+        expanded_return: bool = False,
+    ):
         mishra = copy.deepcopy(self.mishra)
-        if unsummon:
+        if unsummon or expanded_return:
             next(
                 entry for entry in mishra.entries if entry.board == "mainboard"
-            ).name = "Unsummon"
+            ).name = (
+                "Expanded Battlefield Return Fixture"
+                if expanded_return
+                else "Unsummon"
+            )
         session = make_session(
             self.db,
             mishra,
@@ -447,6 +458,75 @@ class ReturnToOwnerHandRuleTests(unittest.TestCase):
         serialized_d = json.dumps(projected_d, sort_keys=True)
         self.assertTrue(all(ref not in serialized_d for ref in private_refs))
         self.assert_replays(session, "targeted-return-to-hand-record")
+
+    def test_expanded_target_offer_commit_revalidation_and_replay(self):
+        def setup(seed: int):
+            session = self.session(seed, expanded_return=True)
+            engine = session.engine
+            source = next(
+                card
+                for card in engine.state.cards.values()
+                if card.owner == "A"
+                and card.printed_name == "Expanded Battlefield Return Fixture"
+            )
+            own = self.put_on_battlefield(
+                engine,
+                self.permanent(engine, "A"),
+            )
+            opposing = self.put_on_battlefield(
+                engine,
+                self.permanent(engine, "B"),
+            )
+            own.tapped = True
+            opposing.tapped = True
+            engine.move_card(source.object_id, "hand", log=False)
+            engine.state.players["A"].mana_pool["C"] = 1
+            engine.state.players["A"].mana_pool["U"] = 1
+            engine.state.priority_player = "A"
+            hints = engine._priority_action_hints("A")
+            action = next(
+                row for row in hints["actions"] if row.get("card") == source.ref
+            )
+            self.assertEqual([opposing.ref], action["target_schema"]["legal_refs"])
+            self.assertNotIn(own.ref, action["target_schema"]["legal_refs"])
+            engine._issue_priority("A", hints)
+            return session, source, opposing, action
+
+        stale, stale_source, stale_target, stale_action = setup(701_091_001)
+        stale_target.tapped = False
+        before = authoritative_state_hash(stale.state)
+        rejected = stale.act(
+            "pilot:A",
+            {
+                "action_id": stale_action["id"],
+                "targets": [stale_target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1},
+            },
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(stale.state))
+        self.assertEqual("hand", stale_source.zone)
+
+        session, source, target, action = setup(701_091_002)
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+        accepted = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1},
+            },
+        )
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.pass_stack(session)
+        self.assertEqual("hand", target.zone)
+        self.assertEqual("B", target.owner)
+        self.assertEqual("graveyard", source.zone)
+        self.assert_replays(session, "expanded-targeted-return-record")
 
     def test_return_transaction_mutants_are_killed(self):
         session = self.session(7010906)

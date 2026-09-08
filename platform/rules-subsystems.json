@@ -2691,25 +2691,87 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-static-declaration-composition-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-targeted-return-to-hand-closure",
+          "member_family_ids": [
+            "activated_effect:return",
+            "effect_clause:return"
+          ],
+          "canonical_owner_ids": [
+            "capability:card.return.own_graveyard_to_owner_hand",
+            "capability:effect.choice.optional_fixed",
+            "capability:permanent.return.owner_hand",
+            "capability:resolution.effect.fixed_homogeneous_target_set",
+            "capability:target.permanent.characteristic_predicate",
+            "capability:target.revalidate_resolution",
+            "component:quorune.compiler.direct_target.direct_permanent_target_spec",
+            "component:quorune.compiler.fixed_homogeneous_target_sets.fixed_homogeneous_target_set_effect_template",
+            "component:quorune.compiler.optional_effect_templates.fixed_optional_effect_template",
+            "component:quorune.compiler.return_to_hand_templates.targeted_own_graveyard_return_to_hand_effect_template",
+            "component:quorune.compiler.return_to_hand_templates.targeted_return_to_hand_effect_template",
+            "component:quorune.rules.graveyard_card_targets.OwnGraveyardCardTargetSpec",
+            "component:quorune.rules.node_capability_shapes.targeted_return_to_hand_node_capabilities",
+            "component:quorune.semantic_runtime.return_to_hand_handlers.ReturnGraveyardCardToOwnerHandHandler",
+            "component:quorune.semantic_runtime.return_to_hand_handlers.ReturnPermanentToOwnerHandHandler",
+            "component:quorune.targets.TargetGroup"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-direct-permanent-target-predicate",
+            "fixed-own-graveyard-card-characteristic-predicate",
+            "mandatory-optional-or-fixed-homogeneous-cardinality",
+            "owner-hand-destination"
+          ],
+          "shared_dependencies": [
+            "card.return.own_graveyard_to_owner_hand",
+            "effect.choice.optional_fixed",
+            "permanent.return.owner_hand",
+            "resolution.effect.fixed_homogeneous_target_set",
+            "target.permanent.characteristic_predicate",
+            "target.revalidate_resolution",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one existing mandatory, optional, fixed-homogeneous, or closed-sequence targeted return to owner hand over a closed live battlefield permanent predicate or a fixed public characteristic predicate in the resolving controller's graveyard",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the two existing return-to-owner-hand leaf compilers through their shared target, optional, homogeneous, sequence, trigger, activation, zone-transition, replacement, projection, and replay owners without a new return operation or runtime handler.",
+          "explicit_exclusions": [
+            "cards in another player's graveyard, controller-hand wording, hidden-zone choices, and graveyard-to-battlefield movement",
+            "dynamic, named, mana-value, counter, ability-presence, history, linked, and source-relative graveyard-card predicates",
+            "mass, random, heterogeneous, unbounded, divided, modal-choice, and independently unsupported cost or event carriers",
+            "unsupported destination replacements, temporary exile, copied or face-down card values, and arbitrary runtime rules text"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-targeted-return-to-hand-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v177-fixed-static-declaration-composition",
-      "compiler_version": "oracle-ir-v177",
-      "bundle_id": "bundle:fixed-static-declaration-composition",
-      "candidate_ids": ["compiler:fixed-static-declaration-composition"],
+      "transition_id": "oracle-ir-v178-fixed-targeted-return-to-hand-closure",
+      "compiler_version": "oracle-ir-v178",
+      "bundle_id": "bundle:fixed-targeted-return-to-hand-closure",
+      "candidate_ids": ["compiler:fixed-targeted-return-to-hand-closure"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "activated_effect:return",
+        "effect_clause:return"
       ],
       "capability_ids": [
-        "combat.declaration.typed_components",
-        "continuous.ability.fixed_query_grant",
-        "continuous.ability.fixed_query_keyword_grant",
-        "continuous.attached.fixed_characteristics"
+        "card.return.own_graveyard_to_owner_hand",
+        "effect.choice.optional_fixed",
+        "permanent.return.owner_hand",
+        "resolution.effect.fixed_homogeneous_target_set",
+        "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution"
       ],
-      "measurement_id": "measurement:fixed-static-declaration-composition",
+      "measurement_id": "measurement:fixed-targeted-return-to-hand-closure",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

@@ -2601,8 +2601,28 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                     node.runtime_coverage,
                 )
 
+        targeted = self.compile(
+            "When this creature enters, return up to one target creature you "
+            "control to its owner's hand.",
+            type_line="Creature — Test",
+        )
+        self.assertEqual("exact", targeted.status, targeted.material_residuals)
+        targeted_node = targeted.faces[0].nodes[0]
+        self.assertEqual("permanent.enter.self", targeted_node.event)
+        self.assertEqual(
+            "return-target-creature-you-v2-fixed-up-to-1-target-set-v1",
+            targeted_node.template_id,
+        )
+        self.assertEqual(
+            "return_permanent_targets_to_owner_hand",
+            targeted_node.effects[0]["op"],
+        )
+        self.assertIn(
+            "resolution.effect.fixed_homogeneous_target_set",
+            targeted_node.capability_dependencies,
+        )
+
         exclusions = (
-            "When this creature enters, return up to one target creature you control to its owner's hand.",
             "When this creature enters, return each other creature you control to its owner's hand.",
             "When this creature enters, you may return another creature you control to its owner's hand.",
             "When this creature enters, return X creatures you control to their owner's hand.",

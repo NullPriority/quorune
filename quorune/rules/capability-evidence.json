@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "05b9a7a2175c64e0915deedb32b34b3f3f5ee9a0dca48ef62621aa8ae10f4c03",
-  "declaration_source_fingerprint": "4b9d174871ebd39bf699def74ca193a0a875a98742b1939c92955b90ca674604",
+  "registry_fingerprint": "cf835e0130b0616749e6735e69c5189e483ce64a8d6618dff3915744a38d9368",
+  "declaration_source_fingerprint": "ec32eae0574e3f32637c5953d854764ed13848f9f83a1cae76d603838dc63e0b",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -5287,6 +5287,29 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use one subtype-qualified own-graveyard target through advertisement, command validation, resolution, owner-hand movement, and replay."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_destination_replacement_preserves_graveyard_return_result",
       "official_rule_ids": [
         "108.3",
@@ -5306,6 +5329,29 @@
         "commander_review"
       ],
       "applicability_note": "Commit the own-graveyard return through the canonical destination-replacement boundary and retain the requested and actual destinations in the typed result journal."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep a fixed subtype target scoped to the resolving controller's graveyard in a four-player session."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -5425,6 +5471,29 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a compiled subtype-qualified own-graveyard return through the canonical target and zone owners."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_own_graveyard_card_returns_to_hand_with_new_identity",
       "official_rule_ids": [
         "108.3",
@@ -5444,6 +5513,29 @@
         "commander_review"
       ],
       "applicability_note": "Move one owned physical card from the actor's graveyard to hand and create a new logical incarnation through the canonical zone owner."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_graveyard_return_effect_clauses.OwnGraveyardCardTargetTests.test_characteristic_target_spec_is_canonical_and_round_trips",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Round-trip closed type, subtype, supertype, color, and color-cardinality target predicates without changing their canonical schema."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -5471,6 +5563,29 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Return the selected public graveyard card to a private hand without exposing that hand to another pilot."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_compiled_regrowth_is_owner_scoped_private_and_replays",
       "official_rule_ids": [
         "108.3",
@@ -5494,6 +5609,29 @@
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the subtype-qualified target, payment, graveyard departure, hidden hand result, and final hash exactly."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "replay",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_compiled_regrowth_is_owner_scoped_private_and_replays",
       "official_rule_ids": [
         "108.3",
@@ -5513,6 +5651,29 @@
         "commander_review"
       ],
       "applicability_note": "Replay the owner-scoped target, paid spell, public graveyard departure, hidden hand result, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a subtype-qualified target that leaves the graveyard after advertisement without consuming payment or mutating state."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -43269,6 +43430,26 @@
     },
     {
       "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_expanded_target_offer_commit_revalidation_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Share one tapped opponent-controlled predicate across target advertisement, command validation, resolution, owner-hand movement, and replay."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_compiled_return_is_multiplayer_private_and_replays",
       "official_rule_ids": [
@@ -43289,6 +43470,26 @@
     },
     {
       "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_expanded_target_offer_commit_revalidation_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply an opponent-relative target predicate in a four-player game without admitting the controller's own matching permanent."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
       "evidence_class": "mutation",
       "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_return_transaction_mutants_are_killed",
       "official_rule_ids": [
@@ -43306,6 +43507,26 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the physical/logical identity and controller staleness guard before the zone-change commit."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.TargetedReturnToHandCompilerTests.test_expanded_target_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the shared direct-target return compiler and prove the expanded source-spanned clause returns to a material residual."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -43390,6 +43611,26 @@
     {
       "capability_id": "permanent.return.owner_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_expanded_target_offer_commit_revalidation_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a compiled state- and controller-qualified return through the canonical target and zone owners."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_targeted_return_to_hand_effect_clauses.TargetedReturnToHandCompilerTests.test_spell_trigger_and_activated_contexts_share_targeted_return_lowering",
       "official_rule_ids": [
         "108.3",
@@ -43406,6 +43647,26 @@
         "commander_review"
       ],
       "applicability_note": "Lower the same direct-target return instruction in spell, trigger, and activated contexts with precise source spans."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.TargetedReturnToHandTemplateTests.test_closed_direct_target_predicates_share_the_return_owner",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile controller, source-exclusion, public-state, type-union, and subtype target predicates through the shared direct-target schema."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -43429,6 +43690,26 @@
     },
     {
       "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_expanded_target_offer_commit_revalidation_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use only public battlefield characteristics for target legality and preserve the returned owner's private hand boundary."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
       "evidence_class": "replay",
       "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_compiled_return_is_multiplayer_private_and_replays",
       "official_rule_ids": [
@@ -43446,6 +43727,46 @@
         "commander_review"
       ],
       "applicability_note": "Replay the advertised target, paid spell, return request, hidden-zone result, and final state hash exactly."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_expanded_target_offer_commit_revalidation_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the expanded public target predicate, payment, owner-hand move, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "permanent.return.owner_hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_return_to_hand_rules.ReturnToOwnerHandRuleTests.test_expanded_target_offer_commit_revalidation_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "110.2",
+        "400.2",
+        "400.3",
+        "400.6",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a target that stops satisfying its tapped predicate after advertisement without consuming mana or mutating state."
     },
     {
       "capability_id": "permanent.return.owner_hand",
@@ -59126,5 +59447,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "77968040e4c12a24dd946923e38e747c9083dabc3597fbf59f94f3556c83be9b"
+  "fingerprint": "7093c93deabd97b8bc34e2187bdc4e39ce9c8d24ca4da1d67773353304910d7e"
 }

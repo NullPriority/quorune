@@ -698,10 +698,7 @@ def targeted_return_to_hand_node_capabilities(
         or len(effects) != 1
         or (
             dict(target_schema or {}) not in _TARGETED_RETURN_TO_HAND_SCHEMAS
-            and not (
-                direct_target is not None
-                and direct_target.combat_state is not None
-            )
+            and direct_target is None
         )
     ):
         return ()

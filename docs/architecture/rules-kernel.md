@@ -80,7 +80,10 @@ return-to-owner-hand, own-graveyard card return, and stack-counter handlers
 likewise commit only through their focused transactions. Battlefield and
 graveyard return share one origin-pinned, replacement-aware single-object
 transition substrate while retaining distinct compiler shapes, handlers,
-capabilities, and journals. The aggregate mechanics remain untrusted where
+capabilities, and journals. Their expanded compiler predicates reuse the
+shared direct-permanent target schema or the existing owner-scoped graveyard
+card schema; optional, sequence, and homogeneous forms compose those leaves
+without another runtime owner. The aggregate mechanics remain untrusted where
 dynamic regeneration, replacement ordering, mass selection, linked exile,
 opponent-graveyard recursion, reanimation, conditional payment, alternate
 counter destinations, or other

@@ -101,6 +101,11 @@ one simultaneous replacement-aware zone-move intent; tap and untap use one
 typed set intent over the canonical tap-state owner. Empty up-to selections are
 valid no-ops, while duplicate references, excess references, unknown fields,
 and replacement selections on tap-state operations fail before mutation.
+Battlefield return leaves accept the shared closed direct-permanent predicate;
+own-graveyard return leaves accept fixed type, subtype, supertype, color, and
+color-cardinality fields on the existing owner-scoped card target. Optional,
+sequence, and homogeneous consumers reuse those same typed leaves. No return
+handler receives Oracle prose or adds a parallel zone-mutation path.
 
 Fixed controlled characteristic effects do not register a new family-specific
 static component. Resolution snapshots one closed query through the canonical

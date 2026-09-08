@@ -157,6 +157,14 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
                 {"up_to": 1},
             ),
             (
+                "Return up to one target tapped creature an opponent controls "
+                "to its owner's hand.",
+                "Instant",
+                "spell_ability",
+                "return_permanent_targets_to_owner_hand",
+                {"up_to": 1},
+            ),
+            (
                 "Return up to one target permanent card from your graveyard "
                 "to your hand.",
                 "Sorcery",
@@ -170,6 +178,14 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
                 "spell_ability",
                 "return_graveyard_targets_to_owner_hand",
                 {"up_to": 1},
+            ),
+            (
+                "Return up to two target Goblin cards from your graveyard to "
+                "your hand.",
+                "Sorcery",
+                "spell_ability",
+                "return_graveyard_targets_to_owner_hand",
+                {"up_to": 2},
             ),
             (
                 "Tap up to two target creatures.",

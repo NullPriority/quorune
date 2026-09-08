@@ -4,6 +4,7 @@ from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from common import ROOT
 from quorune.carddb import CardDatabase
@@ -85,8 +86,6 @@ class TargetedReturnToHandTemplateTests(unittest.TestCase):
         for text in (
             "Return up to one target creature to its owner's hand.",
             "You may return target creature to its owner's hand.",
-            "Return another target creature to its owner's hand.",
-            "Return target tapped creature to its owner's hand.",
             "Return target creature to its controller's hand.",
             "Return target creature to its owners hand.",
             "Return target creature card from a graveyard to its owner's hand.",
@@ -95,6 +94,38 @@ class TargetedReturnToHandTemplateTests(unittest.TestCase):
         ):
             with self.subTest(text=text):
                 self.assertIsNone(targeted_return_to_hand_effect_template(text))
+
+    def test_closed_direct_target_predicates_share_the_return_owner(self):
+        cases = {
+            "Return another target creature you control to their owner's hand.": (
+                "creature-you-another",
+                "you",
+                True,
+            ),
+            "Return target tapped creature an opponent controls to its owner's hand.": (
+                "creature-opponent-tapped",
+                "opponent",
+                False,
+            ),
+            "Return target artifact, enchantment, or land to its owner's hand.": (
+                "artifact-or-enchantment-or-land",
+                "any",
+                False,
+            ),
+        }
+        for text, (slug, controller, exclude_source) in cases.items():
+            with self.subTest(text=text):
+                template = targeted_return_to_hand_effect_template(text)
+                self.assertIsNotNone(template)
+                assert template is not None
+                self.assertEqual(f"return-target-{slug}-v2", template.template_id)
+                self.assertIsNotNone(template.target_spec)
+                assert template.target_spec is not None
+                self.assertEqual(controller, template.target_spec.controller_relation)
+                self.assertEqual(
+                    exclude_source,
+                    template.target_spec.source_exclusion,
+                )
 
     def test_combat_state_return_reuses_shared_direct_target_schema(self):
         template = targeted_return_to_hand_effect_template(
@@ -184,6 +215,18 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
                 "activated_ability",
                 "return-target-nonland-permanent-v2",
             ),
+            (
+                "Return target tapped creature an opponent controls to its owner's hand.",
+                "Instant",
+                "spell_ability",
+                "return-target-creature-opponent-tapped-v2",
+            ),
+            (
+                "{W}: Return another target creature you control to their owner's hand.",
+                "Creature — Test",
+                "activated_ability",
+                "return-target-creature-you-another-v2",
+            ),
         )
         for text, type_line, kind, template_id in contexts:
             with self.subTest(kind=kind, text=text):
@@ -200,6 +243,10 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
                 if template_id == "return-target-nonland-permanent-v2":
                     expected_capabilities.add(
                         "target.permanent.characteristic_predicate"
+                    )
+                if template_id == "return-target-creature-opponent-tapped-v2":
+                    expected_capabilities.add(
+                        "state_query.permanent.public_state_predicate"
                     )
                 self.assertEqual(
                     expected_capabilities,
@@ -252,9 +299,9 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
 
     def test_unsupported_return_variants_remain_material_residuals(self):
         for text in (
-            "Return another target creature to its owner's hand.",
-            "Return target tapped creature to its owner's hand.",
             "Return target creature card from a graveyard to its owner's hand.",
+            "Return target creature to its controller's hand.",
+            "Return target creature or spell to its owner's hand.",
         ):
             with self.subTest(text=text):
                 ir = self.compile(text)
@@ -305,7 +352,7 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
             {**template.target_schema, "zones": ["graveyard"]},
             {**template.target_schema, "count": 2},
             {**template.target_schema, "types_none": []},
-            {**template.target_schema, "types_any": ["creature"]},
+            {**template.target_schema, "types_any": ["spell"]},
             {**template.target_schema, "controller": "opponent"},
         )
         for schema in malformed_schemas:
@@ -324,6 +371,21 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
                 mechanic_ids=("cr-115-targets",),
             )
         )
+
+    def test_expanded_target_compiler_mutant_is_killed(self):
+        text = (
+            "Return target tapped creature an opponent controls to its "
+            "owner's hand."
+        )
+        self.assertEqual("exact", self.compile(text).status)
+        with patch(
+            "quorune.compiler.resolution_effect_templates."
+            "targeted_return_to_hand_effect_template",
+            return_value=None,
+        ):
+            mutated = self.compile(text)
+        self.assertNotEqual("exact", mutated.status)
+        self.assertTrue(mutated.material_residuals)
 
     def test_generated_return_program_is_capability_closed(self):
         registry = SemanticRegistry(include_builtin_packs=False)

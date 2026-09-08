@@ -67,6 +67,7 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_entry_return_requirement_measurement,
     _fixed_mana_madness_measurement,
     _fixed_static_declaration_composition_measurement,
+    _fixed_targeted_return_closure_measurement,
     _partner_with_measurement,
     _fixed_token_production_measurement,
     _typed_quoted_ability_grant_measurement,
@@ -2975,6 +2976,68 @@ class RulesSchedulerTests(unittest.TestCase):
                 member_ids={
                     "continuous_layer:continuous-effect-layers-and-dependencies"
                 },
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage=coverage,
+                cohort_fingerprint="fixture-fingerprint",
+            )
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+        self.assertEqual("bounded_executable", measurement["decision"])
+
+    def test_targeted_return_probe_requires_integrated_exact_node(self):
+        source = (
+            "Return target tapped creature an opponent controls to its "
+            "owner's hand."
+        )
+        record = SimpleNamespace(
+            oracle_id="fixture:targeted-return-closure",
+            name="Targeted return fixture",
+            oracle_text=source,
+            type_line="Instant",
+            faces=(),
+        )
+        ability = {
+            "ability_id": "front:n1",
+            "face_id": "front",
+            "source_line": 1,
+            "status": "unresolved",
+            "residuals": [{"residual_id": "r1"}],
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "unresolved",
+                    "minimum_known_blocker_set": ["effect_clause:return"],
+                    "abilities": [ability],
+                }
+            ]
+        }
+        node = SimpleNamespace(
+            node_id="front:n1",
+            exact=True,
+            capability_dependencies=("permanent.return.owner_hand",),
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(node,)),),
+            status="exact",
+        )
+        coverage = {
+            "minimum_complete_card_gain": 1,
+            "minimum_exact_ability_gain": 1,
+            "minimum_material_residual_reduction": 1,
+        }
+        with mock.patch(
+            "scripts.work_selection_cohort_measurements.compile_oracle_card",
+            return_value=compiled,
+        ):
+            measurement = _fixed_targeted_return_closure_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-targeted-return-to-hand-closure",
+                probe_id="fixed-targeted-return-to-hand-existing-owner-v1",
+                member_ids={"effect_clause:return"},
                 cards_by_oracle_id={record.oracle_id: record},
                 coverage=coverage,
                 cohort_fingerprint="fixture-fingerprint",
