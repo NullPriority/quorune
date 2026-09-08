@@ -972,8 +972,16 @@
   ],
   "known_flaky_tests": [],
   "limitations": {
+    "active_development_hours": "GitHub timestamps do not distinguish active development from unattended elapsed time, so active development hours remain null rather than estimated.",
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
+    "first_eligible_head_certification": "The tracked sample records only each pull request's eventual final head, so first eligible-head certification remains null rather than being inferred from workflow-run counts.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
+  },
+  "measurement_window": {
+    "ended_at": "2026-08-25T20:56:41Z",
+    "population": "tracked recent pull requests",
+    "sample_size": 4,
+    "started_at": "2026-08-25T03:52:06Z"
   },
   "observed_at": "2026-09-05T17:27:22Z",
   "recent_pull_requests": [
@@ -1019,8 +1027,8 @@
     }
   ],
   "repository": "NullPriority/quorune",
-  "schema_version": 1,
-  "source_fingerprint": "3ccfa61066571ac4a7112473fe410b33376a1fab3fe1f8727257bcfc75fdf979",
+  "schema_version": 2,
+  "source_fingerprint": "dce438c0e5157696fdacf7c5282e044ba646d50e4a48e52b1907833eff70dcbc",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1036,7 +1044,10 @@
     "current_missing_impact_edges": [],
     "deterministic_escape_count": 51,
     "escape_count": 56,
-    "exact_head_pass_rate": 1.0,
+    "eventual_final_head_certification_pass_rate": 1.0,
+    "eventual_final_head_certification_sample_size": 4,
+    "first_eligible_head_certification_pass_rate": null,
+    "first_eligible_head_certification_sample_size": 0,
     "known_flaky_test_count": 0,
     "repeated_failure_categories": [
       "browser_integration",
