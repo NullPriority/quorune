@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "b6307f31918c0b7b5acff171631c42975e2fc3e3fe04526f1b08805d7784ccd5"
+verified: "eb13364c11a74b5366959159e0b2cef7a9c30d3e7595466f0e4db5cbeaa5921e"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -27,6 +27,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Sheoldred // The True Scriptures | 213 | 23 | 8 | 7 | 13 | 4 | `blocked` |
 | Teachings of the Kirin // Kirin-Touched Orochi | 211 | 28 | 7 | 7 | 9 | 6 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
+| Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
 | Crystal Fragments // Summon: Alexander | 204 | 26 | 7 | 7 | 7 | 8 | `blocked` |
 | Esper Origins // Summon: Esper Maduin | 204 | 21 | 7 | 5 | 6 | 20 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
@@ -40,7 +41,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
 | Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
-| Jill, Shiva's Dominant // Shiva, Warden of Ice | 191 | 18 | 7 | 5 | 12 | 8 | `blocked` |
 | The Modern Age // Vector Glider | 191 | 26 | 7 | 5 | 6 | 6 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 190 | 23 | 4 | 7 | 10 | 19 | `blocked` |
 | Invasion of Segovia // Caetus, Sea Tyrant of Segovia | 189 | 20 | 6 | 4 | 6 | 23 | `blocked` |
