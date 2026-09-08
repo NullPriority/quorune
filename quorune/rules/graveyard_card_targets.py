@@ -275,9 +275,11 @@ class OwnGraveyardCardTargetSpec:
             self.color_count_equal,
         )
         if self.kind is not None:
-            if not isinstance(self.kind, GraveyardCardTargetKind) or any(
-                predicate_values
-            ):
+            if not isinstance(self.kind, GraveyardCardTargetKind):
+                raise GraveyardCardTargetError(
+                    "Graveyard target kind must be a supported typed value"
+                )
+            if any(predicate_values):
                 raise GraveyardCardTargetError(
                     "Graveyard target kind cannot mix a characteristic predicate"
                 )
