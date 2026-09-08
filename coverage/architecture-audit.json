@@ -12040,7 +12040,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 208404,
+      "logical_lines": 208406,
       "methods": {
         "dunder": 555,
         "private": 883,
@@ -12983,8 +12983,8 @@
           "file": "quorune/rules/graveyard_card_targets.py",
           "functions_and_methods": 14,
           "language": "python",
-          "logical_lines": 499,
-          "physical_lines": 535
+          "logical_lines": 501,
+          "physical_lines": 537
         },
         {
           "file": "quorune/public_zone_moves.py",
@@ -16891,7 +16891,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 228109,
+      "physical_lines": 228111,
       "python_file_count": 630,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -23063,7 +23063,7 @@
         {
           "condition": "set(effect) != {\"op\", \"card\"} or effect.get(\"op\") != \"return_graveyard_card_to_owner_hand\" or effect.get(\"card\") != \"$target.0\"",
           "file": "quorune/rules/graveyard_card_targets.py",
-          "line": 516,
+          "line": 518,
           "string_literals": [
             "$target.0",
             "card",
@@ -30134,7 +30134,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "8e027405d062f1430111d9c84c357aaef8bac1f4267e74d10d10a27de0a341b2",
+      "fingerprint": "312c1fa131ca9d12d5bc0ba1931df33d461567884597f563958f83c0bc80d565",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
