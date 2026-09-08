@@ -24,3 +24,11 @@ Do not “fix” Game Record v3 by editing a saved command or checkpoint. Histor
 private records stay local; public fixtures contain sanitized recipes and no
 capabilities or hidden library order. See the [replay architecture](../architecture/replay.md)
 and the [Game Record reference](../reference/game-record.md).
+
+Old data being readable and old behavior being reproducible are separate
+claims. When persisted semantics change, add one focused historical-record
+witness for the supported compatibility boundary. Preserve the historical
+execution result or reject the record explicitly according to current policy;
+never silently reinterpret it. A compiler-version change or successful replay
+recorded only under the current version is not historical-compatibility
+evidence.

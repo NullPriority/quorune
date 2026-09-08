@@ -40,6 +40,7 @@ def _validate_source(value: object) -> dict:
     if not isinstance(value, dict) or set(value) != {
         "schema_version",
         "observed_at",
+        "measurement_window",
         "repository",
         "escapes",
         "recent_pull_requests",
@@ -47,11 +48,30 @@ def _validate_source(value: object) -> dict:
         "limitations",
     }:
         raise ValueError("CI escape source has unknown or missing fields")
-    if value["schema_version"] != 1:
+    if value["schema_version"] != 2:
         raise ValueError("Unsupported CI escape source schema")
     for field in ("observed_at", "repository"):
         if not isinstance(value[field], str) or not value[field]:
             raise ValueError(f"{field} must be nonempty")
+    measurement_window = value["measurement_window"]
+    if not isinstance(measurement_window, dict) or set(measurement_window) != {
+        "started_at",
+        "ended_at",
+        "population",
+        "sample_size",
+    }:
+        raise ValueError("measurement_window has unknown or missing fields")
+    for field in ("started_at", "ended_at", "population"):
+        if (
+            not isinstance(measurement_window[field], str)
+            or not measurement_window[field]
+        ):
+            raise ValueError(f"measurement_window.{field} must be nonempty")
+    if (
+        type(measurement_window["sample_size"]) is not int
+        or measurement_window["sample_size"] < 0
+    ):
+        raise ValueError("measurement_window.sample_size must be nonnegative")
     escapes = value["escapes"]
     if not isinstance(escapes, list):
         raise ValueError("escapes must be a list")
@@ -134,10 +154,16 @@ def _validate_source(value: object) -> dict:
                 raise ValueError(
                     f"recent_pull_requests[{index}].{field} must be nonnegative or null"
                 )
+    if measurement_window["sample_size"] != len(pull_requests):
+        raise ValueError(
+            "measurement_window.sample_size must match recent_pull_requests"
+        )
     _strings(value["known_flaky_tests"], field="known_flaky_tests")
     limitations = value["limitations"]
     if not isinstance(limitations, dict) or set(limitations) != {
+        "active_development_hours",
         "average_pushes_per_merged_pr",
+        "first_eligible_head_certification",
         "slot_b_inactive_seconds",
     } or not all(isinstance(item, str) and item for item in limitations.values()):
         raise ValueError("limitations must explain every unavailable aggregate")
@@ -173,9 +199,10 @@ def build_report(source: Mapping) -> dict:
         row["final_run_conclusion"] == "success" for row in pull_requests
     )
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "repository": value["repository"],
         "observed_at": value["observed_at"],
+        "measurement_window": value["measurement_window"],
         "source_fingerprint": hashlib.sha256(canonical).hexdigest(),
         "summary": {
             "escape_count": len(escapes),
@@ -191,11 +218,14 @@ def build_report(source: Mapping) -> dict:
                 if len(push_counts) == len(pull_requests) and push_counts
                 else None
             ),
-            "exact_head_pass_rate": (
+            "first_eligible_head_certification_pass_rate": None,
+            "first_eligible_head_certification_sample_size": 0,
+            "eventual_final_head_certification_pass_rate": (
                 round(exact_head_passes / len(pull_requests), 6)
                 if pull_requests
                 else None
             ),
+            "eventual_final_head_certification_sample_size": len(pull_requests),
             "average_critical_path_seconds": (
                 round(mean(critical_paths), 3) if critical_paths else None
             ),
@@ -230,12 +260,19 @@ def markdown(report: Mapping) -> str:
         "",
         "## Summary",
         "",
+        f'- Observation window: {report["measurement_window"]["started_at"]} through {report["measurement_window"]["ended_at"]}',
+        f'- Observed population: {report["measurement_window"]["population"]} (n={report["measurement_window"]["sample_size"]})',
         f'- Escapes: {summary["escape_count"]}',
         f'- Deterministic escapes: {summary["deterministic_escape_count"]}',
         f'- Current missing impact edges: {len(summary["current_missing_impact_edges"])}',
         f'- Known flaky tests: {summary["known_flaky_test_count"]}',
         f'- Average pushes per merged PR: {summary["average_pushes_per_merged_pr"]}',
-        f'- Exact-head pass rate: {summary["exact_head_pass_rate"]}',
+        "- First eligible-head certification pass rate: "
+        f'{summary["first_eligible_head_certification_pass_rate"]} '
+        f'(n={summary["first_eligible_head_certification_sample_size"]})',
+        "- Eventual final-head certification pass rate: "
+        f'{summary["eventual_final_head_certification_pass_rate"]} '
+        f'(n={summary["eventual_final_head_certification_sample_size"]})',
         f'- Average observed critical path: {summary["average_critical_path_seconds"]} seconds',
         f'- Average Slot B inactive time: {summary["average_slot_b_inactive_seconds"]}',
         "",
@@ -253,6 +290,8 @@ def markdown(report: Mapping) -> str:
             "",
             "## Measurement limitations",
             "",
+            f'- First eligible-head certification: {report["limitations"]["first_eligible_head_certification"]}',
+            f'- Active development hours: {report["limitations"]["active_development_hours"]}',
             f'- Average pushes per merged PR: {report["limitations"]["average_pushes_per_merged_pr"]}',
             f'- Slot B inactive time: {report["limitations"]["slot_b_inactive_seconds"]}',
             "",

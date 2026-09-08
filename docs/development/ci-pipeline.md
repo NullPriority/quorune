@@ -183,13 +183,23 @@ without becoming semantic generator inputs. Owners with output-triggered fanout
 select database-backed dependents only when their committed generated outputs
 changed; tooling-only changes must not launch the compiler census through a
 validation-only dependency.
-merge commit, while its staged envelope and the complete
+The staged envelope and complete
 `cloud-generated-<commit>` bundle remain exact-commit and exact-source bound.
 Cross-run lookup accepts artifacts only from a completed execution of this
 workflow whose head repository is Quorune itself. A successfully checked owner
 receipt remains reusable when a later downstream job fails or the workflow is
 cancelled; a failed/cancelled owner that published no receipt is a cache miss
 and retries. Fork artifacts cannot seed `main` reuse.
+
+One stable semantic fingerprint receives one corpus census and downstream work
+reuses it. A real semantic correction creates a new fingerprint; prose,
+metadata, and test-only changes do not unless the declared dependency policy
+shows they are semantic inputs. Cache or owner-dependency changes require
+focused counterfactual tests showing that relevant semantic inputs invalidate
+the right owners, downstream-only changes leave unrelated upstream work valid,
+failed or incomplete computation is never reused, and bounded cold and cached
+outputs agree. Cold validation is periodic or policy-change-triggered rather
+than duplicated on every expensive pull-request run.
 The pinned database is also cached from its snapshot and builder inputs, then
 validated by SQLite integrity, schema, and row cardinalities before use. The
 workflow has read-only repository permissions and never commits or opens a pull
@@ -548,6 +558,15 @@ Raw JSON reports and the combined `ci-metrics` artifact are retained for 14
 days so future shard changes use measured history. Cache-hit rate, agent idle
 time, and stale-run cancellation remain `null` when GitHub does not expose
 measured data; the reporting code never estimates them as observations.
+Cross-run summaries separately label first eligible-head certification and
+eventual final-head certification, including observation windows and sample
+sizes. They distinguish semantic, test-only, and generated corrections; report
+observed generation, downstream-correction, queue, certification, and merge-to-
+merge intervals; and distinguish executed checks from reused certification.
+Unavailable fields remain `null`. GitHub timestamps do not measure active
+development hours. Initial support gains and later demotions or correctness
+repairs remain separate transitions in the harvest history rather than being
+collapsed into one retained-support claim.
 Browser behavior failures, browser-driver/setup failures, and artifact-
 publication failures have separate classifications. Optional Linux timing and
 browser-report uploads may fail visibly without changing certification. Shard

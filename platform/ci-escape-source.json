@@ -1,6 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "observed_at": "2026-09-05T17:27:22Z",
+  "measurement_window": {
+    "started_at": "2026-08-25T03:52:06Z",
+    "ended_at": "2026-08-25T20:56:41Z",
+    "population": "tracked recent pull requests",
+    "sample_size": 4
+  },
   "repository": "NullPriority/quorune",
   "escapes": [
     {
@@ -908,7 +914,9 @@
   ],
   "known_flaky_tests": [],
   "limitations": {
+    "active_development_hours": "GitHub timestamps do not distinguish active development from unattended elapsed time, so active development hours remain null rather than estimated.",
     "average_pushes_per_merged_pr": "GitHub retained workflow runs are not equivalent to pushes, so push counts remain null rather than estimated.",
+    "first_eligible_head_certification": "The tracked sample records only each pull request's eventual final head, so first eligible-head certification remains null rather than being inferred from workflow-run counts.",
     "slot_b_inactive_seconds": "GitHub Actions does not observe local worktree activity, so this value remains null rather than estimated."
   }
 }

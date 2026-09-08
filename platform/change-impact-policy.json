@@ -653,6 +653,7 @@
         "test_activation_conditions",
         "test_casting_activation_proposal_equivalence",
         "test_fixed_counter_placement_effects",
+        "test_fixed_entry_conditions",
         "test_public_activation_conditions",
         "test_typed_activated_ability_catalog"
       ],

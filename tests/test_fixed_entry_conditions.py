@@ -8,6 +8,9 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from quorune.activation_condition_model import (
+    ACTIVATION_PUBLIC_QUERY_CAPABILITY,
+)
 from quorune.card_programs import compile_card_program
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.entry_state_templates import static_entry_state_handler
@@ -248,11 +251,36 @@ class FixedEntryConditionCompilerTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 assert_exact()
 
+    def test_rivendell_is_a_positive_cross_owner_integration(self):
+        program = self.compile(
+            _record(
+                "Rivendell enters tapped unless you control a legendary creature.\n"
+                "{T}: Add {U}.\n"
+                "{1}{U}, {T}: Scry 2. Activate only if you control a "
+                "legendary creature.",
+                name="Rivendell",
+                suffix=200,
+            )
+        )
+
+        self.assertEqual((), program.residuals)
+        dependencies = {
+            dependency
+            for ability in program.abilities
+            for dependency in ability.capability_dependencies
+        }
+        self.assertIn(
+            "zone.entry.tapped_state.fixed_condition",
+            dependencies,
+        )
+        self.assertIn(ACTIVATION_PUBLIC_QUERY_CAPABILITY, dependencies)
+        self.assertTrue(program.trust_closure["strict_capability_ready"])
+
     def test_residual_entry_condition_siblings_remain_fail_closed(self):
         variants = (
             (
-                "Mines of Moria",
-                "Mines of Moria enters tapped unless you control a legendary creature.\n"
+                "Additional Cost Boundary",
+                "This land enters tapped unless you control a legendary creature.\n"
                 "{T}: Add {R}.\n"
                 "{3}{R}, {T}, Exile three cards from your graveyard: Create "
                 "two Treasure tokens.",
