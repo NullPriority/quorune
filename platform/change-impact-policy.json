@@ -281,6 +281,8 @@
         "tests/fixtures/targeted-return-to-hand-cards.json"
       ],
       "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_fixed_effect_clause_sequences",
         "test_fixed_homogeneous_target_sets",
         "test_fixed_optional_effect_choices",
         "test_graveyard_return_rules",

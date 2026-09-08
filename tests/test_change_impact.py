@@ -116,6 +116,8 @@ class ChangeImpactTests(unittest.TestCase):
                 plan = classify_changes([owner])
                 self.assertLessEqual(
                     {
+                        "test_fixed_counter_event_triggers",
+                        "test_fixed_effect_clause_sequences",
                         "test_fixed_homogeneous_target_sets",
                         "test_semantic_handlers",
                         "test_targeting_v070",

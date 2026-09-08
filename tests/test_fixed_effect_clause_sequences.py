@@ -148,6 +148,22 @@ class FixedEffectClauseSequenceCompilerTests(unittest.TestCase):
                 "spell_ability",
                 ("bounce", "draw"),
             ),
+            (
+                sequence_record(
+                    "Return target tapped creature an opponent controls to "
+                    "its owner's hand. Draw a card."
+                ),
+                "spell_ability",
+                ("bounce", "draw"),
+            ),
+            (
+                sequence_record(
+                    "Return target Goblin card from your graveyard to your "
+                    "hand. Draw a card."
+                ),
+                "spell_ability",
+                ("return_graveyard_card_to_owner_hand", "draw"),
+            ),
         )
         for record, kind, operations in fixtures:
             with self.subTest(kind=kind):
