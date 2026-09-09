@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "cf835e0130b0616749e6735e69c5189e483ce64a8d6618dff3915744a38d9368",
-  "declaration_source_fingerprint": "ec32eae0574e3f32637c5953d854764ed13848f9f83a1cae76d603838dc63e0b",
+  "declaration_source_fingerprint": "f53d1e98489272acbcf2d9efccfbc86b07df8ab8adced721e8c95ed24ade922f",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -11679,7 +11679,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11699,7 +11699,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_counts_execute_as_many_and_exact_unless",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_counts_execute_as_many_and_exact_unless",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11719,7 +11719,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_unless_branch_and_ability_removal",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_unless_branch_and_ability_removal",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11739,7 +11739,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_unless_sacrifice_uses_source_incarnation",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_unless_sacrifice_uses_source_incarnation",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11759,7 +11759,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_external_entry_self_return_uses_source_incarnation",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_external_entry_self_return_uses_source_incarnation",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11779,7 +11779,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_reentered_source_remains_excluded_from_another_return_payment",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_reentered_source_remains_excluded_from_another_return_payment",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11799,7 +11799,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_external_entry_self_returns_batch_in_apnap_order",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_external_entry_self_returns_batch_in_apnap_order",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11939,7 +11939,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_untapped_basic_land_subtypes_execute",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_untapped_basic_land_subtypes_execute",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11959,7 +11959,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11979,7 +11979,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_choice_uses_owner_hand_and_replays",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -11999,7 +11999,7 @@
     {
       "capability_id": "choice.controller.fixed_return_owner_hand",
       "evidence_class": "rollback",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_entry_return_choice_revalidates_and_rolls_back",
+      "test_id": "tests.test_fixed_entry_return_triggers.FixedEntryReturnTriggerRuntimeTests.test_entry_return_choice_revalidates_and_rolls_back",
       "official_rule_ids": [
         "101.4",
         "400.2",
@@ -22233,7 +22233,7 @@
     {
       "capability_id": "counter.placement.quantity_replacement",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
       "official_rule_ids": [
         "122.1",
         "122.6",
@@ -24948,31 +24948,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_any_death_trigger_observes_opponents_and_its_own_lki",
-      "official_rule_ids": [
-        "115.1",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c",
-        "122.1",
-        "122.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Override legacy controller-default matching with an explicit closed any-controller predicate and preserve the source's own predeparture trigger identity."
-    },
-    {
-      "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_counter_trigger_uses_normalized_event",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cast_counter_trigger_uses_normalized_event",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -24996,31 +24972,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_creature_death_counter_trigger_uses_lki_subject_filters",
-      "official_rule_ids": [
-        "115.1",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c",
-        "122.1",
-        "122.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Use immutable predeparture controller, token, source, and logical-object facts to admit exactly the represented creature-death trigger."
-    },
-    {
-      "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_draw_counter_triggers_use_public_normalized_events",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_counter_triggers_use_public_normalized_events",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25044,31 +24996,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_land_entry_counter_trigger_uses_normalized_event",
-      "official_rule_ids": [
-        "115.1",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c",
-        "122.1",
-        "122.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Consume one committed controlled-land battlefield entry, preserve its normalized object facts on the trigger, and place the source counter on resolution."
-    },
-    {
-      "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_life_gain_counter_trigger_uses_replacement_resolved_amount",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_life_gain_counter_trigger_uses_replacement_resolved_amount",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25092,55 +25020,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_multiple_scheduled_counter_triggers_use_one_apnap_batch",
-      "official_rule_ids": [
-        "115.1",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c",
-        "122.1",
-        "122.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Collect two simultaneous each-upkeep counter occurrences from different controllers into one four-player APNAP placement batch."
-    },
-    {
-      "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_scheduled_counter_trigger_suspends_for_quantity_replacement",
-      "official_rule_ids": [
-        "115.1",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c",
-        "122.1",
-        "122.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Resolve a two-counter upkeep trigger into the canonical resumable quantity-replacement tree and commit only after the affected controller orders both replacements."
-    },
-    {
-      "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_counter_trigger_uses_replacement_owner",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_counter_trigger_uses_replacement_owner",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25164,7 +25044,127 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_any_death_trigger_observes_opponents_and_its_own_lki",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Override legacy controller-default matching with an explicit closed any-controller predicate and preserve the source's own predeparture trigger identity."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_creature_death_counter_trigger_uses_lki_subject_filters",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use immutable predeparture controller, token, source, and logical-object facts to admit exactly the represented creature-death trigger."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_land_entry_counter_trigger_uses_normalized_event",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Consume one committed controlled-land battlefield entry, preserve its normalized object facts on the trigger, and place the source counter on resolution."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_multiple_scheduled_counter_triggers_use_one_apnap_batch",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Collect two simultaneous each-upkeep counter occurrences from different controllers into one four-player APNAP placement batch."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_scheduled_counter_trigger_suspends_for_quantity_replacement",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a two-counter upkeep trigger into the canonical resumable quantity-replacement tree and commit only after the affected controller orders both replacements."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25188,7 +25188,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_zone_entry_counter_triggers_apply_typed_subject_relations",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_zone_entry_counter_triggers_apply_typed_subject_relations",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25212,31 +25212,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_death_counter_replacement_is_private_and_replays_exactly",
-      "official_rule_ids": [
-        "115.1",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c",
-        "122.1",
-        "122.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Resolve a third-seat creature-death trigger through competing counter replacements without exposing its authoritative continuation to the other three seats."
-    },
-    {
-      "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25260,7 +25236,31 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_death_counter_replacement_is_private_and_replays_exactly",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a third-seat creature-death trigger through competing counter replacements without exposing its authoritative continuation to the other three seats."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25284,7 +25284,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_opponent_death_counter_trigger_uses_previous_controller",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_opponent_death_counter_trigger_uses_previous_controller",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25548,7 +25548,31 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_death_counter_replacement_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the player-result counter replacement order only to its affected third-seat controller without exposing object identity."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_death_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25572,7 +25596,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25595,8 +25619,8 @@
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25615,12 +25639,12 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Project the player-result counter replacement order only to its affected third-seat controller without exposing object identity."
+      "applicability_note": "Replay the life-result trigger and suspended counter replacement continuation to the identical authoritative hash."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_death_counter_replacement_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_death_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25644,7 +25668,7 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -25667,32 +25691,8 @@
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
-      "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
-      "official_rule_ids": [
-        "115.1",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c",
-        "122.1",
-        "122.6",
-        "614.16",
-        "616.1"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Replay the life-result trigger and suspended counter replacement continuation to the identical authoritative hash."
-    },
-    {
-      "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "rollback",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_stale_counter_target_rolls_back_trigger_resolution",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_stale_counter_target_rolls_back_trigger_resolution",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -28640,7 +28640,7 @@
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -28664,7 +28664,7 @@
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -28808,7 +28808,7 @@
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -28832,7 +28832,7 @@
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": [
         "115.1",
         "603.2",
@@ -50224,7 +50224,7 @@
     {
       "capability_id": "target.protection.shroud_permanent",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
       "official_rule_ids": [
         "115.1",
         "115.2",
@@ -52195,7 +52195,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52216,7 +52216,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_relations_and_type_predicates_share_committed_event",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cast_relations_and_type_predicates_share_committed_event",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52237,28 +52237,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
-      "official_rule_ids": [
-        "115.1",
-        "120.4",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Bind a scheduled occurrence to an ordinary controller-scoped target choice and resolve the independently typed characteristic effect."
-    },
-    {
-      "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52279,7 +52258,49 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose three independent battlefield predicates and one stack-source self predicate with the shared typed life body and ordinary trigger ordering."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bind a scheduled occurrence to an ordinary controller-scoped target choice and resolve the independently typed characteristic effect."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52300,7 +52321,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_zone_lifecycle_uses_last_known_controller_and_replays",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_zone_lifecycle_uses_last_known_controller_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52317,27 +52338,6 @@
         "commander_review"
       ],
       "applicability_note": "Compose a source-self battlefield-to-graveyard occurrence with an ordinary draw body using the source's last-known controller."
-    },
-    {
-      "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
-      "official_rule_ids": [
-        "115.1",
-        "120.4",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Compose three independent battlefield predicates and one stack-source self predicate with the shared typed life body and ordinary trigger ordering."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -52363,7 +52363,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52384,28 +52384,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_triggers_share_four_player_apnap_batch",
-      "official_rule_ids": [
-        "115.1",
-        "120.4",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Collect mandatory typed-effect triggers controlled by two players into one four-player APNAP batch without a parallel placement path."
-    },
-    {
-      "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52426,28 +52405,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
-      "official_rule_ids": [
-        "115.1",
-        "120.4",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Match controller and opponent damage relations in a four-player table without introducing a combat-specific placement path."
-    },
-    {
-      "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52464,6 +52422,48 @@
         "commander_review"
       ],
       "applicability_note": "Use the canonical four-player APNAP owner when multiple exact predicate programs match the same cast."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_fixed_typed_event_effect_triggers_share_four_player_apnap_batch",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Collect mandatory typed-effect triggers controlled by two players into one four-player APNAP batch without a parallel placement path."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Match controller and opponent damage relations in a four-player table without introducing a combat-specific placement path."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -52783,28 +52783,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
-      "official_rule_ids": [
-        "115.1",
-        "120.4",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Project the pending target decision only to the trigger controller and omit authoritative source object identity from the public choice."
-    },
-    {
-      "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52825,28 +52804,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
-      "official_rule_ids": [
-        "115.1",
-        "120.4",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Project public damage-trigger facts to every seat without source physical or logical object identities."
-    },
-    {
-      "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52863,6 +52821,48 @@
         "commander_review"
       ],
       "applicability_note": "Evaluate every selected predicate from public committed cast facts and source-relative identities without reading hidden Oracle prose or private zones in the v4 event."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the pending target decision only to the trigger controller and omit authoritative source object identity from the public choice."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project public damage-trigger facts to every seat without source physical or logical object identities."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -52888,28 +52888,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
-      "official_rule_ids": [
-        "115.1",
-        "120.4",
-        "603.2",
-        "603.3",
-        "603.3b",
-        "603.6",
-        "608.2b",
-        "608.2c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Replay target selection, four-player priority, and typed characteristic resolution to the identical authoritative state hash."
-    },
-    {
-      "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52930,7 +52909,28 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_fixed_typed_event_effect_trigger_resolves_targeted_body_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay target selection, four-player priority, and typed characteristic resolution to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52951,7 +52951,7 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_zone_lifecycle_uses_last_known_controller_and_replays",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_zone_lifecycle_uses_last_known_controller_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
@@ -52972,7 +52972,7 @@
     {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
       "official_rule_ids": [
         "121.1",
         "121.2",
@@ -52990,7 +52990,7 @@
     {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
       "official_rule_ids": [
         "121.1",
         "121.2",
@@ -53008,7 +53008,7 @@
     {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "mutation",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_event_dispatch_mutants_are_killed",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_event_dispatch_mutants_are_killed",
       "official_rule_ids": [
         "121.1",
         "121.2",
@@ -53062,7 +53062,7 @@
     {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_draw_counter_triggers_use_public_normalized_events",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_counter_triggers_use_public_normalized_events",
       "official_rule_ids": [
         "121.1",
         "121.2",
@@ -53080,7 +53080,7 @@
     {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": [
         "121.1",
         "121.2",
@@ -53098,7 +53098,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -53115,7 +53115,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -53132,7 +53132,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "mutation",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_event_dispatch_mutant_is_killed",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_event_dispatch_mutant_is_killed",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -53200,7 +53200,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -53217,7 +53217,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -53234,7 +53234,7 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": [
         "120.4",
         "603.2",
@@ -53251,7 +53251,7 @@
     {
       "capability_id": "trigger.event.normalized_life_gain",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_life_gain_counter_trigger_uses_replacement_resolved_amount",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_life_gain_counter_trigger_uses_replacement_resolved_amount",
       "official_rule_ids": [
         "119.3",
         "119.9",
@@ -53270,7 +53270,7 @@
     {
       "capability_id": "trigger.event.normalized_life_gain",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": [
         "119.3",
         "119.9",
@@ -53289,7 +53289,7 @@
     {
       "capability_id": "trigger.event.normalized_life_gain",
       "evidence_class": "mutation",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_event_dispatch_mutants_are_killed",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_event_dispatch_mutants_are_killed",
       "official_rule_ids": [
         "119.3",
         "119.9",
@@ -53327,7 +53327,7 @@
     {
       "capability_id": "trigger.event.normalized_life_gain",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_life_gain_counter_trigger_covers_effect_intent_lifelink_and_aftermath",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_life_gain_counter_trigger_covers_effect_intent_lifelink_and_aftermath",
       "official_rule_ids": [
         "119.3",
         "119.9",
@@ -53346,7 +53346,7 @@
     {
       "capability_id": "trigger.event.normalized_life_gain",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": [
         "119.3",
         "119.9",
@@ -53365,7 +53365,7 @@
     {
       "capability_id": "trigger.event.normalized_life_gain",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_player_result_counter_replacement_is_private_and_replays_exactly",
       "official_rule_ids": [
         "119.3",
         "119.9",
@@ -53410,7 +53410,7 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
       "official_rule_ids": [
         "116.2b",
         "508.1",
@@ -53462,7 +53462,7 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_share_typed_batch_owners",
       "official_rule_ids": [
         "116.2b",
         "508.1",
@@ -53540,7 +53540,7 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "mutation",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_event_dispatch_mutant_is_killed",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_event_dispatch_mutant_is_killed",
       "official_rule_ids": [
         "116.2b",
         "508.1",
@@ -53774,7 +53774,7 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cycling_trigger_uses_public_hand_snapshot",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cycling_trigger_uses_public_hand_snapshot",
       "official_rule_ids": [
         "116.2b",
         "508.1",
@@ -53826,7 +53826,7 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
       "official_rule_ids": [
         "116.2b",
         "508.1",
@@ -53878,7 +53878,7 @@
     {
       "capability_id": "trigger.event.normalized_self_attack",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "508.1",
         "508.1m",
@@ -53895,7 +53895,7 @@
     {
       "capability_id": "trigger.event.normalized_self_attack",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "508.1",
         "508.1m",
@@ -53912,7 +53912,7 @@
     {
       "capability_id": "trigger.event.normalized_self_attack",
       "evidence_class": "mutation",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_event_dispatch_mutant_is_killed",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_event_dispatch_mutant_is_killed",
       "official_rule_ids": [
         "508.1",
         "508.1m",
@@ -53963,7 +53963,7 @@
     {
       "capability_id": "trigger.event.normalized_self_attack",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "508.1",
         "508.1m",
@@ -53980,7 +53980,7 @@
     {
       "capability_id": "trigger.event.normalized_self_attack",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": [
         "508.1",
         "508.1m",
@@ -54013,7 +54013,7 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": [
         "601.2i",
         "603.2",
@@ -54029,7 +54029,7 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_cast_relations_and_type_predicates_share_committed_event",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cast_relations_and_type_predicates_share_committed_event",
       "official_rule_ids": [
         "601.2i",
         "603.2",
@@ -54045,7 +54045,7 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": [
         "601.2i",
         "603.2",
@@ -54093,7 +54093,7 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": [
         "601.2i",
         "603.2",
@@ -54285,7 +54285,7 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": [
         "601.2i",
         "603.2",
@@ -54349,7 +54349,7 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
       "official_rule_ids": [
         "603.2",
         "603.6",
@@ -57262,7 +57262,7 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_shroud_and_enchantment_cast_draw_compose",
       "official_rule_ids": [
         "121.1",
         "121.2",
@@ -59447,5 +59447,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "7093c93deabd97b8bc34e2187bdc4e39ce9c8d24ca4da1d67773353304910d7e"
+  "fingerprint": "36943de571a8b2424042f03bceaae38b30e7f7399fe98b224bc52ac211c77b1c"
 }

@@ -968,6 +968,39 @@
       "resolution": "The unchanged assertion-driven journey now declares a bounded 300-second budget and treats already-closed contexts as successful teardown. The same path passed its isolated headless rerun in 2.5 minutes; browser-full impact already selected the journey.",
       "run_id": 33978769486,
       "summary": "The persisted two-turn Spire Garden browser journey exceeded its 180-second test budget on a slower hosted runner; the retained trace showed ordinary progress through Seat B's turn-two end step rather than a behavior assertion or no-progress failure."
+    },
+    {
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Compiler corpus (job 102307685431)"
+      ],
+      "head_sha": "3379cd289f15608ea0419d87a1c7d0f12337f116",
+      "id": "ci-20260909-57",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_generated_owner_cache.GeneratedOwnerCacheTests.test_automatic_plan_regenerates_stale_inherited_owner"
+      ],
+      "resolution": "An inherited cache miss now validates against staged dependency outputs and invokes its canonical writer only when that validation proves the tracked output stale, preserving cheap inheritance when output-triggered dependencies remain unchanged.",
+      "run_id": 34300857260,
+      "summary": "The source-checkpoint planner provisionally inherited compiler corpus outputs after capability-evidence test IDs moved, but the freshly staged evidence fingerprint made those tracked census outputs stale before their owner ran."
+    },
+    {
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Rules scheduler (job 102317015148)"
+      ],
+      "head_sha": "82496f655b9c840dd28b7302afc37b91065bd563",
+      "id": "ci-20260909-58",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_compiler_semantic_receipt_ignores_evidence_provenance",
+        "test_rules_scheduler.RulesSchedulerTests.test_historical_compiler_blob_uses_current_semantic_projection"
+      ],
+      "resolution": "Harvest receipts now exclude capability-evidence provenance from compiler semantic projections and reproject historical compiler blobs under the current algorithm, while status counts, card states, and frontier content remain semantic and fail closed.",
+      "run_id": 34302005779,
+      "summary": "Capability-evidence test IDs changed only provenance, but the harvest-history semantic receipt hashed those fingerprints and misclassified the unchanged compiler v178 corpus as a second use of its already landed transition identity."
     }
   ],
   "known_flaky_tests": [],
@@ -983,7 +1016,7 @@
     "sample_size": 4,
     "started_at": "2026-08-25T03:52:06Z"
   },
-  "observed_at": "2026-09-05T17:27:22Z",
+  "observed_at": "2026-09-09T02:48:18Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1028,7 +1061,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "dce438c0e5157696fdacf7c5282e044ba646d50e4a48e52b1907833eff70dcbc",
+  "source_fingerprint": "5be3431c4003a4a18db4910af9fc1d7033624a80750ea4912c305114a8fb47d4",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1036,14 +1069,14 @@
     "category_counts": {
       "browser_integration": 5,
       "flaky_test": 6,
-      "generated_artifact_drift": 5,
+      "generated_artifact_drift": 7,
       "infrastructure": 1,
       "missing_affected_test": 22,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 51,
-    "escape_count": 56,
+    "deterministic_escape_count": 53,
+    "escape_count": 58,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

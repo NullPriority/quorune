@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "dce438c0e5157696fdacf7c5282e044ba646d50e4a48e52b1907833eff70dcbc"
+verified: "5be3431c4003a4a18db4910af9fc1d7033624a80750ea4912c305114a8fb47d4"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 56
-- Deterministic escapes: 51
+- Escapes: 58
+- Deterministic escapes: 53
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -85,6 +85,8 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260905-54` | [33957811410](https://github.com/NullPriority/quorune/actions/runs/33957811410) | `missing_affected_test` | `not_applicable` | The witness now mutates compiler.multi_keyword_nodes.partner_with_keyword_nodes, which is the symbol consumed by Oracle IR. A repository-wide integrity test resolves every literal unittest.mock.patch target without executing the broad suites, preventing removed module attributes from surviving a focused source checkpoint. |
 | `ci-20260905-55` | [33969136194](https://github.com/NullPriority/quorune/actions/runs/33969136194) | `missing_affected_test` | `not_applicable` | The legacy ability-word composition table now asserts permanent.enter and the dedicated Constellation template, matching the new focused compiler and runtime witnesses. The existing complete compiler impact rule already selected this module; future event remaps must run this exact cross-owner positive table before the source checkpoint. |
 | `ci-20260905-56` | [33978769486](https://github.com/NullPriority/quorune/actions/runs/33978769486) | `browser_integration` | `not_applicable` | The unchanged assertion-driven journey now declares a bounded 300-second budget and treats already-closed contexts as successful teardown. The same path passed its isolated headless rerun in 2.5 minutes; browser-full impact already selected the journey. |
+| `ci-20260909-57` | [34300857260](https://github.com/NullPriority/quorune/actions/runs/34300857260) | `generated_artifact_drift` | `not_applicable` | An inherited cache miss now validates against staged dependency outputs and invokes its canonical writer only when that validation proves the tracked output stale, preserving cheap inheritance when output-triggered dependencies remain unchanged. |
+| `ci-20260909-58` | [34302005779](https://github.com/NullPriority/quorune/actions/runs/34302005779) | `generated_artifact_drift` | `not_applicable` | Harvest receipts now exclude capability-evidence provenance from compiler semantic projections and reproject historical compiler blobs under the current algorithm, while status counts, card states, and frontier content remain semantic and fail closed. |
 
 ## Measurement limitations
 
