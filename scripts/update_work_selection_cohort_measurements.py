@@ -204,23 +204,29 @@ def _transition_measurement_is_eligible(
     )
 
 
-def _transition_coverage(coverage: dict) -> dict:
+def _transition_coverage(coverage: dict, *, transition_id: str) -> dict:
     history = validate_harvest_history(
         json.loads(HARVEST_HISTORY.read_text(encoding="utf-8")),
         minimum_gain=int(coverage["minimum_complete_card_gain"]),
     )
+    consecutive = 0
+    for row in reversed(history["harvest_outcome_history"]):
+        if row.get("transition_id") == transition_id:
+            continue
+        if int(row["actual_complete_card_gain"]) >= int(
+            coverage["minimum_complete_card_gain"]
+        ):
+            break
+        consecutive += 1
     return {
         **coverage,
-        "consecutive_subthreshold_harvests": history[
-            "consecutive_subthreshold_harvests"
-        ],
+        "consecutive_subthreshold_harvests": consecutive,
     }
 
 
 def _transition_measurements(
     *, records: dict, coverage: dict, bundles: list[dict]
 ) -> list[dict]:
-    coverage = _transition_coverage(coverage)
     catalog = json.loads(POLICY.read_text(encoding="utf-8"))
     declaration = catalog["work_selection"].get(
         "semantic_transition_declaration"
@@ -231,6 +237,10 @@ def _transition_measurements(
     measurement_id = declaration.get("measurement_id")
     if not transition_id or not isinstance(measurement_id, str):
         return []
+    coverage = _transition_coverage(
+        coverage,
+        transition_id=transition_id,
+    )
     bundle_id = str(declaration.get("bundle_id") or "")
     bundle = next(
         (row for row in bundles if row.get("bundle_id") == bundle_id), None

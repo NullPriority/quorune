@@ -760,6 +760,7 @@ class RulesSchedulerTests(unittest.TestCase):
             "maximum_consecutive_prerequisite_exceptions"
         ] = open_budget
         policy["coverage_family"]["approved_prerequisite_exceptions"] = [
+            *policy["coverage_family"]["approved_prerequisite_exceptions"],
             {
                 "candidate_id": "frontier:effect_clause:large-ability-fixture",
                 "expected_downstream_complete_card_gain": 130,
@@ -875,7 +876,12 @@ class RulesSchedulerTests(unittest.TestCase):
         coverage = deepcopy(
             self.catalog["work_selection"]["coverage_family"]
         )
-        coverage = _transition_coverage(coverage)
+        coverage = _transition_coverage(
+            coverage,
+            transition_id=self.catalog["work_selection"][
+                "semantic_transition_declaration"
+            ]["transition_id"],
+        )
         coverage["approved_prerequisite_exceptions"] = [
             {
                 "candidate_id": "bundle:measured-prerequisite-fixture",
@@ -4350,6 +4356,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         policy = deepcopy(self.catalog["work_selection"])
         policy["coverage_family"]["approved_prerequisite_exceptions"] = [
+            *policy["coverage_family"]["approved_prerequisite_exceptions"],
             {
                 "candidate_id": "frontier:missing-prerequisite-fixture",
                 "expected_downstream_complete_card_gain": 100,
