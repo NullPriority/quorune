@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-09-05T17:27:22Z",
+  "observed_at": "2026-09-09T02:05:49Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -868,6 +868,22 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "The unchanged assertion-driven journey now declares a bounded 300-second budget and treats already-closed contexts as successful teardown. The same path passed its isolated headless rerun in 2.5 minutes; browser-full impact already selected the journey."
+    },
+    {
+      "id": "ci-20260909-57",
+      "run_id": 34300857260,
+      "head_sha": "3379cd289f15608ea0419d87a1c7d0f12337f116",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The source-checkpoint planner provisionally inherited compiler corpus outputs after capability-evidence test IDs moved, but the freshly staged evidence fingerprint made those tracked census outputs stale before their owner ran.",
+      "failed_surfaces": [
+        "Generated cloud / Compiler corpus (job 102307685431)"
+      ],
+      "regressions": [
+        "test_generated_owner_cache.GeneratedOwnerCacheTests.test_automatic_plan_regenerates_stale_inherited_owner"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "An inherited cache miss now validates against staged dependency outputs and invokes its canonical writer only when that validation proves the tracked output stale, preserving cheap inheritance when output-triggered dependencies remain unchanged."
     }
   ],
   "recent_pull_requests": [

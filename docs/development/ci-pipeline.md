@@ -180,9 +180,11 @@ pinned-database identity where applicable. The key deliberately excludes the
 commit SHA. A PR owner artifact can therefore be reused by a content-identical
 merge tree. Cache-identity implementation files invalidate reusable receipts
 without becoming semantic generator inputs. Owners with output-triggered fanout
-select database-backed dependents only when their committed generated outputs
-changed; tooling-only changes must not launch the compiler census through a
-validation-only dependency.
+select database-backed dependents when their committed generated outputs
+changed. During source-checkpoint assembly, an inherited cache miss validates
+against the staged dependency outputs and regenerates only when that check
+proves the tracked output stale. Tooling-only changes must not launch the
+compiler census through a validation-only dependency.
 The staged envelope and complete
 `cloud-generated-<commit>` bundle remain exact-commit and exact-source bound.
 Cross-run lookup accepts artifacts only from a completed execution of this
