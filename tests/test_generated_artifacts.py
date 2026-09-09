@@ -882,6 +882,12 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             hook,
         )
         self.assertIn('if [ -z "$BRANCH" ] || [ "$BRANCH" = "main" ]', hook)
+        self.assertIn("git diff --quiet --ignore-submodules --", hook)
+        self.assertIn("git diff --cached --quiet --ignore-submodules --", hook)
+        self.assertLess(
+            hook.index("git diff --quiet --ignore-submodules --"),
+            hook.index('"$ROOT/scripts/quick_gate.py"'),
+        )
         self.assertIn("--verify-receipt", hook)
         self.assertIn("--write --fail-on-change", hook)
         self.assertIn(

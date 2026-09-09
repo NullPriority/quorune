@@ -252,8 +252,11 @@ gh run download <run-id> --name cloud-generated-<source-sha> `
 The named checkpoint mode is restricted to non-`main` branches. It still runs
 test-shard/dependency validation and the compiler-identity sentinel, but allows
 the intermediate push before the expensive generated bundle and final receipt
-exist. Never use it for the subsequent generated-output push or as merge
-evidence.
+exist. Its pre-push gate requires a clean tracked worktree so the local
+pre-corpus validation reads the same bytes as the pushed commit. Commit cheap
+source-policy outputs such as new module classifications first; stash or remove
+other tracked partial-finalizer output. Never use checkpoint mode for the
+subsequent generated-output push or as merge evidence.
 
 For recovery or diagnosis only, a manual exact-ref dispatch remains available:
 
