@@ -246,6 +246,9 @@ _PROBE_TYPED_QUOTED_ABILITY_GRANT = (
 )
 _PROBE_PARTNER_WITH = "partner-with-existing-owner-v1"
 _PROBE_FIXED_MANA_MADNESS = "fixed-mana-madness-existing-owner-v1"
+_PROBE_FIXED_ATTACHMENT_ACTIONS = (
+    "fixed-attachment-actions-existing-owner-v1"
+)
 _FIXED_TOKEN_PRODUCTION_FAMILIES = frozenset(
     {
         "activated_effect:create-token",
@@ -314,6 +317,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_QUOTED_ABILITY_GRANT,
     _PROBE_PARTNER_WITH,
     _PROBE_FIXED_MANA_MADNESS,
+    _PROBE_FIXED_ATTACHMENT_ACTIONS,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_CONDITION_QUERY,
@@ -827,6 +831,60 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_FIXED_ATTACHMENT_ACTIONS:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Fixed attachment-action measurement requires card context"
+            )
+        material = _without_parenthetical_reminder(source).strip()
+        source_name, _source_is_permanent, _attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        types, subtypes, _supertypes = type_parts(
+            _source_face_type_line(card_record, ability)
+        )
+        known_keywords = {
+            str(value).casefold()
+            for value in getattr(card_record, "keywords", ())
+        }
+        if material.casefold() in {"living weapon", "for mirrodin!"}:
+            return material.casefold() in known_keywords
+        source_entry = _source_self_zone_trigger_match(
+            material,
+            card_name=source_name,
+        )
+        if source_entry is not None:
+            return bool(
+                source_entry.group("event").casefold() == "enters"
+                and source_entry.group("body").casefold()
+                == "attach it to target creature you control."
+                and "artifact" in types
+                and "equipment" in subtypes
+            )
+        if "equip" in known_keywords and "equipment" in subtypes:
+            return bool(
+                re.fullmatch(
+                    r"Equip (?:creature token|commander|legendary creature|"
+                    r"[A-Z][A-Za-z'-]*) (?:\{(?:\d+|[WUBRGC])\})+\.?",
+                    material,
+                )
+                or re.fullmatch(
+                    r"Equip \{(?:\d+|[WUBRGC])\}\. "
+                    r"Activate only once each turn\.",
+                    material,
+                    re.IGNORECASE,
+                )
+            )
+        return bool(
+            "enchantment" in types
+            and "aura" in subtypes
+            and re.fullmatch(
+                r"(?:\{(?:\d+|[WUBRGC])\})+: Attach this Aura to target "
+                r"creature(?: other than enchanted creature)?\.?",
+                material,
+                re.IGNORECASE,
+            )
+        )
     if probe_id == _PROBE_FIXED_ALL_DAMAGE_PREVENTION:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(

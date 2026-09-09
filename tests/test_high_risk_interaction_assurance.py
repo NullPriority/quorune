@@ -12,6 +12,8 @@ from high_risk_interaction_support import (
     DESTROY_DAMAGE_PREVENTION_PAIR,
     DESTROY_REGENERATION_PAIR,
     FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR,
+    FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS,
+    FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS,
     FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
     FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
     FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
@@ -154,6 +156,20 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
     ) -> None:
         pairs = ATTACHMENT_AND_CONTINUOUS_PAIRS[3:6]
         self.assertEqual(3, len(pairs))
+        assert_high_risk_boundary_pairs(
+            self,
+            pairs,
+            database=self.db,
+        )
+
+    def test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary(
+        self,
+    ) -> None:
+        pairs = (
+            *FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS,
+            *FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS,
+        )
+        self.assertEqual(7, len(pairs))
         assert_high_risk_boundary_pairs(
             self,
             pairs,

@@ -109,6 +109,7 @@ _WITNESSES = {
         "As this Aura enters, choose a color.\n"
         "Enchanted creature has protection from the chosen color. This "
         "effect doesn't remove this Aura.\n"
+        "{1}: Attach this Aura to target creature.\n"
         "Sacrifice this Aura: Target creature gains protection from the "
         "chosen color until end of turn.",
         "{2}{W}",
@@ -128,6 +129,7 @@ _WITNESSES = {
         "Generic Simple Aura Declaration Boundary Fixture",
         "Enchantment — Aura",
         "Enchant creature\n"
+        "{1}: Attach this Aura to target creature.\n"
         "Enchanted creature can't be blocked by creatures with deathtouch.",
         "{1}{U}",
         ("Enchant",),
@@ -173,6 +175,19 @@ _WITNESSES = {
         "Equipment to target creature you control.\n"
         "Equipped creature gets +3/+3 and loses flying.\n"
         "Equip {3}",
+        "{4}",
+        ("Gift", "Equip"),
+    ),
+    "restricted-equip-continuous-boundary": _Witness(
+        "Generic Restricted Equip Continuous Boundary Fixture",
+        "Artifact \N{EM DASH} Equipment",
+        "Gift a tapped Fish (You may promise an opponent a gift as you cast "
+        "this spell. If you do, when it enters, they create a tapped 1/1 blue "
+        "Fish creature token.)\n"
+        "When this Equipment enters, if the gift was promised, attach this "
+        "Equipment to target creature you control.\n"
+        "Equipped creature gets +3/+3 and loses flying.\n"
+        "Equip Human {3}",
         "{4}",
         ("Gift", "Equip"),
     ),
@@ -1004,6 +1019,25 @@ ATTACHMENT_AND_CONTINUOUS_PAIRS = (
     _pair("capability.attachment.equip.fixed_mana", "residual.duration.until-end-of-turn"),
 )
 
+FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS = tuple(
+    _pair("capability.attachment.action.fixed_source", residual)
+    for residual in (
+        "residual.continuous_layer.affected-player-ordering",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.duration.until-end-of-turn",
+        "residual.static_clause.broader-evasion-and-group-constraints",
+        "residual.static_clause.conditional-declaration-predicates",
+        "residual.static_clause.temporary-declaration-restrictions",
+    )
+)
+
+FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS = (
+    _pair(
+        "capability.attachment.equip.fixed_restricted",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+    ),
+)
+
 TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS = tuple(
     _pair("capability.attachment.aura.typed_restriction", residual)
     for residual in (
@@ -1229,6 +1263,8 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
     sorted(
         {
             *ATTACHMENT_AND_CONTINUOUS_PAIRS,
+            *FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS,
+            *FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS,
             *TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
             *EFFECT_AND_REPLACEMENT_PAIRS,
             ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
@@ -1267,8 +1303,16 @@ def _bind(witness: str, *pairs: Pair) -> None:
 
 _bind("floating-shield", *ATTACHMENT_AND_CONTINUOUS_PAIRS[:3])
 _bind(
+    "floating-shield",
+    *FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS[:3],
+)
+_bind(
     "simple-aura-declaration-boundary",
     *ATTACHMENT_AND_CONTINUOUS_PAIRS[3:6],
+)
+_bind(
+    "simple-aura-declaration-boundary",
+    *FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS[3:],
 )
 _bind(
     "attached-declaration-damage-prevention",
@@ -1284,6 +1328,10 @@ _bind(
 )
 _bind("starforged-sword", *ATTACHMENT_AND_CONTINUOUS_PAIRS[6:8])
 _bind("junk-jet", ATTACHMENT_AND_CONTINUOUS_PAIRS[8])
+_bind(
+    "restricted-equip-continuous-boundary",
+    *FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS,
+)
 _bind(
     "saga-chapter-boundary",
     *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS[:3],
@@ -1583,6 +1631,8 @@ __all__ = [
     "DESTROY_REGENERATION_PAIR",
     "EFFECT_AND_REPLACEMENT_PAIRS",
     "FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR",
+    "FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS",
+    "FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS",
     "FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS",
     "FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS",
     "FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS",

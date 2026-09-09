@@ -23,6 +23,7 @@ from .compiler.corpus_reporting import (
 from .compiler.fixed_public_characteristic_sets import (
     fixed_public_characteristic_set_effect_template,
 )
+from .compiler.fixed_attachment_keyword_nodes import fixed_attachment_keyword_node
 from .compiler.attached_granted_ability_nodes import (
     compile_keyword_or_attached_grant_nodes as _keyword_or_attached_grant_nodes,
 )
@@ -150,7 +151,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v178"
+ORACLE_COMPILER_VERSION = "oracle-ir-v180"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -520,6 +521,18 @@ def _keyword_node_for_mechanics(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleNode:
+    attachment_keyword = fixed_attachment_keyword_node(
+        node_id=node_id,
+        line=line,
+        material_line=material_line,
+        span=span,
+        mechanics=mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        residuals=residuals,
+    )
+    if attachment_keyword is not None:
+        return attachment_keyword
     closed_special = closed_special_keyword_node(
         record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,

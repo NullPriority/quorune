@@ -49883,23 +49883,27 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-701.3",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "701"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_expectations_are_independent_and_distinguish_wrong_results"
+      ],
+      "implementation_components": [
+        "quorune.rules.capabilities.CapabilityRegistry"
+      ],
+      "notes": [
+        "Keyword-action heading; attachment.action.fixed_source owns only the closed source-selected Equipment and Aura forms."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "701.3",
       "rule_text_sha256": "d406ade2958cb5b6777af977e28cac8995cd430c03fd3eb36fef2f5f8971daeb",
       "schema_version": 1,
@@ -49908,26 +49912,52 @@
         "end_line": 3288,
         "start_line": 3287
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "target-selected attachment sources, multiple targets, noncreature destinations, reconfigure, fortify, and arbitrary attachment movement remain unsupported"
       ],
       "case_id": "cr-701.3a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "701.3"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_source_aura_attachment_separates_target_and_enchant_legality",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_equipment_entry_trigger_attaches_and_revalidates_target",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_uses_current_source_controller"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_attachment_templates.fixed_source_attachment_effect_template",
+        "quorune.effect_runtime.zones_and_attachments._apply_attach",
+        "quorune.aura.runtime.legal_aura_target_refs",
+        "quorune.attachments.attach_objects"
+      ],
+      "notes": [
+        "The closed family resolves one source-pinned Aura or Equipment instruction through the existing reciprocal relation owner."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "701.3a",
       "rule_text_sha256": "6b48052f00c1e4a6da44840e5e0e2c913396a040f9125e798c8223bbe967c490",
       "schema_version": 1,
@@ -49936,26 +49966,42 @@
         "end_line": 3290,
         "start_line": 3289
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "unrepresented attachment types and target predicates remain unsupported"
       ],
       "case_id": "cr-701.3b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "701.3"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_departed_or_reentered_source_does_not_attach"
+      ],
+      "implementation_components": [
+        "quorune.effect_runtime.zones_and_attachments._apply_attach",
+        "quorune.aura.runtime.legal_aura_target_refs"
+      ],
+      "notes": [
+        "An impossible current attachment instruction has no effect and cannot bind a replacement source incarnation."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "701.3b",
       "rule_text_sha256": "4e0c024b527e1d75a529e1825135b982ba730472f62d74087a3269be13a92eb4",
       "schema_version": 1,
@@ -49964,26 +50010,43 @@
         "end_line": 3292,
         "start_line": 3291
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "bulk attachment movement and effects with independently unsupported linked results remain unsupported"
       ],
       "case_id": "cr-701.3c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "701.3"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_equipment_entry_trigger_attaches_and_revalidates_target",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_attachment_target_projection_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.attachments.attach_objects"
+      ],
+      "notes": [
+        "Changing the attached object uses the existing timestamped reciprocal attachment transaction."
+      ],
+      "required_scenarios": [
+        "positive",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "701.3c",
       "rule_text_sha256": "2e6dc1d350f391e90e460924f7c9eaca480ee1eb7568314ab3488b4d61b1b521",
       "schema_version": 1,
@@ -49992,26 +50055,39 @@
         "end_line": 3294,
         "start_line": 3293
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "attachments to players and nonbattlefield cards remain outside this source-action family"
       ],
       "case_id": "cr-701.3d",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "701.3"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality"
+      ],
+      "implementation_components": [
+        "quorune.aura.runtime.legal_aura_target_refs",
+        "quorune.effect_runtime.zones_and_attachments._apply_attach"
+      ],
+      "notes": [
+        "Aura movement reuses its compiled Enchant restriction and current protection legality rather than bypassing Aura state validation."
+      ],
+      "required_scenarios": [
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "701.3d",
       "rule_text_sha256": "e9bffbe6dea5e73b1c67790b855a538d9116c61966701b8d40371dee4a42b71b",
       "schema_version": 1,
@@ -50020,7 +50096,7 @@
         "end_line": 3296,
         "start_line": 3295
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",
@@ -59776,7 +59852,8 @@
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
         "Equip costs containing nonmana, variable, hybrid, Phyrexian, or snow components are not compiled by this capability",
-        "quality-restricted Equip and Equip planeswalker are reviewed separately and remain unsupported"
+        "target restrictions outside creature token, commander, legendary creature, or one canonical creature subtype remain unsupported",
+        "cost reductions, instant-speed permissions, variable or nonordinary mana, multiple limits, reconfigure, and fortify remain unsupported"
       ],
       "case_id": "cr-702.6a",
       "case_version": 1,
@@ -59797,17 +59874,22 @@
         "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_fixed_equip_parser_exposes_only_executable_target_contract",
         "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_generic_fixed_equip_activation_attaches_and_applies_characteristics",
         "tests.test_exact_artifact_engines.ExactArtifactEngineTests.test_equip_resolves_without_effect_after_equipment_leaves",
-        "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact"
+        "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_restricted_equip_variants_share_one_activation_contract",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_restricted_equip_offer_commit_and_current_target_revalidation",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_restricted_equip_projection_and_replay"
       ],
       "implementation_components": [
         "abilities.parse_activated_abilities",
+        "rules.attachment_actions.fixed_equip_ability_spec",
         "rules.activation.resolution.builtin_activation_resolution",
         "effect_runtime.zones_and_attachments._apply_attach",
         "attachments.attach_objects"
       ],
       "notes": [
         "A printed fixed numeric or colored Equip cost becomes a payable controller-scoped creature-target activation at sorcery speed and resolves through the ordinary stack.",
-        "The source must still be a battlefield Equipment on resolution; otherwise the attachment instruction has no effect."
+        "The source must still be a battlefield Equipment on resolution; otherwise the attachment instruction has no effect.",
+        "One fixed public target restriction or one once-per-turn limit uses the same advertised and committed activation descriptor as ordinary Equip."
       ],
       "required_scenarios": [
         "positive",
@@ -71707,23 +71789,27 @@
       "status": "passing"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.92",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_living_weapon_and_for_mirrodin_lower_distinct_fixed_tokens"
+      ],
+      "implementation_components": [
+        "quorune.rules.capabilities.CapabilityRegistry"
+      ],
+      "notes": [
+        "Keyword heading; trigger.keyword.living_weapon owns the ordinary printed ability."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.92",
       "rule_text_sha256": "6304ae798e550768a2c1c817d7ec2a22306029028953db902e1834784a14ccc4",
       "schema_version": 1,
@@ -71732,26 +71818,51 @@
         "end_line": 4681,
         "start_line": 4680
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "copied, granted, removed, text-changed, and noncanonical Living Weapon variants remain unsupported"
       ],
       "case_id": "cr-702.92a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "702.92"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_living_weapon_creates_germ_and_attaches_before_state_actions",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_attachment_keyword_nodes.fixed_attachment_keyword_node",
+        "quorune.token_creation.create_tokens",
+        "quorune.effect_runtime.zones_and_attachments._apply_create_attached_token",
+        "quorune.attachments.attach_objects"
+      ],
+      "notes": [
+        "The trigger creates a fixed black Phyrexian Germ and attaches the current Equipment to one otherwise interchangeable created Germ before the next state check."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "702.92a",
       "rule_text_sha256": "59ac441752fda5a2209401c6f5d706374cad61260bff154b2f087071c5cb2a96",
       "schema_version": 1,
@@ -71760,7 +71871,7 @@
         "end_line": 4683,
         "start_line": 4682
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "static_traceability",
@@ -80110,23 +80221,27 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.163",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_living_weapon_and_for_mirrodin_lower_distinct_fixed_tokens"
+      ],
+      "implementation_components": [
+        "quorune.rules.capabilities.CapabilityRegistry"
+      ],
+      "notes": [
+        "Keyword heading; trigger.keyword.for_mirrodin owns the ordinary printed ability."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.163",
       "rule_text_sha256": "21d8f4a584dd93c76deb20eae63ea07079de64c080d647167841385c752fabb3",
       "schema_version": 1,
@@ -80135,26 +80250,51 @@
         "end_line": 5195,
         "start_line": 5194
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "copied, granted, removed, text-changed, and noncanonical For Mirrodin! variants remain unsupported"
       ],
       "case_id": "cr-702.163a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "702.163"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_for_mirrodin_creates_rebel_and_attaches_source",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_attachment_keyword_nodes.fixed_attachment_keyword_node",
+        "quorune.token_creation.create_tokens",
+        "quorune.effect_runtime.zones_and_attachments._apply_create_attached_token",
+        "quorune.attachments.attach_objects"
+      ],
+      "notes": [
+        "The trigger creates a fixed 2/2 red Rebel and attaches the current Equipment to one otherwise interchangeable created Rebel."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "702.163a",
       "rule_text_sha256": "43c2fe8f46f882e58fab4304bd6f41b3d50428a5446ba76d0eaa6f12e9dcacab",
       "schema_version": 1,
@@ -80163,7 +80303,7 @@
         "end_line": 5197,
         "start_line": 5196
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "static_traceability",

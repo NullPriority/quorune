@@ -35,10 +35,11 @@ EFFECT_FAMILY_CONTRACTS = (
     EffectFamilyContract(
         family_id="zones-and-attachments.v1",
         semantic_family="effect.zone-attachment",
-        rule_references=("400.7", "701.3"),
+        rule_references=("111.2", "400.7", "701.3"),
         operations=frozenset(
             {
                 "attach",
+                "create_attached_token",
                 "bestow_prepare",
                 "bounce",
                 "destroy",

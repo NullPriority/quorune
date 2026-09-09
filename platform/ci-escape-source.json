@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-09-09T02:48:18Z",
+  "observed_at": "2026-09-09T08:02:13Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -901,6 +901,22 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "Harvest receipts now exclude capability-evidence provenance from compiler semantic projections and reproject historical compiler blobs under the current algorithm, while status counts, card states, and frontier content remain semantic and fail closed."
+    },
+    {
+      "id": "ci-20260909-59",
+      "run_id": 34326504995,
+      "head_sha": "4a69bd426561d9f86b2db22b1f6e799f2665fa2b",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The cloud source checkpoint omitted freshly generated module classifications for four new production modules, while the local pre-push architecture check read those unstaged worktree bytes and incorrectly passed the commit.",
+      "failed_surfaces": [
+        "Generated cloud / Resolve source (job 102384884143)"
+      ],
+      "regressions": [
+        "test_generated_artifacts.GeneratedArtifactFinalizationTests.test_generated_pre_push_hook_uses_worktree_python_and_stops_on_changes"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Cloud source checkpoints now require a clean tracked worktree before local pre-corpus validation, so uncommitted generated outputs cannot mask missing exact-commit content; the required module-classification output is committed with the corrected checkpoint."
     }
   ],
   "recent_pull_requests": [

@@ -2218,6 +2218,75 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_fixed_attachment_action_probe_is_bounded_and_cross_context(self):
+        probe_id = "fixed-attachment-actions-existing-owner-v1"
+        equipment = SimpleNamespace(
+            name="Probe Equipment",
+            type_line="Artifact — Equipment",
+            oracle_text="",
+            faces=(),
+            keywords=("Equip", "Living Weapon", "For Mirrodin!"),
+        )
+        aura = SimpleNamespace(
+            name="Probe Aura",
+            type_line="Enchantment — Aura",
+            oracle_text="",
+            faces=(),
+            keywords=(),
+        )
+        ability = {"face_id": "front"}
+        for source in (
+            "When this Equipment enters, attach it to target creature you control.",
+            "Living weapon (When this Equipment enters, create a 0/0 black "
+            "Phyrexian Germ creature token, then attach this to it.)",
+            "For Mirrodin! (When this Equipment enters, create a 2/2 red "
+            "Rebel creature token, then attach this to it.)",
+            "Equip creature token {1}",
+            "Equip commander {2}",
+            "Equip legendary creature {3}",
+            "Equip Human {1}",
+            "Equip {0}. Activate only once each turn.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=equipment,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "{3}{U}: Attach this Aura to target creature.",
+            "{2}{U}: Attach this Aura to target creature other than enchanted creature.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=aura,
+                        ability=ability,
+                    )
+                )
+        for source in (
+            "Equip {3}",
+            "Equip Human {W/U}",
+            "Equip Human—Discard a card",
+            "When this Equipment enters, attach it to target creature an opponent controls.",
+            "Attach target Equipment to target creature.",
+            "Living Weapon — Create two Germ tokens.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(
+                    _matches_probe(
+                        probe_id,
+                        source,
+                        card_record=equipment,
+                        ability=ability,
+                    )
+                )
+
     def test_fixed_casting_surface_probe_is_closed(self):
         probe_id = "fixed-casting-surface-existing-owner-v2"
         for source in (

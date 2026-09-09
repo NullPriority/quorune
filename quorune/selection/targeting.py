@@ -450,6 +450,7 @@ class TargetSelectionOwnerMixin:
                 supertypes=supertypes,
                 colors=colors,
                 derived=derived,
+                source_ref=source_ref,
             ):
                 return False
         except TargetPredicateError as exc:
@@ -1016,7 +1017,7 @@ class TargetSelectionOwnerMixin:
             candidates = self._target_candidate_map(
                 item.controller,
                 plan,
-                source_ref=item.ref,
+                source_ref=self._stack_source_ref(item),
             )
             grouped = dict(item.context.get("target_groups") or {})
             if not grouped:

@@ -107,7 +107,7 @@
       "mana_cost": "{2}",
       "name": "Attached Grant Draw Discard Equipment Fixture",
       "oracle_id": "fixture-attached-grant-draw-discard-equipment",
-      "oracle_text": "Equipped creature has \"Whenever this creature attacks, draw a card, then discard a card.\"\nEquip {1}",
+      "oracle_text": "Equipped creature has \"Whenever this creature attacks, draw a card, then discard a card.\"\nEquip Pirate {1}",
       "power": null,
       "produced_mana": [],
       "released_at": "2026-09-01",

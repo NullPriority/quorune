@@ -4,6 +4,7 @@ import random
 from typing import Any, Mapping, Sequence
 
 from ..attachments import attach_objects
+from ..aura import legal_aura_target_refs
 from ..continuous_effects import ContinuousOperation, Layer
 from ..continuous_effect_state import (
     ContinuousEffectStateError,
@@ -361,6 +362,74 @@ def _apply_reanimate_attached_creature_aura(
     )
     return creature.ref
 
+def _attachment_object(host: Any, actor: str, value: str) -> CardInstance:
+    identity_matches = [
+        card
+        for card in host.state.cards.values()
+        if card.object_id == value or card.ref.casefold() == value.casefold()
+    ]
+    if len(identity_matches) == 1:
+        return identity_matches[0]
+    return host._resolve_object(actor, value, zones={"battlefield"})
+
+
+def _resolved_attachment_kind(
+    host: Any,
+    attachment: CardInstance,
+    requested: Any,
+) -> str:
+    types, subtypes, _ = host._type_parts(
+        str(host._effective_card_data(attachment).get("type_line") or "")
+    )
+    kind = str(
+        requested
+        or (
+            "equipment"
+            if "artifact" in types and "equipment" in subtypes
+            else "aura"
+            if "enchantment" in types and "aura" in subtypes
+            else ""
+        )
+    ).casefold()
+    if kind not in {"aura", "equipment"}:
+        raise GameRuleError("Attach has an unsupported source kind")
+    return kind
+
+
+def _attachment_target_is_legal(
+    host: Any,
+    attachment: CardInstance,
+    creature: CardInstance,
+    *,
+    attachment_kind: str,
+) -> bool:
+    attachment_types, attachment_subtypes, _ = host._type_parts(
+        str(host._effective_card_data(attachment).get("type_line") or "")
+    )
+    creature_types, _, _ = host._type_parts(
+        str(host._effective_card_data(creature).get("type_line") or "")
+    )
+    if "creature" not in creature_types:
+        return False
+    if attachment_kind == "equipment":
+        return bool(
+            "artifact" in attachment_types
+            and "equipment" in attachment_subtypes
+        )
+    enchant_spec = host._compiled_enchant_spec(attachment)
+    return bool(
+        "enchantment" in attachment_types
+        and "aura" in attachment_subtypes
+        and enchant_spec is not None
+        and creature.ref
+        in legal_aura_target_refs(
+            host,
+            attachment,
+            enchant_spec,
+            controller=attachment.controller,
+            as_target=True,
+        )
+    )
 
 
 def _apply_attach(
@@ -372,89 +441,102 @@ def _apply_attach(
     reason: str,
 ) -> Any:
     op = operation
-    equipment_value = str(
-        effect.get("equipment") or effect.get("source")
+    legacy_equipment_shape = (
+        "equipment" in effect
+        and "creature" in effect
+        and "source" not in effect
+        and "target" not in effect
     )
-    creature_value = str(effect["creature"])
+    has_source = "equipment" in effect or "source" in effect
+    has_target = "creature" in effect or "target" in effect
+    source_value = effect.get("equipment", effect.get("source"))
+    target_value = effect.get("creature", effect.get("target"))
+    if not has_source or not has_target:
+        raise GameRuleError("Attach requires a source and target")
+    if source_value is None or target_value is None:
+        if isinstance(effect.get("_runtime_source"), Mapping):
+            return None
+        raise GameRuleError("Attach requires a source and target")
+    attachment_value = str(source_value)
+    creature_value = str(target_value)
 
-    def attachment_object(value: str) -> CardInstance:
-        identity_matches = [
-            card
-            for card in host.state.cards.values()
-            if card.object_id == value
-            or card.ref.casefold() == value.casefold()
-        ]
-        if len(identity_matches) == 1:
-            return identity_matches[0]
-        return host._resolve_object(
-            actor,
-            value,
-            zones={"battlefield"},
-        )
-
-    equipment = attachment_object(equipment_value)
-    if equipment.zone != "battlefield":
+    attachment = _attachment_object(host, actor, attachment_value)
+    if attachment.zone != "battlefield":
+        details = {
+            ("equipment" if legacy_equipment_shape else "attachment"): attachment.ref,
+            "creature": creature_value,
+            "reason": reason,
+            "result": (
+                "equipment_not_on_battlefield"
+                if legacy_equipment_shape
+                else "source_not_on_battlefield"
+            ),
+        }
         host._log(
             actor,
             "attachment.no_effect",
             (
-                f"{equipment.ref} could not become attached because "
+                f"{attachment.ref} could not become attached because "
                 "it was no longer on the battlefield."
             ),
-            {
-                "equipment": equipment.ref,
-                "creature": creature_value,
-                "reason": reason,
-                "result": "equipment_not_on_battlefield",
-            },
+            details,
             importance=2,
         )
         return None
-    creature = attachment_object(creature_value)
+    creature = _attachment_object(host, actor, creature_value)
     if creature.zone != "battlefield":
+        details = {
+            ("equipment" if legacy_equipment_shape else "attachment"): attachment.ref,
+            "creature": creature.ref,
+            "reason": reason,
+            "result": "creature_not_on_battlefield",
+        }
         host._log(
             actor,
             "attachment.no_effect",
             (
-                f"{equipment.ref} could not become attached because "
+                f"{attachment.ref} could not become attached because "
                 f"{creature.ref} was no longer on the battlefield."
             ),
+            details,
+            importance=2,
+        )
+        return None
+    attachment_kind = _resolved_attachment_kind(
+        host,
+        attachment,
+        effect.get("attachment_kind"),
+    )
+    if not _attachment_target_is_legal(
+        host,
+        attachment,
+        creature,
+        attachment_kind=attachment_kind,
+    ):
+        if legacy_equipment_shape:
+            raise GameRuleError(
+                "Attach requires an Equipment and a creature"
+            )
+        host._log(
+            actor,
+            "attachment.no_effect",
+            f"{attachment.ref} could not legally attach to {creature.ref}.",
             {
-                "equipment": equipment.ref,
+                "attachment": attachment.ref,
                 "creature": creature.ref,
                 "reason": reason,
-                "result": "creature_not_on_battlefield",
+                "result": "illegal_attachment",
             },
             importance=2,
         )
         return None
-    equipment_types, equipment_subtypes, _ = host._type_parts(
-        str(
-            host._effective_card_data(equipment).get("type_line")
-            or ""
-        )
-    )
-    creature_types, _, _ = host._type_parts(
-        str(
-            host._effective_card_data(creature).get("type_line")
-            or ""
-        )
-    )
-    if (
-        "artifact" not in equipment_types
-        or "equipment" not in equipment_subtypes
-        or "creature" not in creature_types
-    ):
-        raise GameRuleError(
-            "Attach requires an Equipment and a creature"
-        )
     attach_objects(
         host.state.cards,
-        equipment,
+        attachment,
         creature,
         source_timestamp=(
-            equipment.zone_timestamp
-            if equipment.attached_to == creature.object_id
+            attachment.zone_timestamp
+            if attachment.attached_to == creature.object_id
             else host._next_zone_timestamp()
         ),
         players=host.state.players,
@@ -462,19 +544,93 @@ def _apply_attach(
     host._log(
         actor,
         "attachment.attach",
-        f"{equipment.ref} became attached to {creature.ref}.",
-        {
-            "equipment": equipment.ref,
-            "creature": creature.ref,
-            "reason": reason,
-        },
+        f"{attachment.ref} became attached to {creature.ref}.",
+        (
+            {
+                "equipment": attachment.ref,
+                "creature": creature.ref,
+                "reason": reason,
+            }
+            if legacy_equipment_shape
+            else {
+                "attachment": attachment.ref,
+                "attachment_kind": attachment_kind,
+                "creature": creature.ref,
+                "reason": reason,
+            }
+        ),
         importance=2,
         changed_objects=[
-            equipment.object_id,
+            attachment.object_id,
             creature.object_id,
         ],
     )
     return creature.ref
+
+
+def _apply_create_attached_token(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> Any:
+    op = operation
+    allowed = {
+        "op",
+        "source",
+        "controller",
+        "name",
+        "quantity",
+        "characteristics",
+        "_replacement_selections",
+        "_runtime_source",
+    }
+    source = effect.get("source")
+    runtime_source = effect.get("_runtime_source")
+    controller = effect.get("controller")
+    name = effect.get("name")
+    characteristics = effect.get("characteristics")
+    if (
+        set(effect) - allowed
+        or effect.get("quantity") != 1
+        or "source" not in effect
+        or not (
+            isinstance(source, str)
+            and bool(source)
+            or source is None
+            and isinstance(runtime_source, Mapping)
+        )
+        or (controller is not None and not isinstance(controller, str))
+        or not isinstance(name, str)
+        or not name
+        or not isinstance(characteristics, Mapping)
+    ):
+        raise GameRuleError("Attached token creation has a closed fixed shape")
+    created = host.create_token(
+        str(effect.get("controller") or actor),
+        name=name,
+        quantity=1,
+        characteristics=dict(characteristics),
+        reason=reason,
+        replacement_selections=tuple(
+            effect.get("_replacement_selections") or ()
+        ),
+    )
+    if created and source is not None:
+        _apply_attach(
+            host,
+            {
+                "attachment_kind": "equipment",
+                "source": source,
+                "target": created[0],
+            },
+            actor=actor,
+            operation="attach",
+            reason=reason,
+        )
+    return created
 
 
 
@@ -1121,6 +1277,7 @@ HANDLERS = {
     'prepare_graveyard_creature_aura': _apply_prepare_graveyard_creature_aura,
     'reanimate_attached_creature_aura': _apply_reanimate_attached_creature_aura,
     'attach': _apply_attach,
+    'create_attached_token': _apply_create_attached_token,
     'bestow_prepare': _apply_bestow_prepare,
     'bounce': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
     'destroy': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,

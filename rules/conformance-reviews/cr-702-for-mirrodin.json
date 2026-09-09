@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 702.163 — For Mirrodin!",
+  "cases": [
+    {
+      "rule_id": "702.163",
+      "rule_text_sha256": "21d8f4a584dd93c76deb20eae63ea07079de64c080d647167841385c752fabb3",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["quorune.rules.capabilities.CapabilityRegistry"],
+      "executable_test_ids": ["tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_living_weapon_and_for_mirrodin_lower_distinct_fixed_tokens"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["Keyword heading; trigger.keyword.for_mirrodin owns the ordinary printed ability."]
+    },
+    {
+      "rule_id": "702.163a",
+      "rule_text_sha256": "43c2fe8f46f882e58fab4304bd6f41b3d50428a5446ba76d0eaa6f12e9dcacab",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.fixed_attachment_keyword_nodes.fixed_attachment_keyword_node", "quorune.token_creation.create_tokens", "quorune.effect_runtime.zones_and_attachments._apply_create_attached_token", "quorune.attachments.attach_objects"],
+      "executable_test_ids": ["tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_for_mirrodin_creates_rebel_and_attaches_source", "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token", "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "blockers": ["copied, granted, removed, text-changed, and noncanonical For Mirrodin! variants remain unsupported"],
+      "notes": ["The trigger creates a fixed 2/2 red Rebel and attaches the current Equipment to one otherwise interchangeable created Rebel."]
+    }
+  ]
+}

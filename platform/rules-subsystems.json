@@ -2750,28 +2750,90 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-targeted-return-to-hand-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-attachment-actions",
+          "member_family_ids": [
+            "activated_effect:unparsed-attach-this-aura",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "keyword_dependency:equip",
+            "keyword_dependency:for-mirrodin",
+            "keyword_dependency:living-weapon"
+          ],
+          "canonical_owner_ids": [
+            "capability:attachment.equip.fixed_mana",
+            "capability:target.revalidate_resolution",
+            "capability:token.creation.fixed_definition",
+            "capability:trigger.event.normalized_zone_change",
+            "component:quorune.attachments.attach_objects",
+            "component:quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+            "component:quorune.effect_runtime.zones_and_attachments._apply_attach",
+            "component:quorune.rules.activation.resolution.builtin_activation_resolution",
+            "component:quorune.token_creation.create_tokens"
+          ],
+          "source_contexts": [
+            "activated",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-mana-restricted-equip",
+            "fixed-mana-source-aura-reattachment",
+            "one-created-germ-or-rebel-token",
+            "source-equipment-entry-attachment",
+            "source-incarnation-attachment"
+          ],
+          "shared_dependencies": [
+            "attachment.equip.fixed_mana",
+            "target.revalidate_resolution",
+            "token.creation.fixed_definition",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one fixed source-attachment action across Equipment entry triggers, fixed-mana restricted Equip variants, fixed-mana source-Aura movement, Living Weapon, and For Mirrodin! through the existing target, token, attachment, trigger, activation, and replay owners",
+          "estimated_implementation_hours": 7,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Adds one typed source-attachment instruction and one replacement-aware created-token result handoff to the existing attach transaction, allowing target-selected and token-linked attachment contexts to share legality, source incarnation, target revalidation, projection, and replay without another attachment engine.",
+          "explicit_exclusions": [
+            "attachment to an illegal object, stale source or target incarnations, unsupported token-replacement aftermath, and independently unsupported sibling abilities",
+            "aura movement to players, objects other than creatures, target-selected Aura or Equipment sources, and more than one target",
+            "equip cost reductions, instant-speed permissions, multiple activation limits, reconfigure, fortify, and target restrictions outside creature token, commander, legendary creature, or one creature subtype",
+            "modified, copied, attacking, Role, Incubator, and arbitrary quoted-ability token definitions",
+            "variable, hybrid, Phyrexian, snow, energy, life, loyalty, discard, sacrifice, and other nonordinary attachment activation costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-attachment-actions-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v178-fixed-targeted-return-to-hand-closure",
-      "compiler_version": "oracle-ir-v178",
-      "bundle_id": "bundle:fixed-targeted-return-to-hand-closure",
-      "candidate_ids": ["compiler:fixed-targeted-return-to-hand-closure"],
+      "transition_id": "oracle-ir-v180-fixed-attachment-actions",
+      "compiler_version": "oracle-ir-v180",
+      "bundle_id": "bundle:fixed-attachment-actions",
+      "candidate_ids": ["compiler:fixed-attachment-actions"],
       "family_ids": [
-        "activated_effect:return",
-        "effect_clause:return"
+        "activated_effect:unparsed-attach-this-aura",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "keyword_dependency:equip",
+        "keyword_dependency:for-mirrodin",
+        "keyword_dependency:living-weapon"
       ],
       "capability_ids": [
-        "card.return.own_graveyard_to_owner_hand",
-        "effect.choice.optional_fixed",
-        "permanent.return.owner_hand",
-        "resolution.effect.fixed_homogeneous_target_set",
-        "target.permanent.characteristic_predicate",
-        "target.revalidate_resolution"
+        "attachment.action.fixed_source",
+        "attachment.aura.simple_object",
+        "attachment.equip.fixed_mana",
+        "attachment.equip.fixed_restricted",
+        "target.revalidate_resolution",
+        "token.creation.fixed_definition",
+        "trigger.event.normalized_zone_change",
+        "trigger.keyword.for_mirrodin",
+        "trigger.keyword.living_weapon",
+        "trigger.placement.apnap"
       ],
-      "measurement_id": "measurement:fixed-targeted-return-to-hand-closure",
+      "measurement_id": "measurement:fixed-attachment-actions",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

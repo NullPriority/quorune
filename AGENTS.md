@@ -228,6 +228,12 @@ For a database-backed change that should be offloaded, push an explicitly
 authorized source-checkpoint commit. The pull-request
 `generated-artifacts.yml` run starts on source-changing events, executes the
 pre-corpus sentinels, and publishes `cloud-generated-<sha>` for that exact ref.
+The checkpoint hook requires a clean tracked worktree before it runs those
+sentinels. Commit the cheap automatic-owner outputs needed by source policy,
+including classifications for new production modules, and remove or stash any
+other tracked local finalizer output before the checkpoint. This prevents an
+uncommitted generated file from making local validation disagree with the
+pushed commit.
 It deliberately does not subscribe to `ready_for_review`; do not manually
 restart it for a draft-to-review metadata transition. Download and install the
 bundle with:

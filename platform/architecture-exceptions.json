@@ -1038,6 +1038,33 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0045",
+      "adr": "docs/adr/0094-typed-fixed-attachment-actions.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "ea971c16b4ee9f0d61a21b03ade3bd290633311b2930bcc887cd4d87e4c143bc",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed create_attached_token operation serialized after the typed fixed-attachment harvest.",
+      "rationale": "The measured family adds one strict composite operation solely to hand the original result of canonical replacement-aware token creation to the canonical reciprocal attachment transaction. The current baseline retains earlier reductions while this family adds no CommanderEngine method, direct or unowned GameState write, oversized symbol, Oracle-ID literal, runtime Oracle prose, or prohibited identity dispatch. Existing activation, target, Aura legality, token, attachment, trigger, state-action, rollback, privacy, and replay owners retain authority.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact residual identities and counts in the rebound schema-4 baseline plus create_attached_token, attachment.action.fixed_source, attachment.equip.fixed_restricted, trigger.keyword.living_weapon, trigger.keyword.for_mirrodin, the fixed compiler and capability-shape owners, and the existing token and attachment handoff described by ADR 0094; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, oversized-symbol growth, arbitrary callbacks, family-specific ability-presence checks, dynamic characteristic counts, general result bindings, modified token definitions, token multiplication, broader attachment targets, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the composite owner only while exact grammar, validation before mutation, original-token identity, replacement ordering, current attachment legality, source-incarnation exclusion, APNAP placement, state-action timing, rollback, privacy, historical Equipment behavior, and exact replay evidence remain enforced.",
+      "target_milestone": "capability-closed broad compiler harvest through canonical target, token, and attachment owners",
+      "replay_implications": "CardPrograms record only the fixed token definition, source placeholder, and reviewed operation; Game Record v3 preserves trigger placement, replacement selections, created-token identity, source incarnation, reciprocal relation, legacy Equipment event shape, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "All admitted attachment targets, Equipment, Auras, and created tokens are public battlefield objects. Decisions remain seat-scoped, while physical and logical object identities stay absent from pilot projections.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict operation; unknown fields, missing source provenance, nonunit quantity, malformed token definitions, stale source incarnations, illegal live attachments, unsupported replacements, and blocked dependencies fail before unauthorized mutation or remain a rules-defined no-effect result.",
+      "tests": [
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_source_equipment_entry_attach_is_typed_and_targeted",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_source_aura_attachment_separates_target_and_enchant_legality",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_uses_current_source_controller",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_departed_or_reentered_source_does_not_attach",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_living_weapon_creates_germ_and_attaches_before_state_actions",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_malformed_attached_token_effect_fails_before_mutation",
+        "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }
