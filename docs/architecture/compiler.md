@@ -613,6 +613,20 @@ effective source-pinned characteristic snapshot. Player Auras use the same
 reciprocal attachment owner with an internal typed player identity and project
 only the public seat.
 
+`compiler/fixed_attachment_templates.py`, `rules/attachment_actions.py`, and
+`compiler/fixed_attachment_keyword_nodes.py` own a separate closed attachment-
+action family. It lowers one source Equipment entry attachment, one source Aura
+reattachment, fixed-mana Equip restricted to a creature token, commander,
+legendary creature, or one creature subtype, and the ordinary Living Weapon and
+For Mirrodin! entry triggers. Resolution revalidates the source incarnation and
+current target before delegating to the existing reciprocal attachment owner;
+the keyword triggers first use the replacement-aware token owner and attach the
+source only to the original Germ or Rebel. Additional replacement-created
+tokens remain unattached. Multiple targets, other attachment source kinds,
+broader Equip costs or restrictions, modified keyword token definitions, and
+replacements that multiply or alter the original token remain source-spanned
+residuals.
+
 A syntactically complete but unsupported Enchant line produces one precise
 restriction residual instead of a second generic mechanic blocker. Numeric
 power, toughness, and mana-value predicates, dynamic characteristic counts,

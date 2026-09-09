@@ -83,6 +83,7 @@ def target_predicate_matches(
     supertypes: Set[str],
     colors: Set[str],
     derived: Mapping[str, bool],
+    source_ref: str | None = None,
 ) -> bool:
     """Evaluate the closed predicate vocabulary for one normalized target row."""
 
@@ -141,6 +142,22 @@ def target_predicate_matches(
         )
     if predicate == "nonblue_spell":
         return row.get("category") == "spell" and "U" not in colors
+    if predicate == "not_source_attachment":
+        source = next(
+            (
+                candidate
+                for candidate in host.state.cards.values()
+                if candidate.ref == source_ref
+                and candidate.zone == "battlefield"
+                and not candidate.phased_out
+            ),
+            None,
+        )
+        return bool(
+            source is not None
+            and isinstance(card, CardInstance)
+            and source.attached_to != card.object_id
+        )
     if predicate == "power_less_than_source":
         return _relative_power_matches(
             host,

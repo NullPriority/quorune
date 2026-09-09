@@ -13,8 +13,11 @@ from ..fixed_token_production import (
     INVESTIGATE_CAPABILITY_ID,
     INVESTIGATE_MECHANIC_ID,
 )
-
 from .component_resolution import implementation_component_resolves
+from .attachment_action_capability_shapes import (
+    attachment_action_covered_mechanics,
+    fixed_attachment_action_node_capabilities,
+)
 from .counter_capability_shapes import (
     fixed_counter_placement_group_node_capabilities,
 )
@@ -1032,6 +1035,7 @@ def _targeted_effect_capabilities(
 ) -> set[str]:
     dependencies: set[str] = set()
     for resolver in (
+        fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
         fixed_counter_placement_batch_node_capabilities,
         fixed_counter_placement_group_node_capabilities,
@@ -1376,17 +1380,6 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     }
 
 
-def _has_aura_attachment_capability(supplied: set[str]) -> bool:
-    return bool(
-        supplied.intersection(
-            {
-                "attachment.aura.simple_object",
-                "attachment.aura.typed_restriction",
-            }
-        )
-    )
-
-
 def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
         FIXED_CHOOSE_ONE_MODAL_CAPABILITY: FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -1487,8 +1480,7 @@ def capability_covered_mechanics(
     covered.update(fixed_token_creation_covered_mechanics(supplied))
     covered.update(_fixed_modal_covered_mechanics(supplied))
     covered.update(_affected_player_choice_covered_mechanics(supplied))
-    if _has_aura_attachment_capability(supplied):
-        covered.add("enchant")
+    covered.update(attachment_action_covered_mechanics(supplied))
     if "protection.typed.debt" in supplied:
         covered.add("protection")
     if "damage.prevention.persistent_amount" in supplied:

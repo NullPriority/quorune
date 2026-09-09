@@ -311,6 +311,7 @@ def _activated_effect_dependency_gate(
         and str(effects[0].get("op") or "")
         in {
             "amass",
+            "attach",
             "become_monarch",
             "bounce",
             "counter_stack_target",

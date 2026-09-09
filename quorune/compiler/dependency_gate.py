@@ -7,6 +7,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from ..aura import is_enchant_keyword_line, parse_enchant_line
 from ..enchant_spec import TypedEnchantSpec
 from ..ability_fragments import parse_protection_line
+from ..rules.attachment_actions import fixed_equip_ability_spec
 from ..death_return import PERSIST_KEYWORD, UNDYING_KEYWORD
 from ..rules.capabilities import (
     CapabilityClosure,
@@ -273,13 +274,10 @@ def keyword_dependency_gate(
             capabilities=("trigger.keyword.afterlife.fixed",),
         )
 
-    if mechanics == ("equip",) and re.fullmatch(
-        r"Equip\s+(?:\{(?:\d+|[WUBRGC])\})+\.?",
-        material_line,
-        re.IGNORECASE,
-    ):
+    equip = fixed_equip_ability_spec(material_line)
+    if mechanics == ("equip",) and equip is not None:
         return explicit_capability_gate(
-            "attachment.equip.fixed_mana",
+            equip.capability_id,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
         )

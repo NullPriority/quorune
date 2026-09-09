@@ -25,6 +25,7 @@ from .activated_ability_descriptor import validate_activated_ability_descriptor
 from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
 from .fixed_mana_abilities import FixedManaMode
+from .rules.attachment_actions import fixed_equip_ability_spec
 from .rules.source_references import SourceReferenceSpec
 from .util import mana_cost_to_vector, normalize_mana_bundle, parse_mana_symbols
 
@@ -797,6 +798,49 @@ def _equip_effect_descriptor() -> tuple[str, FrozenMap]:
     )
 
 
+def _fixed_equip_keyword_ability(
+    raw_line: str,
+    line_index: int,
+    card_name: str,
+    keywords: Sequence[str],
+) -> ActivatedAbility | None:
+    if "equip" not in {str(value).casefold() for value in keywords}:
+        return None
+    spec = fixed_equip_ability_spec(raw_line)
+    if spec is None:
+        return None
+    cost = _parse_cost(spec.cost_text, card_name)
+    return ActivatedAbility(
+        ability_id=f"ab{line_index + 1}",
+        line_index=line_index,
+        oracle_line=raw_line.strip(),
+        cost_text=spec.cost_text,
+        effect_text=(
+            "Attach this Equipment to target creature you control. "
+            "Activate only as a sorcery."
+        ),
+        zones=("battlefield",),
+        mana=cost.mana,
+        complex_symbols=cost.complex_symbols,
+        tap_source=cost.tap_source,
+        untap_source=cost.untap_source,
+        discard_source=cost.discard_source,
+        sacrifice_source=cost.sacrifice_source,
+        exile_source=cost.exile_source,
+        life_payment=cost.life_payment,
+        energy_payment=cost.energy_payment,
+        loyalty_delta=cost.loyalty_delta,
+        choices=cost.choices,
+        uncompiled_costs=cost.uncompiled,
+        sorcery_speed=True,
+        builtin_semantic_key="builtin:equip",
+        target_schema=FrozenMap(spec.target_schema),
+        activation_limit=(
+            ActivationLimit.ONCE_PER_TURN if spec.once_per_turn else None
+        ),
+    )
+
+
 def _legacy_crew_keyword_ability(
     line: str,
     line_index: int,
@@ -1168,6 +1212,14 @@ def _parse_activated_line(
     craft = _craft_keyword_abilities(raw, line_index)
     if craft:
         return craft
+    equip = _fixed_equip_keyword_ability(
+        raw,
+        line_index,
+        card_name,
+        keywords,
+    )
+    if equip is not None:
+        return (equip,)
     line, keyword_override = _normalized_ability_line(raw)
     if not line or ":" not in line:
         return ()

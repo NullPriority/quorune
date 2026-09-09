@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 701.3 — Fixed source attachment actions",
+  "cases": [
+    {
+      "rule_id": "701.3",
+      "rule_text_sha256": "d406ade2958cb5b6777af977e28cac8995cd430c03fd3eb36fef2f5f8971daeb",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["quorune.rules.capabilities.CapabilityRegistry"],
+      "executable_test_ids": ["tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_expectations_are_independent_and_distinguish_wrong_results"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["Keyword-action heading; attachment.action.fixed_source owns only the closed source-selected Equipment and Aura forms."]
+    },
+    {
+      "rule_id": "701.3a",
+      "rule_text_sha256": "6b48052f00c1e4a6da44840e5e0e2c913396a040f9125e798c8223bbe967c490",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.fixed_attachment_templates.fixed_source_attachment_effect_template", "quorune.effect_runtime.zones_and_attachments._apply_attach", "quorune.aura.runtime.legal_aura_target_refs", "quorune.attachments.attach_objects"],
+      "executable_test_ids": ["tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_source_aura_attachment_separates_target_and_enchant_legality", "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_equipment_entry_trigger_attaches_and_revalidates_target", "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality", "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_uses_current_source_controller"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "blockers": ["target-selected attachment sources, multiple targets, noncreature destinations, reconfigure, fortify, and arbitrary attachment movement remain unsupported"],
+      "notes": ["The closed family resolves one source-pinned Aura or Equipment instruction through the existing reciprocal relation owner."]
+    },
+    {
+      "rule_id": "701.3b",
+      "rule_text_sha256": "4e0c024b527e1d75a529e1825135b982ba730472f62d74087a3269be13a92eb4",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.effect_runtime.zones_and_attachments._apply_attach", "quorune.aura.runtime.legal_aura_target_refs"],
+      "executable_test_ids": ["tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality", "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_departed_or_reentered_source_does_not_attach"],
+      "required_scenarios": ["positive", "negative", "interaction"],
+      "covered_scenarios": ["positive", "negative", "interaction"],
+      "blockers": ["unrepresented attachment types and target predicates remain unsupported"],
+      "notes": ["An impossible current attachment instruction has no effect and cannot bind a replacement source incarnation."]
+    },
+    {
+      "rule_id": "701.3c",
+      "rule_text_sha256": "2e6dc1d350f391e90e460924f7c9eaca480ee1eb7568314ab3488b4d61b1b521",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.attachments.attach_objects"],
+      "executable_test_ids": ["tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_equipment_entry_trigger_attaches_and_revalidates_target", "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_attachment_target_projection_and_replay"],
+      "required_scenarios": ["positive", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "multiplayer", "replay", "hidden_information"],
+      "blockers": ["bulk attachment movement and effects with independently unsupported linked results remain unsupported"],
+      "notes": ["Changing the attached object uses the existing timestamped reciprocal attachment transaction."]
+    },
+    {
+      "rule_id": "701.3d",
+      "rule_text_sha256": "e9bffbe6dea5e73b1c67790b855a538d9116c61966701b8d40371dee4a42b71b",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.aura.runtime.legal_aura_target_refs", "quorune.effect_runtime.zones_and_attachments._apply_attach"],
+      "executable_test_ids": ["tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality"],
+      "required_scenarios": ["negative", "interaction"],
+      "covered_scenarios": ["negative", "interaction"],
+      "blockers": ["attachments to players and nonbattlefield cards remain outside this source-action family"],
+      "notes": ["Aura movement reuses its compiled Enchant restriction and current protection legality rather than bypassing Aura state validation."]
+    }
+  ]
+}

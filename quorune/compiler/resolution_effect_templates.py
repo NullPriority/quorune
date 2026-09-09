@@ -9,6 +9,7 @@ from .affected_player_discard_templates import (
 from .affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_effect_template,
 )
+from .fixed_attachment_templates import fixed_source_attachment_effect_template
 from .amass_templates import fixed_amass_effect_template
 from .bolster_templates import fixed_bolster_effect_template
 from .counter_placement_group_templates import (
@@ -83,6 +84,12 @@ def typed_resolution_effect_template(
     )
     if fixed_counter_controller_sequence is not None:
         return fixed_counter_controller_sequence.compiled()
+    attachment = fixed_source_attachment_effect_template(
+        text,
+        source_attachment_relation=source_attachment_relation,
+    )
+    if attachment is not None:
+        return attachment.compiled()
     fixed_damage = fixed_damage_effect_template(text, card_name=card_name)
     if fixed_damage is not None:
         return fixed_damage.compiled()

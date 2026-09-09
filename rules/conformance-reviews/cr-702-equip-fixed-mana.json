@@ -13,6 +13,7 @@
       "reviewed": true,
       "implementation_components": [
         "abilities.parse_activated_abilities",
+        "rules.attachment_actions.fixed_equip_ability_spec",
         "rules.activation.resolution.builtin_activation_resolution",
         "effect_runtime.zones_and_attachments._apply_attach",
         "attachments.attach_objects"
@@ -22,16 +23,21 @@
         "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_generic_fixed_equip_activation_attaches_and_applies_characteristics",
         "tests.test_exact_artifact_engines.ExactArtifactEngineTests.test_equip_resolves_without_effect_after_equipment_leaves",
         "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact"
+        ,"tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_restricted_equip_variants_share_one_activation_contract"
+        ,"tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_restricted_equip_offer_commit_and_current_target_revalidation"
+        ,"tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_restricted_equip_projection_and_replay"
       ],
       "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
       "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
       "blockers": [
         "Equip costs containing nonmana, variable, hybrid, Phyrexian, or snow components are not compiled by this capability",
-        "quality-restricted Equip and Equip planeswalker are reviewed separately and remain unsupported"
+        "target restrictions outside creature token, commander, legendary creature, or one canonical creature subtype remain unsupported",
+        "cost reductions, instant-speed permissions, variable or nonordinary mana, multiple limits, reconfigure, and fortify remain unsupported"
       ],
       "notes": [
         "A printed fixed numeric or colored Equip cost becomes a payable controller-scoped creature-target activation at sorcery speed and resolves through the ordinary stack.",
-        "The source must still be a battlefield Equipment on resolution; otherwise the attachment instruction has no effect."
+        "The source must still be a battlefield Equipment on resolution; otherwise the attachment instruction has no effect.",
+        "One fixed public target restriction or one once-per-turn limit uses the same advertised and committed activation descriptor as ordinary Equip."
       ]
     }
   ]
