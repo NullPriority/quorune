@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "02a89a1a64a9384ae33a1b82f707185a30fc97fc",
+  "baseline_commit": "7988c48f95c4749b4cb8f3541a1fe31cad59571a",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -10,7 +10,7 @@
   "direct_game_state_write_classification_counts": {
     "canonical_mutation_owner_write": 16,
     "compatibility_adapter_write": 11,
-    "grandfathered_engine_debt": 54,
+    "grandfathered_engine_debt": 49,
     "orchestration_root_replacement": 1
   },
   "direct_game_state_write_identities": [
@@ -25,18 +25,6 @@
       "kind": "mutating_call:extend",
       "state_path": "combat.damage_assignments",
       "symbol": "_apply_combat_assignments"
-    },
-    {
-      "file": "quorune/engine.py",
-      "kind": "assignment",
-      "state_path": "players.mana_pool",
-      "symbol": "_apply_mana_spend"
-    },
-    {
-      "file": "quorune/engine.py",
-      "kind": "assignment",
-      "state_path": "players.stats",
-      "symbol": "_apply_mana_spend"
     },
     {
       "file": "quorune/engine.py",
@@ -244,27 +232,9 @@
     },
     {
       "file": "quorune/engine.py",
-      "kind": "mutating_call:setdefault",
-      "state_path": "players.stats",
-      "symbol": "_restricted_mana"
-    },
-    {
-      "file": "quorune/engine.py",
       "kind": "assignment",
       "state_path": "stack",
       "symbol": "_stabilize"
-    },
-    {
-      "file": "quorune/engine.py",
-      "kind": "assignment",
-      "state_path": "players.stats",
-      "symbol": "_store_restricted_mana"
-    },
-    {
-      "file": "quorune/engine.py",
-      "kind": "mutating_call:pop",
-      "state_path": "players.stats",
-      "symbol": "_store_restricted_mana"
     },
     {
       "file": "quorune/engine.py",
@@ -472,7 +442,7 @@
     }
   ],
   "direct_game_state_writes_by_file": {
-    "quorune/engine.py": 55,
+    "quorune/engine.py": 50,
     "quorune/permissions.py": 8,
     "quorune/record.py": 11,
     "quorune/selection/storm.py": 3,
@@ -480,7 +450,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 7049,
+    "logical_lines": 6989,
     "methods": [
       {
         "kind": "method",
@@ -529,11 +499,6 @@
       },
       {
         "kind": "method",
-        "name": "_add_restricted_mana",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
         "name": "_advance_step",
         "visibility": "private"
       },
@@ -550,11 +515,6 @@
       {
         "kind": "method",
         "name": "_apply_combat_assignments",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
-        "name": "_apply_mana_spend",
         "visibility": "private"
       },
       {
@@ -1299,11 +1259,6 @@
       },
       {
         "kind": "method",
-        "name": "_restricted_mana",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
         "name": "_restriction_is_relevant",
         "visibility": "private"
       },
@@ -1404,11 +1359,6 @@
       },
       {
         "kind": "method",
-        "name": "_spendable_mana_pool",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
         "name": "_stabilize",
         "visibility": "private"
       },
@@ -1430,11 +1380,6 @@
       {
         "kind": "method",
         "name": "_start_game",
-        "visibility": "private"
-      },
-      {
-        "kind": "method",
-        "name": "_store_restricted_mana",
         "visibility": "private"
       },
       {
@@ -1633,12 +1578,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7555
+    "physical_lines": 7490
   },
   "exception_binding": {
-    "adr": "docs/adr/0092-typed-spell-history-transformations.md",
-    "allowance_fingerprint": "c572f50d3afa9d046cbeff3b1e463669a54d01d70738c528642a6a2cab73b5ae",
-    "exception_id": "ARCH-EXC-0044"
+    "adr": "docs/adr/0094-typed-fixed-attachment-actions.md",
+    "allowance_fingerprint": "ea971c16b4ee9f0d61a21b03ade3bd290633311b2930bcc887cd4d87e4c143bc",
+    "exception_id": "ARCH-EXC-0045"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1747,11 +1692,6 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 155,
-      "symbol": "CommanderEngine._enter_step"
-    },
-    {
-      "file": "quorune/engine.py",
       "logical_lines": 240,
       "symbol": "CommanderEngine._prepare_stack_resolution"
     },
@@ -1829,7 +1769,7 @@
   "oversized_modules": [
     {
       "file": "quorune/engine.py",
-      "logical_lines": 7049
+      "logical_lines": 6989
     },
     {
       "file": "quorune/record.py",
@@ -1838,10 +1778,6 @@
     {
       "file": "quorune/report.py",
       "logical_lines": 1754
-    },
-    {
-      "file": "quorune/semantic_runtime/zone_replacements.py",
-      "logical_lines": 1513
     },
     {
       "file": "web/src/App.tsx",
@@ -1881,6 +1817,7 @@
     "counter_stack",
     "counter_stack_target",
     "counter_unless_pay",
+    "create_attached_token",
     "create_damage_prevention_shield",
     "create_damage_redirection",
     "create_emblem",
