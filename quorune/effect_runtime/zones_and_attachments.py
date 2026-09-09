@@ -427,7 +427,7 @@ def _attachment_target_is_legal(
             attachment,
             enchant_spec,
             controller=attachment.controller,
-            as_target=True,
+            as_target=False,
         )
     )
 
