@@ -348,6 +348,31 @@ def prerequisite_exception_is_approved(
     )
 
 
+def prerequisite_exception_is_eligible(
+    exceptions: Sequence[Mapping[str, Any]],
+    *,
+    candidate_id: str,
+    measurement_id: str | None,
+    downstream_gain: int | None,
+    complete_gain: int,
+    minimum_complete_gain: int,
+    minimum_downstream_gain: int,
+    consecutive_exceptions: int,
+    maximum_consecutive_exceptions: int,
+) -> bool:
+    return bool(
+        prerequisite_exception_is_approved(
+            exceptions,
+            candidate_id=candidate_id,
+            measurement_id=measurement_id,
+            downstream_gain=downstream_gain,
+            minimum_downstream_gain=minimum_downstream_gain,
+        )
+        and complete_gain >= minimum_complete_gain
+        and consecutive_exceptions < maximum_consecutive_exceptions
+    )
+
+
 def estimated_bundle_effort(implementation_hours: int) -> str:
     if implementation_hours <= 8:
         return "small"
@@ -725,6 +750,7 @@ __all__ = [
     "candidate_frontier_measurements",
     "estimated_bundle_effort",
     "prerequisite_exception_is_approved",
+    "prerequisite_exception_is_eligible",
     "prerequisite_fanout_identity",
     "single_candidate_bundle",
     "validated_candidate_frontier_measurements",

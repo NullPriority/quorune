@@ -6,7 +6,7 @@ from .work_selection_bundles import (
     atomic_frontier_bundle,
     bundle_measurement_decision,
     estimated_bundle_effort,
-    prerequisite_exception_is_approved,
+    prerequisite_exception_is_eligible,
     prerequisite_fanout_identity,
     single_candidate_bundle,
     validate_bundle_policy,
@@ -843,18 +843,25 @@ def _frontier_decision(
     )
     structural = complete_gain == 0 and sole_blockers == 0
     exception_allowed = bool(
-        prerequisite_exception_is_approved(
+        prerequisite_exception_is_eligible(
             policy["approved_prerequisite_exceptions"],
             candidate_id=candidate_id,
             measurement_id=prerequisite_measurement_id,
             downstream_gain=prerequisite_downstream_gain,
+            complete_gain=complete_gain,
+            minimum_complete_gain=int(
+                policy["minimum_prerequisite_complete_card_gain"]
+            ),
             minimum_downstream_gain=int(
                 policy["minimum_prerequisite_downstream_card_gain"]
             ),
+            consecutive_exceptions=int(
+                policy["consecutive_subthreshold_harvests"]
+            ),
+            maximum_consecutive_exceptions=int(
+                policy["maximum_consecutive_prerequisite_exceptions"]
+            ),
         )
-        and complete_gain >= int(policy["minimum_prerequisite_complete_card_gain"])
-        and int(policy["consecutive_subthreshold_harvests"])
-        < int(policy["maximum_consecutive_prerequisite_exceptions"])
     )
     if prerequisites:
         return (

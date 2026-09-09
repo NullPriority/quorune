@@ -61,6 +61,8 @@ from scripts.harvest_outcome_history import (
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.update_work_selection_cohort_measurements import (
     _preserved_transition_is_current,
+    _transition_coverage,
+    _transition_measurement_is_eligible,
 )
 from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
@@ -864,6 +866,48 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         self.assertEqual("requires_broader_bundle", readiness)
         self.assertFalse(eligible)
+
+    def test_transition_receipt_accepts_only_eligible_generated_prerequisite(self):
+        coverage = deepcopy(
+            self.catalog["work_selection"]["coverage_family"]
+        )
+        coverage = _transition_coverage(coverage)
+        coverage["approved_prerequisite_exceptions"] = [
+            {
+                "candidate_id": "bundle:measured-prerequisite-fixture",
+                "measurement_id": "measurement:measured-prerequisite-fixture",
+                "reason": "The generated fixture proves the downstream fanout.",
+            }
+        ]
+        bundle = {
+            "bundle_id": "bundle:measured-prerequisite-fixture",
+            "measurement_status": "generated_probe",
+        }
+        measured = {
+            "measurement_id": "measurement:measured-prerequisite-fixture",
+            "complete_card_gain": 10,
+            "decision": "retired_below_harvest_floor",
+            "prerequisite_fanout": {
+                "downstream_complete_card_gain": 100,
+            },
+        }
+        self.assertTrue(
+            _transition_measurement_is_eligible(
+                measured,
+                coverage=coverage,
+                bundle=bundle,
+            )
+        )
+        measured["prerequisite_fanout"][
+            "downstream_complete_card_gain"
+        ] = 99
+        self.assertFalse(
+            _transition_measurement_is_eligible(
+                measured,
+                coverage=coverage,
+                bundle=bundle,
+            )
+        )
 
     def test_harvest_history_exposes_repeated_subthreshold_results(self):
         inputs = _with_dependency_ready_compiler_harvest(self.work_inputs)
