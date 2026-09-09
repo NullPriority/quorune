@@ -1161,6 +1161,41 @@ class RulesSchedulerTests(unittest.TestCase):
             ),
         )
 
+    def test_compiler_semantic_receipt_ignores_evidence_provenance(self):
+        first = {
+            "capability_evidence_fingerprint": "a" * 64,
+            "status_counts": {"exact": 1, "partial": 0},
+            "target_effect_corpus_assurance": {
+                "capability_evidence_fingerprint": "a" * 64,
+                "fingerprint": "b" * 64,
+                "covered_effects": 1,
+            },
+        }
+        second = deepcopy(first)
+        second["capability_evidence_fingerprint"] = "c" * 64
+        second["target_effect_corpus_assurance"].update(
+            {
+                "capability_evidence_fingerprint": "c" * 64,
+                "fingerprint": "d" * 64,
+            }
+        )
+
+        for path in (
+            "coverage/card-program-coverage-commander.json",
+            "coverage/oracle-coverage-commander.json",
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(
+                    _semantic_report_sha256(path, b"", first),
+                    _semantic_report_sha256(path, b"", second),
+                )
+                changed = deepcopy(second)
+                changed["status_counts"]["exact"] = 2
+                self.assertNotEqual(
+                    _semantic_report_sha256(path, b"", first),
+                    _semantic_report_sha256(path, b"", changed),
+                )
+
     def test_historical_frontier_blob_upgrades_to_semantic_identity(self):
         latest = self.work_inputs["harvest_outcome_history"]["entries"][-1][
             "head_receipt"
@@ -1188,6 +1223,33 @@ class RulesSchedulerTests(unittest.TestCase):
             _semantic_blob_sha256(
                 "coverage/card-unlock-frontier.json.gz",
                 identity,
+                repository=ROOT,
+            ),
+        )
+
+    def test_historical_compiler_blob_uses_current_semantic_projection(self):
+        path = "coverage/card-program-coverage-commander.json"
+        raw = (ROOT / path).read_bytes()
+        value = json.loads(raw)
+        oid = subprocess.run(
+            ["git", "rev-parse", f"HEAD:{path}"],
+            cwd=ROOT,
+            check=True,
+            text=True,
+            encoding="utf-8",
+            stdout=subprocess.PIPE,
+        ).stdout.strip()
+        expected = _semantic_report_sha256(path, raw, value)
+
+        self.assertEqual(
+            expected,
+            _semantic_blob_sha256(
+                path,
+                {
+                    "git_blob_oid": oid,
+                    "raw_sha256": hashlib.sha256(raw).hexdigest(),
+                    "semantic_sha256": "f" * 64,
+                },
                 repository=ROOT,
             ),
         )

@@ -26,7 +26,10 @@ from scripts.generated_owner_cache import (
     restore_owner_artifact,
     store_owner_artifact,
 )
-from scripts.cloud_generated_artifacts import run_owner
+from scripts.cloud_generated_artifacts import (
+    CloudGeneratedArtifactError,
+    run_owner,
+)
 from scripts.find_reusable_workflow_artifact import find_reusable_run
 
 
@@ -313,6 +316,71 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         self.assertEqual("inherited", receipt["execution"])
         self.assertEqual(
             ["check:selected-owner"],
+            [call.args[0] for call in runner.call_args_list],
+        )
+
+    def test_automatic_plan_regenerates_stale_inherited_owner(self):
+        selected = GeneratorSpec(
+            id="selected-owner",
+            depends_on=(),
+            outputs=("selected.txt",),
+            check=("selected.py", "--check"),
+            write=("selected.py", "--write"),
+            write_with_database=None,
+            write_policy="automatic",
+            input_groups=("source",),
+            implementation_inputs=("selected.py",),
+            database_identity="none",
+            execution_class="foundation",
+            reuse_policy="safe",
+        )
+        identity = mock.Mock(fingerprint="a" * 64)
+        artifact_receipt = mock.Mock()
+        artifact_receipt.to_dict.return_value = {"owner": "selected-owner"}
+        local = ROOT / "local"
+        local.mkdir(exist_ok=True)
+        with TemporaryDirectory(dir=local) as raw, mock.patch(
+            "scripts.cloud_generated_artifacts.load_manifest",
+            return_value=(selected,),
+        ), mock.patch(
+            "scripts.cloud_generated_artifacts._owner_identity",
+            return_value=identity,
+        ), mock.patch(
+            "scripts.cloud_generated_artifacts.owner_cache_directory",
+            return_value=Path(raw) / "cache-miss",
+        ), mock.patch(
+            "scripts.cloud_generated_artifacts.store_owner_artifact",
+            return_value=artifact_receipt,
+        ), mock.patch(
+            "scripts.cloud_generated_artifacts._run",
+            side_effect=(
+                CloudGeneratedArtifactError("inherited output is stale"),
+                None,
+                None,
+            ),
+        ) as runner, mock.patch(
+            "scripts.cloud_generated_artifacts._copy_outputs",
+            return_value={"selected.txt": "hash"},
+        ), mock.patch(
+            "scripts.cloud_generated_artifacts._source_commit",
+            return_value="b" * 40,
+        ), mock.patch(
+            "scripts.cloud_generated_artifacts.tracked_worktree_source_fingerprint",
+            return_value="source",
+        ), mock.patch(
+            "scripts.cloud_generated_artifacts._snapshot_metadata",
+            return_value={},
+        ):
+            receipt = run_owner(
+                "selected-owner",
+                str(Path(raw) / "stage"),
+                None,
+                affected_owners_json="[]",
+            )
+
+        self.assertEqual("generated", receipt["execution"])
+        self.assertEqual(
+            ["check:selected-owner", "selected-owner", "check:selected-owner"],
             [call.args[0] for call in runner.call_args_list],
         )
 

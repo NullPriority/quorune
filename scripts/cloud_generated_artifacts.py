@@ -289,7 +289,19 @@ def run_owner(
                 inherited = False
             if not inherited:
                 _run(owner, command)
-            _run(f"check:{owner}", check_command(selected))
+                _run(f"check:{owner}", check_command(selected))
+            else:
+                try:
+                    _run(f"check:{owner}", check_command(selected))
+                except CloudGeneratedArtifactError:
+                    print(
+                        f"[{owner}] inherited outputs are stale; generating "
+                        "the content-keyed owner",
+                        flush=True,
+                    )
+                    inherited = False
+                    _run(owner, command)
+                    _run(f"check:{owner}", check_command(selected))
             if artifact_dir.exists():
                 cached = read_owner_receipt(artifact_dir / "_owner_receipt.json")
                 regenerated = build_owner_receipt(selected, identity, root=ROOT)

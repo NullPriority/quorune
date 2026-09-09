@@ -251,9 +251,12 @@ Owner artifacts are keyed by declared content inputs rather than commit SHA,
 so a content-identical merge commit reuses the PR census and downstream work.
 Generated-owner planning excludes cache-identity implementation files from
 semantic affected-owner selection. An output-triggered validation owner fans
-out to semantic dependents only when its committed generated output changes;
-CI, receipt, shard, and recovery tooling changes must not request a compiler
-census merely because they changed cache or validation machinery.
+out to semantic dependents when its committed generated output changes. During
+source-checkpoint assembly, an otherwise inherited cache miss first validates
+against the newly staged dependency outputs and regenerates only when that
+check proves its tracked output stale. CI, receipt, shard, and recovery tooling
+changes must not request a compiler census merely because they changed cache
+or validation machinery.
 `main` pushes still publish a separately exact-main bundle without write
 permissions. Use manual `workflow_dispatch` only for recovery or diagnosis.
 The checkpoint environment variable is permitted only for this intermediate
