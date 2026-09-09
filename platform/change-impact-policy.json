@@ -282,6 +282,7 @@
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
+        "test_fixed_entry_return_triggers",
         "test_fixed_effect_clause_sequences",
         "test_fixed_homogeneous_target_sets",
         "test_fixed_optional_effect_choices",
@@ -625,6 +626,7 @@
         "test_activated_draw_abilities",
         "test_damage_prevention_shields",
         "test_fixed_counter_event_triggers",
+        "test_fixed_counter_player_cast_triggers",
         "test_fixed_damage_effect_clauses",
         "test_fixed_player_life_effects",
         "test_fixed_token_creation_effects",
@@ -911,6 +913,7 @@
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
+        "test_fixed_counter_zone_triggers",
         "test_fixed_effect_clause_sequences",
         "test_fixed_optional_effect_choices",
         "test_optional_draw_choices"
@@ -961,6 +964,7 @@
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
+        "test_fixed_counter_player_cast_triggers",
         "test_prowess_rules"
       ]
     },
@@ -993,6 +997,8 @@
         "test_block_transitions",
         "test_copy_objects",
         "test_fixed_counter_event_triggers",
+        "test_fixed_counter_player_cast_triggers",
+        "test_fixed_counter_zone_triggers",
         "test_morph_rules",
         "test_ordinary_cycling",
         "test_prowess_rules",
@@ -1011,6 +1017,7 @@
         "test_block_keyword_compiler",
         "test_block_transitions",
         "test_fixed_counter_event_triggers",
+        "test_fixed_source_combat_growth_triggers",
         "test_prowess_rules",
         "test_rules_scheduler"
       ]
@@ -1025,6 +1032,7 @@
         "test_fixed_affected_player_discards",
         "test_fixed_affected_player_sacrifices",
         "test_fixed_counter_event_triggers",
+        "test_fixed_entry_return_triggers",
         "test_return_to_hand_rules",
         "test_rules_scheduler",
         "test_zone_general_rules"

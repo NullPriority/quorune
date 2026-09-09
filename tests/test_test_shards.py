@@ -39,6 +39,29 @@ class TestShardManifestTests(unittest.TestCase):
         summary = validate_partition(self.manifest)
         self.assertEqual(len(discovered_modules()), summary["test_modules"])
 
+    def test_counter_event_assurance_is_split_across_loadfile_units(self):
+        modules = (
+            "test_fixed_counter_event_triggers",
+            "test_fixed_counter_player_cast_triggers",
+            "test_fixed_counter_zone_triggers",
+            "test_fixed_entry_return_triggers",
+            "test_fixed_source_combat_growth_triggers",
+        )
+        self.assertLessEqual(
+            set(modules),
+            set(self.manifest["primary_shards"]["functional-02"]),
+        )
+        identifiers = canonical_test_ids(load_suite(modules))
+        self.assertGreaterEqual(len(identifiers), 100)
+        for module in modules:
+            with self.subTest(module=module):
+                self.assertTrue(
+                    any(
+                        identifier.startswith(f"{module}.")
+                        for identifier in identifiers
+                    )
+                )
+
     def test_primary_matrix_uses_every_authoritative_shard_once(self):
         rows = primary_matrix(self.manifest)["include"]
         self.assertEqual(
