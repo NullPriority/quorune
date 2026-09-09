@@ -315,6 +315,9 @@ The rules-scheduler owner also maintains
 immutable Git provenance, while new semantic transitions use base and head
 content-receipt fingerprints over the Commander CardProgram corpus, Oracle
 coverage, card-unlock frontier, interaction inventory, and architecture audit.
+Compiler receipt comparison excludes capability-evidence test-reference
+fingerprints and their derived checksums while retaining support status, card
+state, ability carrier, and frontier content as semantic inputs.
 The frontier retains only immutable card-snapshot hashes, counts, schema, and
 timestamps; local archive paths and download URLs never participate in its
 fingerprint. Transition receipts likewise compare a canonical frontier payload,

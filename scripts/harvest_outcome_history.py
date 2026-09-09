@@ -16,7 +16,7 @@ from quorune.work_selection_evidence import (
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
-HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v8"
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v9"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
@@ -50,6 +50,14 @@ def _semantic_report_sha256(
 ) -> str:
     del raw
     canonical = dict(value)
+    if path in {_PROGRAM_PATH, _ORACLE_PATH}:
+        canonical.pop("capability_evidence_fingerprint", None)
+        assurance = canonical.get("target_effect_corpus_assurance")
+        if isinstance(assurance, Mapping):
+            canonical_assurance = dict(assurance)
+            canonical_assurance.pop("capability_evidence_fingerprint", None)
+            canonical_assurance.pop("fingerprint", None)
+            canonical["target_effect_corpus_assurance"] = canonical_assurance
     if path == _FRONTIER_PATH:
         canonical.pop("fingerprint", None)
         snapshot = value.get("card_data_snapshot")
@@ -1007,7 +1015,8 @@ def _semantic_blob_sha256(
     repository: Path | None,
 ) -> str:
     semantic = str(identity.get("semantic_sha256") or "")
-    if semantic:
+    reproject = path in {_PROGRAM_PATH, _ORACLE_PATH} and repository is not None
+    if semantic and not reproject:
         return semantic
     raw_sha256 = str(identity.get("raw_sha256") or "")
     if repository is None:
@@ -1015,9 +1024,14 @@ def _semantic_blob_sha256(
     oid = str(identity.get("git_blob_oid") or "")
     if not _COMMIT.fullmatch(oid):
         raise HarvestOutcomeHistoryError(
-            "Historical frontier receipt lacks a canonical Git blob identity"
+            "Historical semantic receipt lacks a canonical Git blob identity"
         )
-    raw = _git(repository, "cat-file", "blob", oid)
+    try:
+        raw = _git(repository, "cat-file", "blob", oid)
+    except HarvestOutcomeHistoryError:
+        if semantic:
+            return semantic
+        raise
     value = _json_object(
         raw,
         path,

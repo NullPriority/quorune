@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-09-09T02:05:49Z",
+  "observed_at": "2026-09-09T02:48:18Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -884,6 +884,23 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "An inherited cache miss now validates against staged dependency outputs and invokes its canonical writer only when that validation proves the tracked output stale, preserving cheap inheritance when output-triggered dependencies remain unchanged."
+    },
+    {
+      "id": "ci-20260909-58",
+      "run_id": 34302005779,
+      "head_sha": "82496f655b9c840dd28b7302afc37b91065bd563",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "Capability-evidence test IDs changed only provenance, but the harvest-history semantic receipt hashed those fingerprints and misclassified the unchanged compiler v178 corpus as a second use of its already landed transition identity.",
+      "failed_surfaces": [
+        "Generated cloud / Rules scheduler (job 102317015148)"
+      ],
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_compiler_semantic_receipt_ignores_evidence_provenance",
+        "test_rules_scheduler.RulesSchedulerTests.test_historical_compiler_blob_uses_current_semantic_projection"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Harvest receipts now exclude capability-evidence provenance from compiler semantic projections and reproject historical compiler blobs under the current algorithm, while status counts, card states, and frontier content remain semantic and fail closed."
     }
   ],
   "recent_pull_requests": [
