@@ -54,6 +54,7 @@ from scripts.harvest_outcome_history import (
     _semantic_blob_sha256,
     _semantic_outcome_state,
     _semantic_report_sha256,
+    _transition_measurement_receipt,
     _validate_content_entry,
     _validate_non_harvest_content_entry,
     validated_semantic_transition_declaration,
@@ -934,6 +935,50 @@ class RulesSchedulerTests(unittest.TestCase):
                 "material_residual_reduction",
             ),
         )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "coverage").mkdir()
+            (root / "platform").mkdir()
+            artifact = {"transition_measurements": [receipt]}
+            artifact["fingerprint"] = hashlib.sha256(
+                stable_json(artifact).encode("utf-8")
+            ).hexdigest()
+            (root / "coverage" / "work-selection-cohort-measurements.json").write_text(
+                stable_json(artifact),
+                encoding="utf-8",
+            )
+            (root / "platform" / "rules-subsystems.json").write_text(
+                stable_json(
+                    {
+                        "work_selection": {
+                            "coverage_family": {
+                                "minimum_prerequisite_complete_card_gain": coverage[
+                                    "minimum_prerequisite_complete_card_gain"
+                                ],
+                                "minimum_prerequisite_downstream_card_gain": coverage[
+                                    "minimum_prerequisite_downstream_card_gain"
+                                ],
+                                "approved_prerequisite_exceptions": coverage[
+                                    "approved_prerequisite_exceptions"
+                                ],
+                                "candidate_bundles": [bundle],
+                            }
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                receipt,
+                _transition_measurement_receipt(
+                    root,
+                    {
+                        "transition_id": receipt["transition_id"],
+                        "measurement_id": measured["measurement_id"],
+                        "bundle_id": measured["bundle_id"],
+                    },
+                ),
+            )
         measured["prerequisite_fanout"][
             "downstream_complete_card_gain"
         ] = 99
