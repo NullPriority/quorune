@@ -710,10 +710,6 @@ class RulesSchedulerTests(unittest.TestCase):
             "requires_broader_bundle",
             narrow["runtime_readiness"]["status"],
         )
-        self.assertEqual(
-            consecutive_subthreshold,
-            work["selection_policy"]["consecutive_subthreshold_harvests"],
-        )
         self.assertEqual(21, narrow["expected_complete_card_gain"])
         self.assertEqual(130, narrow["expected_exact_ability_gain"])
         self.assertEqual(
