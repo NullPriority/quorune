@@ -25270,7 +25270,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 235,
+        "primary_test_count": 236,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -25317,6 +25317,7 @@
           "test_combat_phase_rules",
           "test_command_zone_rules",
           "test_commander_damage_identity",
+          "test_commander_match_readiness",
           "test_commander_pairing",
           "test_complex_activation_mana_costs",
           "test_concession_rules",
@@ -25370,8 +25371,7 @@
           "test_fixed_counter_placement_groups",
           "test_fixed_counter_placement_sets",
           "test_fixed_counter_placement_target_sets",
-          "test_fixed_counter_removal_effects",
-          "test_fixed_damage_effect_clauses"
+          "test_fixed_counter_removal_effects"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -27162,7 +27162,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 211,
+        "primary_test_count": 212,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -27202,6 +27202,7 @@
           "test_combat_phase_rules",
           "test_command_zone_rules",
           "test_commander_damage_identity",
+          "test_commander_match_readiness",
           "test_commander_pairing",
           "test_complex_activation_mana_costs",
           "test_concession_rules",
@@ -27262,8 +27263,7 @@
           "test_fixed_library_searches",
           "test_fixed_library_selection",
           "test_fixed_mana_abilities",
-          "test_fixed_mana_value_target_predicates",
-          "test_fixed_mass_damage"
+          "test_fixed_mana_value_target_predicates"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -30112,7 +30112,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "a8710fb0cb1a78ab0f9d262f0aba5411b21e7d2cd113cd1d281901998e521434",
+      "fingerprint": "3293162c3b20efeff76bd2a6554b63e1e21f8834a00ff29819af5110c1719f0e",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -30970,18 +30970,18 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 3972,
-      "discovered_total": 7281,
+      "conventional_ast_cases": 3977,
+      "discovered_total": 7286,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 218,
         "fuzz_named": 1,
         "privacy_or_projection_named": 59,
-        "replay_named": 313,
+        "replay_named": 314,
         "server_named": 32
       },
       "reconciles": true,
-      "test_files": 331
+      "test_files": 332
     }
   }
 }

@@ -59,9 +59,11 @@ contract and semantic distinctions; the
 ## Bounded match readiness
 
 Match readiness is a separate incremental milestone, not an inference from card
-closure. Its small source-controlled reference set uses existing format, trust-
-closure, deck, server-session, browser-soak, and replay owners and labels each
-scenario as reviewed-compatible or strict capability-only readiness. A scenario
+closure. `tests/test_commander_match_readiness.py` owns the small source-
+controlled reference table over the maintained Mishra and Zimone decks and the
+existing format, trust-closure, server-session, browser-soak, and replay owners.
+It labels every scenario as reviewed-compatible or a rules-runtime fixture; it
+does not claim strict capability-only readiness. The bounded scenario set
 covers natural completion, supported legal-action availability, private choices
 and principal-correct projection, reconnect or save/load during a pending
 decision, exact replay, and classification of every unsupported-rule stop.
@@ -70,9 +72,10 @@ An expected declared unsupported interaction is a coverage limitation. An
 unexpected failure inside a claimed supported scenario is a defect even when
 mutation failed closed. The reference set grows independently of the corpus;
 neither every card nor every deck must satisfy the milestone before the next
-safe rules harvest. Until the reference scenarios are populated and pass, the
-existing incomplete format-capability inventory continues to block strict match-
-readiness claims as described by the
+safe rules harvest. The maintained decks are Commander-legal and reviewed-
+compatible, while strict readiness remains blocked by the incomplete format
+capability inventory plus current missing, legacy/mixed, and unbound per-card
+program dependencies described by the
 [trust-closure contract](../architecture/trust-closure.md).
 
 During iteration, run the new/focused tests and adjacent impacted modules. The
