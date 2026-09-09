@@ -51,6 +51,12 @@ compatibility remains separately available. This fail-closed blocker is
 intentional; an empty format declaration is not proof that CR or Commander
 ambient rules are complete.
 
+Deck-level strict closure also reports every missing CardProgram, legacy or
+mixed trust basis, and unbound per-card runtime dependency. The bounded
+Commander match-readiness reference set keeps those categories separate from
+format inventory and from reviewed-compatible execution; removing one category
+does not silently promote the match while another remains.
+
 Unrelated blocked registry entries do not block a match. A blocked capability
 does block when it enters the match or dynamic reachable set. Conservative
 overblocking is allowed; underblocking is not.

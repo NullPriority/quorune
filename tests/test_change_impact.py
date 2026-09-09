@@ -255,6 +255,26 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_match_readiness_sources_select_the_bounded_reference(self):
+        for owner in (
+            "examples/mishra-eminent-one.txt",
+            "quorune/card_programs/trust.py",
+            "quorune/effect_runtime/state_and_permissions.py",
+            "quorune/semantic_choices/payments.py",
+            "quorune/turn_step_owner.py",
+            "web/tests/four-player.spec.ts",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertIn(
+                    "test_commander_match_readiness",
+                    plan.test_modules,
+                )
+                self.assertIn(
+                    "commander-match-readiness-reference",
+                    plan.matched_rule_ids,
+                )
+
     def test_continuous_runtime_changes_select_performance_contract(self):
         for owner in (
             "quorune/card_programs/runtime.py",

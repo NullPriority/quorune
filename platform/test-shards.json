@@ -255,6 +255,7 @@
       "test_block_keyword_triggers",
       "test_bloodthirst_rules",
       "test_combat_declaration_costs",
+      "test_commander_match_readiness",
       "test_continuous_effect_duration",
       "test_decision_opportunities",
       "test_destruction_rules",
@@ -558,6 +559,7 @@
     ],
     "deterministic-game-regressions": [
       "test_codex_arena",
+      "test_commander_match_readiness",
       "test_deterministic_full_game",
       "test_exact_artifact_engines",
       "test_native_v3_slice",

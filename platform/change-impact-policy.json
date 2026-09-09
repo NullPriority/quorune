@@ -1291,6 +1291,34 @@
       ]
     },
     {
+      "id": "commander-match-readiness-reference",
+      "patterns": [
+        "examples/mishra-eminent-one.txt",
+        "examples/zimone-and-dina.txt",
+        "quorune/card_programs/trust.py",
+        "quorune/cli.py",
+        "quorune/deck.py",
+        "quorune/drawing/**",
+        "quorune/effect_runtime/state_and_permissions.py",
+        "quorune/pilot.py",
+        "quorune/preflight.py",
+        "quorune/projection.py",
+        "quorune/record*.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/session.py",
+        "quorune/turn_priority_owner.py",
+        "quorune/turn_step_owner.py",
+        "tests/common.py",
+        "tests/test_commander_match_readiness.py",
+        "tests/test_deterministic_full_game.py",
+        "web/tests/four-player.spec.ts",
+        "web/tests/ordered-scry.spec.ts"
+      ],
+      "test_modules": [
+        "test_commander_match_readiness"
+      ]
+    },
+    {
       "id": "server-replay-privacy-suite",
       "patterns": [
         "server/**",
