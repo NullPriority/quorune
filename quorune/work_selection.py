@@ -1299,9 +1299,19 @@ def _validate_candidate_context(
     if len(ids) != len(set(ids)):
         raise WorkSelectionError("Work-selection candidate ids must be unique")
     candidate_ids = set(ids)
+    retired_exception_ids = {
+        str(row.get("bundle_id") or "")
+        for row in validated["harvest_outcome_history"]
+    }
+    pending = validated.get("pending_transition")
+    if isinstance(pending, Mapping):
+        retired_exception_ids.add(str(pending.get("bundle_id") or ""))
     for row in validated["approved_prerequisite_exceptions"]:
         candidate_id = str(row["candidate_id"])
-        if candidate_id not in candidate_ids:
+        if (
+            candidate_id not in candidate_ids
+            and candidate_id not in retired_exception_ids
+        ):
             raise WorkSelectionError(
                 "Approved prerequisite exception must reference a current serious "
                 f"frontier candidate: {candidate_id}"

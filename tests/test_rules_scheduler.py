@@ -25,6 +25,7 @@ from quorune.rules_scheduler import (
 )
 from quorune.work_selection import (
     _frontier_decision,
+    _validate_candidate_context,
     WorkSelectionError,
     build_work_selection,
     load_work_selection_inputs,
@@ -989,6 +990,28 @@ class RulesSchedulerTests(unittest.TestCase):
                 bundle=bundle,
             )
         )
+
+    def test_prerequisite_exception_can_retire_at_transition_fixed_point(self):
+        candidate_id = "bundle:retired-prerequisite-fixture"
+        validated = {
+            "approved_prerequisite_exceptions": [
+                {"candidate_id": candidate_id}
+            ],
+            "reviewed_rerank_history": [],
+            "harvest_outcome_history": [],
+            "pending_transition": {"bundle_id": candidate_id},
+        }
+        _validate_candidate_context([], validated)
+        validated["pending_transition"] = None
+        with self.assertRaisesRegex(
+            WorkSelectionError,
+            "current serious frontier candidate",
+        ):
+            _validate_candidate_context([], validated)
+        validated["harvest_outcome_history"] = [
+            {"bundle_id": candidate_id}
+        ]
+        _validate_candidate_context([], validated)
 
     def test_harvest_history_exposes_repeated_subthreshold_results(self):
         inputs = _with_dependency_ready_compiler_harvest(self.work_inputs)
