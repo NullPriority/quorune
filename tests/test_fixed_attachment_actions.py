@@ -8,6 +8,11 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
+from quorune.ability_fragments import (
+    ProtectionQualityKind,
+    ProtectionSpec,
+    ability_fragment_to_dict,
+)
 from quorune.abilities import ActivationLimit, parse_activated_abilities
 from quorune.attachments import attach_objects
 from quorune.carddb import CardRecord
@@ -991,6 +996,247 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         self.assertEqual(second.object_id, aura.attached_to)
         self.assertEqual("B", aura.controller)
         self.assertEqual("B", second.controller)
+
+    def test_aura_reattachment_keeps_stack_controller_targeting_after_control_change(self):
+        session = self.session(7013021)
+        engine = session.engine
+        aura = self.add_card(
+            engine,
+            seat="A",
+            name="Exclusive Moving Aura Fixture",
+            ref="hexproof-moving-aura",
+            zone="battlefield",
+        )
+        first = engine._resolve_object(
+            "A",
+            engine.create_token(
+                "A",
+                name="First attachment recipient",
+                characteristics={
+                    "type_line": "Token Creature \N{EM DASH} Human",
+                    "power": "2",
+                    "toughness": "2",
+                },
+            )[0],
+        )
+        target = engine._resolve_object(
+            "A",
+            engine.create_token(
+                "A",
+                name="Controlled Hexproof recipient",
+                characteristics={
+                    "type_line": "Token Creature \N{EM DASH} Human",
+                    "power": "2",
+                    "toughness": "2",
+                    "keywords": ["Hexproof"],
+                },
+            )[0],
+        )
+        attach_objects(
+            engine.state.cards,
+            aura,
+            first,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.players["A"].mana_pool["U"] = 3
+        engine._issue_priority("A")
+
+        activated = session.act(
+            "pilot:A",
+            {
+                "action_id": f"activate:{aura.ref}:ab3",
+                "targets": [target.ref],
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertEqual("A", engine.state.stack[-1].controller)
+        engine.change_control(aura.object_id, "B", reason="resolution witness")
+        self.assertEqual("B", aura.controller)
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        self.pass_until_empty(session)
+
+        self.assertEqual(target.object_id, aura.attached_to)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "aura-controller-change-replay"
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_aura_reattachment_rejects_opponent_hexproof_targeting(self):
+        session = self.session(7013022)
+        engine = session.engine
+        aura = self.add_card(
+            engine,
+            seat="A",
+            name="Exclusive Moving Aura Fixture",
+            ref="opponent-hexproof-moving-aura",
+            zone="battlefield",
+        )
+        first = self._battlefield_creature(
+            engine, "A", "Mishra, Eminent One"
+        )
+        target = engine._resolve_object(
+            "B",
+            engine.create_token(
+                "B",
+                name="Opposing Hexproof recipient",
+                characteristics={
+                    "type_line": "Token Creature \N{EM DASH} Insect",
+                    "power": "2",
+                    "toughness": "2",
+                    "keywords": ["Hexproof"],
+                },
+            )[0],
+        )
+        engine.create_token(
+            "A",
+            name="Alternative legal recipient",
+            characteristics={
+                "type_line": "Token Creature \N{EM DASH} Human",
+                "power": "2",
+                "toughness": "2",
+            },
+        )
+        attach_objects(
+            engine.state.cards,
+            aura,
+            first,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.players["A"].mana_pool["U"] = 3
+        engine._issue_priority("A")
+
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act(
+            "pilot:A",
+            {
+                "action_id": f"activate:{aura.ref}:ab3",
+                "targets": [target.ref],
+            },
+        )
+        self.assertFalse(rejected.ok)
+        self.assertIn("target", rejected.summary.casefold())
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.assertEqual(first.object_id, aura.attached_to)
+
+    def test_aura_reattachment_uses_current_controller_enchant_restriction(self):
+        session = self.session(7013023)
+        engine = session.engine
+        aura = self.add_card(
+            engine,
+            seat="A",
+            name="Controlled Moving Aura Fixture",
+            ref="restricted-controller-moving-aura",
+            zone="battlefield",
+        )
+        first = self._battlefield_creature(
+            engine, "A", "Mishra, Eminent One"
+        )
+        target = engine._resolve_object(
+            "A",
+            engine.create_token(
+                "A",
+                name="Old-controller recipient",
+                characteristics={
+                    "type_line": "Token Creature \N{EM DASH} Human",
+                    "power": "2",
+                    "toughness": "2",
+                },
+            )[0],
+        )
+        attach_objects(
+            engine.state.cards,
+            aura,
+            first,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        engine.state.players["A"].mana_pool["U"] = 2
+
+        engine._activate(
+            "A",
+            {
+                "source": aura.ref,
+                "ability": "ab3",
+                "targets": [target.ref],
+            },
+        )
+        engine.change_control(first.object_id, "B", reason="enchant witness")
+        engine.change_control(aura.object_id, "B", reason="enchant witness")
+        self.resolve_top(engine)
+
+        self.assertEqual(first.object_id, aura.attached_to)
+        self.assertEqual("B", first.controller)
+        self.assertEqual("B", aura.controller)
+        self.assertEqual("A", target.controller)
+
+    def test_nontargeted_aura_attachment_respects_protection(self):
+        session = self.session(7013024)
+        engine = session.engine
+        aura = self.add_card(
+            engine,
+            seat="A",
+            name="Exclusive Moving Aura Fixture",
+            ref="protected-recipient-moving-aura",
+            zone="battlefield",
+        )
+        first = self._battlefield_creature(
+            engine, "A", "Mishra, Eminent One"
+        )
+        target = engine._resolve_object(
+            "A",
+            engine.create_token(
+                "A",
+                name="Protected attachment recipient",
+                characteristics={
+                    "type_line": "Token Creature \N{EM DASH} Human",
+                    "power": "2",
+                    "toughness": "2",
+                },
+            )[0],
+        )
+        target.annotations["copy_overrides"] = {
+            "keywords": ["Protection"],
+            "ability_fragments": [
+                ability_fragment_to_dict(
+                    ProtectionSpec(ProtectionQualityKind.COLOR, "U")
+                )
+            ],
+        }
+        attach_objects(
+            engine.state.cards,
+            aura,
+            first,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+
+        engine.apply_effect(
+            {
+                "op": "attach",
+                "attachment_kind": "aura",
+                "source": aura.ref,
+                "target": target.ref,
+            },
+            actor="A",
+        )
+
+        self.assertEqual(first.object_id, aura.attached_to)
 
     def test_living_weapon_creates_germ_and_attaches_before_state_actions(self):
         session = self.session(7013006)
