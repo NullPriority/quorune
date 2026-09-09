@@ -14,7 +14,7 @@ from quorune.carddb import CardRecord
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckLoader
 from quorune.errors import GameRuleError
-from quorune.model import CardInstance
+from quorune.model import CardInstance, CombatState
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.projection import StateProjector
 from quorune.record import (
@@ -81,7 +81,7 @@ def record(
     name: str,
     oracle_text: str,
     *,
-    type_line: str = "Artifact — Equipment",
+    type_line: str = "Artifact \N{EM DASH} Equipment",
     keywords: tuple[str, ...] = (),
 ) -> CardRecord:
     return CardRecord(
@@ -127,6 +127,20 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                 self.assertTrue(row["legal_options"])
                 self.assertTrue(row["committed_result"])
                 self.assertTrue(row["counterexample"])
+
+    def test_fixture_type_lines_compile_without_platform_encoding_repair(self):
+        payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        for row in payload["cards"]:
+            with self.subTest(card=row["name"]):
+                compiled = self.compile(
+                    record(
+                        row["name"],
+                        row["oracle_text"],
+                        type_line=row["type_line"],
+                        keywords=tuple(row["keywords"]),
+                    )
+                )
+                self.assertEqual("exact", compiled.status)
 
     def test_source_equipment_entry_attach_is_typed_and_targeted(self):
         compiled = self.compile(
@@ -183,7 +197,7 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                     record(
                         "Moving Aura",
                         f"Enchant creature you control\n{{1}}{{U}}: {source}",
-                        type_line="Enchantment — Aura",
+                        type_line="Enchantment \N{EM DASH} Aura",
                         keywords=("Enchant",),
                     )
                 )
@@ -264,7 +278,7 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                 "Living weapon",
                 ("Equip", "Living weapon"),
                 "Phyrexian Germ",
-                "Token Creature — Phyrexian Germ",
+                "Token Creature \N{EM DASH} Phyrexian Germ",
                 "0",
                 "0",
                 ["B"],
@@ -274,7 +288,7 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                 "For Mirrodin!",
                 ("Equip", "For Mirrodin!"),
                 "Rebel",
-                "Token Creature — Rebel",
+                "Token Creature \N{EM DASH} Rebel",
                 "2",
                 "2",
                 ["R"],
@@ -302,10 +316,10 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
         base = record("Boundary Harness", "Equip {2}", keywords=("Equip",))
         for oracle_text in (
             "Equip Human {W/U}",
-            "Equip Human—Discard a card",
+            "Equip Human\N{EM DASH}Discard a card",
             "When this Equipment enters, attach it to target creature an opponent controls.",
-            "Living Weapon — Create two Germ tokens.",
-            "For Mirrodin — Create a Rebel token.",
+            "Living Weapon \N{EM DASH} Create two Germ tokens.",
+            "For Mirrodin \N{EM DASH} Create a Rebel token.",
         ):
             with self.subTest(oracle_text=oracle_text):
                 compiled = self.compile(
@@ -447,6 +461,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         target = self._battlefield_creature(
             engine, "A", "Mishra, Eminent One"
         )
+        power_before = engine._numeric_stat(target.object_id, "power")
 
         engine.move_card(
             source.object_id,
@@ -464,6 +479,10 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         self.assertTrue(selected.ok, selected.summary)
         self.resolve_top(engine)
         self.assertEqual(target.object_id, source.attached_to)
+        self.assertEqual(
+            power_before + 1,
+            engine._numeric_stat(target.object_id, "power"),
+        )
 
         stale = self.session(7013002)
         stale_engine = stale.engine
@@ -493,6 +512,118 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         stale_engine.move_card(stale_target.object_id, "graveyard", log=False)
         self.resolve_top(stale_engine)
         self.assertIsNone(stale_source.attached_to)
+
+    def test_entry_attachment_and_turn_gated_characteristics_compose(self):
+        session = self.session(7013021)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Stateful Entry Harness Fixture",
+            ref="stateful-entry-harness",
+            zone="hand",
+        )
+        target = self._battlefield_creature(
+            engine, "A", "Mishra, Eminent One"
+        )
+        base_power = engine._numeric_stat(target.object_id, "power")
+        engine.state.active_player = "A"
+
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            reason="turn-gated attachment composition",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        selected = session.act(
+            "pilot:A",
+            {"action_id": "choose", "targets": [target.ref]},
+        )
+        self.assertTrue(selected.ok, selected.summary)
+        self.resolve_top(engine)
+
+        active = engine._effective_card_data(target)
+        self.assertEqual(str(base_power + 2), active["power"])
+        self.assertIn("First Strike", active["keywords"])
+        self.assertEqual(target.object_id, source.attached_to)
+
+        engine.state.active_player = "B"
+        inactive = engine._effective_card_data(target)
+        self.assertEqual(str(base_power), inactive["power"])
+        self.assertNotIn("First Strike", inactive["keywords"])
+        self.assertEqual(target.object_id, source.attached_to)
+
+    def test_entry_attachment_and_granted_draw_compose(self):
+        session = self.session(7013022)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Drawing Entry Harness Fixture",
+            ref="drawing-entry-harness",
+            zone="hand",
+        )
+        target = self._battlefield_creature(
+            engine, "A", "Mishra, Eminent One"
+        )
+        engine.state.active_player = "A"
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            reason="attachment draw composition",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        selected = session.act(
+            "pilot:A",
+            {"action_id": "choose", "targets": [target.ref]},
+        )
+        self.assertTrue(selected.ok, selected.summary)
+        self.resolve_top(engine)
+        self.assertEqual(target.object_id, source.attached_to)
+        self.assertIn("Trample", engine._effective_card_data(target)["keywords"])
+
+        engine.state.phase_index = 7
+        engine.state.phase = "combat"
+        engine.state.step = "combat_damage"
+        target.attacking = "B"
+        engine.state.combat = CombatState(
+            attackers_declared=True,
+            blockers_declared=True,
+            had_attacking_creature=True,
+            attackers={target.object_id: "B"},
+            defending_players=["B"],
+        )
+        hand_before = len(engine.state.players["A"].zones["hand"])
+        life_before = engine.state.players["B"].life
+
+        engine._begin_combat_damage()
+        self.assertLess(engine.state.players["B"].life, life_before)
+        self.assertTrue(
+            engine.state.stack,
+            {
+                "pending_trigger_batches": [
+                    batch.to_dict()
+                    for batch in engine.state.pending_trigger_batches
+                ],
+                "recent_events": [
+                    event.to_dict() for event in engine.state.events[-8:]
+                ],
+                "target_keywords": engine._effective_card_data(target)[
+                    "keywords"
+                ],
+            },
+        )
+        self.resolve_top(engine)
+
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+        self.assertEqual(target.object_id, source.attached_to)
 
     def test_legacy_equipment_attach_event_shape_is_preserved(self):
         session = self.session(7013017)
@@ -627,7 +758,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             "A",
             name="Human witness",
             characteristics={
-                "type_line": "Token Creature — Human",
+                "type_line": "Token Creature \N{EM DASH} Human",
                 "power": "2",
                 "toughness": "2",
             },
@@ -636,7 +767,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             "A",
             name="Insect witness",
             characteristics={
-                "type_line": "Token Creature — Insect",
+                "type_line": "Token Creature \N{EM DASH} Insect",
                 "power": "2",
                 "toughness": "2",
             },
@@ -667,10 +798,10 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             },
         )
         human.annotations["token_characteristics"]["type_line"] = (
-            "Token Creature — Insect"
+            "Token Creature \N{EM DASH} Insect"
         )
         human.annotations["copy_overrides"]["type_line"] = (
-            "Token Creature — Insect"
+            "Token Creature \N{EM DASH} Insect"
         )
         self.resolve_top(engine)
         self.assertIsNone(source.attached_to)
@@ -730,7 +861,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             "A",
             name="First creature",
             characteristics={
-                "type_line": "Token Creature — Human",
+                "type_line": "Token Creature \N{EM DASH} Human",
                 "power": "2",
                 "toughness": "2",
             },
@@ -739,7 +870,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             "B",
             name="Second creature",
             characteristics={
-                "type_line": "Token Creature — Insect",
+                "type_line": "Token Creature \N{EM DASH} Insect",
                 "power": "2",
                 "toughness": "2",
             },
@@ -801,7 +932,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
                 "A",
                 name="Second controlled creature",
                 characteristics={
-                    "type_line": "Token Creature — Human",
+                    "type_line": "Token Creature \N{EM DASH} Human",
                     "power": "2",
                     "toughness": "2",
                 },
@@ -813,7 +944,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
                 "B",
                 name="Opposing creature",
                 characteristics={
-                    "type_line": "Token Creature — Insect",
+                    "type_line": "Token Creature \N{EM DASH} Insect",
                     "power": "2",
                     "toughness": "2",
                 },
@@ -1002,7 +1133,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
                     "name": "Phyrexian Germ",
                     "quantity": 1,
                     "characteristics": {
-                        "type_line": "Token Creature — Phyrexian Germ",
+                        "type_line": "Token Creature \N{EM DASH} Phyrexian Germ",
                         "power": "0",
                         "toughness": "0",
                     },
@@ -1080,7 +1211,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             "C",
             name="Replay Human",
             characteristics={
-                "type_line": "Token Creature — Human",
+                "type_line": "Token Creature \N{EM DASH} Human",
                 "power": "2",
                 "toughness": "2",
             },

@@ -2809,8 +2809,8 @@
       "approved_prerequisite_exceptions": []
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v179-fixed-attachment-actions",
-      "compiler_version": "oracle-ir-v179",
+      "transition_id": "oracle-ir-v180-fixed-attachment-actions",
+      "compiler_version": "oracle-ir-v180",
       "bundle_id": "bundle:fixed-attachment-actions",
       "candidate_ids": ["compiler:fixed-attachment-actions"],
       "family_ids": [

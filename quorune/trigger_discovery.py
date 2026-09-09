@@ -804,7 +804,7 @@ def _event_programs_for_source(
             characteristics.get("ability_fragments", ())
         )
     ):
-        if granted.event != event:
+        if granted.event.removesuffix(".self") != event:
             continue
         program = host.semantics.get(granted.semantic_key)
         if program is None:

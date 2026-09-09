@@ -6414,6 +6414,123 @@
       "capability_ids": ["continuous.attached.fixed_characteristics"],
       "interaction_order": 2,
       "assertion": "A constructed Aura compiles its exact attached declaration fragment beside an unsupported damage-prevention activation, and the incomplete CardProgram remains unavailable at strict runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_equipment_entry_trigger_attaches_and_revalidates_target",
+      "piece_ids": ["capability.attachment.action.fixed_source", "capability.continuous.attached.fixed_characteristics"],
+      "capability_ids": ["attachment.action.fixed_source", "continuous.attached.fixed_characteristics"],
+      "interaction_order": 2,
+      "assertion": "The source Equipment entry trigger attaches through the canonical relation and its fixed attached power modifier immediately applies to the selected creature."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_entry_attachment_and_turn_gated_characteristics_compose",
+      "piece_ids": ["capability.attachment.action.fixed_source", "capability.continuous.characteristics.fixed_public_state"],
+      "capability_ids": ["attachment.action.fixed_source", "continuous.characteristics.fixed_public_state"],
+      "interaction_order": 2,
+      "assertion": "A source-entry attachment applies its turn-gated attached modifier during the controller's turn and removes only that modifier when the active player changes."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_entry_attachment_and_granted_draw_compose",
+      "piece_ids": ["capability.attachment.action.fixed_source", "capability.zone.draw.library_to_hand"],
+      "capability_ids": ["attachment.action.fixed_source", "zone.draw.library_to_hand"],
+      "interaction_order": 2,
+      "assertion": "A source-entry attachment grants a typed source-self combat-damage trigger to the recipient, and the normalized damage occurrence resolves one canonical private draw while the relation remains live."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_equipped_granted_discard_obeys_destination_replacement",
+      "piece_ids": ["capability.attachment.equip.fixed_restricted", "capability.continuous.attached.fixed_characteristics"],
+      "capability_ids": ["attachment.equip.fixed_restricted", "continuous.attached.fixed_characteristics"],
+      "interaction_order": 2,
+      "assertion": "Subtype-restricted Equip attaches to a legal Pirate and the attached continuous owner grants its attack trigger to that recipient."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_equipped_granted_discard_obeys_destination_replacement",
+      "piece_ids": ["capability.attachment.equip.fixed_restricted", "capability.zone.change.destination_replacement"],
+      "capability_ids": ["attachment.equip.fixed_restricted", "zone.change.destination_replacement"],
+      "interaction_order": 2,
+      "assertion": "A subtype-restricted Equip grant resolves its private discard through the canonical destination replacement, producing public exile without disturbing the attachment."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_equipped_granted_discard_obeys_destination_replacement",
+      "piece_ids": ["capability.attachment.equip.fixed_restricted", "capability.zone.draw.library_to_hand"],
+      "capability_ids": ["attachment.equip.fixed_restricted", "zone.draw.library_to_hand"],
+      "interaction_order": 2,
+      "assertion": "A subtype-restricted Equip grant triggers from the attached Pirate and completes the canonical private draw before its ordered discard."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.attachment.action.fixed_source", "residual.continuous_layer.affected-player-ordering"],
+      "capability_ids": ["attachment.action.fixed_source"],
+      "interaction_order": 2,
+      "assertion": "The constructed source-Aura movement witness compiles its typed attachment action beside unresolved affected-player continuous ordering, and strict runtime admission rejects the incomplete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.attachment.action.fixed_source", "residual.continuous_layer.continuous-effect-layers-and-dependencies"],
+      "capability_ids": ["attachment.action.fixed_source"],
+      "interaction_order": 2,
+      "assertion": "The constructed source-Aura movement witness compiles its typed attachment action beside unresolved continuous layers and dependencies, and strict runtime admission rejects the incomplete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.attachment.action.fixed_source", "residual.duration.until-end-of-turn"],
+      "capability_ids": ["attachment.action.fixed_source"],
+      "interaction_order": 2,
+      "assertion": "The constructed source-Aura movement witness compiles its typed attachment action beside an unresolved until-end-of-turn result, and strict runtime admission rejects the incomplete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.attachment.action.fixed_source", "residual.static_clause.broader-evasion-and-group-constraints"],
+      "capability_ids": ["attachment.action.fixed_source"],
+      "interaction_order": 2,
+      "assertion": "The constructed source-Aura movement witness compiles its typed attachment action beside an unsupported evasion declaration, and strict runtime admission rejects the incomplete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.attachment.action.fixed_source", "residual.static_clause.conditional-declaration-predicates"],
+      "capability_ids": ["attachment.action.fixed_source"],
+      "interaction_order": 2,
+      "assertion": "The constructed source-Aura movement witness compiles its typed attachment action beside an unsupported conditional declaration predicate, and strict runtime admission rejects the incomplete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.attachment.action.fixed_source", "residual.static_clause.temporary-declaration-restrictions"],
+      "capability_ids": ["attachment.action.fixed_source"],
+      "interaction_order": 2,
+      "assertion": "The constructed source-Aura movement witness compiles its typed attachment action beside an unsupported temporary declaration restriction, and strict runtime admission rejects the incomplete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_attachment_action_residual_pairs_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.attachment.equip.fixed_restricted", "residual.continuous_layer.continuous-effect-layers-and-dependencies"],
+      "capability_ids": ["attachment.equip.fixed_restricted"],
+      "interaction_order": 2,
+      "assertion": "The constructed restricted-Equip witness compiles its subtype activation beside unresolved continuous layers and dependencies, and strict runtime admission rejects the incomplete CardProgram."
     }
   ]
 }

@@ -597,6 +597,7 @@
         "quorune/compiler/continuous_templates.py",
         "quorune/rules/activation/query.py",
         "quorune/semantic_runtime/continuous_components.py",
+        "quorune/trigger_discovery.py",
         "tests/fixtures/attached-quoted-ability-grants.json",
         "tests/fixtures/fixed-query-quoted-ability-grants.json",
         "tests/test_attached_static_characteristics.py",
@@ -606,6 +607,7 @@
         "test_attached_static_characteristics",
         "test_casting_activation_proposal_equivalence",
         "test_continuous_effect_components",
+        "test_fixed_attachment_actions",
         "test_fixed_query_quoted_ability_grants",
         "test_typed_ability_fragments"
       ]

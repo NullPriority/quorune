@@ -2452,6 +2452,12 @@ class AttachedQuotedAbilityRuntimeTests(unittest.TestCase):
             ref="discard-equipment",
         )
         recipient = self.creature(engine, ref="discard-recipient")
+        recipient.annotations["token_characteristics"]["type_line"] = (
+            "Token Creature — Pirate"
+        )
+        recipient.annotations["copy_overrides"]["type_line"] = (
+            "Token Creature — Pirate"
+        )
         self.equip(engine, equipment, recipient)
         replacement = self.add_fixture(
             engine,

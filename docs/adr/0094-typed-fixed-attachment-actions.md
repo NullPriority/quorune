@@ -69,7 +69,10 @@ The selected compiler family shares existing activation, target, token,
 attachment, trigger, state-action, privacy, and replay owners. The new
 operation performs no direct GameState write, accepts no callback or arbitrary
 query, reads no runtime Oracle prose, and dispatches on no card name or Oracle
-ID. Malformed composite fields fail before token creation.
+ID. Malformed composite fields fail before token creation. The shared trigger
+discovery owner compares a granted source-self event with its normalized base
+occurrence before the existing source-identity predicate runs, so attached
+combat-damage triggers are not lost at the prefilter boundary.
 
 Variable or nonordinary Equip costs, broader target restrictions, instant-speed
 permissions, Reconfigure, Fortify, multiple targets, player or noncreature

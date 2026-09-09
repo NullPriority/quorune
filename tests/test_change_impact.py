@@ -103,6 +103,20 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_trigger_discovery_selects_attached_granted_trigger_consumers(self):
+        plan = classify_changes(["quorune/trigger_discovery.py"])
+
+        self.assertLessEqual(
+            {
+                "test_attached_static_characteristics",
+                "test_fixed_attachment_actions",
+                "test_fixed_query_quoted_ability_grants",
+                "test_typed_ability_fragments",
+            },
+            set(plan.test_modules),
+        )
+        self.assertIn("typed-quoted-ability-grant-contract", plan.matched_rule_ids)
+
     def test_fixed_target_set_sources_select_owner_and_interaction_evidence(self):
         for owner in (
             "quorune/compiler/fixed_homogeneous_target_sets.py",
