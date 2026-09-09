@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "cf835e0130b0616749e6735e69c5189e483ce64a8d6618dff3915744a38d9368",
-  "declaration_source_fingerprint": "f53d1e98489272acbcf2d9efccfbc86b07df8ab8adced721e8c95ed24ade922f",
+  "registry_fingerprint": "15ec1c00da373226379336801d822196e742a59dac102c7f3027fbf9c3db4111",
+  "declaration_source_fingerprint": "7167557211c45013e993de6576145a60b5559b8b045e7aefea2e3936b59c3123",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -3959,6 +3959,204 @@
       "applicability_note": "Replay the activation, mana payment, battlefield incarnation, Haste journal, unearthed designation, delayed trigger, projection state, and final authoritative hash."
     },
     {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_rechecks_live_enchant_legality",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Move a source Aura through the canonical reciprocal relation while rechecking its live Enchant restriction and current target legality."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_aura_reattachment_uses_current_source_controller",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer every creature permitted by the printed target restriction, then re-evaluate the separate controller-relative Enchant legality from the Aura's current controller when the attach action resolves."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_attachment_target_projection_and_replay",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Place and resolve a source-Equipment entry trigger in four-player APNAP order with its target choice owned by the correct seat."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_attachment_action_compiler_and_runtime_mutants_are_killed",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the typed attachment-effect compiler and prove the exact source-entry contract no longer survives."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_departed_or_reentered_source_does_not_attach",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject attachment when the source left or returned as a new logical object before its old trigger resolved."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_source_aura_attachment_separates_target_and_enchant_legality",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower both reviewed Aura movement forms while keeping printed target restrictions distinct from the compiled Enchant legality checked by the attachment owner."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_equipment_entry_trigger_attaches_and_revalidates_target",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Target one controlled creature, revalidate it on resolution, and attach the same Equipment incarnation through the canonical owner."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_attachment_target_projection_and_replay",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose the public attachment choices only to the acting seat without leaking authoritative object identifiers to any principal."
+    },
+    {
+      "capability_id": "attachment.action.fixed_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_attachment_target_projection_and_replay",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "701.3a",
+        "701.3b",
+        "701.3c",
+        "701.3d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay target selection, APNAP priority, attachment resolution, and the resulting reciprocal relation to the identical state hash."
+    },
+    {
       "capability_id": "attachment.aura.simple_object",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_aura_equipment_anthem_temporary_effect_and_draw_compose",
@@ -4892,6 +5090,153 @@
         "commander_review"
       ],
       "applicability_note": "Replay the attachment command and verify the exact relation result."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_restricted",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_restricted_equip_offer_commit_and_current_target_revalidation",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the same typed target predicate for rejection at activation and live revalidation after the chosen creature changes characteristics."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_restricted",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_restricted_equip_projection_and_replay",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Activate and resolve subtype-restricted Equip from the correct four-player seat while retaining public target and relation state."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_restricted",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_attachment_action_compiler_and_runtime_mutants_are_killed",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the shared fixed attachment lowering and reject the resulting nonexact program."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_restricted",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_adjacent_attachment_grammar_remains_fail_closed",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep hybrid, nonmana, cost-reduced, and otherwise unsupported Equip variants material."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_restricted",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_restricted_equip_variants_share_one_activation_contract",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed creature-token, commander, legendary-creature, subtype, and once-per-turn Equip variants into one activation contract."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_restricted",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_restricted_equip_projection_and_replay",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the public restricted-Equip relation without exposing authoritative object identifiers."
+    },
+    {
+      "capability_id": "attachment.equip.fixed_restricted",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_restricted_equip_projection_and_replay",
+      "official_rule_ids": [
+        "301.5",
+        "602.1",
+        "602.2",
+        "608.2b",
+        "608.2h",
+        "701.3",
+        "702.6a",
+        "702.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay restricted target selection, mana payment, priority, and attachment to the identical state hash."
     },
     {
       "capability_id": "attachment.reference.current_or_lki",
@@ -55126,6 +55471,318 @@
       "applicability_note": "Replay the seat-scoped refusal and typed sacrifice to the identical authoritative state hash."
     },
     {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose replacement-aware token creation with exactly one attachment while keeping independently created tokens unattached."
+    },
+    {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Place and resolve the For Mirrodin! entry trigger under four-player APNAP priority."
+    },
+    {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_attachment_action_compiler_and_runtime_mutants_are_killed",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove shared attachment lowering and prove the token-linked family cannot retain exact closure."
+    },
+    {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_adjacent_attachment_grammar_remains_fail_closed",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject altered For Mirrodin! prose and unsupported token definitions instead of approximating them."
+    },
+    {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_for_mirrodin_creates_rebel_and_attaches_source",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Create one fixed 2/2 red Rebel and attach the current Equipment incarnation to it."
+    },
+    {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public Rebel and attachment references without authoritative object identifiers."
+    },
+    {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay APNAP placement, Rebel creation, and the reciprocal attachment to the identical state hash."
+    },
+    {
+      "capability_id": "trigger.keyword.for_mirrodin",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_malformed_attached_token_effect_fails_before_mutation",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.163",
+        "702.163a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a malformed composite descriptor before creating a Rebel token or changing any attachment relation."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose replacement-aware token creation with exactly one Germ attachment while keeping an independently created token unattached."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Place and resolve the Living Weapon entry trigger under four-player APNAP priority."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_attachment_action_compiler_and_runtime_mutants_are_killed",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove shared attachment lowering and prove the token-linked family cannot retain exact closure."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionCompilerTests.test_adjacent_attachment_grammar_remains_fail_closed",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject altered Living Weapon prose and unsupported token definitions instead of approximating them."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_living_weapon_creates_germ_and_attaches_before_state_actions",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Create one fixed 0/0 black Phyrexian Germ, attach the current Equipment, and retain it through the next state check when the Equipment raises toughness."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public Germ and attachment references without authoritative object identifiers."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_four_player_token_attachment_triggers_replay",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay APNAP placement, Germ creation, and the reciprocal attachment to the identical state hash."
+    },
+    {
+      "capability_id": "trigger.keyword.living_weapon",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_malformed_attached_token_effect_fails_before_mutation",
+      "official_rule_ids": [
+        "111.2",
+        "603.3",
+        "603.3b",
+        "701.3",
+        "702.92",
+        "702.92a",
+        "704.5f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a malformed composite descriptor before creating a Phyrexian Germ token or changing any attachment relation."
+    },
+    {
       "capability_id": "trigger.keyword.prowess",
       "evidence_class": "interaction",
       "test_id": "tests.test_prowess_rules.ProwessRuntimeTests.test_prowess_and_opponent_cast_trigger_share_one_apnap_batch",
@@ -59447,5 +60104,5 @@
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
     }
   ],
-  "fingerprint": "36943de571a8b2424042f03bceaae38b30e7f7399fe98b224bc52ac211c77b1c"
+  "fingerprint": "bbab3966ebfe204eeabedf1750c6dcdab24c4f923e91380dc9a11a35b949b159"
 }
