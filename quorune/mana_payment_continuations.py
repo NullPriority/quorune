@@ -10,6 +10,7 @@ from .rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
 )
 from .rules.morph_actions import commit_turn_face_up
+from .suspend import commit_suspend
 from .replacement.ordering import (
     ReplacementChoiceRequired,
     replacement_choice_payload,
@@ -41,7 +42,7 @@ def issue_mana_payment_replacement_choice(
 ) -> None:
     """Suspend a rolled-back cast/activation cost at a CR 616 choice."""
 
-    if action not in {"cast", "activate", "turn_face_up"}:
+    if action not in {"cast", "activate", "turn_face_up", "suspend"}:
         raise ReplacementEffectError(
             "Only represented priority actions have resumable mana payments"
         )
@@ -57,9 +58,10 @@ def issue_mana_payment_replacement_choice(
         "cast",
         "activate",
         "turn_face_up",
+        "suspend",
     }:
         resume_kind = "priority_action_cost"
-    elif event_kinds == ("zone.change",) and action == "cast":
+    elif event_kinds == ("zone.change",) and action in {"cast", "suspend"}:
         resume_kind = "priority_action_cost"
     elif event_kinds == ("zone.change",) and action == "activate":
         event = required.batch.events[0]
@@ -120,7 +122,7 @@ def execute_mana_choice_capable_priority_action(
 ) -> bool:
     """Run one payment atomically or replace it with a strict continuation."""
 
-    if action not in {"cast", "activate", "turn_face_up"}:
+    if action not in {"cast", "activate", "turn_face_up", "suspend"}:
         raise ValueError(
             "Only represented priority actions may suspend mana payment"
         )
@@ -144,8 +146,14 @@ def execute_mana_choice_capable_priority_action(
                 host._cast(seat, payload)
             elif action == "activate":
                 host._activate(seat, payload)
-            else:
+            elif action == "turn_face_up":
                 commit_turn_face_up(
+                    host,
+                    seat=seat,
+                    response=payload,
+                )
+            else:
+                commit_suspend(
                     host,
                     seat=seat,
                     response=payload,

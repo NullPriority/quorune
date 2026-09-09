@@ -24,6 +24,7 @@ from quorune.rules_scheduler import (
     rules_dependency_queue_errors,
 )
 from quorune.work_selection import (
+    _frontier_decision,
     WorkSelectionError,
     build_work_selection,
     load_work_selection_inputs,
@@ -703,6 +704,10 @@ class RulesSchedulerTests(unittest.TestCase):
             "requires_broader_bundle",
             narrow["runtime_readiness"]["status"],
         )
+        self.assertEqual(
+            consecutive_subthreshold,
+            work["selection_policy"]["consecutive_subthreshold_harvests"],
+        )
         self.assertEqual(21, narrow["expected_complete_card_gain"])
         self.assertEqual(130, narrow["expected_exact_ability_gain"])
         self.assertEqual(
@@ -797,10 +802,68 @@ class RulesSchedulerTests(unittest.TestCase):
             "requires_broader_bundle",
             narrow["runtime_readiness"]["status"],
         )
-        self.assertEqual(
-            consecutive_subthreshold,
-            work["selection_policy"]["consecutive_subthreshold_harvests"],
+
+    def test_bundle_prerequisite_exception_uses_generated_fanout_measurement(self):
+        coverage = deepcopy(
+            self.catalog["work_selection"]["coverage_family"]
         )
+        coverage["excluded_efforts"] = set(coverage["excluded_efforts"])
+        coverage["consecutive_subthreshold_harvests"] = 0
+        coverage["approved_prerequisite_exceptions"] = [
+            {
+                "candidate_id": "bundle:measured-prerequisite-fixture",
+                "measurement_id": "measurement:measured-prerequisite-fixture",
+                "reason": "The generated fixture proves the downstream fanout.",
+            }
+        ]
+        readiness, eligible, _reason = _frontier_decision(
+            candidate_id="bundle:measured-prerequisite-fixture",
+            complete_gain=10,
+            ability_gain=73,
+            residual_gain=73,
+            lowerable_untrusted_abilities=73,
+            sole_blockers=10,
+            prerequisites=(),
+            effort="medium",
+            policy=coverage,
+            prerequisite_measurement_id=(
+                "measurement:measured-prerequisite-fixture"
+            ),
+            prerequisite_downstream_gain=100,
+        )
+        self.assertEqual("approved_prerequisite_exception", readiness)
+        self.assertTrue(eligible)
+        self.assertEqual(
+            ("bounded_prerequisite", None),
+            bundle_measurement_decision(
+                "generated_probe",
+                False,
+                {
+                    "decision": "retired_below_harvest_floor",
+                    "prerequisite_fanout": {
+                        "downstream_complete_card_gain": 100,
+                    },
+                },
+            ),
+        )
+
+        readiness, eligible, _reason = _frontier_decision(
+            candidate_id="bundle:measured-prerequisite-fixture",
+            complete_gain=10,
+            ability_gain=73,
+            residual_gain=73,
+            lowerable_untrusted_abilities=73,
+            sole_blockers=10,
+            prerequisites=(),
+            effort="medium",
+            policy=coverage,
+            prerequisite_measurement_id=(
+                "measurement:measured-prerequisite-fixture"
+            ),
+            prerequisite_downstream_gain=99,
+        )
+        self.assertEqual("requires_broader_bundle", readiness)
+        self.assertFalse(eligible)
 
     def test_harvest_history_exposes_repeated_subthreshold_results(self):
         inputs = _with_dependency_ready_compiler_harvest(self.work_inputs)

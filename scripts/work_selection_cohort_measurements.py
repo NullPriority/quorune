@@ -249,6 +249,33 @@ _PROBE_FIXED_MANA_MADNESS = "fixed-mana-madness-existing-owner-v1"
 _PROBE_FIXED_ATTACHMENT_ACTIONS = (
     "fixed-attachment-actions-existing-owner-v1"
 )
+_PROBE_FIXED_SUSPEND_LIFECYCLE = (
+    "fixed-suspend-lifecycle-existing-owner-v1"
+)
+_CAST_LIFECYCLE_FANOUT_TERMS = (
+    "aftermath",
+    "blitz",
+    "buyback",
+    "escape",
+    "flashback",
+    "foretell",
+    "jump-start",
+    "madness",
+    "mayhem",
+    "miracle",
+    "overload",
+    "plot",
+    "rebound",
+    "retrace",
+    "spectacle",
+    "suspend",
+)
+_CAST_LIFECYCLE_FANOUT = re.compile(
+    r"^(?:"
+    + "|".join(re.escape(value) for value in _CAST_LIFECYCLE_FANOUT_TERMS)
+    + r")(?:\b|[\-\u2013\u2014\ufffd])",
+    re.IGNORECASE,
+)
 _FIXED_TOKEN_PRODUCTION_FAMILIES = frozenset(
     {
         "activated_effect:create-token",
@@ -318,6 +345,7 @@ _PROBE_IDS = {
     _PROBE_PARTNER_WITH,
     _PROBE_FIXED_MANA_MADNESS,
     _PROBE_FIXED_ATTACHMENT_ACTIONS,
+    _PROBE_FIXED_SUSPEND_LIFECYCLE,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_CONDITION_QUERY,
@@ -2442,6 +2470,161 @@ def _ordinary_saga_chapter_program_measurement(
     }
 
 
+def _fixed_suspend_lifecycle_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure fixed Suspend plus its one-blocker cast-lifecycle fanout."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    exact_ability_gain = 0
+    complete_cards = 0
+    one_additional = 0
+    two_additional = 0
+    expected_residual_reduction = 0
+    existing_exact_sibling_nodes = 0
+    remaining_residual_sibling_nodes = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    fanout_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        nonexact_lines = [
+            _source_line(record, ability)
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        ]
+        if (
+            len(card.get("minimum_known_blocker_set", ())) == 1
+            and any(_CAST_LIFECYCLE_FANOUT.match(line) for line in nonexact_lines)
+        ):
+            fanout_cards.add(oracle_id)
+        suspend_abilities = [
+            ability
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+            and (
+                spec := fixed_cast_lifecycle_spec(
+                    _source_line(record, ability)
+                )
+            )
+            is not None
+            and spec.kind.value == "suspend"
+        ]
+        if not suspend_abilities:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented_lines = {
+            node.span.line
+            for face in compiled.faces
+            for node in face.nodes
+            if node.exact
+            and node.template_id == "fixed-public-cast-lifecycle-v1"
+            and any(
+                isinstance(handler.get("lifecycle"), Mapping)
+                and handler["lifecycle"].get("kind") == "suspend"
+                for handler in node.handlers
+            )
+        }
+        represented = [
+            ability
+            for ability in suspend_abilities
+            if int(ability.get("source_line") or 0) in represented_lines
+        ]
+        if not represented:
+            unsupported_grammar_cards.add(oracle_id)
+            continue
+        if len(represented) != len(suspend_abilities):
+            unsupported_grammar_cards.add(oracle_id)
+        exact_ability_gain += len(represented)
+        matched_cards[oracle_id] = len(represented)
+        remaining = [
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        ]
+        existing_exact_sibling_nodes += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        remaining_residual_sibling_nodes += len(remaining)
+        if compiled.status == "exact":
+            complete_cards += 1
+        else:
+            unsupported_sibling_cards += 1
+        one_additional += len(remaining) == 1
+        two_additional += len(remaining) == 2
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        expected_residual_reduction += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": expected_residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": exact_ability_gain,
+            "existing_exact_sibling_nodes": existing_exact_sibling_nodes,
+            "remaining_residual_sibling_nodes": remaining_residual_sibling_nodes,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": len(matched_cards) - complete_cards,
+            "expected_oracle_residual_reduction": expected_residual_reduction,
+            "expected_card_program_residual_reduction": expected_residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": unsupported_sibling_cards,
+            "cards_excluded_by_unsupported_grammar": len(unsupported_grammar_cards),
+        },
+        "prerequisite_fanout": {
+            "downstream_complete_card_gain": len(fanout_cards),
+            "family_ids": list(_CAST_LIFECYCLE_FANOUT_TERMS),
+            "basis": (
+                "Current Commander cards with exactly one minimum-known "
+                "blocker and a nonexact printed cast-lifecycle ability line"
+            ),
+        },
+    }
+
+
 def _measurement(
     *,
     frontier: Mapping[str, Any],
@@ -2455,6 +2638,15 @@ def _measurement(
     if probe_id not in _PROBE_IDS:
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
+        )
+    if probe_id == _PROBE_FIXED_SUSPEND_LIFECYCLE:
+        return _fixed_suspend_lifecycle_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
         )
     if probe_id == _PROBE_FIXED_ALL_DAMAGE_PREVENTION:
         return _fixed_all_damage_prevention_measurement(

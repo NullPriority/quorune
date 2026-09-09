@@ -555,11 +555,11 @@ def _validate_priority_response(
         raise ReplacementEffectError(
             "Mana-payment cast response is malformed"
         )
-    if action == "turn_face_up" and (
+    if action in {"turn_face_up", "suspend"} and (
         not isinstance(response.get("card"), str) or not response.get("card")
     ):
         raise ReplacementEffectError(
-            "Mana-payment turn-face-up response is malformed"
+            "Mana-payment special-action response is malformed"
         )
 
 
@@ -722,7 +722,7 @@ def _priority_action_cost_event_ids(
     response: Mapping[str, Any],
     seat: str,
 ) -> set[str]:
-    if action not in {"cast", "activate", "turn_face_up"} or len(
+    if action not in {"cast", "activate", "turn_face_up", "suspend"} or len(
         batch.events
     ) != 1:
         raise ReplacementEffectError(
@@ -757,6 +757,21 @@ def _priority_action_cost_event_ids(
                 == f"counter.place:{payment_id}:{card_ref}:megamorph"
                 and payload.get("source") == card_ref
             )
+        elif action == "suspend":
+            payment_id = response.get("_mana_payment_id")
+            card_ref = response.get("card")
+            action_valid = bool(
+                payload.get("effect_generated") is True
+                and payload.get("counter_name") == "time"
+                and payload.get("target_zone") == "exile"
+                and type(payment_id) is str
+                and payment_id
+                and type(card_ref) is str
+                and card_ref
+                and event.event_id
+                == f"counter.place:{payment_id}:{card_ref}:suspend"
+                and payload.get("source") == card_ref
+            )
         elif action == "activate":
             common_valid = common_valid and (
                 payload.get("effect_generated") is False
@@ -781,11 +796,26 @@ def _priority_action_cost_event_ids(
                 and payload.get("source") == card_ref
             )
     elif event.kind == "zone.change":
-        common_valid = action_valid = (
-            _activation_zone_cost_event_is_valid(event, response, seat=seat)
-            if action == "activate"
-            else _casting_zone_cost_event_is_valid(event, response, seat=seat)
-        )
+        if action == "suspend":
+            affected = event.affected_object
+            card_ref = response.get("card")
+            common_valid = action_valid = bool(
+                affected is not None
+                and affected.owner == seat
+                and payload.get("origin") == "hand"
+                and payload.get("destination") == "exile"
+                and payload.get("object_ref") == card_ref
+                and type(card_ref) is str
+                and bool(card_ref)
+                and event.event_id.startswith("zone.change:")
+                and event.event_id.endswith(f":{card_ref}")
+            )
+        else:
+            common_valid = action_valid = (
+                _activation_zone_cost_event_is_valid(event, response, seat=seat)
+                if action == "activate"
+                else _casting_zone_cost_event_is_valid(event, response, seat=seat)
+            )
     if not common_valid or not action_valid:
         raise ReplacementEffectError(
             "Priority-action cost continuation event is malformed"
@@ -808,7 +838,7 @@ def _decode_mana_continuation(
     if (
         not isinstance(seat, str)
         or not seat
-        or action not in {"cast", "activate", "turn_face_up"}
+        or action not in {"cast", "activate", "turn_face_up", "suspend"}
         or not isinstance(response, Mapping)
         or not isinstance(frame, Mapping)
     ):
@@ -828,6 +858,26 @@ def _decode_mana_continuation(
             response=response,
             seat=seat,
         )
+        if action == "suspend":
+            raw_journal = response.get("_mana_replacement_selections")
+            if isinstance(raw_journal, Mapping):
+                payment_id = str(response.get("_mana_payment_id") or "")
+                card_ref = str(response.get("card") or "")
+                counter_id = (
+                    f"counter.place:{payment_id}:{card_ref}:suspend"
+                )
+                event_ids.update(
+                    event_id
+                    for event_id in raw_journal
+                    if type(event_id) is str
+                    and (
+                        event_id == counter_id
+                        or (
+                            event_id.startswith("zone.change:")
+                            and event_id.endswith(f":{card_ref}")
+                        )
+                    )
+                )
     else:
         event_ids = {
             event.event_id for event in batch.events if event.kind == "damage"

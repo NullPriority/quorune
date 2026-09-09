@@ -125,6 +125,7 @@
     "quorune/attack_counter_triggers.py",
     "quorune/cascade.py",
     "quorune/storm.py",
+    "quorune/suspend.py",
     "quorune/spell_copy_engine_adapter.py",
     "quorune/choice_forms.py",
     "quorune/combat.py",

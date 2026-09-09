@@ -2804,36 +2804,86 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-attachment-actions-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-mana-suspend-lifecycle",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.lifecycle.fixed_public",
+            "capability:casting.permission.one_shot_exile_without_mana",
+            "capability:continuous.resolution.fixed_keyword_until_control_change",
+            "capability:counter.placement.quantity_replacement",
+            "capability:counter.removal.rule_generated",
+            "component:quorune.cast_lifecycles.FixedCastLifecycleSpec",
+            "component:quorune.rules.action_catalog.build_priority_action_catalog",
+            "component:quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin",
+            "component:quorune.suspend.commit_suspend",
+            "component:quorune.trigger_processing.enqueue_trigger_batch",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-positive-time-count",
+            "ordinary-fixed-mana-suspend",
+            "owner-upkeep-and-last-counter-triggers",
+            "timing-gated-hand-special-action"
+          ],
+          "shared_dependencies": [
+            "casting.lifecycle.fixed_public",
+            "casting.permission.one_shot_exile_without_mana",
+            "continuous.resolution.fixed_keyword_until_control_change",
+            "counter.placement.quantity_replacement",
+            "counter.removal.rule_generated",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one positive-count ordinary fixed-mana Suspend declaration whose no-stack hand action, public exile counters, owner-upkeep removal, last-counter optional free cast, and creature Haste all reuse the existing typed casting, counter, trigger, continuous-effect, and zone owners",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Establishes the staged-zone cast-lifecycle boundary shared by current one-blocker Suspend, Foretell, Plot, Escape, Rebound, Jump-start, Mayhem, Miracle, Overload, Spectacle, Blitz, Buyback, and related printed lifecycle families; the generated cohort artifact, not this policy source, owns the current fanout measurement.",
+          "explicit_exclusions": [
+            "Foretell, Plot, Escape, Rebound, Jump-start, and every other distinct lifecycle grammar",
+            "alternative-cost combinations, mandatory additional costs that are not currently payable, and independently unsupported spell bodies",
+            "copied, granted, text-changed, duplicated, incomplete-card, token, spell-copy, inactive-face, and land declarations",
+            "external exile-card counter removal outside represented typed producers and cast prohibitions outside current canonical timing authority",
+            "variable counts or costs, hybrid, Phyrexian, snow, nonmana, conditional, qualified, and modified Suspend"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-suspend-lifecycle-existing-owner-v1"
         }
       ],
-      "approved_prerequisite_exceptions": []
+      "approved_prerequisite_exceptions": [
+        {
+          "candidate_id": "bundle:fixed-mana-suspend-lifecycle",
+          "measurement_id": "measurement:fixed-mana-suspend-lifecycle",
+          "reason": "The generated source-controlled probe must show at least the policy minimum of current one-blocker Commander cards on the shared staged-zone casting lifecycle before this subthreshold direct Suspend harvest is eligible."
+        }
+      ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v180-fixed-attachment-actions",
-      "compiler_version": "oracle-ir-v180",
-      "bundle_id": "bundle:fixed-attachment-actions",
-      "candidate_ids": ["compiler:fixed-attachment-actions"],
+      "transition_id": "oracle-ir-v181-fixed-mana-suspend-lifecycle",
+      "compiler_version": "oracle-ir-v181",
+      "bundle_id": "bundle:fixed-mana-suspend-lifecycle",
+      "candidate_ids": ["compiler:fixed-mana-suspend-lifecycle"],
       "family_ids": [
-        "activated_effect:unparsed-attach-this-aura",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "keyword_dependency:equip",
-        "keyword_dependency:for-mirrodin",
-        "keyword_dependency:living-weapon"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "attachment.action.fixed_source",
-        "attachment.aura.simple_object",
-        "attachment.equip.fixed_mana",
-        "attachment.equip.fixed_restricted",
-        "target.revalidate_resolution",
-        "token.creation.fixed_definition",
-        "trigger.event.normalized_zone_change",
-        "trigger.keyword.for_mirrodin",
-        "trigger.keyword.living_weapon",
-        "trigger.placement.apnap"
+        "casting.lifecycle.fixed_public",
+        "casting.permission.one_shot_exile_without_mana",
+        "continuous.resolution.fixed_keyword_until_control_change",
+        "counter.placement.quantity_replacement",
+        "counter.removal.rule_generated",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
       ],
-      "measurement_id": "measurement:fixed-attachment-actions",
+      "measurement_id": "measurement:fixed-mana-suspend-lifecycle",
       "non_harvest_reason": null
     },
     "forecast_corrections": [
@@ -3420,6 +3470,11 @@
         "candidate_id": "compiler:public-activation-conditions",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The v172 selector has no eligible carried candidate while the raw continuous-layer aggregate remains heterogeneous and every retained measured bundle is complete or below the normal floor. Bounded comparisons retire new public step-trigger schedules at 8 complete cards, activation timing windows alone at 29, and public activation queries alone at 25. Their shared typed ActivationCondition owner forms one coherent activation-legality family across otherwise exact effect bodies, with a conservative 54-card and 63-ability lower bound. Controller upkeep, pre-attack turn windows, current controller battlefield/graveyard queries, and identity-free hand counts reuse the existing offer, commit, characteristic, projection, and replay owners; opponent, source-relative, stateful, historical, compound, and independently unsupported effect forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-mana-suspend-lifecycle",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current selector has no eligible carried candidate and the raw continuous-layer leader remains a heterogeneous aggregate. Two bounded investigations retire fixed hand-to-battlefield actions and unmodified copy-as-entry below their required direct or prerequisite-fanout floors. The source-controlled Suspend probe instead measures a positive complete-card lower bound while establishing the staged-zone cast-lifecycle foundation shared by more than the required current one-blocker Commander cards. Positive-count ordinary fixed mana reuses current timing, special-action payment, public exile, counter placement and removal, APNAP trigger placement, optional one-shot free casting, current ability applicability, Haste, control change, projection, and replay owners; variable, modified, duplicate, copied, granted, incomplete, land, and distinct lifecycle forms remain fail-closed."
       }
     ]
   },

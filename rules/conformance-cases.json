@@ -68556,23 +68556,27 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-702.62",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "702"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_suspend_rules.SuspendCompilerTests.test_fixed_suspend_compiles_to_the_shared_cast_lifecycle"
+      ],
+      "implementation_components": [
+        "quorune.rules.capabilities.CapabilityRegistry"
+      ],
+      "notes": [
+        "Keyword heading; the bounded positive-count ordinary fixed-mana family is owned by casting.lifecycle.fixed_public."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "702.62",
       "rule_text_sha256": "4948e134182f84200d4e8197f88fd1d8510a7004f281222325311858b969380a",
       "schema_version": 1,
@@ -68581,26 +68585,62 @@
         "end_line": 4479,
         "start_line": 4478
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "variable counts or costs, hybrid, Phyrexian, snow, nonmana, conditional, qualified, copied, granted, text-changed, duplicate, incomplete-card, inactive-face, and land forms remain unsupported",
+        "external exile-card time-counter removal outside represented typed producers remains unmodeled",
+        "other staged-zone casting lifecycles remain independently unsupported"
       ],
       "case_id": "cr-702.62a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "702.62"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_suspend_rules.SuspendCompilerTests.test_fixed_suspend_compiles_to_the_shared_cast_lifecycle",
+        "tests.test_suspend_rules.SuspendCompilerTests.test_dynamic_modified_and_land_suspend_remain_residual",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_upkeep_counter_trigger_countering_and_stale_incarnation",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_cast_decline_success_haste_and_control_change",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_targetless_final_cast_and_countered_cast_trigger_remain_exiled",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_multiple_upkeep_triggers_use_controller_order_and_private_projection",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_four_player_projection_save_load_and_exact_replay"
+      ],
+      "implementation_components": [
+        "quorune.suspend.build_suspend_offer",
+        "quorune.suspend.commit_suspend",
+        "quorune.suspend.suspend_upkeep_trigger_items",
+        "quorune.suspend.resolve_suspend_upkeep_trigger",
+        "quorune.suspend.resolve_suspend_cast_trigger",
+        "quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin",
+        "quorune.cast_lifecycles.complete_fixed_cast_lifecycle_resolution"
+      ],
+      "notes": [
+        "The hand action uses current timing but not target availability or printed spell payment, public exile and counter owners commit atomically, both triggers are counterable and incarnation-pinned, and the optional free cast reuses ordinary targets, additional costs, stack construction, and control-duration Haste.",
+        "The fine-grained lifecycle capability is trusted while the aggregate rule remains blocked at the stated exclusions."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "702.62a",
       "rule_text_sha256": "3f4eeca464dcae5592d508d68a1c0037306fff9288e2cddf881033f00a8c5ff9",
       "schema_version": 1,
@@ -68609,26 +68649,40 @@
         "end_line": 4481,
         "start_line": 4480
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "unsupported Suspend declarations and off-boundary exile counter interactions do not receive broader suspended-state trust"
       ],
       "case_id": "cr-702.62b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
       "dependency_rule_ids": [
         "702.62"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_current_ability_removal_and_restoration_gate_suspend_lifecycle",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_upkeep_counter_trigger_countering_and_stale_incarnation"
+      ],
+      "implementation_components": [
+        "quorune.compiled_cast_lifecycles.compiled_fixed_cast_lifecycle_specs",
+        "quorune.suspend.suspend_upkeep_trigger_items"
+      ],
+      "notes": [
+        "A current capability-closed Suspend component, public exile zone, and positive time-counter count jointly determine the represented suspended state."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "702.62b",
       "rule_text_sha256": "cf56ff22c1e29d7f95ca9b7223be26374dcd73341fb44391284b6305295681b1",
       "schema_version": 1,
@@ -68637,26 +68691,40 @@
         "end_line": 4483,
         "start_line": 4482
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "represented casting prohibitions beyond the current typed timing owner remain unimplemented"
       ],
       "case_id": "cr-702.62c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
       "dependency_rule_ids": [
         "702.62"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_sorcery_timing_flash_partial_stale_and_unpayable_fail_closed",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost"
+      ],
+      "implementation_components": [
+        "quorune.cast_timing.cast_timing_is_legal",
+        "quorune.suspend.build_suspend_offer"
+      ],
+      "notes": [
+        "The special action shares ordinary type and compiled Flash timing while deliberately ignoring targets, printed mana payment, and other later casting steps."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "702.62c",
       "rule_text_sha256": "c7437d35515a4d1974ec39ce72a74bbd64ad525815b0c225ab13fc04861fe1aa",
       "schema_version": 1,
@@ -68665,26 +68733,44 @@
         "end_line": 4485,
         "start_line": 4484
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "independently unsupported spell bodies and mandatory additional-cost combinations remain fail-closed"
       ],
       "case_id": "cr-702.62d",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "702.62"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_cast_decline_success_haste_and_control_change",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_noncreature_suspend_spell_does_not_gain_latent_haste",
+        "tests.test_suspend_rules.SuspendRuntimeTests.test_targetless_final_cast_and_countered_cast_trigger_remain_exiled"
+      ],
+      "implementation_components": [
+        "quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin",
+        "quorune.rules.casting.proposal.build_cast_proposal",
+        "quorune.rules.casting.commit.commit_cast"
+      ],
+      "notes": [
+        "The optional cast ignores normal timing and mana cost, disallows unrelated alternative costs, and otherwise delegates current targets, mandatory additional costs, and stack construction to the canonical casting owner."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "702.62d",
       "rule_text_sha256": "bf887c8cc6816b3d5f88195a7703fb40b27c4425476a4726cd5bf43e38ea9223",
       "schema_version": 1,
@@ -68693,7 +68779,7 @@
         "end_line": 4487,
         "start_line": 4486
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",

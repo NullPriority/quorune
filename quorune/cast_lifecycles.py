@@ -12,6 +12,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .additional_cost_vocabulary import DISCARD_ONE_COST
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .continuous_effect_state import ResolutionEffectSource
+from .continuous_effect_model import ContinuousEffectDuration
 from .impulse_access_model import (
     ImpulseAccessDuration,
     TemporaryCastPermissionGrant,
@@ -30,6 +31,7 @@ FIXED_CAST_LIFECYCLE_CAPABILITY_ID = "casting.lifecycle.fixed_public"
 FIXED_CAST_LIFECYCLE_HANDLER_ID = "casting.lifecycle.fixed-public.v1"
 FIXED_CAST_LIFECYCLE_RUNTIME_EVENT = "cast.cost"
 FIXED_CAST_LIFECYCLE_CONTEXT_FIELD = "fixed_cast_lifecycle"
+SUSPEND_HASTE_CONTEXT_FIELD = "suspend_haste"
 
 
 class FixedCastLifecycleKind(str, Enum):
@@ -38,6 +40,7 @@ class FixedCastLifecycleKind(str, Enum):
     MADNESS = "madness"
     WARP = "warp"
     RETRACE = "retrace"
+    SUSPEND = "suspend"
 
 
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
@@ -50,6 +53,11 @@ _FIXED_LIFECYCLE = re.compile(
 )
 _RETRACE = re.compile(
     r"^Retrace(?:\s+\(.*\))?\.?$",
+    re.IGNORECASE,
+)
+_SUSPEND = re.compile(
+    rf"^Suspend (?P<count>[1-9][0-9]*)[\-\u2013\u2014\ufffd]"
+    rf"(?P<cost>{_ORDINARY_COST})(?:\s+\(.*\))?\.?$",
     re.IGNORECASE,
 )
 
@@ -66,10 +74,14 @@ class FixedCastLifecycleSpec:
     kind: FixedCastLifecycleKind
     cost_text: str | None
     mana_cost: FrozenMap | None
+    counter_count: int | None = None
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {
+            1,
+            2,
+        }:
             raise FixedCastLifecycleError(
                 "Unsupported fixed cast-lifecycle schema version"
             )
@@ -98,18 +110,46 @@ class FixedCastLifecycleSpec:
                 raise FixedCastLifecycleError(
                     "Retrace Oracle line is outside the closed grammar"
                 )
-            if self.cost_text is not None or self.mana_cost is not None:
+            if (
+                self.cost_text is not None
+                or self.mana_cost is not None
+                or self.counter_count is not None
+                or self.schema_version != 1
+            ):
                 raise FixedCastLifecycleError(
                     "Retrace uses the printed cost and has no fixed mana field"
                 )
             return
-        match = _FIXED_LIFECYCLE.fullmatch(self.oracle_line.strip())
+        if self.kind is FixedCastLifecycleKind.SUSPEND:
+            match = _SUSPEND.fullmatch(self.oracle_line.strip())
+            if (
+                match is None
+                or self.schema_version != 2
+                or type(self.counter_count) is not int
+                or self.counter_count <= 0
+                or int(match.group("count")) != self.counter_count
+            ):
+                raise FixedCastLifecycleError(
+                    "Suspend requires a positive fixed counter count"
+                )
+        else:
+            match = _FIXED_LIFECYCLE.fullmatch(self.oracle_line.strip())
         if (
             match is None
-            or match.group("mechanic").casefold() != self.kind.value
+            or (
+                self.kind is not FixedCastLifecycleKind.SUSPEND
+                and match.group("mechanic").casefold() != self.kind.value
+            )
         ):
             raise FixedCastLifecycleError(
                 "Fixed cast-lifecycle Oracle line does not match its kind"
+            )
+        if (
+            self.kind is not FixedCastLifecycleKind.SUSPEND
+            and (self.counter_count is not None or self.schema_version != 1)
+        ):
+            raise FixedCastLifecycleError(
+                "Only Suspend carries a counter count"
             )
         if (
             type(self.cost_text) is not str
@@ -146,7 +186,7 @@ class FixedCastLifecycleSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "FixedCastLifecycleSpec":
-        expected = {
+        legacy = {
             "schema_version",
             "ability_id",
             "line_index",
@@ -155,7 +195,11 @@ class FixedCastLifecycleSpec:
             "cost_text",
             "mana_cost",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        current = legacy | {"counter_count"}
+        if not isinstance(value, Mapping) or set(value) not in {
+            frozenset(legacy),
+            frozenset(current),
+        }:
             raise FixedCastLifecycleError(
                 "Fixed cast-lifecycle descriptors have a closed schema"
             )
@@ -177,11 +221,12 @@ class FixedCastLifecycleSpec:
             kind=kind,
             cost_text=value["cost_text"],
             mana_cost=(FrozenMap(raw_mana) if raw_mana is not None else None),
+            counter_count=value.get("counter_count"),
             schema_version=value["schema_version"],
         )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "ability_id": self.ability_id,
             "line_index": self.line_index,
@@ -194,11 +239,17 @@ class FixedCastLifecycleSpec:
                 else None
             ),
         }
+        if self.schema_version == 2:
+            value["counter_count"] = self.counter_count
+        return value
 
     def fixed_cost_option(self) -> dict[str, Any]:
-        if self.kind is FixedCastLifecycleKind.RETRACE or self.mana_cost is None:
+        if self.kind in {
+            FixedCastLifecycleKind.RETRACE,
+            FixedCastLifecycleKind.SUSPEND,
+        } or self.mana_cost is None:
             raise FixedCastLifecycleError(
-                "Retrace does not define a fixed-mana cost option"
+                "This lifecycle does not define a fixed-mana cast option"
             )
         option = {
             "id": self.kind.value,
@@ -264,6 +315,22 @@ def compile_fixed_cast_lifecycle(
     """Compile a fixed-mana public lifecycle or ordinary Retrace."""
 
     normalized = " ".join(material_line.strip().split())
+    suspended = _SUSPEND.fullmatch(normalized)
+    if suspended is not None:
+        cost_text = suspended.group("cost").upper()
+        mana_cost, complex_symbols = mana_cost_to_vector(cost_text)
+        if complex_symbols:
+            return None
+        return FixedCastLifecycleSpec(
+            ability_id=f"ab{line_index + 1}",
+            line_index=line_index,
+            oracle_line=oracle_line,
+            kind=FixedCastLifecycleKind.SUSPEND,
+            cost_text=cost_text,
+            mana_cost=FrozenMap(mana_cost),
+            counter_count=int(suspended.group("count")),
+            schema_version=2,
+        )
     fixed = _FIXED_LIFECYCLE.fullmatch(normalized)
     if fixed is not None:
         cost_text = fixed.group("cost").upper()
@@ -383,6 +450,30 @@ def complete_fixed_cast_lifecycle_resolution(
 ) -> None:
     """Apply the chosen lifecycle only after a permanent resolves."""
 
+    suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
+    if isinstance(suspended, Mapping):
+        spec = FixedCastLifecycleSpec.from_dict(suspended)
+        if spec.kind is not FixedCastLifecycleKind.SUSPEND:
+            raise FixedCastLifecycleError(
+                "Suspend Haste context has the wrong lifecycle"
+            )
+        if card.zone == "battlefield" and card.object_kind == "card":
+            normalized_zone_object_keyword("Haste")
+            commit_zone_object_keyword_grant(
+                host,
+                card=card,
+                source=ResolutionEffectSource(
+                    stack_ref=item.ref,
+                    object_id=card.object_id,
+                    logical_object_id=card.logical_object_id,
+                    card_ref=card.ref,
+                ),
+                keyword="Haste",
+                duration=(
+                    ContinuousEffectDuration.UNTIL_CONTROL_CHANGE
+                ),
+            )
+        return
     raw = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if not isinstance(raw, Mapping):
         return
@@ -462,5 +553,6 @@ __all__ = [
     "FIXED_CAST_LIFECYCLE_CONTEXT_FIELD",
     "FIXED_CAST_LIFECYCLE_HANDLER_ID",
     "FIXED_CAST_LIFECYCLE_RUNTIME_EVENT",
+    "SUSPEND_HASTE_CONTEXT_FIELD",
     "retrace_land_discard_cost_descriptor",
 ]

@@ -36,6 +36,7 @@ def commit_zone_object_keyword_grant(
     card: Any,
     source: ResolutionEffectSource,
     keyword: str,
+    duration: ContinuousEffectDuration = ContinuousEffectDuration.ZONE_OBJECT,
 ) -> ContinuousEffect:
     """Grant a typed layer-6 keyword for this battlefield logical object."""
 
@@ -61,6 +62,13 @@ def commit_zone_object_keyword_grant(
             "Zone-object keyword grants require typed resolution source identity"
         )
     normalized = normalized_zone_object_keyword(keyword)
+    if duration not in {
+        ContinuousEffectDuration.ZONE_OBJECT,
+        ContinuousEffectDuration.UNTIL_CONTROL_CHANGE,
+    }:
+        raise ZoneObjectKeywordGrantError(
+            "Zone-object keyword grant duration is unsupported"
+        )
     try:
         effect = create_resolution_continuous_effect(
             host,
@@ -69,7 +77,7 @@ def commit_zone_object_keyword_grant(
             layer=Layer.ABILITY,
             sublayer="6",
             operations=(ContinuousOperation("add_ability", normalized),),
-            duration=ContinuousEffectDuration.ZONE_OBJECT,
+            duration=duration,
         )
     except ContinuousEffectStateError as exc:
         raise ZoneObjectKeywordGrantError(str(exc)) from exc

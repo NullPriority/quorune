@@ -1,5 +1,5 @@
 {
-  "contract_count": 123,
+  "contract_count": 124,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -665,6 +665,12 @@
       "mechanic_id": "surveil",
       "path": "mechanics/contracts/surveil.json",
       "sha256": "3d065f1fa2a51995a1a0afa99657eb0153371e84addb14f15e0072b2117538ba",
+      "version": 1
+    },
+    {
+      "mechanic_id": "suspend",
+      "path": "mechanics/contracts/suspend.json",
+      "sha256": "72efff7d6d01cce8629d8bb7b3770f928f723ec451637456f726dd98cbfd44bd",
       "version": 1
     },
     {
@@ -4881,19 +4887,44 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/suspend.json",
+      "contract_sha256": "72efff7d6d01cce8629d8bb7b3770f928f723ec451637456f726dd98cbfd44bd",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.suspend, quorune.rules.action_catalog, quorune.counter_placement, quorune.counter_removal, quorune.trigger_processing, quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin, quorune.stack_resolution, and quorune.continuous_effect_state",
+      "implementation_version": "typed-fixed-mana-suspend-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "variable-count or variable-cost, hybrid, Phyrexian, snow, nonmana, modified, copied, granted, text-changed, duplicate, incomplete-card, inactive-face, and land forms remain unsupported",
+        "external exile-card counter removal outside current typed producers remains unmodeled",
+        "represented casting prohibitions beyond current typed timing authority remain blocked",
+        "Foretell, Plot, Escape, Rebound, Jump-start, and other staged-zone lifecycle families remain separate"
+      ],
       "mechanic_id": "suspend",
       "official_name": "Suspend",
       "rule_references": [
         "702.62"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_expected_suspend_contract_is_independent_of_implementation",
+        "test_fixed_suspend_compiles_to_the_shared_cast_lifecycle",
+        "test_dynamic_modified_and_land_suspend_remain_residual",
+        "test_suspend_prefixed_card_name_does_not_reclassify_spell_text",
+        "test_suspend_dependency_and_compiler_mutations_fail_closed",
+        "test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost",
+        "test_sorcery_timing_flash_partial_stale_and_unpayable_fail_closed",
+        "test_upkeep_counter_trigger_countering_and_stale_incarnation",
+        "test_suspend_cast_decline_success_haste_and_control_change",
+        "test_noncreature_suspend_spell_does_not_gain_latent_haste",
+        "test_targetless_final_cast_and_countered_cast_trigger_remain_exiled",
+        "test_current_ability_removal_and_restoration_gate_suspend_lifecycle",
+        "test_step_begin_collection_adds_suspend_upkeep_to_shared_batch",
+        "test_multiple_upkeep_triggers_use_controller_order_and_private_projection",
+        "test_four_player_projection_save_load_and_exact_replay"
+      ],
       "trust_level": "untrusted"
     },
     {

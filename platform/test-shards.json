@@ -115,7 +115,8 @@
       "test_semantic_choice_characterization",
       "test_state_based_actions",
       "test_static_action_permissions",
-      "test_sunburst_rules"
+      "test_sunburst_rules",
+      "test_suspend_rules"
     ],
     "functional-04": [
       "test_attached_counter_placement",
@@ -430,6 +431,7 @@
       "test_stack_rules",
       "test_static_abilities",
       "test_static_action_permissions",
+      "test_suspend_rules",
       "test_typecycling",
       "test_typed_activated_ability_catalog",
       "test_unearth_rules"
@@ -507,6 +509,7 @@
       "test_self_counter_keyword_actions",
       "test_source_references",
       "test_storm_rules",
+      "test_suspend_rules",
       "test_targeted_counter_effect_clauses",
       "test_targeted_destruction_effect_clauses",
       "test_targeted_exile_effect_clauses",

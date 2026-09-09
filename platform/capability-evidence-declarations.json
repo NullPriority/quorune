@@ -3645,7 +3645,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_and_warp_are_identity_pinned_through_delayed_resolution",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Grant Dash Haste and move only the resolved Dash or Warp battlefield incarnation at the delayed trigger."
     },
@@ -3653,7 +3653,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve the command-zone Dash cast, Haste grant, delayed logical identity, owner-selected commander replacement, save/load, and exact replay through existing owners."
     },
@@ -3661,7 +3661,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_offer_commit_tax_and_rollbacks",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use one advertised and committed Dash option from the command zone, add commander tax, and reject stale, unpayable, or no-longer-current choices without mutation."
     },
@@ -3669,7 +3669,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_delayed_return_uses_owner_and_incarnation_after_control_changes",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Return the resolved Dash incarnation to its physical owner's hand after control changes while ignoring absent or re-entered incarnations."
     },
@@ -3677,7 +3677,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_public_modifiers_apply_to_lifecycle_total_costs",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply the public fixed modifier after selecting a lifecycle total and before canonical payment."
     },
@@ -3685,15 +3685,47 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_retrace_uses_private_typed_land_discard_and_revalidates",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Offer Retrace only to the owner, select one land through the typed private cost, and reject a stale payment before mutation."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_current_ability_removal_and_restoration_gate_suspend_lifecycle",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use the shared current-component query for both the hand special action and owner-upkeep exile trigger."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_step_begin_collection_adds_suspend_upkeep_to_shared_batch",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Collect the intrinsic owner-upkeep trigger beside semantic and delayed occurrences before the shared APNAP batch begins."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_cast_decline_success_haste_and_control_change",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve the last-counter trigger into a current free-cast choice, ordinary spell resolution, and exact Haste control duration."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_upkeep_counter_trigger_countering_and_stale_incarnation",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep both Suspend triggers independent, counterable, and pinned to the current public exile incarnation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Execute command-zone Dash and its owner-selected delayed commander replacement in a four-player state."
     },
@@ -3701,23 +3733,47 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Execute the Warp lifecycle in four-player state through the ordinary trigger and permission owners."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Commit a Suspend special action in four-player state without granting another seat authority over the private hand action."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_multiple_upkeep_triggers_use_controller_order_and_private_projection",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Place simultaneous owner-upkeep Suspend triggers through ordinary APNAP and controller ordering."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_lifecycle_descriptors_are_closed_and_dependency_gated",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Mutate the closed cost descriptor and capability state so exact lifecycle admission is lost."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_suspend_rules.SuspendCompilerTests.test_suspend_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the Suspend compiler production and independently block each shared lifecycle dependency so exact admission disappears."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_cast_lifecycle_open_costs_and_other_families_remain_residual",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep variable, hybrid, nonmana, modified, and separate lifecycle families material."
     },
@@ -3725,7 +3781,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_lifecycle_descriptors_are_closed_and_dependency_gated",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject cost-text drift and remove exact admission when the lifecycle capability is not trusted."
     },
@@ -3733,7 +3789,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_partial_card_and_stale_lifecycle_contract_fail_closed",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Withhold a partial Retrace card and roll back a lifecycle whose current compiled identity changed before commit."
     },
@@ -3741,15 +3797,47 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_retrace_removed_graveyard_ability_fails_closed",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suppress Retrace when an off-battlefield ability-layer change makes current component applicability unavailable instead of assuming the printed graveyard ability remains."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_suspend_rules.SuspendCompilerTests.test_dynamic_modified_and_land_suspend_remain_residual",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep variable counts or costs, hybrid, Phyrexian, snow, nonmana, qualified, and land-face Suspend outside the closed grammar."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_noncreature_suspend_spell_does_not_gain_latent_haste",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Do not attach the control-duration Haste grant when the card cast through Suspend was not a creature spell."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_sorcery_timing_flash_partial_stale_and_unpayable_fail_closed",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Withhold illegal timing and incomplete-card actions and reject stale or unpayable submissions before mutation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_targetless_final_cast_and_countered_cast_trigger_remain_exiled",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Leave the no-counter exile incarnation in place when its cast trigger is countered or no legal target makes the cast unavailable."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_fixed_cast_lifecycles_compile_source_spanned_typed_programs",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed Buyback, Dash, Warp, and bare Retrace into one source-spanned typed lifecycle descriptor family."
     },
@@ -3757,7 +3845,7 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_buyback_resolves_to_hand_but_countered_spell_does_not",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Return a successfully resolved Buyback spell through replacement-aware resolution while a countered copy follows the ordinary graveyard path."
     },
@@ -3765,15 +3853,31 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_offer_commit_tax_and_rollbacks",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Offer and commit fixed Dash from the command zone through canonical cast authority and the ordinary commander-tax total."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_suspend_rules.SuspendCompilerTests.test_fixed_suspend_compiles_to_the_shared_cast_lifecycle",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower positive-count ordinary fixed-mana Suspend to the existing complete-card-bound lifecycle descriptor."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Offer and commit the no-stack hand action from timing authority alone, then exile face up with the fixed time-counter count."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project the command-zone Dash offer and delayed commander replacement only to the acting owner without exposing physical object identity."
     },
@@ -3781,15 +3885,23 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose public Warp zone state without leaking authoritative physical object identity."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reveal the card only after public exile while keeping its physical object identity out of every seat projection."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_dash_commander_delayed_return_replacement_persists_and_replays",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay both the command-zone Dash cast with its delayed trigger and the persisted owner-selected command-zone replacement exactly."
     },
@@ -3797,9 +3909,17 @@
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_lifecycle_replay_and_projection_are_deterministic",
-      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.81", "702.109", "702.185"],
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the fixed Warp cost, stack transition, battlefield incarnation, delayed exile, and later-turn permission exactly."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the exact special-action offer, mana payment, public exile move, time-counter placement, and final authoritative hash."
     },
     {
       "capability_id": "casting.madness.fixed_mana",
@@ -8999,6 +9119,70 @@
       "applicability_note": "Serialize and replay a source-bound resolution-created effect from exact commands."
     },
     {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_cast_decline_success_haste_and_control_change",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant Haste to the resolved Suspend creature and expire it permanently through the canonical first control-change boundary."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the identity-pinned lifecycle provenance in a four-player record without projecting internal object identity."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_cast_decline_success_haste_and_control_change",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Require both the initial Haste result and its irreversible expiration so a missing grant or surviving-duration mutation fails."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_noncreature_suspend_spell_does_not_gain_latent_haste",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Require the selected stack object to be a creature spell before attaching the identity-pinned Haste duration."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_upkeep_counter_trigger_countering_and_stale_incarnation",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Do not grant Haste when the cast trigger is countered or detached from its original exile incarnation."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_suspend_cast_decline_success_haste_and_control_change",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Apply the represented control-duration Haste grant to the creature permanent created by the Suspend cast."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep the effect's physical and logical identity internal while projecting only public card and keyword facts."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1f", "702.62a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Round-trip the versioned lifecycle and exact source identity through the current Game Record contract."
+    },
+    {
       "capability_id": "continuous.resolution.fixed_keyword_zone_object",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_zone_object_keyword_survives_cleanup_and_source_departure_but_not_target_reentry",
@@ -12890,15 +13074,23 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "interaction",
       "test_id": "tests.test_rule_generated_counter_removals.StateBasedCounterRemovalTests.test_overlapping_sba_removals_share_one_atomic_plan",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Coalesce overlapping same-snapshot opposing-pair and maximum requirements without double-removing indistinguishable counters."
     },
     {
       "capability_id": "counter.removal.rule_generated",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_upkeep_counter_trigger_countering_and_stale_incarnation",
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove one time counter from the current public exile incarnation only when its owner-upkeep trigger resolves."
+    },
+    {
+      "capability_id": "counter.removal.rule_generated",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_rule_generated_counter_removals.StateBasedCounterRemovalTests.test_opposing_counter_removal_replays_in_four_player_game",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Resolve an opposing-counter state action after a four-player priority round without seat-order-dependent state."
     },
@@ -12906,7 +13098,7 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "mutation",
       "test_id": "tests.test_damage_result_events.DamageResultEventTests.test_damage_counter_owner_mutants_are_killed",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replace the canonical damage-result removal commit with a no-op and prove loyalty and defense cannot change through a bypass."
     },
@@ -12914,7 +13106,7 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "mutation",
       "test_id": "tests.test_rule_generated_counter_removals.CounterRemovalTransactionTests.test_stun_replacement_uses_the_counter_removal_owner",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a mutation that bypasses the exact counter-state commit while attempting to report the stun replacement as completed."
     },
@@ -12922,7 +13114,7 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "negative",
       "test_id": "tests.test_rule_generated_counter_removals.CounterRemovalTransactionTests.test_malformed_or_unpayable_removal_fails_before_mutation",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject malformed, duplicate, boolean, nonintegral, and insufficient exact removals before any counter changes."
     },
@@ -12930,7 +13122,7 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "negative",
       "test_id": "tests.test_rule_generated_counter_removals.CounterRemovalTransactionTests.test_stale_identity_rolls_back_the_whole_removal_batch",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject a stale logical incarnation and preserve every counter in the prepared batch."
     },
@@ -12938,7 +13130,7 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "positive",
       "test_id": "tests.test_damage_result_events.DamageResultEventTests.test_damage_counter_results_use_canonical_typed_owners",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit simultaneous Planeswalker loyalty and Battle defense damage removals through the canonical exact-removal owner."
     },
@@ -12946,15 +13138,23 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "positive",
       "test_id": "tests.test_rule_generated_counter_removals.CounterRemovalTransactionTests.test_removals_are_canonical_and_commit_exactly",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Canonicalize exact permanent-counter removals and commit their typed transitions atomically."
     },
     {
       "capability_id": "counter.removal.rule_generated",
+      "evidence_class": "positive",
+      "test_id": "tests.test_suspend_rules.SuspendRuntimeTests.test_upkeep_counter_trigger_countering_and_stale_incarnation",
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Commit the mandatory Suspend upkeep removal through the same typed exact-removal transaction used by other rule-generated changes."
+    },
+    {
+      "capability_id": "counter.removal.rule_generated",
       "evidence_class": "replay",
       "test_id": "tests.test_rule_generated_counter_removals.StateBasedCounterRemovalTests.test_opposing_counter_removal_replays_in_four_player_game",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay a four-player opposing-counter state action to the same authoritative state hash."
     },
@@ -12962,7 +13162,7 @@
       "capability_id": "counter.removal.rule_generated",
       "evidence_class": "rollback",
       "test_id": "tests.test_damage_result_events.DamageResultEventTests.test_stale_damage_counter_subject_rolls_back_every_result",
-      "official_rule_ids": ["122.1d", "502.3", "701.26b", "704.3", "704.5q", "704.5r"],
+      "official_rule_ids": ["122.1d", "502.3", "701.26b", "702.62a", "702.62b", "704.3", "704.5q", "704.5r"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Validate all damage-result counter owners before applying any placement, removal, or life mutation."
     },

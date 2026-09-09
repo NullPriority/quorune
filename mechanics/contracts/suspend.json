@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "suspend",
+  "official_name": "Suspend",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["601.2b", "601.2f", "601.2h", "702.62", "702.62a", "702.62b", "702.62c", "702.62d"],
+  "glossary_references": ["suspend"],
+  "dependencies": ["casting-spells", "continuous-effects", "counters", "exile", "handling-triggered-abilities", "priority", "resolving-spells-and-abilities", "stack"],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["hand", "exile", "stack", "battlefield"],
+    "objects": ["one complete-card-admitted physical card with positive-count ordinary fixed-mana Suspend", "one public exile incarnation", "independent upkeep and last-counter triggers", "one ordinary spell object when cast"],
+    "events": ["timing-authorized no-stack special action", "replacement-aware hand-to-exile transition", "owner-upkeep trigger", "last-time-counter trigger", "optional completed spell cast"],
+    "state_reads": ["current source ability", "ordinary type and compiled Flash timing", "owner and logical incarnation", "current public time-counter count", "current legal cast targets and mandatory additional costs"],
+    "state_writes": ["canonical mana payment", "public exile move", "replacement-aware time-counter placement", "typed exact counter removal", "ordinary APNAP trigger batches", "ordinary stack construction", "identity-pinned layer-6 Haste effect"],
+    "costs": ["the hand special action pays only the fixed Suspend cost", "the last-counter cast does not pay the mana cost, cannot select another alternative cost, and retains represented mandatory additional costs"],
+    "timing": ["the hand action uses the timing at which the card could begin to be cast", "the last-counter cast ignores ordinary type timing during trigger resolution"],
+    "targets": ["targets are irrelevant to the hand action and chosen only for the later cast", "no legal later target leaves the card exiled"],
+    "choices": ["the hand action is optional", "the last-counter cast is optional", "multiple same-controller upkeep triggers use ordinary controller ordering"],
+    "hidden_information": ["the action is owner-private while the card is in hand", "the exiled card and counters are public", "physical and logical object IDs are never projected"],
+    "apnap": ["owner-upkeep and last-counter triggers use the ordinary trigger batch"],
+    "layers": ["the current-component owner gates the ability in hand and exile", "a creature cast this way gains Haste until the first control change"],
+    "replacement_effects": ["the initial exile move and time-counter placement use their canonical replacement-aware owners"],
+    "copy": ["copied, granted, text-changed, and duplicate Suspend abilities remain unsupported"],
+    "control_change": ["the Suspend Haste effect expires permanently at the first control change"],
+    "zone_change": ["both triggers are pinned to the current public exile incarnation", "a countered or declined last-counter trigger leaves the no-counter card in exile"],
+    "source_leaves": ["leaving and returning before either trigger resolves makes the old trigger stale"]
+  },
+  "variants": ["zero-cost and colored fixed Suspend costs", "creature and noncreature cards", "printed Flash timing", "unpayable printed mana cost", "unavailable later target", "countered upkeep or cast trigger", "decline", "source reentry", "ability removal and restoration", "control change", "four-player projection, save/load, and replay"],
+  "witness_cards": [
+    {"name": "Durkwood Baloth", "oracle_id": "1732cd31-1393-426f-a2fe-9b6b3f27136b"},
+    {"name": "Lotus Bloom", "oracle_id": "04cf02dc-f053-414e-87d8-1537f25bcbf4"},
+    {"name": "Riftwing Cloudskate", "oracle_id": "ae2e6ffd-fb93-4c47-88e7-e84460eefbe5"}
+  ],
+  "rulings": [],
+  "test_ids": ["test_expected_suspend_contract_is_independent_of_implementation", "test_fixed_suspend_compiles_to_the_shared_cast_lifecycle", "test_dynamic_modified_and_land_suspend_remain_residual", "test_suspend_prefixed_card_name_does_not_reclassify_spell_text", "test_suspend_dependency_and_compiler_mutations_fail_closed", "test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost", "test_sorcery_timing_flash_partial_stale_and_unpayable_fail_closed", "test_upkeep_counter_trigger_countering_and_stale_incarnation", "test_suspend_cast_decline_success_haste_and_control_change", "test_noncreature_suspend_spell_does_not_gain_latent_haste", "test_targetless_final_cast_and_countered_cast_trigger_remain_exiled", "test_current_ability_removal_and_restoration_gate_suspend_lifecycle", "test_step_begin_collection_adds_suspend_upkeep_to_shared_batch", "test_multiple_upkeep_triggers_use_controller_order_and_private_projection", "test_four_player_projection_save_load_and_exact_replay"],
+  "implementation": {
+    "component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.suspend, quorune.rules.action_catalog, quorune.counter_placement, quorune.counter_removal, quorune.trigger_processing, quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin, quorune.stack_resolution, and quorune.continuous_effect_state",
+    "version": "typed-fixed-mana-suspend-v1",
+    "capability_ids": ["casting.lifecycle.fixed_public", "continuous.resolution.fixed_keyword_until_control_change", "counter.placement.quantity_replacement", "counter.removal.rule_generated"],
+    "supported_slice": "One positive-count ordinary fixed-mana printed Suspend instance on a nonland complete card, using current timing, public exile counters, owner-upkeep removal, optional last-counter free casting, and creature Haste until control changes."
+  },
+  "known_blockers": ["variable-count or variable-cost, hybrid, Phyrexian, snow, nonmana, modified, copied, granted, text-changed, duplicate, incomplete-card, inactive-face, and land forms remain unsupported", "external exile-card counter removal outside current typed producers remains unmodeled", "represented casting prohibitions beyond current typed timing authority remain blocked", "Foretell, Plot, Escape, Rebound, Jump-start, and other staged-zone lifecycle families remain separate"],
+  "review_status": "reviewed"
+}

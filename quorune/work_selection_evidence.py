@@ -121,8 +121,8 @@ _NON_HARVEST_ENTRY_FIELDS = (
     "non_harvest_reason",
     "outcome_kind",
 }
-COHORT_MEASUREMENT_SCHEMA_VERSION = 4
-COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v4"
+COHORT_MEASUREMENT_SCHEMA_VERSION = 5
+COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v5"
 _COHORT_DECISIONS = {
     "bounded_executable",
     "retired_below_harvest_floor",
@@ -142,6 +142,7 @@ _COHORT_ROW_FIELDS = {
     "grants_gameplay_trust",
 }
 _COHORT_ACCOUNTING_FIELD = "candidate_accounting"
+_COHORT_PREREQUISITE_FANOUT_FIELD = "prerequisite_fanout"
 _COHORT_ACCOUNTING_FIELDS = {
     "affected_oracle_carriers",
     "existing_exact_sibling_nodes",
@@ -153,6 +154,11 @@ _COHORT_ACCOUNTING_FIELDS = {
     "newly_applicable_high_risk_pairs",
     "cards_excluded_by_unsupported_sibling",
     "cards_excluded_by_unsupported_grammar",
+}
+_COHORT_PREREQUISITE_FANOUT_FIELDS = {
+    "basis",
+    "downstream_complete_card_gain",
+    "family_ids",
 }
 _TRANSITION_MEASUREMENT_FIELDS = {
     "transition_id",
@@ -169,20 +175,39 @@ class WorkSelectionCohortMeasurementError(ValueError):
 
 def _validate_cohort_row_shape(value: Mapping[str, Any]) -> bool:
     fields = set(value)
-    if fields != _COHORT_ROW_FIELDS and fields != _COHORT_ROW_FIELDS | {
-        _COHORT_ACCOUNTING_FIELD
-    }:
+    optional = {
+        _COHORT_ACCOUNTING_FIELD,
+        _COHORT_PREREQUISITE_FANOUT_FIELD,
+    }
+    if not _COHORT_ROW_FIELDS <= fields or fields - _COHORT_ROW_FIELDS - optional:
         return False
     accounting = value.get(_COHORT_ACCOUNTING_FIELD)
-    if accounting is None:
-        return True
-    return bool(
+    if accounting is not None and not (
         isinstance(accounting, Mapping)
         and set(accounting) == _COHORT_ACCOUNTING_FIELDS
         and all(
             type(accounting.get(field)) is int and accounting[field] >= 0
             for field in _COHORT_ACCOUNTING_FIELDS
         )
+    ):
+        return False
+    fanout = value.get(_COHORT_PREREQUISITE_FANOUT_FIELD)
+    if fanout is None:
+        return True
+    return bool(
+        isinstance(fanout, Mapping)
+        and set(fanout) == _COHORT_PREREQUISITE_FANOUT_FIELDS
+        and type(fanout.get("downstream_complete_card_gain")) is int
+        and fanout["downstream_complete_card_gain"] >= 0
+        and isinstance(fanout.get("family_ids"), list)
+        and bool(fanout["family_ids"])
+        and all(
+            type(value) is str and bool(value)
+            for value in fanout["family_ids"]
+        )
+        and len(fanout["family_ids"]) == len(set(fanout["family_ids"]))
+        and type(fanout.get("basis")) is str
+        and bool(fanout["basis"].strip())
     )
 
 
