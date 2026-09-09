@@ -50,6 +50,7 @@ def with_fixed_cast_lifecycle_costs(
         if spec.kind in {
             FixedCastLifecycleKind.MADNESS,
             FixedCastLifecycleKind.RETRACE,
+            FixedCastLifecycleKind.SUSPEND,
         }:
             continue
         option = spec.fixed_cost_option()

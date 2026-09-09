@@ -14,9 +14,15 @@ if str(ROOT) not in sys.path:
 
 from quorune.carddb import CardDatabase
 from quorune.util import stable_json
-from quorune.work_selection_bundles import bundle_measurement_fingerprint
+from quorune.work_selection_bundles import (
+    bundle_measurement_fingerprint,
+    prerequisite_exception_is_eligible,
+    prerequisite_fanout_identity,
+)
+from quorune.work_selection_common import transition_measurement_matches_policy
 from quorune.work_selection_common import stable_hash
 from quorune.work_selection_evidence import (
+    validate_harvest_history,
     validate_work_selection_cohort_measurements,
 )
 from scripts.work_selection_cohort_measurements import (
@@ -160,6 +166,64 @@ def _completed_transition_measurement_receipts(
     )
 
 
+def _transition_measurement_is_eligible(
+    measured: dict,
+    *,
+    coverage: dict,
+    bundle: dict,
+) -> bool:
+    if not transition_measurement_matches_policy(
+        measured,
+        bundle=bundle,
+        coverage=coverage,
+    ):
+        return False
+    if measured.get("decision") == "bounded_executable":
+        return True
+    measurement_id, downstream_gain = prerequisite_fanout_identity(measured)
+    return bool(
+        prerequisite_exception_is_eligible(
+            coverage["approved_prerequisite_exceptions"],
+            candidate_id=str(bundle["bundle_id"]),
+            measurement_id=measurement_id,
+            downstream_gain=downstream_gain,
+            complete_gain=int(measured.get("complete_card_gain") or 0),
+            minimum_complete_gain=int(
+                coverage["minimum_prerequisite_complete_card_gain"]
+            ),
+            minimum_downstream_gain=int(
+                coverage["minimum_prerequisite_downstream_card_gain"]
+            ),
+            consecutive_exceptions=int(
+                coverage["consecutive_subthreshold_harvests"]
+            ),
+            maximum_consecutive_exceptions=int(
+                coverage["maximum_consecutive_prerequisite_exceptions"]
+            ),
+        )
+    )
+
+
+def _transition_coverage(coverage: dict, *, transition_id: str) -> dict:
+    history = validate_harvest_history(
+        json.loads(HARVEST_HISTORY.read_text(encoding="utf-8")),
+        minimum_gain=int(coverage["minimum_complete_card_gain"]),
+    )
+    consecutive = 0
+    for row in reversed(history["harvest_outcome_history"]):
+        if row.get("transition_id") == transition_id:
+            continue
+        if int(row["actual_complete_card_gain"]) >= int(
+            coverage["minimum_complete_card_gain"]
+        ):
+            break
+        consecutive += 1
+    return {
+        **coverage,
+        "consecutive_subthreshold_harvests": consecutive,
+    }
+
+
 def _transition_measurements(
     *, records: dict, coverage: dict, bundles: list[dict]
 ) -> list[dict]:
@@ -173,6 +237,10 @@ def _transition_measurements(
     measurement_id = declaration.get("measurement_id")
     if not transition_id or not isinstance(measurement_id, str):
         return []
+    coverage = _transition_coverage(
+        coverage,
+        transition_id=transition_id,
+    )
     bundle_id = str(declaration.get("bundle_id") or "")
     bundle = next(
         (row for row in bundles if row.get("bundle_id") == bundle_id), None
@@ -214,9 +282,10 @@ def _transition_measurements(
         coverage=coverage,
         cohort_fingerprints=fingerprints,
     )["measurements"][0]
-    if (
-        measured.get("decision") != "bounded_executable"
-        or int(measured.get("complete_card_gain") or 0) <= 0
+    if not _transition_measurement_is_eligible(
+        measured,
+        coverage=coverage,
+        bundle=bundle,
     ):
         raise ValueError(
             "Semantic transition requires a generated positive complete-card "

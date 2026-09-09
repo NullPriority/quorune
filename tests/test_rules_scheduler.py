@@ -24,6 +24,8 @@ from quorune.rules_scheduler import (
     rules_dependency_queue_errors,
 )
 from quorune.work_selection import (
+    _frontier_decision,
+    _validate_candidate_context,
     WorkSelectionError,
     build_work_selection,
     load_work_selection_inputs,
@@ -37,8 +39,10 @@ from quorune.work_selection_bundles import (
     WorkSelectionBundleError,
 )
 from quorune.work_selection_evidence import (
+    _validate_transition_measurements,
     validate_harvest_forecast_correction,
 )
+from quorune.work_selection_common import transition_measurement_matches_policy
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
@@ -51,6 +55,7 @@ from scripts.harvest_outcome_history import (
     _semantic_blob_sha256,
     _semantic_outcome_state,
     _semantic_report_sha256,
+    _transition_measurement_receipt,
     _validate_content_entry,
     _validate_non_harvest_content_entry,
     validated_semantic_transition_declaration,
@@ -60,6 +65,8 @@ from scripts.harvest_outcome_history import (
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.update_work_selection_cohort_measurements import (
     _preserved_transition_is_current,
+    _transition_coverage,
+    _transition_measurement_is_eligible,
 )
 from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
@@ -749,6 +756,7 @@ class RulesSchedulerTests(unittest.TestCase):
             "maximum_consecutive_prerequisite_exceptions"
         ] = open_budget
         policy["coverage_family"]["approved_prerequisite_exceptions"] = [
+            *policy["coverage_family"]["approved_prerequisite_exceptions"],
             {
                 "candidate_id": "frontier:effect_clause:large-ability-fixture",
                 "expected_downstream_complete_card_gain": 130,
@@ -797,10 +805,215 @@ class RulesSchedulerTests(unittest.TestCase):
             "requires_broader_bundle",
             narrow["runtime_readiness"]["status"],
         )
-        self.assertEqual(
-            consecutive_subthreshold,
-            work["selection_policy"]["consecutive_subthreshold_harvests"],
+
+    def test_bundle_prerequisite_exception_uses_generated_fanout_measurement(self):
+        coverage = deepcopy(
+            self.catalog["work_selection"]["coverage_family"]
         )
+        coverage["excluded_efforts"] = set(coverage["excluded_efforts"])
+        coverage["consecutive_subthreshold_harvests"] = 0
+        coverage["approved_prerequisite_exceptions"] = [
+            {
+                "candidate_id": "bundle:measured-prerequisite-fixture",
+                "measurement_id": "measurement:measured-prerequisite-fixture",
+                "reason": "The generated fixture proves the downstream fanout.",
+            }
+        ]
+        readiness, eligible, _reason = _frontier_decision(
+            candidate_id="bundle:measured-prerequisite-fixture",
+            complete_gain=10,
+            ability_gain=73,
+            residual_gain=73,
+            lowerable_untrusted_abilities=73,
+            sole_blockers=10,
+            prerequisites=(),
+            effort="medium",
+            policy=coverage,
+            prerequisite_measurement_id=(
+                "measurement:measured-prerequisite-fixture"
+            ),
+            prerequisite_downstream_gain=100,
+        )
+        self.assertEqual("approved_prerequisite_exception", readiness)
+        self.assertTrue(eligible)
+        self.assertEqual(
+            ("bounded_prerequisite", None),
+            bundle_measurement_decision(
+                "generated_probe",
+                False,
+                {
+                    "decision": "retired_below_harvest_floor",
+                    "prerequisite_fanout": {
+                        "downstream_complete_card_gain": 100,
+                    },
+                },
+            ),
+        )
+
+        readiness, eligible, _reason = _frontier_decision(
+            candidate_id="bundle:measured-prerequisite-fixture",
+            complete_gain=10,
+            ability_gain=73,
+            residual_gain=73,
+            lowerable_untrusted_abilities=73,
+            sole_blockers=10,
+            prerequisites=(),
+            effort="medium",
+            policy=coverage,
+            prerequisite_measurement_id=(
+                "measurement:measured-prerequisite-fixture"
+            ),
+            prerequisite_downstream_gain=99,
+        )
+        self.assertEqual("requires_broader_bundle", readiness)
+        self.assertFalse(eligible)
+
+    def test_transition_receipt_accepts_only_eligible_generated_prerequisite(self):
+        coverage = deepcopy(
+            self.catalog["work_selection"]["coverage_family"]
+        )
+        coverage = _transition_coverage(
+            coverage,
+            transition_id=self.catalog["work_selection"][
+                "semantic_transition_declaration"
+            ]["transition_id"],
+        )
+        coverage["approved_prerequisite_exceptions"] = [
+            {
+                "candidate_id": "bundle:measured-prerequisite-fixture",
+                "measurement_id": "measurement:measured-prerequisite-fixture",
+                "reason": "The generated fixture proves the downstream fanout.",
+            }
+        ]
+        bundle = {
+            "bundle_id": "bundle:measured-prerequisite-fixture",
+            "measurement_status": "generated_probe",
+        }
+        measured = {
+            "measurement_id": "measurement:measured-prerequisite-fixture",
+            "bundle_id": "bundle:measured-prerequisite-fixture",
+            "probe_id": "measured-prerequisite-fixture-v1",
+            "cohort_fingerprint": "0" * 64,
+            "affected_commander_cards": 10,
+            "complete_card_gain": 10,
+            "one_additional_blocker_cards": 0,
+            "two_additional_blocker_cards": 0,
+            "exact_ability_gain": 10,
+            "material_residual_reduction": 10,
+            "decision": "retired_below_harvest_floor",
+            "grants_gameplay_trust": False,
+            "prerequisite_fanout": {
+                "downstream_complete_card_gain": 100,
+                "family_ids": ["fixture"],
+                "basis": "A generated test fixture.",
+            },
+        }
+        bundle["measurement_probe_id"] = measured["probe_id"]
+        self.assertTrue(
+            _transition_measurement_is_eligible(
+                measured,
+                coverage=coverage,
+                bundle=bundle,
+            )
+        )
+        receipt = {
+            "transition_id": "fixture-transition",
+            "frontier_fingerprint": "1" * 64,
+            "oracle_source_sha256": "2" * 64,
+            "measurement": deepcopy(measured),
+        }
+        receipt["receipt_fingerprint"] = hashlib.sha256(
+            stable_json(receipt).encode("utf-8")
+        ).hexdigest()
+        _validate_transition_measurements(
+            [receipt],
+            expected_bundles={bundle["bundle_id"]: bundle},
+            coverage=coverage,
+            metric_fields=(
+                "affected_commander_cards",
+                "complete_card_gain",
+                "one_additional_blocker_cards",
+                "two_additional_blocker_cards",
+                "exact_ability_gain",
+                "material_residual_reduction",
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "coverage").mkdir()
+            (root / "platform").mkdir()
+            artifact = {"transition_measurements": [receipt]}
+            artifact["fingerprint"] = hashlib.sha256(
+                stable_json(artifact).encode("utf-8")
+            ).hexdigest()
+            (root / "coverage" / "work-selection-cohort-measurements.json").write_text(
+                stable_json(artifact),
+                encoding="utf-8",
+            )
+            (root / "platform" / "rules-subsystems.json").write_text(
+                stable_json(
+                    {
+                        "work_selection": {
+                            "coverage_family": {
+                                "minimum_prerequisite_complete_card_gain": coverage[
+                                    "minimum_prerequisite_complete_card_gain"
+                                ],
+                                "minimum_prerequisite_downstream_card_gain": coverage[
+                                    "minimum_prerequisite_downstream_card_gain"
+                                ],
+                                "approved_prerequisite_exceptions": coverage[
+                                    "approved_prerequisite_exceptions"
+                                ],
+                                "candidate_bundles": [bundle],
+                            }
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                receipt,
+                _transition_measurement_receipt(
+                    root,
+                    {
+                        "transition_id": receipt["transition_id"],
+                        "measurement_id": measured["measurement_id"],
+                        "bundle_id": measured["bundle_id"],
+                    },
+                ),
+            )
+        measured["prerequisite_fanout"][
+            "downstream_complete_card_gain"
+        ] = 99
+        self.assertFalse(
+            _transition_measurement_is_eligible(
+                measured,
+                coverage=coverage,
+                bundle=bundle,
+            )
+        )
+
+    def test_prerequisite_exception_can_retire_at_transition_fixed_point(self):
+        candidate_id = "bundle:retired-prerequisite-fixture"
+        validated = {
+            "approved_prerequisite_exceptions": [
+                {"candidate_id": candidate_id}
+            ],
+            "reviewed_rerank_history": [],
+            "harvest_outcome_history": [],
+            "pending_transition": {"bundle_id": candidate_id},
+        }
+        _validate_candidate_context([], validated)
+        validated["pending_transition"] = None
+        with self.assertRaisesRegex(
+            WorkSelectionError,
+            "current serious frontier candidate",
+        ):
+            _validate_candidate_context([], validated)
+        validated["harvest_outcome_history"] = [
+            {"bundle_id": candidate_id}
+        ]
+        _validate_candidate_context([], validated)
 
     def test_harvest_history_exposes_repeated_subthreshold_results(self):
         inputs = _with_dependency_ready_compiler_harvest(self.work_inputs)
@@ -3519,12 +3732,11 @@ class RulesSchedulerTests(unittest.TestCase):
         coverage = work_selection["coverage_family"]
         self.assertGreater(measurement["complete_card_gain"], 0)
         self.assertTrue(
-            measurement["complete_card_gain"]
-            >= coverage["minimum_complete_card_gain"]
-            or measurement["exact_ability_gain"]
-            >= coverage["minimum_exact_ability_gain"]
-            or measurement["material_residual_reduction"]
-            >= coverage["minimum_material_residual_reduction"]
+            transition_measurement_matches_policy(
+                measurement,
+                bundle=bundle,
+                coverage=coverage,
+            )
         )
         self.assertGreater(measurement["exact_ability_gain"], 0)
 
@@ -4140,6 +4352,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         policy = deepcopy(self.catalog["work_selection"])
         policy["coverage_family"]["approved_prerequisite_exceptions"] = [
+            *policy["coverage_family"]["approved_prerequisite_exceptions"],
             {
                 "candidate_id": "frontier:missing-prerequisite-fixture",
                 "expected_downstream_complete_card_gain": 100,

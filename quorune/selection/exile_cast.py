@@ -12,6 +12,7 @@ from ..cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
     FixedCastLifecycleSpec,
+    SUSPEND_HASTE_CONTEXT_FIELD,
 )
 from ..compiled_madness import compiled_fixed_madness_spec
 from ..errors import GameRuleError, StateInvariantError
@@ -21,6 +22,10 @@ from ..rules.casting.model import CastProposalError
 from ..rules.casting.proposal import _aura_spell_target_schema
 from ..semantic_runtime.intents import MadnessChoiceIntent
 from ..stack_resolution import complete_stack_resolution
+from ..suspend import (
+    SUSPEND_CAST_SEMANTIC_KEY,
+    SUSPEND_EXILE_CAST_PRODUCER,
+)
 from ..util import stable_json
 from ..zone_transitions import ZoneTransitionOwner
 from .model import (
@@ -272,6 +277,18 @@ class OneShotExileCastChoiceOwnerMixin:
         if item.semantic_key == CASCADE_SEMANTIC_KEY:
             begin_cascade_resolution(self, item)
             return True
+        from ..suspend import (
+            resolve_suspend_cast_trigger,
+            resolve_suspend_upkeep_trigger,
+            SUSPEND_UPKEEP_SEMANTIC_KEY,
+        )
+
+        if item.semantic_key == SUSPEND_UPKEEP_SEMANTIC_KEY:
+            resolve_suspend_upkeep_trigger(self, item)
+            return True
+        if item.semantic_key == SUSPEND_CAST_SEMANTIC_KEY:
+            resolve_suspend_cast_trigger(self, item)
+            return True
         return False
 
     @staticmethod
@@ -298,7 +315,7 @@ class OneShotExileCastChoiceOwnerMixin:
         *,
         actor: str,
         card: CardInstance,
-        maximum_mana_value: float,
+        maximum_mana_value: float | None,
         required_face: str | None = None,
     ) -> tuple[dict[str, Any], ...]:
         record = self.card_record(card)
@@ -319,7 +336,10 @@ class OneShotExileCastChoiceOwnerMixin:
                 resulting_mana_value = mana_value_of_cost(mana_cost)
             except GameRuleError:
                 continue
-            if resulting_mana_value >= maximum_mana_value:
+            if (
+                maximum_mana_value is not None
+                and resulting_mana_value >= maximum_mana_value
+            ):
                 continue
             semantic_key = (
                 f"{record.oracle_id}:spell:{face_name or 'front'}"
@@ -560,10 +580,13 @@ class OneShotExileCastChoiceOwnerMixin:
         item: StackItem,
         card: CardInstance,
         cleanup_cards: Sequence[CardInstance],
-        maximum_mana_value: float,
+        maximum_mana_value: float | None,
         producer: str,
     ) -> None:
-        if producer != EXILE_CAST_PRODUCER_CASCADE:
+        if producer not in {
+            EXILE_CAST_PRODUCER_CASCADE,
+            SUSPEND_EXILE_CAST_PRODUCER,
+        }:
             raise StateInvariantError("Unsupported one-shot exile-cast producer")
         options = self._one_shot_exile_cast_options(
             actor=item.controller,
@@ -664,7 +687,10 @@ class OneShotExileCastChoiceOwnerMixin:
             raise GameRuleError("Exile-cast continuation is malformed")
         if payload["schema_version"] != 1:
             raise GameRuleError("Unsupported exile-cast continuation version")
-        if payload["producer"] != EXILE_CAST_PRODUCER_CASCADE:
+        if payload["producer"] not in {
+            EXILE_CAST_PRODUCER_CASCADE,
+            SUSPEND_EXILE_CAST_PRODUCER,
+        }:
             raise GameRuleError("Exile-cast producer changed")
         return selection, payload
 
@@ -700,7 +726,10 @@ class OneShotExileCastChoiceOwnerMixin:
         candidate_ref: str | None,
         cast_stack_ref: str | None = None,
     ) -> None:
-        if producer != EXILE_CAST_PRODUCER_CASCADE:
+        if producer not in {
+            EXILE_CAST_PRODUCER_CASCADE,
+            SUSPEND_EXILE_CAST_PRODUCER,
+        }:
             raise StateInvariantError("Unsupported one-shot exile-cast producer")
         owners = {card.owner for card in cleanup_cards}
         if len(owners) > 1:
@@ -715,7 +744,11 @@ class OneShotExileCastChoiceOwnerMixin:
         self._remove_resolving_choice_item(item)
         self._log(
             item.controller,
-            "cascade.resolve",
+            (
+                "cascade.resolve"
+                if producer == EXILE_CAST_PRODUCER_CASCADE
+                else "suspend.cast.resolve"
+            ),
             f"Resolved {item.ref}: {item.label} ({outcome}).",
             {
                 "stack": item.ref,
@@ -735,35 +768,57 @@ class OneShotExileCastChoiceOwnerMixin:
     def _complete_one_shot_exile_cast_choice(self, decision: Any) -> None:
         selection, payload = self._decode_one_shot_exile_cast_choice(decision)
         actor = decision.actors[0]
+        producer = str(payload["producer"])
+        expected_semantic_key = (
+            "builtin:cascade"
+            if producer == EXILE_CAST_PRODUCER_CASCADE
+            else SUSPEND_CAST_SEMANTIC_KEY
+        )
         item = next(
             (
                 candidate
                 for candidate in self.state.stack
                 if candidate.ref == selection.stack_ref
                 and candidate.stack_id == payload["resolution_stack_id"]
-                and candidate.semantic_key == "builtin:cascade"
+                and candidate.semantic_key == expected_semantic_key
                 and candidate.controller == actor
             ),
             None,
         )
         if item is None:
-            raise GameRuleError("The Cascade trigger is no longer on the stack")
+            raise GameRuleError("The exile-cast trigger is no longer on the stack")
         candidate = self._current_exiled_identity(payload["candidate"])
         cleanup_rows = payload["cleanup"]
-        if not isinstance(cleanup_rows, list) or not cleanup_rows:
+        if not isinstance(cleanup_rows, list) or (
+            producer == EXILE_CAST_PRODUCER_CASCADE and not cleanup_rows
+        ):
             raise GameRuleError("Exile-cast cleanup identities are malformed")
         cleanup_cards = tuple(
             self._current_exiled_identity(row) for row in cleanup_rows
         )
-        if candidate not in cleanup_cards or candidate.ref != selection.source_ref:
+        if (
+            (
+                producer == EXILE_CAST_PRODUCER_CASCADE
+                and candidate not in cleanup_cards
+            )
+            or candidate.ref != selection.source_ref
+        ):
             raise GameRuleError("Exile-cast candidate detached from cleanup")
         maximum = payload["maximum_mana_value"]
-        if type(maximum) not in {int, float} or maximum <= 0:
+        if (
+            producer == EXILE_CAST_PRODUCER_CASCADE
+            and (type(maximum) not in {int, float} or maximum <= 0)
+        ) or (
+            producer == SUSPEND_EXILE_CAST_PRODUCER
+            and maximum is not None
+        ):
             raise GameRuleError("Exile-cast mana-value boundary is malformed")
         options = self._one_shot_exile_cast_options(
             actor=actor,
             card=candidate,
-            maximum_mana_value=float(maximum),
+            maximum_mana_value=(
+                float(maximum) if maximum is not None else None
+            ),
         )
         if _options_fingerprint(options) != payload["options_fingerprint"]:
             raise GameRuleError("Exile-cast options changed")
@@ -831,6 +886,20 @@ class OneShotExileCastChoiceOwnerMixin:
         )
         if cast_item is None:
             raise StateInvariantError("The exile-cast choice created no spell")
+        if (
+            producer == SUSPEND_EXILE_CAST_PRODUCER
+            and type_line_has_card_type(
+                str(
+                    self._effective_card_data(candidate).get(
+                        "type_line", ""
+                    )
+                ),
+                "creature",
+            )
+        ):
+            cast_item.context[SUSPEND_HASTE_CONTEXT_FIELD] = copy.deepcopy(
+                item.context.get("suspend_spec")
+            )
         self._finish_one_shot_exile_cast_resolution(
             item=item,
             producer=payload["producer"],

@@ -13,7 +13,7 @@ _FIXED_ENTRY_MECHANICS = ("fading", "graft", "vanishing")
 
 _KEYWORD_WITH_VALUE = re.compile(
     rf"^(?P<name>{re.escape(_BLOODTHIRST_MECHANIC)}|{re.escape(_RENOWN_MECHANIC)}|{re.escape(_MODULAR_MECHANIC)}|{'|'.join(map(re.escape, _FIXED_ENTRY_MECHANICS))}|ward|equip|enchant|bushido|cycling|crew|dredge|kicker|toxic|"
-    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|madness|warp|level up|outlast|reinforce|scavenge)"
+    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|madness|warp|suspend|level up|outlast|reinforce|scavenge)"
     r"(?:\s+(?P<value>.+))?$",
     re.IGNORECASE,
 )
@@ -102,7 +102,16 @@ def keyword_mechanics(
         )
         match = _KEYWORD_WITH_VALUE.fullmatch(keyword_part)
         if match and match.group("name").casefold() in known:
-            mechanics.append(match.group("name").casefold())
+            mechanic = match.group("name").casefold()
+            if mechanic == "suspend" and re.fullmatch(
+                r"[1-9][0-9]*[\-\u2013\u2014\ufffd]"
+                r"(?:\{(?:0|[1-9][0-9]*|[WUBRGC])\})+"
+                r"(?:\s+\(.*\))?",
+                str(match.group("value") or ""),
+                re.IGNORECASE,
+            ) is None:
+                return None
+            mechanics.append(mechanic)
             continue
         if lower.startswith("protection from ") and "protection" in known:
             mechanics.append("protection")

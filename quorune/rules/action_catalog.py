@@ -21,6 +21,7 @@ from .activation_costs import activation_choice_candidates
 from .casting.proposal import build_cast_offer
 from ..morph import FACE_DOWN_CAST_METHODS
 from .morph_actions import build_turn_face_up_offer
+from ..suspend import build_suspend_offer
 
 
 class ActionCatalogHost(Protocol):
@@ -341,6 +342,22 @@ def _turn_face_up_offers(
     return refs, offers
 
 
+def _suspend_offers(
+    host: ActionCatalogHost,
+    seat: str,
+) -> tuple[list[str], list[dict[str, Any]]]:
+    refs: list[str] = []
+    offers: list[dict[str, Any]] = []
+    for object_id in host.state.players[seat].zones["hand"]:
+        card = host.state.cards[object_id]
+        offer = build_suspend_offer(host, seat, card)
+        if offer is None:
+            continue
+        refs.append(card.ref)
+        offers.append(offer.to_dict())
+    return refs, offers
+
+
 def build_priority_action_catalog(
     host: ActionCatalogHost, seat: str
 ) -> dict[str, Any]:
@@ -352,18 +369,20 @@ def build_priority_action_catalog(
         _ability_offers(host, seat)
     )
     turn_face_up, turn_face_up_offers = _turn_face_up_offers(host, seat)
+    suspend, suspend_offers = _suspend_offers(host, seat)
     actions = priority_actions_with_mana_undo(host.state, seat)
     actions.extend(land_offers)
     actions.extend(cast_offers)
     actions.extend(activation_offers)
     actions.extend(turn_face_up_offers)
+    actions.extend(suspend_offers)
     actions.append(_concede_offer(host, seat))
     return {
         "cast": castable,
         "lands": lands,
         "abilities": abilities,
         "mana_abilities": mana_abilities,
-        "special_actions": turn_face_up,
+        "special_actions": [*turn_face_up, *suspend],
         "actions": actions,
         "diagnostic": {
             "unpayable": [

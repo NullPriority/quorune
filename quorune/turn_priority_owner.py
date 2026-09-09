@@ -202,6 +202,7 @@ class TurnPriorityDecisionOwner:
                 "cast",
                 "activate",
                 "turn_face_up",
+                "suspend",
                 "undo_mana",
                 "concede",
             ],
@@ -223,7 +224,7 @@ class TurnPriorityDecisionOwner:
                 response=response,
                 entry_action_id=decision.decision_id,
             )
-        elif action in {"cast", "activate", "turn_face_up"}:
+        elif action in {"cast", "activate", "turn_face_up", "suspend"}:
             execute_mana_choice_capable_priority_action(
                 self.host,
                 seat=seat,

@@ -572,15 +572,13 @@ _WITNESSES = {
         "{2}{W/U}",
         loyalty="5",
     ),
-    "ith-high-arcanist": _Witness(
-        "Ith, High Arcanist",
-        "Legendary Creature — Human Wizard",
-        "Vigilance\n"
+    "continuous-prevention-boundary": _Witness(
+        "Constructed Continuous Prevention Boundary",
+        "Creature — Human Wizard",
+        "This creature has all activated abilities of all creature cards in exile.\n"
         "{T}: Untap target attacking creature. Prevent all combat damage "
-        "that would be dealt to and dealt by that creature this turn.\n"
-        "Suspend 4—{W}{U}",
+        "that would be dealt to and dealt by that creature this turn.",
         "{3}{W}{U}",
-        ("Vigilance", "Suspend"),
         power="3",
         toughness="5",
     ),
@@ -1422,7 +1420,7 @@ _bind("etchings-of-the-chosen", *COST_AND_REPLACEMENT_PAIRS[6:8])
 _bind("prismatic-circle", CONTINUOUS_AND_REPLACEMENT_PAIRS[0])
 _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
-_bind("ith-high-arcanist", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
+_bind("continuous-prevention-boundary", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
 _bind("dovin-hand-of-control", CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR)
 _bind("avatar-of-woe", CONTINUOUS_AND_REPLACEMENT_PAIRS[5])
 _bind(

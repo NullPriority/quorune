@@ -6531,6 +6531,51 @@
       "capability_ids": ["attachment.equip.fixed_restricted"],
       "interaction_order": 2,
       "assertion": "The constructed restricted-Equip witness compiles its subtype activation beside unresolved continuous layers and dependencies, and strict runtime admission rejects the incomplete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_suspend_offer_commit_uses_timing_not_targets_or_printed_cost",
+      "piece_ids": ["capability.casting.lifecycle.fixed_public", "capability.counter.placement.quantity_replacement"],
+      "capability_ids": ["casting.lifecycle.fixed_public", "counter.placement.quantity_replacement"],
+      "interaction_order": 2,
+      "assertion": "The Suspend special action pays only its typed lifecycle cost, moves the current hand incarnation to public exile, and places its fixed time counters through the canonical replacement-aware counter transaction."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_upkeep_counter_trigger_countering_and_stale_incarnation",
+      "piece_ids": ["capability.casting.lifecycle.fixed_public", "capability.counter.removal.rule_generated"],
+      "capability_ids": ["casting.lifecycle.fixed_public", "counter.removal.rule_generated"],
+      "interaction_order": 2,
+      "assertion": "A current Suspend upkeep trigger removes exactly one time counter through the canonical rule-generated counter-removal transaction and leaves a stale incarnation untouched."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_suspend_cast_decline_success_haste_and_control_change",
+      "piece_ids": ["capability.casting.lifecycle.fixed_public", "capability.casting.permission.one_shot_exile_without_mana"],
+      "capability_ids": ["casting.lifecycle.fixed_public", "casting.permission.one_shot_exile_without_mana"],
+      "interaction_order": 2,
+      "assertion": "The last Suspend counter creates an optional current exile cast without paying the mana cost, while declining leaves the no-counter card in exile."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_suspend_cast_decline_success_haste_and_control_change",
+      "piece_ids": ["capability.casting.lifecycle.fixed_public", "capability.continuous.resolution.fixed_keyword_until_control_change"],
+      "capability_ids": ["casting.lifecycle.fixed_public", "continuous.resolution.fixed_keyword_until_control_change"],
+      "interaction_order": 2,
+      "assertion": "A creature spell cast through Suspend receives one identity-pinned Haste grant that survives a same-controller assignment and expires at the first real control change."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_multiple_upkeep_triggers_use_controller_order_and_private_projection",
+      "piece_ids": ["capability.casting.lifecycle.fixed_public", "capability.trigger.placement.apnap"],
+      "capability_ids": ["casting.lifecycle.fixed_public", "trigger.placement.apnap"],
+      "interaction_order": 2,
+      "assertion": "Multiple current Suspend upkeep triggers enter the ordinary APNAP batch and expose only their controller's ordering decision in four-player projection."
     }
   ]
 }

@@ -361,7 +361,11 @@ def closed_special_keyword_node(
     flashback = ordinary_fixed_mana_flashback_keyword_node(**values)
     if flashback is not None:
         return flashback
-    cast_lifecycle = fixed_cast_lifecycle_keyword_node(**values)
+    cast_lifecycle = fixed_cast_lifecycle_keyword_node(
+        record=record,
+        face_id=face_id,
+        **values,
+    )
     if cast_lifecycle is not None:
         return cast_lifecycle
     counter_activation = fixed_counter_keyword_activation_node(

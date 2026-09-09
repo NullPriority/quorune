@@ -341,6 +341,21 @@ class TriggerProcessingHostMixin:
         )
 
 
+def _intrinsic_trigger_items(
+    host: TriggerProcessingHost,
+    event_kind: str,
+    context: Mapping[str, Any],
+) -> tuple[StackItem, ...]:
+    if event_kind != "step.begin" or context.get("step") != "upkeep":
+        return ()
+    from .suspend import suspend_upkeep_trigger_items
+
+    return suspend_upkeep_trigger_items(
+        host,
+        active_player=str(context.get("player") or ""),
+    )
+
+
 def collect_trigger_items(
     host: TriggerProcessingHost,
     event_kind: str,
@@ -358,6 +373,7 @@ def collect_trigger_items(
     )
     if host._semantic_pause_annotation() is not None:
         return triggered
+    triggered.extend(_intrinsic_trigger_items(host, event_kind, context))
     owner = TriggerProcessingOwner(host)
     triggered.extend(
         owner.materialize_delayed_trigger(trigger)

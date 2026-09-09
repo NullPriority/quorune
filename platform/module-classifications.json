@@ -8505,6 +8505,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/suspend.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/tap_state.py",
       "layer": "rules",
       "owning_subsystem": "tap_state_effects",
@@ -9151,5 +9165,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "3a9e1fc04cf46d21b8a5cfdbd2ebc73cb1168d558006315547f50587ab6ba6d5"
+  "fingerprint": "b182bee2e29e0284baa5c39af1f0305c92f316a814a683f63d07a0e08e69c080"
 }

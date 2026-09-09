@@ -33,6 +33,11 @@ class FixedCastLifecycleHandler:
         "702.81",
         "702.109",
         "702.185",
+        "702.62",
+        "702.62a",
+        "702.62b",
+        "702.62c",
+        "702.62d",
     )
     capability_dependencies: tuple[str, ...] = (
         FIXED_CAST_LIFECYCLE_CAPABILITY_ID,

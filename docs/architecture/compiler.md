@@ -871,17 +871,28 @@ Nonmana Evoke remains unsupported except for an exact reviewed typed override;
 variable, Phyrexian, snow, granted, removed, and equivalent-text forms remain
 outside this compiler family.
 
-Fixed ordinary-mana Buyback, Dash, Warp, and bare Retrace lower through one
-typed cast-lifecycle owner. Dash contributes an alternative cost whenever the
-canonical casting owner already authorizes the card's current zone, including
-a designated commander in the command zone; the ordinary total-cost owner adds
-commander tax. Warp remains hand-only. Lifecycle lookup uses the shared
-static-component applicability query before both offer and commit. Because the
-layer engine does not yet evaluate exact ability additions or removals outside
-the battlefield, any relevant off-battlefield ability-layer effect makes the
+Fixed ordinary-mana Buyback, Dash, Warp, and positive-count Suspend, plus bare
+Retrace, lower through one typed cast-lifecycle owner. Dash contributes an
+alternative cost whenever the canonical casting owner already authorizes the
+card's current zone, including a designated commander in the command zone; the
+ordinary total-cost owner adds commander tax. Warp remains hand-only. Suspend
+contributes a timing-gated hand special action rather than a cast: it pays only
+the Suspend cost, moves the card face up to exile, and places time counters
+through the existing zone and counter owners. Its owner-upkeep and last-counter
+triggers use ordinary APNAP placement; the latter offers a current cast without
+paying the mana cost through the existing one-shot exile-cast and casting
+owners. A creature cast this way receives an identity-pinned Haste effect that
+expires permanently on the first control change.
+
+Lifecycle lookup uses the shared static-component applicability query before
+offers, commits, and the represented Suspend upkeep trigger. Because the layer
+engine does not yet evaluate exact ability additions or removals outside the
+battlefield, any relevant off-battlefield ability-layer effect makes the
 lifecycle unavailable rather than assuming its printed ability remains. That
-fail-closed boundary applies equally to Retrace and is not a general graveyard
-characteristic layer.
+fail-closed boundary applies equally to Retrace and Suspend. Variable,
+modified, duplicate, copied, granted, incomplete-card, land, external
+exile-counter, and distinct staged-zone lifecycle forms remain outside this
+boundary.
 
 Ordinary fixed-mana `Madness` lowers as two source-spanned abilities. Its
 static hand component replaces only a typed discard's requested graveyard

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Mapping
 
+from .continuous_effect_state import expire_control_change_continuous_effects
 from .model import CONTROL_HISTORY_VERSION
 
 
@@ -100,9 +101,17 @@ def record_control_change(
     state: Any,
     permanent: Any,
     timestamp_factory: Callable[[], int] | None,
+    *,
+    previous_controller: str,
 ) -> None:
     """Record a committed control change without perturbing legacy replay."""
 
+    if not isinstance(previous_controller, str) or not previous_controller:
+        raise ControlHistoryError(
+            "Control changes require the previous controller"
+        )
+    if previous_controller != permanent.controller:
+        expire_control_change_continuous_effects(state, permanent)
     history_version = getattr(state, "control_history_version", None)
     if history_version is not None and timestamp_factory is None:
         raise ControlHistoryError(

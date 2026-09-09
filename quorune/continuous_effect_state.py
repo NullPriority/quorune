@@ -333,6 +333,31 @@ def expire_end_of_turn_continuous_effects(state: Any) -> int:
     return expired
 
 
+def expire_control_change_continuous_effects(state: Any, card: Any) -> int:
+    """End identity-pinned effects at the first control-change boundary."""
+
+    journal = state.continuous_effects
+    if journal is None:
+        return 0
+    identity = ContinuousObjectIdentity(
+        object_id=card.object_id,
+        logical_object_id=card.logical_object_id,
+    )
+    retained = [
+        effect
+        for effect in journal
+        if not (
+            isinstance(effect, ContinuousEffect)
+            and effect.duration
+            is ContinuousEffectDuration.UNTIL_CONTROL_CHANGE
+            and identity in effect.locked_objects
+        )
+    ]
+    expired = len(journal) - len(retained)
+    journal[:] = retained
+    return expired
+
+
 __all__ = [
     "ContinuousEffectStateError",
     "ResolutionEffectSource",
@@ -340,6 +365,7 @@ __all__ = [
     "active_resolution_effects",
     "create_resolution_declaration_rule_effect",
     "create_resolution_continuous_effect",
+    "expire_control_change_continuous_effects",
     "expire_end_of_turn_continuous_effects",
     "matching_battlefield_objects",
     "resolution_effect_source",

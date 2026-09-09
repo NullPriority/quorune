@@ -2,7 +2,8 @@ from __future__ import annotations
 
 """Source-spanned nodes for fixed public casting lifecycles."""
 
-from typing import Any
+from dataclasses import replace
+from typing import Any, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..cast_lifecycles import (
@@ -24,8 +25,58 @@ _RETRACE_DISCARD_CAPABILITY_ID = (
 )
 
 
+def _residual_lifecycle_node(
+    *,
+    node_id: str,
+    line: str,
+    span: SourceSpan,
+    mechanics: tuple[str, ...],
+    residuals: list[OracleResidual],
+    reason: str,
+    blockers: tuple[str, ...],
+) -> OracleNode:
+    residual_id = append_residual(
+        residuals,
+        kind="keyword_grammar",
+        text=line,
+        span=span,
+        reason=reason,
+        blockers=blockers,
+    )
+    return OracleNode(
+        node_id=node_id,
+        kind="keyword_ability",
+        text=line,
+        span=span,
+        active_zone="all",
+        event=FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
+        lowerable=False,
+        exact=False,
+        template_id="fixed-public-cast-lifecycle-residual-v1",
+        mechanics=mechanics,
+        residual_ids=(residual_id,),
+    )
+
+
+def _face_type_line(record: Any, face_id: str) -> str:
+    result = str(record.type_line)
+    if face_id == "front" or not getattr(record, "faces", ()):
+        return result
+    face = next(
+        (
+            value
+            for value in record.faces
+            if str(value.get("name") or "") == face_id
+        ),
+        None,
+    )
+    return str(face.get("type_line") or result) if face is not None else result
+
+
 def fixed_cast_lifecycle_keyword_node(
     *,
+    record: Any,
+    face_id: str,
     node_id: str,
     line: str,
     material_line: str,
@@ -46,32 +97,36 @@ def fixed_cast_lifecycle_keyword_node(
         line_index=span.line - 1,
     )
     if spec is None:
-        residual_id = append_residual(
-            residuals,
-            kind="keyword_grammar",
-            text=line,
+        return _residual_lifecycle_node(
+            node_id=node_id,
+            line=line,
             span=span,
+            mechanics=mechanics,
+            residuals=residuals,
             reason="Casting lifecycle is outside the fixed public grammar",
             blockers=(
-                "ordinary fixed-mana Buyback, Dash, or Warp, or bare Retrace",
+                "ordinary fixed-mana Buyback, Dash, Warp, or Suspend, or bare Retrace",
                 "variable, hybrid, Phyrexian, snow, nonmana, modified, copied, or granted costs",
             ),
         )
-        return OracleNode(
-            node_id=node_id,
-            kind="keyword_ability",
-            text=line,
-            span=span,
-            active_zone="all",
-            event=FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
-            lowerable=False,
-            exact=False,
-            template_id="fixed-public-cast-lifecycle-residual-v1",
-            mechanics=mechanics,
-            residual_ids=(residual_id,),
-        )
     if spec.kind is FixedCastLifecycleKind.MADNESS:
         return None
+    if (
+        spec.kind is FixedCastLifecycleKind.SUSPEND
+        and "land" in _face_type_line(record, face_id).replace("—", "-")
+        .split("-", 1)[0]
+        .casefold()
+        .split()
+    ):
+        return _residual_lifecycle_node(
+            node_id=node_id,
+            line=line,
+            span=span,
+            mechanics=mechanics,
+            residuals=residuals,
+            reason="Suspend is not supported on a land face",
+            blockers=("nonland fixed Suspend lifecycle",),
+        )
     dependencies = (
         FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
         *(
@@ -119,6 +174,13 @@ def fixed_cast_lifecycle_keyword_node(
                 "owner_graveyard_cast_permission",
                 "typed_land_discard_additional_cost",
             ),
+            FixedCastLifecycleKind.SUSPEND: (
+                "hand_timing_special_action",
+                "face_up_exile_time_counters",
+                "owner_upkeep_counter_removal",
+                "last_counter_optional_free_cast",
+                "identity_pinned_control_duration_haste",
+            ),
         }[spec.kind],
         CURRENT_ABILITY_FRAGMENT_COVERAGE,
     )
@@ -149,7 +211,53 @@ def fixed_cast_lifecycle_keyword_node(
     )
 
 
+def reject_repeated_suspend_nodes(
+    nodes: Sequence[OracleNode],
+    residuals: list[OracleResidual],
+) -> tuple[OracleNode, ...]:
+    """Keep multiple independent Suspend instances outside this lifecycle."""
+
+    positions = [
+        index
+        for index, node in enumerate(nodes)
+        if node.template_id == FIXED_CAST_LIFECYCLE_TEMPLATE_ID
+        and any(
+            isinstance(handler.get("lifecycle"), dict)
+            and handler["lifecycle"].get("kind") == "suspend"
+            for handler in node.handlers
+        )
+    ]
+    if len(positions) <= 1:
+        return tuple(nodes)
+    result = list(nodes)
+    for index in positions:
+        node = result[index]
+        residual_id = append_residual(
+            residuals,
+            kind="keyword_grammar",
+            text=node.text,
+            span=node.span,
+            reason="Multiple Suspend instances require linked trigger identity",
+            blockers=("single fixed Suspend instance",),
+        )
+        result[index] = replace(
+            node,
+            lowerable=False,
+            exact=False,
+            template_id="fixed-public-cast-lifecycle-residual-v1",
+            handlers=(),
+            runtime_coverage=(),
+            residual_ids=(residual_id,),
+            capability_dependencies=(),
+            capability_closure=(),
+            capability_profile=None,
+            capability_fingerprint=None,
+        )
+    return tuple(result)
+
+
 __all__ = [
     "FIXED_CAST_LIFECYCLE_TEMPLATE_ID",
     "fixed_cast_lifecycle_keyword_node",
+    "reject_repeated_suspend_nodes",
 ]

@@ -9,7 +9,10 @@ import subprocess
 from typing import Any, Mapping, Sequence
 
 from quorune.util import stable_json
-from quorune.work_selection_common import WorkSelectionError
+from quorune.work_selection_common import (
+    transition_measurement_matches_policy,
+    WorkSelectionError,
+)
 from quorune.work_selection_evidence import (
     validate_harvest_forecast_correction,
 )
@@ -26,6 +29,7 @@ _ARCHITECTURE_PATH = "coverage/architecture-audit.json"
 _COHORT_MEASUREMENTS_PATH = (
     "coverage/work-selection-cohort-measurements.json"
 )
+_RULES_SUBSYSTEMS_PATH = "platform/rules-subsystems.json"
 _CARD_DATA_SNAPSHOT_FIELDS = (
     "schema_version",
     "card_count",
@@ -936,6 +940,32 @@ def _content_public_receipt(receipt: Mapping[str, Any]) -> dict[str, Any]:
     return public
 
 
+def _transition_measurement_is_policy_valid(
+    repository: Path,
+    declaration: Mapping[str, Any],
+    measurement: Mapping[str, Any],
+) -> bool:
+    try:
+        catalog = json.loads(
+            (repository / _RULES_SUBSYSTEMS_PATH).read_text(
+                encoding="utf-8"
+            )
+        )
+        coverage = catalog["work_selection"]["coverage_family"]
+        bundle = next(
+            row
+            for row in coverage["candidate_bundles"]
+            if row.get("bundle_id") == declaration.get("bundle_id")
+        )
+        return transition_measurement_matches_policy(
+            measurement,
+            bundle=bundle,
+            coverage=coverage,
+        )
+    except (KeyError, OSError, UnicodeError, json.JSONDecodeError, StopIteration):
+        return False
+
+
 def _transition_measurement_receipt(
     repository: Path,
     declaration: Mapping[str, Any],
@@ -992,7 +1022,6 @@ def _transition_measurement_receipt(
         or not str(receipt.get("oracle_source_sha256") or "")
         or not isinstance(measurement, Mapping)
         or measurement.get("bundle_id") != declaration.get("bundle_id")
-        or measurement.get("decision") != "bounded_executable"
         or measurement.get("grants_gameplay_trust") is not False
         or not str(measurement.get("probe_id") or "")
         or not str(measurement.get("cohort_fingerprint") or "")
@@ -1000,6 +1029,11 @@ def _transition_measurement_receipt(
             type(measurement.get(field)) is not int
             or measurement[field] < 0
             for field in metric_fields
+        )
+        or not _transition_measurement_is_policy_valid(
+            repository,
+            declaration,
+            measurement,
         )
     ):
         raise HarvestOutcomeHistoryError(

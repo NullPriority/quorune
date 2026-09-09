@@ -137,6 +137,7 @@ class ActionOffer:
         "activate",
         "play_land",
         "turn_face_up",
+        "suspend",
         "concede",
         "mana_undo",
     ]
@@ -154,6 +155,7 @@ class ActionOffer:
             "activate",
             "play_land",
             "turn_face_up",
+            "suspend",
             "concede",
             "mana_undo",
         }:

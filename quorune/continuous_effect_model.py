@@ -42,6 +42,7 @@ class ContinuousEffectDuration(str, Enum):
 
     WHILE_SOURCE_PRESENT = "while_source_present"
     UNTIL_END_OF_TURN = "until_end_of_turn"
+    UNTIL_CONTROL_CHANGE = "until_control_change"
     ZONE_OBJECT = "zone_object"
 
 

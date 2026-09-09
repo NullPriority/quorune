@@ -6,8 +6,11 @@ from .work_selection_bundles import (
     atomic_frontier_bundle,
     bundle_measurement_decision,
     estimated_bundle_effort,
+    prerequisite_exception_is_eligible,
+    prerequisite_fanout_identity,
     single_candidate_bundle,
     validate_bundle_policy,
+    validate_prerequisite_exceptions,
     validated_candidate_frontier_measurements,
     WorkSelectionBundleError,
 )
@@ -155,39 +158,13 @@ def _validated_coverage_policy(coverage: Mapping[str, Any]) -> dict[str, Any]:
 def _validated_prerequisite_exceptions(
     coverage: Mapping[str, Any], *, minimum_downstream_gain: int
 ) -> list[Mapping[str, Any]]:
-    exceptions = list(coverage.get("approved_prerequisite_exceptions", []))
-    ids: set[str] = set()
-    expected = {
-        "candidate_id",
-        "expected_downstream_complete_card_gain",
-        _REASON_FIELD,
-    }
-    for index, raw in enumerate(exceptions):
-        row = _mapping(
-            raw, f"approved_prerequisite_exceptions[{index}]"
+    try:
+        return validate_prerequisite_exceptions(
+            coverage,
+            minimum_downstream_gain=minimum_downstream_gain,
         )
-        if set(row) != expected:
-            raise WorkSelectionError(
-                "Approved prerequisite exceptions have an invalid shape"
-            )
-        candidate_id = str(row.get("candidate_id") or "")
-        downstream_gain = _nonnegative_int(
-            row.get("expected_downstream_complete_card_gain"),
-            "expected_downstream_complete_card_gain",
-        )
-        reason = str(row.get(_REASON_FIELD) or "")
-        if (
-            not candidate_id
-            or candidate_id in ids
-            or downstream_gain < minimum_downstream_gain
-            or not reason
-        ):
-            raise WorkSelectionError(
-                "Approved prerequisite exceptions must be unique, measured, "
-                "and complete"
-            )
-        ids.add(candidate_id)
-    return exceptions
+    except WorkSelectionBundleError as exc:
+        raise WorkSelectionError(str(exc)) from exc
 
 
 def _validated_candidate_bundles(
@@ -849,6 +826,8 @@ def _frontier_decision(
     prerequisites: Sequence[str],
     effort: str,
     policy: Mapping[str, Any],
+    prerequisite_measurement_id: str | None = None,
+    prerequisite_downstream_gain: int | None = None,
 ) -> tuple[str, bool, str]:
     excluded = effort in policy["excluded_efforts"]
     broad = complete_gain >= int(policy["minimum_complete_card_gain"])
@@ -863,15 +842,26 @@ def _frontier_decision(
         >= int(policy["minimum_material_residual_reduction"])
     )
     structural = complete_gain == 0 and sole_blockers == 0
-    exceptions = {
-        str(row["candidate_id"])
-        for row in policy["approved_prerequisite_exceptions"]
-    }
     exception_allowed = bool(
-        candidate_id in exceptions
-        and complete_gain >= int(policy["minimum_prerequisite_complete_card_gain"])
-        and int(policy["consecutive_subthreshold_harvests"])
-        < int(policy["maximum_consecutive_prerequisite_exceptions"])
+        prerequisite_exception_is_eligible(
+            policy["approved_prerequisite_exceptions"],
+            candidate_id=candidate_id,
+            measurement_id=prerequisite_measurement_id,
+            downstream_gain=prerequisite_downstream_gain,
+            complete_gain=complete_gain,
+            minimum_complete_gain=int(
+                policy["minimum_prerequisite_complete_card_gain"]
+            ),
+            minimum_downstream_gain=int(
+                policy["minimum_prerequisite_downstream_card_gain"]
+            ),
+            consecutive_exceptions=int(
+                policy["consecutive_subthreshold_harvests"]
+            ),
+            maximum_consecutive_exceptions=int(
+                policy["maximum_consecutive_prerequisite_exceptions"]
+            ),
+        )
     )
     if prerequisites:
         return (
@@ -1026,6 +1016,7 @@ def _synthesized_frontier_candidates(
         prerequisites = measurement["prerequisites"]
         implementation_hours = measurement["implementation_hours"]
         effort = estimated_bundle_effort(implementation_hours)
+        prerequisite_id, prerequisite_gain = prerequisite_fanout_identity(measurement["measurement_outcome"])
         readiness, eligible, reason = _frontier_decision(
             candidate_id=bundle_id,
             complete_gain=gains["exact_cards"],
@@ -1039,12 +1030,12 @@ def _synthesized_frontier_candidates(
             prerequisites=prerequisites,
             effort=effort,
             policy=policy,
+            prerequisite_measurement_id=prerequisite_id,
+            prerequisite_downstream_gain=prerequisite_gain,
         )
         effective_measurement_status, demotion_reason = bundle_measurement_decision(
-            str(bundle_policy["measurement_status"]),
-            bool(measurement["bounded_executable_verified"]),
-            measurement["measurement_outcome"],
-        )
+            str(bundle_policy["measurement_status"]), bool(measurement["bounded_executable_verified"]),
+            measurement["measurement_outcome"])
         if effective_measurement_status == "measured_nonviable":
             readiness, eligible, reason = "measured_below_harvest_floor", False, str(demotion_reason)
         elif demotion_reason is not None:
@@ -1308,9 +1299,19 @@ def _validate_candidate_context(
     if len(ids) != len(set(ids)):
         raise WorkSelectionError("Work-selection candidate ids must be unique")
     candidate_ids = set(ids)
+    retired_exception_ids = {
+        str(row.get("bundle_id") or "")
+        for row in validated["harvest_outcome_history"]
+    }
+    pending = validated.get("pending_transition")
+    if isinstance(pending, Mapping):
+        retired_exception_ids.add(str(pending.get("bundle_id") or ""))
     for row in validated["approved_prerequisite_exceptions"]:
         candidate_id = str(row["candidate_id"])
-        if candidate_id not in candidate_ids:
+        if (
+            candidate_id not in candidate_ids
+            and candidate_id not in retired_exception_ids
+        ):
             raise WorkSelectionError(
                 "Approved prerequisite exception must reference a current serious "
                 f"frontier candidate: {candidate_id}"

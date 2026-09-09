@@ -38,6 +38,7 @@ from .compiler.ability_keyword_fragments import (
     lower_ability_keyword_fragments,
 )
 from .compiler.closed_static_nodes import closed_static_or_replacement_node
+from .compiler.cast_lifecycle_nodes import reject_repeated_suspend_nodes
 from .compiler.dependency_gate import (
     dependency_gate as _dependency_gate,
     keyword_dependency_gate,
@@ -151,7 +152,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v180"
+ORACLE_COMPILER_VERSION = "oracle-ir-v181"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1414,7 +1415,7 @@ def _compile_face(
         )
     return _leveler_face_ir(
         leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
-        keywords, nodes, residuals, capability_registry, capability_profile,
+        keywords, reject_repeated_suspend_nodes(nodes, residuals), residuals, capability_registry, capability_profile,
     )
 
 

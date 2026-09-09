@@ -10,6 +10,7 @@ from .work_selection_common import (
     mapping,
     nonnegative_int,
     stable_hash,
+    transition_measurement_matches_policy,
 )
 
 
@@ -121,8 +122,8 @@ _NON_HARVEST_ENTRY_FIELDS = (
     "non_harvest_reason",
     "outcome_kind",
 }
-COHORT_MEASUREMENT_SCHEMA_VERSION = 4
-COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v4"
+COHORT_MEASUREMENT_SCHEMA_VERSION = 5
+COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v5"
 _COHORT_DECISIONS = {
     "bounded_executable",
     "retired_below_harvest_floor",
@@ -142,6 +143,7 @@ _COHORT_ROW_FIELDS = {
     "grants_gameplay_trust",
 }
 _COHORT_ACCOUNTING_FIELD = "candidate_accounting"
+_COHORT_PREREQUISITE_FANOUT_FIELD = "prerequisite_fanout"
 _COHORT_ACCOUNTING_FIELDS = {
     "affected_oracle_carriers",
     "existing_exact_sibling_nodes",
@@ -153,6 +155,11 @@ _COHORT_ACCOUNTING_FIELDS = {
     "newly_applicable_high_risk_pairs",
     "cards_excluded_by_unsupported_sibling",
     "cards_excluded_by_unsupported_grammar",
+}
+_COHORT_PREREQUISITE_FANOUT_FIELDS = {
+    "basis",
+    "downstream_complete_card_gain",
+    "family_ids",
 }
 _TRANSITION_MEASUREMENT_FIELDS = {
     "transition_id",
@@ -169,20 +176,39 @@ class WorkSelectionCohortMeasurementError(ValueError):
 
 def _validate_cohort_row_shape(value: Mapping[str, Any]) -> bool:
     fields = set(value)
-    if fields != _COHORT_ROW_FIELDS and fields != _COHORT_ROW_FIELDS | {
-        _COHORT_ACCOUNTING_FIELD
-    }:
+    optional = {
+        _COHORT_ACCOUNTING_FIELD,
+        _COHORT_PREREQUISITE_FANOUT_FIELD,
+    }
+    if not _COHORT_ROW_FIELDS <= fields or fields - _COHORT_ROW_FIELDS - optional:
         return False
     accounting = value.get(_COHORT_ACCOUNTING_FIELD)
-    if accounting is None:
-        return True
-    return bool(
+    if accounting is not None and not (
         isinstance(accounting, Mapping)
         and set(accounting) == _COHORT_ACCOUNTING_FIELDS
         and all(
             type(accounting.get(field)) is int and accounting[field] >= 0
             for field in _COHORT_ACCOUNTING_FIELDS
         )
+    ):
+        return False
+    fanout = value.get(_COHORT_PREREQUISITE_FANOUT_FIELD)
+    if fanout is None:
+        return True
+    return bool(
+        isinstance(fanout, Mapping)
+        and set(fanout) == _COHORT_PREREQUISITE_FANOUT_FIELDS
+        and type(fanout.get("downstream_complete_card_gain")) is int
+        and fanout["downstream_complete_card_gain"] >= 0
+        and isinstance(fanout.get("family_ids"), list)
+        and bool(fanout["family_ids"])
+        and all(
+            type(value) is str and bool(value)
+            for value in fanout["family_ids"]
+        )
+        and len(fanout["family_ids"]) == len(set(fanout["family_ids"]))
+        and type(fanout.get("basis")) is str
+        and bool(fanout["basis"].strip())
     )
 
 
@@ -252,7 +278,8 @@ def validate_harvest_forecast_correction(
 def _validate_transition_measurements(
     rows: Sequence[Any],
     *,
-    expected_bundles: Mapping[str, str],
+    expected_bundles: Mapping[str, Mapping[str, Any]],
+    coverage: Mapping[str, Any],
     metric_fields: Sequence[str],
 ) -> None:
     seen_transitions: set[str] = set()
@@ -279,13 +306,21 @@ def _validate_transition_measurements(
                 or measurement[field] < 0
                 for field in metric_fields
             )
-            or measurement.get("decision") != "bounded_executable"
             or measurement.get("grants_gameplay_trust") is not False
             or measurement.get("bundle_id") not in expected_bundles
-            or not str(measurement.get("probe_id") or "")
+            or expected_bundles[
+                str(measurement.get("bundle_id") or "")
+            ].get("measurement_probe_id") != measurement.get("probe_id")
             or measurement.get("measurement_id")
             != "measurement:"
             + str(measurement.get("bundle_id") or "").split(":", 1)[-1]
+            or not transition_measurement_matches_policy(
+                measurement,
+                bundle=expected_bundles[
+                    str(measurement.get("bundle_id") or "")
+                ],
+                coverage=coverage,
+            )
         ):
             raise WorkSelectionCohortMeasurementError(
                 "Transition cohort measurement identity is invalid"
@@ -348,7 +383,7 @@ def validate_work_selection_cohort_measurements(
             "Cohort measurements and transition receipts must be arrays"
         )
     expected_bundles = {
-        str(bundle["bundle_id"]): str(bundle["measurement_probe_id"])
+        str(bundle["bundle_id"]): bundle
         for bundle in bundle_policies
         if bundle.get("measurement_probe_id") is not None
     }
@@ -369,7 +404,9 @@ def validate_work_selection_cohort_measurements(
         bundle_id = str(row.get("bundle_id") or "")
         if (
             bundle_id in result
-            or expected_bundles.get(bundle_id) != row.get("probe_id")
+            or expected_bundles.get(bundle_id, {}).get(
+                "measurement_probe_id"
+            ) != row.get("probe_id")
             or row.get("measurement_id")
             != "measurement:" + bundle_id.split(":", 1)[-1]
             or row.get("cohort_fingerprint")
@@ -409,6 +446,7 @@ def validate_work_selection_cohort_measurements(
     _validate_transition_measurements(
         transition_measurements,
         expected_bundles=expected_bundles,
+        coverage=coverage,
         metric_fields=metric_fields,
     )
     return result

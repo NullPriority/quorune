@@ -5,6 +5,11 @@ import re
 from typing import Any, Collection, Mapping, Sequence
 
 from quorune.util import stable_json
+from quorune.work_selection_common import (
+    prerequisite_exception_is_approved,
+    prerequisite_exception_is_eligible,
+    prerequisite_fanout_identity,
+)
 from quorune.work_selection_evidence import (
     validate_work_selection_cohort_measurements,
     WorkSelectionCohortMeasurementError,
@@ -231,6 +236,10 @@ def bundle_measurement_decision(
         and measurement_outcome is not None
         and measurement_outcome.get("decision") == "retired_below_harvest_floor"
     ):
+        if isinstance(
+            measurement_outcome.get("prerequisite_fanout"), Mapping
+        ):
+            return "bounded_prerequisite", None
         return (
             "measured_nonviable",
             "The generated current-frontier bounded cohort is below every "
@@ -260,6 +269,50 @@ def bundle_measurement_decision(
         "exclusions and sibling grammar require a bounded executable cohort "
         "before this bundle can become foreground.",
     )
+
+
+def validate_prerequisite_exceptions(
+    coverage: Mapping[str, Any],
+    *,
+    minimum_downstream_gain: int,
+) -> list[Mapping[str, Any]]:
+    exceptions = list(coverage.get("approved_prerequisite_exceptions", []))
+    legacy = {
+        "candidate_id",
+        "expected_downstream_complete_card_gain",
+        "reason",
+    }
+    measured = {"candidate_id", "measurement_id", "reason"}
+    candidate_ids: set[str] = set()
+    for index, raw in enumerate(exceptions):
+        row = _mapping(raw, f"approved_prerequisite_exceptions[{index}]")
+        fields = frozenset(row)
+        if fields not in {frozenset(legacy), frozenset(measured)}:
+            raise WorkSelectionBundleError(
+                "Approved prerequisite exceptions have an invalid shape"
+            )
+        candidate_id = str(row.get("candidate_id") or "")
+        downstream_gain = (
+            _nonnegative_int(
+                row.get("expected_downstream_complete_card_gain"),
+                "expected_downstream_complete_card_gain",
+            )
+            if fields == legacy
+            else minimum_downstream_gain
+        )
+        if (
+            not candidate_id
+            or candidate_id in candidate_ids
+            or downstream_gain < minimum_downstream_gain
+            or (fields == measured and not str(row.get("measurement_id") or ""))
+            or not str(row.get("reason") or "")
+        ):
+            raise WorkSelectionBundleError(
+                "Approved prerequisite exceptions must be unique, measured, "
+                "and complete"
+            )
+        candidate_ids.add(candidate_id)
+    return exceptions
 
 
 def estimated_bundle_effort(implementation_hours: int) -> str:
@@ -638,8 +691,12 @@ __all__ = [
     "bundle_measurement_decision",
     "candidate_frontier_measurements",
     "estimated_bundle_effort",
+    "prerequisite_exception_is_approved",
+    "prerequisite_exception_is_eligible",
+    "prerequisite_fanout_identity",
     "single_candidate_bundle",
     "validated_candidate_frontier_measurements",
     "validate_bundle_policy",
+    "validate_prerequisite_exceptions",
     "WorkSelectionBundleError",
 ]
