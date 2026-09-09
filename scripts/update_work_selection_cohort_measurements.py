@@ -15,11 +15,11 @@ if str(ROOT) not in sys.path:
 from quorune.carddb import CardDatabase
 from quorune.util import stable_json
 from quorune.work_selection_bundles import (
-    bundle_measurement_decision,
     bundle_measurement_fingerprint,
     prerequisite_exception_is_eligible,
     prerequisite_fanout_identity,
 )
+from quorune.work_selection_common import transition_measurement_matches_policy
 from quorune.work_selection_common import stable_hash
 from quorune.work_selection_evidence import (
     validate_harvest_history,
@@ -172,17 +172,17 @@ def _transition_measurement_is_eligible(
     coverage: dict,
     bundle: dict,
 ) -> bool:
-    status, _reason = bundle_measurement_decision(
-        str(bundle["measurement_status"]),
-        False,
+    if not transition_measurement_matches_policy(
         measured,
-    )
+        bundle=bundle,
+        coverage=coverage,
+    ):
+        return False
     if measured.get("decision") == "bounded_executable":
-        return int(measured.get("complete_card_gain") or 0) > 0
+        return True
     measurement_id, downstream_gain = prerequisite_fanout_identity(measured)
     return bool(
-        status == "bounded_prerequisite"
-        and prerequisite_exception_is_eligible(
+        prerequisite_exception_is_eligible(
             coverage["approved_prerequisite_exceptions"],
             candidate_id=str(bundle["bundle_id"]),
             measurement_id=measurement_id,

@@ -38,8 +38,10 @@ from quorune.work_selection_bundles import (
     WorkSelectionBundleError,
 )
 from quorune.work_selection_evidence import (
+    _validate_transition_measurements,
     validate_harvest_forecast_correction,
 )
+from quorune.work_selection_common import transition_measurement_matches_policy
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
@@ -885,18 +887,52 @@ class RulesSchedulerTests(unittest.TestCase):
         }
         measured = {
             "measurement_id": "measurement:measured-prerequisite-fixture",
+            "bundle_id": "bundle:measured-prerequisite-fixture",
+            "probe_id": "measured-prerequisite-fixture-v1",
+            "cohort_fingerprint": "0" * 64,
+            "affected_commander_cards": 10,
             "complete_card_gain": 10,
+            "one_additional_blocker_cards": 0,
+            "two_additional_blocker_cards": 0,
+            "exact_ability_gain": 10,
+            "material_residual_reduction": 10,
             "decision": "retired_below_harvest_floor",
+            "grants_gameplay_trust": False,
             "prerequisite_fanout": {
                 "downstream_complete_card_gain": 100,
+                "family_ids": ["fixture"],
+                "basis": "A generated test fixture.",
             },
         }
+        bundle["measurement_probe_id"] = measured["probe_id"]
         self.assertTrue(
             _transition_measurement_is_eligible(
                 measured,
                 coverage=coverage,
                 bundle=bundle,
             )
+        )
+        receipt = {
+            "transition_id": "fixture-transition",
+            "frontier_fingerprint": "1" * 64,
+            "oracle_source_sha256": "2" * 64,
+            "measurement": deepcopy(measured),
+        }
+        receipt["receipt_fingerprint"] = hashlib.sha256(
+            stable_json(receipt).encode("utf-8")
+        ).hexdigest()
+        _validate_transition_measurements(
+            [receipt],
+            expected_bundles={bundle["bundle_id"]: bundle},
+            coverage=coverage,
+            metric_fields=(
+                "affected_commander_cards",
+                "complete_card_gain",
+                "one_additional_blocker_cards",
+                "two_additional_blocker_cards",
+                "exact_ability_gain",
+                "material_residual_reduction",
+            ),
         )
         measured["prerequisite_fanout"][
             "downstream_complete_card_gain"
@@ -3626,12 +3662,11 @@ class RulesSchedulerTests(unittest.TestCase):
         coverage = work_selection["coverage_family"]
         self.assertGreater(measurement["complete_card_gain"], 0)
         self.assertTrue(
-            measurement["complete_card_gain"]
-            >= coverage["minimum_complete_card_gain"]
-            or measurement["exact_ability_gain"]
-            >= coverage["minimum_exact_ability_gain"]
-            or measurement["material_residual_reduction"]
-            >= coverage["minimum_material_residual_reduction"]
+            transition_measurement_matches_policy(
+                measurement,
+                bundle=bundle,
+                coverage=coverage,
+            )
         )
         self.assertGreater(measurement["exact_ability_gain"], 0)
 

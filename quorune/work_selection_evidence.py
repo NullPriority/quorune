@@ -10,6 +10,7 @@ from .work_selection_common import (
     mapping,
     nonnegative_int,
     stable_hash,
+    transition_measurement_matches_policy,
 )
 
 
@@ -277,7 +278,8 @@ def validate_harvest_forecast_correction(
 def _validate_transition_measurements(
     rows: Sequence[Any],
     *,
-    expected_bundles: Mapping[str, str],
+    expected_bundles: Mapping[str, Mapping[str, Any]],
+    coverage: Mapping[str, Any],
     metric_fields: Sequence[str],
 ) -> None:
     seen_transitions: set[str] = set()
@@ -304,13 +306,21 @@ def _validate_transition_measurements(
                 or measurement[field] < 0
                 for field in metric_fields
             )
-            or measurement.get("decision") != "bounded_executable"
             or measurement.get("grants_gameplay_trust") is not False
             or measurement.get("bundle_id") not in expected_bundles
-            or not str(measurement.get("probe_id") or "")
+            or expected_bundles[
+                str(measurement.get("bundle_id") or "")
+            ].get("measurement_probe_id") != measurement.get("probe_id")
             or measurement.get("measurement_id")
             != "measurement:"
             + str(measurement.get("bundle_id") or "").split(":", 1)[-1]
+            or not transition_measurement_matches_policy(
+                measurement,
+                bundle=expected_bundles[
+                    str(measurement.get("bundle_id") or "")
+                ],
+                coverage=coverage,
+            )
         ):
             raise WorkSelectionCohortMeasurementError(
                 "Transition cohort measurement identity is invalid"
@@ -373,7 +383,7 @@ def validate_work_selection_cohort_measurements(
             "Cohort measurements and transition receipts must be arrays"
         )
     expected_bundles = {
-        str(bundle["bundle_id"]): str(bundle["measurement_probe_id"])
+        str(bundle["bundle_id"]): bundle
         for bundle in bundle_policies
         if bundle.get("measurement_probe_id") is not None
     }
@@ -394,7 +404,9 @@ def validate_work_selection_cohort_measurements(
         bundle_id = str(row.get("bundle_id") or "")
         if (
             bundle_id in result
-            or expected_bundles.get(bundle_id) != row.get("probe_id")
+            or expected_bundles.get(bundle_id, {}).get(
+                "measurement_probe_id"
+            ) != row.get("probe_id")
             or row.get("measurement_id")
             != "measurement:" + bundle_id.split(":", 1)[-1]
             or row.get("cohort_fingerprint")
@@ -434,6 +446,7 @@ def validate_work_selection_cohort_measurements(
     _validate_transition_measurements(
         transition_measurements,
         expected_bundles=expected_bundles,
+        coverage=coverage,
         metric_fields=metric_fields,
     )
     return result
