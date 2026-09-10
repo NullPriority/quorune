@@ -20,6 +20,7 @@ from ...counter_placement import (
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_madness import current_fixed_cast_lifecycle_spec
+from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec
 from ...cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
@@ -44,6 +45,7 @@ from ..spell_cast_events import SpellCastEvent
 from ...selection.exile_cast import mana_value_of_cost
 from ...zone_object_state import (
     mark_card_face_down_for_morph,
+    mark_card_fixed_cast_lifecycle,
     mark_card_flashed_back,
     mark_card_kicked,
 )
@@ -405,23 +407,20 @@ def _resolve_fixed_zone_change_additional_cost(
     selected_option: Mapping[str, Any],
     selected: Mapping[str, Any],
 ) -> tuple[
-    Any,
+    tuple[Any, ...],
     FixedZoneChangeAdditionalCost,
-    tuple[str | None | Mapping[str, Any], ...],
+    Mapping[str, tuple[str | None | Mapping[str, Any], ...]],
 ]:
     raw_costs = selected_option.get("additional_costs")
     cost_position = selected.get("cost_position")
+    common_fields = {"kind", "operation", "cost_position"}
+    reference_field = "card" if "card" in selected else "cards"
     if (
         not isinstance(raw_costs, list)
         or type(cost_position) is not int
         or cost_position < 0
         or cost_position >= len(raw_costs)
-        or set(selected) != {
-            "kind",
-            "operation",
-            "card",
-            "cost_position",
-        }
+        or set(selected) != common_fields | {reference_field}
         or selected.get("kind") != ZONE_CHANGE_COST_KIND
     ):
         raise CastProposalError(
@@ -444,64 +443,76 @@ def _resolve_fixed_zone_change_additional_cost(
             "The zone-change additional-cost operation is malformed",
             reason="additional_cost_malformed",
         )
-    selected_ref = selected.get("card")
-    if (
-        type(selected_ref) is not str
-        or selected_ref
-        not in fixed_zone_change_cost_candidates(
+    raw_refs = (
+        [selected.get("card")]
+        if reference_field == "card"
+        else selected.get("cards")
+    )
+    candidates = fixed_zone_change_cost_candidates(
             host,
             actor=proposal.seat,
             cost=cost,
             exclude_object_id=proposal.object_id,
         )
+    if (
+        not isinstance(raw_refs, (list, tuple))
+        or len(raw_refs) != cost.count
+        or len(set(raw_refs)) != cost.count
+        or any(type(ref) is not str or ref not in candidates for ref in raw_refs)
     ):
         raise CastProposalError(
             "The selected zone-change cost object is no longer legal",
             status="unpayable",
             reason="zone_change_cost_unpayable",
         )
-    paid = host._resolve_object(
-        proposal.seat,
-        selected_ref,
-        zones={cost.origin_zone},
-        controlled_only=cost.origin_zone == "battlefield",
-        owned_only=cost.origin_zone != "battlefield",
+    paid = tuple(
+        host._resolve_object(
+            proposal.seat,
+            ref,
+            zones={cost.origin_zone},
+            controlled_only=cost.origin_zone == "battlefield",
+            owned_only=cost.origin_zone != "battlefield",
+        )
+        for ref in raw_refs
     )
     raw_journal = response.get("_mana_replacement_selections") or {}
-    if not isinstance(raw_journal, Mapping) or len(raw_journal) > 1:
+    if not isinstance(raw_journal, Mapping) or len(raw_journal) > cost.count:
         raise CastProposalError(
             "The casting replacement journal is malformed",
             reason="replacement_journal_malformed",
         )
-    if raw_journal:
-        event_id, selections = next(iter(raw_journal.items()))
+    journals: dict[str, tuple[str | None | Mapping[str, Any], ...]] = {}
+    for event_id, selections in raw_journal.items():
+        matched = next(
+            (
+                card
+                for card in paid
+                if type(event_id) is str
+                and event_id.startswith("zone.change:")
+                and event_id.endswith(f":{card.ref}")
+            ),
+            None,
+        )
         if (
-            type(event_id) is not str
-            or not event_id.startswith("zone.change:")
-            or not event_id.endswith(f":{paid.ref}")
+            matched is None
+            or not isinstance(selections, (list, tuple))
         ):
             raise CastProposalError(
                 "The casting replacement journal is malformed",
                 reason="replacement_journal_malformed",
             )
-    else:
-        selections = ()
-    if not isinstance(selections, (list, tuple)):
-        raise CastProposalError(
-            "The casting replacement selections are malformed",
-            reason="replacement_journal_malformed",
-        )
-    return paid, cost, tuple(selections)
+        journals[matched.ref] = tuple(selections)
+    return paid, cost, journals
 
 
-def _fixed_zone_change_commit_entry(
+def _fixed_zone_change_commit_entries(
     host: CastCommitHost,
     proposal: CastProposal,
     response: Mapping[str, Any],
     selected_option: Mapping[str, Any],
     selected: Mapping[str, Any],
-) -> tuple[Any, str, str, str, dict[str, Any], list[str], str, str, tuple]:
-    paid, cost, replacement_selections = (
+) -> list[tuple[Any, str, str, str, dict[str, Any], list[str], str, str, tuple]]:
+    paid_cards, cost, replacement_journals = (
         _resolve_fixed_zone_change_additional_cost(
             host,
             proposal,
@@ -510,21 +521,24 @@ def _fixed_zone_change_commit_entry(
             selected,
         )
     )
-    return (
-        paid,
-        paid.zone,
-        paid.controller,
-        paid.logical_object_id,
-        copy.deepcopy(host._effective_card_data(paid)),
-        [
-            host.state.cards[attachment_id].ref
-            for attachment_id in paid.attachments
-            if attachment_id in host.state.cards
-        ],
-        cost.log_kind,
-        cost.destination_zone,
-        replacement_selections,
-    )
+    return [
+        (
+            paid,
+            paid.zone,
+            paid.controller,
+            paid.logical_object_id,
+            copy.deepcopy(host._effective_card_data(paid)),
+            [
+                host.state.cards[attachment_id].ref
+                for attachment_id in paid.attachments
+                if attachment_id in host.state.cards
+            ],
+            cost.log_kind,
+            cost.destination_zone,
+            replacement_journals.get(paid.ref, ()),
+        )
+        for paid in paid_cards
+    ]
 
 
 def _ordinary_card_cost_commit_entries(
@@ -648,8 +662,8 @@ def _commit_additional_costs(
             )
             continue
         if kind == ZONE_CHANGE_COST_KIND:
-            changes.append(
-                _fixed_zone_change_commit_entry(
+            changes.extend(
+                _fixed_zone_change_commit_entries(
                     host, proposal, response, selected_option, selected
                 )
             )
@@ -736,6 +750,41 @@ def _face_down_method_spec_from_details(
     return method_spec
 
 
+def _cast_lifecycle_stack_specs(
+    host: CastCommitHost,
+    proposal: CastProposal,
+    card: Any,
+    selected_option: Mapping[str, Any],
+) -> tuple[FixedCastLifecycleSpec | None, FixedCastLifecycleSpec | None]:
+    rebound = (
+        compiled_fixed_cast_lifecycle_spec(
+            host,
+            card,
+            FixedCastLifecycleKind.REBOUND,
+        )
+        if proposal.origin == "hand"
+        else None
+    )
+    raw = selected_option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
+    selected = (
+        FixedCastLifecycleSpec.from_dict(raw)
+        if isinstance(raw, Mapping)
+        else None
+    )
+    return selected, rebound
+
+
+def _mark_selected_cast_lifecycle(
+    card: Any,
+    spec: FixedCastLifecycleSpec | None,
+) -> None:
+    if spec is not None and spec.kind in {
+        FixedCastLifecycleKind.ESCAPE,
+        FixedCastLifecycleKind.JUMP_START,
+    }:
+        mark_card_fixed_cast_lifecycle(card, spec)
+
+
 def _create_spell_item(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -746,6 +795,9 @@ def _create_spell_item(
     details: Mapping[str, Any],
     spent: Mapping[str, int],
 ) -> StackItem:
+    lifecycle_spec, rebound = _cast_lifecycle_stack_specs(
+        host, proposal, card, selected_option
+    )
     card.annotations.pop("temporary_play_permission", None)
     host._remove_from_zone(card)
     host._reset_zone_change(card, "stack")
@@ -756,6 +808,7 @@ def _create_spell_item(
         mark_card_kicked(card)
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
         mark_card_flashed_back(card)
+    _mark_selected_cast_lifecycle(card, lifecycle_spec)
     method_spec = _face_down_method_spec_from_details(details)
     if method_spec is not None:
         mark_card_face_down_for_morph(
@@ -780,6 +833,7 @@ def _create_spell_item(
     destination, lifecycle_context = fixed_cast_lifecycle_stack_fields(
         selected_option,
         destination,
+        rebound=rebound,
     )
     ref = host._next_ref("S")
     used_improvise = bool(
@@ -1062,6 +1116,51 @@ def _dispatch_cast_events(
     enqueue_trigger_batch(host, trigger_batch)
 
 
+def _revalidate_fixed_lifecycle_contract(
+    host: CastCommitHost,
+    proposal: CastProposal,
+    card: Any,
+    selected_option: Mapping[str, Any],
+) -> None:
+    lifecycle_raw = selected_option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
+    if lifecycle_raw is None:
+        return
+    try:
+        proposed = FixedCastLifecycleSpec.from_dict(lifecycle_raw)
+    except (FixedCastLifecycleError, TypeError) as exc:
+        raise CastProposalError(
+            str(exc),
+            reason="stale_fixed_cast_lifecycle_contract",
+        ) from exc
+    current = current_fixed_cast_lifecycle_spec(host, card, proposed.kind)
+    expected_origin = {
+        FixedCastLifecycleKind.ESCAPE: "graveyard",
+        FixedCastLifecycleKind.FORETELL: "exile",
+        FixedCastLifecycleKind.JUMP_START: "graveyard",
+        FixedCastLifecycleKind.MADNESS: "exile",
+        FixedCastLifecycleKind.PLOT: "exile",
+        FixedCastLifecycleKind.WARP: "hand",
+        FixedCastLifecycleKind.RETRACE: "graveyard",
+    }.get(proposed.kind)
+    option_id = str(selected_option.get("id") or "")
+    valid_id = (
+        option_id == "retrace"
+        if proposed.kind is FixedCastLifecycleKind.RETRACE
+        else option_id == proposed.kind.value
+    )
+    if (
+        current != proposed
+        or selected_option.get("fixed_cast_lifecycle_fingerprint")
+        != proposed.fingerprint
+        or (expected_origin is not None and proposal.origin != expected_origin)
+        or not valid_id
+    ):
+        raise CastProposalError(
+            "The fixed cast-lifecycle contract changed before commit",
+            reason="stale_fixed_cast_lifecycle_contract",
+        )
+
+
 def _revalidate_cast_contracts(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -1116,51 +1215,7 @@ def _revalidate_cast_contracts(
                 "The fixed-mana Flashback contract changed before commit",
                 reason="stale_flashback_contract",
             )
-    lifecycle_raw = selected_option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
-    if lifecycle_raw is not None:
-        try:
-            proposed_lifecycle = FixedCastLifecycleSpec.from_dict(
-                lifecycle_raw
-            )
-        except (FixedCastLifecycleError, TypeError) as exc:
-            raise CastProposalError(
-                str(exc),
-                reason="stale_fixed_cast_lifecycle_contract",
-            ) from exc
-        current_lifecycle = current_fixed_cast_lifecycle_spec(
-            host,
-            card,
-            proposed_lifecycle.kind,
-        )
-        expected_origin = {
-            FixedCastLifecycleKind.MADNESS: "exile",
-            FixedCastLifecycleKind.WARP: "hand",
-            FixedCastLifecycleKind.RETRACE: "graveyard",
-        }.get(proposed_lifecycle.kind)
-        option_id = str(selected_option.get("id") or "")
-        if (
-            current_lifecycle != proposed_lifecycle
-            or selected_option.get("fixed_cast_lifecycle_fingerprint")
-            != proposed_lifecycle.fingerprint
-            or (
-                expected_origin is not None
-                and proposal.origin != expected_origin
-            )
-            or (
-                proposed_lifecycle.kind
-                is FixedCastLifecycleKind.RETRACE
-                and option_id not in {"retrace"}
-            )
-            or (
-                proposed_lifecycle.kind
-                is not FixedCastLifecycleKind.RETRACE
-                and option_id != proposed_lifecycle.kind.value
-            )
-        ):
-            raise CastProposalError(
-                "The fixed cast-lifecycle contract changed before commit",
-                reason="stale_fixed_cast_lifecycle_contract",
-            )
+    _revalidate_fixed_lifecycle_contract(host, proposal, card, selected_option)
     evoke_payment = selected_option.get(EVOKE_PAYMENT_FIELD)
     if evoke_payment is not None:
         if not validate_evoke_payment_marker(evoke_payment):

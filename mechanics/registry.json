@@ -1,5 +1,5 @@
 {
-  "contract_count": 124,
+  "contract_count": 129,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -272,6 +272,12 @@
       "version": 1
     },
     {
+      "mechanic_id": "escape",
+      "path": "mechanics/contracts/escape.json",
+      "sha256": "0898196003d043f3dbd63122d797ed619235f8a276f608c91bcfd65221e0e657",
+      "version": 1
+    },
+    {
       "mechanic_id": "evoke",
       "path": "mechanics/contracts/evoke.json",
       "sha256": "957bea46d6eb5416c28565517844490709bf1565f40e277c13139a3b0071f263",
@@ -330,6 +336,12 @@
       "path": "mechanics/contracts/flying.json",
       "sha256": "748bdba731056878bb54076a402e810348077ce01b54c26b69b5e1ebc14ae5d9",
       "version": 2
+    },
+    {
+      "mechanic_id": "foretell",
+      "path": "mechanics/contracts/foretell.json",
+      "sha256": "e5431bc97bcef91dff8cdc2d35ac6ce475e3aab5e14b4da09d4ac413d58c2751",
+      "version": 1
     },
     {
       "mechanic_id": "goad",
@@ -401,6 +413,12 @@
       "mechanic_id": "intimidate",
       "path": "mechanics/contracts/intimidate.json",
       "sha256": "2e0470ef5dce1be6026599115a5a8e7190be2111b5c91ff1fb1949a752d18da1",
+      "version": 1
+    },
+    {
+      "mechanic_id": "jump-start",
+      "path": "mechanics/contracts/jump-start.json",
+      "sha256": "5629d44fb17ec16d52dc65fadfe21b51a077dd22741f38c628fcdf796d21d114",
       "version": 1
     },
     {
@@ -530,6 +548,12 @@
       "version": 1
     },
     {
+      "mechanic_id": "plot",
+      "path": "mechanics/contracts/plot.json",
+      "sha256": "cb62d96a2a63f830929d918d1c3a30f534eb163024ad4b3c5d2ed8a57488688c",
+      "version": 1
+    },
+    {
       "mechanic_id": "cr-615-prevention-effects",
       "path": "mechanics/contracts/prevention-effects.json",
       "sha256": "f3a8954352b5c1e389ca9d95345ff73af5a87862ae7d539c8595e3dd3d9f33a3",
@@ -551,6 +575,12 @@
       "mechanic_id": "reach",
       "path": "mechanics/contracts/reach.json",
       "sha256": "7bb248d70a0d63933de44914bf22768d389aebafbc35925251745d20b36bac86",
+      "version": 1
+    },
+    {
+      "mechanic_id": "rebound",
+      "path": "mechanics/contracts/rebound.json",
+      "sha256": "14ff1608ac7c035409c4bfdc79ac047a27a844e35443a7ee2fdb4aafd123006e",
       "version": 1
     },
     {
@@ -2145,19 +2175,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/escape.json",
+      "contract_sha256": "0898196003d043f3dbd63122d797ed619235f8a276f608c91bcfd65221e0e657",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost, quorune.rules.casting.costs, quorune.rules.casting.commit, and quorune.zone_transitions",
+      "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "any-number and compound Escape payments",
+        "escapes-with counters, abilities, and linked triggered abilities",
+        "variable, hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, repeated, and incomplete-card forms",
+        "independently unsupported spell bodies"
+      ],
       "mechanic_id": "escape",
       "official_name": "Escape",
       "rule_references": [
         "702.138"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
+        "test_open_zone_cast_forms_remain_residual",
+        "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability",
+        "test_escape_insufficient_and_duplicate_other_card_payments_fail_closed"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -2652,19 +2696,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/foretell.json",
+      "contract_sha256": "e5431bc97bcef91dff8cdc2d35ac6ce475e3aab5e14b4da09d4ac413d58c2751",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, quorune.zone_transitions, and quorune.projection",
+      "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "Foretell cost and timing modifiers",
+        "external foretell effects",
+        "variable, hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, repeated, and incomplete-card forms",
+        "alternative-cost combinations and independently unsupported spell bodies"
+      ],
       "mechanic_id": "foretell",
       "official_name": "Foretell",
       "rule_references": [
         "702.143"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
+        "test_open_zone_cast_forms_remain_residual",
+        "test_foretell_private_staging_persists_without_current_ability_and_replays",
+        "test_staging_timing_stale_offer_and_payment_fail_without_mutation"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -3254,19 +3312,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/jump-start.json",
+      "contract_sha256": "5629d44fb17ec16d52dc65fadfe21b51a077dd22741f38c628fcdf796d21d114",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.rules.casting, quorune.zone_object_state, and quorune.semantic_runtime.zone_replacements",
+      "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "modified Jump-start declarations",
+        "non-instant or non-sorcery resulting spells",
+        "copied, granted, text-changed, repeated, and incomplete-card forms",
+        "alternative-cost combinations and independently unsupported spell bodies"
+      ],
       "mechanic_id": "jump-start",
       "official_name": "Jump-Start",
       "rule_references": [
         "702.133"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
+        "test_open_zone_cast_forms_remain_residual",
+        "test_jump_start_discards_then_self_exiles_when_countered",
+        "test_jump_start_resolution_departure_replays_exactly"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -3972,19 +4044,32 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/plot.json",
+      "contract_sha256": "cb62d96a2a63f830929d918d1c3a30f534eb163024ad4b3c5d2ed8a57488688c",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, and quorune.zone_transitions",
+      "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "external plot effects and Plot granted outside hand",
+        "variable, hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, repeated, and incomplete-card forms",
+        "alternative-cost combinations and independently unsupported spell bodies"
+      ],
       "mechanic_id": "plot",
       "official_name": "Plot",
       "rule_references": [
         "702.170"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
+        "test_open_zone_cast_forms_remain_residual",
+        "test_plot_uses_both_special_action_and_later_cast_timing",
+        "test_staging_timing_stale_offer_and_payment_fail_without_mutation"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -4220,19 +4305,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/rebound.json",
+      "contract_sha256": "14ff1608ac7c035409c4bfdc79ac047a27a844e35443a7ee2fdb4aafd123006e",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.stack_resolution, quorune.trigger_processing, quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin, and quorune.staged_cast_lifecycles.resolve_rebound_cast_trigger",
+      "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "granted Rebound and external rebound effects",
+        "copied, text-changed, repeated, and incomplete-card forms",
+        "replacement or permission interactions outside canonical owners",
+        "independently unsupported spell bodies"
+      ],
       "mechanic_id": "rebound",
       "official_name": "Rebound",
       "rule_references": [
         "702.88"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
+        "test_open_zone_cast_forms_remain_residual",
+        "test_rebound_schedules_identity_pinned_optional_free_cast",
+        "test_countered_and_stale_rebound_cards_do_not_receive_a_cast"
+      ],
       "trust_level": "untrusted"
     },
     {

@@ -7,6 +7,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Protocol
 
 from ...cast_lifecycles import FixedCastLifecycleKind
+from ...cast_lifecycles import fixed_zone_cast_designation
 from ...compiled_cast_lifecycles import (
     compiled_fixed_cast_lifecycle_spec,
     compiled_fixed_cast_lifecycle_specs,
@@ -14,6 +15,7 @@ from ...compiled_cast_lifecycles import (
 
 
 class FixedCastLifecycleCostHost(Protocol):
+    state: Any
     semantics: Any
 
     def card_record(self, card: Any) -> Any: ...
@@ -28,7 +30,7 @@ def with_fixed_cast_lifecycle_costs(
     *,
     suppress_source_costs: bool,
 ) -> dict[str, Any] | None:
-    """Add fixed Buyback, Dash, and Warp to the existing option schema."""
+    """Add fixed hand-zone lifecycle costs to the existing option schema."""
 
     result = copy.deepcopy(dict(schema))
     specs = (
@@ -49,6 +51,11 @@ def with_fixed_cast_lifecycle_costs(
     for spec in specs:
         if spec.kind in {
             FixedCastLifecycleKind.MADNESS,
+            FixedCastLifecycleKind.ESCAPE,
+            FixedCastLifecycleKind.FORETELL,
+            FixedCastLifecycleKind.JUMP_START,
+            FixedCastLifecycleKind.PLOT,
+            FixedCastLifecycleKind.REBOUND,
             FixedCastLifecycleKind.RETRACE,
             FixedCastLifecycleKind.SUSPEND,
         }:
@@ -98,8 +105,58 @@ def retrace_base_options(
     ]
 
 
+def zone_lifecycle_base_options(
+    host: FixedCastLifecycleCostHost,
+    seat: str,
+    card: Any,
+    printed: Sequence[Mapping[str, Any]],
+    *,
+    cast_without_mana: bool,
+    force_without_mana_cost: bool,
+    suppress_source_costs: bool,
+) -> list[dict[str, Any]]:
+    """Return current staged or graveyard lifecycle casting branches."""
+
+    if suppress_source_costs or force_without_mana_cost or cast_without_mana:
+        return []
+    if card.zone == "exile":
+        designation = fixed_zone_cast_designation(
+            host.state,
+            card,
+            actor=seat,
+        )
+        return (
+            [designation.lifecycle.fixed_cost_option()]
+            if designation is not None
+            else []
+        )
+    if card.zone != "graveyard":
+        return []
+    result: list[dict[str, Any]] = []
+    escape = compiled_fixed_cast_lifecycle_spec(
+        host,
+        card,
+        FixedCastLifecycleKind.ESCAPE,
+    )
+    if escape is not None:
+        result.append(escape.fixed_cost_option())
+    jump_start = compiled_fixed_cast_lifecycle_spec(
+        host,
+        card,
+        FixedCastLifecycleKind.JUMP_START,
+    )
+    if jump_start is not None:
+        result.extend(
+            jump_start.printed_zone_cost_option(option)
+            for option in printed
+            if str(option.get("id") or "") == "normal"
+        )
+    return result
+
+
 __all__ = [
     "FixedCastLifecycleCostHost",
     "retrace_base_options",
     "with_fixed_cast_lifecycle_costs",
+    "zone_lifecycle_base_options",
 ]

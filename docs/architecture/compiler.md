@@ -885,8 +885,9 @@ Nonmana Evoke remains unsupported except for an exact reviewed typed override;
 variable, Phyrexian, snow, granted, removed, and equivalent-text forms remain
 outside this compiler family.
 
-Fixed ordinary-mana Buyback, Dash, Warp, and positive-count Suspend, plus bare
-Retrace, lower through one typed cast-lifecycle owner. Dash contributes an
+Fixed ordinary-mana Buyback, Dash, Escape, Foretell, Plot, Warp, and
+positive-count Suspend, plus bare Jump-start, Rebound, and Retrace, lower
+through one typed cast-lifecycle owner. Dash contributes an
 alternative cost whenever the canonical casting owner already authorizes the
 card's current zone, including a designated commander in the command zone; the
 ordinary total-cost owner adds commander tax. Warp remains hand-only. Suspend
@@ -898,15 +899,31 @@ paying the mana cost through the existing one-shot exile-cast and casting
 owners. A creature cast this way receives an identity-pinned Haste effect that
 expires permanently on the first control change.
 
+Foretell and Plot add no-stack hand actions through the same priority and mana
+transaction. Foretell creates an owner-private, distinguishable face-down exile
+designation and a later-turn fixed alternative cost. Plot creates a public
+designation and a later-turn sorcery-window cast without paying the mana cost.
+Those rules-created designations survive loss of the printed ability but end on
+a zone change. Escape and Jump-start instead require their current graveyard
+ability: Escape combines a fixed ordinary alternative cost with exactly N
+distinct other owned graveyard cards through the fixed-set zone-cost owner;
+Jump-start combines the printed cost with one typed discard and a mandatory
+stack-leave self-exile replacement. Rebound applies only to a successful
+hand-cast instant or sorcery resolution, then schedules one identity-pinned
+next-upkeep optional cast through the existing one-shot exile owner. A
+countered initial spell and an exile card that left and returned do not
+Rebound.
+
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
 engine does not yet evaluate exact ability additions or removals outside the
 battlefield, any relevant off-battlefield ability-layer effect makes the
 lifecycle unavailable rather than assuming its printed ability remains. That
-fail-closed boundary applies equally to Retrace and Suspend. Variable,
-modified, duplicate, copied, granted, incomplete-card, land, external
-exile-counter, and distinct staged-zone lifecycle forms remain outside this
-boundary.
+fail-closed boundary applies to current-ability Escape, Jump-start, Retrace,
+and Suspend, but not to an already-created Foretell or Plot designation.
+Variable, modified, duplicate, copied, granted, incomplete-card, land,
+external foretell/plot, Escape follow-on, external exile-counter, and other
+distinct lifecycle forms remain outside this boundary.
 
 Ordinary fixed-mana `Madness` lowers as two source-spanned abilities. Its
 static hand component replaces only a typed discard's requested graveyard

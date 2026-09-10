@@ -342,7 +342,8 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         self.assertEqual(descriptor, parsed.to_descriptor())
         for mutation in (
             {**descriptor, "count": True},
-            {**descriptor, "count": 2},
+            {**descriptor, "count": 0},
+            {**descriptor, "count": 100},
             {**descriptor, "choice_field": "cost_cards"},
             {**descriptor, "operation": "discard_many"},
             {**descriptor, "unknown": True},
@@ -371,6 +372,11 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
             with self.subTest(mutation=mutation):
                 with self.assertRaises(AdditionalCostError):
                     FixedZoneChangeAdditionalCost.from_descriptor(mutation)
+
+        fixed_set = FixedZoneChangeAdditionalCost.from_descriptor(
+            {**descriptor, "count": 2}
+        )
+        self.assertEqual(2, fixed_set.count)
 
         extended = zone_change_cost(
             "As an additional cost to cast this spell, sacrifice a Vampire or Zombie."

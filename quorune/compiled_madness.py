@@ -7,7 +7,11 @@ from typing import Any, Protocol
 from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .card_program_faces import program_matches_face
 from .card_programs.admission import program_has_complete_card_program_admission
-from .cast_lifecycles import FixedCastLifecycleKind, FixedCastLifecycleSpec
+from .cast_lifecycles import (
+    fixed_zone_cast_designation,
+    FixedCastLifecycleKind,
+    FixedCastLifecycleSpec,
+)
 from .madness import (
     MADNESS_REPLACEMENT_EVENT,
     MADNESS_REPLACEMENT_HANDLER_ID,
@@ -21,6 +25,7 @@ from .semantic_runtime.madness import (
 
 
 class CompiledMadnessHost(Protocol):
+    state: Any
     semantics: Any
 
     def card_record(self, card: Any) -> Any: ...
@@ -97,6 +102,20 @@ def current_fixed_cast_lifecycle_spec(
 ) -> FixedCastLifecycleSpec | None:
     if kind is FixedCastLifecycleKind.MADNESS:
         return compiled_fixed_madness_spec(host, card)
+    if kind in {
+        FixedCastLifecycleKind.FORETELL,
+        FixedCastLifecycleKind.PLOT,
+    }:
+        designation = fixed_zone_cast_designation(
+            host.state,
+            card,
+            actor=card.owner,
+        )
+        return (
+            designation.lifecycle
+            if designation is not None and designation.lifecycle.kind is kind
+            else None
+        )
     from .compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec
 
     return compiled_fixed_cast_lifecycle_spec(host, card, kind)

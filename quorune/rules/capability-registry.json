@@ -6987,6 +6987,33 @@
       "status": "trusted"
     },
     {
+      "id": "casting.lifecycle.fixed_zone_cast",
+      "version": 1,
+      "official_rules": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile fixed Foretell, Plot, Escape, Jump-start, and Rebound through one typed zone-cast lifecycle extension of the canonical casting surface.",
+        "inputs": ["one complete-card-admitted physical source", "one source-spanned fixed lifecycle declaration", "current ability applicability while that ability governs", "one identity-pinned rules-created exile designation where applicable", "canonical priority, timing, target, cost, replacement, trigger, projection, and replay authority"],
+        "outputs": ["private Foretell and public Plot no-stack staging", "later-turn designated exile casting", "fixed-count Escape other-card payment", "Jump-start typed discard and stack self-exile", "successful hand-cast Rebound exile and next-upkeep optional free cast", "stale-contract rollback and exact replay"],
+        "exclusions": ["variable, hybrid, Phyrexian, snow, nonmana, conditional, modified, copied, granted, text-changed, or repeated lifecycle forms", "Escape any-number and compound payments plus escapes-with counters, abilities, and linked triggers", "external foretell or plot effects and Foretell cost or timing modifiers", "alternative-cost combinations, incomplete cards, tokens, spell copies, inactive faces, lands, and independently unsupported spell bodies", "replacement, prohibition, or permission interactions outside canonical typed owners"]
+      },
+      "dependencies": ["casting.additional_cost.zone_change.fixed_discard", "casting.additional_cost.zone_change.fixed_exile", "casting.lifecycle.fixed_public", "casting.permission.one_shot_exile_without_mana", "trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.cast_lifecycles.FixedCastLifecycleSpec", "quorune.cast_lifecycles.FixedZoneCastDesignation", "quorune.compiler.cast_lifecycle_nodes.fixed_cast_lifecycle_keyword_node", "quorune.semantic_runtime.cast_lifecycles.FixedCastLifecycleHandler", "quorune.compiled_cast_lifecycles.compiled_fixed_cast_lifecycle_specs", "quorune.staged_cast_lifecycles.build_staged_cast_offer", "quorune.staged_cast_lifecycles.commit_staged_cast_lifecycle", "quorune.staged_cast_lifecycles.resolve_rebound_cast_trigger", "CommanderEngine._compiled_zone_cast_permission", "CommanderEngine._effective_static_component_keys", "quorune.rules.action_catalog.build_priority_action_catalog", "quorune.rules.casting.lifecycle_costs.zone_lifecycle_base_options", "quorune.rules.casting.costs.build_cast_cost_options", "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost", "quorune.rules.casting.commit.commit_cast", "quorune.zone_object_state.mark_card_fixed_cast_lifecycle", "quorune.zone_object_state.mark_fixed_zone_cast_designation", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.stack_resolution.complete_stack_resolution", "quorune.trigger_processing.schedule_delayed_trigger", "quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin", "quorune.projection.StateProjector"],
+      "positive_tests": ["test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner", "test_foretell_private_staging_persists_without_current_ability_and_replays", "test_plot_uses_both_special_action_and_later_cast_timing", "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability", "test_jump_start_discards_then_self_exiles_when_countered", "test_rebound_schedules_identity_pinned_optional_free_cast"],
+      "negative_tests": ["test_open_zone_cast_forms_remain_residual", "test_staging_timing_stale_offer_and_payment_fail_without_mutation", "test_escape_insufficient_and_duplicate_other_card_payments_fail_closed", "test_countered_and_stale_rebound_cards_do_not_receive_a_cast"],
+      "interaction_tests": ["test_escape_pays_fixed_other_card_set_and_revalidates_current_ability", "test_jump_start_discards_then_self_exiles_when_countered", "test_countered_and_stale_rebound_cards_do_not_receive_a_cast"],
+      "multiplayer_tests": ["test_foretell_private_staging_persists_without_current_ability_and_replays"],
+      "privacy_tests": ["test_foretell_private_staging_persists_without_current_ability_and_replays"],
+      "replay_tests": ["test_foretell_private_staging_persists_without_current_ability_and_replays", "test_jump_start_resolution_departure_replays_exactly", "test_rebound_schedules_identity_pinned_optional_free_cast"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking fixed typed discard or exile costs, the base lifecycle owner, one-shot exile casting, normalized zone events, APNAP trigger placement, or destination replacement removes exact admission; complete-card trust, the shared current-component query, and rules-created designation identities independently fail closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler and runtime tests reject grammar widening, current-ability loss, stale offers and identities, insufficient or duplicate payments, omitted self-replacement, and omitted delayed cast ownership.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "casting.madness.fixed_mana",
       "version": 1,
       "official_rules": ["400.7k", "601.2b", "601.2f", "601.2h", "702.35", "702.35a", "702.35b", "702.35c"],

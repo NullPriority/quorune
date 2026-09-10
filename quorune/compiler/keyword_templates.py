@@ -13,7 +13,7 @@ _FIXED_ENTRY_MECHANICS = ("fading", "graft", "vanishing")
 
 _KEYWORD_WITH_VALUE = re.compile(
     rf"^(?P<name>{re.escape(_BLOODTHIRST_MECHANIC)}|{re.escape(_RENOWN_MECHANIC)}|{re.escape(_MODULAR_MECHANIC)}|{'|'.join(map(re.escape, _FIXED_ENTRY_MECHANICS))}|ward|equip|enchant|bushido|cycling|crew|dredge|kicker|toxic|"
-    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|madness|warp|suspend|level up|outlast|reinforce|scavenge)"
+    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|flashback|unearth|buyback|dash|escape|foretell|madness|plot|warp|suspend|level up|outlast|reinforce|scavenge)"
     r"(?:\s+(?P<value>.+))?$",
     re.IGNORECASE,
 )
@@ -57,6 +57,14 @@ def keyword_mechanics(
         # the whole printed ability for the typed Flashback grammar to accept
         # or reject as one source-spanned node.
         return ("flashback",)
+    if "escape" in known and re.match(
+        r"escape[—–-]",
+        material,
+        re.IGNORECASE,
+    ):
+        # Escape's comma separates its alternative mana payment from the
+        # fixed other-card exile payment inside one keyword declaration.
+        return ("escape",)
     if (
         "partner with" in known
         and partner_with_spec_for_material_line(material) is not None

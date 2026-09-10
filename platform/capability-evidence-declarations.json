@@ -3922,6 +3922,94 @@
       "applicability_note": "Replay the exact special-action offer, mana payment, public exile move, time-counter placement, and final authoritative hash."
     },
     {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_countered_and_stale_rebound_cards_do_not_receive_a_cast",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Distinguish countered initial spells from successful resolution and reject an exile card that left and returned before the delayed trigger resolved."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_escape_pays_fixed_other_card_set_and_revalidates_current_ability",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Exclude the source, commit exactly the fixed other-card payment, and revalidate the current graveyard ability before any mutation."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_jump_start_discards_then_self_exiles_when_countered",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose the private typed discard payment with the mandatory current stack-object self-exile replacement on countering."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_foretell_private_staging_persists_without_current_ability_and_replays",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep one distinguishable face-down exile object in four-player state while only its owner receives the later cast authority."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleCompilerTests.test_zone_lifecycle_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the shared keyword-node production and block the new zone-cast capability so exact lifecycle admission disappears."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleCompilerTests.test_open_zone_cast_forms_remain_residual",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject variable, hybrid, nonmana, modified, and open-count zone-cast lifecycle forms."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleCompilerTests.test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed Foretell, Plot, Escape, Rebound, and Jump-start declarations into one source-spanned lifecycle descriptor owner."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_foretell_private_staging_persists_without_current_ability_and_replays",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project the Foretell card identity only to its owner and suppress the intermediate public zone-move name."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_foretell_private_staging_persists_without_current_ability_and_replays",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the persisted private designation, fixed alternative payment, stack move, and final battlefield hash."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_jump_start_resolution_departure_replays_exactly",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the selected discard, mana payment, spell resolution, mandatory stack-leave exile, and final authoritative hash."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_zone_cast",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_zone_cast_lifecycles.FixedZoneCastLifecycleRuntimeTests.test_rebound_schedules_identity_pinned_optional_free_cast",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the identity-pinned delayed choice, free cast, ordinary resolution, and final authoritative hash."
+    },
+    {
       "capability_id": "casting.madness.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_madness_stale_payment_counter_and_current_ability_boundaries",

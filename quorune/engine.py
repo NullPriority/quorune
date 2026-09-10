@@ -31,7 +31,10 @@ from .compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
 )
-from .compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec
+from .compiled_cast_lifecycles import (
+    compiled_fixed_cast_lifecycle_spec,
+    compiled_fixed_zone_cast_permission,
+)
 from .cast_lifecycles import (
     fixed_cast_lifecycle_resolution_destination,
     FixedCastLifecycleKind,
@@ -2725,17 +2728,12 @@ class CommanderEngine(
         if compiled_ordinary_zone_cast_permission(self, seat, card):
             return True
         return bool(
-            card.owner == seat
-            and card.zone == "graveyard"
-            and (
-                compiled_fixed_mana_flashback_spec(self, card) is not None
-                or compiled_fixed_cast_lifecycle_spec(
-                    self,
-                    card,
-                    FixedCastLifecycleKind.RETRACE,
-                )
-                is not None
+            (
+                card.owner == seat
+                and card.zone == "graveyard"
+                and compiled_fixed_mana_flashback_spec(self, card) is not None
             )
+            or compiled_fixed_zone_cast_permission(self, seat, card)
         )
 
     def _cast(

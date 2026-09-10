@@ -8408,6 +8408,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/staged_cast_lifecycles.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/stack_counter.py",
       "layer": "rules",
       "owning_subsystem": "stack_counter",
