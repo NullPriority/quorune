@@ -7,7 +7,9 @@ import re
 from typing import Any, Mapping
 
 from ..keyword_counters import keyword_counter_mechanic
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
+from .creature_subtypes import canonical_creature_subtype
 from .counter_placement_templates import (
     existing_target_counter_placement_effect_template,
     fixed_counter_placement_effect_template,
@@ -37,23 +39,54 @@ _GETS = re.compile(
 )
 _GAINS = re.compile(r"gains (?P<keywords>.+)", re.IGNORECASE)
 FIXED_TARGET_CHARACTERISTIC_KEYWORDS = frozenset(
-    {
-        "deathtouch",
-        "double strike",
-        "first strike",
-        "flying",
-        "haste",
-        "hexproof",
-        "indestructible",
-        "lifelink",
-        "menace",
-        "reach",
-        "shroud",
-        "trample",
-        "vigilance",
-    }
+    keyword.casefold() for keyword in FIXED_CHARACTERISTIC_KEYWORDS
 )
 _SEQUENCE_MECHANIC = "fixed-target-effect-sequence"
+FIXED_SOURCE_CHARACTERISTIC_MECHANIC = (
+    "fixed-source-characteristics-until-end-of-turn"
+)
+FIXED_SOURCE_CHARACTERISTIC_CAPABILITY = (
+    "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+)
+SOURCE_ZONE_OBJECT = "$source.zone_object"
+_TRAILING_REMINDER = re.compile(
+    r"\s*\([^()]*(?:\([^()]*\)[^()]*)*\)\s*$"
+)
+_SOURCE_GETS_AND_GAINS = re.compile(
+    r"this (?P<kind>artifact|creature|enchantment|permanent|spacecraft|vehicle) "
+    r"gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and gains "
+    r"(?P<keywords>.+?) until end of turn\.?",
+    re.IGNORECASE,
+)
+_SOURCE_GAINS_MULTIPLE = re.compile(
+    r"this (?P<kind>artifact|creature|enchantment|permanent|spacecraft|vehicle) "
+    r"gains (?P<keywords>.+?\s+and\s+.+?) until end of turn\.?",
+    re.IGNORECASE,
+)
+_SOURCE_COLOR = re.compile(
+    r"this creature becomes (?P<color>colorless|all colors) "
+    r"until end of turn\.?",
+    re.IGNORECASE,
+)
+_ARTIFACT_ANIMATION = re.compile(
+    r"this artifact becomes a (?P<power>\d+)/(?P<toughness>\d+) "
+    r"(?P<description>.*?)artifact creature"
+    r"(?: with (?P<keywords>.+?))? until end of turn\.?",
+    re.IGNORECASE,
+)
+_ARTIFACT_BASE_ANIMATION = re.compile(
+    r"this artifact becomes a (?P<description>.+?) artifact creature "
+    r"with base power and toughness (?P<power>\d+)/(?P<toughness>\d+) "
+    r"until end of turn\.?",
+    re.IGNORECASE,
+)
+_COLOR_NAMES = {
+    "white": "W",
+    "blue": "U",
+    "black": "B",
+    "red": "R",
+    "green": "G",
+}
 _ZONE_OBJECT_SEQUENCE = re.compile(
     r"(?P<counter>put .+?\.) it gains (?P<keyword>[a-z ]+)\."
     r"(?: \(this effect lasts indefinitely\.\))?",
@@ -75,6 +108,252 @@ def _keyword_list(text: str) -> tuple[str, ...] | None:
     ):
         return None
     return tuple(value.title() for value in values)
+
+
+def _source_kind_is_compatible(
+    kind: str,
+    source_card_types: tuple[str, ...],
+) -> bool:
+    normalized = kind.casefold()
+    required = (
+        "artifact"
+        if normalized in {"artifact", "spacecraft", "vehicle"}
+        else normalized
+    )
+    return required == "permanent" or required in source_card_types
+
+
+def _subtype_sequence(text: str) -> tuple[str, ...] | None:
+    words = tuple(value for value in text.strip().split() if value)
+    if not words:
+        return ()
+    memo: dict[int, tuple[str, ...] | None] = {}
+
+    def parse(index: int) -> tuple[str, ...] | None:
+        if index == len(words):
+            return ()
+        if index in memo:
+            return memo[index]
+        for end in range(len(words), index, -1):
+            candidate = canonical_creature_subtype(
+                " ".join(words[index:end])
+            )
+            if candidate is None:
+                continue
+            remaining = parse(end)
+            if remaining is not None:
+                memo[index] = (candidate.title(), *remaining)
+                return memo[index]
+        memo[index] = None
+        return None
+
+    return parse(0)
+
+
+def _animation_description(
+    text: str,
+) -> tuple[tuple[str, ...] | None, tuple[str, ...]] | None:
+    normalized = " ".join(text.casefold().split())
+    colors: list[str] = []
+    remaining = normalized
+    for expression in sorted(
+        (
+            *tuple(_COLOR_NAMES),
+            *tuple(
+                f"{first} and {second}"
+                for first in _COLOR_NAMES
+                for second in _COLOR_NAMES
+                if first != second
+            ),
+        ),
+        key=len,
+        reverse=True,
+    ):
+        if remaining == expression or remaining.startswith(expression + " "):
+            colors = [
+                _COLOR_NAMES[value]
+                for value in expression.split(" and ")
+            ]
+            remaining = remaining[len(expression) :].strip()
+            break
+    subtypes = _subtype_sequence(remaining)
+    if subtypes is None:
+        return None
+    canonical_colors = tuple(
+        color for color in "WUBRG" if color in colors
+    )
+    return (canonical_colors if colors else None), subtypes
+
+
+@dataclass(frozen=True, slots=True)
+class FixedSourceCharacteristicsTemplate:
+    source_kind: str
+    set_card_types: tuple[str, ...] | None = None
+    set_subtypes: tuple[str, ...] | None = None
+    set_colors: tuple[str, ...] | None = None
+    base_power: int | None = None
+    base_toughness: int | None = None
+    power: int = 0
+    toughness: int = 0
+    keywords: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.source_kind:
+            raise ValueError("Source characteristic kind is required")
+        if (self.base_power is None) is not (self.base_toughness is None):
+            raise ValueError("Source characteristic base stats must be paired")
+        if any(
+            keyword.casefold() not in FIXED_TARGET_CHARACTERISTIC_KEYWORDS
+            for keyword in self.keywords
+        ) or len(set(self.keywords)) != len(self.keywords):
+            raise ValueError("Source characteristic keywords are unsupported")
+        if not any(
+            (
+                self.set_card_types is not None,
+                self.set_subtypes is not None,
+                self.set_colors is not None,
+                self.base_power is not None,
+                self.power != 0,
+                self.toughness != 0,
+                bool(self.keywords),
+            )
+        ):
+            raise ValueError("Source characteristic effect cannot be empty")
+
+    @property
+    def effects(self) -> tuple[Mapping[str, Any], ...]:
+        return (
+            {
+                "op": "apply_source_characteristics_until_end_of_turn",
+                "card": SOURCE_ZONE_OBJECT,
+                "set_card_types": (
+                    list(self.set_card_types)
+                    if self.set_card_types is not None
+                    else None
+                ),
+                "set_subtypes": (
+                    list(self.set_subtypes)
+                    if self.set_subtypes is not None
+                    else None
+                ),
+                "set_colors": (
+                    list(self.set_colors)
+                    if self.set_colors is not None
+                    else None
+                ),
+                "base_power": self.base_power,
+                "base_toughness": self.base_toughness,
+                "power": self.power,
+                "toughness": self.toughness,
+                "keywords": list(self.keywords),
+            },
+        )
+
+    @property
+    def mechanics(self) -> tuple[str, ...]:
+        return tuple(
+            dict.fromkeys(
+                (
+                    "cr-611-continuous-effects",
+                    FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
+                    *(keyword.casefold() for keyword in self.keywords),
+                )
+            )
+        )
+
+    def compiled(self):
+        return (
+            "fixed-source-characteristics-until-end-of-turn-v1",
+            self.effects,
+            None,
+            self.mechanics,
+        )
+
+
+def fixed_source_characteristics_effect_template(
+    text: str,
+    *,
+    source_is_permanent: bool | None,
+    source_card_types: tuple[str, ...],
+) -> FixedSourceCharacteristicsTemplate | None:
+    """Lower one closed, identity-pinned source characteristic effect."""
+
+    if source_is_permanent is not True:
+        return None
+    normalized_types = tuple(
+        sorted(value.casefold() for value in source_card_types)
+    )
+    normalized = _TRAILING_REMINDER.sub("", text.strip()).strip()
+    match = _SOURCE_GETS_AND_GAINS.fullmatch(normalized)
+    if match is not None:
+        if not _source_kind_is_compatible(
+            match.group("kind"), normalized_types
+        ):
+            return None
+        keywords = _keyword_list(match.group("keywords"))
+        if keywords is None:
+            return None
+        return FixedSourceCharacteristicsTemplate(
+            source_kind=match.group("kind").casefold(),
+            power=int(match.group("power")),
+            toughness=int(match.group("toughness")),
+            keywords=keywords,
+        )
+    match = _SOURCE_GAINS_MULTIPLE.fullmatch(normalized)
+    if match is not None:
+        if not _source_kind_is_compatible(
+            match.group("kind"), normalized_types
+        ):
+            return None
+        keywords = _keyword_list(match.group("keywords"))
+        if keywords is None:
+            return None
+        return FixedSourceCharacteristicsTemplate(
+            source_kind=match.group("kind").casefold(),
+            keywords=keywords,
+        )
+    match = _SOURCE_COLOR.fullmatch(normalized)
+    if match is not None:
+        if "creature" not in normalized_types:
+            return None
+        colors = () if match.group("color").casefold() == "colorless" else tuple("WUBRG")
+        return FixedSourceCharacteristicsTemplate(
+            source_kind="creature",
+            set_colors=colors,
+        )
+    match = _ARTIFACT_ANIMATION.fullmatch(normalized)
+    if match is not None and "artifact" in normalized_types:
+        description = _animation_description(match.group("description"))
+        keywords = (
+            _keyword_list(match.group("keywords"))
+            if match.group("keywords")
+            else ()
+        )
+        if description is None or keywords is None:
+            return None
+        colors, subtypes = description
+        return FixedSourceCharacteristicsTemplate(
+            source_kind="artifact",
+            set_card_types=("Artifact", "Creature"),
+            set_subtypes=subtypes,
+            set_colors=colors,
+            base_power=int(match.group("power")),
+            base_toughness=int(match.group("toughness")),
+            keywords=keywords,
+        )
+    match = _ARTIFACT_BASE_ANIMATION.fullmatch(normalized)
+    if match is not None and "artifact" in normalized_types:
+        description = _animation_description(match.group("description"))
+        if description is None or description[0] is not None:
+            return None
+        return FixedSourceCharacteristicsTemplate(
+            source_kind="artifact",
+            set_card_types=("Artifact", "Creature"),
+            set_subtypes=description[1],
+            base_power=int(match.group("power")),
+            base_toughness=int(match.group("toughness")),
+        )
+    return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -415,10 +694,14 @@ def fixed_target_effect_sequence_template(
 
 
 __all__ = [
+    "FIXED_SOURCE_CHARACTERISTIC_MECHANIC",
+    "FIXED_SOURCE_CHARACTERISTIC_CAPABILITY",
     "FIXED_TARGET_CHARACTERISTIC_KEYWORDS",
+    "FixedSourceCharacteristicsTemplate",
     "FixedTargetCharacteristicsTemplate",
     "FixedTargetEffectSequenceTemplate",
     "FixedTargetZoneObjectKeywordSequenceTemplate",
+    "fixed_source_characteristics_effect_template",
     "fixed_target_characteristics_effect_template",
     "fixed_target_effect_sequence_template",
     "fixed_target_zone_object_keyword_sequence_template",

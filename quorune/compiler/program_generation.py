@@ -45,6 +45,7 @@ from ..rules.node_capability_shapes import (
     fixed_amass_node_capabilities,
     fixed_target_effect_sequence_node_capabilities,
     fixed_source_effect_sequence_node_capabilities,
+    fixed_source_characteristics_node_capabilities,
     fixed_target_characteristics_node_capabilities,
     temporary_declaration_restriction_node_capabilities,
     fixed_player_counter_placement_node_capabilities,
@@ -872,6 +873,23 @@ def _is_closed_fixed_target_characteristics_program(
     )
 
 
+def _is_closed_fixed_source_characteristics_program(
+    program: SemanticProgram,
+) -> bool:
+    """Recognize one closed source characteristic effect."""
+
+    required = set(
+        fixed_source_characteristics_node_capabilities(
+            effects=program.effects,
+            target_schema=program.target_schema,
+            mechanic_ids=program.coverage,
+        )
+    )
+    return bool(required) and required.issubset(
+        program.capability_dependencies
+    )
+
+
 def _is_closed_temporary_declaration_restriction_program(
     program: SemanticProgram,
 ) -> bool:
@@ -1217,6 +1235,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_bolster_program,
         _is_closed_fixed_amass_program,
         _is_closed_fixed_target_characteristics_program,
+        _is_closed_fixed_source_characteristics_program,
         _is_closed_temporary_declaration_restriction_program,
         _is_closed_fixed_target_effect_sequence_program,
         _is_closed_fixed_source_effect_sequence_program,

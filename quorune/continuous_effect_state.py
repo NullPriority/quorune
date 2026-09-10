@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from .continuous_effects import (
@@ -22,6 +22,32 @@ from .object_query import object_matches_query, object_query_result
 
 class ContinuousEffectStateError(ValueError):
     """Persistent CR 611 state could not be constructed safely."""
+
+
+@dataclass(frozen=True, slots=True)
+class ResolutionContinuousComponent:
+    """One layer component of a single resolution-created effect."""
+
+    layer: Layer
+    sublayer: str
+    operations: tuple[ContinuousOperation, ...]
+
+    def __post_init__(self) -> None:
+        try:
+            object.__setattr__(self, "layer", Layer(self.layer))
+            operations = tuple(self.operations)
+        except (TypeError, ValueError) as exc:
+            raise ContinuousEffectStateError(
+                "Resolution continuous components require typed layers"
+            ) from exc
+        if not operations or any(
+            not isinstance(operation, ContinuousOperation)
+            for operation in operations
+        ):
+            raise ContinuousEffectStateError(
+                "Resolution continuous components require typed operations"
+            )
+        object.__setattr__(self, "operations", operations)
 
 
 @dataclass(frozen=True, slots=True)
@@ -240,6 +266,83 @@ def create_resolution_continuous_effect(
     return commit_continuous_effect(host.state, effect)
 
 
+def create_resolution_continuous_effect_components(
+    host: ContinuousEffectStateHost,
+    *,
+    source: ResolutionEffectSource,
+    targets: Sequence[Any],
+    components: Sequence[ResolutionContinuousComponent],
+    duration: ContinuousEffectDuration = (
+        ContinuousEffectDuration.UNTIL_END_OF_TURN
+    ),
+) -> tuple[ContinuousEffect, ...]:
+    """Atomically commit one multi-layer effect with one shared timestamp."""
+
+    if not isinstance(source, ResolutionEffectSource):
+        raise ContinuousEffectStateError(
+            "Resolution continuous components require a typed source"
+        )
+    values = tuple(components)
+    if not values or any(
+        not isinstance(value, ResolutionContinuousComponent)
+        for value in values
+    ):
+        raise ContinuousEffectStateError(
+            "Resolution continuous component sets must be typed and nonempty"
+        )
+    if len({(value.layer, value.sublayer) for value in values}) != len(values):
+        raise ContinuousEffectStateError(
+            "Resolution continuous components require unique layer positions"
+        )
+    identities = tuple(
+        ContinuousObjectIdentity(
+            object_id=card.object_id,
+            logical_object_id=card.logical_object_id,
+        )
+        for card in targets
+    )
+    if not identities:
+        return ()
+    source_id = source.object_id or source.stack_ref
+    prototypes = tuple(
+        ContinuousEffect(
+            effect_id=f"resolution-component:{index}",
+            source_id=source_id,
+            layer=component.layer,
+            sublayer=component.sublayer,
+            timestamp=0,
+            operations=component.operations,
+            origin=ContinuousEffectOrigin.RESOLUTION,
+            duration=duration,
+            applies=ObjectQuerySpec(zones=("battlefield",)),
+            locked_objects=identities,
+        )
+        for index, component in enumerate(values, start=1)
+    )
+    journal = host.state.continuous_effects
+    if journal is None:
+        raise ContinuousEffectStateError(
+            "Continuous-effect state is unavailable"
+        )
+    timestamp = host._next_zone_timestamp()
+    base_ref = host._next_ref("CE")
+    effects = tuple(
+        replace(
+            prototype,
+            effect_id=f"{base_ref}:{index}",
+            timestamp=timestamp,
+        )
+        for index, prototype in enumerate(prototypes, start=1)
+    )
+    effect_ids = {effect.effect_id for effect in effects}
+    if any(current.effect_id in effect_ids for current in journal):
+        raise ContinuousEffectStateError(
+            "Continuous-effect identity is already committed"
+        )
+    journal.extend(effects)
+    return effects
+
+
 def create_resolution_declaration_rule_effect(
     host: ContinuousEffectStateHost,
     *,
@@ -361,10 +464,12 @@ def expire_control_change_continuous_effects(state: Any, card: Any) -> int:
 __all__ = [
     "ContinuousEffectStateError",
     "ResolutionEffectSource",
+    "ResolutionContinuousComponent",
     "active_resolution_declaration_rule_effects",
     "active_resolution_effects",
     "create_resolution_declaration_rule_effect",
     "create_resolution_continuous_effect",
+    "create_resolution_continuous_effect_components",
     "expire_control_change_continuous_effects",
     "expire_end_of_turn_continuous_effects",
     "matching_battlefield_objects",

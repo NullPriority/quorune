@@ -75,6 +75,7 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_entry_return_requirement_measurement,
     _fixed_mana_madness_measurement,
     _fixed_owner_zone_move_measurement,
+    _fixed_source_characteristic_measurement,
     _fixed_static_declaration_composition_measurement,
     _fixed_targeted_return_closure_measurement,
     _is_fixed_owner_zone_move_candidate,
@@ -3515,6 +3516,83 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(1, measurement["exact_ability_gain"])
         self.assertEqual(1, measurement["material_residual_reduction"])
         self.assertEqual("bounded_executable", measurement["decision"])
+
+    def test_source_characteristic_probe_requires_integrated_exact_node(self):
+        source = (
+            "{2}: This artifact becomes a 2/2 blue Bird artifact creature "
+            "with flying until end of turn."
+        )
+        record = SimpleNamespace(
+            oracle_id="fixture:source-characteristics",
+            name="Source characteristic fixture",
+            oracle_text=source,
+            type_line="Artifact",
+            faces=(),
+        )
+        family_ids = {
+            "activated_effect:unparsed-this-artifact-becomes",
+            "duration:until-end-of-turn",
+        }
+        ability = {
+            "ability_id": "front:n1",
+            "face_id": "front",
+            "source_line": 1,
+            "status": "unresolved",
+            "residuals": [{"residual_id": "r1"}],
+            "blockers": {"canonical_family_ids": sorted(family_ids)},
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "unresolved",
+                    "minimum_known_blocker_set": sorted(family_ids),
+                    "abilities": [ability],
+                }
+            ]
+        }
+        node = SimpleNamespace(
+            node_id="front:n1",
+            exact=True,
+            template_id=(
+                "fixed-source-characteristics-until-end-of-turn-v1"
+            ),
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(node,)),),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _fixed_source_characteristic_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-source-characteristic-effects",
+                probe_id="fixed-source-characteristics-existing-owner-v1",
+                member_ids=family_ids,
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
 
     def test_source_combat_growth_probe_requires_integrated_exact_node(self):
         source = (

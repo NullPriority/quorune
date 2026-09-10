@@ -276,7 +276,13 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     elif op in {"set_types", "add_types", "remove_types"}:
         if field not in {None, "supertypes", "card_types", "subtypes"}:
             raise ContinuousEffectError("Type operations require a represented type field")
-        _nonempty_words(value, field_name=op)
+        if not (
+            op == "set_types"
+            and field == "subtypes"
+            and isinstance(value, (list, tuple))
+            and not value
+        ):
+            _nonempty_words(value, field_name=op)
     elif op in {"set_colors", "add_colors", "remove_colors"}:
         if field is not None:
             raise ContinuousEffectError("Color operations do not accept a field")

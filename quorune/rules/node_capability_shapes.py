@@ -25,6 +25,8 @@ from ..compiler.counter_placement_templates import (
 from ..compiler.creature_subtypes import canonical_creature_subtype
 from ..compiler.direct_target import DirectPermanentTargetSpec
 from ..compiler.fixed_target_effect_sequences import (
+    FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
+    FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
     FIXED_TARGET_CHARACTERISTIC_KEYWORDS,
 )
 from ..compiler.fixed_source_effect_sequences import (
@@ -1153,6 +1155,118 @@ def fixed_target_characteristics_node_capabilities(
     )
 
 
+def fixed_source_characteristics_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, Any]],
+    target_schema: Mapping[str, Any] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    """Return ownership for one closed source characteristic effect."""
+
+    mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (
+        target_schema is not None
+        or FIXED_SOURCE_CHARACTERISTIC_MECHANIC not in mechanics
+        or "cr-611-continuous-effects" not in mechanics
+        or len(effects) != 1
+    ):
+        return ()
+    effect = effects[0]
+    expected_fields = {
+        "op",
+        "card",
+        "set_card_types",
+        "set_subtypes",
+        "set_colors",
+        "base_power",
+        "base_toughness",
+        "power",
+        "toughness",
+        "keywords",
+    }
+    if (
+        set(effect) != expected_fields
+        or effect.get("op")
+        != "apply_source_characteristics_until_end_of_turn"
+        or effect.get("card") != SOURCE_ZONE_OBJECT
+    ):
+        return ()
+    set_card_types = effect.get("set_card_types")
+    set_subtypes = effect.get("set_subtypes")
+    set_colors = effect.get("set_colors")
+    base_power = effect.get("base_power")
+    base_toughness = effect.get("base_toughness")
+    power = effect.get("power")
+    toughness = effect.get("toughness")
+    keywords = effect.get("keywords")
+    if set_card_types is not None and (
+        not isinstance(set_card_types, list)
+        or set_card_types != ["Artifact", "Creature"]
+    ):
+        return ()
+    if set_subtypes is not None and (
+        not isinstance(set_subtypes, list)
+        or any(
+            type(value) is not str or not value
+            or canonical_creature_subtype(value) is None
+            for value in set_subtypes
+        )
+        or len(set(set_subtypes)) != len(set_subtypes)
+        or set_card_types is None
+    ):
+        return ()
+    if set_colors is not None and (
+        not isinstance(set_colors, list)
+        or any(value not in "WUBRG" for value in set_colors)
+        or set_colors != [value for value in "WUBRG" if value in set_colors]
+        or len(set_colors) not in {0, 1, 2, 5}
+    ):
+        return ()
+    if (
+        (base_power is None) is not (base_toughness is None)
+        or any(
+            value is not None and type(value) is not int
+            for value in (base_power, base_toughness)
+        )
+        or any(
+            value is not None and value < 0
+            for value in (base_power, base_toughness)
+        )
+        or type(power) is not int
+        or type(toughness) is not int
+        or not isinstance(keywords, list)
+        or any(
+            keyword not in _FIXED_TARGET_SEQUENCE_KEYWORDS
+            for keyword in keywords
+        )
+        or len(set(keywords)) != len(keywords)
+        or len(keywords) > 2
+    ):
+        return ()
+    if (
+        (set_card_types is None) is not (set_subtypes is None)
+        or (set_card_types is None) is not (base_power is None)
+        or (base_power is not None and (power or toughness))
+    ):
+        return ()
+    if not any(
+        (
+            set_card_types is not None,
+            set_subtypes is not None,
+            set_colors is not None,
+            base_power is not None,
+            power != 0,
+            toughness != 0,
+            bool(keywords),
+        )
+    ):
+        return ()
+    return (
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
+    )
+
+
 def temporary_declaration_restriction_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -1491,6 +1605,7 @@ __all__ = [
     "fixed_counter_target_schema_is_closed",
     "fixed_target_effect_sequence_node_capabilities",
     "fixed_source_effect_sequence_node_capabilities",
+    "fixed_source_characteristics_node_capabilities",
     "fixed_target_characteristics_node_capabilities",
     "temporary_declaration_restriction_node_capabilities",
     "fixed_counter_placement_set_node_capabilities",
