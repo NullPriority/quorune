@@ -6762,6 +6762,21 @@
       ],
       "interaction_order": 2,
       "assertion": "A targeted until-end-of-turn Shadow grant feeds current advertised and accepted blocker legality through the shared layer-6 keyword owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_animation_updates_dynamic_counts_and_detaches_equipment",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "The canonical fixed-mana Equip activation attaches the source, then source animation makes that Equipment a creature and the state-based owner detaches it."
     }
   ]
 }

@@ -7,7 +7,6 @@ import tempfile
 import unittest
 
 from common import ROOT, keep_all, make_session
-from quorune.attachments import attach_objects
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
@@ -517,13 +516,18 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
             name="Queen Allenal of Ruadach",
             ref="ANIMATE-COUNT",
         )
-        attach_objects(
-            engine.state.cards,
-            source,
-            recipient,
-            source_timestamp=engine._next_zone_timestamp(),
-            players=engine.state.players,
+        engine.state.players["A"].mana_pool["C"] = 4
+        self.prepare_main(session)
+        equipped = session.act(
+            "pilot:A",
+            {
+                "action_id": f"activate:{source.ref}:ab2",
+                "targets": [recipient.ref],
+            },
         )
+        self.assertTrue(equipped.ok, equipped.summary)
+        self.resolve_stack(session)
+        self.assertEqual(recipient.object_id, source.attached_to)
         self.assertEqual(2, engine._numeric_stat(queen.object_id, "power"))
         engine.state.players["A"].mana_pool["C"] = 3
         self.prepare_main(session)
