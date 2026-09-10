@@ -72,6 +72,14 @@ class OwnGraveyardCardTargetTests(unittest.TestCase):
             spec.kind = GraveyardCardTargetKind.CARD  # type: ignore[misc]
         with self.assertRaisesRegex(GraveyardCardTargetError, "typed value"):
             OwnGraveyardCardTargetSpec("card")  # type: ignore[arg-type]
+        with self.assertRaisesRegex(
+            GraveyardCardTargetError,
+            "positive type",
+        ):
+            OwnGraveyardCardTargetSpec(
+                GraveyardCardTargetKind.PERMANENT_CARD,
+                types_any=("creature",),
+            )
 
     def test_target_spec_rejects_noncanonical_or_open_predicates(self):
         base = OwnGraveyardCardTargetSpec(
@@ -220,6 +228,126 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIsNone(
                     targeted_own_graveyard_return_to_hand_effect_template(text)
+                )
+
+    def test_qualified_permanent_card_keeps_its_graveyard_type_domain(self):
+        permanent_types = {
+            "artifact",
+            "battle",
+            "creature",
+            "enchantment",
+            "land",
+            "planeswalker",
+        }
+        green_permanent_ir = self.compile(
+            "Return target green permanent card from your graveyard to your hand."
+        )
+        self.assertEqual("exact", green_permanent_ir.status)
+        green_permanent_schema = green_permanent_ir.faces[0].nodes[0].target_schema
+        self.assertEqual(["G"], green_permanent_schema["colors_any"])
+        self.assertEqual(
+            permanent_types,
+            set(green_permanent_schema["types_any"]),
+        )
+        green_permanent_group = TargetGroup.from_mapping(
+            green_permanent_schema
+        )
+        self.assertTrue(
+            green_permanent_group.matches_type_characteristics(
+                types=("creature",), subtypes=(), supertypes=()
+            )
+        )
+        self.assertFalse(
+            green_permanent_group.matches_type_characteristics(
+                types=("instant",), subtypes=(), supertypes=()
+            )
+        )
+
+        green_card_ir = self.compile(
+            "Return target green card from your graveyard to your hand."
+        )
+        self.assertEqual("exact", green_card_ir.status)
+        green_card_group = TargetGroup.from_mapping(
+            green_card_ir.faces[0].nodes[0].target_schema
+        )
+        for card_type in ("instant", "sorcery"):
+            with self.subTest(green_card_type=card_type):
+                self.assertTrue(
+                    green_card_group.matches_type_characteristics(
+                        types=(card_type,), subtypes=(), supertypes=()
+                    )
+                )
+
+        for description, expected in (
+            (
+                "multicolored permanent",
+                {"types_any": permanent_types, "color_count_min": 2},
+            ),
+            (
+                "noncreature permanent",
+                {
+                    "types_any": permanent_types,
+                    "types_none": {"creature"},
+                },
+            ),
+        ):
+            with self.subTest(description=description):
+                compiled = self.compile(
+                    f"Return target {description} card from your graveyard to your hand."
+                )
+                self.assertEqual("exact", compiled.status)
+                schema = compiled.faces[0].nodes[0].target_schema
+                for field, value in expected.items():
+                    actual = schema[field]
+                    self.assertEqual(
+                        value,
+                        set(actual) if isinstance(value, set) else actual,
+                    )
+                if description == "noncreature permanent":
+                    group = TargetGroup.from_mapping(schema)
+                    self.assertTrue(
+                        group.matches_type_characteristics(
+                            types=("enchantment",),
+                            subtypes=(),
+                            supertypes=(),
+                        )
+                    )
+                    for card_type in ("creature", "instant", "sorcery"):
+                        self.assertFalse(
+                            group.matches_type_characteristics(
+                                types=(card_type,),
+                                subtypes=(),
+                                supertypes=(),
+                            )
+                        )
+
+        for kind in (
+            GraveyardCardTargetKind.PERMANENT_CARD,
+            GraveyardCardTargetKind.NONLAND_PERMANENT_CARD,
+        ):
+            with self.subTest(existing=kind.value):
+                compiled = self.compile(
+                    f"Return target {kind.value} from your graveyard to your hand."
+                )
+                self.assertEqual("exact", compiled.status)
+                group = TargetGroup.from_mapping(
+                    compiled.faces[0].nodes[0].target_schema
+                )
+                self.assertTrue(
+                    group.matches_type_characteristics(
+                        types=("artifact",), subtypes=(), supertypes=()
+                    )
+                )
+                self.assertEqual(
+                    kind is GraveyardCardTargetKind.PERMANENT_CARD,
+                    group.matches_type_characteristics(
+                        types=("land",), subtypes=(), supertypes=()
+                    ),
+                )
+                self.assertFalse(
+                    group.matches_type_characteristics(
+                        types=("instant",), subtypes=(), supertypes=()
+                    )
                 )
 
     def test_spell_trigger_and_activated_contexts_share_graveyard_return_lowering(self):

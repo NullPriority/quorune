@@ -279,12 +279,22 @@ class OwnGraveyardCardTargetSpec:
                 raise GraveyardCardTargetError(
                     "Graveyard target kind must be a supported typed value"
                 )
-            if any(predicate_values):
+            if (
+                self.kind is not GraveyardCardTargetKind.PERMANENT_CARD
+                and any(predicate_values)
+            ):
                 raise GraveyardCardTargetError(
                     "Graveyard target kind cannot mix a characteristic predicate"
                 )
-            return
-        if not any(predicate_values):
+            if self.kind is GraveyardCardTargetKind.PERMANENT_CARD and (
+                self.types_any or self.types_all
+            ):
+                raise GraveyardCardTargetError(
+                    "Permanent-card domain cannot mix a positive type predicate"
+                )
+            if not any(predicate_values):
+                return
+        elif not any(predicate_values):
             raise GraveyardCardTargetError(
                 "Graveyard target requires a supported typed value or predicate"
             )
@@ -356,9 +366,11 @@ class OwnGraveyardCardTargetSpec:
 
     @property
     def slug(self) -> str:
-        if self.kind is not None:
-            return self.kind.value.replace(" or ", "-or-").replace(" ", "-")
-        parts: list[str] = []
+        parts: list[str] = (
+            [self.kind.value.replace(" or ", "-or-").replace(" ", "-")]
+            if self.kind is not None
+            else []
+        )
         for prefix, values, separator in (
             ("any-", self.types_any, "-or-"),
             ("all-", self.types_all, "-and-"),
@@ -381,7 +393,7 @@ class OwnGraveyardCardTargetSpec:
             parts.append(f"at-least-{self.color_count_min}-colors")
         if self.color_count_equal is not None:
             parts.append(f"exactly-{self.color_count_equal}-colors")
-        return "-".join(parts) + "-card"
+        return "-".join(parts) + ("" if self.kind is not None else "-card")
 
     def to_target_schema(self) -> dict[str, Any]:
         schema: dict[str, Any] = {
@@ -390,16 +402,18 @@ class OwnGraveyardCardTargetSpec:
             "owner_relation": "you",
             "count": 1,
         }
-        if self.kind is not None:
-            if self.kind.types_any:
-                schema["types_any"] = list(self.kind.types_any)
-            if self.kind.types_none:
-                schema["types_none"] = list(self.kind.types_none)
-            return schema
+        kind_types_any = self.kind.types_any if self.kind is not None else ()
+        kind_types_none = self.kind.types_none if self.kind is not None else ()
+        if kind_types_any:
+            schema["types_any"] = list(kind_types_any)
+        combined_types_none = tuple(
+            sorted(set((*kind_types_none, *self.types_none)))
+        )
+        if combined_types_none:
+            schema["types_none"] = list(combined_types_none)
         for field in (
             "types_any",
             "types_all",
-            "types_none",
             "subtypes_any",
             "supertypes_any",
             "supertypes_none",
@@ -464,16 +478,33 @@ class OwnGraveyardCardTargetSpec:
             for kind in GraveyardCardTargetKind
             if kind.types_any == types_any and kind.types_none == types_none
         )
+        simple_kind = len(matches) == 1 and set(schema) <= {
+            "zones",
+            "categories",
+            "owner_relation",
+            "count",
+            "types_any",
+            "types_none",
+        }
+        permanent_domain = (
+            types_any == GraveyardCardTargetKind.PERMANENT_CARD.types_any
+            and not schema.get("types_all")
+        )
         spec = (
             cls(matches[0])
-            if len(matches) == 1 and set(schema) <= {
-                "zones",
-                "categories",
-                "owner_relation",
-                "count",
-                "types_any",
-                "types_none",
-            }
+            if simple_kind
+            else cls(
+                GraveyardCardTargetKind.PERMANENT_CARD,
+                types_none=types_none,
+                subtypes_any=tuple(schema.get("subtypes_any", ())),
+                supertypes_any=tuple(schema.get("supertypes_any", ())),
+                supertypes_none=tuple(schema.get("supertypes_none", ())),
+                colors_any=tuple(schema.get("colors_any", ())),
+                colors_none=tuple(schema.get("colors_none", ())),
+                color_count_min=schema.get("color_count_min"),
+                color_count_equal=schema.get("color_count_equal"),
+            )
+            if permanent_domain
             else cls(
                 None,
                 types_any=types_any,
