@@ -346,6 +346,13 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                 FixedOwnerZoneMoveReference.SOURCE,
             ),
             (
+                "{1}: Return this Equipment to its owner's hand.",
+                "Artifact — Equipment",
+                "Owner Equipment Return Fixture",
+                "activated_ability",
+                FixedOwnerZoneMoveReference.SOURCE,
+            ),
+            (
                 "Sacrifice this Aura: Return enchanted creature to its owner's hand.",
                 "Enchantment — Aura",
                 "Owner Attachment Fixture",
@@ -1585,6 +1592,194 @@ class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
         self.assertEqual("hand", land.zone)
         self.assertEqual("B", land.owner)
         self.assert_replays(choice_session, "fixed-owner-controller-choice")
+
+    def test_fixed_owner_equipment_return_composes_with_equip(self):
+        session = self.session(
+            7294161,
+            spell="Owner Equipment Return Fixture",
+        )
+        engine = session.engine
+        target = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        self.promote_fixture(engine, "Owner Equipment Return Fixture")
+        equipment = self.card(
+            engine,
+            "A",
+            name="Owner Equipment Return Fixture",
+        )
+        engine.move_card(
+            equipment.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        engine.state.players["A"].mana_pool["C"] = 2
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        hints = engine._priority_action_hints("A")
+        actions = [
+            row
+            for row in hints["actions"]
+            if row.get("source") == equipment.ref
+            and str(row.get("id") or "").startswith("activate:")
+        ]
+        equip_action = next(
+            row
+            for row in actions
+            if target.ref
+            in row.get("target_schema", {}).get("legal_refs", ())
+        )
+        engine._issue_priority("A", hints)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        equipped = session.act(
+            "pilot:A",
+            {
+                "action_id": equip_action["id"],
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"C": 1},
+            },
+        )
+        self.assertTrue(equipped.ok, equipped.summary)
+        self.resolve_all(session)
+        self.assertEqual(target.object_id, equipment.attached_to)
+
+        decision = session.packet("pilot:A", full=True)["decision"]
+        self.assertEqual("priority", decision["kind"])
+        return_action = next(
+            row
+            for row in decision["ctx"]["legal"]["actions"]
+            if row.get("source") == equipment.ref
+            and str(row.get("id") or "").startswith("activate:")
+            and not row.get("target_schema", {}).get("legal_refs")
+        )
+        returned = session.act(
+            "pilot:A",
+            {
+                "action_id": return_action["id"],
+                "pay": "manual",
+                "payment": {"C": 1},
+            },
+        )
+        self.assertTrue(returned.ok, returned.summary)
+        self.resolve_all(session)
+        self.assertEqual("hand", equipment.zone)
+        self.assertEqual("A", equipment.owner)
+        self.assertIsNone(equipment.attached_to)
+        self.assert_replays(session, "fixed-owner-equipment-return-record")
+
+    def test_fixed_owner_modal_move_and_player_target_both_execute(self):
+        move_session = self.session(
+            7294162,
+            spell="Owner Modal Move Fixture",
+        )
+        move_engine = move_session.engine
+        creature = next(
+            card
+            for card in move_engine.state.cards.values()
+            if card.owner == "C"
+            and card.zone != "command"
+            and "creature"
+            in move_engine._type_parts(
+                str(move_engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        move_engine.move_card(
+            creature.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        self.promote_fixture(move_engine, "Owner Modal Move Fixture")
+        move_source, move_action = self.ready_spell(
+            move_session,
+            "Owner Modal Move Fixture",
+            {"C": 1, "U": 1, "R": 1},
+        )
+        schema = move_action["target_schema"]
+        self.assertEqual(["mode_1", "mode_2"], schema["legal_modes"])
+        self.assertIn(
+            creature.ref,
+            schema["mode_schemas"]["mode_1"]["groups"][0]["legal_refs"],
+        )
+        self.assertIn(
+            "B",
+            schema["mode_schemas"]["mode_2"]["groups"][0]["legal_refs"],
+        )
+        move_session.initial_checkpoint = checkpoint_envelope(move_engine.state)
+        move_session.commands.clear()
+        move_session.decisions.clear()
+        cast = move_session.act(
+            "pilot:A",
+            {
+                "action_id": move_action["id"],
+                "modes": ["mode_1"],
+                "targets": [creature.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1, "R": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(move_session)
+        self.assertEqual("library", creature.zone)
+        self.assertEqual("C", creature.owner)
+        self.assertEqual(
+            creature.object_id,
+            move_engine.state.players["C"].zones["library"][-1],
+        )
+        self.assertEqual("graveyard", move_source.zone)
+        self.assert_replays(move_session, "fixed-owner-modal-move-record")
+
+        damage_session = self.session(
+            7294163,
+            spell="Owner Modal Move Fixture",
+        )
+        damage_engine = damage_session.engine
+        self.promote_fixture(damage_engine, "Owner Modal Move Fixture")
+        damage_source, damage_action = self.ready_spell(
+            damage_session,
+            "Owner Modal Move Fixture",
+            {"C": 1, "U": 1, "R": 1},
+        )
+        life_before = damage_engine.state.players["B"].life
+        damage_session.initial_checkpoint = checkpoint_envelope(
+            damage_engine.state
+        )
+        damage_session.commands.clear()
+        damage_session.decisions.clear()
+        cast = damage_session.act(
+            "pilot:A",
+            {
+                "action_id": damage_action["id"],
+                "modes": ["mode_2"],
+                "targets": ["B"],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1, "R": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(damage_session)
+        self.assertEqual(life_before - 2, damage_engine.state.players["B"].life)
+        self.assertEqual("graveyard", damage_source.zone)
+        self.assert_replays(damage_session, "fixed-owner-modal-damage-record")
 
     def test_fixed_owner_zone_move_commander_replacement_and_projection(self):
         session = self.session(729417, spell="Each Player Return Fixture")

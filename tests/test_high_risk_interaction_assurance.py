@@ -17,6 +17,7 @@ from high_risk_interaction_support import (
     FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
     FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
     FIXED_QUERY_GRANT_AND_REPLACEMENT_PAIRS,
+    FIXED_OWNER_ZONE_AND_CHOICE_PAIRS,
     FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
     IMPULSE_ACCESS_AND_CHOICE_PAIRS,
     MADNESS_AND_CHOICE_PAIRS,
@@ -80,6 +81,14 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                     "residual.target_or_choice.multiple-targets",
                 ),
             ),
+            database=self.db,
+        )
+
+    def test_fixed_owner_zone_residual_choice_pairs_fail_closed(self) -> None:
+        self.assertEqual(2, len(FIXED_OWNER_ZONE_AND_CHOICE_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self,
+            FIXED_OWNER_ZONE_AND_CHOICE_PAIRS,
             database=self.db,
         )
 
