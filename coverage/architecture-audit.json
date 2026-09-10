@@ -11724,11 +11724,11 @@
       "applicable_high_risk_pairs": 301,
       "applicable_piece_pairs": 75726,
       "available": true,
-      "covered_high_risk_pairs": 300,
-      "covered_piece_pairs": 967,
+      "covered_high_risk_pairs": 301,
+      "covered_piece_pairs": 968,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "df804e780ddb169b032121e73743443700b12447d5f2b737cdc33a4c25608e68",
-      "uncovered_high_risk_pairs": 1
+      "source_fingerprint": "5b13e567c29da9aa7cd3d2ce60238c623a04b55b42a5e95493529a31c2dffdce",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -30733,7 +30733,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "dce97c58151fb9895d4b148da6bee9964ddcfb1b3a5cde278354b3fab631baa7",
+      "fingerprint": "d887a045f14371ee5ed75e1cda79c5c15ec5f5ecc4b11afdd27b40a19315f4ab",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
