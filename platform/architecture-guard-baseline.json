@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "7988c48f95c4749b4cb8f3541a1fe31cad59571a",
+  "baseline_commit": "58a523a3f5ea1e1540405941010dd20cd7f2e4e9",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -450,7 +450,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 6989,
+    "logical_lines": 6987,
     "methods": [
       {
         "kind": "method",
@@ -1578,12 +1578,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7490
+    "physical_lines": 7488
   },
   "exception_binding": {
-    "adr": "docs/adr/0094-typed-fixed-attachment-actions.md",
-    "allowance_fingerprint": "ea971c16b4ee9f0d61a21b03ade3bd290633311b2930bcc887cd4d87e4c143bc",
-    "exception_id": "ARCH-EXC-0045"
+    "adr": "docs/adr/0096-typed-fixed-source-characteristic-effects.md",
+    "allowance_fingerprint": "9ebf577c192dd8daca7e96aa4f4d5b3443055656af040bc274f2d0210f3cdd42",
+    "exception_id": "ARCH-EXC-0046"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1676,6 +1676,11 @@
       "symbol": "activated_oracle_node"
     },
     {
+      "file": "quorune/compiler/resolution_effect_templates.py",
+      "logical_lines": 159,
+      "symbol": "typed_resolution_effect_template"
+    },
+    {
       "file": "quorune/declaration_costs.py",
       "logical_lines": 249,
       "symbol": "parse_declaration_cost_line"
@@ -1684,6 +1689,11 @@
       "file": "quorune/declaration_restrictions.py",
       "logical_lines": 881,
       "symbol": "parse_declaration_restriction_line"
+    },
+    {
+      "file": "quorune/effect_runtime/objects_stack_and_tokens.py",
+      "logical_lines": 210,
+      "symbol": "_apply_source_characteristics_until_end_of_turn"
     },
     {
       "file": "quorune/engine.py",
@@ -1769,7 +1779,7 @@
   "oversized_modules": [
     {
       "file": "quorune/engine.py",
-      "logical_lines": 6989
+      "logical_lines": 6987
     },
     {
       "file": "quorune/record.py",
@@ -1778,6 +1788,14 @@
     {
       "file": "quorune/report.py",
       "logical_lines": 1754
+    },
+    {
+      "file": "quorune/rules/capabilities.py",
+      "logical_lines": 1505
+    },
+    {
+      "file": "quorune/rules/node_capability_shapes.py",
+      "logical_lines": 1540
     },
     {
       "file": "web/src/App.tsx",
@@ -1793,6 +1811,7 @@
     "add_type_until_end_of_turn",
     "add_types_until_end_of_turn",
     "amass",
+    "apply_source_characteristics_until_end_of_turn",
     "attach",
     "become_monarch",
     "bestow_prepare",

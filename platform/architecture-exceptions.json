@@ -1065,6 +1065,33 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0046",
+      "adr": "docs/adr/0096-typed-fixed-source-characteristic-effects.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "9ebf577c192dd8daca7e96aa4f4d5b3443055656af040bc274f2d0210f3cdd42",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed apply_source_characteristics_until_end_of_turn operation serialized after the typed fixed source-characteristic harvest.",
+      "rationale": "The measured broad family adds one strict source-incarnation operation and one atomic same-timestamp continuous-component commit through the existing layer evaluator. CommanderEngine gains no method or logical line; direct and unowned GameState writes, Oracle-ID literals, runtime Oracle prose, and prohibited identity dispatch remain flat. The reviewed capabilities and node-shape modules cross the size threshold only through closed capability routing, while the compiler and runtime functions remain bounded to this typed family.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact residual identities and counts in the rebound schema-4 baseline plus apply_source_characteristics_until_end_of_turn, ResolutionContinuousComponent, create_resolution_continuous_effect_components, the fixed source-characteristic compiler and capability shape, the shared supported-keyword vocabulary, and same-timestamp layers 4, 5, 6, 7b, and 7c described by ADR 0096; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, arbitrary callbacks, family-specific ability-presence checks, dynamic or chosen characteristic values, land animation, copy or text changes, declaration riders, unsupported keywords, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the source-characteristic owner only while closed validation, same-timestamp layer components, shared layer-6 applicability, cycle-safe dynamic counts, logical-incarnation locking, state-based Equipment detachment, cleanup, rollback, privacy, and exact replay remain enforced. Extract the reviewed oversized routing functions before adding an unrelated characteristic family.",
+      "target_milestone": "capability-closed broad compiler harvest through a reusable typed multi-layer characteristic owner",
+      "replay_implications": "CardPrograms record only fixed typed characteristic fields and the source-zone-object placeholder; Game Record v3 preserves stack-source identity, one component timestamp, locked logical identity, cleanup, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "Every admitted affected object and resulting characteristic is public. Pilot projections expose effective characteristics but not the continuous-effect journal, physical identity, logical identity, or component IDs.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict operation; unknown fields, noncanonical values, malformed animation/modifier mixtures, unsupported keywords, stale source incarnations, and blocked dependencies fail before authoritative mutation.",
+      "tests": [
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristics_compile_across_shared_contexts",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_grammar_keeps_open_forms_residual",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_shape_is_closed_and_capability_bound",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_source_effects_follow_incarnation_control_and_cleanup_boundaries",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_animation_updates_dynamic_counts_and_detaches_equipment",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_targeted_shadow_uses_shared_keyword_and_block_legality",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_malformed_source_characteristics_roll_back_atomically",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }
