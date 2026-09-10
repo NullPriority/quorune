@@ -25,6 +25,10 @@ from .rules.single_object_zone_transition import (
 from .util import stable_json
 
 
+FIXED_OWNER_ZONE_MOVE_CAPABILITY = "zone.single_owner_move.fixed_destination"
+FIXED_OWNER_ZONE_MOVE_MECHANIC = "fixed-owner-zone-move"
+
+
 class PublicZoneMoveError(ValueError):
     """A public zone-move descriptor, snapshot, or request is invalid."""
 
@@ -537,6 +541,8 @@ def exile_public_graveyard_card(
 
 __all__ = [
     "exile_public_graveyard_card",
+    "FIXED_OWNER_ZONE_MOVE_CAPABILITY",
+    "FIXED_OWNER_ZONE_MOVE_MECHANIC",
     "PublicZoneDestination",
     "PublicZoneMoveError",
     "PublicZoneMoveHost",

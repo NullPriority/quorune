@@ -109,3 +109,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0092 — typed spell-history transformations](0092-typed-spell-history-transformations.md)
 - [ADR 0093 — typed fixed token production](0093-typed-fixed-token-production.md)
 - [ADR 0094 — typed fixed attachment actions](0094-typed-fixed-attachment-actions.md)
+- [ADR 0095 — typed fixed owner-zone moves](0095-typed-fixed-owner-zone-moves.md)

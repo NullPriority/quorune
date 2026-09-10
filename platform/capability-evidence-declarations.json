@@ -26986,6 +26986,70 @@
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_source_attachment_and_choice_lifecycle",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose source incarnation, sacrificed-Aura last-known attachment, owner-relative choice, target revalidation, and canonical replacement-aware zone movement."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_zone_move_commander_replacement_and_projection",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Collect one public creature choice from each of four players in APNAP order before one simultaneous owner-hand move and Commander replacement."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_move_shapes_and_boundaries",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject changed operation, object reference, destination, position, target schema, choice scope, and open descriptor fields before capability closure."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_move_shapes_and_boundaries",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep heterogeneous spell-or-permanent targets, arbitrary positions, controller destinations, broader choices, and unsupported historic predicates residual."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_moves_compile_across_contexts",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower fixed target, source, enchanted-object, controller-choice, and each-player-choice owner-destination moves across spell, trigger, activated, and modal contexts."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_zone_move_commander_replacement_and_projection",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project public choices and the Commander result without exposing physical or logical object identities or unrelated private hand and library contents."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_library_positions_target_revalidation_and_replay",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay target selection, control change, owner-library insertion, graveyard recycling, new incarnations, and the final authoritative hash."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_library_positions_target_revalidation_and_replay",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ]
 }

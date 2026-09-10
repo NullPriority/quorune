@@ -6576,6 +6576,53 @@
       "capability_ids": ["casting.lifecycle.fixed_public", "trigger.placement.apnap"],
       "interaction_order": 2,
       "assertion": "Multiple current Suspend upkeep triggers enter the ordinary APNAP batch and expose only their controller's ordering decision in four-player projection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_fixed_owner_library_positions_target_revalidation_and_replay",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.single_owner_move.fixed_destination"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "interaction_order": 2,
+      "assertion": "A public battlefield or graveyard target is offered and resolution-revalidated through the canonical target owner before the selected current incarnation moves to its physical owner's fixed library position."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_fixed_owner_source_attachment_and_choice_lifecycle",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.zone.single_owner_move.fixed_destination"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "interaction_order": 2,
+      "assertion": "A sacrificed Aura's source-pinned attachment reference resolves from last-known information and moves only the enchanted current incarnation to its physical owner's hand."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_fixed_owner_zone_move_commander_replacement_and_projection",
+      "piece_ids": [
+        "capability.variant.commander.zone_return",
+        "capability.zone.change.destination_replacement",
+        "capability.zone.single_owner_move.fixed_destination"
+      ],
+      "capability_ids": [
+        "variant.commander.zone_return",
+        "zone.change.destination_replacement",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "interaction_order": 3,
+      "assertion": "One four-player APNAP public selection freezes all owner-hand requests before the canonical destination-replacement owner offers the commander owner its command-zone alternative and commits one replayable batch."
     }
   ]
 }

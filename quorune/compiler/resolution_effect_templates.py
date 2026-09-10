@@ -39,6 +39,9 @@ from .fixed_target_effect_sequences import (
 from .fixed_homogeneous_target_sets import (
     fixed_homogeneous_target_set_effect_template,
 )
+from .fixed_owner_zone_move_templates import (
+    fixed_owner_zone_move_effect_template,
+)
 from .fixed_source_effect_sequences import (
     fixed_source_effect_sequence_template,
 )
@@ -67,6 +70,23 @@ CompiledEffectTemplate = tuple[
 ]
 
 
+def _attachment_or_owner_zone_move(
+    text: str,
+    card_name: str,
+    source_is_permanent: bool | None,
+    source_attachment_relation: AttachmentReferenceKind | None,
+):
+    return fixed_source_attachment_effect_template(
+        text,
+        source_attachment_relation=source_attachment_relation,
+    ) or fixed_owner_zone_move_effect_template(
+        text,
+        card_name=card_name,
+        source_is_permanent=source_is_permanent,
+        source_attachment_relation=source_attachment_relation,
+    )
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -84,9 +104,8 @@ def typed_resolution_effect_template(
     )
     if fixed_counter_controller_sequence is not None:
         return fixed_counter_controller_sequence.compiled()
-    attachment = fixed_source_attachment_effect_template(
-        text,
-        source_attachment_relation=source_attachment_relation,
+    attachment = _attachment_or_owner_zone_move(
+        text, card_name, source_is_permanent, source_attachment_relation
     )
     if attachment is not None:
         return attachment.compiled()

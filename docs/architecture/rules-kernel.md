@@ -90,9 +90,15 @@ counter destinations, or other
 unsupported grammar and interactions are materially reachable.
 The fixed public-zone-move handlers are a separate broad grammar over the same
 owners: one handler revalidates a public graveyard-card target, while the set
-handler emits one typed simultaneous intent. Neither handler receives mutable
-state, parses Oracle prose, or bypasses commander, replacement, trigger,
-projection, or replay coordination.
+handler emits one typed simultaneous intent. Fixed owner-destination clauses
+reuse those existing effect operations for target, source-incarnation,
+current-or-last-known attachment, controller-selection, and APNAP each-player
+selection forms. The canonical zone owner derives the hand, graveyard, or
+library container from physical ownership and applies Commander and other
+destination replacements before committing a new logical incarnation. No
+handler receives mutable state, parses Oracle prose, or bypasses target,
+attachment, commander, replacement, trigger, projection, or replay
+coordination.
 
 Continuous characteristics are a shared rules responsibility rather than a
 client reconstruction. `continuous_effect_state.py` owns the authoritative
