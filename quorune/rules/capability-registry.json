@@ -4746,6 +4746,33 @@
       "status": "trusted"
     },
     {
+      "id": "zone.single_owner_move.fixed_destination",
+      "version": 1,
+      "official_rules": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and execute one fixed targeted, source, attachment-referenced, controller-selected, or each-player-selected public object move toward its owner's hand, graveyard, or fixed library position through existing target, choice, attachment-reference, and replacement-aware zone owners.",
+        "inputs": ["one source-spanned fixed owner-destination zone-move clause", "one closed public target, source incarnation, current-or-LKI enchanted creature, or public return choice", "physical and logical object identity", "fixed top, bottom, second, third, or fourth library position or whole-library shuffle", "represented destination-replacement selections"],
+        "outputs": ["sound public target or APNAP choice", "resolution-time target and incarnation revalidation", "owner-indexed destination", "new logical object identity", "replacement-aware final destination", "private library or hand projection", "exact replay"],
+        "exclusions": ["spell-or-permanent heterogeneous targets", "mass moves other than the exact each-player one-creature return", "alternative-cost returns", "historic predicates other than nonland historic permanent", "random, optional, modal, conditional, delayed, linked-result, variable-count, and arbitrary-position moves", "controller rather than owner destinations", "unrepresented attachment relations and destination replacements"]
+      },
+      "dependencies": ["variant.commander.zone_return", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.compiler.fixed_owner_zone_move_templates.FixedOwnerZoneMoveTemplate", "quorune.compiler.fixed_owner_zone_move_templates.fixed_owner_zone_move_effect_template", "quorune.rules.public_zone_move_capability_shapes.fixed_owner_zone_move_node_capabilities", "quorune.selection.targeting.TargetSelectionOwnerMixin", "quorune.attachment_references.resolve_source_attachment", "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler", "quorune.effect_runtime.zones_and_attachments._apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice", "quorune.effect_runtime.zones_and_attachments._apply_shuffle_into_library", "quorune.zone_transitions.ZoneTransitionOwner.move_card"],
+      "positive_tests": ["test_fixed_owner_zone_moves_compile_across_contexts", "test_fixed_owner_library_positions_target_revalidation_and_replay", "test_fixed_owner_source_attachment_and_choice_lifecycle"],
+      "negative_tests": ["test_fixed_owner_zone_move_shapes_and_boundaries", "test_fixed_owner_library_positions_target_revalidation_and_replay"],
+      "interaction_tests": ["test_fixed_owner_source_attachment_and_choice_lifecycle", "test_fixed_owner_zone_move_commander_replacement_and_projection"],
+      "multiplayer_tests": ["test_fixed_owner_source_attachment_and_choice_lifecycle", "test_fixed_owner_zone_move_commander_replacement_and_projection"],
+      "privacy_tests": ["test_fixed_owner_zone_move_commander_replacement_and_projection"],
+      "replay_tests": ["test_fixed_owner_library_positions_target_revalidation_and_replay", "test_fixed_owner_source_attachment_and_choice_lifecycle"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the canonical destination-replacement owner prevents every fixed owner-zone move from receiving trusted closure; target and attachment forms additionally require their existing typed owners.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused shape tests alter the reference, origin, destination, position, target schema, choice scope, and attachment descriptor; every mutation loses the capability dependency before runtime mutation.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "permanent.exile.effect",
       "version": 2,
       "official_rules": ["400.2", "400.7", "406.1", "406.2", "608.2c", "701.13", "701.13a"],

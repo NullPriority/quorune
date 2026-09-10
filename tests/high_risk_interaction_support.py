@@ -787,6 +787,14 @@ _WITNESSES = {
         power="2",
         toughness="4",
     ),
+    "owner-zone-target-condition-boundary": _Witness(
+        "Generic Owner-Zone Target Condition Boundary Fixture",
+        "Instant",
+        "This spell costs {2} less to cast if it targets an attacking "
+        "creature.\nPut target creature into its owner's library second "
+        "from the top.",
+        "{3}{U}",
+    ),
 }
 
 
@@ -1141,6 +1149,14 @@ ZONE_AND_CHOICE_PAIRS = (
     _pair("capability.zone.move.fixed_public_set", "residual.target_or_choice.target-predicate"),
 )
 
+FIXED_OWNER_ZONE_AND_CHOICE_PAIRS = tuple(
+    _pair("capability.zone.single_owner_move.fixed_destination", residual)
+    for residual in (
+        "residual.target_or_choice.conditional-effect",
+        "residual.target_or_choice.target-predicate",
+    )
+)
+
 MADNESS_AND_CHOICE_PAIRS = (
     _pair(
         "capability.zone.change.destination_replacement",
@@ -1271,6 +1287,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *FIXED_SET_DAMAGE_AND_REGENERATION_PAIRS,
             *FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS,
             *ZONE_AND_CHOICE_PAIRS,
+            *FIXED_OWNER_ZONE_AND_CHOICE_PAIRS,
             *MADNESS_AND_CHOICE_PAIRS,
             *COST_AND_REPLACEMENT_PAIRS,
             *CONTINUOUS_AND_REPLACEMENT_PAIRS,
@@ -1451,6 +1468,10 @@ _bind("pemmins-aura", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[2])
 _bind("sleep-cursed-faerie", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
 _bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS[:2])
 _bind("stella-lee-wild-card", IMPULSE_ACCESS_AND_CHOICE_PAIRS[2])
+_bind(
+    "owner-zone-target-condition-boundary",
+    *FIXED_OWNER_ZONE_AND_CHOICE_PAIRS,
+)
 _bind(
     "kirtars-wrath",
     *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,

@@ -253,6 +253,7 @@ def _target_boolean_fields(raw: Mapping[str, Any]) -> dict[str, Any]:
             "tapped",
             "commander",
             "token",
+            "face_down",
             "land",
             "creature",
             "artifact",
@@ -323,6 +324,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "tapped",
         "commander",
         "token",
+        "face_down",
         "land",
         "creature",
         "artifact",
@@ -397,6 +399,7 @@ class TargetGroup:
     tapped: bool | None = None
     commander: bool | None = None
     token: bool | None = None
+    face_down: bool | None = None
     land: bool | None = None
     creature: bool | None = None
     artifact: bool | None = None

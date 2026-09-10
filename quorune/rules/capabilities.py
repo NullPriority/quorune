@@ -30,6 +30,8 @@ from .graveyard_card_targets import (
     targeted_own_graveyard_return_node_capabilities,
 )
 from .public_zone_move_capability_shapes import (
+    fixed_owner_zone_move_covered_mechanics,
+    fixed_owner_zone_move_node_capabilities,
     fixed_public_zone_move_set_node_capabilities,
     public_graveyard_card_exile_node_capabilities,
 )
@@ -1087,6 +1089,7 @@ def _targeted_effect_capabilities(
         targeted_return_to_hand_node_capabilities,
         targeted_own_graveyard_return_node_capabilities,
         public_graveyard_card_exile_node_capabilities,
+        fixed_owner_zone_move_node_capabilities,
         fixed_public_zone_move_set_node_capabilities,
         targeted_tap_state_node_capabilities,
         fixed_token_creation_node_capabilities,
@@ -1466,6 +1469,7 @@ def capability_covered_mechanics(
                 "fixed-public-zone-move-set",
             }
         )
+    covered.update(fixed_owner_zone_move_covered_mechanics(supplied))
     covered.update(_return_to_hand_covered_mechanics(supplied))
     if "stack.counter.effect" in supplied:
         covered.add("counter")

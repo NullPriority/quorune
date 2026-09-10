@@ -508,6 +508,18 @@ forms remain source-spanned residuals. Commander-profile trust also requires
 the typed CR 903.9 owner choice; the compiler never excludes commanders from
 an otherwise universal Oracle instruction.
 
+`compiler/fixed_owner_zone_move_templates.py` owns the complementary closed
+single-object and public-choice grammar whose destination is determined by the
+moved object's owner. Targeted battlefield, graveyard, and face-up exile
+objects, the source's current incarnation, a current-or-last-known enchanted
+creature, one controller-selected tapped land, and one creature selected by
+each player lower to the existing target, attachment-reference, APNAP choice,
+and zone-transition owners. Library moves admit only top, bottom, second,
+third, or fourth position, plus the exact enchanted-creature shuffle form.
+Heterogeneous spell-or-permanent targets, hidden selection, broader mass
+choices, controller destinations, alternative costs, delayed or linked moves,
+and arbitrary positions remain source-spanned residuals.
+
 `compiler/library_search_templates.py` owns fixed restrictive searches of the
 controller's library directly to the battlefield across spell, triggered,
 activated, and modal bodies. The compiler emits one typed hidden-zone selector

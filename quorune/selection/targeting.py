@@ -149,6 +149,10 @@ def _target_group_object_facts_match(
             group.token is None
             or bool(card and card.is_token) == group.token
         )
+        and (
+            group.face_down is None
+            or bool(card and card.face_down) == group.face_down
+        )
     )
 
 

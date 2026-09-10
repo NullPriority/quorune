@@ -112,6 +112,7 @@ from quorune.oracle_ir import (
     _without_parenthetical_reminder,
     compile_oracle_card,
 )
+from quorune.public_zone_moves import FIXED_OWNER_ZONE_MOVE_CAPABILITY
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.targets import TargetGroup
 from quorune.semantic_runtime.cast_costs import (
@@ -179,6 +180,9 @@ _PROBE_FIXED_STATIC_DECLARATION_COMPOSITION = (
 )
 _PROBE_FIXED_TARGETED_RETURN_CLOSURE = (
     "fixed-targeted-return-to-hand-existing-owner-v1"
+)
+_PROBE_FIXED_OWNER_ZONE_MOVES = (
+    "fixed-owner-zone-moves-existing-owner-v1"
 )
 _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY = (
     "typed-public-state-characteristic-query-existing-owner-v1"
@@ -285,6 +289,27 @@ _FIXED_TOKEN_PRODUCTION_FAMILIES = frozenset(
         "keyword_dependency:investigate",
     }
 )
+_FIXED_OWNER_ZONE_MOVE_FAMILIES = frozenset(
+    {
+        "activated_effect:return",
+        "activated_effect:unparsed-put-enchanted-creature",
+        "activated_effect:unparsed-put-target-artifact",
+        "activated_effect:unparsed-put-target-card",
+        "activated_effect:unparsed-put-this-aura",
+        "activated_effect:unparsed-put-this-creature",
+        "activated_effect:unparsed-shuffle-enchanted-creature",
+        "effect_clause:return",
+        "effect_clause:unparsed-each-player-returns",
+        "effect_clause:unparsed-put-target-artifact",
+        "effect_clause:unparsed-put-target-creature",
+        "effect_clause:unparsed-put-target-enchantment",
+        "effect_clause:unparsed-put-target-face",
+        "effect_clause:unparsed-put-target-land",
+        "effect_clause:unparsed-put-target-nonland",
+        "effect_clause:unparsed-put-target-permanent",
+        "reference_binding:linked-result-reference",
+    }
+)
 _CONTINUOUS_LAYER_FAMILY = (
     "continuous_layer:continuous-effect-layers-and-dependencies"
 )
@@ -351,6 +376,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_PUBLIC_CONDITION_QUERY,
     _PROBE_FIXED_STATIC_DECLARATION_COMPOSITION,
     _PROBE_FIXED_TARGETED_RETURN_CLOSURE,
+    _PROBE_FIXED_OWNER_ZONE_MOVES,
     _PROBE_TYPED_PUBLIC_STATE_CHARACTERISTIC_QUERY,
     _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER,
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
@@ -2894,6 +2920,16 @@ def _measurement(
         )
     if probe_id == _PROBE_FIXED_TARGETED_RETURN_CLOSURE:
         return _fixed_targeted_return_closure_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_FIXED_OWNER_ZONE_MOVES:
+        return _fixed_owner_zone_move_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
@@ -6020,6 +6056,117 @@ def _fixed_targeted_return_closure_measurement(
         ),
         "exact_ability_gain": matched_abilities,
         "material_residual_reduction": matched_residuals,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _is_fixed_owner_zone_move_candidate(text: str) -> bool:
+    normalized = " ".join(text.casefold().split())
+    return bool(
+        re.search(r"\b(?:put|return|returns|shuffle)\b", normalized)
+        and re.search(r"\bowner['’]s\b", normalized)
+    )
+
+
+def _fixed_owner_zone_move_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact owner-destination moves through existing runtime owners."""
+
+    registry = load_default_capability_registry()
+    exact_ability_gain = 0
+    expected_residual_reduction = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        blockers = {
+            str(value) for value in card.get("minimum_known_blocker_set", ())
+        }
+        source_candidate = any(
+            ability.get("status") != "exact"
+            and _is_fixed_owner_zone_move_candidate(_source_line(record, ability))
+            for ability in card.get("abilities", ())
+        )
+        if not (
+            source_candidate
+            or blockers.intersection(_FIXED_OWNER_ZONE_MOVE_FAMILIES)
+        ):
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented = sum(
+            node.exact
+            and FIXED_OWNER_ZONE_MOVE_CAPABILITY
+            in node.capability_dependencies
+            for face in compiled.faces
+            for node in face.nodes
+        )
+        previous_exact = int(card.get("exact_ability_count") or 0)
+        current_exact = sum(
+            int(node.exact)
+            for face in compiled.faces
+            for node in face.nodes
+        )
+        ability_gain = max(0, current_exact - previous_exact)
+        previous_residuals = sum(
+            len(ability.get("residuals", ()))
+            for ability in card.get("abilities", ())
+        )
+        residual_reduction = max(
+            0,
+            previous_residuals - len(compiled.material_residuals),
+        )
+        if not represented or not (ability_gain or residual_reduction):
+            continue
+        matched_cards[oracle_id] = len(
+            blockers - member_ids
+        )
+        exact_ability_gain += ability_gain
+        expected_residual_reduction += residual_reduction
+        if card.get("oracle_ir_status") != "exact" and compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or expected_residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": expected_residual_reduction,
         "decision": (
             "bounded_executable"
             if reaches_floor

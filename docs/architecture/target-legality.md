@@ -31,7 +31,10 @@ subtype, supertype, keyword, color, and color-cardinality qualifiers remain in
 the characteristic snapshot, so represented positive and negative qualities,
 including the closed Outlaw exclusion and monocolored or multicolored forms,
 respond to copy and continuous characteristic changes without parsing Oracle
-text at runtime. Token status remains an authoritative object fact. The same
+text at runtime. Token and face-down status remain authoritative object facts.
+A closed public exile target may require `face_down: false`, so a printed
+"face-up exiled card" instruction is offered, committed, and revalidated
+through the same target owner without exposing a face-down identity. The same
 snapshot supplies one fixed exact,
 minimum, or maximum mana-value qualifier. That qualifier observes represented
 copy-derived characteristics and the public mana value of a face-down object;

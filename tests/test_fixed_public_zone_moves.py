@@ -10,6 +10,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from quorune.attachment_references import AttachmentReferenceKind
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.commander_zones import (
     commander_hand_library_replacement_effect,
@@ -21,6 +22,10 @@ from quorune.commander_zones import (
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
+from quorune.compiler.fixed_owner_zone_move_templates import (
+    fixed_owner_zone_move_effect_template,
+    FixedOwnerZoneMoveReference,
+)
 from quorune.deck import DeckLoader
 from quorune.model import CardInstance, StackItem
 from quorune.object_predicate import ObjectQuerySpec
@@ -28,6 +33,7 @@ from quorune.object_query import ObjectQueryResult
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.projection import StateProjector
 from quorune.public_zone_moves import (
+    FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     PublicZoneDestination,
     PublicZoneMoveError,
     PublicZoneMoveSetSpec,
@@ -243,10 +249,11 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
         text: str,
         *,
         type_line: str = "Instant",
+        name: str = "Fixed Public Zone Move Fixture",
         capabilities=None,
     ):
         return compile_oracle_card(
-            card_record(text, type_line=type_line),
+            card_record(text, type_line=type_line, name=name),
             capability_registry=capabilities or self.capabilities,
             capability_profile="commander_review",
         )
@@ -306,6 +313,205 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                 self.assertIn(
                     "card.exile.public_graveyard",
                     node.capability_dependencies,
+                )
+
+    def test_fixed_owner_zone_moves_compile_across_contexts(self):
+        contexts = (
+            (
+                "Put target creature on top of its owner's library.",
+                "Instant",
+                "Fixed Public Zone Move Fixture",
+                "spell_ability",
+                FixedOwnerZoneMoveReference.TARGET,
+            ),
+            (
+                "When this creature enters, put target land on the bottom of its owner's library.",
+                "Creature — Test",
+                "Fixed Public Zone Move Fixture",
+                "triggered_ability",
+                FixedOwnerZoneMoveReference.TARGET,
+            ),
+            (
+                "{2}, {T}: Put target card from a graveyard on the bottom of its owner's library.",
+                "Artifact Creature — Test",
+                "Fixed Public Zone Move Fixture",
+                "activated_ability",
+                FixedOwnerZoneMoveReference.TARGET,
+            ),
+            (
+                "{U}: Return Owner Source Fixture to its owner's hand.",
+                "Creature — Test",
+                "Owner Source Fixture",
+                "activated_ability",
+                FixedOwnerZoneMoveReference.SOURCE,
+            ),
+            (
+                "{1}: Return this Equipment to its owner's hand.",
+                "Artifact — Equipment",
+                "Owner Equipment Return Fixture",
+                "activated_ability",
+                FixedOwnerZoneMoveReference.SOURCE,
+            ),
+            (
+                "Sacrifice this Aura: Return enchanted creature to its owner's hand.",
+                "Enchantment — Aura",
+                "Owner Attachment Fixture",
+                "activated_ability",
+                FixedOwnerZoneMoveReference.SOURCE_ATTACHMENT,
+            ),
+            (
+                "{G}: Return a tapped land you control to its owner's hand.",
+                "Creature — Test",
+                "Fixed Public Zone Move Fixture",
+                "activated_ability",
+                FixedOwnerZoneMoveReference.PUBLIC_CHOICE,
+            ),
+            (
+                "Each player returns a creature they control to its owner's hand.",
+                "Instant",
+                "Fixed Public Zone Move Fixture",
+                "spell_ability",
+                FixedOwnerZoneMoveReference.PUBLIC_CHOICE,
+            ),
+        )
+        for text, type_line, name, kind, reference in contexts:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line, name=name)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(kind, node.kind)
+                self.assertIn(
+                    FIXED_OWNER_ZONE_MOVE_CAPABILITY,
+                    node.capability_dependencies,
+                )
+                template = fixed_owner_zone_move_effect_template(
+                    (
+                        text.split(": ", 1)[-1]
+                        if kind == "activated_ability"
+                        else text.split(", ", 1)[-1]
+                        if kind == "triggered_ability"
+                        else text
+                    ),
+                    card_name=name,
+                    source_is_permanent=(type_line == "Instant") is False,
+                    source_attachment_relation=(
+                        AttachmentReferenceKind.ENCHANTED
+                        if type_line == "Enchantment — Aura"
+                        else None
+                    ),
+                )
+                self.assertIsNotNone(template)
+                assert template is not None
+                self.assertIs(reference, template.reference)
+
+        modal = self.compile(
+            "Choose one —\n"
+            "• Put target creature on top of its owner's library.\n"
+            "• Destroy target artifact."
+        )
+        self.assertEqual("exact", modal.status, modal.material_residuals)
+        self.assertIn(
+            FIXED_OWNER_ZONE_MOVE_CAPABILITY,
+            modal.faces[0].nodes[0].capability_dependencies,
+        )
+
+        qualified = {
+            "Put target face-up exiled card into its owner's graveyard.": {
+                "zones": ["exile"],
+                "face_down": False,
+            },
+            "Put target nonland historic permanent into its owner's library fourth from the top.": {
+                "zones": ["battlefield"],
+                "types_none": ["land"],
+            },
+            "Return target creature or Vehicle to its owner's hand.": {
+                "zones": ["battlefield"],
+                "categories": ["permanent"],
+            },
+        }
+        for text, expected in qualified.items():
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                schema = ir.faces[0].nodes[0].target_schema
+                for field, value in expected.items():
+                    self.assertEqual(value, schema[field])
+
+    def test_fixed_owner_zone_move_shapes_and_boundaries(self):
+        for text in (
+            "Put target creature into its owner's library fifth from the top.",
+            "Return target spell or creature to its owner's hand.",
+            "Put target historic permanent on top of its owner's library.",
+            "Return an untapped land you control to its owner's hand.",
+            "Each player returns a permanent they control to its owner's hand.",
+            "Put target creature on top of its controller's library.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(
+                    fixed_owner_zone_move_effect_template(
+                        text,
+                        card_name="Boundary Fixture",
+                        source_is_permanent=True,
+                        source_attachment_relation=None,
+                    )
+                )
+                ir = self.compile(text)
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+        template = fixed_owner_zone_move_effect_template(
+            "Put target creature on top of its owner's library.",
+            card_name="Boundary Fixture",
+            source_is_permanent=False,
+            source_attachment_relation=None,
+        )
+        self.assertIsNotNone(template)
+        assert template is not None
+        self.assertTrue(
+            capability_dependencies_for_node(
+                effects=template.effects,
+                target_schema=template.target_schema,
+                mechanic_ids=template.mechanics,
+            )
+        )
+        effect = dict(template.effects[0])
+        for malformed in (
+            {**effect, "op": "open_owner_move"},
+            {**effect, "card": "$target.1"},
+            {**effect, "destination": "command"},
+            {**effect, "position": 5},
+            {**effect, "extra": True},
+        ):
+            with self.subTest(malformed=malformed):
+                self.assertFalse(
+                    capability_dependencies_for_node(
+                        effects=(malformed,),
+                        target_schema=template.target_schema,
+                        mechanic_ids=template.mechanics,
+                    )
+                )
+
+    def test_existing_self_return_compositions_retain_their_owner(self):
+        cases = (
+            (
+                "Whenever you cast a Spirit or Arcane spell, you may return "
+                "this creature to its owner's hand.",
+                "Creature — Spirit",
+            ),
+            (
+                "{W}, {T}: Return this creature to its owner's hand and "
+                "return target Griffin card from your graveyard to your "
+                "hand. Activate only during your upkeep.",
+                "Creature — Griffin",
+            ),
+        )
+        for text, type_line in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertNotIn(
+                    FIXED_OWNER_ZONE_MOVE_CAPABILITY,
+                    ir.faces[0].nodes[0].capability_dependencies,
                 )
 
     def test_unsupported_public_zone_move_shapes_remain_residual(self):
@@ -535,6 +741,65 @@ class _RuntimeBase(unittest.TestCase):
         )
         engine._issue_priority("A", hints)
         return source, action
+
+    def promote_fixture(self, engine, name: str):
+        record = self.db.lookup(name)
+        for program in engine.semantics.programs_for_oracle(record.oracle_id):
+            engine.semantics.remove(program.key)
+        return register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="trusted",
+            capability_registry=load_default_capability_registry(),
+            capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+
+    def ready_activation(
+        self,
+        session,
+        name: str,
+        mana: dict[str, int],
+        *,
+        aura_target_ref: str | None = None,
+    ):
+        engine = session.engine
+        source = self.card(engine, "A", name=name)
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+            aura_target_ref=aura_target_ref,
+        )
+        engine.state.players["A"].mana_pool.update(mana)
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        hints = engine._priority_action_hints("A")
+        action = next(
+            row
+            for row in hints["actions"]
+            if row.get("source") == source.ref
+            and str(row.get("id") or "").startswith("activate:")
+        )
+        engine._issue_priority("A", hints)
+        return source, action
+
+    def pass_until_choice(self, session):
+        for _ in range(32):
+            decision = session.state.pending_decision
+            if decision is not None and decision.kind != "priority":
+                return decision
+            principal = session.pending_principals()[0]
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("Zone-move choice was not reached")
 
     def resolve_all(self, session, *, apply_replacements: bool = True):
         for _ in range(100):
@@ -988,6 +1253,609 @@ class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
             )
             self.assertNotIn("logical_object_id", rendered)
             self.assertNotIn(creature.object_id, rendered)
+
+    def test_fixed_owner_face_up_exile_target_filters_face_down_card(self):
+        session = self.session(7294101, spell="Face Up Exile Move Fixture")
+        engine = session.engine
+        face_up = self.card(engine, "B")
+        face_down = self.card(
+            engine,
+            "C",
+            exclude=(face_up.object_id,),
+        )
+        engine.move_card(face_up.object_id, "exile", log=False)
+        engine.move_card(face_down.object_id, "exile", log=False)
+        face_down.face_down = True
+        self.promote_fixture(engine, "Face Up Exile Move Fixture")
+        source, action = self.ready_spell(
+            session,
+            "Face Up Exile Move Fixture",
+            {"W": 1},
+        )
+        legal_refs = action["target_schema"]["legal_refs"]
+        self.assertIn(face_up.ref, legal_refs)
+        self.assertNotIn(face_down.ref, legal_refs)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [face_up.ref],
+                "pay": "manual",
+                "payment": {"W": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(session)
+        self.assertEqual("graveyard", face_up.zone)
+        self.assertEqual("B", face_up.owner)
+        self.assertEqual("exile", face_down.zone)
+        self.assertTrue(face_down.face_down)
+        self.assertEqual("graveyard", source.zone)
+        self.assert_replays(session, "fixed-owner-face-up-exile-record")
+
+    def test_fixed_owner_library_positions_target_revalidation_and_replay(self):
+        session = self.session(729411, spell="Owner Library Move Fixture")
+        engine = session.engine
+        target = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "C"
+            and card.zone != "command"
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        self.promote_fixture(engine, "Owner Library Move Fixture")
+        source, action = self.ready_spell(
+            session,
+            "Owner Library Move Fixture",
+            {"C": 1, "U": 1},
+        )
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        accepted = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1},
+            },
+        )
+        self.assertTrue(accepted.ok, accepted.summary)
+        engine.change_control(target.object_id, "D", reason="owner-zone witness")
+        engine.permissions.invalidate_current()
+        priority_player = engine.state.priority_player
+        engine.state.pending_decision = None
+        engine._issue_priority(priority_player)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        self.resolve_all(session)
+        self.assertEqual("library", target.zone)
+        self.assertEqual("C", target.owner)
+        self.assertEqual(
+            target.object_id,
+            engine.state.players["C"].zones["library"][-1],
+        )
+        self.assertEqual("graveyard", source.zone)
+        self.assert_replays(session, "fixed-owner-library-target-record")
+
+        stale = self.session(729412, spell="Owner Library Move Fixture")
+        stale_engine = stale.engine
+        stale_target = next(
+            card
+            for card in stale_engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "creature"
+            in stale_engine._type_parts(
+                str(stale_engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        stale_engine.move_card(
+            stale_target.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        self.promote_fixture(stale_engine, "Owner Library Move Fixture")
+        _stale_source, stale_action = self.ready_spell(
+            stale,
+            "Owner Library Move Fixture",
+            {"C": 1, "U": 1},
+        )
+        accepted = stale.act(
+            "pilot:A",
+            {
+                "action_id": stale_action["id"],
+                "targets": [stale_target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1},
+            },
+        )
+        self.assertTrue(accepted.ok, accepted.summary)
+        stale_engine.move_card(stale_target.object_id, "exile", log=False)
+        stale_engine.move_card(
+            stale_target.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        stale_engine.permissions.invalidate_current()
+        priority_player = stale_engine.state.priority_player
+        stale_engine.state.pending_decision = None
+        stale_engine._issue_priority(priority_player)
+        stale.initial_checkpoint = checkpoint_envelope(stale_engine.state)
+        stale.commands.clear()
+        stale.decisions.clear()
+        self.resolve_all(stale)
+        self.assertEqual("battlefield", stale_target.zone)
+        self.assert_replays(stale, "stale-fixed-owner-library-target-record")
+
+        recycle = self.session(
+            729413,
+            spell="Owner Graveyard Recycler Fixture",
+        )
+        recycle_engine = recycle.engine
+        recycle_target = self.card(recycle_engine, "B")
+        recycle_engine.move_card(
+            recycle_target.object_id,
+            "graveyard",
+            log=False,
+        )
+        self.promote_fixture(
+            recycle_engine,
+            "Owner Graveyard Recycler Fixture",
+        )
+        recycler, recycle_action = self.ready_activation(
+            recycle,
+            "Owner Graveyard Recycler Fixture",
+            {"C": 2},
+        )
+        self.assertIn(
+            recycle_target.ref,
+            recycle_action["target_schema"]["legal_refs"],
+        )
+        recycle.initial_checkpoint = checkpoint_envelope(recycle_engine.state)
+        recycle.commands.clear()
+        recycle.decisions.clear()
+        activated = recycle.act(
+            "pilot:A",
+            {
+                "action_id": recycle_action["id"],
+                "targets": [recycle_target.ref],
+                "pay": "manual",
+                "payment": {"C": 2},
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.resolve_all(recycle)
+        self.assertTrue(recycler.tapped)
+        self.assertEqual("library", recycle_target.zone)
+        self.assertEqual(
+            recycle_target.object_id,
+            recycle_engine.state.players["B"].zones["library"][0],
+        )
+        self.assert_replays(recycle, "fixed-owner-graveyard-bottom-record")
+
+    def test_fixed_owner_source_attachment_and_choice_lifecycle(self):
+        source_session = self.session(729414, spell="Owner Self Return Fixture")
+        source_engine = source_session.engine
+        self.promote_fixture(source_engine, "Owner Self Return Fixture")
+        source, action = self.ready_activation(
+            source_session,
+            "Owner Self Return Fixture",
+            {"U": 1},
+        )
+        activated = source_session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"U": 1},
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        source_engine.move_card(source.object_id, "exile", log=False)
+        source_engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        source_session.initial_checkpoint = checkpoint_envelope(
+            source_engine.state
+        )
+        source_session.commands.clear()
+        source_session.decisions.clear()
+        self.resolve_all(source_session)
+        self.assertEqual("battlefield", source.zone)
+        self.assert_replays(source_session, "fixed-owner-source-incarnation")
+
+        attachment_session = self.session(
+            729415,
+            spell="Owner Attachment Return Fixture",
+        )
+        attachment_engine = attachment_session.engine
+        target = next(
+            card
+            for card in attachment_engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "creature"
+            in attachment_engine._type_parts(
+                str(
+                    attachment_engine._effective_card_data(card).get(
+                        "type_line"
+                    )
+                    or ""
+                )
+            )[0]
+        )
+        attachment_engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        self.promote_fixture(
+            attachment_engine,
+            "Owner Attachment Return Fixture",
+        )
+        aura, attachment_action = self.ready_activation(
+            attachment_session,
+            "Owner Attachment Return Fixture",
+            {},
+            aura_target_ref=target.ref,
+        )
+        attachment_session.initial_checkpoint = checkpoint_envelope(
+            attachment_engine.state
+        )
+        attachment_session.commands.clear()
+        attachment_session.decisions.clear()
+        activated = attachment_session.act(
+            "pilot:A",
+            {"action_id": attachment_action["id"]},
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertEqual("graveyard", aura.zone)
+        self.resolve_all(attachment_session)
+        self.assertEqual("hand", target.zone)
+        self.assertEqual("B", target.owner)
+        self.assert_replays(
+            attachment_session,
+            "fixed-owner-attachment-lki-record",
+        )
+
+        choice_session = self.session(
+            729416,
+            spell="Controller Choice Return Fixture",
+        )
+        choice_engine = choice_session.engine
+        land = next(
+            card
+            for card in choice_engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "land"
+            in choice_engine._type_parts(
+                str(choice_engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        choice_engine.move_card(
+            land.object_id,
+            "battlefield",
+            controller="A",
+            tapped=True,
+            log=False,
+        )
+        self.promote_fixture(
+            choice_engine,
+            "Controller Choice Return Fixture",
+        )
+        _choice_source, choice_action = self.ready_activation(
+            choice_session,
+            "Controller Choice Return Fixture",
+            {"G": 1},
+        )
+        choice_session.initial_checkpoint = checkpoint_envelope(
+            choice_engine.state
+        )
+        choice_session.commands.clear()
+        choice_session.decisions.clear()
+        activated = choice_session.act(
+            "pilot:A",
+            {
+                "action_id": choice_action["id"],
+                "pay": "manual",
+                "payment": {"G": 1},
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.pass_until_choice(choice_session)
+        chosen = choice_session.act(
+            "pilot:A",
+            {"action_id": "choose", "cards": [land.ref]},
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.resolve_all(choice_session)
+        self.assertEqual("hand", land.zone)
+        self.assertEqual("B", land.owner)
+        self.assert_replays(choice_session, "fixed-owner-controller-choice")
+
+    def test_fixed_owner_equipment_return_composes_with_equip(self):
+        session = self.session(
+            7294161,
+            spell="Owner Equipment Return Fixture",
+        )
+        engine = session.engine
+        target = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        self.promote_fixture(engine, "Owner Equipment Return Fixture")
+        equipment = self.card(
+            engine,
+            "A",
+            name="Owner Equipment Return Fixture",
+        )
+        engine.move_card(
+            equipment.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        engine.state.players["A"].mana_pool["C"] = 2
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        hints = engine._priority_action_hints("A")
+        actions = [
+            row
+            for row in hints["actions"]
+            if row.get("source") == equipment.ref
+            and str(row.get("id") or "").startswith("activate:")
+        ]
+        equip_action = next(
+            row
+            for row in actions
+            if target.ref
+            in row.get("target_schema", {}).get("legal_refs", ())
+        )
+        engine._issue_priority("A", hints)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        equipped = session.act(
+            "pilot:A",
+            {
+                "action_id": equip_action["id"],
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"C": 1},
+            },
+        )
+        self.assertTrue(equipped.ok, equipped.summary)
+        self.resolve_all(session)
+        self.assertEqual(target.object_id, equipment.attached_to)
+
+        decision = session.packet("pilot:A", full=True)["decision"]
+        self.assertEqual("priority", decision["kind"])
+        return_action = next(
+            row
+            for row in decision["ctx"]["legal"]["actions"]
+            if row.get("source") == equipment.ref
+            and str(row.get("id") or "").startswith("activate:")
+            and not row.get("target_schema", {}).get("legal_refs")
+        )
+        returned = session.act(
+            "pilot:A",
+            {
+                "action_id": return_action["id"],
+                "pay": "manual",
+                "payment": {"C": 1},
+            },
+        )
+        self.assertTrue(returned.ok, returned.summary)
+        self.resolve_all(session)
+        self.assertEqual("hand", equipment.zone)
+        self.assertEqual("A", equipment.owner)
+        self.assertIsNone(equipment.attached_to)
+        self.assert_replays(session, "fixed-owner-equipment-return-record")
+
+    def test_fixed_owner_modal_move_and_player_target_both_execute(self):
+        move_session = self.session(
+            7294162,
+            spell="Owner Modal Move Fixture",
+        )
+        move_engine = move_session.engine
+        creature = next(
+            card
+            for card in move_engine.state.cards.values()
+            if card.owner == "C"
+            and card.zone != "command"
+            and "creature"
+            in move_engine._type_parts(
+                str(move_engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        move_engine.move_card(
+            creature.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        self.promote_fixture(move_engine, "Owner Modal Move Fixture")
+        move_source, move_action = self.ready_spell(
+            move_session,
+            "Owner Modal Move Fixture",
+            {"C": 1, "U": 1, "R": 1},
+        )
+        schema = move_action["target_schema"]
+        self.assertEqual(["mode_1", "mode_2"], schema["legal_modes"])
+        self.assertIn(
+            creature.ref,
+            schema["mode_schemas"]["mode_1"]["groups"][0]["legal_refs"],
+        )
+        self.assertIn(
+            "B",
+            schema["mode_schemas"]["mode_2"]["groups"][0]["legal_refs"],
+        )
+        move_session.initial_checkpoint = checkpoint_envelope(move_engine.state)
+        move_session.commands.clear()
+        move_session.decisions.clear()
+        cast = move_session.act(
+            "pilot:A",
+            {
+                "action_id": move_action["id"],
+                "modes": ["mode_1"],
+                "targets": [creature.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1, "R": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(move_session)
+        self.assertEqual("library", creature.zone)
+        self.assertEqual("C", creature.owner)
+        self.assertEqual(
+            creature.object_id,
+            move_engine.state.players["C"].zones["library"][-1],
+        )
+        self.assertEqual("graveyard", move_source.zone)
+        self.assert_replays(move_session, "fixed-owner-modal-move-record")
+
+        damage_session = self.session(
+            7294163,
+            spell="Owner Modal Move Fixture",
+        )
+        damage_engine = damage_session.engine
+        self.promote_fixture(damage_engine, "Owner Modal Move Fixture")
+        damage_source, damage_action = self.ready_spell(
+            damage_session,
+            "Owner Modal Move Fixture",
+            {"C": 1, "U": 1, "R": 1},
+        )
+        life_before = damage_engine.state.players["B"].life
+        damage_session.initial_checkpoint = checkpoint_envelope(
+            damage_engine.state
+        )
+        damage_session.commands.clear()
+        damage_session.decisions.clear()
+        cast = damage_session.act(
+            "pilot:A",
+            {
+                "action_id": damage_action["id"],
+                "modes": ["mode_2"],
+                "targets": ["B"],
+                "pay": "manual",
+                "payment": {"C": 1, "U": 1, "R": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(damage_session)
+        self.assertEqual(life_before - 2, damage_engine.state.players["B"].life)
+        self.assertEqual("graveyard", damage_source.zone)
+        self.assert_replays(damage_session, "fixed-owner-modal-damage-record")
+
+    def test_fixed_owner_zone_move_commander_replacement_and_projection(self):
+        session = self.session(729417, spell="Each Player Return Fixture")
+        engine = session.engine
+        selected: dict[str, CardInstance] = {}
+        for seat in "ACD":
+            creature = next(
+                card
+                for card in engine.state.cards.values()
+                if card.owner == seat
+                and card.zone != "command"
+                and "creature"
+                in engine._type_parts(
+                    str(engine._effective_card_data(card).get("type_line") or "")
+                )[0]
+            )
+            engine.move_card(
+                creature.object_id,
+                "battlefield",
+                controller=seat,
+                log=False,
+            )
+            selected[seat] = creature
+        commander = self.commander(engine, "B")
+        engine.move_card(
+            commander.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        selected["B"] = commander
+        self.promote_fixture(engine, "Each Player Return Fixture")
+        source, action = self.ready_spell(
+            session,
+            "Each Player Return Fixture",
+            {"U": 1},
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"U": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.pass_until_choice(session)
+        for index, seat in enumerate("ABCD"):
+            self.assertEqual(f"pilot:{seat}", session.pending_principals()[0])
+            chosen = session.act(
+                f"pilot:{seat}",
+                {"action_id": "choose", "cards": [selected[seat].ref]},
+            )
+            self.assertTrue(chosen.ok, chosen.summary)
+            if index < 3:
+                self.assertTrue(
+                    all(card.zone == "battlefield" for card in selected.values())
+                )
+        self.resolve_all(session, apply_replacements=True)
+        self.assertEqual("command", commander.zone)
+        for seat in "ACD":
+            self.assertEqual("hand", selected[seat].zone)
+        self.assertEqual("graveyard", source.zone)
+        for seat in "ABCD":
+            rendered = json.dumps(
+                StateProjector(self.db, engine.state)._snapshot(f"pilot:{seat}"),
+                sort_keys=True,
+            )
+            self.assertTrue(
+                all(card.object_id not in rendered for card in selected.values())
+            )
+            self.assertNotIn("logical_object_id", rendered)
+        self.assert_replays(session, "fixed-owner-each-player-choice-record")
 
 
 class CommanderZoneMoveRuntimeTests(_RuntimeBase):

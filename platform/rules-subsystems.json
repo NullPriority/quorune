@@ -2752,6 +2752,81 @@
           "measurement_probe_id": "fixed-targeted-return-to-hand-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-owner-zone-moves",
+          "member_family_ids": [
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:return",
+            "activated_effect:unparsed-put-enchanted-creature",
+            "activated_effect:unparsed-put-target-artifact",
+            "activated_effect:unparsed-put-target-card",
+            "activated_effect:unparsed-put-this-aura",
+            "activated_effect:unparsed-put-this-creature",
+            "activated_effect:unparsed-shuffle-enchanted-creature",
+            "effect_clause:return",
+            "effect_clause:unparsed-choose-one",
+            "effect_clause:unparsed-choose-one-or",
+            "effect_clause:unparsed-each-player-returns",
+            "effect_clause:unparsed-put-target-artifact",
+            "effect_clause:unparsed-put-target-creature",
+            "effect_clause:unparsed-put-target-enchantment",
+            "effect_clause:unparsed-put-target-face",
+            "effect_clause:unparsed-put-target-land",
+            "effect_clause:unparsed-put-target-nonland",
+            "effect_clause:unparsed-put-target-permanent",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "reference_binding:linked-result-reference"
+          ],
+          "canonical_owner_ids": [
+            "capability:attachment.reference.current_or_lki",
+            "capability:target.revalidate_resolution",
+            "capability:variant.commander.zone_return",
+            "capability:zone.change.destination_replacement",
+            "capability:zone.single_owner_move.fixed_destination",
+            "component:quorune.attachment_references.AttachmentReferenceSpec",
+            "component:quorune.compiler.fixed_owner_zone_move_templates.FixedOwnerZoneMoveTemplate",
+            "component:quorune.compiler.fixed_owner_zone_move_templates.fixed_owner_zone_move_effect_template",
+            "component:quorune.effect_runtime.zones_and_attachments._apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice",
+            "component:quorune.effect_runtime.zones_and_attachments._apply_shuffle_into_library",
+            "component:quorune.selection.targeting.TargetSelectionOwnerMixin._target_row_matches",
+            "component:quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+            "component:quorune.targets.TargetGroup",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-public-object-characteristic-predicate",
+            "fixed-owner-hand-graveyard-or-library-destination",
+            "target-source-attachment-or-public-choice-reference",
+            "top-bottom-second-third-or-fourth-library-position"
+          ],
+          "shared_dependencies": [
+            "attachment.reference.current_or_lki",
+            "target.revalidate_resolution",
+            "variant.commander.zone_return",
+            "zone.change.destination_replacement",
+            "zone.single_owner_move.fixed_destination"
+          ],
+          "shared_grammar": "one fixed public object moves to its owner's hand, graveyard, top, bottom, second, third, or fourth library position, or a currently enchanted creature is shuffled into its owner's library, using one target, source incarnation, current-or-LKI attachment, controller choice, or APNAP each-player choice across spell, triggered, activated, and modal contexts",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing target, source-reference, attachment-reference, public APNAP choice, owner-relative destination, Commander replacement, zone-transition, projection, and replay owners without another move operation or runtime handler.",
+          "explicit_exclusions": [
+            "alternative-cost returns, delayed or linked returns, historic predicates other than nonland historic permanent, and unsupported attachment relations",
+            "mass moves other than the exact each-player one-creature return, untapped or broader public choices, and independently unsupported choice carriers",
+            "random, optional, conditional, variable-count, chosen-quality, arbitrary-position, multiple-destination, reanimation, and copied or text-changed forms",
+            "spell-or-permanent heterogeneous targets, controller destinations, hidden-origin selection, and more than one target"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-owner-zone-moves-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-attachment-actions",
           "member_family_ids": [
             "activated_effect:unparsed-attach-this-aura",
@@ -2867,14 +2942,43 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v182-own-graveyard-permanent-domain",
-      "compiler_version": "oracle-ir-v182",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Preserve the permanent-card domain when adapting qualified battlefield predicates to own-graveyard targets without claiming a card-support harvest."
+      "transition_id": "oracle-ir-v183-fixed-owner-zone-moves",
+      "compiler_version": "oracle-ir-v183",
+      "bundle_id": "bundle:fixed-owner-zone-moves",
+      "candidate_ids": ["compiler:fixed-owner-zone-moves"],
+      "family_ids": [
+        "activated_effect:ordered-effect-composition",
+        "activated_effect:return",
+        "activated_effect:unparsed-put-enchanted-creature",
+        "activated_effect:unparsed-put-target-artifact",
+        "activated_effect:unparsed-put-target-card",
+        "activated_effect:unparsed-put-this-aura",
+        "activated_effect:unparsed-put-this-creature",
+        "activated_effect:unparsed-shuffle-enchanted-creature",
+        "effect_clause:return",
+        "effect_clause:unparsed-choose-one",
+        "effect_clause:unparsed-choose-one-or",
+        "effect_clause:unparsed-each-player-returns",
+        "effect_clause:unparsed-put-target-artifact",
+        "effect_clause:unparsed-put-target-creature",
+        "effect_clause:unparsed-put-target-enchantment",
+        "effect_clause:unparsed-put-target-face",
+        "effect_clause:unparsed-put-target-land",
+        "effect_clause:unparsed-put-target-nonland",
+        "effect_clause:unparsed-put-target-permanent",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "reference_binding:linked-result-reference"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "target.revalidate_resolution",
+        "variant.commander.zone_return",
+        "zone.change.destination_replacement",
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "measurement_id": "measurement:fixed-owner-zone-moves",
+      "non_harvest_reason": null
     },
     "forecast_corrections": [
       {
@@ -3465,6 +3569,11 @@
         "candidate_id": "compiler:fixed-mana-suspend-lifecycle",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current selector has no eligible carried candidate and the raw continuous-layer leader remains a heterogeneous aggregate. Two bounded investigations retire fixed hand-to-battlefield actions and unmodified copy-as-entry below their required direct or prerequisite-fanout floors. The source-controlled Suspend probe instead measures a positive complete-card lower bound while establishing the staged-zone cast-lifecycle foundation shared by more than the required current one-blocker Commander cards. Positive-count ordinary fixed mana reuses current timing, special-action payment, public exile, counter placement and removal, APNAP trigger placement, optional one-shot free casting, current ability applicability, Haste, control change, projection, and replay owners; variable, modified, duplicate, copied, granted, incomplete, land, and distinct lifecycle forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:fixed-owner-zone-moves",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The current selector has no eligible carried candidate, while the raw unparsed effect and activation leaders fragment into hundreds of distinct families and the dependency-ready counter queue lacks measured broad gain. The generated integrated owner-destination probe instead establishes a threshold-clearing complete-card lower bound through existing target revalidation, source-incarnation, attachment-reference, APNAP public choice, owner-relative destination, Commander replacement, zone-transition, projection, and replay owners. It admits only fixed public target, source, enchanted-creature, controller-choice, and each-player-choice moves to owner hand, graveyard, fixed library position, or shuffle across spell, triggered, activated, and modal contexts; heterogeneous targets, hidden selection, alternative costs, mass, delayed, linked, variable, arbitrary-position, copied, text-changed, and independently unsupported forms remain fail-closed."
       }
     ]
   },
