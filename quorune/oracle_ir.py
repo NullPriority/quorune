@@ -152,7 +152,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v184"
+ORACLE_COMPILER_VERSION = "oracle-ir-v185"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -283,7 +283,13 @@ def _effect_template(
     self_return = fixed_self_return_effect_template(normalized)
     if self_return is not None:
         return self_return.compiled()
-    typed = typed_resolution_effect_template(normalized, card_name=card_name, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
+    typed = typed_resolution_effect_template(
+        normalized,
+        card_name=card_name,
+        source_is_permanent=source_is_permanent,
+        source_card_types=source_card_types,
+        source_attachment_relation=source_attachment_relation,
+    )
     if typed is not None:
         return typed
     tap_state = targeted_tap_state_effect_template(normalized, source_is_permanent=source_is_permanent, source_card_types=source_card_types, source_attachment_relation=source_attachment_relation)

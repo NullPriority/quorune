@@ -110,3 +110,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0093 — typed fixed token production](0093-typed-fixed-token-production.md)
 - [ADR 0094 — typed fixed attachment actions](0094-typed-fixed-attachment-actions.md)
 - [ADR 0095 — typed fixed owner-zone moves](0095-typed-fixed-owner-zone-moves.md)
+- [ADR 0096 — typed fixed source characteristic effects](0096-typed-fixed-source-characteristic-effects.md)

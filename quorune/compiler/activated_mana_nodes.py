@@ -311,6 +311,7 @@ def _activated_effect_dependency_gate(
         and str(effects[0].get("op") or "")
         in {
             "amass",
+            "apply_source_characteristics_until_end_of_turn",
             "attach",
             "become_monarch",
             "bounce",

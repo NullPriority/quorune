@@ -182,6 +182,22 @@ opponent-only targets, attachment-relative, chosen, counter-qualified, tapped,
 modified, keyword-qualified, dynamic, conditional, quoted, Protection,
 type-changing, and variable-duration forms remain source-spanned residuals.
 
+`compiler/fixed_target_effect_sequences.py` also owns one fixed source-
+characteristic result shared by activated and normalized triggered contexts.
+It accepts a fixed power/toughness modifier plus supported keywords, a fixed
+set of two supported keywords, a colorless or all-colors source change, or a
+fixed artifact animation with literal colors, creature subtypes, base
+power/toughness, and supported keywords. The runtime commits every represented
+layer-4, layer-5, layer-6, layer-7b, and layer-7c component atomically with one
+timestamp and one locked source incarnation. The same canonical keyword map
+extends targeted spell and activated effects without a family-local ability
+check. Layer-4 animation feeds the existing cycle-safe dynamic-characteristic
+boundary before layer-7a counts, and the state-based owner detaches Equipment
+that becomes a creature. Land animation and retains-type riders, dynamic or
+chosen values, copies, text or control changes, declaration riders,
+Protection, landwalk, Banding, unsupported keywords, and non-until-end-of-turn
+durations remain source-spanned residuals.
+
 The existing attached-characteristic handler in
 `compiler/continuous_templates.py` lowers closed enchanted, equipped, and
 fortified subject wording into one versioned live-relation descriptor. The

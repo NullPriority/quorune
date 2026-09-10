@@ -3012,6 +3012,59 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-zone-cast-lifecycles-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-source-characteristic-effects",
+          "member_family_ids": [
+            "activated_effect:unparsed-target-creature-gains",
+            "activated_effect:unparsed-target-creature-gets",
+            "activated_effect:unparsed-this-artifact-becomes",
+            "activated_effect:unparsed-this-creature-becomes",
+            "activated_effect:unparsed-this-creature-gains",
+            "activated_effect:unparsed-this-creature-gets",
+            "continuous_layer:granted-ability",
+            "duration:until-end-of-turn",
+            "effect_clause:unparsed-target-creature-gains",
+            "effect_clause:unparsed-target-creature-gets"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+            "component:quorune.compiler.fixed_target_effect_sequences.FixedSourceCharacteristicsTemplate",
+            "component:quorune.continuous_effect_state.create_resolution_continuous_effect_components",
+            "component:quorune.effect_runtime.objects_stack_and_tokens._apply_source_characteristics_until_end_of_turn",
+            "component:quorune.keyword_abilities.FIXED_CHARACTERISTIC_KEYWORDS",
+            "component:quorune.rules.node_capability_shapes.fixed_source_characteristics_node_capabilities"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-artifact-animation",
+            "fixed-source-colorless-or-all-colors",
+            "fixed-source-power-toughness-and-keyword",
+            "fixed-source-supported-keyword-set",
+            "shared-supported-target-keyword"
+          ],
+          "shared_dependencies": [
+            "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+          ],
+          "shared_grammar": "one identity-pinned fixed source characteristic effect whose type, subtype, color, supported abilities, base power/toughness, and fixed modifiers share one timestamp across layers 4, 5, 6, 7b, and 7c; the same canonical supported-keyword map also expands target effects across spell, triggered, and activated contexts",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes fixed artifact animation, fixed self power/toughness and supported-keyword composition, fixed multiple supported self keywords, fixed colorless/all-colors changes, and newly shared supported target keywords while establishing the reusable multi-layer resolution-effect owner.",
+          "explicit_exclusions": [
+            "choice-dependent colors, types, abilities, or modes",
+            "conditional, multiple-source, attachment-relative, indefinite, and non-until-end-of-turn effects",
+            "copy, text-changing, control-changing, switch-power-toughness, protection, landwalk, Banding, and unsupported keyword effects",
+            "declaration riders such as can't be blocked, can attack, and loses Defender",
+            "dynamic power, toughness, colors, types, or quantities",
+            "land animation and retains-land or retains-type riders"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-source-characteristics-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3023,50 +3076,26 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v184-fixed-zone-cast-lifecycles",
-      "compiler_version": "oracle-ir-v184",
-      "bundle_id": "bundle:fixed-zone-cast-lifecycles",
-      "candidate_ids": ["compiler:fixed-zone-cast-lifecycles"],
+      "transition_id": "oracle-ir-v185-fixed-source-characteristic-effects",
+      "compiler_version": "oracle-ir-v185",
+      "bundle_id": "bundle:fixed-source-characteristic-effects",
+      "candidate_ids": ["compiler:fixed-source-characteristic-effects"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:exile",
-        "effect_clause:unparsed-foretell-1-b",
-        "effect_clause:unparsed-foretell-1-r",
-        "effect_clause:unparsed-foretell-1-u",
-        "effect_clause:unparsed-foretell-1-w",
-        "effect_clause:unparsed-foretell-2-b",
-        "effect_clause:unparsed-foretell-2-r",
-        "effect_clause:unparsed-foretell-2-w",
-        "effect_clause:unparsed-foretell-3-b",
-        "effect_clause:unparsed-foretell-4-g",
-        "effect_clause:unparsed-foretell-4-r",
-        "effect_clause:unparsed-foretell-4-u",
-        "effect_clause:unparsed-foretell-5-b",
-        "effect_clause:unparsed-foretell-5-r",
-        "effect_clause:unparsed-foretell-b",
-        "effect_clause:unparsed-foretell-g",
-        "effect_clause:unparsed-foretell-r",
-        "effect_clause:unparsed-foretell-u",
-        "effect_clause:unparsed-foretell-w",
-        "effect_clause:unparsed-plot-1-b",
-        "effect_clause:unparsed-plot-1-r",
-        "effect_clause:unparsed-plot-2-g",
-        "effect_clause:unparsed-plot-3-r",
-        "effect_clause:unparsed-plot-3-u",
-        "effect_clause:unparsed-plot-4-u",
-        "keyword_dependency:jump-start",
-        "keyword_dependency:rebound"
+        "activated_effect:unparsed-target-creature-gains",
+        "activated_effect:unparsed-target-creature-gets",
+        "activated_effect:unparsed-this-artifact-becomes",
+        "activated_effect:unparsed-this-creature-becomes",
+        "activated_effect:unparsed-this-creature-gains",
+        "activated_effect:unparsed-this-creature-gets",
+        "continuous_layer:granted-ability",
+        "duration:until-end-of-turn",
+        "effect_clause:unparsed-target-creature-gains",
+        "effect_clause:unparsed-target-creature-gets"
       ],
       "capability_ids": [
-        "casting.additional_cost.zone_change.fixed_discard",
-        "casting.additional_cost.zone_change.fixed_exile",
-        "casting.lifecycle.fixed_zone_cast",
-        "casting.permission.one_shot_exile_without_mana",
-        "trigger.event.normalized_zone_change",
-        "trigger.placement.apnap",
-        "zone.change.destination_replacement"
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
       ],
-      "measurement_id": "measurement:fixed-zone-cast-lifecycles",
+      "measurement_id": "measurement:fixed-source-characteristic-effects",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

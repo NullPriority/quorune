@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from ..attachment_references import AttachmentReferenceKind
 from .affected_player_discard_templates import (
@@ -32,6 +32,7 @@ from .damage_templates import fixed_damage_effect_template
 from .destruction_templates import destruction_effect_template
 from .exile_templates import targeted_exile_effect_template
 from .fixed_target_effect_sequences import (
+    fixed_source_characteristics_effect_template,
     fixed_target_characteristics_effect_template,
     fixed_target_effect_sequence_template,
     fixed_target_zone_object_keyword_sequence_template,
@@ -92,6 +93,7 @@ def typed_resolution_effect_template(
     *,
     card_name: str,
     source_is_permanent: bool | None = None,
+    source_card_types: Sequence[str] = (),
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
@@ -190,6 +192,15 @@ def typed_resolution_effect_template(
     fixed_counter_removal = fixed_counter_removal_effect_template(text)
     if fixed_counter_removal is not None:
         return fixed_counter_removal.compiled()
+    fixed_source_characteristics = (
+        fixed_source_characteristics_effect_template(
+            text,
+            source_is_permanent=source_is_permanent,
+            source_card_types=tuple(source_card_types),
+        )
+    )
+    if fixed_source_characteristics is not None:
+        return fixed_source_characteristics.compiled()
     fixed_target_characteristics = (
         fixed_target_characteristics_effect_template(text)
     )

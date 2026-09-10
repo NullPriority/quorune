@@ -138,7 +138,21 @@ EFFECT_FAMILY_CONTRACTS = (
     EffectFamilyContract(
         family_id="objects-stack-and-tokens.v1",
         semantic_family="effect.object-stack-token",
-        rule_references=("111.2", "701.5", "701.27", "707.2"),
+        rule_references=(
+            "111.2",
+            "205.1b",
+            "208.5",
+            "611.2c",
+            "613.1d",
+            "613.1e",
+            "613.1f",
+            "613.1g",
+            "613.4b",
+            "613.4c",
+            "701.5",
+            "701.27",
+            "707.2",
+        ),
         operations=frozenset(
             {
                 "add_subtype",
@@ -146,6 +160,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "add_type",
                 "add_type_until_end_of_turn",
                 "add_types_until_end_of_turn",
+                "apply_source_characteristics_until_end_of_turn",
                 "change_control",
                 "change_control_until_end_of_turn",
                 "copy_until_end_of_turn",

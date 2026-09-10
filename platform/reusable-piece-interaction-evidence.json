@@ -6696,6 +6696,87 @@
       ],
       "interaction_order": 2,
       "assertion": "An exact fixed owner-library move remains unavailable when the same card retains an unsupported target predicate; strict runtime admission rejects the incomplete CardProgram before mutation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
+      "piece_ids": [
+        "capability.combat.block.flying",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.block.flying",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 3,
+      "assertion": "One timestamped source animation adds Creature, fixed colors, Flying, and base power/toughness in their canonical layers; current block legality consumes the resulting Flying keyword and exact replay preserves the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_source_effects_follow_incarnation_control_and_cleanup_boundaries",
+      "piece_ids": [
+        "capability.combat.damage.participation.strike_steps",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.damage.participation.strike_steps",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 3,
+      "assertion": "A fixed source modifier and First strike grant survive control change on the same incarnation, expire in cleanup, and do not attach to a source that leaves and returns before resolution."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_animation_updates_dynamic_counts_and_detaches_equipment",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_power_toughness_definition",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_power_toughness_definition",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 3,
+      "assertion": "Layer-4 source animation feeds the cycle-safe layer-7a creature count before its own layer-7b base statistics, while state-based actions detach an Equipment that becomes a creature."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_targeted_shadow_uses_shared_keyword_and_block_legality",
+      "piece_ids": [
+        "capability.combat.block.shadow",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "combat.block.shadow",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "A targeted until-end-of-turn Shadow grant feeds current advertised and accepted blocker legality through the shared layer-6 keyword owner."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_animation_updates_dynamic_counts_and_detaches_equipment",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "The canonical fixed-mana Equip activation attaches the source, then source animation makes that Equipment a creature and the state-based owner detaches it."
     }
   ]
 }

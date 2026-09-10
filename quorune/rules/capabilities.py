@@ -49,6 +49,8 @@ from .entry_return_capability_shapes import (
     fixed_entry_return_node_capabilities,
 )
 from .node_capability_shapes import (
+    FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
+    FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
     fixed_alternative_additional_cost_node_capabilities,
     fixed_counter_additional_cost_node_capabilities,
     fixed_life_payment_additional_cost_node_capabilities,
@@ -60,6 +62,7 @@ from .node_capability_shapes import (
     fixed_counter_placement_target_set_node_capabilities,
     fixed_target_effect_sequence_node_capabilities,
     fixed_source_effect_sequence_node_capabilities,
+    fixed_source_characteristics_node_capabilities,
     fixed_target_characteristics_node_capabilities,
     temporary_declaration_restriction_node_capabilities,
     fixed_player_counter_placement_node_capabilities,
@@ -417,6 +420,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _FIXED_SOURCE_SEQUENCE_MECHANIC: (
         "resolution.effect_sequence.fixed_source",
     ),
+    FIXED_SOURCE_CHARACTERISTIC_MECHANIC: (
+        FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
+    ),
     _FIXED_CONTROLLER_SEQUENCE_MECHANIC: (
         "resolution.effect_sequence.fixed_controller",
     ),
@@ -449,6 +455,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "return-to-owner-hand",
         _FIXED_TARGET_SEQUENCE_MECHANIC,
         _FIXED_SOURCE_SEQUENCE_MECHANIC,
+        FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
@@ -1049,6 +1056,7 @@ def _targeted_effect_capabilities(
         fixed_player_counter_placement_node_capabilities,
         optional_fixed_counter_event_trigger_node_capabilities,
         fixed_target_characteristics_node_capabilities,
+        fixed_source_characteristics_node_capabilities,
         temporary_declaration_restriction_node_capabilities,
         fixed_target_effect_sequence_node_capabilities,
         fixed_source_effect_sequence_node_capabilities,

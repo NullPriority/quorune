@@ -19,8 +19,11 @@ from ..continuous_effects import ContinuousOperation, Layer
 from ..continuous_effect_state import (
     ContinuousEffectStateError,
     create_resolution_continuous_effect,
+    create_resolution_continuous_effect_components,
+    ResolutionContinuousComponent,
     resolution_effect_source,
 )
+from ..creature_subtypes import canonical_creature_subtype
 from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
 from ..impulse_access import grant_temporary_cast_permission
@@ -29,6 +32,7 @@ from ..impulse_access_model import (
     TemporaryCastPermissionError,
     TemporaryCastPermissionGrant,
 )
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..permanent_transform import commit_transform_batch
 from ..util import unique_preserving_order
 from ..trigger_processing import schedule_delayed_trigger
@@ -72,6 +76,220 @@ def _commit_temporary_characteristic_effect(
     except ContinuousEffectStateError as exc:
         raise GameRuleError(str(exc)) from exc
     return True
+
+
+def _apply_source_characteristics_until_end_of_turn(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> Any:
+    del operation
+    allowed = {
+        "op",
+        "card",
+        "set_card_types",
+        "set_subtypes",
+        "set_colors",
+        "base_power",
+        "base_toughness",
+        "power",
+        "toughness",
+        "keywords",
+        "_runtime_source",
+    }
+    if set(effect) not in (allowed, allowed - {"_runtime_source"}):
+        raise GameRuleError(
+            "Source characteristic effect fields are malformed"
+        )
+    value = effect.get("card")
+    if not value:
+        return None
+    try:
+        card = host._resolve_object(
+            actor,
+            str(value),
+            zones={"battlefield"},
+        )
+    except GameRuleError:
+        return None
+
+    set_card_types = effect["set_card_types"]
+    set_subtypes = effect["set_subtypes"]
+    set_colors = effect["set_colors"]
+    base_power = effect["base_power"]
+    base_toughness = effect["base_toughness"]
+    power = effect["power"]
+    toughness = effect["toughness"]
+    raw_keywords = effect["keywords"]
+    if set_card_types is not None and (
+        not isinstance(set_card_types, list)
+        or set_card_types != ["Artifact", "Creature"]
+    ):
+        raise GameRuleError("Source characteristic card types are malformed")
+    if set_card_types is not None and host._type_parts(
+        " ".join(set_card_types)
+    )[0] != {value.casefold() for value in set_card_types}:
+        raise GameRuleError(
+            "Source characteristic card types are not canonical"
+        )
+    if set_subtypes is not None and (
+        not isinstance(set_subtypes, list)
+        or any(
+            type(subtype) is not str or not subtype
+            or canonical_creature_subtype(subtype) is None
+            for subtype in set_subtypes
+        )
+        or len(set(set_subtypes)) != len(set_subtypes)
+        or set_card_types is None
+    ):
+        raise GameRuleError("Source characteristic subtypes are malformed")
+    if set_colors is not None and (
+        not isinstance(set_colors, list)
+        or any(
+            type(color) is not str or color not in "WUBRG"
+            for color in set_colors
+        )
+        or len(set(set_colors)) != len(set_colors)
+        or set_colors != [color for color in "WUBRG" if color in set_colors]
+        or len(set_colors) not in {0, 1, 2, 5}
+    ):
+        raise GameRuleError("Source characteristic colors are malformed")
+    if (base_power is None) is not (base_toughness is None) or any(
+        value is not None and type(value) is not int
+        for value in (base_power, base_toughness)
+    ) or any(
+        value is not None and value < 0
+        for value in (base_power, base_toughness)
+    ):
+        raise GameRuleError("Source characteristic base stats are malformed")
+    if type(power) is not int or type(toughness) is not int:
+        raise GameRuleError("Source characteristic stat changes are malformed")
+    if (
+        not isinstance(raw_keywords, list)
+        or any(
+            type(keyword) is not str
+            or keyword not in FIXED_CHARACTERISTIC_KEYWORDS
+            for keyword in raw_keywords
+        )
+        or len(set(raw_keywords)) != len(raw_keywords)
+        or len(raw_keywords) > 2
+    ):
+        raise GameRuleError("Source characteristic keywords are malformed")
+    if (
+        (set_card_types is None) is not (set_subtypes is None)
+        or (set_card_types is None) is not (base_power is None)
+        or (base_power is not None and (power or toughness))
+    ):
+        raise GameRuleError(
+            "Source animation and modifier fields cannot be mixed"
+        )
+
+    components: list[ResolutionContinuousComponent] = []
+    type_operations: list[ContinuousOperation] = []
+    if set_card_types is not None:
+        type_operations.append(
+            ContinuousOperation(
+                "set_types",
+                set_card_types,
+                field="card_types",
+            )
+        )
+    if set_subtypes is not None:
+        type_operations.append(
+            ContinuousOperation(
+                "set_types",
+                set_subtypes,
+                field="subtypes",
+            )
+        )
+    if type_operations:
+        components.append(
+            ResolutionContinuousComponent(
+                Layer.TYPE,
+                "4",
+                tuple(type_operations),
+            )
+        )
+    if set_colors is not None:
+        color_operation = (
+            ContinuousOperation("set_colors", set_colors)
+            if set_colors
+            else ContinuousOperation("remove_all_colors")
+        )
+        components.append(
+            ResolutionContinuousComponent(
+                Layer.COLOR,
+                "5",
+                (color_operation,),
+            )
+        )
+    if raw_keywords:
+        components.append(
+            ResolutionContinuousComponent(
+                Layer.ABILITY,
+                "6",
+                tuple(
+                    ContinuousOperation("add_ability", keyword)
+                    for keyword in raw_keywords
+                ),
+            )
+        )
+    if base_power is not None:
+        components.append(
+            ResolutionContinuousComponent(
+                Layer.POWER_TOUGHNESS,
+                "7b",
+                (
+                    ContinuousOperation(
+                        "set_power_toughness",
+                        [base_power, base_toughness],
+                    ),
+                ),
+            )
+        )
+    if power or toughness:
+        components.append(
+            ResolutionContinuousComponent(
+                Layer.POWER_TOUGHNESS,
+                "7c",
+                (
+                    ContinuousOperation(
+                        "modify_power_toughness",
+                        [power, toughness],
+                    ),
+                ),
+            )
+        )
+    if not components:
+        raise GameRuleError("Source characteristic effect cannot be empty")
+    try:
+        create_resolution_continuous_effect_components(
+            host,
+            source=resolution_effect_source(
+                host,
+                effect,
+                fallback_card=card,
+            ),
+            targets=(card,),
+            components=tuple(components),
+        )
+    except ContinuousEffectStateError as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(
+        actor,
+        "permanent.characteristics",
+        f"{card.ref} changed characteristics until end of turn.",
+        {
+            "object": card.ref,
+            "reason": reason,
+        },
+        importance=1,
+        changed_objects=[card.object_id],
+    )
+    return card.ref
 
 
 def _apply_delayed_trigger(
@@ -1053,6 +1271,7 @@ HANDLERS = {
     'add_type': _apply_add_type,
     'add_type_until_end_of_turn': _apply_add_type_until_end_of_turn,
     'add_types_until_end_of_turn': _apply_add_types_until_end_of_turn,
+    'apply_source_characteristics_until_end_of_turn': _apply_source_characteristics_until_end_of_turn,
     'change_control': _apply_change_control,
     'change_control_until_end_of_turn': _apply_change_control_until_end_of_turn,
     'copy_until_end_of_turn': _apply_copy_until_end_of_turn,

@@ -9000,6 +9000,14 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_targeted_shadow_uses_shared_keyword_and_block_legality",
+      "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Feed a targeted temporary Shadow grant through the shared layer-6 evaluator into current blocker legality."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": ["611.2a", "611.2c", "613.1d", "613.1f", "613.1g", "613.4c"],
@@ -9397,6 +9405,62 @@
       "official_rule_ids": ["400.7", "608.2c", "611.2a", "611.2c", "613.1f"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject a replacement continuation whose target left and returned with a new logical identity before either the counter or keyword result mutates state."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_animation_updates_dynamic_counts_and_detaches_equipment",
+      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Apply the layer-4 animation before the cycle-safe layer-7a creature count and detach an Equipment that becomes a creature."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
+      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve one source animation in four-player state while preserving public characteristics and shared effect identity."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_shape_is_closed_and_capability_bound",
+      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject source, layer, color, base-stat, dynamic-value, duplicate-keyword, and unknown-field mutations."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_grammar_keeps_open_forms_residual",
+      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep dynamic values, choices, unsupported keywords, land animation, declaration riders, copies, and mismatched source kinds residual."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristics_compile_across_shared_contexts",
+      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed source stats, multiple supported keywords, colors, and artifact animation through one identity-pinned owner."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
+      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project public animated characteristics to every seat without exposing the continuous-effect journal."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
+      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save, load, and exactly replay one four-layer source animation with a shared timestamp."
     },
     {
       "capability_id": "counter.characteristic.keyword",
