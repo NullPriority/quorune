@@ -1372,12 +1372,15 @@ def _tracked_content_entries(
 def _latest_semantic_receipt(
     entries: Sequence[Mapping[str, Any]],
     non_harvest_transitions: Sequence[Mapping[str, Any]],
+    *,
+    repository: Path | None = None,
 ) -> Mapping[str, Any]:
     latest = entries[-1]["head_receipt"]
     for transition in non_harvest_transitions:
-        if (
-            transition["base_receipt"].get("content_fingerprint")
-            == latest.get("content_fingerprint")
+        if _semantic_receipts_match(
+            transition["base_receipt"],
+            latest,
+            repository=repository,
         ):
             latest = transition["head_receipt"]
     return latest
@@ -1466,7 +1469,11 @@ def _tracked_non_harvest_transitions(
     durable = _receipt(repository, _durable_main_tip(repository))
     if not _pending_matches_receipt(value["pending_transition"], durable):
         return result
-    base = _latest_semantic_receipt(entries, result)
+    base = _latest_semantic_receipt(
+        entries,
+        result,
+        repository=repository,
+    )
     durable_commit = _durable_main_tip(repository)
     parent = _git(repository, "rev-parse", f"{durable_commit}^").decode().strip()
     full_base = _receipt(repository, parent)
@@ -1759,7 +1766,11 @@ def build_harvest_outcome_history(
         if row.get("transition_id")
     }
     current_receipt = _worktree_receipt(repository)
-    latest = _latest_semantic_receipt(entries, non_harvest_transitions)
+    latest = _latest_semantic_receipt(
+        entries,
+        non_harvest_transitions,
+        repository=repository,
+    )
     semantic_outcome_status = "current"
     pending = None
     validated_declaration = (
