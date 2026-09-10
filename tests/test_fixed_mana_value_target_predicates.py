@@ -299,8 +299,6 @@ class FixedManaValueTargetCompilerTests(unittest.TestCase):
             "Destroy target tapped creature with mana value 3 or less.",
             "Destroy target artifact, enchantment, or creature with power 3 "
             "or less.",
-            "Return target creature card with mana value 3 or less from your "
-            "graveyard to the battlefield.",
         )
         for index, text in enumerate(variants, start=1):
             with self.subTest(text=text):

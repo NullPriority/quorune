@@ -500,15 +500,28 @@ Trample through existing consumers. Multiple, and/or, variable, nonmana,
 copied, granted, kicked-trigger, spell-rider, dynamic, and open entry families
 remain source-spanned residuals.
 
-`compiler/activated_mana_nodes.py` also owns three exact source-self zone-move
-effects: graveyard to owner hand, graveyard to battlefield tapped, and a
+`compiler/activated_mana_nodes.py` also owns four exact source-self zone-move
+effects: graveyard to owner hand, graveyard to battlefield tapped or untapped, and a
 battlefield Aura to owner hand. The typed descriptor replaces the parser's
 default battlefield active zone with the represented origin and records the
 destination, tapped state, source form, and complete-card policy. Only the
 battlefield result requires the shared complete-card admission certificate;
 the hand-return forms may remain independently executable on partial cards.
-Untapped, targeted, mass, optional, conditional, multiple-object, copied,
-granted, and text-changed movement stays source-spanned and residual.
+Qualified source-self, targeted, mass, optional, conditional, multiple-object,
+copied, granted, and text-changed movement stays source-spanned and residual.
+
+`compiler/reanimation_templates.py` owns the complementary fixed target
+reanimation grammar across spell, triggered, activated, modal, and Saga bodies.
+It accepts one mandatory or up-to-one permanent card from a public graveyard,
+closed permanent type, subtype, supertype, union, fixed mana-value, and exact
+represented fixed-power predicates, the resolving controller or card owner,
+and tapped or untapped entry. The emitted `reanimate` operation reuses the
+shared resolution-time target revalidation, typed Aura-entry, destination-
+replacement, and canonical zone-transition owners. Numeric graveyard targets
+use the same exact current-characteristic boundary as battlefield targeting;
+unrepresentable characteristic-defining or cyclic values fail closed. Mass,
+untargeted non-source, delayed, linked-result, entry-rider, variable, copied,
+granted, hidden-origin, and compound forms remain material residuals.
 
 `compiler/public_zone_move_templates.py` owns fixed public-origin movement as
 one shared grammar across spell, triggered, activated, and modal bodies. It

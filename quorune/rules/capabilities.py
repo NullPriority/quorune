@@ -30,11 +30,11 @@ from .graveyard_card_targets import (
     targeted_own_graveyard_return_node_capabilities,
 )
 from .public_zone_move_capability_shapes import (
-    fixed_owner_zone_move_covered_mechanics,
-    fixed_owner_zone_move_node_capabilities,
+    fixed_owner_zone_move_covered_mechanics, fixed_owner_zone_move_node_capabilities,
     fixed_public_zone_move_set_node_capabilities,
     public_graveyard_card_exile_node_capabilities,
 )
+from .reanimation_capability_shapes import fixed_target_reanimation_covered_mechanics, fixed_target_reanimation_node_capabilities
 from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
@@ -1095,7 +1095,7 @@ def _targeted_effect_capabilities(
         targeted_destruction_node_capabilities,
         targeted_exile_node_capabilities,
         targeted_return_to_hand_node_capabilities,
-        targeted_own_graveyard_return_node_capabilities,
+        targeted_own_graveyard_return_node_capabilities, fixed_target_reanimation_node_capabilities,
         public_graveyard_card_exile_node_capabilities,
         fixed_owner_zone_move_node_capabilities,
         fixed_public_zone_move_set_node_capabilities,
@@ -1477,7 +1477,7 @@ def capability_covered_mechanics(
                 "fixed-public-zone-move-set",
             }
         )
-    covered.update(fixed_owner_zone_move_covered_mechanics(supplied))
+    covered.update(fixed_owner_zone_move_covered_mechanics(supplied)); covered.update(fixed_target_reanimation_covered_mechanics(supplied))
     covered.update(_return_to_hand_covered_mechanics(supplied))
     if "stack.counter.effect" in supplied:
         covered.add("counter")

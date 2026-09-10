@@ -220,6 +220,15 @@ class SelfZoneMoveCompilerTests(unittest.TestCase):
                 True,
             ),
             (
+                "{1}{B}: Return this card from your graveyard to the battlefield.",
+                "Creature — Skeleton",
+                "graveyard",
+                "battlefield",
+                False,
+                "card",
+                True,
+            ),
+            (
                 "{W}: Return this Aura to its owner's hand.",
                 "Enchantment — Aura",
                 "battlefield",
@@ -263,7 +272,6 @@ class SelfZoneMoveCompilerTests(unittest.TestCase):
 
     def test_unsupported_self_zone_move_shapes_remain_residual(self):
         unsupported = (
-            "{1}{B}: Return this card from your graveyard to the battlefield.",
             "{B}: Return this creature from your graveyard to your hand.",
             "{2}{B}: Return this card from a graveyard to its owner's hand.",
             "{2}{B}: Return this card and another card from your graveyard to your hand.",
@@ -521,6 +529,36 @@ class SelfZoneMoveRuntimeTests(unittest.TestCase):
         self.assertIsNone(aura.attached_to)
         self.assertNotIn(aura.object_id, target.attachments)
         self.assertIn(aura.object_id, engine.state.players["B"].zones["hand"])
+
+    def test_source_self_reanimation_preserves_untapped_result(self):
+        session = self.session(70123005, players=2)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            name="Untapped Self Return",
+            ref="SELF-UNTAPPED",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 1, "B": 1})
+        self.prepare_main(session)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        action = self.action_for(session, source, "ab1")
+        result = session.act("pilot:B", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_stack_with_passes(session)
+
+        self.assertEqual("battlefield", source.zone)
+        self.assertEqual("B", source.controller)
+        self.assertFalse(source.tapped)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "self-zone-move-untapped-replay"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_partial_reanimation_and_stale_sources_fail_closed(self):
         session = self.session(70123003, players=2)

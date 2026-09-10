@@ -4854,6 +4854,33 @@
       "status": "trusted"
     },
     {
+      "id": "zone.reanimate.fixed_target",
+      "version": 1,
+      "official_rules": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and execute one mandatory or up-to-one target permanent-card move from a public graveyard to the battlefield under the resolving controller or card owner through canonical target, Aura-entry, and replacement-aware zone owners.",
+        "inputs": ["one source-spanned fixed reanimation clause", "one public graveyard card matching the closed permanent, type, subtype, supertype, fixed mana-value, or exact represented fixed-power predicate", "resolution-time physical and logical target identity", "requested controller and tapped state", "represented destination-replacement and Aura-entry choices"],
+        "outputs": ["public graveyard target", "resolution-time target revalidation", "replacement-aware battlefield entry with a new logical identity", "specified controller and tapped state", "ordinary entry events, state-based actions, projection, and exact replay"],
+        "exclusions": ["untargeted, each-player, all-card, mass, random, linked-result, reflexive, delayed, self-return, or top-graveyard selection", "variable, exact-value, history, chosen, different-name, total-value, or cross-field target predicates", "unrepresentable characteristic-defining or cyclic power and type-changing interactions outside the shared exact-characteristic boundary", "entry counters, gained abilities, type changes, attachment instructions, life changes, sacrifice or exile riders, and other compound results", "destinations other than the battlefield and source zones other than public graveyards", "more than one target, copied or granted wording, and independently unsupported costs, events, modes, or sibling abilities"]
+      },
+      "dependencies": ["attachment.aura.typed_restriction", "target.revalidate_resolution", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.compiler.reanimation_templates.FixedTargetReanimationTemplate", "quorune.compiler.reanimation_templates.fixed_target_reanimation_effect_template", "quorune.rules.reanimation_capability_shapes.fixed_target_reanimation_node_capabilities", "quorune.effect_runtime.zones_and_attachments._apply_reanimate", "quorune.zone_transitions.ZoneTransitionOwner.move_card"],
+      "positive_tests": ["test_fixed_target_reanimation_compiles_across_spell_trigger_activation_and_modal_contexts", "test_reanimation_target_domains_controller_and_tapped_state_are_typed", "test_reanimation_closed_type_and_power_qualities_are_typed", "test_reanimation_controller_tapped_and_characteristic_variants_resolve"],
+      "negative_tests": ["test_reanimation_unsupported_and_malformed_shapes_fail_closed", "test_reanimation_target_revalidates_and_rolls_back"],
+      "interaction_tests": ["test_reanimation_destination_replacement_and_aura_entry_choices_resume_once", "test_reanimation_current_graveyard_characteristics_and_source_control_compose"],
+      "multiplayer_tests": ["test_reanimation_four_player_projection_and_apnap_are_stable"],
+      "privacy_tests": ["test_reanimation_four_player_projection_and_apnap_are_stable"],
+      "replay_tests": ["test_reanimation_destination_replacement_and_aura_entry_choices_resume_once", "test_reanimation_four_player_projection_and_apnap_are_stable"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking target revalidation, typed Aura entry, or destination replacement prevents the source-spanned reanimation node from becoming trusted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused shape and runtime mutation witnesses remove the compiler production, widen the graveyard permanent domain, bypass target revalidation, or skip the canonical zone owner; exact lowering and no-mutation assertions reject each survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "permanent.return.owner_hand",
       "version": 3,
       "official_rules": ["108.3", "110.2", "400.2", "400.3", "400.6", "400.7", "608.2c"],
@@ -7204,23 +7231,23 @@
     },
     {
       "id": "zone.self_move.activated",
-      "version": 1,
+      "version": 2,
       "official_rules": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Resolve one source-self activated zone movement from graveyard to owner hand, graveyard to battlefield tapped, or a battlefield Aura to owner hand through canonical identity and zone owners.",
+        "summary": "Resolve one source-self activated zone movement from graveyard to owner hand, graveyard to battlefield tapped or untapped, or a battlefield Aura to owner hand through canonical identity and zone owners.",
         "inputs": ["one source-spanned colon-form activated ability", "same physical card and logical source incarnation", "supported origin, destination, tapped state, and source form", "represented activation costs", "current replacement and trigger state"],
         "outputs": ["one server-authored source-zone activation", "ordinary ability stack object", "resolution-time source identity revalidation", "replacement-aware canonical zone move", "public or private destination projection", "normalized zone events and exact replay"],
-        "exclusions": ["untapped battlefield reanimation in this cost slice", "targeted, mass, optional, delayed, conditional, transformed, or controller-relative movement", "multiple objects or destinations", "unsupported source-form predicates", "unrepresented activated costs", "battlefield materialization when the complete CardProgram remains residual", "copied, granted, or text-changed abilities outside current typed discovery"]
+        "exclusions": ["targeted, mass, optional, delayed, transformed, or controller-relative movement", "multiple objects or destinations", "unsupported source-form predicates", "unrepresented activated costs or activation conditions", "battlefield materialization when the complete CardProgram remains residual", "copied, granted, or text-changed abilities outside current typed discovery"]
       },
       "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
       "implementation_components": ["quorune.self_zone_move.SelfZoneMoveSpec", "quorune.compiler.activated_mana_nodes.activated_oracle_node", "quorune.semantic_runtime.self_zone_move.SelfZoneMoveAbilityHandler", "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.proposal.build_activation_offer", "quorune.rules.activation.commit.commit_activation", "quorune.self_zone_move.resolve_self_zone_move", "quorune.zone_transitions.ZoneTransitionOwner"],
-      "positive_tests": ["test_supported_self_zone_moves_compile_source_spanned_programs", "test_graveyard_to_hand_is_owner_scoped_private_and_replays", "test_tapped_reanimation_and_aura_return_use_zone_owners"],
+      "positive_tests": ["test_supported_self_zone_moves_compile_source_spanned_programs", "test_graveyard_to_hand_is_owner_scoped_private_and_replays", "test_tapped_reanimation_and_aura_return_use_zone_owners", "test_source_self_reanimation_preserves_untapped_result"],
       "negative_tests": ["test_unsupported_self_zone_move_shapes_remain_residual", "test_partial_reanimation_and_stale_sources_fail_closed"],
       "interaction_tests": ["test_tapped_reanimation_and_aura_return_use_zone_owners", "test_partial_reanimation_and_stale_sources_fail_closed", "test_target_revalidation_and_self_return_coexist_on_one_card"],
       "multiplayer_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays"],
       "privacy_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays"],
-      "replay_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays"],
+      "replay_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays", "test_source_self_reanimation_preserves_untapped_result"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement, normalized zone events, or APNAP trigger placement prevents the self-zone-move node from receiving trusted closure.",

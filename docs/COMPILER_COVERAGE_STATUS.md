@@ -2,7 +2,7 @@
 title: "Compiler coverage status"
 status: "generated"
 authoritative_source: "coverage/architecture-audit.json"
-verified: "936701c7821444f70e5384c37e88f8d542ce8e0ce366886bc5a95a1538ec4886"
+verified: "f4c8d263e92f74ac50d604570ffb4abdded608bc84e44f6d314b24b3ffff28b2"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 generated_source: "coverage/architecture-audit.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_architecture_audi
 
 # Compiler coverage status
 
-Source fingerprint: `936701c7821444f70e5384c37e88f8d542ce8e0ce366886bc5a95a1538ec4886`
+Source fingerprint: `f4c8d263e92f74ac50d604570ffb4abdded608bc84e44f6d314b24b3ffff28b2`
 
 ## Current top-level state
 
@@ -20,7 +20,7 @@ Source fingerprint: `936701c7821444f70e5384c37e88f8d542ce8e0ce366886bc5a95a1538e
 - CardProgram schema version: `2`
 - Commander Oracle objects: `31623`
 - Exact fraction: `0.310154`
-- Capability records: `264`
+- Capability records: `265`
 - Assured fixed-target compiler nodes/shapes: `681` / `133`
 
 ## Top blockers

@@ -27060,6 +27060,70 @@
       "applicability_note": "Reject stale set membership or identity before the canonical batch commits any move, event, or visible state."
     },
     {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationRuntimeTests.test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve destination replacement before the new battlefield incarnation and complete any required Aura attachment choice exactly once."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationRuntimeTests.test_reanimation_four_player_projection_and_apnap_are_stable",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose the public graveyard target and resulting permanent to four seats while preserving ordinary APNAP entry-trigger placement."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationCompilerTests.test_reanimation_capability_shape_and_dependency_mutations_fail_closed",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the production, alter its operation or target schema, and block each required dependency so no malformed node retains trust."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationCompilerTests.test_reanimation_unsupported_and_malformed_shapes_fail_closed",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject untargeted, mass, dynamic, variable, linked, delayed, and compound reanimation without emitting an executable approximation."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationCompilerTests.test_fixed_target_reanimation_compiles_across_spell_trigger_activation_and_modal_contexts",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower the same closed graveyard-card target and battlefield result through spell, normalized trigger, activated, and modal compiler contexts."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationRuntimeTests.test_reanimation_four_player_projection_and_apnap_are_stable",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project only public card and permanent references and omit physical identities, continuation internals, and every unrelated hidden-zone card."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationRuntimeTests.test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay target choice, replacement and attachment continuations, new incarnation, controller, tapped state, and final authoritative hash."
+    },
+    {
+      "capability_id": "zone.reanimate.fixed_target",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationRuntimeTests.test_reanimation_target_revalidates_and_rolls_back",
+      "official_rule_ids": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A target that leaves its graveyard or changes incarnation before resolution causes no zone, controller, trigger, or log mutation."
+    },
+    {
       "capability_id": "zone.self_move.activated",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_tapped_reanimation_and_aura_return_use_zone_owners",
@@ -27097,7 +27161,7 @@
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveCompilerTests.test_unsupported_self_zone_move_shapes_remain_residual",
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Keep untapped reanimation, changed source or graveyard ownership, and multi-object forms source-spanned and nonexecutable."
+      "applicability_note": "Keep changed source or graveyard ownership, broader source nouns, and multi-object forms source-spanned and nonexecutable."
     },
     {
       "capability_id": "zone.self_move.activated",
@@ -27113,7 +27177,15 @@
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveCompilerTests.test_supported_self_zone_moves_compile_source_spanned_programs",
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Lower all three exact source-self forms to typed zone, destination, tapped-state, source-form, admission-policy, and runtime-handler descriptors."
+      "applicability_note": "Lower all four exact source-self forms to typed zone, destination, tapped-state, source-form, admission-policy, and runtime-handler descriptors."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_source_self_reanimation_preserves_untapped_result",
+      "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Pay, stack, revalidate, and resolve an untapped source-self graveyard return through the canonical zone owner."
     },
     {
       "capability_id": "zone.self_move.activated",
@@ -27138,6 +27210,14 @@
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the fixed-cost activation, stack source identity, canonical owner-zone move, public-to-hidden projection, and final authoritative hash."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_source_self_reanimation_preserves_untapped_result",
+      "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the activation, source incarnation, canonical battlefield entry, untapped state, and final authoritative hash."
     },
     {
       "capability_id": "zone.single_owner_move.fixed_destination",

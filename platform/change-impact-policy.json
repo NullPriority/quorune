@@ -313,6 +313,27 @@
       ]
     },
     {
+      "id": "fixed-single-object-reanimation-contract",
+      "patterns": [
+        "quorune/compiler/reanimation_templates.py",
+        "quorune/effect_runtime/zones_and_attachments.py",
+        "quorune/rules/reanimation_capability_shapes.py",
+        "quorune/self_zone_move.py",
+        "quorune/targets.py",
+        "tests/fixtures/fixed-target-reanimation-cards.json",
+        "tests/fixtures/self-zone-move-cards.json"
+      ],
+      "test_modules": [
+        "test_aura_targeting_entry",
+        "test_exact_artifact_engines",
+        "test_exact_deck_interactions",
+        "test_fixed_mana_value_target_predicates",
+        "test_fixed_target_reanimation",
+        "test_rules_scheduler",
+        "test_self_zone_move_rules"
+      ]
+    },
+    {
       "id": "fixed-public-numeric-damage-target-contract",
       "patterns": [
         "quorune/compiler/direct_target.py",

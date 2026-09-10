@@ -20,6 +20,7 @@ from ..fixed_mana_abilities import (
     compile_fixed_activated_mana_ability,
     fixed_mana_handler_descriptor,
 )
+from ..effect_contracts import REANIMATE_OPERATION
 from ..intrinsic_basic_land_mana import (
     INTRINSIC_BASIC_LAND_MANA_CAPABILITY,
     expected_intrinsic_basic_land_mana_reminder,
@@ -344,6 +345,7 @@ def _activated_effect_dependency_gate(
             "offer_optional_effect",
             "proliferate",
             "regenerate",
+            REANIMATE_OPERATION,
             "place_counters",
             "place_counter_batch",
             "place_counters_on_set",
