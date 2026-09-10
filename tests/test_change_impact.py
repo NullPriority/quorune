@@ -103,6 +103,18 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_stack_resolution_selects_fixed_zone_cast_lifecycle_contract(self):
+        plan = classify_changes(["quorune/stack_resolution.py"])
+
+        self.assertIn(
+            "test_fixed_zone_cast_lifecycles",
+            plan.test_modules,
+        )
+        self.assertIn(
+            "fixed-zone-cast-lifecycle-contract",
+            plan.matched_rule_ids,
+        )
+
     def test_trigger_discovery_selects_attached_granted_trigger_consumers(self):
         plan = classify_changes(["quorune/trigger_discovery.py"])
 

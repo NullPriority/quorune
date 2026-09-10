@@ -12,6 +12,8 @@ from ..cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
     FixedCastLifecycleSpec,
+    REBOUND_CAST_SEMANTIC_KEY,
+    REBOUND_EXILE_CAST_PRODUCER,
     SUSPEND_HASTE_CONTEXT_FIELD,
 )
 from ..compiled_madness import compiled_fixed_madness_spec
@@ -38,10 +40,33 @@ from .model import (
 
 EXILE_CAST_OPERATION_ID = "selection.nontarget.exile-cast.v1"
 EXILE_CAST_PRODUCER_CASCADE = "cascade"
+_ONE_SHOT_EXILE_CAST_PRODUCERS = frozenset(
+    {
+        EXILE_CAST_PRODUCER_CASCADE,
+        REBOUND_EXILE_CAST_PRODUCER,
+        SUSPEND_EXILE_CAST_PRODUCER,
+    }
+)
 _MANA_SYMBOL_RE = re.compile(r"\{([^{}]+)\}")
 _PUBLIC_COST_OPTION_FIELDS = frozenset(
     {"id", "kind", "requirements", "choice_schema", "label"}
 )
+
+
+def _one_shot_semantic_key(producer: str) -> str:
+    return {
+        EXILE_CAST_PRODUCER_CASCADE: "builtin:cascade",
+        REBOUND_EXILE_CAST_PRODUCER: REBOUND_CAST_SEMANTIC_KEY,
+        SUSPEND_EXILE_CAST_PRODUCER: SUSPEND_CAST_SEMANTIC_KEY,
+    }.get(producer, "")
+
+
+def _one_shot_log_code(producer: str) -> str:
+    return {
+        EXILE_CAST_PRODUCER_CASCADE: "cascade.resolve",
+        REBOUND_EXILE_CAST_PRODUCER: "rebound.cast.resolve",
+        SUSPEND_EXILE_CAST_PRODUCER: "suspend.cast.resolve",
+    }.get(producer, "")
 
 
 def mana_value_of_cost(cost: str, *, x_value: int = 0) -> float:
@@ -288,6 +313,11 @@ class OneShotExileCastChoiceOwnerMixin:
             return True
         if item.semantic_key == SUSPEND_CAST_SEMANTIC_KEY:
             resolve_suspend_cast_trigger(self, item)
+            return True
+        if item.semantic_key == REBOUND_CAST_SEMANTIC_KEY:
+            from ..rules.staged_cast_lifecycles import resolve_rebound_cast_trigger
+
+            resolve_rebound_cast_trigger(self, item)
             return True
         return False
 
@@ -583,10 +613,7 @@ class OneShotExileCastChoiceOwnerMixin:
         maximum_mana_value: float | None,
         producer: str,
     ) -> None:
-        if producer not in {
-            EXILE_CAST_PRODUCER_CASCADE,
-            SUSPEND_EXILE_CAST_PRODUCER,
-        }:
+        if producer not in _ONE_SHOT_EXILE_CAST_PRODUCERS:
             raise StateInvariantError("Unsupported one-shot exile-cast producer")
         options = self._one_shot_exile_cast_options(
             actor=item.controller,
@@ -687,10 +714,7 @@ class OneShotExileCastChoiceOwnerMixin:
             raise GameRuleError("Exile-cast continuation is malformed")
         if payload["schema_version"] != 1:
             raise GameRuleError("Unsupported exile-cast continuation version")
-        if payload["producer"] not in {
-            EXILE_CAST_PRODUCER_CASCADE,
-            SUSPEND_EXILE_CAST_PRODUCER,
-        }:
+        if payload["producer"] not in _ONE_SHOT_EXILE_CAST_PRODUCERS:
             raise GameRuleError("Exile-cast producer changed")
         return selection, payload
 
@@ -726,10 +750,7 @@ class OneShotExileCastChoiceOwnerMixin:
         candidate_ref: str | None,
         cast_stack_ref: str | None = None,
     ) -> None:
-        if producer not in {
-            EXILE_CAST_PRODUCER_CASCADE,
-            SUSPEND_EXILE_CAST_PRODUCER,
-        }:
+        if producer not in _ONE_SHOT_EXILE_CAST_PRODUCERS:
             raise StateInvariantError("Unsupported one-shot exile-cast producer")
         owners = {card.owner for card in cleanup_cards}
         if len(owners) > 1:
@@ -744,11 +765,7 @@ class OneShotExileCastChoiceOwnerMixin:
         self._remove_resolving_choice_item(item)
         self._log(
             item.controller,
-            (
-                "cascade.resolve"
-                if producer == EXILE_CAST_PRODUCER_CASCADE
-                else "suspend.cast.resolve"
-            ),
+            _one_shot_log_code(producer),
             f"Resolved {item.ref}: {item.label} ({outcome}).",
             {
                 "stack": item.ref,
@@ -769,11 +786,7 @@ class OneShotExileCastChoiceOwnerMixin:
         selection, payload = self._decode_one_shot_exile_cast_choice(decision)
         actor = decision.actors[0]
         producer = str(payload["producer"])
-        expected_semantic_key = (
-            "builtin:cascade"
-            if producer == EXILE_CAST_PRODUCER_CASCADE
-            else SUSPEND_CAST_SEMANTIC_KEY
-        )
+        expected_semantic_key = _one_shot_semantic_key(producer)
         item = next(
             (
                 candidate
@@ -808,10 +821,7 @@ class OneShotExileCastChoiceOwnerMixin:
         if (
             producer == EXILE_CAST_PRODUCER_CASCADE
             and (type(maximum) not in {int, float} or maximum <= 0)
-        ) or (
-            producer == SUSPEND_EXILE_CAST_PRODUCER
-            and maximum is not None
-        ):
+        ) or (producer != EXILE_CAST_PRODUCER_CASCADE and maximum is not None):
             raise GameRuleError("Exile-cast mana-value boundary is malformed")
         options = self._one_shot_exile_cast_options(
             actor=actor,

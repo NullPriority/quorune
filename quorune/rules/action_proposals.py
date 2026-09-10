@@ -138,6 +138,7 @@ class ActionOffer:
         "play_land",
         "turn_face_up",
         "suspend",
+        "stage_cast_lifecycle",
         "concede",
         "mana_undo",
     ]
@@ -156,6 +157,7 @@ class ActionOffer:
             "play_land",
             "turn_face_up",
             "suspend",
+            "stage_cast_lifecycle",
             "concede",
             "mana_undo",
         }:

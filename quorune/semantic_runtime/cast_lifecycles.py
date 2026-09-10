@@ -13,6 +13,7 @@ from ..cast_lifecycles import (
     FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
     FIXED_CAST_LIFECYCLE_HANDLER_ID,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
+    FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
 )
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -31,7 +32,26 @@ class FixedCastLifecycleHandler:
         "601.2h",
         "702.27",
         "702.81",
+        "702.88",
+        "702.88a",
+        "702.88b",
         "702.109",
+        "702.133",
+        "702.133a",
+        "702.138",
+        "702.138a",
+        "702.138b",
+        "702.143",
+        "702.143a",
+        "702.143b",
+        "702.143c",
+        "702.143e",
+        "702.143f",
+        "702.170",
+        "702.170a",
+        "702.170b",
+        "702.170d",
+        "702.170e",
         "702.185",
         "702.62",
         "702.62a",
@@ -41,6 +61,7 @@ class FixedCastLifecycleHandler:
     )
     capability_dependencies: tuple[str, ...] = (
         FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
+        FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
     )
 
     def validate(

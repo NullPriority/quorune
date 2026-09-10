@@ -3,10 +3,18 @@ from __future__ import annotations
 """Object-local state reset for CR 400.7 zone transitions."""
 
 import copy
+from typing import Sequence
 
 from .model import CardInstance
 from .kicker import KICKER_ANNOTATION
 from .flashback import FLASHBACK_CAST_ANNOTATION
+from .cast_lifecycles import (
+    FixedCastLifecycleKind,
+    FixedCastLifecycleSpec,
+    FixedZoneCastDesignation,
+    FIXED_CAST_LIFECYCLE_STACK_ANNOTATION,
+    FIXED_ZONE_CAST_DESIGNATION_FIELD,
+)
 from .morph import (
     face_down_characteristics,
     FixedManaMorphSpec,
@@ -58,6 +66,63 @@ def mark_card_flashed_back(card: CardInstance) -> None:
     ):
         raise ZoneObjectStateError("Flashed-back spell state is malformed")
     card.annotations[FLASHBACK_CAST_ANNOTATION] = True
+
+
+def mark_card_fixed_cast_lifecycle(
+    card: CardInstance,
+    spec: FixedCastLifecycleSpec,
+) -> None:
+    """Record an intrinsic cast lifecycle on one stack incarnation."""
+
+    if (
+        not isinstance(card, CardInstance)
+        or card.zone != "stack"
+        or card.object_kind != "card"
+        or not isinstance(spec, FixedCastLifecycleSpec)
+        or spec.kind
+        not in {
+            FixedCastLifecycleKind.ESCAPE,
+            FixedCastLifecycleKind.JUMP_START,
+            FixedCastLifecycleKind.REBOUND,
+        }
+        or card.annotations.get(FIXED_CAST_LIFECYCLE_STACK_ANNOTATION)
+        is not None
+    ):
+        raise ZoneObjectStateError("Fixed cast-lifecycle stack state is malformed")
+    card.annotations[FIXED_CAST_LIFECYCLE_STACK_ANNOTATION] = spec.to_dict()
+
+
+def mark_fixed_zone_cast_designation(
+    card: CardInstance,
+    *,
+    spec: FixedCastLifecycleSpec,
+    turn_sequence: int,
+    viewers: Sequence[str],
+) -> None:
+    """Commit one rules-created Foretell or Plot exile designation."""
+
+    if (
+        card.zone != "exile"
+        or card.object_kind != "card"
+        or card.owner not in viewers
+        or spec.kind
+        not in {FixedCastLifecycleKind.FORETELL, FixedCastLifecycleKind.PLOT}
+    ):
+        raise ZoneObjectStateError("Fixed zone-cast designation is malformed")
+    designation = FixedZoneCastDesignation(
+        lifecycle=spec,
+        logical_object_id=card.logical_object_id,
+        created_turn_sequence=turn_sequence,
+    )
+    card.annotations[FIXED_ZONE_CAST_DESIGNATION_FIELD] = designation.to_dict()
+    if spec.kind is FixedCastLifecycleKind.FORETELL:
+        card.face_down = True
+        card.known_to = [card.owner]
+        card.revealed_to = []
+    else:
+        card.face_down = False
+        card.known_to = list(viewers)
+        card.revealed_to = list(viewers)
 
 
 def mark_card_face_down_for_morph(
@@ -178,6 +243,7 @@ def reset_card_after_zone_change(
                 "pending_aura_zone",
                 "face_down_characteristics",
                 "face_down_method",
+                FIXED_CAST_LIFECYCLE_STACK_ANNOTATION,
             }
         )
     card.annotations = {
@@ -196,6 +262,8 @@ def reset_card_after_zone_change(
 __all__ = [
     "mark_card_face_down_for_morph",
     "mark_card_flashed_back",
+    "mark_card_fixed_cast_lifecycle",
+    "mark_fixed_zone_cast_designation",
     "mark_card_kicked",
     "mark_card_unearthed",
     "ZoneObjectStateError",

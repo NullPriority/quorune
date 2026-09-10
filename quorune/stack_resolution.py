@@ -128,6 +128,13 @@ def complete_stack_resolution(
     card = host.state.cards[item.card_object_id]
     if card.zone != "stack":
         return
+    resolved_logical_object_id = card.logical_object_id
+    applied_replacement_effect_ids = (
+        prepared_replacement.event.applied_effects
+        if prepared_replacement is not None
+        and prepared_replacement.event is not None
+        else ()
+    )
     evoked = validate_evoke_payment_marker(
         item.context.get(EVOKE_PAYMENT_FIELD)
     )
@@ -148,6 +155,8 @@ def complete_stack_resolution(
         host,
         item=item,
         card=card,
+        resolved_logical_object_id=resolved_logical_object_id,
+        applied_replacement_effect_ids=applied_replacement_effect_ids,
     )
     if evoked and card.zone != "battlefield":
         card.annotations.pop("evoked", None)

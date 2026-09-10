@@ -11,6 +11,7 @@ from ..cast_lifecycles import (
     FixedCastLifecycleKind,
     fixed_cast_lifecycle_handler_descriptor,
     FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
+    FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
 )
 from ..rules.capabilities import CapabilityRegistry
@@ -22,6 +23,9 @@ FIXED_CAST_LIFECYCLE_TEMPLATE_ID = "fixed-public-cast-lifecycle-v1"
 _MECHANICS = frozenset(kind.value for kind in FixedCastLifecycleKind)
 _RETRACE_DISCARD_CAPABILITY_ID = (
     "casting.additional_cost.zone_change.fixed_discard"
+)
+_ESCAPE_EXILE_CAPABILITY_ID = (
+    "casting.additional_cost.zone_change.fixed_exile"
 )
 
 
@@ -73,6 +77,99 @@ def _face_type_line(record: Any, face_id: str) -> str:
     return str(face.get("type_line") or result) if face is not None else result
 
 
+def _lifecycle_face_blocker(
+    record: Any,
+    face_id: str,
+    spec: Any,
+) -> tuple[str, str] | None:
+    card_types = set(
+        _face_type_line(record, face_id)
+        .replace("—", "-")
+        .split("-", 1)[0]
+        .casefold()
+        .split()
+    )
+    if (
+        spec.kind
+        in {
+            FixedCastLifecycleKind.ESCAPE,
+            FixedCastLifecycleKind.FORETELL,
+            FixedCastLifecycleKind.PLOT,
+            FixedCastLifecycleKind.SUSPEND,
+        }
+        and "land" in card_types
+    ):
+        return (
+            "Cast lifecycle is not supported on a land face",
+            "nonland fixed cast lifecycle",
+        )
+    if spec.kind in {
+        FixedCastLifecycleKind.JUMP_START,
+        FixedCastLifecycleKind.REBOUND,
+    } and not card_types.intersection({"instant", "sorcery"}):
+        return (
+            f"{spec.kind.value.title()} requires an instant or sorcery face",
+            "instant or sorcery cast lifecycle",
+        )
+    return None
+
+
+def _lifecycle_runtime_coverage(spec: Any) -> tuple[str, ...]:
+    return {
+        FixedCastLifecycleKind.BUYBACK: (
+            "fixed_mana_optional_additional_cost",
+            "replacement_aware_resolution_destination",
+        ),
+        FixedCastLifecycleKind.DASH: (
+            "fixed_mana_alternate_cost",
+            "zone_object_haste",
+            "identity_pinned_delayed_return",
+        ),
+        FixedCastLifecycleKind.ESCAPE: (
+            "owner_graveyard_cast_permission",
+            "fixed_mana_alternate_cost",
+            "typed_fixed_other_card_exile_cost",
+            "escaped_stack_designation",
+        ),
+        FixedCastLifecycleKind.FORETELL: (
+            "turn_priority_special_action",
+            "owner_private_face_down_exile_designation",
+            "later_turn_fixed_mana_exile_cast",
+        ),
+        FixedCastLifecycleKind.JUMP_START: (
+            "owner_graveyard_cast_permission",
+            "typed_card_discard_additional_cost",
+            "mandatory_stack_leave_exile",
+        ),
+        FixedCastLifecycleKind.PLOT: (
+            "sorcery_timing_special_action",
+            "public_exile_designation",
+            "later_turn_sorcery_timing_free_cast",
+        ),
+        FixedCastLifecycleKind.REBOUND: (
+            "hand_cast_resolution_exile",
+            "next_owner_upkeep_optional_free_cast",
+            "identity_pinned_exile_trigger",
+        ),
+        FixedCastLifecycleKind.WARP: (
+            "fixed_mana_alternate_cost",
+            "identity_pinned_delayed_exile",
+            "later_turn_exile_cast_permission",
+        ),
+        FixedCastLifecycleKind.RETRACE: (
+            "owner_graveyard_cast_permission",
+            "typed_land_discard_additional_cost",
+        ),
+        FixedCastLifecycleKind.SUSPEND: (
+            "hand_timing_special_action",
+            "face_up_exile_time_counters",
+            "owner_upkeep_counter_removal",
+            "last_counter_optional_free_cast",
+            "identity_pinned_control_duration_haste",
+        ),
+    }[spec.kind]
+
+
 def fixed_cast_lifecycle_keyword_node(
     *,
     record: Any,
@@ -105,33 +202,48 @@ def fixed_cast_lifecycle_keyword_node(
             residuals=residuals,
             reason="Casting lifecycle is outside the fixed public grammar",
             blockers=(
-                "ordinary fixed-mana Buyback, Dash, Warp, or Suspend, or bare Retrace",
+                "closed fixed Buyback, Dash, Escape, Foretell, Plot, Warp, or Suspend, or bare Jump-start, Rebound, or Retrace",
                 "variable, hybrid, Phyrexian, snow, nonmana, modified, copied, or granted costs",
             ),
         )
     if spec.kind is FixedCastLifecycleKind.MADNESS:
         return None
-    if (
-        spec.kind is FixedCastLifecycleKind.SUSPEND
-        and "land" in _face_type_line(record, face_id).replace("—", "-")
-        .split("-", 1)[0]
-        .casefold()
-        .split()
-    ):
+    face_blocker = _lifecycle_face_blocker(record, face_id, spec)
+    if face_blocker is not None:
         return _residual_lifecycle_node(
             node_id=node_id,
             line=line,
             span=span,
             mechanics=mechanics,
             residuals=residuals,
-            reason="Suspend is not supported on a land face",
-            blockers=("nonland fixed Suspend lifecycle",),
+            reason=face_blocker[0],
+            blockers=(face_blocker[1],),
         )
+    zone_cast_kinds = {
+        FixedCastLifecycleKind.ESCAPE,
+        FixedCastLifecycleKind.FORETELL,
+        FixedCastLifecycleKind.JUMP_START,
+        FixedCastLifecycleKind.PLOT,
+        FixedCastLifecycleKind.REBOUND,
+    }
     dependencies = (
-        FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
+        (
+            FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID
+            if spec.kind in zone_cast_kinds
+            else FIXED_CAST_LIFECYCLE_CAPABILITY_ID
+        ),
         *(
             (_RETRACE_DISCARD_CAPABILITY_ID,)
-            if spec.kind is FixedCastLifecycleKind.RETRACE
+            if spec.kind
+            in {
+                FixedCastLifecycleKind.JUMP_START,
+                FixedCastLifecycleKind.RETRACE,
+            }
+            else ()
+        ),
+        *(
+            (_ESCAPE_EXILE_CAPABILITY_ID,)
+            if spec.kind is FixedCastLifecycleKind.ESCAPE
             else ()
         ),
     )
@@ -154,36 +266,7 @@ def fixed_cast_lifecycle_keyword_node(
         if gate.blockers
         else ()
     )
-    coverage = (
-        *{
-            FixedCastLifecycleKind.BUYBACK: (
-                "fixed_mana_optional_additional_cost",
-                "replacement_aware_resolution_destination",
-            ),
-            FixedCastLifecycleKind.DASH: (
-                "fixed_mana_alternate_cost",
-                "zone_object_haste",
-                "identity_pinned_delayed_return",
-            ),
-            FixedCastLifecycleKind.WARP: (
-                "fixed_mana_alternate_cost",
-                "identity_pinned_delayed_exile",
-                "later_turn_exile_cast_permission",
-            ),
-            FixedCastLifecycleKind.RETRACE: (
-                "owner_graveyard_cast_permission",
-                "typed_land_discard_additional_cost",
-            ),
-            FixedCastLifecycleKind.SUSPEND: (
-                "hand_timing_special_action",
-                "face_up_exile_time_counters",
-                "owner_upkeep_counter_removal",
-                "last_counter_optional_free_cast",
-                "identity_pinned_control_duration_haste",
-            ),
-        }[spec.kind],
-        CURRENT_ABILITY_FRAGMENT_COVERAGE,
-    )
+    coverage = (*_lifecycle_runtime_coverage(spec), CURRENT_ABILITY_FRAGMENT_COVERAGE)
     return OracleNode(
         node_id=node_id,
         kind="keyword_ability",
@@ -215,19 +298,25 @@ def reject_repeated_suspend_nodes(
     nodes: Sequence[OracleNode],
     residuals: list[OracleResidual],
 ) -> tuple[OracleNode, ...]:
-    """Keep multiple independent Suspend instances outside this lifecycle."""
+    """Keep repeated instances of one lifecycle kind outside this owner."""
 
-    positions = [
+    by_kind: dict[str, list[int]] = {}
+    for index, node in enumerate(nodes):
+        if node.template_id != FIXED_CAST_LIFECYCLE_TEMPLATE_ID:
+            continue
+        for handler in node.handlers:
+            lifecycle = handler.get("lifecycle")
+            if isinstance(lifecycle, dict):
+                kind = str(lifecycle.get("kind") or "")
+                if kind:
+                    by_kind.setdefault(kind, []).append(index)
+    positions = sorted(
         index
-        for index, node in enumerate(nodes)
-        if node.template_id == FIXED_CAST_LIFECYCLE_TEMPLATE_ID
-        and any(
-            isinstance(handler.get("lifecycle"), dict)
-            and handler["lifecycle"].get("kind") == "suspend"
-            for handler in node.handlers
-        )
-    ]
-    if len(positions) <= 1:
+        for values in by_kind.values()
+        if len(values) > 1
+        for index in values
+    )
+    if not positions:
         return tuple(nodes)
     result = list(nodes)
     for index in positions:
@@ -237,8 +326,8 @@ def reject_repeated_suspend_nodes(
             kind="keyword_grammar",
             text=node.text,
             span=node.span,
-            reason="Multiple Suspend instances require linked trigger identity",
-            blockers=("single fixed Suspend instance",),
+            reason="Repeated cast-lifecycle instances require linked identity",
+            blockers=("single fixed instance of each cast lifecycle",),
         )
         result[index] = replace(
             node,

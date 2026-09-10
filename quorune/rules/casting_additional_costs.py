@@ -278,7 +278,7 @@ class FixedSacrificeAdditionalCost:
 
 @dataclass(frozen=True, slots=True)
 class FixedZoneChangeAdditionalCost:
-    """Move exactly one selected object between operation-owned zones."""
+    """Move one fixed-size selected set between operation-owned zones."""
 
     operation: str
     choice_field: str
@@ -300,9 +300,9 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional-cost operation is unsupported"
             )
-        if type(self.count) is not int or self.count != 1:
+        if type(self.count) is not int or not 1 <= self.count <= 99:
             raise AdditionalCostError(
-                "Fixed zone-change additional costs require one object"
+                "Fixed zone-change additional costs require 1-99 objects"
             )
         origin, _, expected_field = FIXED_ZONE_CHANGE_COST_CONTRACTS[
             self.operation

@@ -6,6 +6,10 @@ from dataclasses import replace
 from typing import Any, Protocol
 
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
+from ...cast_lifecycles import (
+    fixed_zone_cast_designation,
+    fixed_zone_cast_timing_is_legal,
+)
 from ...cast_timing import cast_timing_is_legal, type_line_has_card_type
 from ...compiled_cast_timing import compiled_cast_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
@@ -44,7 +48,6 @@ class CastProposalHost(CastCostHost, Protocol):
     def _select_cast_face(
         self, record: Any, requested_face: str | None
     ) -> Mapping[str, Any] | None: ...
-
     def _sorcery_timing(self, seat: str) -> None: ...
 
     def _normalize_target_submission(self, value: Any) -> Any: ...
@@ -94,6 +97,23 @@ class CastProposalHost(CastCostHost, Protocol):
         cast_type_line: str | None = None,
         suppress_source_costs: bool = False,
     ) -> list[dict[str, Any]]: ...
+
+
+def _zone_lifecycle_cast_timing_is_legal(
+    host: CastProposalHost,
+    seat: str,
+    card: Any,
+) -> bool:
+    designation = fixed_zone_cast_designation(
+        host.state,
+        card,
+        actor=seat,
+    )
+    return designation is None or fixed_zone_cast_timing_is_legal(
+        host.state,
+        designation,
+        actor=seat,
+    )
 
 
 def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -> Any:
@@ -352,6 +372,16 @@ def _cast_program_and_cost(
         raise CastProposalError(
             "A land card cannot be cast as a spell",
             reason="land_not_spell",
+        )
+    if (
+        not request.ignore_timing
+        and not _zone_lifecycle_cast_timing_is_legal(
+            host, request.actor, card
+        )
+    ):
+        raise CastProposalError(
+            "This staged card cannot be cast in the current timing window",
+            reason="zone_lifecycle_timing",
         )
     if not request.ignore_timing and not cast_timing_is_legal(
         host.state,
@@ -764,6 +794,8 @@ def build_cast_offer(
     )
     if type_line_has_card_type(type_line, "land"):
         return CastProposalResult("unavailable", "land_not_spell")
+    if not _zone_lifecycle_cast_timing_is_legal(host, seat, card):
+        return CastProposalResult("unavailable", "zone_lifecycle_timing")
     face_name = str(front.get("name") or "") if front else None
     if not cast_timing_is_legal(
         host.state,

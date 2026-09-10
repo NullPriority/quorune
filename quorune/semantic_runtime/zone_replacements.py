@@ -42,6 +42,7 @@ from ..replacement_effects import (
 from ..rules.capabilities import load_default_capability_registry
 from ..turn_history import opponent_was_dealt_damage_this_turn
 from ..flashback import flashed_back_subject_replacements
+from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
 from ..zone_trigger_events import ZoneTransitionKind
 from ..kicker import KICKER_ANNOTATION
@@ -982,6 +983,10 @@ def _zone_change_snapshot_effects(
             (
                 *ambient_effects,
                 *flashed_back_subject_replacements(host.state.cards, (subject.object_id for subject in subjects)),
+                *fixed_cast_lifecycle_subject_replacements(
+                    host.state.cards,
+                    tuple(subject.object_id for subject in subjects),
+                ),
                 *intrinsic_effects,
                 *generated_effects,
                 *self_entry_effects,

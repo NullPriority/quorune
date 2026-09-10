@@ -8,6 +8,7 @@ from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .card_program_faces import program_matches_face
 from .card_programs.admission import program_has_complete_card_program_admission
 from .cast_lifecycles import (
+    fixed_zone_cast_designation,
     FixedCastLifecycleKind,
     FixedCastLifecycleSpec,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
@@ -87,8 +88,32 @@ def compiled_fixed_cast_lifecycle_spec(
     return matches[0] if len(matches) == 1 else None
 
 
+def compiled_fixed_zone_cast_permission(
+    host: CompiledCastLifecycleHost,
+    seat: str,
+    card: Any,
+) -> bool:
+    """Return current intrinsic or designation-based lifecycle authority."""
+
+    if fixed_zone_cast_designation(host.state, card, actor=seat) is not None:
+        return True
+    return bool(
+        card.owner == seat
+        and card.zone == "graveyard"
+        and any(
+            compiled_fixed_cast_lifecycle_spec(host, card, kind) is not None
+            for kind in (
+                FixedCastLifecycleKind.ESCAPE,
+                FixedCastLifecycleKind.JUMP_START,
+                FixedCastLifecycleKind.RETRACE,
+            )
+        )
+    )
+
+
 __all__ = [
     "CompiledCastLifecycleHost",
     "compiled_fixed_cast_lifecycle_spec",
     "compiled_fixed_cast_lifecycle_specs",
+    "compiled_fixed_zone_cast_permission",
 ]

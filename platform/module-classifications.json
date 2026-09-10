@@ -6390,6 +6390,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/staged_cast_lifecycles.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/rules/station_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -9180,5 +9194,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "23cefa8d0ad1ddcf83f9faf4db7a915284e69491e22b0e2266002294cd446670"
+  "fingerprint": "115c355b2078f44956fdff40edc07e61fa866160251ff7db52885ae505873ee6"
 }

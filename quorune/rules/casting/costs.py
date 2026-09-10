@@ -54,6 +54,7 @@ from ..casting_additional_cost_groups import (
 from .lifecycle_costs import (
     retrace_base_options,
     with_fixed_cast_lifecycle_costs,
+    zone_lifecycle_base_options,
 )
 from .static_modifiers import (
     apply_static_reductions as _apply_owned_static_reductions,
@@ -410,6 +411,45 @@ def _cast_schema_and_mechanics(
     return schema, mechanics
 
 
+def _zone_cast_base_options(
+    host: CastCostHost,
+    seat: str,
+    card: Any,
+    printed: Sequence[Mapping[str, Any]],
+    *,
+    cast_without_mana: bool,
+    force_without_mana_cost: bool,
+    alternative_base: Mapping[str, Any] | None,
+    suppress_source_costs: bool,
+) -> list[dict[str, Any]]:
+    base = _flashback_base_options(
+        host,
+        seat,
+        card,
+        printed,
+        cast_without_mana=cast_without_mana,
+        force_without_mana_cost=force_without_mana_cost,
+        suppress_source_costs=suppress_source_costs,
+    )
+    if (
+        card.zone == "exile"
+        and not compiled_ordinary_zone_cast_permission(host, seat, card)
+        and not force_without_mana_cost
+        and alternative_base is None
+    ):
+        base.clear()
+    common = {
+        "cast_without_mana": cast_without_mana,
+        "force_without_mana_cost": force_without_mana_cost,
+        "suppress_source_costs": suppress_source_costs,
+    }
+    base.extend(retrace_base_options(host, card, printed, **common))
+    base.extend(
+        zone_lifecycle_base_options(host, seat, card, printed, **common)
+    )
+    return base
+
+
 def _initial_options(
     host: CastCostHost,
     seat: str,
@@ -476,24 +516,15 @@ def _initial_options(
             requirements = host._mana_vector(option.get("requirements"))
             requirements["GENERIC"] += commander_tax
             option["requirements"] = requirements
-    base = _flashback_base_options(
+    base = _zone_cast_base_options(
         host,
         seat,
         card,
         printed,
         cast_without_mana=cast_without_mana,
         force_without_mana_cost=force_without_mana_cost,
+        alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
-    )
-    base.extend(
-        retrace_base_options(
-            host,
-            card,
-            printed,
-            cast_without_mana=cast_without_mana,
-            force_without_mana_cost=force_without_mana_cost,
-            suppress_source_costs=suppress_source_costs,
-        )
     )
     for raw in [] if cast_without_mana else schema.get("alternate_costs", []):
         alternative = dict(raw)
@@ -1186,11 +1217,11 @@ def _fixed_zone_change_selection(
             exclude_object_id=source_object_id,
         )
     )
-    if not candidates:
+    if len(candidates) < cost.count:
         return False, None
     choice_schema[cost.choice_field] = {
         "type": "object_ref_array",
-        "count": 1,
+        "count": cost.count,
         "legal_refs": candidates,
         "zone": cost.origin_zone,
         "destination": cost.destination_zone,
@@ -1205,17 +1236,20 @@ def _fixed_zone_change_selection(
         return False, None
     values = list(raw_values)
     if (
-        len(values) != 1
-        or type(values[0]) is not str
-        or values[0] not in candidates
+        len(values) != cost.count
+        or len(set(values)) != cost.count
+        or any(type(value) is not str or value not in candidates for value in values)
     ):
         return False, None
-    return True, {
+    selected = {
         "kind": ZONE_CHANGE_COST_KIND,
         "operation": cost.operation,
-        "card": values[0],
         "cost_position": cost_position,
     }
+    selected["card" if cost.count == 1 else "cards"] = (
+        values[0] if cost.count == 1 else values
+    )
+    return True, selected
 
 
 def _apply_additional_costs(
