@@ -11681,7 +11681,7 @@
       "covered_high_risk_pairs": 293,
       "covered_piece_pairs": 950,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "a1e624ca9dfc2800086c17e342469a2fd7e62df0f6b9e778a68faf2792f85efa",
+      "source_fingerprint": "4660c00daa5fc1afae72f9dcb8576f9a91c0f8aa5ec8ec706ae8461cfe7659a8",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12070,7 +12070,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 210054,
+      "logical_lines": 210094,
       "methods": {
         "dunder": 555,
         "private": 894,
@@ -12919,6 +12919,13 @@
           "physical_lines": 578
         },
         {
+          "file": "quorune/rules/graveyard_card_targets.py",
+          "functions_and_methods": 14,
+          "language": "python",
+          "logical_lines": 532,
+          "physical_lines": 568
+        },
+        {
           "file": "web/src/styles.css",
           "functions_and_methods": null,
           "language": "web",
@@ -13015,13 +13022,6 @@
           "language": "python",
           "logical_lines": 501,
           "physical_lines": 555
-        },
-        {
-          "file": "quorune/rules/graveyard_card_targets.py",
-          "functions_and_methods": 14,
-          "language": "python",
-          "logical_lines": 501,
-          "physical_lines": 537
         },
         {
           "file": "quorune/public_zone_moves.py",
@@ -13654,6 +13654,13 @@
           "physical_lines": 314
         },
         {
+          "file": "quorune/compiler/return_to_hand_templates.py",
+          "functions_and_methods": 17,
+          "language": "python",
+          "logical_lines": 278,
+          "physical_lines": 312
+        },
+        {
           "file": "quorune/semantic_choices/token_and_copy.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -13673,13 +13680,6 @@
           "language": "python",
           "logical_lines": 273,
           "physical_lines": 325
-        },
-        {
-          "file": "quorune/compiler/return_to_hand_templates.py",
-          "functions_and_methods": 17,
-          "language": "python",
-          "logical_lines": 269,
-          "physical_lines": 303
         },
         {
           "file": "quorune/counter_keyword_abilities.py",
@@ -16945,7 +16945,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 229880,
+      "physical_lines": 229920,
       "python_file_count": 635,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -23172,7 +23172,7 @@
         {
           "condition": "set(effect) != {\"op\", \"card\"} or effect.get(\"op\") != \"return_graveyard_card_to_owner_hand\" or effect.get(\"card\") != \"$target.0\"",
           "file": "quorune/rules/graveyard_card_targets.py",
-          "line": 518,
+          "line": 549,
           "string_literals": [
             "$target.0",
             "card",
@@ -29644,7 +29644,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1494,
     "compiler_module_physical_lines": 1555,
-    "compiler_version": "oracle-ir-v181",
+    "compiler_version": "oracle-ir-v182",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -30256,7 +30256,7 @@
         "contract_fingerprint": "416a79ebc71f9edf21580bbe301d218a02922965142f908500937be92b32b88e",
         "exact_cards_with_template": 484,
         "exact_nodes": 648,
-        "fingerprint": "2bda551434548e3cef0846abe040deb7cee2ed3845778e1ff95b167dc958ac4e",
+        "fingerprint": "03ec30b15640509cd8ab3bf804e9814301ece173de9c5e7e9a01183f3741e293",
         "grammar_source_fingerprint": "1525bea0938be4b240866b409937ecfa28f9e16247f3251564d7ecdd63347c32",
         "identity_fingerprint": "29364a872c5cec010c9f1173c2ce072420696bb1f8f4761a59ea72290a940c2f",
         "present": true,
@@ -30268,7 +30268,7 @@
         "contract_fingerprint": "416a79ebc71f9edf21580bbe301d218a02922965142f908500937be92b32b88e",
         "exact_cards_with_template": 501,
         "exact_nodes": 673,
-        "fingerprint": "0323f3a0872581a891c740e5cfd08e1fc7ec35e70201166ce2fa33b03d80750a",
+        "fingerprint": "24363ca5bf3cf422214a29af1243aef3e5729304af001a2c3f6fa5f1460a4cd9",
         "grammar_source_fingerprint": "1525bea0938be4b240866b409937ecfa28f9e16247f3251564d7ecdd63347c32",
         "identity_fingerprint": "d128f39c9b9ffd4802a0094b1b905557c6370294e2e59f51573d840dd75f20d7",
         "present": true,
@@ -30287,7 +30287,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "2b87998ae77b8ce08669b0284286a9040b2e6daae35a5c529859458088103d9c",
+      "fingerprint": "2730fecf826acdce7acdf364598d0e5c57296b9c5334437984bcb8382552a766",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -31145,11 +31145,11 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4031,
-      "discovered_total": 7340,
+      "conventional_ast_cases": 4033,
+      "discovered_total": 7342,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
-        "compiler_named": 222,
+        "compiler_named": 223,
         "fuzz_named": 1,
         "privacy_or_projection_named": 64,
         "replay_named": 318,

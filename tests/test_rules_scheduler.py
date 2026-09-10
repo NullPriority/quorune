@@ -46,7 +46,9 @@ from quorune.work_selection_common import transition_measurement_matches_policy
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
+    _content_public_receipt,
     _content_entry,
+    _latest_semantic_receipt,
     _non_harvest_content_entry,
     _refresh_content_entry,
     _receipt,
@@ -874,9 +876,9 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         coverage = _transition_coverage(
             coverage,
-            transition_id=self.catalog["work_selection"][
-                "semantic_transition_declaration"
-            ]["transition_id"],
+            transition_id=self.work_inputs["harvest_outcome_history"][
+                "entries"
+            ][-1]["transition_id"],
         )
         coverage["approved_prerequisite_exceptions"] = [
             {
@@ -1121,15 +1123,24 @@ class RulesSchedulerTests(unittest.TestCase):
         ]
         if declaration["bundle_id"] is None:
             pending = derived["pending_transition"]
-            self.assertEqual("pending", derived["semantic_outcome_status"])
-            self.assertIsNotNone(pending)
-            self.assertEqual("non_harvest", pending["outcome_kind"])
+            if derived["semantic_outcome_status"] == "pending":
+                self.assertIsNotNone(pending)
+                current = pending
+            else:
+                self.assertEqual("current", derived["semantic_outcome_status"])
+                self.assertIsNone(pending)
+                current = next(
+                    row
+                    for row in derived["non_harvest_transitions"]
+                    if row["transition_id"] == declaration["transition_id"]
+                )
+            self.assertEqual("non_harvest", current["outcome_kind"])
             self.assertEqual(
-                declaration["transition_id"], pending["transition_id"]
+                declaration["transition_id"], current["transition_id"]
             )
             self.assertEqual(
                 declaration["non_harvest_reason"],
-                pending["non_harvest_reason"],
+                current["non_harvest_reason"],
             )
             return
         current = by_bundle[declaration["bundle_id"]]
@@ -1603,6 +1614,52 @@ class RulesSchedulerTests(unittest.TestCase):
                 base=base,
                 head=changed_support,
             )
+
+    def test_non_harvest_transition_chains_across_nonsemantic_content(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        latest = _receipt(ROOT, provenance[-1]["head_commit"])
+        runtime_base = deepcopy(latest)
+        interactions = "coverage/reusable-piece-interactions.json.gz"
+        runtime_base["blobs"][interactions]["raw_sha256"] = "a" * 64
+        runtime_base["blobs"][interactions]["semantic_sha256"] = "a" * 64
+        head = deepcopy(runtime_base)
+        head["compiler_version"] = "oracle-ir-v999"
+        for path, value in (
+            ("coverage/card-program-coverage-commander.json", "b"),
+            ("coverage/oracle-coverage-commander.json", "c"),
+        ):
+            head["blobs"][path]["raw_sha256"] = value * 64
+            head["blobs"][path]["semantic_sha256"] = value * 64
+        declaration = validated_semantic_transition_declaration(
+            {
+                "transition_id": "oracle-ir-v999-runtime-gap",
+                "compiler_version": "oracle-ir-v999",
+                "bundle_id": None,
+                "candidate_ids": [],
+                "family_ids": [],
+                "capability_ids": [],
+                "expected_complete_card_gain": None,
+                "non_harvest_reason": (
+                    "Preserve a non-harvest transition across runtime-only output changes."
+                ),
+            }
+        )
+        transition = _non_harvest_content_entry(
+            declaration,
+            base=runtime_base,
+            head=head,
+        )
+        entries = [{"head_receipt": _content_public_receipt(latest)}]
+
+        self.assertNotEqual(
+            entries[-1]["head_receipt"]["content_fingerprint"],
+            transition["base_receipt"]["content_fingerprint"],
+        )
+        resolved = _latest_semantic_receipt(entries, [transition])
+        self.assertEqual(
+            transition["head_receipt"]["content_fingerprint"],
+            resolved["content_fingerprint"],
+        )
 
     def test_content_receipt_refreshes_downstream_assurance_at_fixed_point(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]
@@ -3690,9 +3747,26 @@ class RulesSchedulerTests(unittest.TestCase):
             pending = self.work_inputs["harvest_outcome_history"][
                 "pending_transition"
             ]
-            self.assertEqual("non_harvest", pending["outcome_kind"])
+            if pending is None:
+                self.assertEqual(
+                    "current",
+                    self.work_inputs["harvest_outcome_history"][
+                        "semantic_outcome_status"
+                    ],
+                )
+                current = next(
+                    row
+                    for row in self.work_inputs["harvest_outcome_history"][
+                        "non_harvest_transitions"
+                    ]
+                    if row["transition_id"] == declaration["transition_id"]
+                )
+            else:
+                self.assertEqual("non_harvest", pending["outcome_kind"])
+                current = pending
+            self.assertEqual("non_harvest", current["outcome_kind"])
             self.assertEqual(
-                declaration["transition_id"], pending["transition_id"]
+                declaration["transition_id"], current["transition_id"]
             )
             return
         bundle = next(

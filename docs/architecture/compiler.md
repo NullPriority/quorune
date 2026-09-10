@@ -155,7 +155,9 @@ graveyard-exile clause into one interchangeable public target set. The grammar
 accepts exact counts from two through six, one-or-two, and up-to one through
 six. Battlefield returns reuse every closed direct-permanent predicate;
 own-graveyard returns reuse fixed card types, type intersections and unions,
-subtypes, supertypes, colors, and color cardinality. The owner adds only one
+subtypes, supertypes, colors, and color cardinality. Qualified permanent-card
+predicates retain that explicit card domain when the battlefield parser's
+permanent zone would otherwise make it implicit. The owner adds only one
 shared count and resolution-revalidation capability, and supports a single-
 graveyard constraint through target ownership. The same scalar leaves also feed
 the existing optional and closed-sequence compilers. Heterogeneous roles,

@@ -2867,24 +2867,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v181-fixed-mana-suspend-lifecycle",
-      "compiler_version": "oracle-ir-v181",
-      "bundle_id": "bundle:fixed-mana-suspend-lifecycle",
-      "candidate_ids": ["compiler:fixed-mana-suspend-lifecycle"],
-      "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
-      ],
-      "capability_ids": [
-        "casting.lifecycle.fixed_public",
-        "casting.permission.one_shot_exile_without_mana",
-        "continuous.resolution.fixed_keyword_until_control_change",
-        "counter.placement.quantity_replacement",
-        "counter.removal.rule_generated",
-        "trigger.placement.apnap",
-        "zone.change.destination_replacement"
-      ],
-      "measurement_id": "measurement:fixed-mana-suspend-lifecycle",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v182-own-graveyard-permanent-domain",
+      "compiler_version": "oracle-ir-v182",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Preserve the permanent-card domain when adapting qualified battlefield predicates to own-graveyard targets without claiming a card-support harvest."
     },
     "forecast_corrections": [
       {

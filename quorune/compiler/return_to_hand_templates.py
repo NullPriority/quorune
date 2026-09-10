@@ -276,8 +276,17 @@ def _own_graveyard_characteristic_target(
     ):
         return None
     try:
+        permanent_domain = (
+            normalized.endswith(" permanent")
+            and not direct.types_any
+            and not direct.types_all
+        )
         return OwnGraveyardCardTargetSpec(
-            None,
+            (
+                GraveyardCardTargetKind.PERMANENT_CARD
+                if permanent_domain
+                else None
+            ),
             types_any=direct.types_any,
             types_all=direct.types_all,
             types_none=direct.types_none,
