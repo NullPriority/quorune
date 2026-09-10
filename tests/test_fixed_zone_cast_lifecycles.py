@@ -35,7 +35,7 @@ from quorune.trigger_processing import (
     collect_trigger_items,
     enqueue_trigger_batch,
 )
-from quorune.staged_cast_lifecycles import (
+from quorune.rules.staged_cast_lifecycles import (
     build_staged_cast_offer,
     commit_staged_cast_lifecycle,
 )

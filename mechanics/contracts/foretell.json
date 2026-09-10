@@ -34,7 +34,7 @@
   "rulings": [],
   "test_ids": ["test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner", "test_open_zone_cast_forms_remain_residual", "test_foretell_private_staging_persists_without_current_ability_and_replays", "test_staging_timing_stale_offer_and_payment_fail_without_mutation"],
   "implementation": {
-    "component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, quorune.zone_transitions, and quorune.projection",
+    "component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.rules.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, quorune.zone_transitions, and quorune.projection",
     "version": "typed-fixed-zone-cast-lifecycles-v1",
     "capability_ids": ["casting.lifecycle.fixed_zone_cast", "zone.change.destination_replacement"],
     "supported_slice": "One intrinsic fixed ordinary-mana Foretell declaration on a complete card, with its owner-turn special action, private distinguishable exile designation, and later-turn alternative cast."

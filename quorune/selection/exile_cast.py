@@ -315,7 +315,7 @@ class OneShotExileCastChoiceOwnerMixin:
             resolve_suspend_cast_trigger(self, item)
             return True
         if item.semantic_key == REBOUND_CAST_SEMANTIC_KEY:
-            from ..staged_cast_lifecycles import resolve_rebound_cast_trigger
+            from ..rules.staged_cast_lifecycles import resolve_rebound_cast_trigger
 
             resolve_rebound_cast_trigger(self, item)
             return True

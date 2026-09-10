@@ -11,7 +11,7 @@ from .rules.activation_zone_change_costs import (
 )
 from .rules.morph_actions import commit_turn_face_up
 from .suspend import commit_suspend
-from .staged_cast_lifecycles import commit_staged_cast_lifecycle
+from .rules.staged_cast_lifecycles import commit_staged_cast_lifecycle
 from .replacement.ordering import (
     ReplacementChoiceRequired,
     replacement_choice_payload,

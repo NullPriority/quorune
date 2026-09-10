@@ -34,7 +34,7 @@
   "rulings": [],
   "test_ids": ["test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner", "test_open_zone_cast_forms_remain_residual", "test_rebound_schedules_identity_pinned_optional_free_cast", "test_countered_and_stale_rebound_cards_do_not_receive_a_cast"],
   "implementation": {
-    "component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.stack_resolution, quorune.trigger_processing, quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin, and quorune.staged_cast_lifecycles.resolve_rebound_cast_trigger",
+    "component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.stack_resolution, quorune.trigger_processing, quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin, and quorune.rules.staged_cast_lifecycles.resolve_rebound_cast_trigger",
     "version": "typed-fixed-zone-cast-lifecycles-v1",
     "capability_ids": ["casting.lifecycle.fixed_zone_cast", "casting.permission.one_shot_exile_without_mana", "trigger.placement.apnap", "zone.change.destination_replacement"],
     "supported_slice": "One intrinsic bare Rebound declaration on a complete instant or sorcery cast from hand, successfully resolved to exile, and offered once from the same exile incarnation at its controller's next upkeep."

@@ -34,7 +34,7 @@
   "rulings": [],
   "test_ids": ["test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner", "test_open_zone_cast_forms_remain_residual", "test_plot_uses_both_special_action_and_later_cast_timing", "test_staging_timing_stale_offer_and_payment_fail_without_mutation"],
   "implementation": {
-    "component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, and quorune.zone_transitions",
+    "component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.rules.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, and quorune.zone_transitions",
     "version": "typed-fixed-zone-cast-lifecycles-v1",
     "capability_ids": ["casting.lifecycle.fixed_zone_cast", "zone.change.destination_replacement"],
     "supported_slice": "One intrinsic fixed ordinary-mana Plot declaration on a complete card, with its sorcery-window special action, public exile designation, and later-turn free cast."

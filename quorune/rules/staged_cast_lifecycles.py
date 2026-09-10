@@ -5,19 +5,19 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
-from .cast_lifecycles import (
+from ..cast_lifecycles import (
     FixedCastLifecycleKind,
     FixedCastLifecycleSpec,
     REBOUND_EXILE_CAST_PRODUCER,
 )
-from .compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_specs
-from .errors import GameRuleError
-from .mana_undo import clear_mana_undo_stack
-from .model import CardInstance
-from .model import StackItem
-from .replacement.immutable import thaw_value
-from .rules.action_proposals import ActionOffer, freeze_json
-from .zone_object_state import mark_fixed_zone_cast_designation
+from ..compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_specs
+from ..errors import GameRuleError
+from ..mana_undo import clear_mana_undo_stack
+from ..model import CardInstance
+from ..model import StackItem
+from ..replacement.immutable import thaw_value
+from .action_proposals import ActionOffer, freeze_json
+from ..zone_object_state import mark_fixed_zone_cast_designation
 
 
 STAGED_CAST_ACTION = "stage_cast_lifecycle"

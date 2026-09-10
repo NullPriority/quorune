@@ -644,7 +644,7 @@
         "quorune/selection/exile_cast.py",
         "quorune/semantic_runtime/cast_lifecycles.py",
         "quorune/semantic_runtime/zone_replacements.py",
-        "quorune/staged_cast_lifecycles.py",
+        "quorune/rules/staged_cast_lifecycles.py",
         "quorune/turn_priority_owner.py",
         "quorune/zone_object_state.py",
         "tests/fixtures/fixed-zone-cast-lifecycles.json",

@@ -2975,8 +2975,8 @@
             "component:quorune.rules.action_catalog.build_priority_action_catalog",
             "component:quorune.rules.casting.commit.commit_cast",
             "component:quorune.rules.casting.costs.build_cast_cost_options",
+            "component:quorune.rules.staged_cast_lifecycles.commit_staged_cast_lifecycle",
             "component:quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin",
-            "component:quorune.staged_cast_lifecycles.commit_staged_cast_lifecycle",
             "component:quorune.trigger_processing.schedule_delayed_trigger",
             "component:quorune.zone_transitions.ZoneTransitionOwner"
           ],

@@ -22,7 +22,7 @@ from .casting.proposal import build_cast_offer
 from ..morph import FACE_DOWN_CAST_METHODS
 from .morph_actions import build_turn_face_up_offer
 from ..suspend import build_suspend_offer
-from ..staged_cast_lifecycles import build_staged_cast_offer
+from .staged_cast_lifecycles import build_staged_cast_offer
 
 
 class ActionCatalogHost(Protocol):

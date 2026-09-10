@@ -340,7 +340,7 @@
     {
       "mechanic_id": "foretell",
       "path": "mechanics/contracts/foretell.json",
-      "sha256": "e5431bc97bcef91dff8cdc2d35ac6ce475e3aab5e14b4da09d4ac413d58c2751",
+      "sha256": "ded4585260aecce6802ceca25b9f4125d36387b60a9ab9a55ea4cd409c584a51",
       "version": 1
     },
     {
@@ -550,7 +550,7 @@
     {
       "mechanic_id": "plot",
       "path": "mechanics/contracts/plot.json",
-      "sha256": "cb62d96a2a63f830929d918d1c3a30f534eb163024ad4b3c5d2ed8a57488688c",
+      "sha256": "ebb9c0ebabc157372b86c4b54b3357e0b400982c99ff9184edb58dac28dc66fd",
       "version": 1
     },
     {
@@ -580,7 +580,7 @@
     {
       "mechanic_id": "rebound",
       "path": "mechanics/contracts/rebound.json",
-      "sha256": "14ff1608ac7c035409c4bfdc79ac047a27a844e35443a7ee2fdb4aafd123006e",
+      "sha256": "a0bb43cbe37f02d284c0cc2281e77d34a960fc6b3c9c5c749dac084822002dc6",
       "version": 1
     },
     {
@@ -2697,13 +2697,13 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/foretell.json",
-      "contract_sha256": "e5431bc97bcef91dff8cdc2d35ac6ce475e3aab5e14b4da09d4ac413d58c2751",
+      "contract_sha256": "ded4585260aecce6802ceca25b9f4125d36387b60a9ab9a55ea4cd409c584a51",
       "contract_version": 1,
       "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, quorune.zone_transitions, and quorune.projection",
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.rules.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, quorune.zone_transitions, and quorune.projection",
       "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
       "known_blockers": [
@@ -4045,13 +4045,13 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/plot.json",
-      "contract_sha256": "cb62d96a2a63f830929d918d1c3a30f534eb163024ad4b3c5d2ed8a57488688c",
+      "contract_sha256": "ebb9c0ebabc157372b86c4b54b3357e0b400982c99ff9184edb58dac28dc66fd",
       "contract_version": 1,
       "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, and quorune.zone_transitions",
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.rules.staged_cast_lifecycles, quorune.rules.action_catalog, quorune.rules.casting, and quorune.zone_transitions",
       "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
       "known_blockers": [
@@ -4306,13 +4306,13 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/rebound.json",
-      "contract_sha256": "14ff1608ac7c035409c4bfdc79ac047a27a844e35443a7ee2fdb4aafd123006e",
+      "contract_sha256": "a0bb43cbe37f02d284c0cc2281e77d34a960fc6b3c9c5c749dac084822002dc6",
       "contract_version": 1,
       "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.stack_resolution, quorune.trigger_processing, quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin, and quorune.staged_cast_lifecycles.resolve_rebound_cast_trigger",
+      "implementation_component": "quorune.cast_lifecycles.FixedCastLifecycleSpec, quorune.stack_resolution, quorune.trigger_processing, quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin, and quorune.rules.staged_cast_lifecycles.resolve_rebound_cast_trigger",
       "implementation_version": "typed-fixed-zone-cast-lifecycles-v1",
       "kind": "keyword_ability",
       "known_blockers": [
