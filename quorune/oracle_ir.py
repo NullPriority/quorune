@@ -280,6 +280,9 @@ def _effect_template(
     )
     if regeneration is not None:
         return regeneration.compiled()
+    self_return = fixed_self_return_effect_template(normalized)
+    if self_return is not None:
+        return self_return.compiled()
     typed = typed_resolution_effect_template(normalized, card_name=card_name, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
     if typed is not None:
         return typed
@@ -357,9 +360,6 @@ def _effect_template(
             None,
             ("cr-611-continuous-effects", keyword),
         )
-    self_return = fixed_self_return_effect_template(normalized)
-    if self_return is not None:
-        return self_return.compiled()
     token_creation = fixed_token_creation_effect_template(normalized)
     if token_creation is not None:
         return token_creation.compiled()

@@ -484,6 +484,29 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                     )
                 )
 
+    def test_existing_self_return_compositions_retain_their_owner(self):
+        cases = (
+            (
+                "Whenever you cast a Spirit or Arcane spell, you may return "
+                "this creature to its owner's hand.",
+                "Creature — Spirit",
+            ),
+            (
+                "{W}, {T}: Return this creature to its owner's hand and "
+                "return target Griffin card from your graveyard to your "
+                "hand. Activate only during your upkeep.",
+                "Creature — Griffin",
+            ),
+        )
+        for text, type_line in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertNotIn(
+                    FIXED_OWNER_ZONE_MOVE_CAPABILITY,
+                    ir.faces[0].nodes[0].capability_dependencies,
+                )
+
     def test_unsupported_public_zone_move_shapes_remain_residual(self):
         self.assertIsNone(
             public_zone_move_effect_template(
