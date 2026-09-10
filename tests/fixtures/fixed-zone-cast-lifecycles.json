@@ -97,6 +97,25 @@
       "layout": "normal",
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "19000000-0000-4000-8000-000000000006",
+      "name": "Targeted Rebound Lifecycle Fixture",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Tap target creature.\nRebound",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["Rebound"],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
     }
   ],
   "rulings": []

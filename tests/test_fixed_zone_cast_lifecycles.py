@@ -20,6 +20,7 @@ from quorune.deck import DeckLoader
 from quorune.errors import GameRuleError
 from quorune.model import CardInstance, StackItem
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
@@ -30,6 +31,8 @@ from quorune.rules.casting.commit import commit_cast
 from quorune.rules.casting.model import CastProposalRequest
 from quorune.rules.casting.model import CastProposalError
 from quorune.rules.casting.proposal import build_cast_proposal
+from quorune.session import CommanderSession
+from quorune.semantics import SemanticProgram
 from quorune.trigger_processing import (
     begin_pending_trigger_batch,
     collect_trigger_items,
@@ -659,6 +662,228 @@ class FixedZoneCastLifecycleRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
 
+    def test_rebound_competing_exile_choices_checkpoint_and_replay(self):
+        for branch in ("rebound", "voidwalker"):
+            with self.subTest(branch=branch):
+                session = self.session(
+                    70208803 if branch == "rebound" else 70208804
+                )
+                engine = session.engine
+                source = self.add_card(
+                    session,
+                    name="Rebound Lifecycle Fixture",
+                    ref=f"REBOUND-COMPETE-{branch.upper()}",
+                )
+                self.add_card(
+                    session,
+                    name="Dauthi Voidwalker",
+                    ref=f"REBOUND-VOIDWALKER-{branch.upper()}",
+                    seat="B",
+                    zone="battlefield",
+                )
+                engine.state.players["A"].mana_pool.update(
+                    {"C": 2, "U": 1}
+                )
+                self.prepare_main(session)
+                cast = self.action(engine, card=source, action="cast")
+                starting_hand = len(engine.state.players["A"].zones["hand"])
+                session.initial_checkpoint = checkpoint_envelope(engine.state)
+                session.commands.clear()
+                session.decisions.clear()
+                result = session.act(
+                    "pilot:A",
+                    {
+                        "action_id": cast["id"],
+                        "cost_option": "normal",
+                        "pay": "auto",
+                    },
+                )
+                self.assertTrue(result.ok, result.summary)
+                for _ in range(4):
+                    decision = engine.state.pending_decision
+                    if decision is not None and decision.kind == "replacement.order":
+                        break
+                    principal = session.pending_principals()[0]
+                    result = session.act(principal, {"action_id": "pass"})
+                    self.assertTrue(result.ok, result.summary)
+                decision = engine.state.pending_decision
+                self.assertIsNotNone(decision)
+                assert decision is not None
+                self.assertEqual("replacement.order", decision.kind)
+                self.assertEqual(["A"], decision.actors)
+                projected = StateProjector(
+                    self.db, engine.state
+                )._decision("pilot:A")
+                self.assertIsNotNone(projected)
+                assert projected is not None
+                options = projected["ctx"]["options"]
+                self.assertEqual(2, len(options))
+                selected = next(
+                    option["id"]
+                    for option in options
+                    if (
+                        option["id"].startswith("rule:rebound:")
+                        if branch == "rebound"
+                        else option["id"].startswith(
+                            "replacement.zone.destination.v1:"
+                        )
+                    )
+                )
+                self.assertEqual("stack", source.zone)
+                self.assertFalse(engine.state.delayed_triggers)
+                self.assertEqual(
+                    starting_hand,
+                    len(engine.state.players["A"].zones["hand"]),
+                )
+
+                with tempfile.TemporaryDirectory() as temporary:
+                    game_dir = Path(temporary) / f"rebound-{branch}-choice"
+                    session.save(game_dir)
+                    restarted = CommanderSession.load(self.db, game_dir)
+                    loaded_source = restarted.engine.state.cards[
+                        source.object_id
+                    ]
+                    loaded_decision = StateProjector(
+                        self.db, restarted.engine.state
+                    )._decision("pilot:A")
+                    self.assertIsNotNone(loaded_decision)
+                    assert loaded_decision is not None
+                    self.assertIn(
+                        selected,
+                        {
+                            option["id"]
+                            for option in loaded_decision["ctx"]["options"]
+                        },
+                    )
+                    hand_before_resume = len(
+                        restarted.engine.state.players["A"].zones["hand"]
+                    )
+                    result = restarted.act(
+                        "pilot:A",
+                        {"action_id": "choose", "replacement": selected},
+                    )
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("exile", loaded_source.zone)
+                    self.assertFalse(restarted.engine.state.stack)
+                    self.assertEqual(
+                        hand_before_resume,
+                        len(
+                            restarted.engine.state.players["A"].zones["hand"]
+                        ),
+                    )
+                    applied = [
+                        event.details["effect_id"]
+                        for event in restarted.engine.state.events
+                        if event.code == "replacement.apply"
+                        and event.details.get("object") == loaded_source.ref
+                    ]
+                    self.assertEqual([selected], applied)
+                    if branch == "rebound":
+                        self.assertEqual(
+                            1, len(restarted.engine.state.delayed_triggers)
+                        )
+                        self.assertEqual(
+                            loaded_source.logical_object_id,
+                            restarted.engine.state.delayed_triggers[
+                                0
+                            ].source_logical_object_id,
+                        )
+                        self.assertNotIn("void", loaded_source.counters)
+                    else:
+                        self.assertFalse(
+                            restarted.engine.state.delayed_triggers
+                        )
+                        self.assertEqual(1, loaded_source.counters["void"])
+                    expected_hash = authoritative_state_hash(
+                        restarted.engine.state
+                    )
+                    restarted.save(game_dir)
+                    replay = replay_record(game_dir, self.db, verify=True)
+                self.assertTrue(replay["ok"], replay)
+                self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_rebound_competes_with_other_destination_without_scheduling(self):
+        session = self.session(70208805)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            name="Rebound Lifecycle Fixture",
+            ref="REBOUND-COMPETE-HAND",
+        )
+        replacement_source = self.add_card(
+            session,
+            name="Sol Ring",
+            ref="REBOUND-HAND-SOURCE",
+            seat="B",
+            zone="battlefield",
+            register=False,
+        )
+        program = SemanticProgram(
+            key="test:rebound-hand-replacement",
+            label="Put an opponent's graveyard-bound card into its hand",
+            oracle_id=replacement_source.oracle_id,
+            active_zone="battlefield",
+            event="zone.change",
+            trust_level="provisional",
+            handlers=[
+                {
+                    "handler_id": "replacement.zone.destination.v1",
+                    "schema_version": 1,
+                    "event": "zone.change",
+                    "condition": {
+                        "destination": "graveyard",
+                        "object_kind": "card",
+                        "owner_relation": "opponent",
+                    },
+                    "destination": "hand",
+                    "counters": {},
+                }
+            ],
+        )
+        engine.semantics.put(program)
+        ordinary_trust = engine.semantic_program_is_current_trusted
+        engine.state.players["A"].mana_pool.update({"C": 2, "U": 1})
+        self.prepare_main(session)
+        engine.permissions.invalidate_current()
+        engine._cast(
+            "A",
+            {"card": source.ref, "cost_option": "normal", "pay": "auto"},
+        )
+
+        with patch.object(
+            engine,
+            "semantic_program_is_current_trusted",
+            side_effect=lambda candidate: (
+                candidate is program or ordinary_trust(candidate)
+            ),
+        ):
+            engine.state.priority_player = None
+            engine._prepare_stack_resolution()
+            decision = engine.state.pending_decision
+            self.assertIsNotNone(decision)
+            assert decision is not None
+            self.assertEqual("replacement.order", decision.kind)
+            projected = StateProjector(
+                self.db, engine.state
+            )._decision("pilot:A")
+            self.assertIsNotNone(projected)
+            assert projected is not None
+            options = projected["ctx"]["options"]
+            selected = next(
+                option["id"]
+                for option in options
+                if option["id"].startswith(
+                    "replacement.zone.destination.v1:"
+                )
+            )
+            result = session.act(
+                "pilot:A",
+                {"action_id": "choose", "replacement": selected},
+            )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("hand", source.zone)
+        self.assertFalse(engine.state.delayed_triggers)
+
     def test_countered_and_stale_rebound_cards_do_not_receive_a_cast(self):
         session = self.session(70208802)
         engine = session.engine
@@ -701,6 +926,126 @@ class FixedZoneCastLifecycleRuntimeTests(unittest.TestCase):
         engine._prepare_stack_resolution()
         self.assertIsNone(engine.state.pending_decision)
         self.assertEqual("exile", stale.zone)
+
+    def test_all_targets_illegal_and_nonhand_rebound_do_not_apply(self):
+        targeted_session = self.session(70208806)
+        targeted_engine = targeted_session.engine
+        targeted = self.add_card(
+            targeted_session,
+            name="Targeted Rebound Lifecycle Fixture",
+            ref="REBOUND-ILLEGAL-TARGET",
+        )
+        target = self.add_card(
+            targeted_session,
+            name="Goblin Engineer",
+            ref="REBOUND-TARGET",
+            seat="B",
+            zone="battlefield",
+            register=False,
+        )
+        targeted_engine.state.players["A"].mana_pool.update(
+            {"C": 1, "U": 1}
+        )
+        self.prepare_main(targeted_session)
+        targeted_engine.permissions.invalidate_current()
+        targeted_engine._cast(
+            "A",
+            {
+                "card": targeted.ref,
+                "cost_option": "normal",
+                "targets": [target.ref],
+                "pay": "auto",
+            },
+        )
+        targeted_engine.move_card(
+            target.object_id,
+            "hand",
+            reason="make every Rebound target illegal",
+            log=False,
+        )
+        targeted_engine.state.priority_player = None
+        targeted_engine._prepare_stack_resolution()
+        self.assertEqual("graveyard", targeted.zone)
+        self.assertFalse(targeted_engine.state.delayed_triggers)
+        self.assertTrue(
+            any(
+                event.code == "target.illegal"
+                for event in targeted_engine.state.events
+            )
+        )
+
+        nonhand_session = self.session(70208807)
+        nonhand_engine = nonhand_session.engine
+        nonhand = self.add_card(
+            nonhand_session,
+            name="Rebound Lifecycle Fixture",
+            ref="REBOUND-NONHAND",
+            zone="graveyard",
+        )
+        nonhand.annotations["cast_from"] = ["graveyard"]
+        nonhand_engine.state.players["A"].mana_pool.update(
+            {"C": 2, "U": 1}
+        )
+        self.prepare_main(nonhand_session)
+        nonhand_engine.permissions.invalidate_current()
+        nonhand_engine._cast(
+            "A",
+            {
+                "card": nonhand.ref,
+                "from": "graveyard",
+                "cost_option": "normal",
+                "pay": "auto",
+            },
+        )
+        self.assertNotIn(
+            FIXED_CAST_LIFECYCLE_STACK_ANNOTATION,
+            nonhand.annotations,
+        )
+        nonhand_engine.state.priority_player = None
+        nonhand_engine._prepare_stack_resolution()
+        self.assertEqual("graveyard", nonhand.zone)
+        self.assertFalse(nonhand_engine.state.delayed_triggers)
+
+    def test_declined_rebound_cast_leaves_the_exiled_incarnation(self):
+        session = self.session(70208808)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            name="Rebound Lifecycle Fixture",
+            ref="REBOUND-DECLINE",
+        )
+        engine.state.players["A"].mana_pool.update({"C": 2, "U": 1})
+        self.prepare_main(session)
+        engine.permissions.invalidate_current()
+        engine._cast(
+            "A",
+            {"card": source.ref, "cost_option": "normal", "pay": "auto"},
+        )
+        engine.state.priority_player = None
+        engine._prepare_stack_resolution()
+        triggers = collect_trigger_items(
+            engine,
+            "step.begin",
+            {"phase": "beginning", "step": "upkeep", "player": "A"},
+        )
+        enqueue_trigger_batch(engine, triggers)
+        self.assertFalse(begin_pending_trigger_batch(engine))
+        engine.state.priority_player = None
+        engine._prepare_stack_resolution()
+        result = session.act(
+            "pilot:A",
+            {"action": "choose", "choice": "decline"},
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("exile", source.zone)
+        self.assertFalse(engine.state.stack)
+        self.assertFalse(
+            collect_trigger_items(
+                engine,
+                "step.begin",
+                {"phase": "beginning", "step": "upkeep", "player": "A"},
+            )
+        )
 
 
 if __name__ == "__main__":

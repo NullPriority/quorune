@@ -72,7 +72,7 @@ def mark_card_fixed_cast_lifecycle(
     card: CardInstance,
     spec: FixedCastLifecycleSpec,
 ) -> None:
-    """Record an Escape or Jump-start stack designation on one incarnation."""
+    """Record an intrinsic cast lifecycle on one stack incarnation."""
 
     if (
         not isinstance(card, CardInstance)
@@ -80,7 +80,11 @@ def mark_card_fixed_cast_lifecycle(
         or card.object_kind != "card"
         or not isinstance(spec, FixedCastLifecycleSpec)
         or spec.kind
-        not in {FixedCastLifecycleKind.ESCAPE, FixedCastLifecycleKind.JUMP_START}
+        not in {
+            FixedCastLifecycleKind.ESCAPE,
+            FixedCastLifecycleKind.JUMP_START,
+            FixedCastLifecycleKind.REBOUND,
+        }
         or card.annotations.get(FIXED_CAST_LIFECYCLE_STACK_ANNOTATION)
         is not None
     ):

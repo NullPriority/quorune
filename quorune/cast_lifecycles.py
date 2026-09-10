@@ -30,6 +30,7 @@ from .trigger_processing import schedule_delayed_trigger
 from .util import mana_cost_to_vector, stable_json
 from .zone_object_keyword_grants import commit_zone_object_keyword_grant
 from .zone_object_keyword_model import normalized_zone_object_keyword
+from .zone_trigger_events import ZoneTransitionKind
 
 
 FIXED_CAST_LIFECYCLE_CAPABILITY_ID = "casting.lifecycle.fixed_public"
@@ -759,7 +760,7 @@ def fixed_cast_lifecycle_resolution_destination(
     item: StackItem,
     destination: str | None,
 ) -> str | None:
-    """Apply Buyback only to a successful graveyard-bound resolution."""
+    """Apply lifecycle destinations that are not replacement choices."""
 
     raw = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if not isinstance(raw, Mapping):
@@ -767,10 +768,6 @@ def fixed_cast_lifecycle_resolution_destination(
     spec = FixedCastLifecycleSpec.from_dict(raw)
     if spec.kind is FixedCastLifecycleKind.JUMP_START:
         return "exile"
-    if spec.kind is FixedCastLifecycleKind.REBOUND and item.context.get(
-        "rebound_from_hand"
-    ) is True:
-        return "exile" if destination in {None, "graveyard"} else destination
     if (
         spec.kind is FixedCastLifecycleKind.BUYBACK
         and destination in {None, "graveyard"}
@@ -810,10 +807,28 @@ def fixed_cast_lifecycle_stack_fields(
     }
 
 
+def fixed_cast_lifecycle_replacement_effect_id(
+    kind: FixedCastLifecycleKind,
+    logical_object_id: str,
+) -> str:
+    if kind not in {
+        FixedCastLifecycleKind.JUMP_START,
+        FixedCastLifecycleKind.REBOUND,
+    }:
+        raise FixedCastLifecycleError(
+            "This cast lifecycle has no stack replacement identity"
+        )
+    if type(logical_object_id) is not str or not logical_object_id:
+        raise FixedCastLifecycleError(
+            "A cast-lifecycle replacement requires a logical object"
+        )
+    return f"rule:{kind.value}:{logical_object_id}"
+
+
 def fixed_cast_lifecycle_stack_replacement(
     card: CardInstance | None,
 ) -> ReplacementEffect | None:
-    """Return a represented lifecycle's mandatory stack self-replacement."""
+    """Return a represented lifecycle's stack-zone replacement."""
 
     if (
         not isinstance(card, CardInstance)
@@ -828,21 +843,49 @@ def fixed_cast_lifecycle_stack_replacement(
         spec = FixedCastLifecycleSpec.from_dict(raw)
     except (FixedCastLifecycleError, TypeError, ValueError):
         return None
-    if spec.kind is not FixedCastLifecycleKind.JUMP_START:
+    if spec.kind not in {
+        FixedCastLifecycleKind.JUMP_START,
+        FixedCastLifecycleKind.REBOUND,
+    }:
         return None
+    rebound = spec.kind is FixedCastLifecycleKind.REBOUND
     return ReplacementEffect(
-        effect_id=f"rule:{spec.kind.value}:{card.logical_object_id}",
+        effect_id=fixed_cast_lifecycle_replacement_effect_id(
+            spec.kind,
+            card.logical_object_id,
+        ),
         source_id=card.ref,
         event_kind="zone.change",
-        replacement_class=ReplacementClass.SELF_REPLACEMENT,
+        replacement_class=(
+            ReplacementClass.OTHER
+            if rebound
+            else ReplacementClass.SELF_REPLACEMENT
+        ),
         conditions={
             "origin": {"eq": "stack"},
-            "destination": {"not_in": ["exile"]},
+            "destination": (
+                {"eq": "graveyard"}
+                if rebound
+                else {"not_in": ["exile"]}
+            ),
             "object_ref": {"eq": card.ref},
             "logical_object_id": {"eq": card.logical_object_id},
+            **(
+                {
+                    "transition_kind": {
+                        "eq": ZoneTransitionKind.ORDINARY.value
+                    }
+                }
+                if rebound
+                else {}
+            ),
         },
         operations=(SetField("destination", "exile"),),
-        label=f"{card.ref}: exile the jump-started spell instead",
+        label=(
+            f"{card.ref}: exile the resolving spell with Rebound"
+            if rebound
+            else f"{card.ref}: exile the jump-started spell instead"
+        ),
     )
 
 
@@ -867,8 +910,10 @@ def complete_fixed_cast_lifecycle_resolution(
     *,
     item: StackItem,
     card: CardInstance,
+    resolved_logical_object_id: str | None = None,
+    applied_replacement_effect_ids: Sequence[str] = (),
 ) -> None:
-    """Apply the chosen lifecycle only after a permanent resolves."""
+    """Apply the chosen lifecycle only after a stack object resolves."""
 
     suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
     if isinstance(suspended, Mapping):
@@ -899,8 +944,17 @@ def complete_fixed_cast_lifecycle_resolution(
         return
     spec = FixedCastLifecycleSpec.from_dict(raw)
     if spec.kind is FixedCastLifecycleKind.REBOUND:
+        applied_rebound = bool(
+            resolved_logical_object_id
+            and fixed_cast_lifecycle_replacement_effect_id(
+                spec.kind,
+                resolved_logical_object_id,
+            )
+            in applied_replacement_effect_ids
+        )
         if (
             item.context.get("rebound_from_hand") is True
+            and applied_rebound
             and card.zone == "exile"
             and card.object_kind == "card"
         ):
@@ -1002,6 +1056,7 @@ __all__ = [
     "fixed_cast_lifecycle_handler_descriptor",
     "fixed_cast_lifecycle_resolution_destination",
     "fixed_cast_lifecycle_stack_fields",
+    "fixed_cast_lifecycle_replacement_effect_id",
     "FIXED_CAST_LIFECYCLE_CAPABILITY_ID",
     "FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID",
     "FIXED_CAST_LIFECYCLE_CONTEXT_FIELD",

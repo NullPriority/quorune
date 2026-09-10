@@ -777,12 +777,16 @@ def _cast_lifecycle_stack_specs(
 def _mark_selected_cast_lifecycle(
     card: Any,
     spec: FixedCastLifecycleSpec | None,
+    rebound: FixedCastLifecycleSpec | None,
 ) -> None:
     if spec is not None and spec.kind in {
         FixedCastLifecycleKind.ESCAPE,
         FixedCastLifecycleKind.JUMP_START,
     }:
         mark_card_fixed_cast_lifecycle(card, spec)
+        return
+    if rebound is not None:
+        mark_card_fixed_cast_lifecycle(card, rebound)
 
 
 def _create_spell_item(
@@ -808,7 +812,7 @@ def _create_spell_item(
         mark_card_kicked(card)
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
         mark_card_flashed_back(card)
-    _mark_selected_cast_lifecycle(card, lifecycle_spec)
+    _mark_selected_cast_lifecycle(card, lifecycle_spec, rebound)
     method_spec = _face_down_method_spec_from_details(details)
     if method_spec is not None:
         mark_card_face_down_for_morph(
