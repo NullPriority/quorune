@@ -67,7 +67,6 @@ from scripts.harvest_outcome_history import (
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.update_work_selection_cohort_measurements import (
     _preserved_transition_is_current,
-    _transition_coverage,
     _transition_measurement_is_eligible,
 )
 from scripts.work_selection_cohort_measurements import (
@@ -876,12 +875,7 @@ class RulesSchedulerTests(unittest.TestCase):
         coverage = deepcopy(
             self.catalog["work_selection"]["coverage_family"]
         )
-        coverage = _transition_coverage(
-            coverage,
-            transition_id=self.work_inputs["harvest_outcome_history"][
-                "entries"
-            ][-1]["transition_id"],
-        )
+        coverage["consecutive_subthreshold_harvests"] = 0
         coverage["approved_prerequisite_exceptions"] = [
             {
                 "candidate_id": "bundle:measured-prerequisite-fixture",
