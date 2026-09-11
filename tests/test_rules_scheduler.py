@@ -75,6 +75,7 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_entry_return_requirement_measurement,
     _fixed_mana_madness_measurement,
     _fixed_owner_zone_move_measurement,
+    _fixed_single_object_reanimation_measurement,
     _fixed_source_characteristic_measurement,
     _fixed_static_declaration_composition_measurement,
     _fixed_targeted_return_closure_measurement,
@@ -3593,6 +3594,112 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(1, measurement["complete_card_gain"])
         self.assertEqual(1, measurement["exact_ability_gain"])
         self.assertEqual(1, measurement["material_residual_reduction"])
+
+    def test_single_object_reanimation_probe_counts_target_and_source_forms(self):
+        records = {
+            "fixture:target": SimpleNamespace(
+                oracle_id="fixture:target",
+                oracle_text=(
+                    "Return target creature card from your graveyard to the "
+                    "battlefield."
+                ),
+            ),
+            "fixture:source": SimpleNamespace(
+                oracle_id="fixture:source",
+                oracle_text=(
+                    "{1}{B}: Return this card from your graveyard to the "
+                    "battlefield."
+                ),
+            ),
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": oracle_id,
+                    "oracle_ir_status": "partial",
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                }
+                for oracle_id in records
+            ]
+        }
+        compiled = {
+            "fixture:target": SimpleNamespace(
+                faces=(
+                    SimpleNamespace(
+                        nodes=(
+                            SimpleNamespace(
+                                node_id="front:n1",
+                                exact=True,
+                                template_id="reanimate-target-v1",
+                                mechanics=("fixed-target-reanimation",),
+                                effects=({"op": "reanimate"},),
+                            ),
+                        )
+                    ),
+                ),
+                material_residuals=(),
+                status="exact",
+            ),
+            "fixture:source": SimpleNamespace(
+                faces=(
+                    SimpleNamespace(
+                        nodes=(
+                            SimpleNamespace(
+                                node_id="front:n1",
+                                exact=True,
+                                template_id="activated-self-zone-move-v1",
+                                mechanics=("self-zone-move",),
+                                effects=(
+                                    {
+                                        "op": "self_zone_move",
+                                        "origin": "graveyard",
+                                        "destination": "battlefield",
+                                        "tapped": False,
+                                        "source_form": "card",
+                                    },
+                                ),
+                            ),
+                        )
+                    ),
+                ),
+                material_residuals=(),
+                status="exact",
+            ),
+        }
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                side_effect=lambda record, **_kwargs: compiled[record.oracle_id],
+            ),
+        ):
+            measurement = _fixed_single_object_reanimation_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-single-object-reanimation",
+                probe_id="fixed-single-object-reanimation-existing-owner-v1",
+                cards_by_oracle_id=records,
+                coverage={
+                    "minimum_complete_card_gain": 2,
+                    "minimum_exact_ability_gain": 2,
+                    "minimum_material_residual_reduction": 2,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(2, measurement["affected_commander_cards"])
+        self.assertEqual(2, measurement["complete_card_gain"])
+        self.assertEqual(2, measurement["exact_ability_gain"])
+        self.assertEqual(2, measurement["material_residual_reduction"])
 
     def test_source_combat_growth_probe_requires_integrated_exact_node(self):
         source = (

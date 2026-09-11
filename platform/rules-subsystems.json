@@ -3065,6 +3065,63 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-source-characteristics-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-single-object-reanimation",
+          "member_family_ids": [
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:put-onto-battlefield",
+            "activated_effect:return",
+            "card_form:ordinary-saga-chapter-event-binding",
+            "effect_clause:exact-typed-chapter-effect-body",
+            "effect_clause:put-onto-battlefield",
+            "effect_clause:return",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "event_binding:ordinary-saga-chapter-event-binding",
+            "reference_binding:linked-result-reference",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:zone.reanimate.fixed_target",
+            "capability:zone.self_move.activated",
+            "component:quorune.compiler.reanimation_templates.FixedTargetReanimationTemplate",
+            "component:quorune.effect_runtime.zones_and_attachments._apply_reanimate",
+            "component:quorune.rules.reanimation_capability_shapes.fixed_target_reanimation_node_capabilities",
+            "component:quorune.self_zone_move.SelfZoneMoveSpec",
+            "component:quorune.zone_transitions.ZoneTransitionOwner.move_card"
+          ],
+          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "normalized_literal_parameters": [
+            "fixed-permanent-characteristic-target",
+            "fixed-public-graveyard-relation",
+            "fixed-resolution-controller",
+            "optional-tapped-battlefield-entry",
+            "single-or-up-to-one-target",
+            "source-self-untapped-entry"
+          ],
+          "shared_dependencies": [
+            "attachment.aura.typed_restriction",
+            "target.revalidate_resolution",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one fixed target permanent-card or exact source-self card move from a public graveyard to the battlefield through the existing target-revalidation, nonspell Aura-entry, destination-replacement, source-incarnation, and zone-transition owners across spell, triggered, activated, modal, and Saga contexts",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Establishes the fixed single-object reanimation boundary shared by hundreds of remaining counter, keyword, delayed, linked-result, mass, and self-return variants; the generated cohort artifact owns the current direct closure measurement.",
+          "explicit_exclusions": [
+            "copied, granted, text-changed, and runtime Oracle-derived behavior",
+            "destinations other than the battlefield, hidden origins, more than one target, and independently unsupported costs, events, modes, or sibling abilities",
+            "entry counters, gained abilities, type changes, attachment instructions, life changes, sacrifice or exile riders, and every other compound result",
+            "unrepresentable characteristic-defining or cyclic power and type-changing interactions outside the shared exact-characteristic boundary",
+            "untargeted non-source, each-player, all-card, mass, random, linked-result, reflexive, delayed, qualified source-self, and top-graveyard selection",
+            "variable, exact-value, history, chosen, different-name, total-value, and cross-field target predicates"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-single-object-reanimation-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3076,26 +3133,29 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v185-fixed-source-characteristic-effects",
-      "compiler_version": "oracle-ir-v185",
-      "bundle_id": "bundle:fixed-source-characteristic-effects",
-      "candidate_ids": ["compiler:fixed-source-characteristic-effects"],
+      "transition_id": "oracle-ir-v186-fixed-single-object-reanimation",
+      "compiler_version": "oracle-ir-v186",
+      "bundle_id": "bundle:fixed-single-object-reanimation",
+      "candidate_ids": ["compiler:fixed-single-object-reanimation"],
       "family_ids": [
-        "activated_effect:unparsed-target-creature-gains",
-        "activated_effect:unparsed-target-creature-gets",
-        "activated_effect:unparsed-this-artifact-becomes",
-        "activated_effect:unparsed-this-creature-becomes",
-        "activated_effect:unparsed-this-creature-gains",
-        "activated_effect:unparsed-this-creature-gets",
-        "continuous_layer:granted-ability",
-        "duration:until-end-of-turn",
-        "effect_clause:unparsed-target-creature-gains",
-        "effect_clause:unparsed-target-creature-gets"
+        "activated_effect:ordered-effect-composition",
+        "activated_effect:put-onto-battlefield",
+        "activated_effect:return",
+        "card_form:ordinary-saga-chapter-event-binding",
+        "effect_clause:exact-typed-chapter-effect-body",
+        "effect_clause:put-onto-battlefield",
+        "effect_clause:return",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "event_binding:ordinary-saga-chapter-event-binding",
+        "reference_binding:linked-result-reference",
+        "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+        "zone.reanimate.fixed_target",
+        "zone.self_move.activated"
       ],
-      "measurement_id": "measurement:fixed-source-characteristic-effects",
+      "measurement_id": "measurement:fixed-single-object-reanimation",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

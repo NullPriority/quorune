@@ -22,6 +22,7 @@ from high_risk_interaction_support import (
     IMPULSE_ACCESS_AND_CHOICE_PAIRS,
     MADNESS_AND_CHOICE_PAIRS,
     PUBLIC_SET_AND_CHOICE_PAIRS,
+    REANIMATION_RESIDUAL_BOUNDARY_PAIRS,
     REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS,
     REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
     SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS,
@@ -220,6 +221,16 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             IMPULSE_ACCESS_AND_CHOICE_PAIRS,
+            database=self.db,
+        )
+
+    def test_reanimation_residual_carriers_fail_closed_at_runtime_boundary(
+        self,
+    ) -> None:
+        self.assertEqual(4, len(REANIMATION_RESIDUAL_BOUNDARY_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self,
+            REANIMATION_RESIDUAL_BOUNDARY_PAIRS,
             database=self.db,
         )
 

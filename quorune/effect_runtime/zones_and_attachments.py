@@ -728,9 +728,45 @@ def _apply_reanimate(
     reason: str,
 ) -> Any:
     op = operation
+    allowed = {
+        "op",
+        "card",
+        "controller",
+        "tapped",
+        "reason",
+        "_replacement_selections",
+        "_runtime_source",
+        "_aura_target_ref",
+    }
+    if set(effect) - allowed or not {
+        "op",
+        "card",
+        "controller",
+    }.issubset(effect):
+        raise GameRuleError("Reanimation effect has an invalid shape")
+    if effect.get("op") != REANIMATE_OPERATION:
+        raise GameRuleError("Reanimation operation is unsupported")
+    controller = effect.get("controller")
+    if type(controller) is not str or not controller:
+        raise GameRuleError("Reanimation controller is malformed")
+    host._require_seat(controller, in_game=True)
+    card_ref = effect.get("card")
+    if type(card_ref) is not str or not card_ref:
+        raise GameRuleError("Reanimation card reference is malformed")
+    tapped = effect.get("tapped", False)
+    if type(tapped) is not bool:
+        raise GameRuleError("Reanimation tapped state is malformed")
+    selections = effect.get("_replacement_selections", ())
+    if not isinstance(selections, (list, tuple)):
+        raise GameRuleError("Reanimation replacement selections are malformed")
+    aura_target_ref = effect.get("_aura_target_ref")
+    if aura_target_ref is not None and (
+        type(aura_target_ref) is not str or not aura_target_ref
+    ):
+        raise GameRuleError("Reanimation Aura target is malformed")
     card = host._resolve_object(
         actor,
-        str(effect["card"]),
+        card_ref,
         zones={"graveyard"},
     )
     types, _, _ = host._type_parts(
@@ -739,16 +775,28 @@ def _apply_reanimate(
             or ""
         )
     )
-    if "creature" not in types:
+    if not types.intersection(
+        {
+            "artifact",
+            "battle",
+            "creature",
+            "enchantment",
+            "land",
+            "planeswalker",
+        }
+    ):
         raise GameRuleError(
-            "Reanimate effect requires a creature card"
+            "Reanimation effect requires a permanent card"
         )
     return host.move_card(
         card.object_id,
         "battlefield",
-        controller=str(effect.get("controller") or actor),
+        controller=controller,
+        tapped=tapped,
         reason=reason,
         semantic_events=True,
+        replacement_selections=tuple(selections),
+        aura_target_ref=aura_target_ref,
     )
 
 

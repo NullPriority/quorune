@@ -457,15 +457,23 @@ class TargetGroup:
             TargetDamageHistorySpec,
         ):
             raise ValueError("Target damage history must be typed")
-        if (
-            self.numeric_characteristic is not None
-            or self.damage_history is not None
-        ) and (
+        numeric_domain = (
+            self.zones == ("battlefield",)
+            and self.categories == ("permanent",)
+        ) or (
+            self.zones == ("graveyard",)
+            and self.categories == ("card",)
+        )
+        if self.numeric_characteristic is not None and not numeric_domain:
+            raise ValueError(
+                "Numeric predicates require one public permanent or graveyard card"
+            )
+        if self.damage_history is not None and (
             self.zones != ("battlefield",)
             or self.categories != ("permanent",)
         ):
             raise ValueError(
-                "Numeric and history predicates require one battlefield permanent"
+                "Damage-history predicates require one battlefield permanent"
             )
 
     def matches_type_characteristics(

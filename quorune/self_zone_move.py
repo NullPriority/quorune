@@ -16,6 +16,7 @@ SELF_ZONE_MOVE_EFFECT_HANDLER_ID = "generic.self-zone-move.v1"
 SELF_ZONE_MOVE_OPERATION = "self_zone_move"
 _SUPPORTED_RESULTS = {
     ("graveyard", "hand", False, "card"),
+    ("graveyard", "battlefield", False, "card"),
     ("graveyard", "battlefield", True, "card"),
     ("battlefield", "hand", False, "aura"),
 }
@@ -113,6 +114,8 @@ def compile_self_zone_move(
     result: tuple[str, str, bool, str] | None = None
     if effect == "Return this card from your graveyard to your hand.":
         result = ("graveyard", "hand", False, "card")
+    elif effect == "Return this card from your graveyard to the battlefield.":
+        result = ("graveyard", "battlefield", False, "card")
     elif effect == "Return this card from your graveyard to the battlefield tapped.":
         result = ("graveyard", "battlefield", True, "card")
     elif effect == "Return this Aura to its owner's hand.":
