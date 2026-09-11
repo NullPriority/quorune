@@ -11768,13 +11768,13 @@
       ]
     },
     "interaction_assurance_baseline": {
-      "applicable_high_risk_pairs": 308,
-      "applicable_piece_pairs": 76619,
+      "applicable_high_risk_pairs": 310,
+      "applicable_piece_pairs": 77433,
       "available": true,
-      "covered_high_risk_pairs": 308,
-      "covered_piece_pairs": 975,
+      "covered_high_risk_pairs": 310,
+      "covered_piece_pairs": 977,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "ee0438834aeb0b3a68ea9c6d34226dde60333112ea1f6bc7cbc456a627fbb168",
+      "source_fingerprint": "b11d9c2259498f7d5bc5e03d05bf5b5fb56c39af4e9052684ea93e9d04d8450c",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -26434,6 +26434,7 @@
           "continuous.ability.fixed_query_grant",
           "continuous.attached.fixed_characteristics",
           "damage.amount.positive",
+          "damage.creature_power.fixed_interaction",
           "damage.prevention.persistent_amount",
           "damage.prevention.static_fixed",
           "damage.prevention.triggered_results",
@@ -26446,7 +26447,7 @@
           "trigger.event.normalized_damage",
           "trigger.event.normalized_life_gain"
         ],
-        "capability_count": 24,
+        "capability_count": 25,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -26550,7 +26551,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Combat.",
-        "reusable_piece_count": 26,
+        "reusable_piece_count": 27,
         "reusable_pieces": [
           "capability.combat.block.fear",
           "capability.combat.block.horsemanship",
@@ -26565,6 +26566,7 @@
           "capability.continuous.ability.fixed_query_grant",
           "capability.continuous.attached.fixed_characteristics",
           "capability.damage.amount.positive",
+          "capability.damage.creature_power.fixed_interaction",
           "capability.damage.prevention.persistent_amount",
           "capability.damage.prevention.static_fixed",
           "capability.damage.prevention.triggered_results",
@@ -27037,6 +27039,7 @@
           "counter.removal.fixed_effect",
           "counter.removal.rule_generated",
           "damage.amount.positive",
+          "damage.creature_power.fixed_interaction",
           "damage.prevention.persistent_amount",
           "damage.prevention.static_fixed",
           "damage.prevention.triggered_results",
@@ -27071,7 +27074,7 @@
           "trigger.event.normalized_life_gain",
           "zone.entry.tapped_state"
         ],
-        "capability_count": 66,
+        "capability_count": 67,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -27148,7 +27151,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Damage results life and counters.",
-        "reusable_piece_count": 69,
+        "reusable_piece_count": 70,
         "reusable_pieces": [
           "capability.activation.counter_keyword.fixed",
           "capability.activation.loyalty.positive_counter_cost",
@@ -27183,6 +27186,7 @@
           "capability.counter.removal.fixed_effect",
           "capability.counter.removal.rule_generated",
           "capability.damage.amount.positive",
+          "capability.damage.creature_power.fixed_interaction",
           "capability.damage.prevention.persistent_amount",
           "capability.damage.prevention.static_fixed",
           "capability.damage.prevention.triggered_results",
@@ -27331,6 +27335,7 @@
           "counter.producer.undying",
           "counter.removal.all_effect",
           "counter.removal.fixed_effect",
+          "damage.creature_power.fixed_interaction",
           "damage.prevention.aftermath.damage",
           "damage.prevention.persistent_amount",
           "damage.prevention.static_fixed",
@@ -27340,10 +27345,9 @@
           "effect.choice.optional_fixed_mana_payment",
           "format.commander.pairing.choose_background",
           "format.commander.pairing.doctors_companion",
-          "format.commander.pairing.partner",
-          "format.commander.pairing.partner_with"
+          "format.commander.pairing.partner"
         ],
-        "capability_count": 171,
+        "capability_count": 172,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -27633,7 +27637,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Oracle compiler.",
-        "reusable_piece_count": 177,
+        "reusable_piece_count": 179,
         "reusable_pieces": [
           "capability.activation.condition.phase_window",
           "capability.activation.counter_keyword.fixed",
@@ -27724,6 +27728,7 @@
           "capability.counter.producer.undying",
           "capability.counter.removal.all_effect",
           "capability.counter.removal.fixed_effect",
+          "capability.damage.creature_power.fixed_interaction",
           "capability.damage.prevention.aftermath.damage",
           "capability.damage.prevention.persistent_amount",
           "capability.damage.prevention.static_fixed",
@@ -27733,8 +27738,7 @@
           "capability.effect.choice.optional_fixed_mana_payment",
           "capability.format.commander.pairing.choose_background",
           "capability.format.commander.pairing.doctors_companion",
-          "capability.format.commander.pairing.partner",
-          "capability.format.commander.pairing.partner_with"
+          "capability.format.commander.pairing.partner"
         ],
         "runtime_oracle_text_accesses": 18,
         "state_authority": {
@@ -30246,23 +30250,23 @@
     "card_program_v2_present": true,
     "commander_legal_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.311893,
-      "material_residuals": 30553,
+      "exact_fraction": 0.313822,
+      "material_residuals": 30455,
       "residual_kinds": {
         "cost": 1102,
         "declaration_cost": 10,
         "declaration_restriction": 127,
-        "dependency_contract": 641,
-        "effect": 4161,
+        "dependency_contract": 643,
+        "effect": 4139,
         "keyword_grammar": 69,
         "keyword_lifecycle": 48,
         "mana_ability": 542,
         "replacement_effect": 1227,
-        "saga_chapter": 393,
+        "saga_chapter": 391,
         "spell_additional_cost": 120,
-        "spell_effect": 6417,
-        "static_ability": 4986,
-        "trigger": 10664,
+        "spell_effect": 6366,
+        "static_ability": 4985,
+        "trigger": 10640,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 20,
         "unsupported_cycling_cost": 11,
@@ -30280,38 +30284,38 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 9863,
+        "exact": 9924,
         "partial": 11079,
-        "unresolved": 10681
+        "unresolved": 10620
       },
-      "template_count": 1332,
+      "template_count": 1342,
       "total_faces": 32431,
       "total_oracle_ids": 31623
     },
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1496,
     "compiler_module_physical_lines": 1557,
-    "compiler_version": "oracle-ir-v186",
+    "compiler_version": "oracle-ir-v187",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.339228,
-      "material_residuals": 37293,
+      "exact_fraction": 0.340885,
+      "material_residuals": 37190,
       "residual_kinds": {
         "cost": 1299,
         "declaration_cost": 11,
         "declaration_restriction": 143,
-        "dependency_contract": 748,
-        "effect": 4768,
+        "dependency_contract": 750,
+        "effect": 4746,
         "keyword_grammar": 77,
         "keyword_lifecycle": 50,
         "mana_ability": 625,
         "replacement_effect": 1444,
-        "saga_chapter": 440,
+        "saga_chapter": 437,
         "spell_additional_cost": 126,
-        "spell_effect": 8467,
-        "static_ability": 6140,
-        "trigger": 12890,
+        "spell_effect": 8414,
+        "static_ability": 6139,
+        "trigger": 12864,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 21,
         "unsupported_cycling_cost": 11,
@@ -30330,11 +30334,11 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 13102,
+        "exact": 13166,
         "partial": 12296,
-        "unresolved": 13225
+        "unresolved": 13161
       },
-      "template_count": 1359,
+      "template_count": 1369,
       "total_faces": 41840,
       "total_oracle_ids": 38623
     },
@@ -30903,7 +30907,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 500,
         "exact_nodes": 658,
-        "fingerprint": "66f177e648bce472c757f31636f01b980215c83d0e9d0363f60028d23a3e91c4",
+        "fingerprint": "099dfb936a509eda9107d2cf84f9b8aa6e86ab3fd2570d5e6f0cff2ec75cf35c",
         "grammar_source_fingerprint": "a9c3a3a7ec561cc9e2deb7c995261790285a8b0ae100baa08d90ec37633c625f",
         "identity_fingerprint": "391f68d84eeacea87feaca4dddc43912e585f54d276d8f300b8bb18dab3048b4",
         "present": true,
@@ -30915,7 +30919,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 518,
         "exact_nodes": 684,
-        "fingerprint": "88f3f2f7ce418c1c03e882367e8a6dc8edbc8925aa3f1012467b769395ffa288",
+        "fingerprint": "048934c990dbae8e6b9e26504a0ba737cf3394c7a3c454467d309fba5e342a11",
         "grammar_source_fingerprint": "a9c3a3a7ec561cc9e2deb7c995261790285a8b0ae100baa08d90ec37633c625f",
         "identity_fingerprint": "9637d16f11d9aa19d2ea4949b3adfc60cd02198baa0276e43a96aa598e540f5b",
         "present": true,
@@ -30934,7 +30938,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "3470dd1ebad55ba2df9699d0c71538b46031eeea2afb359c0bf239298121c01d",
+      "fingerprint": "8794e3aa259f5c31558df01d813204f22cffc1099bbb4ecc638b719cc9411e5a",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -31792,8 +31796,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4098,
-      "discovered_total": 7407,
+      "conventional_ast_cases": 4099,
+      "discovered_total": 7408,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 224,

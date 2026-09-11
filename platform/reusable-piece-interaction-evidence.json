@@ -6840,6 +6840,24 @@
       "capability_ids": ["zone.reanimate.fixed_target"],
       "interaction_order": 2,
       "assertion": "A represented reanimation instruction does not make a CardProgram with an unresolved target-dependent sibling strictly or compatibly executable."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_polukranos_replacement_residuals_withhold_exact_fight_at_runtime",
+      "piece_ids": ["capability.damage.creature_power.fixed_interaction", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["damage.creature_power.fixed_interaction"],
+      "interaction_order": 2,
+      "assertion": "Polukranos compiles its fixed Fight activation exactly while its conditional damage replacement remains material, so the complete CardProgram is unavailable at strict runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_polukranos_replacement_residuals_withhold_exact_fight_at_runtime",
+      "piece_ids": ["capability.damage.creature_power.fixed_interaction", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["damage.creature_power.fixed_interaction"],
+      "interaction_order": 2,
+      "assertion": "Polukranos's exact Fight activation does not bypass its unresolved self-replacement and prevention ordering; strict runtime admission withholds every activation from the partial card."
     }
   ]
 }

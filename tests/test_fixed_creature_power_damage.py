@@ -791,6 +791,41 @@ class FixedCreaturePowerDamageRuntimeTests(unittest.TestCase):
         self.assertEqual(source_life + 1, engine.state.players["A"].life)
         self.assertEqual([], engine.state.damage_prevention_shields)
 
+    def test_polukranos_replacement_residuals_withhold_exact_fight_at_runtime(self):
+        session = self.session(40209, card_name="Polukranos, Unchained")
+        engine = session.engine
+        self.promote(engine, "Polukranos, Unchained")
+        source = self.named_card(engine, "Polukranos, Unchained")
+        compiled = compile_oracle_card(
+            self.db.lookup("Polukranos, Unchained"),
+            capability_registry=trusted_registry(),
+            capability_profile="commander_review",
+        )
+        self.assertEqual("partial", compiled.status)
+        self.assertTrue(
+            any(
+                node.exact and CREATURE_POWER_DAMAGE_MECHANIC in node.mechanics
+                for face in compiled.faces
+                for node in face.nodes
+            )
+        )
+        engine.move_card(source.object_id, "battlefield", controller="A", log=False)
+        source.counters["+1/+1"] = 6
+        engine.state.players["A"].turns_begun = 1
+        source.acquired_control_turn_count = 0
+        engine.state.config.semantic_policy = "trusted_only"
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        legal = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]
+        self.assertFalse(
+            any(action.get("source") == source.ref for action in legal["actions"])
+        )
+
     def test_creature_power_damage_replacement_choice_save_load_and_replay(self):
         session = self.session(40206, card_name="Fixed Bite")
         engine = session.engine
