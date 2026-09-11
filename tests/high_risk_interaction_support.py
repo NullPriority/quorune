@@ -32,6 +32,44 @@ class _Witness:
 
 
 _WITNESSES = {
+    "reanimation-saga-boundary": _Witness(
+        "Generic Reanimation Saga Boundary Fixture",
+        "Enchantment — Saga",
+        "Read ahead (Choose a chapter and start with that many lore counters. "
+        "Add one after your draw step. Skipped chapters don't trigger. "
+        "Sacrifice after III.)\n"
+        "I — Target opponent reveals their hand. You choose a creature card "
+        "from it. That player discards that card.\n"
+        "II — Search your library for a card, put that card into your hand, "
+        "then shuffle. You lose 3 life.\n"
+        "III — Put target creature card from a graveyard onto the battlefield "
+        "under your control.",
+        "{3}{B}{B}",
+        ("Read Ahead",),
+    ),
+    "reanimation-conditional-boundary": _Witness(
+        "Generic Conditional Reanimation Boundary Fixture",
+        "Sorcery",
+        "This spell costs {2} less to cast if it targets an attacking creature.\n"
+        "Put target creature card from a graveyard onto the battlefield under "
+        "your control.\n"
+        "Spell mastery — If there are two or more instant and/or sorcery cards in your "
+        "graveyard, that creature enters with two additional +1/+1 counters "
+        "on it.",
+        "{4}{B}",
+        ("Spell mastery",),
+    ),
+    "reanimation-multiple-target-boundary": _Witness(
+        "Generic Multiple-Target Reanimation Boundary Fixture",
+        "Sorcery",
+        "Return up to three target creature cards with mana value 1 or less "
+        "from your graveyard to the battlefield.\n"
+        "Forecast — {5}{W}, Reveal this card from your hand: Return target "
+        "creature card with mana value 1 or less from your graveyard to the "
+        "battlefield. (Activate only during your upkeep and only once each turn.)",
+        "{2}{W}",
+        ("Forecast",),
+    ),
     "fixed-query-grant-entry-replacement": _Witness(
         "Generic Query Grant Entry Replacement Fixture",
         "Enchantment",
@@ -920,6 +958,25 @@ IMPULSE_ACCESS_AND_CHOICE_PAIRS = (
     ),
 )
 
+REANIMATION_RESIDUAL_BOUNDARY_PAIRS = (
+    _pair(
+        "capability.zone.reanimate.fixed_target",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+    ),
+    _pair(
+        "capability.zone.reanimate.fixed_target",
+        "residual.target_or_choice.conditional-effect",
+    ),
+    _pair(
+        "capability.zone.reanimate.fixed_target",
+        "residual.target_or_choice.multiple-targets",
+    ),
+    _pair(
+        "capability.zone.reanimate.fixed_target",
+        "residual.target_or_choice.target-predicate",
+    ),
+)
+
 
 SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS = (
     _pair(
@@ -1299,6 +1356,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
             *IMPULSE_ACCESS_AND_CHOICE_PAIRS,
+            *REANIMATION_RESIDUAL_BOUNDARY_PAIRS,
             *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
             *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS,
         }
@@ -1468,6 +1526,19 @@ _bind("pemmins-aura", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[2])
 _bind("sleep-cursed-faerie", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
 _bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS[:2])
 _bind("stella-lee-wild-card", IMPULSE_ACCESS_AND_CHOICE_PAIRS[2])
+_bind(
+    "reanimation-saga-boundary",
+    REANIMATION_RESIDUAL_BOUNDARY_PAIRS[0],
+)
+_bind(
+    "reanimation-conditional-boundary",
+    REANIMATION_RESIDUAL_BOUNDARY_PAIRS[1],
+    REANIMATION_RESIDUAL_BOUNDARY_PAIRS[3],
+)
+_bind(
+    "reanimation-multiple-target-boundary",
+    REANIMATION_RESIDUAL_BOUNDARY_PAIRS[2],
+)
 _bind(
     "owner-zone-target-condition-boundary",
     *FIXED_OWNER_ZONE_AND_CHOICE_PAIRS,
@@ -1660,6 +1731,7 @@ __all__ = [
     "MADNESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
+    "REANIMATION_RESIDUAL_BOUNDARY_PAIRS",
     "REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS",
     "REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",

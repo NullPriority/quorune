@@ -11731,14 +11731,14 @@
       ]
     },
     "interaction_assurance_baseline": {
-      "applicable_high_risk_pairs": 301,
-      "applicable_piece_pairs": 75726,
+      "applicable_high_risk_pairs": 308,
+      "applicable_piece_pairs": 76619,
       "available": true,
       "covered_high_risk_pairs": 301,
       "covered_piece_pairs": 968,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "5b13e567c29da9aa7cd3d2ce60238c623a04b55b42a5e95493529a31c2dffdce",
-      "uncovered_high_risk_pairs": 0
+      "source_fingerprint": "59b76ab6fa6b2fd044b722d408c5e8206fc03083b440da127719d6df4223c695",
+      "uncovered_high_risk_pairs": 7
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -27197,7 +27197,7 @@
           "format.commander.pairing.partner",
           "format.commander.pairing.partner_with"
         ],
-        "capability_count": 170,
+        "capability_count": 171,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -27496,7 +27496,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Oracle compiler.",
-        "reusable_piece_count": 176,
+        "reusable_piece_count": 177,
         "reusable_pieces": [
           "capability.activation.condition.phase_window",
           "capability.activation.counter_keyword.fixed",
@@ -29432,10 +29432,11 @@
           "zone.impulse_access.fixed",
           "zone.mill.fixed",
           "zone.move.fixed_public_set",
+          "zone.reanimate.fixed_target",
           "zone.self_move.activated",
           "zone.single_owner_move.fixed_destination"
         ],
-        "capability_count": 36,
+        "capability_count": 37,
         "compiler_cardprogram_representations": [
           "typed zone-transition semantic intents"
         ],
@@ -29615,7 +29616,7 @@
         "removal_condition": "No missing-owner condition remains. Compatibility facades may be removed only after historical callers use the typed transition port and exact Game Record v3 replay remains unchanged; future move producers must not restore direct engine zone-list mutation.",
         "replay_behavior": "Physical identity and logical incarnation transitions are serialized in Game Record v3 state and event journals.",
         "responsibility": "Own physical identity, logical incarnations, zone membership, destination replacement, LKI, attachment cleanup, and normalized zone events.",
-        "reusable_piece_count": 37,
+        "reusable_piece_count": 38,
         "reusable_pieces": [
           "capability.activation.unearth.fixed_mana",
           "capability.card.exile.public_graveyard",
@@ -29651,6 +29652,7 @@
           "capability.zone.impulse_access.fixed",
           "capability.zone.mill.fixed",
           "capability.zone.move.fixed_public_set",
+          "capability.zone.reanimate.fixed_target",
           "capability.zone.self_move.activated",
           "capability.zone.single_owner_move.fixed_destination",
           "mechanic.sunburst"
@@ -30107,23 +30109,23 @@
     "card_program_v2_present": true,
     "commander_legal_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.310154,
-      "material_residuals": 30675,
+      "exact_fraction": 0.311893,
+      "material_residuals": 30553,
       "residual_kinds": {
         "cost": 1102,
         "declaration_cost": 10,
         "declaration_restriction": 127,
-        "dependency_contract": 626,
-        "effect": 4203,
+        "dependency_contract": 641,
+        "effect": 4161,
         "keyword_grammar": 69,
         "keyword_lifecycle": 48,
         "mana_ability": 542,
         "replacement_effect": 1227,
-        "saga_chapter": 397,
+        "saga_chapter": 393,
         "spell_additional_cost": 120,
-        "spell_effect": 6476,
-        "static_ability": 4988,
-        "trigger": 10694,
+        "spell_effect": 6417,
+        "static_ability": 4986,
+        "trigger": 10664,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 20,
         "unsupported_cycling_cost": 11,
@@ -30141,38 +30143,38 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 9808,
-        "partial": 11065,
-        "unresolved": 10750
+        "exact": 9863,
+        "partial": 11079,
+        "unresolved": 10681
       },
-      "template_count": 1317,
+      "template_count": 1332,
       "total_faces": 32431,
       "total_oracle_ids": 31623
     },
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1500,
     "compiler_module_physical_lines": 1561,
-    "compiler_version": "oracle-ir-v185",
+    "compiler_version": "oracle-ir-v186",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.337778,
-      "material_residuals": 37422,
+      "exact_fraction": 0.339228,
+      "material_residuals": 37293,
       "residual_kinds": {
         "cost": 1299,
         "declaration_cost": 11,
         "declaration_restriction": 143,
-        "dependency_contract": 732,
-        "effect": 4815,
+        "dependency_contract": 748,
+        "effect": 4768,
         "keyword_grammar": 77,
         "keyword_lifecycle": 50,
         "mana_ability": 625,
         "replacement_effect": 1444,
-        "saga_chapter": 445,
+        "saga_chapter": 440,
         "spell_additional_cost": 126,
-        "spell_effect": 8526,
-        "static_ability": 6142,
-        "trigger": 12922,
+        "spell_effect": 8467,
+        "static_ability": 6140,
+        "trigger": 12890,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 21,
         "unsupported_cycling_cost": 11,
@@ -30191,11 +30193,11 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 13046,
-        "partial": 12281,
-        "unresolved": 13296
+        "exact": 13102,
+        "partial": 12296,
+        "unresolved": 13225
       },
-      "template_count": 1344,
+      "template_count": 1359,
       "total_faces": 41840,
       "total_oracle_ids": 38623
     },
@@ -30764,7 +30766,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 500,
         "exact_nodes": 658,
-        "fingerprint": "7a3c9ce80dfc12f8494166879ace07b785ae72aac937484415397228b71c016b",
+        "fingerprint": "66f177e648bce472c757f31636f01b980215c83d0e9d0363f60028d23a3e91c4",
         "grammar_source_fingerprint": "a9c3a3a7ec561cc9e2deb7c995261790285a8b0ae100baa08d90ec37633c625f",
         "identity_fingerprint": "391f68d84eeacea87feaca4dddc43912e585f54d276d8f300b8bb18dab3048b4",
         "present": true,
@@ -30776,7 +30778,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 518,
         "exact_nodes": 684,
-        "fingerprint": "3b8d3b8f1ff269656e0ebd46dcb26b6342bc1677c560397a6d12860bb1b05ace",
+        "fingerprint": "88f3f2f7ce418c1c03e882367e8a6dc8edbc8925aa3f1012467b769395ffa288",
         "grammar_source_fingerprint": "a9c3a3a7ec561cc9e2deb7c995261790285a8b0ae100baa08d90ec37633c625f",
         "identity_fingerprint": "9637d16f11d9aa19d2ea4949b3adfc60cd02198baa0276e43a96aa598e540f5b",
         "present": true,
@@ -30795,7 +30797,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "81f160633a3a44b4e46122be2853e3a9324dd3855ed70bfd3e1a72fc32555136",
+      "fingerprint": "c6d7e6a5d61ca014bb041087d46fdd13057bc85c72bdde89dbc5a155f4990e41",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

@@ -6777,6 +6777,69 @@
       ],
       "interaction_order": 2,
       "assertion": "The canonical fixed-mana Equip activation attaches the source, then source animation makes that Equipment a creature and the state-based owner detaches it."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
+      "piece_ids": ["capability.attachment.aura.simple_object", "capability.zone.reanimate.fixed_target"],
+      "capability_ids": ["attachment.aura.simple_object", "zone.reanimate.fixed_target"],
+      "interaction_order": 2,
+      "assertion": "A graveyard Aura enters through the fixed reanimation effect, pauses for its canonical nonspell attachment choice, resumes exactly once, and preserves tapped state, controller, replacement history, save/load, and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_reanimation_current_graveyard_characteristics_and_source_control_compose",
+      "piece_ids": ["capability.target.permanent.characteristic_predicate", "capability.zone.reanimate.fixed_target"],
+      "capability_ids": ["target.permanent.characteristic_predicate", "zone.reanimate.fixed_target"],
+      "interaction_order": 2,
+      "assertion": "The fixed reanimation target uses current graveyard type and exact represented power predicates at offer and resolution, rejecting a target whose current characteristics stop matching."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_reanimation_target_revalidates_and_rolls_back",
+      "piece_ids": ["capability.target.revalidate_resolution", "capability.zone.reanimate.fixed_target"],
+      "capability_ids": ["target.revalidate_resolution", "zone.reanimate.fixed_target"],
+      "interaction_order": 2,
+      "assertion": "A reanimation target that leaves and returns before resolution has a stale incarnation, so resolution performs no zone, identity, controller, trigger, or log mutation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_reanimation_residual_carriers_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.reanimate.fixed_target", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["zone.reanimate.fixed_target"],
+      "interaction_order": 2,
+      "assertion": "A CardProgram containing an exact reanimation chapter and an unresolved Saga chapter remains residual and cannot bind either strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_reanimation_residual_carriers_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.reanimate.fixed_target", "residual.target_or_choice.conditional-effect"],
+      "capability_ids": ["zone.reanimate.fixed_target"],
+      "interaction_order": 2,
+      "assertion": "An exact reanimation instruction beside an unresolved conditional result leaves the complete CardProgram untrusted and unavailable at runtime."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_reanimation_residual_carriers_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.reanimate.fixed_target", "residual.target_or_choice.multiple-targets"],
+      "capability_ids": ["zone.reanimate.fixed_target"],
+      "interaction_order": 2,
+      "assertion": "A represented single-target reanimation sibling cannot admit a card whose other reanimation instruction retains an unresolved multiple-target selection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_reanimation_residual_carriers_fail_closed_at_runtime_boundary",
+      "piece_ids": ["capability.zone.reanimate.fixed_target", "residual.target_or_choice.target-predicate"],
+      "capability_ids": ["zone.reanimate.fixed_target"],
+      "interaction_order": 2,
+      "assertion": "A represented reanimation instruction does not make a CardProgram with an unresolved target-dependent sibling strictly or compatibly executable."
     }
   ]
 }
