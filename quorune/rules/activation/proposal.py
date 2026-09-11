@@ -9,6 +9,12 @@ from ...activation_mana_cost import (
     payable_activation_mana_options,
     select_activation_mana_option,
 )
+from ...creature_power_damage import (
+    capture_creature_power_damage_source_lki,
+    creature_power_damage_needs_source_lki,
+    creature_power_damage_source_available,
+    CREATURE_POWER_DAMAGE_LKI_CONTEXT,
+)
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
 from ...station import station_candidates, station_cost_choice
@@ -71,6 +77,10 @@ class ActivationProposalHost(Protocol):
     ) -> dict[str, Any]: ...
 
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+
+    def _type_parts(
+        self, type_line: str
+    ) -> tuple[set[str], set[str], set[str]]: ...
 
     def _may_activate_creature_as_haste(self, seat: str, source: Any) -> bool: ...
 
@@ -219,6 +229,31 @@ def _validate_activation_timing_costs(
         )
 
 
+def _creature_power_damage_context(
+    host: ActivationProposalHost,
+    source: Any,
+    program: Any,
+) -> dict[str, Any]:
+    if program is None:
+        return {}
+    source_lki = capture_creature_power_damage_source_lki(
+        host,
+        source,
+        program.effects,
+    )
+    if creature_power_damage_needs_source_lki(program.effects) and source_lki is None:
+        raise ActivationProposalError(
+            "Creature-power damage source is unavailable",
+            status="unavailable",
+            reason="creature_power_source_unavailable",
+        )
+    return (
+        {CREATURE_POWER_DAMAGE_LKI_CONTEXT: source_lki}
+        if source_lki is not None
+        else {}
+    )
+
+
 def build_activation_proposal(
     host: ActivationProposalHost,
     request: ActivationProposalRequest,
@@ -292,6 +327,7 @@ def build_activation_proposal(
     )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     context = host._fetch_context(request.actor, ability, response)
+    context.update(_creature_power_damage_context(host, source, program))
     mana_option = None
     if ability.mana_cost_options:
         try:
@@ -322,7 +358,11 @@ def build_activation_proposal(
         source_object_id=source.object_id,
         source_zone=source.zone,
         ability_id=ability.ability_id,
-        semantic_key=("builtin:fetch_land" if context else semantic_key),
+        semantic_key=(
+            "builtin:fetch_land"
+            if context.get("builtin") == "fetch_land"
+            else semantic_key
+        ),
         mana_ability=ability.mana_ability,
         requirements=freeze_json(requirements),
         targets=tuple(targets),
@@ -402,6 +442,23 @@ def _activation_choice_schema(
     return None
 
 
+def _creature_power_damage_offer_result(
+    host: ActivationProposalHost,
+    source: Any,
+    program: Any,
+) -> ActivationProposalResult | None:
+    if program is None or creature_power_damage_source_available(
+        host,
+        source,
+        program.effects,
+    ):
+        return None
+    return ActivationProposalResult(
+        "unavailable",
+        "creature_power_source_unavailable",
+    )
+
+
 def build_activation_offer(
     host: ActivationProposalHost,
     seat: str,
@@ -431,6 +488,9 @@ def build_activation_offer(
         and not host.semantic_program_is_current_trusted(program)
     ):
         return ActivationProposalResult("unresolved", "semantic_policy_requires_trusted")
+    unavailable = _creature_power_damage_offer_result(host, source, program)
+    if unavailable is not None:
+        return unavailable
     target_schema = (
         thaw_value(selected.target_schema)
         if selected.target_schema is not None

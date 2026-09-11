@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 701.14 — Fight",
+  "cases": [
+    {
+      "rule_id": "701.14",
+      "rule_text_sha256": "1ef142c8213e887dc6812fe3147cfeada300cc161799af8d62bf1e165b1a4a6c",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["quorune.rules.capabilities.CapabilityRegistry"],
+      "executable_test_ids": ["tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageCompilerTests.test_fixed_creature_power_damage_compiles_across_supported_contexts"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["The closed compiler family is owned by damage.creature_power.fixed_interaction."]
+    },
+    {
+      "rule_id": "701.14a",
+      "rule_text_sha256": "d4b58af7dd2b0a9842a0316a7f381d5f59289a34392114e9fa786c9f914b7f26",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.creature_power_damage_templates.fixed_creature_power_damage_effect_template", "quorune.creature_power_damage.resolve_creature_power_damage", "quorune.damage.resolve_damage_batch"],
+      "executable_test_ids": ["tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_fight_and_bite_resolve_through_canonical_damage"],
+      "required_scenarios": ["positive", "interaction"],
+      "covered_scenarios": ["positive", "interaction"],
+      "blockers": [],
+      "notes": ["Both current exact powers are snapshotted into one simultaneous canonical damage batch."]
+    },
+    {
+      "rule_id": "701.14b",
+      "rule_text_sha256": "82dba98b70b26d0cf36e76261c3026212c7b024c0d9889eda453e3cf42868123",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.creature_power_damage.resolve_creature_power_damage"],
+      "executable_test_ids": ["tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_fight_requires_both_current_creatures_and_bite_revalidates_targets"],
+      "required_scenarios": ["negative", "interaction"],
+      "covered_scenarios": ["negative", "interaction"],
+      "blockers": [],
+      "notes": ["Fight deals no damage if either participant is absent, phased out, no longer a creature, or a stale source incarnation."]
+    },
+    {
+      "rule_id": "701.14c",
+      "rule_text_sha256": "62b70138e8fd4564cab1c72e530c09c8a316ca77eef5c152c9969ed4ca7a8da2",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.creature_power_damage.resolve_creature_power_damage"],
+      "executable_test_ids": ["tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_self_fight_and_malformed_effects_are_atomic"],
+      "required_scenarios": ["positive", "negative"],
+      "covered_scenarios": ["positive", "negative"],
+      "blockers": [],
+      "notes": ["A creature fighting itself receives one simultaneous result equal to twice its current power."]
+    },
+    {
+      "rule_id": "701.14d",
+      "rule_text_sha256": "ed36bf607cced5ee49f3474459a7d8912d19151197d62aa83eac5e10c1e29d5c",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.creature_power_damage.resolve_creature_power_damage", "quorune.damage.damage_proposal"],
+      "executable_test_ids": ["tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_composes_with_lki_prevention_replacement_and_results"],
+      "required_scenarios": ["interaction"],
+      "covered_scenarios": ["interaction"],
+      "blockers": [],
+      "notes": ["Fight proposals are explicitly noncombat and traverse ordinary noncombat prevention, replacement, lifelink, and result handling."]
+    }
+  ]
+}

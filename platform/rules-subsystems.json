@@ -3122,6 +3122,62 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-single-object-reanimation-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-creature-power-damage",
+          "member_family_ids": [
+            "activated_effect:deal-damage",
+            "activated_effect:unparsed-target-beast-creature",
+            "activated_effect:unparsed-target-creature-you",
+            "activated_effect:unparsed-this-creature-fights",
+            "duration:until-end-of-turn",
+            "effect_clause:deal-damage",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:put-counter",
+            "effect_clause:unparsed-target-blocking-creature",
+            "effect_clause:unparsed-target-creature-fights",
+            "effect_clause:unparsed-target-creature-you",
+            "effect_clause:unparsed-target-green-creature",
+            "quantity_expression:dynamic-quantity",
+            "target_or_choice:multiple-targets",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:damage.creature_power.fixed_interaction",
+            "component:quorune.compiler.creature_power_damage_templates.FixedCreaturePowerDamageTemplate",
+            "component:quorune.creature_power_damage.resolve_creature_power_damage",
+            "component:quorune.damage.resolve_damage_batch",
+            "component:quorune.rules.creature_power_damage_capability_shapes.fixed_creature_power_damage_node_capabilities"
+          ],
+          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "normalized_literal_parameters": [
+            "exact-current-creature-power",
+            "fight-simultaneous-batch",
+            "fixed-counter-or-stat-preparation",
+            "source-lki-one-way-damage",
+            "source-or-direct-creature-role",
+            "typed-one-or-two-target-plan"
+          ],
+          "shared_dependencies": [
+            "damage.amount.positive",
+            "damage.result.multitype_permanent",
+            "damage.result.player_life",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one closed Fight instruction or one creature dealing damage equal to its exact power, including fixed counter or stat preparation, through the shared target plan, source snapshot, simultaneous damage batch, prevention, replacement, result, and replay owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes at least fifty-one Commander cards across direct spells, source-self triggers, activated abilities, optional Fight, Auras, combat-state targets, and fixed preparation while preserving one typed damage transaction.",
+          "explicit_exclusions": [
+            "external event objects and reflexive linked-result references",
+            "random, mass, divided, multiplied, toughness-based, indefinite, or conditional quantities",
+            "runtime Oracle parsing and card-specific dispatch",
+            "unrepresented characteristic-defining, cyclic, copy, face-down, and type-changing interactions",
+            "unrepresented target domains, modal branches, and compound riders"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-creature-power-damage-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3133,29 +3189,31 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v186-fixed-single-object-reanimation",
-      "compiler_version": "oracle-ir-v186",
-      "bundle_id": "bundle:fixed-single-object-reanimation",
-      "candidate_ids": ["compiler:fixed-single-object-reanimation"],
+      "transition_id": "oracle-ir-v187-fixed-creature-power-damage",
+      "compiler_version": "oracle-ir-v187",
+      "bundle_id": "bundle:fixed-creature-power-damage",
+      "candidate_ids": ["compiler:fixed-creature-power-damage"],
       "family_ids": [
-        "activated_effect:ordered-effect-composition",
-        "activated_effect:put-onto-battlefield",
-        "activated_effect:return",
-        "card_form:ordinary-saga-chapter-event-binding",
-        "effect_clause:exact-typed-chapter-effect-body",
-        "effect_clause:put-onto-battlefield",
-        "effect_clause:return",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "event_binding:ordinary-saga-chapter-event-binding",
-        "reference_binding:linked-result-reference",
+        "activated_effect:deal-damage",
+        "activated_effect:unparsed-target-beast-creature",
+        "activated_effect:unparsed-target-creature-you",
+        "activated_effect:unparsed-this-creature-fights",
+        "duration:until-end-of-turn",
+        "effect_clause:deal-damage",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:put-counter",
+        "effect_clause:unparsed-target-blocking-creature",
+        "effect_clause:unparsed-target-creature-fights",
+        "effect_clause:unparsed-target-creature-you",
+        "effect_clause:unparsed-target-green-creature",
+        "quantity_expression:dynamic-quantity",
+        "target_or_choice:multiple-targets",
         "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "zone.reanimate.fixed_target",
-        "zone.self_move.activated"
+        "damage.creature_power.fixed_interaction"
       ],
-      "measurement_id": "measurement:fixed-single-object-reanimation",
+      "measurement_id": "measurement:fixed-creature-power-damage",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

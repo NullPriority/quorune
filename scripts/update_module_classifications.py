@@ -67,6 +67,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/continuous_conditions.py",
         "quorune/continuous_effect_model.py",
         "quorune/creature_subtypes.py",
+        "quorune/creature_power_damage_model.py",
         "quorune/enchant_spec.py",
         "quorune/entry_counter_model.py",
         "quorune/evolve.py",
@@ -192,6 +193,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/creature_subtypes.py",
         "quorune/cumulative_upkeep.py",
         "quorune/damage.py",
+        "quorune/creature_power_damage.py",
         "quorune/damage_prevention.py",
         "quorune/damage_transaction.py",
         "quorune/damage_values.py",
@@ -433,6 +435,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/damage_modifier_state.py",
         "quorune/damage_source.py",
+        "quorune/creature_power_damage_model.py",
         "quorune/prevention_triggers.py",
         "quorune/replacement/immutable.py",
     }:
@@ -547,6 +550,7 @@ def _owner(relative: str, layer: str) -> str:
         return "regeneration"
     if relative in {
         "quorune/damage.py",
+        "quorune/creature_power_damage.py",
         "quorune/damage_prevention.py",
         "quorune/damage_prevention_aftermath.py",
         "quorune/damage_prevention_creation.py",

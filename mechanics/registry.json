@@ -1,5 +1,5 @@
 {
-  "contract_count": 129,
+  "contract_count": 130,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -311,6 +311,12 @@
       "mechanic_id": "fear",
       "path": "mechanics/contracts/fear.json",
       "sha256": "fb39100e2d8c76f2803ed1e4875c9266e490540cc72013e0cbe019a61abeea90",
+      "version": 1
+    },
+    {
+      "mechanic_id": "fight",
+      "path": "mechanics/contracts/fight.json",
+      "sha256": "be349d18df8204edbe84201f7e014acda64a3c3205d61ca8a10a4a69268fcb1b",
       "version": 1
     },
     {
@@ -6183,19 +6189,41 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/fight.json",
+      "contract_sha256": "be349d18df8204edbe84201f7e014acda64a3c3205d61ca8a10a4a69268fcb1b",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "701"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.compiler.creature_power_damage_templates, quorune.rules.creature_power_damage_capability_shapes, quorune.creature_power_damage, and the canonical damage transaction",
+      "implementation_version": "typed-fixed-creature-power-damage-v1",
       "kind": "keyword_action",
+      "known_blockers": [
+        "external-event and reflexive linked objects need their typed event owners",
+        "random, mass, divided, multiplied, toughness-based, and open dynamic quantities remain residual",
+        "unrepresentable characteristic-defining, cyclic, copy, face-down, and type-changing interactions remain excluded"
+      ],
       "mechanic_id": "fight",
       "official_name": "Fight",
       "rule_references": [
         "701.14"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_fixed_creature_power_damage_compiles_across_supported_contexts",
+        "test_fixed_prep_fight_sequences_share_target_roles",
+        "test_another_power_damage_recipient_excludes_the_dealing_creature",
+        "test_unsupported_creature_power_wording_and_shape_mutations_fail_closed",
+        "test_fight_and_bite_resolve_through_canonical_damage",
+        "test_fight_requires_both_current_creatures_and_bite_revalidates_targets",
+        "test_self_fight_and_malformed_effects_are_atomic",
+        "test_prepared_fight_resolves_in_printed_order",
+        "test_source_death_trigger_captures_power_and_damage_lki",
+        "test_creature_power_damage_composes_with_lki_prevention_replacement_and_results",
+        "test_creature_power_damage_offer_commit_and_source_incarnations_are_exact",
+        "test_creature_power_damage_replacement_choice_save_load_and_replay",
+        "test_creature_power_damage_four_player_projection_and_replay"
+      ],
       "trust_level": "untrusted"
     },
     {

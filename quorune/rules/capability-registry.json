@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 149,
+  "registry_version": 150,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6065,6 +6065,33 @@
       "dependency_fail_closed_rationale": "This capability has no capability dependencies.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "damage.creature_power.fixed_interaction",
+      "version": 1,
+      "official_rules": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and execute one closed two-creature Fight instruction or one creature dealing damage equal to its exact power through the canonical target, damage-source, replacement, prevention, and result owners.",
+        "inputs": ["one source-spanned Fight or one-way creature-power damage clause", "one or two direct battlefield targets or the resolving source or enchanted creature", "exact current creature power or represented source last-known information for one-way damage", "resolution-time target and source legality", "represented damage replacement and prevention choices"],
+        "outputs": ["one simultaneous noncombat Fight damage batch or one noncombat damage proposal", "pinned damage-source characteristics and incarnation", "canonical damage replacement, prevention, result, trigger, state-action, projection, and replay behavior"],
+        "exclusions": ["Fight when either creature is absent, phased out, or no longer a creature at resolution", "dynamic, characteristic-defining, cyclic, nonintegral, toughness-based, multiplied, divided, random, mass, or linked-result quantities outside the exact numeric characteristic boundary", "external event objects, reflexive linked targets, and source pronouns outside a source-self trigger or activated ability", "compound, conditional, optional, modal, or preparatory instructions outside separately capability-closed composition owners", "unrepresented target domains, source references, continuous effects, copy effects, face-down effects, or type-changing interactions" ]
+      },
+      "dependencies": ["damage.amount.positive", "damage.result.multitype_permanent", "damage.result.player_life", "target.revalidate_resolution"],
+      "implementation_components": ["quorune.compiler.creature_power_damage_templates.FixedCreaturePowerDamageTemplate", "quorune.compiler.creature_power_damage_templates.fixed_creature_power_damage_effect_template", "quorune.creature_power_damage.capture_creature_power_damage_source_lki", "quorune.rules.creature_power_damage_capability_shapes.fixed_creature_power_damage_node_capabilities", "quorune.creature_power_damage.resolve_creature_power_damage", "quorune.damage.resolve_damage_batch"],
+      "positive_tests": ["test_fixed_creature_power_damage_compiles_across_supported_contexts", "test_fight_and_bite_resolve_through_canonical_damage", "test_prepared_fight_resolves_in_printed_order", "test_source_death_trigger_captures_power_and_damage_lki"],
+      "negative_tests": ["test_unsupported_creature_power_wording_and_shape_mutations_fail_closed", "test_fight_requires_both_current_creatures_and_bite_revalidates_targets"],
+      "interaction_tests": ["test_creature_power_damage_composes_with_lki_prevention_replacement_and_results", "test_creature_power_damage_offer_commit_and_source_incarnations_are_exact", "test_fight_requires_both_current_creatures_and_bite_revalidates_targets", "test_source_death_trigger_captures_power_and_damage_lki"],
+      "multiplayer_tests": ["test_creature_power_damage_four_player_projection_and_replay"],
+      "privacy_tests": ["test_creature_power_damage_four_player_projection_and_replay"],
+      "replay_tests": ["test_creature_power_damage_four_player_projection_and_replay", "test_creature_power_damage_offer_commit_and_source_incarnations_are_exact", "test_creature_power_damage_replacement_choice_save_load_and_replay", "test_source_death_trigger_captures_power_and_damage_lki"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The strict node shape requires the exact compiler-owned operation and target plan, while the capability closure requires target revalidation and canonical public damage results; blocking any dependency keeps the node residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused shape and runtime mutation witnesses alter the Fight simultaneity, current-creature requirement, source incarnation, target domain, or canonical damage batch and are rejected by exact state and journal assertions.",
       "blockers": [],
       "status": "trusted"
     },

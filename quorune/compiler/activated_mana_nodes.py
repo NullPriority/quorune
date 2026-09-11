@@ -21,6 +21,10 @@ from ..fixed_mana_abilities import (
     fixed_mana_handler_descriptor,
 )
 from ..effect_contracts import REANIMATE_OPERATION
+from ..creature_power_damage_model import (
+    CREATURE_POWER_DAMAGE_MECHANIC,
+    CREATURE_POWER_DAMAGE_OPERATION,
+)
 from ..intrinsic_basic_land_mana import (
     INTRINSIC_BASIC_LAND_MANA_CAPABILITY,
     expected_intrinsic_basic_land_mana_reminder,
@@ -41,6 +45,9 @@ from .dependency_gate import (
     DependencyGate,
     dependency_gate,
     explicit_capabilities_gate,
+)
+from .creature_power_damage_templates import (
+    fixed_creature_power_damage_effect_template,
 )
 from .damage_templates import activated_source_damage_effect_template
 from .ir_model import (
@@ -319,6 +326,7 @@ def _activated_effect_dependency_gate(
             "counter_stack_target",
             "create_damage_prevention_shield",
             "create_token",
+            CREATURE_POWER_DAMAGE_OPERATION,
             "choose_damage_source",
             "choose_cards_apnap",
             "choose_option",
@@ -397,6 +405,14 @@ def _activated_effect_dependency_gate(
                 "fixed-effect-clause-sequence",
                 "closed-effect-program",
             }.intersection(mechanics)
+        )
+        or (
+            CREATURE_POWER_DAMAGE_MECHANIC in mechanics
+            and 1 <= len(effects) <= 2
+            and any(
+                effect.get("op") == CREATURE_POWER_DAMAGE_OPERATION
+                for effect in effects
+            )
         )
         or (
             len(effects) >= 1
@@ -579,6 +595,32 @@ def _fixed_activated_costs(ability: ActivatedAbility) -> ActivatedAbility:
     )
 
 
+def _compiled_activated_effect(
+    text: str,
+    *,
+    card_name: str,
+    effect_template: Callable[..., tuple[Any, ...]],
+) -> tuple[Any, ...]:
+    creature_power = fixed_creature_power_damage_effect_template(
+        text,
+        card_name=card_name,
+        allow_source_pronoun=True,
+    )
+    declaration = (
+        declaration_templates.activated_temporary_declaration_restriction_effect_template(
+            text,
+            card_name=card_name,
+        )
+    )
+    damage = activated_source_damage_effect_template(text)
+    compiled = declaration or creature_power or damage
+    return (
+        compiled.compiled()
+        if compiled is not None
+        else effect_template(text, card_name=card_name)
+    )
+
+
 def activated_oracle_node(
     *,
     node_id: str,
@@ -642,14 +684,6 @@ def activated_oracle_node(
     effect_material = _activated_effect_material(ability)
     self_zone_move = compile_self_zone_move(ability)
     handlers: tuple[Mapping[str, Any], ...] = ()
-    activated_damage = activated_source_damage_effect_template(
-        effect_material
-    )
-    declaration_restriction = (
-        declaration_templates.activated_temporary_declaration_restriction_effect_template(
-            effect_material, card_name=card_name
-        )
-    )
     if self_zone_move is not None:
         ability = self_zone_move.ability
         template = "activated-self-zone-move-v1"
@@ -657,16 +691,11 @@ def activated_oracle_node(
         target_schema = None
         mechanics = ("self-zone-move",)
         handlers = (self_zone_move_handler_descriptor(self_zone_move),)
-    elif declaration_restriction is not None:
-        template, effects, target_schema, mechanics = (
-            declaration_restriction.compiled()
-        )
-    elif activated_damage is not None:
-        template, effects, target_schema, mechanics = activated_damage.compiled()
     else:
-        template, effects, target_schema, mechanics = effect_template(
+        template, effects, target_schema, mechanics = _compiled_activated_effect(
             effect_material,
             card_name=card_name,
+            effect_template=effect_template,
         )
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         mechanics = tuple(dict.fromkeys((*mechanics, "exhaust")))

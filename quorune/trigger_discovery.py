@@ -20,6 +20,10 @@ from .attachment_references import (
     capture_source_attachment_snapshot,
     required_attachment_relation,
 )
+from .creature_power_damage import (
+    capture_creature_power_damage_source_lki,
+    CREATURE_POWER_DAMAGE_LKI_CONTEXT,
+)
 from .errors import GameRuleError
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
@@ -829,6 +833,7 @@ def _semantic_trigger_context(
     event: str,
     context: Mapping[str, Any],
     active_zone: str,
+    source_characteristics: Mapping[str, Any],
 ) -> dict[str, Any]:
     stack_context = {
         "event": event,
@@ -887,6 +892,14 @@ def _semantic_trigger_context(
         stack_context["source_transform_count"] = source.transform_count
     if "identity_pinned_exile_cast_choice" in program.coverage:
         stack_context["source_logical_object_id"] = source.logical_object_id
+    source_lki = capture_creature_power_damage_source_lki(
+        host,
+        source,
+        program.effects,
+        characteristics=source_characteristics,
+    )
+    if source_lki is not None:
+        stack_context[CREATURE_POWER_DAMAGE_LKI_CONTEXT] = source_lki
     return stack_context
 
 
@@ -1035,6 +1048,7 @@ def dispatch_semantic_event(
                 event=event,
                 context=context,
                 active_zone=active_zone,
+                source_characteristics=characteristics,
             )
             item = StackItem(
                 stack_id=host._stable_runtime_id("stack", ref),

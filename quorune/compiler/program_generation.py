@@ -17,6 +17,9 @@ from .prevention_templates import is_closed_fixed_prevention_program
 from ..rules.counter_capability_shapes import (
     fixed_counter_placement_group_node_capabilities,
 )
+from ..rules.creature_power_damage_capability_shapes import (
+    fixed_creature_power_damage_node_capabilities,
+)
 from ..rules.delayed_draw_capability_shapes import (
     fixed_next_turn_draw_node_capabilities,
 )
@@ -485,6 +488,15 @@ def _is_closed_fixed_scry_program(program: SemanticProgram) -> bool:
     return _node_capabilities_close_program(
         program,
         fixed_scry_node_capabilities,
+    )
+
+
+def _is_closed_fixed_creature_power_damage_program(
+    program: SemanticProgram,
+) -> bool:
+    return _node_capabilities_close_program(
+        program,
+        fixed_creature_power_damage_node_capabilities,
     )
 
 
@@ -1207,6 +1219,7 @@ def _is_closed_fixed_public_zone_move_set_program(
 def _closed_effect_recognizers():
     return (
         is_closed_fixed_modal_program,
+        _is_closed_fixed_creature_power_damage_program,
         _is_closed_fixed_damage_program,
         _is_closed_fixed_next_turn_draw_program,
         _is_closed_fixed_draw_program,
