@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
+from .creature_power_damage_model import CREATURE_POWER_DAMAGE_OPERATION
 from .semantic_runtime import (
     is_structural_activated_ability_catalog_program,
     validate_runtime_handler_descriptors,
@@ -76,6 +77,7 @@ VALID_EFFECT_OPERATIONS = {
     "create_damage_prevention_shield",
     "create_damage_redirection",
     "damage",
+    CREATURE_POWER_DAMAGE_OPERATION,
     "damage_each_opponent",
     "damage_fixed_set",
     "delayed_mana",

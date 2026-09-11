@@ -153,6 +153,20 @@ class ChangeImpactTests(unittest.TestCase):
                     plan.matched_rule_ids,
                 )
 
+    def test_effect_operation_sources_select_semantic_registry(self):
+        for owner in (
+            "quorune/effect_contracts.py",
+            "quorune/effect_runtime/damage_life_and_turns.py",
+            "quorune/semantics.py",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertIn("test_semantic_handlers", plan.test_modules)
+                self.assertIn(
+                    "semantic-effect-operation-registry-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_fixed_characteristic_sources_select_shared_layer_owners(self):
         for owner in (
             "quorune/compiler/continuous_templates.py",
