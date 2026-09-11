@@ -1092,6 +1092,33 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0047",
+      "adr": "docs/adr/0097-typed-fixed-creature-power-damage.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "76df2f5715d0bdb0fbb658028226924a151621408990adceb5aa898c1bb4985d",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed creature_power_damage operation serialized after the v188 semantic validity correction.",
+      "rationale": "The v187 harvest already introduced one strict capability-closed handler that delegates Fight and one-way creature-power damage to the canonical damage transaction, but omitted that operation from the semantic-program validity inventory. The v188 correction completes the existing architecture review boundary without adding a handler, engine method, direct or unowned GameState write, Oracle-ID literal, runtime Oracle prose access, prohibited identity dispatch, oversized symbol, or card-specific operation.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact residual identities and counts in the source-characteristic schema-4 baseline plus creature_power_damage, its closed compiler and capability shape, exact characteristic boundary, source-LKI and incarnation owner, canonical damage proposal and batch transaction, and semantic-operation impact edge described by ADR 0097; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, arbitrary callbacks, family-specific ability-presence checks, cycle-unsafe dynamic characteristics, broader damage grammar, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the creature-power operation only while closed validation, simultaneous Fight damage, current-creature revalidation, exact source LKI, incarnation pinning, replacement and prevention ordering, Lifelink and damage results, rollback, privacy, save/load, and replay remain enforced.",
+      "target_milestone": "capability-closed broad compiler harvest through one typed creature-power damage owner",
+      "replay_implications": "CardPrograms record only typed mode, source, recipient, and target roles; Game Record v3 preserves source LKI, incarnation checks, replacement choices, canonical damage events, trigger placement, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "All admitted sources, recipients, power values, damage proposals, replacement choices, and results are public. Physical and logical object identities remain absent from pilot projections.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict operation; malformed modes or placeholders, stale or re-entered sources, illegal targets, unsupported characteristic cycles, blocked dependencies, and unreviewed grammar fail before authoritative mutation.",
+      "tests": [
+        "tests.test_semantic_handlers.TypedSemanticHandlerTests.test_registry_is_deterministic_and_rejects_duplicate_ownership",
+        "tests.test_change_impact.ChangeImpactTests.test_effect_operation_sources_select_semantic_registry",
+        "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageCompilerTests.test_fixed_creature_power_damage_compiles_across_supported_contexts",
+        "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageCompilerTests.test_unsupported_creature_power_wording_and_shape_mutations_fail_closed",
+        "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_fight_and_bite_resolve_through_canonical_damage",
+        "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_composes_with_lki_prevention_replacement_and_results",
+        "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_replacement_choice_save_load_and_replay",
+        "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_four_player_projection_and_replay",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }
