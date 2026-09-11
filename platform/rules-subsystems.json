@@ -3189,32 +3189,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v187-fixed-creature-power-damage",
-      "compiler_version": "oracle-ir-v187",
-      "bundle_id": "bundle:fixed-creature-power-damage",
-      "candidate_ids": ["compiler:fixed-creature-power-damage"],
-      "family_ids": [
-        "activated_effect:deal-damage",
-        "activated_effect:unparsed-target-beast-creature",
-        "activated_effect:unparsed-target-creature-you",
-        "activated_effect:unparsed-this-creature-fights",
-        "duration:until-end-of-turn",
-        "effect_clause:deal-damage",
-        "effect_clause:ordered-effect-composition",
-        "effect_clause:put-counter",
-        "effect_clause:unparsed-target-blocking-creature",
-        "effect_clause:unparsed-target-creature-fights",
-        "effect_clause:unparsed-target-creature-you",
-        "effect_clause:unparsed-target-green-creature",
-        "quantity_expression:dynamic-quantity",
-        "target_or_choice:multiple-targets",
-        "target_or_choice:target-predicate"
-      ],
-      "capability_ids": [
-        "damage.creature_power.fixed_interaction"
-      ],
-      "measurement_id": "measurement:fixed-creature-power-damage",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v188-creature-power-semantic-operation",
+      "compiler_version": "oracle-ir-v188",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Register the already-emitted fixed creature-power damage operation in the canonical semantic-program validity inventory without claiming a card-support harvest."
     },
     "forecast_corrections": [
       {

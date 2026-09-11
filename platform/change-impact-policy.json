@@ -180,6 +180,17 @@
       ]
     },
     {
+      "id": "semantic-effect-operation-registry-contract",
+      "patterns": [
+        "quorune/effect_contracts.py",
+        "quorune/effect_runtime/**",
+        "quorune/semantics.py"
+      ],
+      "test_modules": [
+        "test_semantic_handlers"
+      ]
+    },
+    {
       "id": "generated-coverage-sources",
       "patterns": [
         "coverage/**",
