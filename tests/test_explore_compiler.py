@@ -6,7 +6,6 @@ from unittest.mock import patch
 from pathlib import Path
 import os
 
-from quorune import oracle_ir as oracle_ir_module
 from quorune.carddb import CardDatabase
 from quorune.compiler.explore_templates import (
     single_explore_effect_template,
@@ -212,8 +211,8 @@ class ExploreCompilerTests(unittest.TestCase):
                 )
 
             assert_exact()
-            with patch.object(
-                oracle_ir_module,
+            with patch(
+                "quorune.compiler.source_self_effect_templates."
                 "single_explore_effect_template",
                 return_value=None,
             ):

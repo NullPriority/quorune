@@ -481,7 +481,8 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
             self.compile(text, type_line="Creature — Construct").status,
         )
         with patch(
-            "quorune.oracle_ir.source_pronoun_damage_effect_template",
+            "quorune.compiler.source_self_effect_templates."
+            "source_pronoun_damage_effect_template",
             return_value=None,
         ):
             mutated = self.compile(text, type_line="Creature — Construct")
