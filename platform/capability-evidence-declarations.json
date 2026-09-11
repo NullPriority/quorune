@@ -13489,6 +13489,142 @@
       "applicability_note": "Replay the exact generated instruction, affected-set order, event identities, result journal, and final state hash."
     },
     {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_composes_with_lki_prevention_replacement_and_results",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose exact power with a quantity replacement, amount prevention, and Lifelink through the canonical damage transaction."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_offer_commit_and_source_incarnations_are_exact",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Capture source LKI before a sacrifice cost and carry the pinned damage source through the actual activation stack path."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_fight_requires_both_current_creatures_and_bite_revalidates_targets",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Separate Fight's current-creature boundary from one-way source LKI and pin the old logical incarnation."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_source_death_trigger_captures_power_and_damage_lki",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Capture pre-departure exact power and damage-source identity in normalized source-self death-trigger discovery."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_four_player_projection_and_replay",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Offer, commit, and resolve the two-role target plan in a four-player game."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageCompilerTests.test_unsupported_creature_power_wording_and_shape_mutations_fail_closed",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject changed kind, target role, source LKI, and distinct-target plan before capability closure."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageCompilerTests.test_unsupported_creature_power_wording_and_shape_mutations_fail_closed",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep random, divided, toughness, multiplied, external-event, linked-result, and malformed operation shapes residual."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_fight_requires_both_current_creatures_and_bite_revalidates_targets",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Require both current creatures for Fight, revalidate a one-way recipient, and never substitute a new source incarnation."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageCompilerTests.test_fixed_creature_power_damage_compiles_across_supported_contexts",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower source-spanned Fight and one-way exact-power damage across spell, source-self trigger, optional trigger, activated, and combat-state contexts."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_fight_and_bite_resolve_through_canonical_damage",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve simultaneous Fight and one-way power damage as canonical noncombat damage with current exact power."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_prepared_fight_resolves_in_printed_order",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Apply a fixed counter preparation before reading current power and committing the simultaneous damage batch."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_source_death_trigger_captures_power_and_damage_lki",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve one normalized dies trigger from its sealed pre-departure exact power and source incarnation."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_four_player_projection_and_replay",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project public target references and results without physical or logical object identifiers."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_four_player_projection_and_replay",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay two-role target selection, exact power evaluation, noncombat damage, and four-player result projection."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_offer_commit_and_source_incarnations_are_exact",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay activation offer, sacrifice cost, source LKI capture, target commitment, and resulting damage exactly."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_creature_power_damage_replacement_choice_save_load_and_replay",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save and load during affected-player damage replacement ordering, resume the same instruction once, and replay the exact result."
+    },
+    {
+      "capability_id": "damage.creature_power.fixed_interaction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_creature_power_damage.FixedCreaturePowerDamageRuntimeTests.test_source_death_trigger_captures_power_and_damage_lki",
+      "official_rule_ids": ["115.1", "115.1a", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay target placement and resolution from a checkpoint containing the sealed dies-trigger power and damage-source snapshot."
+    },
+    {
       "capability_id": "damage.prevention.aftermath.damage",
       "evidence_class": "interaction",
       "test_id": "tests.test_damage_prevention_aftermath.DamagePreventionAftermathTests.test_other_prevention_applies_to_aftermath_damage",

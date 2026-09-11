@@ -18,12 +18,9 @@ from .attachment_action_capability_shapes import (
     attachment_action_covered_mechanics,
     fixed_attachment_action_node_capabilities,
 )
-from .counter_capability_shapes import (
-    fixed_counter_placement_group_node_capabilities,
-)
-from .delayed_draw_capability_shapes import (
-    fixed_next_turn_draw_node_capabilities,
-)
+from .counter_capability_shapes import fixed_counter_placement_group_node_capabilities
+from .creature_power_damage_capability_shapes import fixed_creature_power_damage_covered_mechanics, fixed_creature_power_damage_node_capabilities
+from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from .crew_capability_shapes import ordinary_crew_node_capabilities
 from .station_capability_shapes import ordinary_station_node_capabilities
 from .graveyard_card_targets import (
@@ -1060,6 +1057,7 @@ def _targeted_effect_capabilities(
         temporary_declaration_restriction_node_capabilities,
         fixed_target_effect_sequence_node_capabilities,
         fixed_source_effect_sequence_node_capabilities,
+        fixed_creature_power_damage_node_capabilities,
         fixed_damage_node_capabilities,
         mass_destruction_node_capabilities,
         fixed_next_turn_draw_node_capabilities,
@@ -1493,6 +1491,7 @@ def capability_covered_mechanics(
     covered.update(_fixed_modal_covered_mechanics(supplied))
     covered.update(_affected_player_choice_covered_mechanics(supplied))
     covered.update(attachment_action_covered_mechanics(supplied))
+    covered.update(fixed_creature_power_damage_covered_mechanics(supplied))
     if "protection.typed.debt" in supplied:
         covered.add("protection")
     if "damage.prevention.persistent_amount" in supplied:

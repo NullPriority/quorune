@@ -13,6 +13,9 @@ from .affected_player_discard_capability_shapes import (
 from .counter_capability_shapes import (
     fixed_counter_placement_group_node_capabilities,
 )
+from .creature_power_damage_capability_shapes import (
+    fixed_creature_power_damage_node_capabilities,
+)
 from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
@@ -95,6 +98,7 @@ _COMPONENT_RESOLVERS = (
     fixed_counter_removal_node_capabilities,
     fixed_player_counter_placement_node_capabilities,
     fixed_target_characteristics_node_capabilities,
+    fixed_creature_power_damage_node_capabilities,
     temporary_declaration_restriction_node_capabilities,
     fixed_damage_node_capabilities,
     fixed_resolution_characteristic_set_node_capabilities,

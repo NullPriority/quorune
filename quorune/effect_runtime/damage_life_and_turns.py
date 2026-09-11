@@ -7,6 +7,10 @@ from ..counter_placement import (
     CounterPlacementRequest,
     place_counters,
 )
+from ..creature_power_damage import (
+    CreaturePowerDamageError,
+    resolve_creature_power_damage,
+)
 from ..damage import (
     DamageError,
     damage_proposal,
@@ -23,6 +27,40 @@ from ..trigger_processing import schedule_delayed_trigger
 
 OPERATIONS = effect_family_contract("damage-life-and-turns.v1").operations
 _REASON_FIELD = "reason"
+
+
+def _apply_creature_power_damage(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> Any:
+    if operation != "creature_power_damage":
+        raise GameRuleError("Creature-power damage operation is unsupported")
+    try:
+        result = resolve_creature_power_damage(
+            host,
+            effect,
+            actor=actor,
+            reason=reason,
+        )
+    except CreaturePowerDamageError as exc:
+        raise GameRuleError(str(exc)) from exc
+    host._log(
+        actor,
+        "effect.creature_power_damage",
+        f"Resolved {effect.get('kind')} creature-power damage.",
+        {
+            "kind": effect.get("kind"),
+            "source": effect.get("source"),
+            "target": effect.get("target"),
+            "dealt_amounts": list(result),
+        },
+        importance=2,
+    )
+    return result
 
 
 def _apply_damage(
@@ -837,6 +875,7 @@ HANDLERS = {
     'create_modified_token_copy': _apply_create_modified_token_copy,
     'create_token_copy_if_controlled_count': _apply_create_token_copy_if_controlled_count,
     'create_token_if_distinct_controlled_names': _apply_create_token_if_distinct_controlled_names,
+    'creature_power_damage': _apply_creature_power_damage,
     'damage': _apply_damage,
     'damage_each_opponent': _apply_damage_each_opponent,
     'destroy_selected_and_reward_source': _apply_destroy_selected_and_reward_source,

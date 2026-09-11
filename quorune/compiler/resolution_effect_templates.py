@@ -28,6 +28,9 @@ from .counter_removal_templates import (
     fixed_counter_removal_effect_template,
 )
 from .counter_templates import targeted_counter_effect_template
+from .creature_power_damage_templates import (
+    fixed_creature_power_damage_effect_template,
+)
 from .damage_templates import fixed_damage_effect_template
 from .destruction_templates import destruction_effect_template
 from .exile_templates import targeted_exile_effect_template
@@ -85,6 +88,10 @@ def _attachment_or_owner_zone_move(
         text,
         card_name=card_name,
         source_is_permanent=source_is_permanent,
+        source_attachment_relation=source_attachment_relation,
+    ) or fixed_creature_power_damage_effect_template(
+        text,
+        card_name=card_name,
         source_attachment_relation=source_attachment_relation,
     )
 

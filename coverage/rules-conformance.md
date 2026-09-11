@@ -12,20 +12,20 @@ maintenance: "generated"
 - Effective date: `2026-08-07`
 - Source SHA-256: `68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769`
 - Total case records: 3309
-- Executable semantic passes: 257
+- Executable semantic passes: 261
 - Executable semantic failures: 0
 - Blocked: 541
 - Skipped: 0
-- Unreviewed: 2324
-- Definition-only: 187
-- Inventory-only: 2324
+- Unreviewed: 2319
+- Definition-only: 188
+- Inventory-only: 2319
 - Current snapshot complete: false
 
 Status detail:
 
 - `blocked`: 541
-- `definition_only`: 187
-- `passing`: 257
-- `unreviewed`: 2324
+- `definition_only`: 188
+- `passing`: 261
+- `unreviewed`: 2319
 
 Inventory-only records prove source linkage and case existence; they do not prove that the engine implements the rule.

@@ -1850,6 +1850,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/creature_power_damage_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/creature_subtypes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -3035,6 +3050,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/source_self_effect_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/spell_additional_cost_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -3503,6 +3533,32 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/creature_power_damage.py",
+      "layer": "rules",
+      "owning_subsystem": "damage",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/creature_power_damage_model.py",
+      "layer": "domain",
+      "owning_subsystem": "damage",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/creature_subtypes.py",
@@ -5944,6 +6000,20 @@
     },
     {
       "file": "quorune/rules/counter_removal_capabilities.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/creature_power_damage_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -9223,5 +9293,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "c60c9017c0b8541306e4965672dd091b9b2dc8284a83a693dd64f6c4adab1b22"
+  "fingerprint": "cd494112e3be780fca23c7418e27c8dd00f7f23077815ced52d9fae443ba3ba8"
 }

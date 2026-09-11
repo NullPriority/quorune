@@ -73,6 +73,7 @@ from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
     _fixed_activation_zone_change_predicate_measurement,
     _fixed_entry_return_requirement_measurement,
+    _fixed_creature_power_damage_measurement,
     _fixed_mana_madness_measurement,
     _fixed_owner_zone_move_measurement,
     _fixed_single_object_reanimation_measurement,
@@ -3700,6 +3701,79 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(2, measurement["complete_card_gain"])
         self.assertEqual(2, measurement["exact_ability_gain"])
         self.assertEqual(2, measurement["material_residual_reduction"])
+
+    def test_creature_power_damage_probe_counts_only_new_exact_owner_nodes(self):
+        records = {
+            value: SimpleNamespace(oracle_id=value, oracle_text="Fight fixture")
+            for value in ("fixture:exact", "fixture:partial")
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": oracle_id,
+                    "oracle_ir_status": "partial",
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                }
+                for oracle_id in records
+            ]
+        }
+        fight = SimpleNamespace(
+            node_id="front:n1",
+            exact=True,
+            mechanics=("fixed-creature-power-damage", "fight"),
+        )
+        unresolved = SimpleNamespace(
+            node_id="front:n2",
+            exact=False,
+            mechanics=(),
+        )
+        compiled = {
+            "fixture:exact": SimpleNamespace(
+                faces=(SimpleNamespace(nodes=(fight,)),),
+                material_residuals=(),
+                status="exact",
+            ),
+            "fixture:partial": SimpleNamespace(
+                faces=(SimpleNamespace(nodes=(fight, unresolved)),),
+                material_residuals=(object(),),
+                status="partial",
+            ),
+        }
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                side_effect=lambda record, **_kwargs: compiled[record.oracle_id],
+            ),
+        ):
+            measurement = _fixed_creature_power_damage_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-creature-power-damage",
+                probe_id="fixed-creature-power-damage-existing-owner-v1",
+                cards_by_oracle_id=records,
+                coverage={
+                    "minimum_complete_card_gain": 2,
+                    "minimum_exact_ability_gain": 2,
+                    "minimum_material_residual_reduction": 2,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(2, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(2, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+        self.assertEqual(1, measurement["one_additional_blocker_cards"])
 
     def test_source_combat_growth_probe_requires_integrated_exact_node(self):
         source = (

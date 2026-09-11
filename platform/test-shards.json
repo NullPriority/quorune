@@ -242,6 +242,7 @@
       "test_draw_reveal_as_drawn",
       "test_echo_rules",
       "test_explore_rules",
+      "test_fixed_creature_power_damage",
       "test_fixed_mana_abilities",
       "test_fixed_multikind_counter_batches",
       "test_fixed_source_characteristic_effects",

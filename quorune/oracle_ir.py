@@ -50,7 +50,9 @@ from .compiler.draw_templates import (
 from .compiler.delayed_draw_templates import (
     fixed_next_turn_upkeep_draw_effect_template,
 )
-from .compiler.damage_templates import source_pronoun_damage_effect_template
+from .compiler.source_self_effect_templates import (
+    source_self_contextual_effect_template,
+)
 from .compiler.fixed_controller_effect_sequences import (
     fixed_controller_effect_sequence_template,
 )
@@ -152,7 +154,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v186"
+ORACLE_COMPILER_VERSION = "oracle-ir-v187"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -890,20 +892,14 @@ def _trigger_node(
         recognized = True
     elif trigger:
         event_phrase = trigger.group("event").casefold()
-        explored = single_explore_effect_template(
+        source_bound_effect = source_self_contextual_effect_template(
             trigger.group("body"),
-            allow_source_pronoun=True,
-        )
-        source_damage = (
-            source_pronoun_damage_effect_template(trigger.group("body"))
-            if event_phrase in {"enters", "dies"}
-            else None
+            card_name=card_name,
+            event_phrase=event_phrase,
         )
         template, effects, target_schema, mechanics = (
-            explored.compiled()
-            if explored is not None
-            else source_damage.compiled()
-            if source_damage is not None
+            source_bound_effect
+            if source_bound_effect is not None
             else effect_template(
                 trigger.group("body"),
                 card_name=card_name,

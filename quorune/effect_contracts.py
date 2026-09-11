@@ -79,6 +79,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "create_token_copy_if_controlled_count",
                 "create_token_if_distinct_controlled_names",
                 "create_treasure",
+                "creature_power_damage",
                 "damage",
                 "damage_each_opponent",
                 "destroy_selected_and_reward_source",

@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "fight",
+  "official_name": "Fight",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["115.1", "120.1", "120.2", "120.4", "608.2b", "608.2c", "701.14", "701.14a", "701.14b", "701.14c", "701.14d"],
+  "glossary_references": ["fight"],
+  "dependencies": ["damage", "effects", "resolving-spells-and-abilities", "state-based-actions"],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["battlefield", "stack"],
+    "objects": ["two current creature permanents", "one resolving spell or ability source"],
+    "events": ["one simultaneous noncombat damage batch", "ordinary canonical damage result and trigger events"],
+    "state_reads": ["current creature status", "current exact power", "current target legality", "current damage replacement and prevention effects"],
+    "state_writes": ["canonical damage results", "ordinary state-based actions after the complete instruction"],
+    "costs": [],
+    "timing": ["target legality and creature status are rechecked at resolution", "both damage events are prepared before either result is committed"],
+    "targets": ["one or two represented battlefield creature targets", "a source or enchanted creature may occupy one Fight role"],
+    "choices": ["affected-player damage replacement ordering", "represented optional Fight choice"],
+    "hidden_information": [],
+    "apnap": ["resulting triggers use ordinary APNAP batching"],
+    "layers": ["current layer-derived type and exact power are read at resolution"],
+    "replacement_effects": ["both proposals enter the canonical damage replacement and prevention transaction"],
+    "copy": ["copied and text-changed Fight instructions remain outside this compiler slice"],
+    "control_change": ["current controller-relative targeting is revalidated independently of the damage source snapshot"],
+    "zone_change": ["Fight does nothing if either creature has left or is no longer a creature", "a new incarnation cannot satisfy the old source reference"],
+    "source_leaves": ["unlike one-way creature-power damage, Fight does not use source last-known information when a participant is absent"]
+  },
+  "variants": ["two direct creature targets", "source fights one target", "enchanted creature fights one target", "optional source Fight", "fixed stat preparation then Fight", "fixed +1/+1 counter preparation then Fight", "self-Fight deals twice its power to itself", "blocking-creature targets"],
+  "witness_cards": [
+    {"name": "Prey Upon", "oracle_id": "b3c12848-528d-4005-878f-4f950a07240a"},
+    {"name": "Ulvenwald Tracker", "oracle_id": "63a37c08-7e38-4fe2-9a71-cc4604c4f831"},
+    {"name": "Savage Stomp", "oracle_id": "2ecda58d-9aa9-4857-bdc5-b6b7b70a79c0"}
+  ],
+  "rulings": [],
+  "test_ids": ["test_fixed_creature_power_damage_compiles_across_supported_contexts", "test_fixed_prep_fight_sequences_share_target_roles", "test_another_power_damage_recipient_excludes_the_dealing_creature", "test_unsupported_creature_power_wording_and_shape_mutations_fail_closed", "test_fight_and_bite_resolve_through_canonical_damage", "test_fight_requires_both_current_creatures_and_bite_revalidates_targets", "test_self_fight_and_malformed_effects_are_atomic", "test_prepared_fight_resolves_in_printed_order", "test_source_death_trigger_captures_power_and_damage_lki", "test_creature_power_damage_composes_with_lki_prevention_replacement_and_results", "test_creature_power_damage_offer_commit_and_source_incarnations_are_exact", "test_creature_power_damage_replacement_choice_save_load_and_replay", "test_creature_power_damage_four_player_projection_and_replay"],
+  "implementation": {
+    "component": "quorune.compiler.creature_power_damage_templates, quorune.rules.creature_power_damage_capability_shapes, quorune.creature_power_damage, and the canonical damage transaction",
+    "version": "typed-fixed-creature-power-damage-v1",
+    "capability_ids": ["damage.creature_power.fixed_interaction"],
+    "supported_slice": "Closed Fight and one-way exact creature-power damage with one or two public targets and fixed Fight preparation."
+  },
+  "known_blockers": ["external-event and reflexive linked objects need their typed event owners", "random, mass, divided, multiplied, toughness-based, and open dynamic quantities remain residual", "unrepresentable characteristic-defining, cyclic, copy, face-down, and type-changing interactions remain excluded"],
+  "review_status": "reviewed"
+}
