@@ -201,6 +201,7 @@ class DrawInstructionReplacementIntegrationTests(unittest.TestCase):
                 key="test:two-draw-doublers",
                 label="Two draw doublers",
                 oracle_id=sources[0].oracle_id,
+                ability_id="test:two-draw-doublers",
                 active_zone="battlefield",
                 event="draw.instruction",
                 handlers=[

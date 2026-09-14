@@ -525,6 +525,7 @@ class ExploreEngineTests(unittest.TestCase):
                 key="fixture:hand-replacement",
                 label="Replace an opponent card moving to hand",
                 oracle_id=sources[0].oracle_id,
+                ability_id="test:explore-hand-replacement",
                 active_zone="battlefield",
                 event="zone.change",
                 trust_level="provisional",

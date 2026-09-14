@@ -320,6 +320,7 @@ class TrustedOnlyPolicyTests(unittest.TestCase):
                 destination="battlefield",
                 requires_arbiter=True,
                 oracle_id=ring.oracle_id,
+                ability_id="test:preflight-semantic-key",
             )
         )
         engine._remove_from_zone(ring)

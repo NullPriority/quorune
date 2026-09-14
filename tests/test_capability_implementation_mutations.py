@@ -883,6 +883,7 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
                 key="test:draw-restriction-mutation",
                 label="Draw restriction mutation",
                 oracle_id=source.oracle_id,
+                ability_id="test:draw-restriction-mutation",
                 active_zone="battlefield",
                 event="draw.permission",
                 handlers=[

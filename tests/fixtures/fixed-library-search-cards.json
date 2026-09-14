@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "public_fixed_library_search_card_data",
-  "source": "Scryfall Oracle subset for fixed library-search tests",
+  "source": "Scryfall Oracle subset and constructed generic fixed library-search fixtures",
   "cards": [
     {
       "oracle_id": "4845dc21-7534-4896-b298-4d44cd7a3b27",
@@ -39,6 +39,44 @@
       "produced_mana": ["C"],
       "layout": "normal",
       "released_at": "2022-06-10",
+      "legalities": {"commander": "legal", "duel": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000302",
+      "name": "Revealed Artifact Search Fixture",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for an artifact card, reveal it, put it into your hand, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal", "duel": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000303",
+      "name": "Private Artifact Search Fixture",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for an artifact card, put it into your hand, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
       "legalities": {"commander": "legal", "duel": "legal"}
     }
   ],

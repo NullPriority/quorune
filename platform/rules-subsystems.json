@@ -3251,6 +3251,62 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-public-alternative-cost-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-restrictive-library-searches",
+          "member_family_ids": [
+            "activated_effect:look-reveal",
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:put-onto-battlefield",
+            "activated_effect:search",
+            "effect_clause:look-reveal",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:put-onto-battlefield",
+            "effect_clause:search",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "reference_binding:linked-result-reference",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:library.search.fixed_to_battlefield",
+            "capability:library.search.fixed_type_to_hand",
+            "component:quorune.compiler.library_search_templates.fixed_library_search_effect_template",
+            "component:quorune.rules.library_search_capability_shapes.fixed_library_search_node_capabilities",
+            "component:quorune.rules.library_search_capability_shapes.fixed_type_to_hand_search_node_capabilities",
+            "component:quorune.selection.searching.HiddenSearchOwnerMixin"
+          ],
+          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "normalized_literal_parameters": [
+            "fixed-positive-search-count",
+            "printed-reveal-policy",
+            "restrictive-type-subtype-supertype-or-color-query",
+            "searching-controller-library",
+            "single-card-hand-destination",
+            "single-permanent-or-uniform-tapped-land-battlefield-destination"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "variant.commander.zone_return",
+            "zone.change.destination_replacement",
+            "zone.entry.tapped_state"
+          ],
+          "shared_grammar": "one complete restrictive controller-library search with a fixed typed quality, printed reveal policy, one hand result or the existing closed battlefield-entry shape, and one exact shuffle across spell, triggered, activated, and modal contexts",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a measured cross-context cohort through the existing actor-private search choice, effective-characteristic query, destination-replacement, Commander-replacement, entry, shuffle, projection, and replay owners without adding another search or library mutation path.",
+          "explicit_exclusions": [
+            "attachment, linked-result, compound-tail, conditional, payment, opponent-choice, and additional-action grammar",
+            "copied, granted, text-changed, face-down, and independently unsupported sibling abilities",
+            "multiple cards to hand, multiple untapped or nonland battlefield entrants, multiple searches, and multiple destinations",
+            "opponent, target-player, graveyard, hand, exile, outside-game, and other noncontroller search origins",
+            "search-limiting and search-replacement effects under CR 701.23f and search or shuffle triggers",
+            "unrestricted, undefined, named, chosen, dynamic, numeric-characteristic, ability-presence, and cross-field alternative qualities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-restrictive-library-search-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3262,42 +3318,29 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v189-fixed-public-alternative-costs",
-      "compiler_version": "oracle-ir-v189",
-      "bundle_id": "bundle:fixed-public-alternative-costs",
-      "candidate_ids": ["compiler:fixed-public-alternative-costs"],
+      "transition_id": "oracle-ir-v190-fixed-restrictive-library-searches",
+      "compiler_version": "oracle-ir-v190",
+      "bundle_id": "bundle:fixed-restrictive-library-searches",
+      "candidate_ids": ["compiler:fixed-restrictive-library-searches"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:discard",
-        "effect_clause:exile",
-        "effect_clause:return",
-        "effect_clause:sacrifice",
-        "effect_clause:unparsed-freerunning-1-b",
-        "effect_clause:unparsed-freerunning-1-u",
-        "effect_clause:unparsed-freerunning-1-w",
-        "effect_clause:unparsed-freerunning-2-g",
-        "effect_clause:unparsed-freerunning-2-r",
-        "effect_clause:unparsed-if-you-control",
-        "effect_clause:unparsed-prowl-1-b",
-        "effect_clause:unparsed-prowl-3-u",
-        "effect_clause:unparsed-prowl-5-u",
-        "effect_clause:unparsed-prowl-u",
-        "effect_clause:unparsed-spectacle-1-b",
-        "effect_clause:unparsed-spectacle-b",
-        "effect_clause:unparsed-spectacle-r",
-        "effect_clause:unparsed-surge-1-r",
-        "effect_clause:unparsed-surge-1-u",
-        "effect_clause:unparsed-surge-2-u",
-        "effect_clause:unparsed-surge-3-u",
-        "effect_clause:unparsed-surge-u-u",
-        "effect_clause:unparsed-you-may-pay",
+        "activated_effect:look-reveal",
+        "activated_effect:ordered-effect-composition",
+        "activated_effect:put-onto-battlefield",
+        "activated_effect:search",
+        "effect_clause:look-reveal",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:put-onto-battlefield",
+        "effect_clause:search",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
         "reference_binding:linked-result-reference",
-        "target_or_choice:conditional-effect"
+        "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "casting.alternative_cost.fixed_public"
+        "library.search.fixed_to_battlefield",
+        "library.search.fixed_type_to_hand"
       ],
-      "measurement_id": "measurement:fixed-public-alternative-costs",
+      "measurement_id": "measurement:fixed-restrictive-library-searches",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

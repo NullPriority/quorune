@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 from collections import Counter
 import hashlib
 import json
@@ -96,6 +97,53 @@ def discovered_modules(root: Path = TESTS) -> tuple[str, ...]:
     return tuple(sorted(path.stem for path in root.glob("test_*.py")))
 
 
+def validate_semantic_program_fixture_identities(
+    tests_root: Path = TESTS,
+) -> int:
+    """Require real-card test programs to declare noncolliding ability IDs."""
+
+    checked = 0
+    violations: list[str] = []
+    for path in sorted(tests_root.glob("test_*.py")):
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except (OSError, UnicodeDecodeError, SyntaxError) as exc:
+            raise TestShardError(f"Unable to inspect test module {path}") from exc
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            called_name = (
+                node.func.id
+                if isinstance(node.func, ast.Name)
+                else node.func.attr
+                if isinstance(node.func, ast.Attribute)
+                else None
+            )
+            if called_name != "SemanticProgram":
+                continue
+            keywords = {
+                keyword.arg: keyword.value
+                for keyword in node.keywords
+                if keyword.arg is not None
+            }
+            oracle_id = keywords.get("oracle_id")
+            if oracle_id is None:
+                continue
+            checked += 1
+            literal_test_identity = (
+                isinstance(oracle_id, ast.Constant)
+                and isinstance(oracle_id.value, str)
+            )
+            if not literal_test_identity and "ability_id" not in keywords:
+                violations.append(f"{path.name}:{node.lineno}")
+    if violations:
+        raise TestShardError(
+            "SemanticProgram fixtures using a runtime Oracle ID require an "
+            "explicit ability_id: " + ", ".join(violations)
+        )
+    return checked
+
+
 def validate_partition(
     manifest: Mapping,
     *,
@@ -129,6 +177,7 @@ def validate_partition(
                 sort_keys=True,
             )
         )
+    validate_semantic_program_fixture_identities(tests_root)
     return {
         "primary_shards": len(primary),
         "test_modules": len(actual),

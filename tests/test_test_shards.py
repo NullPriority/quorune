@@ -28,6 +28,7 @@ from scripts.test_shards import (
     test_collection_fingerprint,
     TestShardError,
     validate_partition,
+    validate_semantic_program_fixture_identities,
 )
 
 
@@ -115,6 +116,29 @@ class TestShardManifestTests(unittest.TestCase):
         mutated["primary_shards"][first].pop()
         with self.assertRaisesRegex(TestShardError, "missing"):
             validate_partition(mutated)
+
+    def test_runtime_oracle_program_fixtures_require_unique_ability_ids(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            path = root / "test_fixture.py"
+            path.write_text(
+                "SemanticProgram(oracle_id=source.oracle_id, "
+                "ability_id='test:fixture')\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                1,
+                validate_semantic_program_fixture_identities(root),
+            )
+            path.write_text(
+                "SemanticProgram(oracle_id=source.oracle_id)\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(
+                TestShardError,
+                "runtime Oracle ID require an explicit ability_id",
+            ):
+                validate_semantic_program_fixture_identities(root)
 
     def test_observed_timing_loader_requires_one_successful_ubuntu_result(self):
         document = {

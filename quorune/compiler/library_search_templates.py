@@ -6,12 +6,14 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping
 
+from ..creature_subtypes import CREATURE_SUBTYPES
 from ..object_predicate import ObjectQuerySpec
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
 FIXED_LIBRARY_SEARCH_MECHANIC_ID = "fixed-library-search-to-battlefield"
 FIXED_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.fixed_to_battlefield"
+FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID = "fixed-library-search-to-hand"
 
 _BASIC_LAND_SUBTYPES = frozenset(
     {"plains", "island", "swamp", "mountain", "forest"}
@@ -19,6 +21,10 @@ _BASIC_LAND_SUBTYPES = frozenset(
 _LAND_SUBTYPES = _BASIC_LAND_SUBTYPES | {"cave", "desert", "gate", "town"}
 _PERMANENT_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
+)
+_CARD_TYPES = _PERMANENT_TYPES | frozenset({"instant", "kindred", "sorcery"})
+_NONCREATURE_SUBTYPES = frozenset(
+    {"arcane", "aura", "equipment", "lesson", "plan", "trap", "vehicle"}
 )
 _COLORS = {
     "white": "W",
@@ -30,8 +36,11 @@ _COLORS = {
 _FIXED_SEARCH = re.compile(
     rf"^Search your library for (?P<up_to>up to )?"
     rf"(?P<count>an|{FIXED_COUNT_PATTERN}) "
-    rf"(?P<quality>.+?) card(?P<plural>s)?, put (?P<pronoun>it|them) "
-    rf"onto the battlefield(?P<tapped> tapped)?, then shuffle\.$",
+    rf"(?P<quality>.+?) card(?P<plural>s)?, "
+    rf"(?:(?P<reveal>reveal (?P<reveal_pronoun>it|them|that card|those cards), ))?"
+    rf"put (?P<pronoun>it|them|that card|those cards) "
+    rf"(?:(?P<hand>into your hand)|onto the battlefield(?P<tapped> tapped)?), "
+    rf"then shuffle\.$",
     re.IGNORECASE,
 )
 
@@ -48,7 +57,11 @@ def _permanent_query() -> ObjectQuerySpec:
     return ObjectQuerySpec(types_any=tuple(sorted(_PERMANENT_TYPES)))
 
 
-def _search_query(quality: str) -> ObjectQuerySpec | None:
+def _search_query(
+    quality: str,
+    *,
+    destination: str,
+) -> ObjectQuerySpec | None:
     normalized = " ".join(quality.casefold().split())
     if normalized == "basic land":
         return ObjectQuerySpec(
@@ -88,9 +101,18 @@ def _search_query(quality: str) -> ObjectQuerySpec | None:
             types_all=("artifact",),
             subtypes_any=("equipment",),
         )
+    if normalized == "aura":
+        return ObjectQuerySpec(
+            types_all=("enchantment",),
+            subtypes_any=("aura",),
+        )
+    if normalized == "legendary" and destination == "hand":
+        return ObjectQuerySpec(supertypes_all=("legendary",))
     if normalized.startswith("legendary "):
         subject = normalized.removeprefix("legendary ")
-        if subject in _PERMANENT_TYPES:
+        if subject in _CARD_TYPES and (
+            destination == "hand" or subject in _PERMANENT_TYPES
+        ):
             return ObjectQuerySpec(
                 types_all=(subject,),
                 supertypes_all=("legendary",),
@@ -111,7 +133,7 @@ def _search_query(quality: str) -> ObjectQuerySpec | None:
                 types_all=("creature",),
                 colors_any=(_COLORS[qualifier],),
             )
-        if qualifier and " " not in qualifier:
+        if qualifier in CREATURE_SUBTYPES:
             return ObjectQuerySpec(
                 types_all=("creature",),
                 subtypes_any=(qualifier,),
@@ -125,6 +147,24 @@ def _search_query(quality: str) -> ObjectQuerySpec | None:
             )
         return None
 
+    if destination == "hand":
+        if normalized in _CARD_TYPES:
+            return ObjectQuerySpec(types_all=(normalized,))
+        if normalized in _COLORS:
+            return ObjectQuerySpec(colors_any=(_COLORS[normalized],))
+        colored_type = re.fullmatch(
+            r"(?P<color>white|blue|black|red|green) "
+            r"(?P<card_type>artifact|battle|creature|enchantment|instant|kindred|land|planeswalker|sorcery)",
+            normalized,
+        )
+        if colored_type is not None:
+            return ObjectQuerySpec(
+                types_all=(colored_type.group("card_type"),),
+                colors_any=(_COLORS[colored_type.group("color")],),
+            )
+        if normalized in CREATURE_SUBTYPES | _NONCREATURE_SUBTYPES:
+            return ObjectQuerySpec(subtypes_any=(normalized,))
+
     type_terms = tuple(
         part.strip()
         for part in re.split(r"\s+and/or\s+|\s+or\s+", normalized)
@@ -132,6 +172,15 @@ def _search_query(quality: str) -> ObjectQuerySpec | None:
     )
     if type_terms and all(term in _PERMANENT_TYPES for term in type_terms):
         return ObjectQuerySpec(types_any=type_terms)
+    if destination == "hand" and type_terms and all(
+        term in _CARD_TYPES for term in type_terms
+    ):
+        return ObjectQuerySpec(types_any=type_terms)
+    if destination == "hand" and type_terms and all(
+        term in CREATURE_SUBTYPES | _NONCREATURE_SUBTYPES
+        for term in type_terms
+    ):
+        return ObjectQuerySpec(subtypes_any=type_terms)
     return None
 
 
@@ -151,6 +200,8 @@ class FixedLibrarySearchTemplate:
     count: int
     optional_count: bool
     query: ObjectQuerySpec
+    destination: str
+    reveal: bool
     enters_tapped: bool
 
     def compiled(
@@ -169,16 +220,27 @@ class FixedLibrarySearchTemplate:
                 "minimum": 0 if self.optional_count else self.count,
                 "maximum": self.count,
             },
-            "destination": "battlefield",
+            "destination": self.destination,
             "shuffle_after": True,
         }
-        if self.enters_tapped:
+        if self.destination == "hand":
+            effect["reveal"] = self.reveal
+        if self.destination == "battlefield" and self.enters_tapped:
             effect["enters_tapped_override"] = True
+        to_hand = self.destination == "hand"
         return (
-            "fixed-library-search-to-battlefield-v1",
+            (
+                "fixed-library-search-to-hand-v1"
+                if to_hand
+                else "fixed-library-search-to-battlefield-v1"
+            ),
             (effect,),
             None,
-            (FIXED_LIBRARY_SEARCH_MECHANIC_ID,),
+            (
+                (FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID,)
+                if to_hand
+                else (FIXED_LIBRARY_SEARCH_MECHANIC_ID,)
+            ),
         )
 
 
@@ -194,11 +256,23 @@ def fixed_library_search_effect_template(
     if not 1 <= count <= 10:
         return None
     singular = count == 1
-    if singular != (match.group("pronoun").casefold() == "it"):
+    singular_pronouns = {"it", "that card"}
+    if singular != (match.group("pronoun").casefold() in singular_pronouns):
+        return None
+    reveal_pronoun = match.group("reveal_pronoun")
+    if reveal_pronoun is not None and singular != (
+        reveal_pronoun.casefold() in singular_pronouns
+    ):
         return None
     if singular == bool(match.group("plural")):
         return None
-    query = _search_query(match.group("quality"))
+    destination = "hand" if match.group("hand") else "battlefield"
+    if destination == "hand" and count != 1:
+        return None
+    query = _search_query(
+        match.group("quality"),
+        destination=destination,
+    )
     if query is None:
         return None
     enters_tapped = bool(match.group("tapped"))
@@ -215,6 +289,8 @@ def fixed_library_search_effect_template(
         count=count,
         optional_count=bool(match.group("up_to")),
         query=query,
+        destination=destination,
+        reveal=bool(match.group("reveal")),
         enters_tapped=enters_tapped,
     )
 
@@ -222,6 +298,7 @@ def fixed_library_search_effect_template(
 __all__ = [
     "FIXED_LIBRARY_SEARCH_CAPABILITY_ID",
     "FIXED_LIBRARY_SEARCH_MECHANIC_ID",
+    "FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID",
     "FixedLibrarySearchTemplate",
     "fixed_library_search_effect_template",
 ]

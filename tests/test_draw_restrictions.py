@@ -232,6 +232,7 @@ class DrawRestrictionIntegrationTests(unittest.TestCase):
                 key=f"test:draw-restriction:{source.object_id}",
                 label="Draw restriction fixture",
                 oracle_id=source.oracle_id,
+                ability_id="test:draw-restriction-fixture",
                 active_zone="battlefield",
                 event="draw.permission",
                 handlers=[
