@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "58a523a3f5ea1e1540405941010dd20cd7f2e4e9",
+  "baseline_commit": "3cae072fdcd946930edb326930bbcc72511cd1b2",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -1581,9 +1581,9 @@
     "physical_lines": 7488
   },
   "exception_binding": {
-    "adr": "docs/adr/0096-typed-fixed-source-characteristic-effects.md",
-    "allowance_fingerprint": "9ebf577c192dd8daca7e96aa4f4d5b3443055656af040bc274f2d0210f3cdd42",
-    "exception_id": "ARCH-EXC-0046"
+    "adr": "docs/adr/0097-typed-fixed-creature-power-damage.md",
+    "allowance_fingerprint": "76df2f5715d0bdb0fbb658028226924a151621408990adceb5aa898c1bb4985d",
+    "exception_id": "ARCH-EXC-0047"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1669,11 +1669,6 @@
       "file": "quorune/codex_cli.py",
       "logical_lines": 156,
       "symbol": "CodexCliArenaRunner.run"
-    },
-    {
-      "file": "quorune/compiler/activated_mana_nodes.py",
-      "logical_lines": 156,
-      "symbol": "activated_oracle_node"
     },
     {
       "file": "quorune/compiler/resolution_effect_templates.py",
@@ -1791,7 +1786,7 @@
     },
     {
       "file": "quorune/rules/capabilities.py",
-      "logical_lines": 1505
+      "logical_lines": 1504
     },
     {
       "file": "quorune/rules/node_capability_shapes.py",
@@ -1847,6 +1842,7 @@
     "create_token_if_distinct_controlled_names",
     "create_token_if_no_controlled_subtype",
     "create_treasure",
+    "creature_power_damage",
     "cumulative_upkeep",
     "cumulative_upkeep_life",
     "damage",
