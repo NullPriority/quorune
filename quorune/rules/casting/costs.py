@@ -52,8 +52,10 @@ from ..casting_additional_cost_groups import (
     fixed_life_payment_additional_cost,
 )
 from .lifecycle_costs import (
+    alternative_cost_condition_met,
     retrace_base_options,
     with_fixed_cast_lifecycle_costs,
+    with_fixed_public_alternative_costs,
     zone_lifecycle_base_options,
 )
 from .static_modifiers import (
@@ -369,7 +371,11 @@ def _cast_schema_and_mechanics(
         if suppress_source_costs
         else dict(program.cost_schema or {}) if program else {}
     )
-    for augment in (_with_kicker_cost, _with_bestow_cost):
+    for augment in (
+        _with_kicker_cost,
+        _with_bestow_cost,
+        with_fixed_public_alternative_costs,
+    ):
         schema = augment(
             host,
             card,
@@ -533,8 +539,8 @@ def _initial_options(
             and str(alternative["source_zone"]) != card.zone
         ):
             continue
-        if not host._alternate_cost_condition_met(
-            seat, dict(alternative.get("condition") or {})
+        if not alternative_cost_condition_met(
+            host, seat, card, dict(alternative.get("condition") or {})
         ):
             continue
         requirements = host._mana_vector(alternative.get("requirements"))

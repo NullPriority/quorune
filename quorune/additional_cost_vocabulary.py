@@ -13,6 +13,7 @@ DISCARD_ONE_COST = "discard_one"
 SACRIFICE_ONE_COST = "sacrifice_one"
 EXILE_ONE_FROM_GRAVEYARD_COST = "exile_one_from_graveyard"
 EXILE_ONE_FROM_BATTLEFIELD_COST = "exile_one_from_battlefield"
+EXILE_ONE_FROM_HAND_COST = "exile_one_from_hand"
 RETURN_ONE_TO_OWNER_HAND_COST = "return_one_to_owner_hand"
 
 FIXED_ZONE_CHANGE_COST_OPERATIONS = frozenset(
@@ -21,6 +22,7 @@ FIXED_ZONE_CHANGE_COST_OPERATIONS = frozenset(
         SACRIFICE_ONE_COST,
         EXILE_ONE_FROM_GRAVEYARD_COST,
         EXILE_ONE_FROM_BATTLEFIELD_COST,
+        EXILE_ONE_FROM_HAND_COST,
         RETURN_ONE_TO_OWNER_HAND_COST,
     }
 )
@@ -41,6 +43,7 @@ FIXED_ZONE_CHANGE_COST_CONTRACTS = {
         "exile",
         "exile_cards",
     ),
+    EXILE_ONE_FROM_HAND_COST: ("hand", "exile", "exile_cards"),
     RETURN_ONE_TO_OWNER_HAND_COST: (
         "battlefield",
         "hand",
@@ -54,6 +57,7 @@ __all__ = [
     "DISCARD_ONE_COST",
     "EXILE_ONE_FROM_BATTLEFIELD_COST",
     "EXILE_ONE_FROM_GRAVEYARD_COST",
+    "EXILE_ONE_FROM_HAND_COST",
     "FIXED_ZONE_CHANGE_COST_OPERATIONS",
     "FIXED_ZONE_CHANGE_COST_CONTRACTS",
     "FIXED_LIFE_PAYMENT_COST_KIND",

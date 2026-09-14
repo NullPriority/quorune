@@ -750,6 +750,33 @@
       "status": "trusted"
     },
     {
+      "id": "casting.alternative_cost.fixed_public",
+      "version": 1,
+      "official_rules": ["118.9", "118.9a", "118.9b", "118.9c", "118.9d", "601.2b", "601.2f", "601.2h", "702.76a", "702.117a", "702.137a", "702.173a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Offer and commit one source-spanned fixed public alternative cost through the canonical casting total, current-ability, nonmana-payment, turn-history, and rollback owners.",
+        "inputs": ["one complete-card-admitted physical source", "one fixed ordinary-mana plain, Spectacle, Surge, Prowl, or Freerunning cost or one fixed life or zone-change plain cost", "one closed current-turn or public battlefield condition", "one selected server-authored cost option", "canonical current mana, life, object, type, and history state"],
+        "outputs": ["one currently legal alternative-cost offer alongside the normal cost", "commander tax, cost increases, and reductions applied to the chosen alternative", "one atomic fixed life or selected zone-change payment when present", "offer and commit condition parity", "current-ability revalidation, rollback, private cost projection, and exact replay"],
+        "exclusions": ["Trap and every condition outside fixed turn, controlled basic-land type, prior self spell cast, opponent life loss, or qualifying combat damage", "tap, reveal, opponent-action, library-move, counter, variable, random, repeatable, or multiple nonmana payments", "hybrid, Phyrexian, snow, X, cost-setting, and result-changing alternatives", "teammate Surge and shared-team games", "additional, optional, lifecycle, payment-mechanic, repeated, copied, granted, text-changed, or independently unsupported sibling costs", "off-battlefield type or ability changes outside current component applicability", "partial cards, tokens, spell copies, and inactive faces"]
+      },
+      "dependencies": ["casting.additional_cost.fixed_life_payment", "casting.additional_cost.fixed_sacrifice", "casting.additional_cost.zone_change.fixed_discard", "casting.additional_cost.zone_change.fixed_exile", "casting.additional_cost.zone_change.fixed_return_to_owner_hand"],
+      "implementation_components": ["quorune.public_alternative_costs.FixedPublicAlternativeCostSpec", "quorune.public_alternative_costs.fixed_public_alternative_condition_met", "quorune.compiler.fixed_public_alternative_costs.compile_fixed_public_alternative_cost", "quorune.compiler.public_alternative_cost_nodes.fixed_public_alternative_cost_keyword_node", "quorune.compiler.public_alternative_cost_nodes.fixed_public_alternative_cost_static_node", "quorune.semantic_runtime.public_alternative_costs.FixedPublicAlternativeCostHandler", "quorune.compiled_public_alternative_costs.compiled_fixed_public_alternative_cost_specs", "quorune.rules.casting.alternative_costs.with_fixed_public_alternative_costs", "quorune.rules.casting.costs.build_cast_cost_options", "quorune.rules.casting.commit.commit_cast", "quorune.life_state.apply_life_changes", "quorune.damage.commit_prepared_damage_batch", "CommanderEngine._effective_static_component_keys"],
+      "positive_tests": ["test_fixed_public_alternative_costs_compile_closed_plain_and_keyword_grammar", "test_fixed_alternative_costs_offer_commit_tax_and_total_costs"],
+      "negative_tests": ["test_fixed_public_alternative_costs_reject_open_costs_conditions_and_composition", "test_partial_removed_and_stale_alternative_costs_fail_closed"],
+      "interaction_tests": ["test_spectacle_surge_prowl_and_freerunning_use_authoritative_history", "test_history_conditions_follow_life_damage_and_cast_commits", "test_nonmana_alternative_costs_are_atomic_and_revalidated"],
+      "multiplayer_tests": ["test_four_player_alternative_cost_projection_save_load_and_replay"],
+      "privacy_tests": ["test_nonmana_alternative_costs_are_atomic_and_revalidated", "test_four_player_alternative_cost_projection_save_load_and_replay"],
+      "replay_tests": ["test_four_player_alternative_cost_projection_save_load_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking any fixed life, sacrifice, discard, exile, or return payment dependency removes exact admission for the corresponding alternative while fixed-mana alternatives retain their independent closed path.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused compiler, descriptor, history-condition, complete-card, current-ability, offer/commit, source-exclusion, and payment mutations are rejected by exact behavioral witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "casting.cost.modifier.fixed_query",
       "version": 2,
       "official_rules": ["601.2f", "601.2h"],

@@ -188,6 +188,15 @@ revalidates the descriptor before payment. The selected cost records one typed
 paid-Kicker spell fact that zone replacement and normalized entry events capture
 before CR 400.7 reset.
 
+`casting.alternative-cost.fixed-public.v1` validates one source-spanned closed
+alternative-cost descriptor and requires complete-card admission. The casting
+owner alone converts it into a cost option and revalidates its current ability,
+public eligibility, fixed mana vector, and at most one typed nonmana payment at
+commit. Freerunning, Prowl, Spectacle, and Surge consume canonical turn-history
+events; plain forms may consume the active turn or a current controlled
+basic-land subtype. The handler creates no casting-legality, payment, history,
+zone-transition, or runtime Oracle-text authority of its own.
+
 `replacement.zone.kicked-entry.v1` consumes that immutable fact for one closed
 mandatory self-replacement. It creates a nested +1/+1 counter event and an
 optional affected-object Flying, First Strike, Haste, or Trample grant, then

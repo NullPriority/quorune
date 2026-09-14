@@ -224,6 +224,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.trigger.storm",
                 "ability.trigger.training",
                 "ability.trigger.ward",
+                "casting.alternative-cost.fixed-public",
                 "casting.bestow.fixed_mana",
                 "casting.cost.modifier.fixed_query",
                 "casting.cost.modifier.self_public",

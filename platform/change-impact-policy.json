@@ -369,6 +369,40 @@
       ]
     },
     {
+      "id": "fixed-public-alternative-cost-contract",
+      "patterns": [
+        "mechanics/contracts/freerunning.json",
+        "mechanics/contracts/prowl.json",
+        "mechanics/contracts/spectacle.json",
+        "mechanics/contracts/surge.json",
+        "quorune/additional_cost_vocabulary.py",
+        "quorune/compiled_public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/compiler/public_alternative_cost_nodes.py",
+        "quorune/damage.py",
+        "quorune/damage_turn_history.py",
+        "quorune/life_state.py",
+        "quorune/model.py",
+        "quorune/public_alternative_costs.py",
+        "quorune/rules/casting/alternative_costs.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/semantic_runtime/public_alternative_costs.py",
+        "tests/fixtures/fixed-public-alternative-costs.json"
+      ],
+      "test_modules": [
+        "test_capability_evidence",
+        "test_card_program_trust",
+        "test_casting_activation_proposal_equivalence",
+        "test_fixed_public_alternative_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_life_state",
+        "test_rules_scheduler",
+        "test_turn_history_rules"
+      ]
+    },
+    {
       "id": "fixed-public-numeric-damage-target-contract",
       "patterns": [
         "quorune/compiler/direct_target.py",

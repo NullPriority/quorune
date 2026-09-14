@@ -12,6 +12,10 @@ from ...compiled_cast_lifecycles import (
     compiled_fixed_cast_lifecycle_spec,
     compiled_fixed_cast_lifecycle_specs,
 )
+from .alternative_costs import (
+    alternative_cost_condition_met,
+    with_fixed_public_alternative_costs,
+)
 
 
 class FixedCastLifecycleCostHost(Protocol):
