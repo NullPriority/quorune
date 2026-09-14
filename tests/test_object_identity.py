@@ -247,6 +247,7 @@ class ObjectIdentityAndTokenLifecycleTests(unittest.TestCase):
             key="test:incarnation-target",
             label="Destroy target artifact",
             oracle_id=source.oracle_id,
+            ability_id="test:incarnation-target",
             effects=[{"op": "destroy", "card": "$target.0"}],
             destination="graveyard",
             target_schema={

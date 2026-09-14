@@ -30,6 +30,7 @@ from .damage_values import (
     DamageSourceSnapshot,
 )
 from .damage_source import represented_toxic_value
+from .damage_turn_history import record_damage_turn_history
 from .deathtouch import DeathtouchError, deathtouch_damage_result_applies
 from .commander import CommanderIdentityError, commander_damage_key
 from .combat_damage_events import (
@@ -1398,19 +1399,7 @@ def commit_prepared_damage_batch(
         received[commander_key] = received.get(commander_key, 0) + amount
         changed_players.append(target)
     for final in history_events:
-        host._record_turn_history(
-            (
-                "player_damaged"
-                if final.target_kind == "player"
-                else "permanent_damaged"
-            ),
-            actor=final.source_controller,
-            object_incarnation=final.source_logical_object_id,
-            target=final.target,
-            target_kind=final.target_kind,
-            target_object_incarnation=final.target_logical_object_id,
-            amount=final.dealt_amount,
-        )
+        record_damage_turn_history(host, final)
 
     gains = [
         DamageLifeGain(

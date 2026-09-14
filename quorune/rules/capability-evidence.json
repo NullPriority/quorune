@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a2e140c8c53e1d0e859d64dfe8633b2819882cb9b799c844d633ed2bbe9bf531",
-  "declaration_source_fingerprint": "4778fd516e948817b27f2e8ac38f28caa406bf77d3b454471df96c3946f9f964",
+  "registry_fingerprint": "8e60a7ccfbc92bb90c166829313c8366022fe61c2c3a0626606e392b71bc3483",
+  "declaration_source_fingerprint": "62bc5b7bb6a46821a056c480d7b83204751ff3680775353591de9ea9e2ed9149",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -7581,6 +7581,281 @@
         "commander_review"
       ],
       "applicability_note": "Replay the represented return payment to the identical authoritative hash."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostConditionTests.test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinguish combat source types, commander designation, prior self spell casts, and opponent life loss through the authoritative bounded turn journal."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostRuntimeTests.test_fixed_alternative_costs_offer_commit_tax_and_total_costs",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply commander tax and the ordinary total-cost pipeline to the selected fixed alternative while preserving offer and commit parity."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostRuntimeTests.test_history_conditions_follow_life_damage_and_cast_commits",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Record opponent life loss and combat source type or commander facts through the canonical life and damage commits, then re-evaluate the same cast conditions."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostRuntimeTests.test_nonmana_alternative_costs_are_atomic_and_revalidated",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude the source, expose only current private payment candidates, and roll back stale or insufficient zone-change payments before stack commitment."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostRuntimeTests.test_four_player_alternative_cost_projection_save_load_and_replay",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the acting seat's private nonmana choices without leaking hand identities and preserve the cast across checkpoint and exact replay."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostCompilerTests.test_fixed_public_alternative_cost_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the keyword production or block the shared capability and require exact admission to disappear."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostCompilerTests.test_fixed_public_alternative_costs_reject_open_costs_conditions_and_composition",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep variable, complex, tap, Trap, multiple-cost, and sibling-cost alternatives outside the exact grammar."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostRuntimeTests.test_partial_removed_and_stale_alternative_costs_fail_closed",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Withhold partial-card and removed-ability alternatives and reject an offer whose condition or physical source changed before commit."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostCompilerTests.test_fixed_public_alternative_costs_compile_closed_plain_and_keyword_grammar",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed plain and keyword alternatives to one source-spanned descriptor whose total cost remains under the canonical casting owner."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostRuntimeTests.test_four_player_alternative_cost_projection_save_load_and_replay",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep alternative-cost payment candidates principal-scoped while exposing only public stack and paid-zone results."
+    },
+    {
+      "capability_id": "casting.alternative_cost.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostRuntimeTests.test_four_player_alternative_cost_projection_save_load_and_replay",
+      "official_rule_ids": [
+        "118.9",
+        "118.9a",
+        "118.9b",
+        "118.9c",
+        "118.9d",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.76a",
+        "702.117a",
+        "702.137a",
+        "702.173a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the selected alternative option, private object payment, mana total, stack placement, and resulting authoritative hash exactly."
     },
     {
       "capability_id": "casting.bestow.fixed_mana",
@@ -62178,5 +62453,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "5e19be24a47dfef9630adcee9850b3fa0d41fcef7d6eaeb4350d7f57df2c9678"
+  "fingerprint": "899efcae50b013265c2ad8de7089c8797b2efb941bd34c26255d92922e0b26b4"
 }

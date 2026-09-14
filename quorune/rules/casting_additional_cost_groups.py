@@ -11,6 +11,7 @@ from ..additional_cost_vocabulary import (
     DISCARD_ONE_COST,
     EXILE_ONE_FROM_BATTLEFIELD_COST,
     EXILE_ONE_FROM_GRAVEYARD_COST,
+    EXILE_ONE_FROM_HAND_COST,
     FIXED_LIFE_PAYMENT_COST_KIND,
     FIXED_MANA_PAYMENT_COST_KIND,
     RETURN_ONE_TO_OWNER_HAND_COST,
@@ -269,6 +270,9 @@ def fixed_zone_change_additional_cost_capability(
         EXILE_ONE_FROM_BATTLEFIELD_COST: (
             "casting.additional_cost.zone_change.fixed_exile"
         ),
+        EXILE_ONE_FROM_HAND_COST: (
+            "casting.additional_cost.zone_change.fixed_exile"
+        ),
         RETURN_ONE_TO_OWNER_HAND_COST: (
             "casting.additional_cost.zone_change.fixed_return_to_owner_hand"
         ),
@@ -346,6 +350,7 @@ def fixed_additional_cost_option_label(
         SACRIFICE_ONE_COST: "Sacrifice one matching permanent",
         EXILE_ONE_FROM_GRAVEYARD_COST: "Exile one matching graveyard card",
         EXILE_ONE_FROM_BATTLEFIELD_COST: "Exile one matching permanent",
+        EXILE_ONE_FROM_HAND_COST: "Exile one matching hand card",
         RETURN_ONE_TO_OWNER_HAND_COST: (
             "Return one matching permanent to its owner's hand"
         ),

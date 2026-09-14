@@ -10,6 +10,9 @@ from .declaration_nodes import (
 from .intrinsic_counter_nodes import intrinsic_counter_prohibition_node
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .kicker_nodes import fixed_kicked_entry_node
+from .public_alternative_cost_nodes import (
+    fixed_public_alternative_cost_static_node,
+)
 from .static_runtime_nodes import runtime_handler_node, static_runtime_node
 
 
@@ -51,6 +54,17 @@ def closed_static_or_replacement_node(
     )
     if kicked_entry is not None:
         return kicked_entry
+    alternative_cost = fixed_public_alternative_cost_static_node(
+        node_id=node_id,
+        line=line,
+        material_line=material_line,
+        span=span,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        residuals=residuals,
+    )
+    if alternative_cost is not None:
+        return alternative_cost
     declaration_grant = fixed_static_declaration_grant_handler(
         material_line,
         source_name=source_name,

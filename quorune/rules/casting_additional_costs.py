@@ -10,6 +10,7 @@ from ..additional_cost_vocabulary import (
     DISCARD_ONE_COST,
     EXILE_ONE_FROM_BATTLEFIELD_COST,
     EXILE_ONE_FROM_GRAVEYARD_COST,
+    EXILE_ONE_FROM_HAND_COST,
     FIXED_ZONE_CHANGE_COST_CONTRACTS,
     FIXED_ZONE_CHANGE_COST_OPERATIONS,
     RETURN_ONE_TO_OWNER_HAND_COST,
@@ -424,6 +425,7 @@ class FixedZoneChangeAdditionalCost:
             SACRIFICE_ONE_COST: "sacrifice",
             EXILE_ONE_FROM_GRAVEYARD_COST: "exile",
             EXILE_ONE_FROM_BATTLEFIELD_COST: "exile",
+            EXILE_ONE_FROM_HAND_COST: "exile",
             RETURN_ONE_TO_OWNER_HAND_COST: "return",
         }[self.operation]
 

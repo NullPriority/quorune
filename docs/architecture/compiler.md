@@ -943,6 +943,19 @@ next-upkeep optional cast through the existing one-shot exile owner. A
 countered initial spell and an exile card that left and returned do not
 Rebound.
 
+The separate fixed public alternative-cost owner lowers complete-card-admitted
+plain “rather than pay” declarations and fixed ordinary-mana Freerunning,
+Prowl, Spectacle, and Surge. Plain declarations may contain one fixed mana or
+life payment, one typed discard, sacrifice, hand-exile, or battlefield return,
+or the reviewed mana-plus-single-zone-change forms. Eligibility reads only the
+canonical active turn, controlled basic-land characteristics, spell-cast
+history, life-loss history, or combat-damage source snapshot. The resulting
+option enters the existing cast proposal, total-cost, atomic payment,
+commander-tax, current-ability, and replay owners. Trap, private or arbitrary
+conditions, team-specific history, tap/reveal/opponent/library/counter/random
+payments, variable or complex mana, multiple nonmana payments, and sibling
+additional, lifecycle, or alternative costs remain residual.
+
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
 engine does not yet evaluate exact ability additions or removals outside the

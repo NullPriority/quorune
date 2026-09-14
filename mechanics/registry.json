@@ -1,5 +1,5 @@
 {
-  "contract_count": 130,
+  "contract_count": 134,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -350,6 +350,12 @@
       "version": 1
     },
     {
+      "mechanic_id": "freerunning",
+      "path": "mechanics/contracts/freerunning.json",
+      "sha256": "dea438c87ba644d911564da047003cbf526f4622f087cf37407a4cd497a6bf73",
+      "version": 1
+    },
+    {
       "mechanic_id": "goad",
       "path": "mechanics/contracts/goad.json",
       "sha256": "3de4584497a92f47b3f6a79942ca34ceb25c0c94965cdca272656a4f9778b3c4",
@@ -578,6 +584,12 @@
       "version": 1
     },
     {
+      "mechanic_id": "prowl",
+      "path": "mechanics/contracts/prowl.json",
+      "sha256": "b4cb2195b1bcd34046efb74cbfe54ab372fbcd62da54434891ea67e08029094b",
+      "version": 1
+    },
+    {
       "mechanic_id": "reach",
       "path": "mechanics/contracts/reach.json",
       "sha256": "7bb248d70a0d63933de44914bf22768d389aebafbc35925251745d20b36bac86",
@@ -656,6 +668,12 @@
       "version": 1
     },
     {
+      "mechanic_id": "spectacle",
+      "path": "mechanics/contracts/spectacle.json",
+      "sha256": "5ce05f41fa7cea1729dced8d60cb51fe10afe6a181000a8322f7f6490cec22a8",
+      "version": 1
+    },
+    {
       "mechanic_id": "daybound-and-nightbound",
       "path": "mechanics/contracts/spell-history-transformations.json",
       "sha256": "63ff4cc2763dcf2ae5c5004a4a515713f404674fcb3c49e93b849ec24c30c9c4",
@@ -695,6 +713,12 @@
       "mechanic_id": "sunburst",
       "path": "mechanics/contracts/sunburst.json",
       "sha256": "2286de9a5b1e45bf89bec6dbd49400ba244c0fd0534f216ba2a3144a102bda3f",
+      "version": 1
+    },
+    {
+      "mechanic_id": "surge",
+      "path": "mechanics/contracts/surge.json",
+      "sha256": "d0180d5d51452b01396886a87dc15abbc90c97e1c1135ba76b0e50b807eec420",
       "version": 1
     },
     {
@@ -2750,19 +2774,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/freerunning.json",
+      "contract_sha256": "dea438c87ba644d911564da047003cbf526f4622f087cf37407a4cd497a6bf73",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.public_alternative_costs.FixedPublicAlternativeCostSpec, quorune.rules.casting.alternative_costs, quorune.rules.casting.costs, quorune.damage, and quorune.turn_history",
+      "implementation_version": "typed-fixed-public-alternative-cost-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unrepresented or cyclic damage-source characteristic changes",
+        "variable, hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, repeated, and incomplete-card forms",
+        "independently unsupported spell bodies"
+      ],
       "mechanic_id": "freerunning",
       "official_name": "Freerunning",
       "rule_references": [
         "702.173"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_fixed_public_alternative_costs_compile_closed_plain_and_keyword_grammar",
+        "test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",
+        "test_history_conditions_follow_life_damage_and_cast_commits",
+        "test_partial_removed_and_stale_alternative_costs_fail_closed",
+        "test_four_player_alternative_cost_projection_save_load_and_replay"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -4218,19 +4256,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/prowl.json",
+      "contract_sha256": "b4cb2195b1bcd34046efb74cbfe54ab372fbcd62da54434891ea67e08029094b",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.public_alternative_costs.FixedPublicAlternativeCostSpec, quorune.rules.casting.alternative_costs, quorune.rules.casting.costs, quorune.damage, and quorune.turn_history",
+      "implementation_version": "typed-fixed-public-alternative-cost-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unrepresented or cyclic source and spell characteristic changes",
+        "variable, hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, repeated, and incomplete-card forms",
+        "independently unsupported spell bodies"
+      ],
       "mechanic_id": "prowl",
       "official_name": "Prowl",
       "rule_references": [
         "702.76"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_fixed_public_alternative_costs_compile_closed_plain_and_keyword_grammar",
+        "test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",
+        "test_history_conditions_follow_life_damage_and_cast_commits",
+        "test_partial_removed_and_stale_alternative_costs_fail_closed",
+        "test_four_player_alternative_cost_projection_save_load_and_replay"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -4745,19 +4797,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/spectacle.json",
+      "contract_sha256": "5ce05f41fa7cea1729dced8d60cb51fe10afe6a181000a8322f7f6490cec22a8",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.public_alternative_costs.FixedPublicAlternativeCostSpec, quorune.rules.casting.alternative_costs, quorune.rules.casting.costs, and quorune.life_state",
+      "implementation_version": "typed-fixed-public-alternative-cost-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "variable, hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, repeated, and incomplete-card forms",
+        "team and result-changing composition",
+        "independently unsupported spell bodies"
+      ],
       "mechanic_id": "spectacle",
       "official_name": "Spectacle",
       "rule_references": [
         "702.137"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_fixed_public_alternative_costs_compile_closed_plain_and_keyword_grammar",
+        "test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",
+        "test_history_conditions_follow_life_damage_and_cast_commits",
+        "test_partial_removed_and_stale_alternative_costs_fail_closed",
+        "test_four_player_alternative_cost_projection_save_load_and_replay"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -4975,19 +5041,33 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/surge.json",
+      "contract_sha256": "d0180d5d51452b01396886a87dc15abbc90c97e1c1135ba76b0e50b807eec420",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.public_alternative_costs.FixedPublicAlternativeCostSpec, quorune.rules.casting.alternative_costs, quorune.rules.casting.costs, and quorune.turn_history",
+      "implementation_version": "typed-fixed-public-alternative-cost-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "shared teammate casting history",
+        "variable, hybrid, Phyrexian, snow, nonmana, copied, granted, text-changed, repeated, and incomplete-card forms",
+        "independently unsupported spell bodies"
+      ],
       "mechanic_id": "surge",
       "official_name": "Surge",
       "rule_references": [
         "702.117"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_fixed_public_alternative_costs_compile_closed_plain_and_keyword_grammar",
+        "test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",
+        "test_history_conditions_follow_life_damage_and_cast_commits",
+        "test_partial_removed_and_stale_alternative_costs_fail_closed",
+        "test_four_player_alternative_cost_projection_save_load_and_replay"
+      ],
       "trust_level": "untrusted"
     },
     {

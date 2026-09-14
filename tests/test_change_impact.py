@@ -115,6 +115,31 @@ class ChangeImpactTests(unittest.TestCase):
             plan.matched_rule_ids,
         )
 
+    def test_public_alternative_cost_owners_select_payment_and_history_contracts(self):
+        for owner in (
+            "quorune/compiler/fixed_public_alternative_costs.py",
+            "quorune/public_alternative_costs.py",
+            "quorune/life_state.py",
+            "quorune/damage.py",
+            "quorune/damage_turn_history.py",
+            "quorune/rules/casting/alternative_costs.py",
+        ):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertIn(
+                    "fixed-public-alternative-cost-contract",
+                    plan.matched_rule_ids,
+                )
+                self.assertLessEqual(
+                    {
+                        "test_fixed_public_alternative_costs",
+                        "test_fixed_zone_change_additional_costs",
+                        "test_life_state",
+                        "test_turn_history_rules",
+                    },
+                    set(plan.test_modules),
+                )
+
     def test_trigger_discovery_selects_attached_granted_trigger_consumers(self):
         plan = classify_changes(["quorune/trigger_discovery.py"])
 

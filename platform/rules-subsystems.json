@@ -3178,6 +3178,79 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-creature-power-damage-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-public-alternative-costs",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:discard",
+            "effect_clause:exile",
+            "effect_clause:return",
+            "effect_clause:sacrifice",
+            "effect_clause:unparsed-freerunning-1-b",
+            "effect_clause:unparsed-freerunning-1-u",
+            "effect_clause:unparsed-freerunning-1-w",
+            "effect_clause:unparsed-freerunning-2-g",
+            "effect_clause:unparsed-freerunning-2-r",
+            "effect_clause:unparsed-if-you-control",
+            "effect_clause:unparsed-prowl-1-b",
+            "effect_clause:unparsed-prowl-3-u",
+            "effect_clause:unparsed-prowl-5-u",
+            "effect_clause:unparsed-prowl-u",
+            "effect_clause:unparsed-spectacle-1-b",
+            "effect_clause:unparsed-spectacle-b",
+            "effect_clause:unparsed-spectacle-r",
+            "effect_clause:unparsed-surge-1-r",
+            "effect_clause:unparsed-surge-1-u",
+            "effect_clause:unparsed-surge-2-u",
+            "effect_clause:unparsed-surge-3-u",
+            "effect_clause:unparsed-surge-u-u",
+            "effect_clause:unparsed-you-may-pay",
+            "reference_binding:linked-result-reference",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.alternative_cost.fixed_public",
+            "component:quorune.compiler.fixed_public_alternative_costs.FixedPublicAlternativeCostSpec",
+            "component:quorune.public_alternative_costs.fixed_public_alternative_condition_met",
+            "component:quorune.rules.casting.alternative_costs.augment_fixed_public_alternative_costs",
+            "component:quorune.rules.casting.costs.build_cast_cost_proposal"
+          ],
+          "source_contexts": ["spell", "static"],
+          "normalized_literal_parameters": [
+            "fixed-ordinary-mana-vector",
+            "fixed-positive-life-payment",
+            "fixed-single-zone-change-payment",
+            "freerunning-public-combat-history",
+            "plain-public-cast-condition",
+            "prowl-public-combat-history",
+            "spectacle-public-life-history",
+            "surge-public-spell-history"
+          ],
+          "shared_dependencies": [
+            "casting.additional_cost.fixed_life_payment",
+            "casting.additional_cost.fixed_sacrifice",
+            "casting.additional_cost.zone_change.fixed_discard",
+            "casting.additional_cost.zone_change.fixed_exile",
+            "casting.additional_cost.zone_change.fixed_return_to_owner_hand",
+            "trigger.event.normalized_zone_change",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one complete-card-admitted fixed public alternative cost, including plain rather-than-pay instructions and fixed-mana Freerunning, Prowl, Spectacle, or Surge, through the shared cast offer, total-cost, payment, current-ability, history, and replay owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a measured cross-era cohort spanning ordinary mana replacements, fixed life and typed zone-change payments, and four reusable public-history keyword conditions without creating a second casting-legality or payment path.",
+          "explicit_exclusions": [
+            "Trap and arbitrary or private cast predicates",
+            "additional, optional, lifecycle, result-changing, and sibling alternative-cost composition",
+            "copied, granted, text-changed, inactive-face, and runtime Oracle-derived behavior",
+            "tap, reveal, opponent-selected, library, counter, random, repeatable, variable, multiple-nonmana, hybrid, Phyrexian, snow, and X payments",
+            "team-specific shared Surge history and unsupported team formats",
+            "unrepresented off-battlefield ability removal, type changes, tokens, copies, and independently unsupported sibling abilities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-public-alternative-cost-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3189,14 +3262,43 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v188-creature-power-semantic-operation",
-      "compiler_version": "oracle-ir-v188",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Register the already-emitted fixed creature-power damage operation in the canonical semantic-program validity inventory without claiming a card-support harvest."
+      "transition_id": "oracle-ir-v189-fixed-public-alternative-costs",
+      "compiler_version": "oracle-ir-v189",
+      "bundle_id": "bundle:fixed-public-alternative-costs",
+      "candidate_ids": ["compiler:fixed-public-alternative-costs"],
+      "family_ids": [
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "effect_clause:discard",
+        "effect_clause:exile",
+        "effect_clause:return",
+        "effect_clause:sacrifice",
+        "effect_clause:unparsed-freerunning-1-b",
+        "effect_clause:unparsed-freerunning-1-u",
+        "effect_clause:unparsed-freerunning-1-w",
+        "effect_clause:unparsed-freerunning-2-g",
+        "effect_clause:unparsed-freerunning-2-r",
+        "effect_clause:unparsed-if-you-control",
+        "effect_clause:unparsed-prowl-1-b",
+        "effect_clause:unparsed-prowl-3-u",
+        "effect_clause:unparsed-prowl-5-u",
+        "effect_clause:unparsed-prowl-u",
+        "effect_clause:unparsed-spectacle-1-b",
+        "effect_clause:unparsed-spectacle-b",
+        "effect_clause:unparsed-spectacle-r",
+        "effect_clause:unparsed-surge-1-r",
+        "effect_clause:unparsed-surge-1-u",
+        "effect_clause:unparsed-surge-2-u",
+        "effect_clause:unparsed-surge-3-u",
+        "effect_clause:unparsed-surge-u-u",
+        "effect_clause:unparsed-you-may-pay",
+        "reference_binding:linked-result-reference",
+        "target_or_choice:conditional-effect"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.fixed_public"
+      ],
+      "measurement_id": "measurement:fixed-public-alternative-costs",
+      "non_harvest_reason": null
     },
     "forecast_corrections": [
       {
