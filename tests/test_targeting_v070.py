@@ -227,6 +227,7 @@ class ExactTargetingTests(unittest.TestCase):
             key="test:up-to-two",
             label="Test up to two",
             oracle_id=source.oracle_id,
+            ability_id="test:up-to-two-targets",
             effects=[
                 {"op": "destroy", "card": "$target.0"},
                 {"op": "destroy", "card": "$target.1"},
