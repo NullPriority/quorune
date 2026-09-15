@@ -55,6 +55,72 @@ FIXTURE_PATH = (
 )
 
 
+def runtime_fixture_card(
+    *,
+    oracle_id: str,
+    name: str,
+    mana_cost: str,
+    mana_value: float,
+    type_line: str,
+    oracle_text: str,
+    power: str | None = None,
+    toughness: str | None = None,
+) -> dict:
+    return {
+        "oracle_id": oracle_id,
+        "name": name,
+        "mana_cost": mana_cost,
+        "cmc": mana_value,
+        "type_line": type_line,
+        "oracle_text": oracle_text,
+        "power": power,
+        "toughness": toughness,
+        "loyalty": None,
+        "defense": None,
+        "colors": ["G"],
+        "color_identity": ["G"],
+        "keywords": [],
+        "produced_mana": [],
+        "layout": "normal",
+        "released_at": "2026-01-01",
+        "legalities": {
+            "commander": "legal",
+            "duel": "legal",
+            "legacy": "legal",
+            "vintage": "legal",
+        },
+        "faces": [],
+    }
+
+
+RUNTIME_CREATURE_ONLY_BITE_CARDS = (
+    runtime_fixture_card(
+        oracle_id="00000000-0000-4000-8000-000000000506",
+        name="Targeted Creature Bite",
+        mana_cost="{1}{G}",
+        mana_value=2.0,
+        type_line="Sorcery",
+        oracle_text=(
+            "Target creature you control deals damage equal to its power to "
+            "target creature an opponent controls."
+        ),
+    ),
+    runtime_fixture_card(
+        oracle_id="00000000-0000-4000-8000-000000000507",
+        name="Source Creature Bite",
+        mana_cost="{2}{G}",
+        mana_value=3.0,
+        type_line="Creature — Beast",
+        oracle_text=(
+            "{T}: This creature deals damage equal to its power to target "
+            "creature an opponent controls."
+        ),
+        power="3",
+        toughness="3",
+    ),
+)
+
+
 def trusted_registry(value: dict | None = None) -> CapabilityRegistry:
     registry = CapabilityRegistry(
         value or json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
@@ -316,11 +382,26 @@ class FixedCreaturePowerDamageRuntimeTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.temporary = tempfile.TemporaryDirectory()
         database = Path(cls.temporary.name) / "fixed-creature-power-damage.sqlite3"
+        runtime_fixture = Path(cls.temporary.name) / "creature-only-bite.json"
+        runtime_fixture.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "fixture_kind": "public_exact-list_card_data",
+                    "source": "Runtime-only creature bite regression fixtures",
+                    "cards": RUNTIME_CREATURE_ONLY_BITE_CARDS,
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+            ),
+            encoding="utf-8",
+        )
         build_fixture_database(
             [
                 ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
                 ROOT / "tests" / "fixtures" / "damage-replacement-cards.json",
                 FIXTURE_PATH,
+                runtime_fixture,
             ],
             database,
         )

@@ -3421,18 +3421,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v192-dynamic-self-entry-counter-quantities",
-      "compiler_version": "oracle-ir-v192",
-      "bundle_id": "bundle:dynamic-self-entry-counter-quantities",
-      "candidate_ids": ["compiler:dynamic-self-entry-counter-quantities"],
-      "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
-      ],
-      "capability_ids": [
-        "counter.producer.dynamic_self_entry"
-      ],
-      "measurement_id": "measurement:dynamic-self-entry-counter-quantities",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v193-creature-only-bite-domain",
+      "compiler_version": "oracle-ir-v193",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Accept the already-compiled creature-only one-way power-damage domain at runtime without widening compiler grammar or claiming a card-support harvest."
     },
     "forecast_corrections": [
       {
