@@ -39,7 +39,9 @@ from quorune.work_selection_bundles import (
     WorkSelectionBundleError,
 )
 from quorune.work_selection_evidence import (
+    _validate_non_harvest_history,
     _validate_transition_measurements,
+    non_harvest_metrics_are_conservative,
     validate_harvest_forecast_correction,
 )
 from quorune.work_selection_common import transition_measurement_matches_policy
@@ -1675,6 +1677,10 @@ class RulesSchedulerTests(unittest.TestCase):
             conservative_entry,
             _validate_non_harvest_content_entry(conservative_entry),
         )
+        self.assertTrue(
+            non_harvest_metrics_are_conservative(conservative_entry)
+        )
+        _validate_non_harvest_history([conservative_entry])
 
     def test_non_harvest_transition_chains_across_nonsemantic_content(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]

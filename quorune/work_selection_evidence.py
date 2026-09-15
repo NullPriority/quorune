@@ -122,6 +122,18 @@ _NON_HARVEST_ENTRY_FIELDS = (
     "non_harvest_reason",
     "outcome_kind",
 }
+_NON_HARVEST_NONPOSITIVE_FIELDS = {
+    "actual_complete_card_gain",
+    "actual_exact_card_gain",
+    "actual_trusted_card_gain",
+    "actual_capability_closed_card_gain",
+    "actual_exact_ability_gain",
+    "actual_material_residual_reduction",
+    "actual_material_oracle_residual_reduction",
+    "actual_material_card_program_residual_reduction",
+    "oracle_exact_ability_node_delta",
+    "executable_trust_transition_delta",
+}
 COHORT_MEASUREMENT_SCHEMA_VERSION = 5
 COHORT_MEASUREMENT_ALGORITHM_VERSION = "frontier-existing-owner-probe-v5"
 _COHORT_DECISIONS = {
@@ -741,23 +753,60 @@ def _validate_history_entries(history: list[Any]) -> None:
             )
 
 
+def non_harvest_metrics_are_conservative(
+    metrics: Mapping[str, Any],
+) -> bool:
+    """Accept correctness demotions while rejecting support or failure gains."""
+
+    if any(
+        type(metrics.get(field)) is not int or metrics[field] > 0
+        for field in _NON_HARVEST_NONPOSITIVE_FIELDS
+    ):
+        return False
+    if type(metrics.get("card_program_ability_record_delta")) is not int:
+        return False
+    if any(
+        metrics.get(field) != 0
+        for field in ("failed_card_delta", "hard_construction_failure_delta")
+    ):
+        return False
+    oracle_status = metrics.get("oracle_status_delta")
+    program_status = metrics.get("card_program_status_delta")
+    if (
+        not isinstance(oracle_status, Mapping)
+        or any(type(value) is not int for value in oracle_status.values())
+        or sum(oracle_status.values()) != 0
+        or oracle_status.get("exact", 0) > 0
+        or not isinstance(program_status, Mapping)
+        or any(type(value) is not int for value in program_status.values())
+        or sum(program_status.values()) != 0
+        or program_status.get("trusted", 0) > 0
+    ):
+        return False
+    transitions = metrics.get("executable_trust_transitions")
+    carriers = metrics.get("frontier_ability_carrier_delta")
+    return bool(
+        isinstance(transitions, Mapping)
+        and transitions.get("promoted") == 0
+        and type(transitions.get("regressed")) is int
+        and transitions["regressed"] >= 0
+        and isinstance(transitions.get("by_transition"), Mapping)
+        and all(
+            isinstance(key, str)
+            and type(value) is int
+            and value > 0
+            for key, value in transitions["by_transition"].items()
+        )
+        and isinstance(carriers, Mapping)
+        and carriers.get("additions") == 0
+        and carriers.get("removals") == 0
+        and type(carriers.get("reclassifications")) is int
+        and carriers["reclassifications"] >= 0
+    )
+
+
 def _validate_non_harvest_history(rows: list[Any]) -> None:
     transition_ids: set[str] = set()
-    zero_fields = {
-        "actual_complete_card_gain",
-        "actual_exact_card_gain",
-        "actual_trusted_card_gain",
-        "actual_capability_closed_card_gain",
-        "actual_exact_ability_gain",
-        "actual_material_residual_reduction",
-        "actual_material_oracle_residual_reduction",
-        "actual_material_card_program_residual_reduction",
-        "failed_card_delta",
-        "hard_construction_failure_delta",
-        "oracle_exact_ability_node_delta",
-        "card_program_ability_record_delta",
-        "executable_trust_transition_delta",
-    }
     for index, raw in enumerate(rows):
         row = mapping(raw, f"non_harvest_transitions[{index}]")
         unsigned = dict(row)
@@ -765,8 +814,6 @@ def _validate_non_harvest_history(rows: list[Any]) -> None:
         transition_id = str(row.get("transition_id") or "")
         base = row.get("base_receipt")
         head = row.get("head_receipt")
-        transitions = row.get("executable_trust_transitions")
-        carriers = row.get("frontier_ability_carrier_delta")
         reason = row.get("non_harvest_reason")
         if (
             set(row) != _NON_HARVEST_ENTRY_FIELDS
@@ -790,17 +837,7 @@ def _validate_non_harvest_history(rows: list[Any]) -> None:
             or not str(head.get("content_fingerprint") or "")
             or base.get("content_fingerprint")
             == head.get("content_fingerprint")
-            or any(row.get(field) != 0 for field in zero_fields)
-            or any(row.get("oracle_status_delta", {}).values())
-            or any(row.get("card_program_status_delta", {}).values())
-            or not isinstance(transitions, Mapping)
-            or transitions.get("promoted") != 0
-            or transitions.get("regressed") != 0
-            or transitions.get("by_transition") != {}
-            or not isinstance(carriers, Mapping)
-            or carriers.get("additions") != 0
-            or carriers.get("removals") != 0
-            or carriers.get("reclassifications") != 0
+            or not non_harvest_metrics_are_conservative(row)
         ):
             raise WorkSelectionError(
                 "Non-harvest semantic transition history is invalid"

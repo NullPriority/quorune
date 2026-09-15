@@ -14,6 +14,7 @@ from quorune.work_selection_common import (
     WorkSelectionError,
 )
 from quorune.work_selection_evidence import (
+    non_harvest_metrics_are_conservative,
     validate_harvest_forecast_correction,
 )
 
@@ -1155,82 +1156,6 @@ def _content_entry(
     return entry
 
 
-_NON_HARVEST_METRIC_FIELDS = (
-    "actual_complete_card_gain",
-    "actual_exact_card_gain",
-    "actual_trusted_card_gain",
-    "actual_capability_closed_card_gain",
-    "actual_exact_ability_gain",
-    "actual_material_residual_reduction",
-    "actual_material_oracle_residual_reduction",
-    "actual_material_card_program_residual_reduction",
-    "failed_card_delta",
-    "hard_construction_failure_delta",
-    "oracle_exact_ability_node_delta",
-    "card_program_ability_record_delta",
-    "executable_trust_transition_delta",
-)
-
-_NON_HARVEST_NONPOSITIVE_FIELDS = tuple(
-    field
-    for field in _NON_HARVEST_METRIC_FIELDS
-    if field
-    not in {
-        "card_program_ability_record_delta",
-        "failed_card_delta",
-        "hard_construction_failure_delta",
-    }
-)
-
-
-def _non_harvest_metrics_are_conservative(metrics: Mapping[str, Any]) -> bool:
-    if any(
-        type(metrics.get(field)) is not int or metrics[field] > 0
-        for field in _NON_HARVEST_NONPOSITIVE_FIELDS
-    ):
-        return False
-    if type(metrics.get("card_program_ability_record_delta")) is not int:
-        return False
-    if any(
-        metrics.get(field) != 0
-        for field in ("failed_card_delta", "hard_construction_failure_delta")
-    ):
-        return False
-    oracle_status = metrics.get("oracle_status_delta")
-    program_status = metrics.get("card_program_status_delta")
-    if (
-        not isinstance(oracle_status, Mapping)
-        or any(type(value) is not int for value in oracle_status.values())
-        or sum(oracle_status.values()) != 0
-        or oracle_status.get("exact", 0) > 0
-        or not isinstance(program_status, Mapping)
-        or any(type(value) is not int for value in program_status.values())
-        or sum(program_status.values()) != 0
-        or program_status.get("trusted", 0) > 0
-    ):
-        return False
-    transitions = metrics.get("executable_trust_transitions")
-    carriers = metrics.get("frontier_ability_carrier_delta")
-    return bool(
-        isinstance(transitions, Mapping)
-        and transitions.get("promoted") == 0
-        and type(transitions.get("regressed")) is int
-        and transitions["regressed"] >= 0
-        and isinstance(transitions.get("by_transition"), Mapping)
-        and all(
-            isinstance(key, str)
-            and type(value) is int
-            and value > 0
-            for key, value in transitions["by_transition"].items()
-        )
-        and isinstance(carriers, Mapping)
-        and carriers.get("additions") == 0
-        and carriers.get("removals") == 0
-        and type(carriers.get("reclassifications")) is int
-        and carriers["reclassifications"] >= 0
-    )
-
-
 def _non_harvest_content_entry(
     declaration: Mapping[str, Any],
     *,
@@ -1247,7 +1172,7 @@ def _non_harvest_content_entry(
             "Non-harvest semantic transition identity is inconsistent"
         )
     metrics = _transition_metrics(base, head)
-    if not _non_harvest_metrics_are_conservative(metrics):
+    if not non_harvest_metrics_are_conservative(metrics):
         raise HarvestOutcomeHistoryError(
             "A non-harvest transition cannot increase card support or failures"
         )
@@ -1279,18 +1204,6 @@ def _validate_non_harvest_content_entry(entry: Any) -> dict[str, Any]:
     fingerprint = candidate.pop("entry_fingerprint", None)
     base = candidate.get("base_receipt")
     head = candidate.get("head_receipt")
-    metrics = {
-        key: value
-        for key, value in candidate.items()
-        if key in _NON_HARVEST_METRIC_FIELDS
-        or key
-        in {
-            "oracle_status_delta",
-            "card_program_status_delta",
-            "executable_trust_transitions",
-            "frontier_ability_carrier_delta",
-        }
-    }
     if (
         fingerprint != _hash(candidate)
         or candidate.get("receipt_identity_kind") != "semantic_content"
@@ -1314,7 +1227,7 @@ def _validate_non_harvest_content_entry(entry: Any) -> dict[str, Any]:
         or head.get("content_fingerprint")
         != _receipt_content_fingerprint(head)
         or base.get("content_fingerprint") == head.get("content_fingerprint")
-        or not _non_harvest_metrics_are_conservative(metrics)
+        or not non_harvest_metrics_are_conservative(candidate)
     ):
         raise HarvestOutcomeHistoryError(
             "Content-bound non-harvest transition is malformed"
