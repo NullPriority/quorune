@@ -885,6 +885,12 @@ activation query and object-incarnation usage journal, while casting and
 activation payment share the same canonical mana-spend context. Origin,
 casting-method, color, mana-value, variable, compound-condition, result-rider,
 and delayed-effect restrictions remain source-spanned residuals.
+The parser must consume the complete printed spending-restriction suffix before
+the fixed-output compiler removes it from the mana instruction. Exact historic
+artifact-, creature-, legendary-, and nonartifact-spell wordings retain their
+legacy serialized identities; broader representable spell/ability unions use
+the typed predicate encoding. A recognized prefix cannot discard an origin,
+chosen-quality, casting-method, or result-rider suffix.
 
 Printed `Affinity for` qualities in the closed casting-payment vocabulary lower
 as source-spanned `cast.cost` descriptors containing canonical effective-object

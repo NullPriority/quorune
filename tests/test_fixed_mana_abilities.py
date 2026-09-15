@@ -18,14 +18,22 @@ from quorune.fixed_mana_abilities import (
     compile_fixed_activated_mana_ability,
     fixed_mana_modes_from_effect,
 )
-from quorune.oracle_ir import compile_oracle_card, generated_programs
+from quorune.oracle_ir import (
+    compile_oracle_card,
+    generated_programs,
+    register_generated_programs,
+)
 from quorune.mana_provenance import ManaProvenanceError
 from quorune.mana_restrictions import (
     ability_mana_spend_context,
     mana_restriction_allows,
     spell_mana_spend_context,
 )
-from quorune.record import checkpoint_envelope, replay_record
+from quorune.record import (
+    authoritative_state_hash,
+    checkpoint_envelope,
+    replay_record,
+)
 from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
@@ -207,6 +215,141 @@ class FixedManaModelTests(unittest.TestCase):
 
 
 class FixedManaCompilerTests(unittest.TestCase):
+    def test_legacy_restriction_prefix_requires_complete_suffix(self):
+        unsupported = (
+            (
+                "{T}: Add {G}. Spend this mana only to cast a creature "
+                "spell from your hand."
+            ),
+            (
+                "{T}: Add {U}. Spend this mana only to cast an artifact "
+                "spell from your graveyard."
+            ),
+            (
+                "{T}: Add {G}. Spend this mana only to cast a creature "
+                "spell of the chosen type."
+            ),
+            (
+                "{T}: Add {G}. Spend this mana only to cast a creature "
+                "spell with flashback."
+            ),
+            (
+                "{T}: Add {G}. Spend this mana only to cast a creature "
+                "spell. If this mana is spent on that spell, it gains haste."
+            ),
+        )
+        capabilities = load_default_capability_registry()
+        for text in unsupported:
+            with self.subTest(text=text):
+                ability = parse_activated_abilities(
+                    card_name="Complete Restriction Fixture",
+                    oracle_text=text,
+                )[0]
+                self.assertIsNone(compile_fixed_activated_mana_ability(ability))
+                compiled = compile_oracle_card(
+                    record(text),
+                    capability_registry=capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", compiled.status)
+                self.assertTrue(compiled.material_residuals)
+                self.assertFalse(
+                    any(
+                        node.handlers
+                        for face in compiled.faces
+                        for node in face.nodes
+                    )
+                )
+        stale = parse_activated_abilities(
+            card_name="Stale Restriction Fixture",
+            oracle_text=unsupported[0],
+        )[0]
+        self.assertIsNone(stale.mana_spend_restriction)
+        self.assertIsNone(
+            compile_fixed_activated_mana_ability(
+                replace(
+                    stale,
+                    mana_spend_restriction="creature_spell_only",
+                )
+            )
+        )
+
+    def test_complete_legacy_restrictions_preserve_serialized_identity(self):
+        cases = (
+            (
+                "{T}: Add {G}. Spend this mana only to cast a creature spell.",
+                "creature_spell_only",
+            ),
+            (
+                "{T}: Add {U}. Spend this mana only to cast an artifact spell.",
+                "artifact_spell_only",
+            ),
+            (
+                "{T}: Add {C}. Spend this mana only to cast artifact spells "
+                "or activate abilities of artifacts.",
+                "artifact_spell_or_ability",
+            ),
+            (
+                "{T}: Add {C}. This mana can't be spent to cast "
+                "nonartifact spells.",
+                "nonartifact_spell_prohibited",
+            ),
+            (
+                "{T}: Add {G}. Spend this mana only to cast a legendary "
+                "spell, and that spell can't be countered.",
+                "legendary_spell_uncounterable",
+            ),
+        )
+        for text, expected in cases:
+            with self.subTest(expected=expected):
+                ability = parse_activated_abilities(
+                    card_name="Legacy Restriction Fixture",
+                    oracle_text=text,
+                )[0]
+                self.assertEqual(expected, ability.mana_spend_restriction)
+                spec = compile_fixed_activated_mana_ability(ability)
+                self.assertIsNotNone(spec)
+                assert spec is not None
+                self.assertEqual(expected, spec.spend_restriction)
+                self.assertEqual(
+                    spec,
+                    FixedActivatedManaAbilitySpec.from_dict(spec.to_dict()),
+                )
+
+    def test_shadowed_legacy_prefixes_use_complete_typed_restrictions(self):
+        cases = (
+            (
+                "{T}: Add {U}. Spend this mana only to cast an artifact "
+                "spell or activate an ability.",
+                ability_mana_spend_context("Creature — Wizard"),
+                spell_mana_spend_context("Creature — Wizard"),
+            ),
+            (
+                "{T}: Add {U}. Spend this mana only to cast an artifact "
+                "spell or activate an ability of an artifact source.",
+                ability_mana_spend_context("Artifact Creature — Golem"),
+                ability_mana_spend_context("Creature — Wizard"),
+            ),
+        )
+        for text, admitted, rejected in cases:
+            with self.subTest(text=text):
+                ability = parse_activated_abilities(
+                    card_name="Typed Restriction Fixture",
+                    oracle_text=text,
+                )[0]
+                spec = compile_fixed_activated_mana_ability(ability)
+                self.assertIsNotNone(spec)
+                assert spec is not None and spec.spend_restriction is not None
+                self.assertTrue(
+                    spec.spend_restriction.startswith("mana-restriction-v1|")
+                )
+                self.assertTrue(
+                    mana_restriction_allows(spec.spend_restriction, admitted)
+                )
+                self.assertFalse(
+                    mana_restriction_allows(spec.spend_restriction, rejected)
+                )
+
     def test_fixed_output_compiler_rejects_library_movement_costs_and_effects(self):
         for text in (
             "Mill a card, {T}: Add {C}.",
@@ -916,6 +1059,69 @@ class FixedManaRuntimeTests(unittest.TestCase):
             )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual(0, player.mana_pool["U"])
+
+    def test_unsupported_restriction_suffix_cannot_seed_a_payment(self):
+        session = self.session(60_532)
+        ring, _ability = self._ring(session)
+        engine = session.engine
+        leaky_record = record(
+            "{T}: Add {G}. Spend this mana only to cast a creature spell "
+            "of the chosen type.",
+            name="Unsupported Restriction Source",
+        )
+        registration = register_generated_programs(
+            self.db,
+            engine.semantics,
+            (leaky_record,),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+        )
+        self.assertEqual(0, registration["runtime_handlers_promoted"])
+        ring.oracle_id = leaky_record.oracle_id
+        ring.printed_name = leaky_record.name
+        original_card_record = engine.card_record
+
+        def card_record_for_test(_host, card):
+            if card.oracle_id == leaky_record.oracle_id:
+                return leaky_record
+            return original_card_record(card)
+
+        with mock.patch.object(
+            type(engine),
+            "card_record",
+            autospec=True,
+            side_effect=card_record_for_test,
+        ):
+            self._prepare_priority(session, ring)
+            self.assertFalse(
+                any(
+                    ability.mana_ability
+                    for ability in engine._activated_abilities(ring)
+                )
+            )
+            self.assertNotIn(
+                ring.ref,
+                {
+                    action.get("source")
+                    for action in engine._priority_action_hints("A")["actions"]
+                },
+            )
+            before = authoritative_state_hash(engine.state)
+            rejected = session.act(
+                "pilot:A",
+                {"a": "activate", "source": ring.ref, "ability": "ab1"},
+            )
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+            self.assertFalse(ring.tapped)
+            with self.assertRaises(ManaProvenanceError):
+                engine._apply_mana_spend(
+                    "A",
+                    {"G": 1},
+                    engine._spell_mana_spend_context("Creature — Elf"),
+                )
+            self.assertEqual(before, authoritative_state_hash(engine.state))
 
     def test_once_per_turn_and_land_condition_use_current_source_state(self):
         session = self.session(60532, players=4)

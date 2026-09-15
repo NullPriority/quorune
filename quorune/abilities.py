@@ -28,6 +28,7 @@ from .creature_subtypes import canonical_creature_subtype
 from .fixed_mana_abilities import FixedManaMode
 from .mana_restrictions import (
     canonical_mana_spend_restriction,
+    legacy_mana_spend_restriction_for_tail,
     valid_mana_spend_restriction,
 )
 from .rules.attachment_actions import fixed_equip_ability_spec
@@ -1154,29 +1155,22 @@ def _dynamic_mana_output(effect_text: str) -> str | None:
 
 def _mana_spend_restriction(effect_text: str) -> str | None:
     lower = " ".join(effect_text.casefold().split())
-    if (
-        "spend this mana only to cast artifact spells or activate "
-        "abilities of artifacts"
-    ) in lower:
-        return "artifact_spell_or_ability"
-    if "spend this mana only to cast an artifact spell" in lower:
-        return "artifact_spell_only"
-    if "spend this mana only to cast a creature spell" in lower:
-        return "creature_spell_only"
-    if (
-        "this mana can't be spent to cast nonartifact spells" in lower
-        or "this mana can't be spent to cast a nonartifact spell" in lower
-    ):
-        return "nonartifact_spell_prohibited"
-    if (
-        "spend this mana only to cast a legendary spell" in lower
-        and "that spell can't be countered" in lower
-    ):
-        return "legendary_spell_uncounterable"
     marker = "spend this mana only to "
-    if marker not in lower:
+    prohibited_marker = "this mana can't be spent to "
+    if prohibited_marker in lower:
+        if lower.count(prohibited_marker) != 1 or marker in lower:
+            return None
+        body = lower.rsplit(prohibited_marker, 1)[1].rstrip(".")
+        return legacy_mana_spend_restriction_for_tail(
+            prohibited_marker,
+            body,
+        )
+    if marker not in lower or lower.count(marker) != 1:
         return None
     body = lower.rsplit(marker, 1)[1].rstrip(".")
+    legacy = legacy_mana_spend_restriction_for_tail(marker, body)
+    if legacy is not None:
+        return legacy
     if any(
         unsupported in body
         for unsupported in (
