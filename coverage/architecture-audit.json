@@ -31123,7 +31123,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "dd2715012ccfadc0dc07356dcf5a7b562218376d5a9997b3ee74c39c2e7ce967",
+      "fingerprint": "33e1f07824d171d782a29e1cabe81b5ffae52028aa906384af52ef23bd22ae49",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
