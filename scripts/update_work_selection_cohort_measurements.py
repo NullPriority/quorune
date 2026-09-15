@@ -205,6 +205,27 @@ def _preserved_transition_is_current(
     )
 
 
+def _completed_transition_measurement_is_current(
+    preserved: dict | None,
+    *,
+    oracle_source_sha256: str,
+    probe_id: str,
+    completed_receipt_fingerprints: frozenset[str],
+) -> bool:
+    """Reuse one landed corrected receipt without requiring Git history."""
+
+    if preserved is None:
+        return False
+    measurement = preserved.get("measurement")
+    return bool(
+        isinstance(measurement, dict)
+        and preserved.get("oracle_source_sha256") == oracle_source_sha256
+        and measurement.get("probe_id") == probe_id
+        and preserved.get("receipt_fingerprint")
+        in completed_receipt_fingerprints
+    )
+
+
 def _completed_transition_measurement_receipts(
     transition_id: str,
 ) -> frozenset[str]:
@@ -306,6 +327,31 @@ def _transition_measurements(
         raise ValueError(
             "Semantic transition measurement does not identify its candidate bundle"
         )
+    preserved = _preserved_transition_measurement(
+        transition_id=transition_id,
+        measurement_id=measurement_id,
+    )
+    completed_receipts = _completed_transition_measurement_receipts(
+        transition_id
+    )
+    current_frontier = _decode_frontier(
+        FRONTIER.read_bytes(),
+        label="Current",
+    )
+    current_snapshot = current_frontier.get("card_data_snapshot")
+    current_oracle_source = (
+        str(current_snapshot.get("oracle_source_sha256") or "")
+        if isinstance(current_snapshot, dict)
+        else ""
+    )
+    probe_id = str(bundle.get("measurement_probe_id") or "")
+    if _completed_transition_measurement_is_current(
+        preserved,
+        oracle_source_sha256=current_oracle_source,
+        probe_id=probe_id,
+        completed_receipt_fingerprints=completed_receipts,
+    ):
+        return [preserved]
     frontier = _source_checkpoint_frontier(transition_id)
     fingerprints = {
         bundle_id: bundle_measurement_fingerprint(frontier, bundle)
@@ -316,19 +362,13 @@ def _transition_measurements(
         if isinstance(snapshot, dict)
         else ""
     )
-    preserved = _preserved_transition_measurement(
-        transition_id=transition_id,
-        measurement_id=measurement_id,
-    )
     if _preserved_transition_is_current(
         preserved,
         frontier_fingerprint=str(frontier.get("fingerprint") or ""),
         oracle_source_sha256=oracle_source_sha256,
         cohort_fingerprint=fingerprints[bundle_id],
-        probe_id=str(bundle.get("measurement_probe_id") or ""),
-        completed_receipt_fingerprints=(
-            _completed_transition_measurement_receipts(transition_id)
-        ),
+        probe_id=probe_id,
+        completed_receipt_fingerprints=completed_receipts,
     ):
         return [preserved]
     measured = build_work_selection_cohort_measurements(
