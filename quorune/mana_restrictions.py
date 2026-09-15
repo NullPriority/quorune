@@ -17,6 +17,36 @@ _LEGACY_RESTRICTIONS = frozenset(
         "nonartifact_spell_prohibited",
     }
 )
+_LEGACY_RESTRICTION_TAILS = {
+    (
+        "spend this mana only to",
+        "cast artifact spells or activate abilities of artifacts",
+    ): "artifact_spell_or_ability",
+    (
+        "spend this mana only to",
+        "cast an artifact spell",
+    ): "artifact_spell_only",
+    (
+        "spend this mana only to",
+        "cast a creature spell",
+    ): "creature_spell_only",
+    (
+        "spend this mana only to",
+        "cast a legendary spell, and that spell can't be countered",
+    ): "legendary_spell_uncounterable",
+    (
+        "spend this mana only to",
+        "cast a legendary spell and that spell can't be countered",
+    ): "legendary_spell_uncounterable",
+    (
+        "this mana can't be spent to",
+        "cast nonartifact spells",
+    ): "nonartifact_spell_prohibited",
+    (
+        "this mana can't be spent to",
+        "cast a nonartifact spell",
+    ): "nonartifact_spell_prohibited",
+}
 
 
 def _token(value: str) -> str:
@@ -111,6 +141,19 @@ def valid_mana_spend_restriction(value: object) -> bool:
     )
 
 
+def legacy_mana_spend_restriction_for_tail(
+    marker: str,
+    tail: str,
+) -> str | None:
+    """Recognize only one completely consumed historical restriction tail."""
+
+    normalized = (
+        " ".join(marker.casefold().split()),
+        " ".join(tail.casefold().split()).rstrip("."),
+    )
+    return _LEGACY_RESTRICTION_TAILS.get(normalized)
+
+
 def _context_facts(
     spend_context: str | None,
 ) -> tuple[str | None, frozenset[str], frozenset[str], frozenset[str]]:
@@ -202,6 +245,7 @@ def mana_restriction_allows(
 __all__ = [
     "ability_mana_spend_context",
     "canonical_mana_spend_restriction",
+    "legacy_mana_spend_restriction_for_tail",
     "mana_restriction_allows",
     "spell_mana_spend_context",
     "valid_mana_spend_restriction",

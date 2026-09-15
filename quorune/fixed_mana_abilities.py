@@ -18,7 +18,10 @@ from .activation_condition_model import (
     ActivationConditionKind,
     activation_restriction_spec,
 )
-from .mana_restrictions import valid_mana_spend_restriction
+from .mana_restrictions import (
+    legacy_mana_spend_restriction_for_tail,
+    valid_mana_spend_restriction,
+)
 from .replacement.immutable import FrozenMap, thaw_value
 from .util import normalize_mana_bundle
 
@@ -416,15 +419,22 @@ def _without_spend_restriction(
     effect_text: str,
     restriction: str | None,
 ) -> str | None:
-    marker = next(
-        (value for value in _SPEND_RESTRICTION_MARKERS if value in effect_text),
-        None,
+    markers = tuple(
+        value for value in _SPEND_RESTRICTION_MARKERS if value in effect_text
     )
-    if marker is None:
+    if not markers:
         return effect_text if restriction is None else None
-    if restriction is None:
+    if (
+        len(markers) != 1
+        or effect_text.count(markers[0]) != 1
+        or restriction is None
+    ):
         return None
-    base, _tail = effect_text.split(marker, 1)
+    marker = markers[0]
+    base, tail = effect_text.split(marker, 1)
+    if not restriction.startswith("mana-restriction-v1|"):
+        if legacy_mana_spend_restriction_for_tail(marker, tail) != restriction:
+            return None
     return base.strip()
 
 

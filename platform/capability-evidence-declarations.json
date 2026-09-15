@@ -18499,6 +18499,14 @@
     {
       "capability_id": "mana.activated.restricted_fixed_output",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_unsupported_restriction_suffix_cannot_seed_a_payment",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Withhold activation authority and preserve state when a recognized spending-restriction prefix has an unsupported suffix."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules",
       "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -18531,10 +18539,26 @@
     {
       "capability_id": "mana.activated.restricted_fixed_output",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_legacy_restriction_prefix_requires_complete_suffix",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject origin, chosen-quality, casting-method, and result-rider suffixes even when their prefix matches a legacy restriction."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_restricted_fixed_mana_filters_payment_and_rolls_back",
       "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject disallowed spell and activated-ability payment without consuming any mana or mutating the activation source."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_unsupported_restriction_suffix_cannot_seed_a_payment",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose no mana activation and reject the attempted payment when the complete printed restriction is unsupported."
     },
     {
       "capability_id": "mana.activated.restricted_fixed_output",
@@ -18547,10 +18571,26 @@
     {
       "capability_id": "mana.activated.restricted_fixed_output",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_complete_legacy_restrictions_preserve_serialized_identity",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the exact historical serialized restriction identities for fully consumed legacy wordings."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_constrained_mana_compiles_spend_limit_and_land_conditions",
       "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower one source-spanned fixed-output activation with a canonical public-characteristic spending predicate."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_shadowed_legacy_prefixes_use_complete_typed_restrictions",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Route complete representable spell-or-ability unions through the existing typed restriction encoding instead of truncating them to a legacy prefix."
     },
     {
       "capability_id": "mana.activated.restricted_fixed_output",
