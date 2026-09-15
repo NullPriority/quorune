@@ -995,6 +995,18 @@ with a nonempty payment fact can apply the descriptor. Parameterized or
 qualified wording, Modular—Sunburst linked values, nonkeyword equivalents,
 and ability propagation outside the typed fragment remain material residuals.
 
+The generic self-entry counter compiler separately accepts one mandatory
+source-self sentence whose amount is cast X, distinct mana colors, a bounded
+current-turn attack, spell, death, or opponent-life-loss fact, hand or mana
+payment provenance, or a closed public object count. Query amounts use the
+shared cycle-safe layer-5 `CharacteristicQuantitySpec`; the zone replacement
+snapshot freezes every resolved amount by component before CR 616 ordering.
+Permanent spell copies retain copied X while every cast-only fact remains
+absent, and the shared current-component marker makes layer-6 ability removal
+fail closed without a self-entry-specific ability query.
+Choice, repeated-kicker, unavailable-history, later-layer dynamic, external-
+entrant, and compound forms remain source-spanned residuals.
+
 Two exact controller-wide static permissions lower to selected-face
 `action.permission` descriptors: playing lands from the controller's own
 graveyard and activating abilities of controlled creatures as though they had

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d408aa7d1551d832b5b0a0e5ad83c440e65a0508b05f259ea54a657ce445a0c0",
-  "declaration_source_fingerprint": "c5c4ccb82b42685139cfbf97b4d0a8e5ce944230a9a7c985be9f2699de130a96",
+  "registry_fingerprint": "aefdc28441429479958f9e14c2268c8043f5e4c73d634ce4ef3826a099e58dc1",
+  "declaration_source_fingerprint": "5f4b89535797d69e93c9b0be57f1bc48bb8048c9c653c6f6b4bf0e5b9a1f607c",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -25796,6 +25796,386 @@
         "commander_review"
       ],
       "applicability_note": "Replay the declaration snapshot, same-controller ordering, Dethrone occurrence, and final counter result to the identical authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_amount_model_covers_each_closed_public_fact",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve every closed stack, cast-provenance, turn-history, and threshold source through the same immutable typed amount model."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Freeze a cast-X entry amount before ordering two competing quantity replacements, then commit only the selected replacement path."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve one permanent spell copy through the canonical copy-object entry path with copied X while cast origin, mana payment, and mana-color provenance remain absent."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_uses_committed_cast_x_and_payment_provenance",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Carry committed cast X, hand origin, and mana payment provenance into the canonical resolving-entry replacement snapshot."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_x_and_query_amounts_use_frozen_preentry_state",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate current layer-4 types through the shared layer-5 query, freeze the pre-entry count, and preserve it when battlefield state changes during replacement suspension."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Route competing entry-counter replacement choices to the prospective controller in four-player state."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryCompilerTests.test_dynamic_self_entry_counter_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the dynamic entry lowering and require the source-spanned X entry ability to lose its exact typed node."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_amount_mutants_are_killed",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Corrupt the frozen X amount before replacement preparation and require the committed counter total to reject the survivor."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryCompilerTests.test_dynamic_self_entry_counter_exclusions_fail_closed",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject power, repeated kicker, unavailable history, life gain, choice, external-object, and multiple-counter forms before runtime admission."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_removed_current_ability_is_inapplicable",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the shared layer-6 static-component query to suppress a source-pinned entry replacement after a relevant off-battlefield remove-all-abilities effect."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_zero_and_stale_entry_leave_no_counter_mutation",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Produce no child counter event for zero or noncast X and preserve an already-departed source without counter mutation."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryCompilerTests.test_dynamic_self_entry_counter_grammar_and_capability_closure",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower X, mana-color, attack, graveyard-query, death-count, and hand-cast forms to one typed entry amount descriptor."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_amount_model_covers_each_closed_public_fact",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compute exact results for X, mana colors, attack, controller and all-player spell histories, deaths, opponent life loss, cast origin, and mana payment."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve copied X on a permanent spell copy that becomes a token while preventing copied stack context from impersonating cast provenance."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_uses_committed_cast_x_and_payment_provenance",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Cast an X permanent from hand through the ordinary proposal, total-cost, payment, stack, and resolution owners and enter with the committed X counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_history_and_cast_provenance_gate_entry_counters",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use current attack and death history plus cast origin to produce or suppress the exact entry amount."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_x_and_query_amounts_use_frozen_preentry_state",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve cast X, distinct mana colors, and a cycle-safe public object count into exact positive entry counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose replacement labels only to the prospective controller and omit physical object identity from every projected choice."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Persist the frozen component amount and pending replacement journal, then replay the selected ordering to the same authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_zero_and_stale_entry_leave_no_counter_mutation",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Abort the replacement continuation after the source leaves the stack without reentering or placing counters on the stale incarnation."
     },
     {
       "capability_id": "counter.producer.effect_entry",
@@ -62918,5 +63298,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "5ff9e77426038d5e9a5faa460eab5e2ac5a379bc1ac5ff2db6dc5e69f40d5bf4"
+  "fingerprint": "31cdf3033ac9b06a4fc53da5b36fc63bedac9347b2fb0a8a3690d0d07898a3d1"
 }

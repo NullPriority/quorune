@@ -3359,6 +3359,57 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-constrained-mana-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:dynamic-self-entry-counter-quantities",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:counter.placement.quantity_replacement",
+            "capability:counter.producer.dynamic_self_entry",
+            "capability:state_query.permanent.public_state_predicate",
+            "component:quorune.compiler.fixed_self_entry_counter_templates.dynamic_self_entry_counter_handler",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.entry_counter_coordination.prepare_resolving_entry_replacement",
+            "component:quorune.entry_counter_model.DynamicEntryCounterAmountSpec",
+            "component:quorune.entry_counters.dynamic_entry_counter_amount",
+            "component:quorune.rules.casting.commit._stack_item",
+            "component:quorune.semantic_runtime.self_entry_counters.DynamicSelfEntryCounterHandler",
+            "component:quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "cast-x-or-origin-payment-fact",
+            "current-turn-attack-death-spell-or-opponent-life-loss-fact",
+            "cycle-safe-public-layer-five-object-count",
+            "distinct-cast-mana-color-count",
+            "fixed-coefficient-offset-or-threshold"
+          ],
+          "shared_dependencies": [
+            "counter.placement.quantity_replacement",
+            "counter.producer.dynamic_self_entry",
+            "state_query.permanent.public_state_predicate"
+          ],
+          "shared_grammar": "one mandatory source-self battlefield-entry counter replacement with a nonnegative amount frozen from cast X, cast provenance, distinct mana colors, bounded current-turn history, or one cycle-safe public layer-5 object count before the canonical zone and counter replacement tree runs",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a measured cross-era cohort of X, Converge, Raid, Morbid, death-count, spell-count, cast-origin, and public object-count entrants through the existing prospective zone snapshot, affected-controller replacement ordering, counter transaction, replay, and projection owners.",
+          "explicit_exclusions": [
+            "additional entry counters applied to other permanents and independently unsupported sibling abilities",
+            "choice, optional, multiple-kind, repeated, distributed, and linked entry counters",
+            "copied, granted, removed, and text-changing entry abilities outside current source-pinned discovery",
+            "dynamic characteristic quantities outside the cycle-safe layer-5 boundary",
+            "history absent from the bounded turn journal, including permanent-left and life-gain facts",
+            "mana spent by color count, devotion, power, toughness, mana value, greatest, noted, chosen, random, and open arithmetic quantities",
+            "multikicker and repeated-kicker quantities",
+            "unrepresented zone, counter, and replacement families"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "dynamic-self-entry-counter-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3370,22 +3421,17 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v191-fixed-constrained-mana-abilities",
-      "compiler_version": "oracle-ir-v191",
-      "bundle_id": "bundle:fixed-constrained-mana-abilities",
-      "candidate_ids": ["compiler:fixed-constrained-mana-abilities"],
+      "transition_id": "oracle-ir-v192-dynamic-self-entry-counter-quantities",
+      "compiler_version": "oracle-ir-v192",
+      "bundle_id": "bundle:dynamic-self-entry-counter-quantities",
+      "candidate_ids": ["compiler:dynamic-self-entry-counter-quantities"],
       "family_ids": [
-        "effect_clause:dynamic-or-conditional-mana-output",
-        "effect_clause:restricted-mana-or-effect-clause-side-effects",
-        "effect_clause:unrepresented-activation-cost-variant"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "activation.condition.public_query",
-        "activation.usage.once_per_turn",
-        "mana.activated.fixed_output",
-        "mana.activated.restricted_fixed_output"
+        "counter.producer.dynamic_self_entry"
       ],
-      "measurement_id": "measurement:fixed-constrained-mana-abilities",
+      "measurement_id": "measurement:dynamic-self-entry-counter-quantities",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

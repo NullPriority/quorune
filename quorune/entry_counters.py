@@ -10,11 +10,14 @@ from .replacement import (
     ReplacementEffect,
 )
 from .entry_counter_model import (
+    DynamicEntryCounterAmountSpec,
+    DynamicEntryCounterValueSource,
     EntryCounterError,
     EffectEntryCounter,
     IntrinsicEntryCounter,
     intrinsic_entry_counters,
 )
+from .turn_history import current_turn_history_events
 
 
 class EntryCharacteristicsQuery(Protocol):
@@ -24,6 +27,121 @@ class EntryCharacteristicsQuery(Protocol):
         *,
         printed_entry_characteristics: bool = False,
     ) -> Mapping[str, Any]: ...
+
+
+def dynamic_entry_counter_amount(
+    host: Any,
+    *,
+    card: Any,
+    destination_controller: str,
+    amount_spec: DynamicEntryCounterAmountSpec,
+    mana_colors_spent: Sequence[str] = (),
+) -> int:
+    """Resolve one dynamic entry amount before replacement ordering."""
+
+    if not destination_controller:
+        raise EntryCounterError(
+            "Dynamic entry counter amounts require a destination controller"
+        )
+    stack_items = tuple(
+        item
+        for item in host.state.stack
+        if item.kind in {"spell", "spell_copy"}
+        and item.card_object_id == card.object_id
+    )
+    if card.zone == "stack" and len(stack_items) != 1:
+        raise EntryCounterError(
+            "A cast dynamic entry counter requires one current stack object"
+        )
+    item = stack_items[0] if stack_items else None
+    was_cast = item is not None and item.kind == "spell"
+    source = amount_spec.value_source
+    if source is DynamicEntryCounterValueSource.CAST_X:
+        value = int(item.x_value or 0) if item is not None else 0
+    elif source is DynamicEntryCounterValueSource.MANA_COLORS_SPENT:
+        value = len(tuple(mana_colors_spent)) if was_cast else 0
+    elif source is DynamicEntryCounterValueSource.CAST_FROM_HAND:
+        value = int(
+            was_cast and item.context.get("cast_origin") == "hand"
+        )
+    elif source is DynamicEntryCounterValueSource.MANA_WAS_SPENT:
+        raw = item.context.get("mana_spent_total", 0) if was_cast else 0
+        if type(raw) is not int or raw < 0:
+            raise EntryCounterError(
+                "Dynamic entry mana-spent provenance is malformed"
+            )
+        value = int(raw > 0)
+    elif source is DynamicEntryCounterValueSource.PUBLIC_QUERY:
+        from .dynamic_characteristics import query_characteristic_count
+
+        assert amount_spec.quantity is not None
+        prospective_source = copy.copy(card)
+        prospective_source.controller = destination_controller
+        value = query_characteristic_count(
+            host,
+            prospective_source,
+            amount_spec.quantity,
+        )
+    else:
+        events = {
+            kind: current_turn_history_events(
+                host.state.turn_history,
+                turn_sequence=host.state.turn_sequence,
+                kind=kind,
+            )
+            for kind in (
+                "creature_attacked",
+                "creature_died",
+                "player_lost_life",
+                "spell_cast",
+            )
+        }
+        if source is DynamicEntryCounterValueSource.CONTROLLER_ATTACKED:
+            value = int(
+                any(
+                    event.actor == destination_controller
+                    for event in events["creature_attacked"]
+                )
+            )
+        elif (
+            source
+            is DynamicEntryCounterValueSource.CONTROLLER_OTHER_SPELLS_CAST
+        ):
+            current_incarnation = (
+                card.logical_object_id if was_cast else None
+            )
+            value = sum(
+                event.actor == destination_controller
+                and event.object_incarnation != current_incarnation
+                for event in events["spell_cast"]
+            )
+        elif source is DynamicEntryCounterValueSource.CONTROLLER_SPELLS_CAST:
+            value = sum(
+                event.actor == destination_controller
+                for event in events["spell_cast"]
+            )
+        elif source is DynamicEntryCounterValueSource.CREATURES_DIED:
+            value = len(events["creature_died"])
+        elif source is DynamicEntryCounterValueSource.OTHER_SPELLS_CAST:
+            current_incarnation = (
+                card.logical_object_id if was_cast else None
+            )
+            value = sum(
+                event.object_incarnation != current_incarnation
+                for event in events["spell_cast"]
+            )
+        elif source is DynamicEntryCounterValueSource.OPPONENTS_LIFE_LOST:
+            opponents = set(host.active_seats) - {destination_controller}
+            value = sum(
+                event.amount
+                for event in events["player_lost_life"]
+                if event.target in opponents
+            )
+        else:
+            raise EntryCounterError(
+                "Dynamic entry counter value source is unsupported"
+            )
+    return amount_spec.amount(value)
 
 
 def capture_prospective_entry_characteristics(
@@ -224,6 +342,7 @@ def mark_intrinsic_entry_counters_initialized(
 
 __all__ = [
     "capture_prospective_entry_characteristics",
+    "dynamic_entry_counter_amount",
     "EntryCounterError",
     "EntryCharacteristicsQuery",
     "EffectEntryCounter",

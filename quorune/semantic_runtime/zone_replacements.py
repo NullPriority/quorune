@@ -6,7 +6,6 @@ import re
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..card_program_faces import program_matches_face, selected_face_id
-from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..commander_zones import (
     commander_hand_library_replacement_effect,
     CommanderZoneError,
@@ -52,7 +51,12 @@ from .context import SemanticNodeError
 from .counter_replacements import (
     collect_counter_placement_replacement_effects,
 )
-from .self_entry_counters import SelfEntryCounterHandler
+from .self_entry_counters import (
+    DynamicSelfEntryCounterHandler,
+    program_static_component_is_applicable,
+    SelfEntryCounterHandler,
+    subject_dynamic_self_entry_amounts,
+)
 from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
 from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler
@@ -75,7 +79,11 @@ from .zone_replacement_model import (
     ZoneDestinationReplacementNode,
     ZoneReplacementError,
 )
-from .zone_replacement_inputs import validated_zone_change_snapshot_inputs
+from .zone_replacement_inputs import (
+    active_zone_replacement_sources,
+    prospective_destination_controller,
+    validated_zone_change_snapshot_inputs,
+)
 
 
 _DESTINATION_HANDLER_ID = "replacement.zone.destination.v1"
@@ -422,6 +430,7 @@ def default_zone_change_replacement_registry(
             RiotEntryChoiceHandler(),
             FixedKickedEntryHandler(),
             MadnessDiscardReplacementHandler(),
+            DynamicSelfEntryCounterHandler(),
             SelfEntryCounterHandler(),
             SunburstEntryCounterHandler(),
             ZoneDestinationReplacementHandler(),
@@ -632,7 +641,7 @@ def _read_ahead_entry_is_supported(
             program,
             card,
             prospective_name=prospective_name or None,
-        ):
+        ) or not program_static_component_is_applicable(host, program, card):
             continue
         for descriptor in program.handlers:
             if descriptor.get("handler_id") == READ_AHEAD_ENTRY_HANDLER_ID:
@@ -711,6 +720,7 @@ def _zone_change_snapshot_subjects(
     destination_controllers: Mapping[str, str | None],
     entry_characteristics: Mapping[str, Mapping[str, Any]],
     effect_entry_counters: Mapping[str, Sequence[EffectEntryCounter]],
+    self_entry_counter_amounts: Mapping[str, Mapping[str, int]],
     mana_colors_spent: Mapping[str, Sequence[str]],
     requested_tapped: Mapping[str, bool],
     entry_pay_life: Mapping[str, bool | None],
@@ -734,11 +744,7 @@ def _zone_change_snapshot_subjects(
             card_types, subtypes, supertypes = host._type_parts(
                 str(characteristics.get("type_line") or "")
             )
-            destination_controller = (
-                destination_controllers[object_id]
-                if object_id in destination_controllers
-                else card.controller if card.zone == "stack" else card.owner
-            )
+            destination_controller = prospective_destination_controller(card, destination_controllers)
             controlled_basic_types = controller_basic_land_types(
                 host,
                 destination_controller,
@@ -799,6 +805,16 @@ def _zone_change_snapshot_subjects(
                     effect_entry_counters=tuple(
                         effect_entry_counters.get(card.object_id, ())
                     ),
+                    self_entry_counter_amounts=subject_dynamic_self_entry_amounts(
+                        host,
+                        card=card,
+                        record=record,
+                        destination=destination,
+                        destination_controller=destination_controller,
+                        prospective_name=prospective_name,
+                        supplied_amounts=self_entry_counter_amounts,
+                        mana_colors_spent=mana_colors_spent,
+                    ),
                     requested_tapped=bool(
                         requested_tapped.get(card.object_id, False)
                     ),
@@ -848,33 +864,6 @@ def _zone_change_snapshot_subjects(
     return tuple(subjects)
 
 
-def _active_zone_replacement_sources(
-    host: ZoneReplacementHost,
-    *,
-    sources: Sequence[Any] | None,
-    source_zones: Mapping[str, str] | None,
-) -> tuple[Any, ...]:
-    candidates = (
-        tuple(sources)
-        if sources is not None
-        else tuple(host._semantic_event_sources(zones={"battlefield"}))
-    )
-    return tuple(
-        source
-        for source in candidates
-        if (
-            (
-                source_zones.get(source.object_id, source.zone)
-                if source_zones is not None
-                else source.zone
-            )
-            == "battlefield"
-            and not source.phased_out
-            and source.controller in host.active_seats
-        )
-    )
-
-
 def _zone_change_snapshot_effects(
     host: ZoneReplacementHost,
     subjects: Sequence[ZoneChangeSubjectSnapshot],
@@ -920,10 +909,8 @@ def _zone_change_snapshot_effects(
         ):
             if (
                 not program_matches_face(record, program, card)
-                or (
-                    CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
-                    and program.key
-                    not in host._effective_static_component_keys(card)
+                or not program_static_component_is_applicable(
+                    host, program, card
                 )
             ):
                 continue
@@ -957,6 +944,8 @@ def _zone_change_snapshot_effects(
                     if subject.entry_face_id != "front"
                     else None
                 ),
+            ) or not program_static_component_is_applicable(
+                host, program, card
             ):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
@@ -1007,6 +996,9 @@ def capture_zone_change_replacement_snapshot(
     effect_entry_counters: Mapping[
         str, Sequence[EffectEntryCounter]
     ] | None = None,
+    self_entry_counter_amounts: Mapping[
+        str, Mapping[str, int]
+    ] | None = None,
     mana_colors_spent: Mapping[str, Sequence[str]] | None = None,
     requested_tapped: Mapping[str, bool] | None = None,
     entry_pay_life: Mapping[str, bool | None] | None = None,
@@ -1038,19 +1030,37 @@ def capture_zone_change_replacement_snapshot(
         transition_kinds=transition_kinds,
         error_type=error_type,
     )
+    frozen_amounts = dict(self_entry_counter_amounts or {})
+    supplied_ids = {object_id for object_id, _destination in supplied}
+    if any(
+        object_id not in supplied_ids
+        or not isinstance(amounts, Mapping)
+        or any(
+            type(component_id) is not str
+            or not component_id
+            or type(amount) is not int
+            or amount < 0
+            for component_id, amount in amounts.items()
+        )
+        for object_id, amounts in frozen_amounts.items()
+    ):
+        raise error_type(
+            "Frozen self-entry counter amounts are malformed or unbound"
+        )
     subjects = _zone_change_snapshot_subjects(
         host,
         supplied,
         destination_controllers=controllers,
         entry_characteristics=characteristics,
         effect_entry_counters=effect_counters,
+        self_entry_counter_amounts=frozen_amounts,
         mana_colors_spent=cast_colors,
         requested_tapped=tapped_requests,
         entry_pay_life=life_choices,
         transition_kinds=kinds,
         error_type=error_type,
     )
-    active_sources = _active_zone_replacement_sources(
+    active_sources = active_zone_replacement_sources(
         host,
         sources=sources,
         source_zones=source_zones,
@@ -1216,6 +1226,7 @@ def prepare_zone_change_replacement(
     destination_controller: str | None = None,
     entry_characteristics: Mapping[str, Any] | None = None,
     effect_entry_counters: Sequence[EffectEntryCounter] = (),
+    self_entry_counter_amounts: Mapping[str, int] | None = None,
     mana_colors_spent: Sequence[str] = (),
     requested_tapped: bool = False,
     entry_pay_life: bool = False,
@@ -1284,6 +1295,11 @@ def prepare_zone_change_replacement(
             if effect_entry_counters
             else None
         ),
+        self_entry_counter_amounts=(
+            {card.object_id: self_entry_counter_amounts}
+            if self_entry_counter_amounts is not None
+            else None
+        ),
         mana_colors_spent=(
             {card.object_id: tuple(mana_colors_spent)}
             if mana_colors_spent
@@ -1312,6 +1328,9 @@ def prepare_zone_change_replacement_batch(
     effect_entry_counters: Mapping[
         str, Sequence[EffectEntryCounter]
     ] | None = None,
+    self_entry_counter_amounts: Mapping[
+        str, Mapping[str, int]
+    ] | None = None,
     mana_colors_spent: Mapping[str, Sequence[str]] | None = None,
     requested_tapped: Mapping[str, bool] | None = None,
     entry_pay_life: Mapping[str, bool | None] | None = None,
@@ -1327,6 +1346,7 @@ def prepare_zone_change_replacement_batch(
         destination_controllers=destination_controllers,
         entry_characteristics=entry_characteristics,
         effect_entry_counters=effect_entry_counters,
+        self_entry_counter_amounts=self_entry_counter_amounts,
         mana_colors_spent=mana_colors_spent,
         requested_tapped=requested_tapped,
         entry_pay_life=entry_pay_life,

@@ -469,6 +469,22 @@ zone-change and quantity-replacement transaction. Variable, zero, larger,
 optional, conditional, additional, multikind, linked, and another-object forms
 remain material residuals; the grammar does not infer or parse them at runtime.
 
+Dynamic prose self-entry counters reuse that owner with one typed amount
+descriptor. The compiler admits cast X, distinct mana colors, closed attack,
+spell, death, opponent-life-loss, hand-origin, or mana-payment facts, and one
+public object count evaluated through the cycle-safe layer-5 quantity boundary.
+The resolving-entry coordinator freezes the resulting nonnegative amount by
+component identity before replacement ordering; a private replacement choice,
+save/load, or exact replay cannot recompute it. Zero creates no counter child.
+Permanent spell copies reuse the canonical copy object's copied X but never
+inherit cast-origin, mana-payment, or mana-color facts. Programs carrying the
+current-component marker consult the shared layer-6 applicability owner, so a
+relevant off-battlefield ability removal suppresses the replacement before its
+amount is frozen.
+Choice or multikind counters, repeated kicker, unavailable history such as
+permanent departures or life gain, dynamic characteristics beyond layer 5,
+and counters placed on other entering permanents remain material residuals.
+
 Ordinary printed Sunburst now has a dedicated cast-payment entry owner. Cast
 commit freezes the distinct WUBRG colors actually spent on the spell as a
 typed stack fact; stack copies deliberately receive an empty fact because they

@@ -1,12 +1,184 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 import re
 from typing import Any, Mapping, Sequence
+
+from .characteristic_fragments import (
+    CharacteristicQuantityScope,
+    CharacteristicQuantitySpec,
+)
 
 
 class EntryCounterError(ValueError):
     """An as-enters counter instruction is not representable."""
+
+
+DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID = (
+    "replacement.zone.dynamic-self-entry-counter.v1"
+)
+DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT = "dynamic_self_entry_counter_amounts"
+
+
+class DynamicEntryCounterValueSource(str, Enum):
+    CAST_X = "cast_x"
+    MANA_COLORS_SPENT = "mana_colors_spent"
+    CONTROLLER_ATTACKED = "controller_attacked"
+    CONTROLLER_OTHER_SPELLS_CAST = "controller_other_spells_cast"
+    CONTROLLER_SPELLS_CAST = "controller_spells_cast"
+    CREATURES_DIED = "creatures_died"
+    OTHER_SPELLS_CAST = "other_spells_cast"
+    OPPONENTS_LIFE_LOST = "opponents_life_lost"
+    PUBLIC_QUERY = "public_query"
+    CAST_FROM_HAND = "cast_from_hand"
+    MANA_WAS_SPENT = "mana_was_spent"
+
+
+class DynamicEntryCounterCalculation(str, Enum):
+    MULTIPLY = "multiply"
+    FIXED_IF_AT_LEAST = "fixed_if_at_least"
+    FIXED_IF_BELOW = "fixed_if_below"
+
+
+@dataclass(frozen=True, slots=True)
+class DynamicEntryCounterAmountSpec:
+    """One closed pre-entry amount calculation over public frozen facts."""
+
+    value_source: DynamicEntryCounterValueSource
+    calculation: DynamicEntryCounterCalculation
+    coefficient: int = 1
+    offset: int = 0
+    minimum: int | None = None
+    quantity: CharacteristicQuantitySpec | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.value_source, DynamicEntryCounterValueSource):
+            try:
+                object.__setattr__(
+                    self,
+                    "value_source",
+                    DynamicEntryCounterValueSource(self.value_source),
+                )
+            except (TypeError, ValueError) as exc:
+                raise EntryCounterError(
+                    "Dynamic entry counter value source is unsupported"
+                ) from exc
+        if not isinstance(self.calculation, DynamicEntryCounterCalculation):
+            try:
+                object.__setattr__(
+                    self,
+                    "calculation",
+                    DynamicEntryCounterCalculation(self.calculation),
+                )
+            except (TypeError, ValueError) as exc:
+                raise EntryCounterError(
+                    "Dynamic entry counter calculation is unsupported"
+                ) from exc
+        if type(self.coefficient) is not int or not 1 <= self.coefficient <= 10:
+            raise EntryCounterError(
+                "Dynamic entry counter coefficient must be from 1 through 10"
+            )
+        if type(self.offset) is not int or not 0 <= self.offset <= 10:
+            raise EntryCounterError(
+                "Dynamic entry counter offset must be from 0 through 10"
+            )
+        if self.calculation is DynamicEntryCounterCalculation.MULTIPLY:
+            if self.minimum is not None:
+                raise EntryCounterError(
+                    "Multiplying entry counter amounts take no minimum"
+                )
+        elif type(self.minimum) is not int or self.minimum < 1:
+            raise EntryCounterError(
+                "Conditional entry counter amounts require a positive minimum"
+            )
+        elif self.offset:
+            raise EntryCounterError(
+                "Conditional entry counter amounts cannot use an offset"
+            )
+        if self.value_source is DynamicEntryCounterValueSource.PUBLIC_QUERY:
+            quantity = self.quantity
+            if (
+                not isinstance(quantity, CharacteristicQuantitySpec)
+                or quantity.scope
+                not in {
+                    CharacteristicQuantityScope.CONTROLLER_ZONE,
+                    CharacteristicQuantityScope.OPPONENT_ZONES,
+                    CharacteristicQuantityScope.ALL_ZONES,
+                }
+                or quantity.query is None
+                or quantity.query.zones
+                not in {("battlefield",), ("graveyard",)}
+            ):
+                raise EntryCounterError(
+                    "Dynamic entry counter queries require the cycle-safe "
+                    "public layer-5 boundary"
+                )
+        elif self.quantity is not None:
+            raise EntryCounterError(
+                "Only public-query entry counter amounts accept a quantity"
+            )
+
+    def amount(self, value: int) -> int:
+        if type(value) is not int or value < 0:
+            raise EntryCounterError(
+                "Dynamic entry counter facts must be nonnegative integers"
+            )
+        if self.calculation is DynamicEntryCounterCalculation.MULTIPLY:
+            return self.offset + self.coefficient * value
+        assert self.minimum is not None
+        admitted = (
+            value >= self.minimum
+            if self.calculation
+            is DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST
+            else value < self.minimum
+        )
+        return self.coefficient if admitted else 0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "value_source": self.value_source.value,
+            "calculation": self.calculation.value,
+            "coefficient": self.coefficient,
+            "offset": self.offset,
+            "minimum": self.minimum,
+            "quantity": (
+                self.quantity.to_dict() if self.quantity is not None else None
+            ),
+        }
+
+    @classmethod
+    def from_dict(
+        cls,
+        value: Mapping[str, Any],
+    ) -> "DynamicEntryCounterAmountSpec":
+        if not isinstance(value, Mapping) or set(value) != {
+            "value_source",
+            "calculation",
+            "coefficient",
+            "offset",
+            "minimum",
+            "quantity",
+        }:
+            raise EntryCounterError(
+                "Dynamic entry counter amount uses a closed schema"
+            )
+        try:
+            quantity = (
+                CharacteristicQuantitySpec.from_dict(value["quantity"])
+                if value["quantity"] is not None
+                else None
+            )
+        except (TypeError, ValueError) as exc:
+            raise EntryCounterError(str(exc)) from exc
+        return cls(
+            value_source=value["value_source"],
+            calculation=value["calculation"],
+            coefficient=value["coefficient"],
+            offset=value["offset"],
+            minimum=value["minimum"],
+            quantity=quantity,
+        )
 
 
 def _normalized_nonempty(value: Any, *, field: str) -> str:
@@ -201,6 +373,11 @@ def intrinsic_entry_counters(
 
 
 __all__ = [
+    "DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT",
+    "DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID",
+    "DynamicEntryCounterAmountSpec",
+    "DynamicEntryCounterCalculation",
+    "DynamicEntryCounterValueSource",
     "EntryCounterError",
     "EffectEntryCounter",
     "IntrinsicEntryCounter",

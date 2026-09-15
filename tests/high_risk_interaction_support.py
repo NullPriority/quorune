@@ -85,6 +85,13 @@ _WITNESSES = {
         "activate an ability of an Elemental.",
         "{2}",
     ),
+    "dynamic-self-entry-replacement-boundary": _Witness(
+        "Generic Dynamic Self-Entry Replacement Boundary Fixture",
+        "Artifact",
+        "As this artifact enters, choose a color.\n"
+        "This artifact enters with X charge counters on it.",
+        "{X}",
+    ),
     "fixed-characteristic-set-regeneration": _Witness(
         "Generic Fixed Characteristic Set Regeneration Boundary Fixture",
         "Sorcery",
@@ -1274,6 +1281,14 @@ RESTRICTED_MANA_AND_REPLACEMENT_PAIRS = tuple(
     )
 )
 
+DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS = tuple(
+    _pair("capability.counter.producer.dynamic_self_entry", replacement)
+    for replacement in (
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    )
+)
+
 CONTINUOUS_AND_REPLACEMENT_PAIRS = (
     _pair(
         "residual.continuous_layer.affected-player-ordering",
@@ -1364,6 +1379,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *MADNESS_AND_CHOICE_PAIRS,
             *COST_AND_REPLACEMENT_PAIRS,
             *RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
+            *DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *CONTINUOUS_AND_REPLACEMENT_PAIRS,
             CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
             *TRIGGER_AND_REPLACEMENT_PAIRS,
@@ -1537,6 +1553,10 @@ _bind("winds-of-qal-sisma", *PREVENTION_AND_REPLACEMENT_PAIRS[1:])
 _bind("gideon-ally-of-zendikar", TOKEN_AND_DAMAGE_PREVENTION_PAIR)
 _bind("rasputin", FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS[0])
 _bind("chromatic-armor", *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS[1:])
+_bind(
+    "dynamic-self-entry-replacement-boundary",
+    *DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
+)
 _bind(
     "bewitching-leechcraft",
     TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[0],
@@ -1740,6 +1760,7 @@ __all__ = [
     "DECLARATION_AND_REPLACEMENT_PAIRS",
     "DESTROY_DAMAGE_PREVENTION_PAIR",
     "DESTROY_REGENERATION_PAIR",
+    "DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS",
     "EFFECT_AND_REPLACEMENT_PAIRS",
     "FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR",
     "FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS",

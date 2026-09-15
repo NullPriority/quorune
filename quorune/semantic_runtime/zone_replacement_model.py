@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 from ..entry_keyword_grants import EntryKeywordGrant
 from ..entry_counters import EffectEntryCounter, IntrinsicEntryCounter
@@ -107,6 +108,35 @@ class ZoneChangeReplacementResolution:
         return tuple(events)
 
 
+def _frozen_dynamic_self_entry_amounts(value: Any) -> FrozenMap:
+    if not isinstance(value, FrozenMap):
+        try:
+            value = FrozenMap(value)
+        except (TypeError, ValueError) as exc:
+            raise ZoneReplacementError(
+                "Dynamic self-entry counter amounts must be an object"
+            ) from exc
+    if any(
+        type(key) is not str
+        or not key
+        or type(amount) is not int
+        or amount < 0
+        for key, amount in value.items()
+    ):
+        raise ZoneReplacementError(
+            "Dynamic self-entry counter amounts require stable IDs and "
+            "nonnegative integers"
+        )
+    return value
+
+
+def _validate_cast_option(value: str | None) -> None:
+    if value is not None and (type(value) is not str or not value):
+        raise ZoneReplacementError(
+            "Zone replacement cast option must be nonempty or null"
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class ZoneChangeSubjectSnapshot:
     object_id: str
@@ -132,6 +162,7 @@ class ZoneChangeSubjectSnapshot:
     mana_colors_spent: tuple[str, ...] = ()
     intrinsic_entry_counters: tuple[IntrinsicEntryCounter, ...] = ()
     effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
+    self_entry_counter_amounts: FrozenMap = field(default_factory=FrozenMap)
     cast_option: str | None = None
 
     def __post_init__(self) -> None:
@@ -198,12 +229,14 @@ class ZoneChangeSubjectSnapshot:
             "effect_entry_counters",
             effect_entry_counters,
         )
-        if self.cast_option is not None and (
-            type(self.cast_option) is not str or not self.cast_option
-        ):
-            raise ZoneReplacementError(
-                "Zone replacement cast option must be nonempty or null"
-            )
+        object.__setattr__(
+            self,
+            "self_entry_counter_amounts",
+            _frozen_dynamic_self_entry_amounts(
+                self.self_entry_counter_amounts
+            ),
+        )
+        _validate_cast_option(self.cast_option)
         if type(self.is_card_object) is not bool:
             raise ZoneReplacementError(
                 "Zone replacement card-object state must be boolean"
