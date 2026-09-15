@@ -1191,6 +1191,25 @@
       ]
     },
     {
+      "id": "fixed-restrictive-library-search-contract",
+      "patterns": [
+        "quorune/compiler/library_search_templates.py",
+        "quorune/rules/library_search_capability_shapes.py",
+        "quorune/selection/searching.py",
+        "scripts/work_selection_cohort_measurements.py",
+        "tests/fixtures/fixed-library-search-cards.json",
+        "tests/test_fixed_library_searches.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_library_searches",
+        "test_rules_scheduler",
+        "test_semantic_searches",
+        "test_storm_rules",
+        "test_typecycling"
+      ]
+    },
+    {
       "id": "spell-cast-characteristic-trigger-contract",
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",

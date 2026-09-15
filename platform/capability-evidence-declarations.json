@@ -17267,7 +17267,7 @@
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "interaction",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_discard_replacement_resumes_before_private_search",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Begin the fixed search only after a replacement-aware discard cost has resumed and committed the exact Typecycling stack object."
     },
@@ -17275,7 +17275,7 @@
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "interaction",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_destination_replacement_resumes_atomically",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suspend the selected hidden-library card's hand move before mutation, apply its owner's Commander replacement privately, and resume the same search transaction."
     },
@@ -17283,23 +17283,39 @@
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep one four-player hidden-library search actor-scoped while retaining a public reveal of only the result."
     },
     {
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchCompilerTests.test_fixed_hand_search_shape_and_dependencies_fail_closed",
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the hand-search capability and each destination dependency, and mutate every closed effect field so exact trust cannot survive."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_compiler_mutant_is_killed",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill removal of the typed compiler producer so the exact search shape cannot survive as an unowned generic effect."
     },
     {
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchCompilerTests.test_fixed_hand_search_shape_and_dependencies_fail_closed",
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject malformed, unrestricted, multi-card, alternate-destination, non-shuffling, and unbound hand-search shapes before capability closure."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "negative",
       "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_variants_and_dependencies_fail_closed",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject extra fields, other destinations, nonrevealed or unshuffled forms, open selectors, ability queries, and malformed counts at the capability-shape boundary."
     },
@@ -17307,31 +17323,55 @@
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "negative",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_continuation_tampering_is_atomic",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject actor, revision, source-identity, and legal-candidate continuation tampering without moving a card or shuffling the library."
     },
     {
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchCompilerTests.test_fixed_restrictive_search_to_hand_compiles_across_contexts",
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower one restrictive single-card search to hand across spell, trigger, activation, and modal bodies through the existing private search owner."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_fixed_typecycling_categories_compile_source_spanned_searches",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Emit exactly one restrictive one-card type search to hand with reveal and post-search shuffle for each closed selector."
     },
     {
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchRuntimeTests.test_generated_hand_search_preserves_reveal_privacy_and_replays",
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep candidates actor-private and reveal only a selected result whose compiled instruction explicitly requires a reveal."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose no candidate identity to nonsearching pilots and reveal only the chosen card after validation."
     },
     {
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchRuntimeTests.test_generated_hand_search_preserves_reveal_privacy_and_replays",
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the private selection, printed reveal policy, replacement-aware hand move, shuffle, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "library.search.fixed_type_to_hand",
+      "evidence_class": "replay",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_destination_replacement_resumes_atomically",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the selected Wizard identity, owner-scoped replacement choice, resumed search, and deterministic shuffle to the same authoritative hash."
     },
@@ -17339,7 +17379,7 @@
       "capability_id": "library.search.fixed_type_to_hand",
       "evidence_class": "replay",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
-      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.24", "701.24a", "701.24b", "903.9b"],
+      "official_rule_ids": ["109.2a", "400.7", "608.2c", "701.23", "701.23a", "701.23b", "701.23e", "701.24", "701.24a", "701.24b", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the identity-pinned selection, replacement-aware hand move, public reveal, and deterministic shuffle to the same authoritative hash."
     },

@@ -13,6 +13,7 @@ from common import ROOT, keep_all, make_session
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.library_search_templates import (
     FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
+    FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID,
     fixed_library_search_effect_template,
 )
 from quorune.deck import DeckLoader
@@ -27,6 +28,9 @@ from quorune.rules.capabilities import (
     CapabilityRegistry,
     capability_dependencies_for_node,
     load_default_capability_registry,
+)
+from quorune.rules.library_search_capability_shapes import (
+    FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID,
 )
 from scripts.build_test_database import build_fixture_database
 
@@ -175,6 +179,85 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual(selector, effects[0]["selector"])
 
+    def test_fixed_restrictive_search_to_hand_compiles_across_contexts(self):
+        contexts = (
+            (
+                "Search your library for an artifact card, reveal it, put it into your hand, then shuffle.",
+                "Sorcery",
+                "spell_ability",
+            ),
+            (
+                "When this creature enters, search your library for a Doctor card, reveal it, put it into your hand, then shuffle.",
+                "Creature — Human Scout",
+                "triggered_ability",
+            ),
+            (
+                "{2}, {T}: Search your library for a blue instant card, reveal that card, put that card into your hand, then shuffle.",
+                "Artifact",
+                "activated_ability",
+            ),
+            (
+                "Choose one —\n• Search your library for an Aura or Equipment card, reveal it, put it into your hand, then shuffle.\n• You gain 3 life.",
+                "Sorcery",
+                "spell_ability",
+            ),
+        )
+        for text, type_line, kind in contexts:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                nodes = [node for face in ir.faces for node in face.nodes if node.exact]
+                search = next(
+                    node
+                    for node in nodes
+                    if FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID
+                    in node.capability_dependencies
+                )
+                self.assertEqual(kind, search.kind)
+                self.assertIn(
+                    FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID,
+                    search.mechanics,
+                )
+                serialized_effects = json.dumps(
+                    {
+                        "effects": search.effects,
+                        "target_schema": search.target_schema,
+                    }
+                )
+                self.assertIn('"op": "search"', serialized_effects)
+                self.assertIn('"destination": "hand"', serialized_effects)
+                self.assertIn('"reveal": true', serialized_effects)
+
+    def test_fixed_search_accepts_canonical_pronouns_and_hand_qualities(self):
+        cases = {
+            "Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.": {
+                "types": ["land"],
+                "supertypes": ["basic"],
+            },
+            "Search your library for a planeswalker card, reveal it, put it into your hand, then shuffle.": {
+                "types": ["planeswalker"],
+            },
+            "Search your library for an instant or sorcery card, reveal that card, put that card into your hand, then shuffle.": {
+                "types_any": ["instant", "sorcery"],
+            },
+            "Search your library for a Lesson or Noble card, reveal it, put it into your hand, then shuffle.": {
+                "subtypes_any": ["lesson", "noble"],
+            },
+            "Search your library for a blue instant card, reveal it, put it into your hand, then shuffle.": {
+                "types": ["instant"],
+                "colors_any": ["U"],
+            },
+        }
+        for text, selector in cases.items():
+            with self.subTest(text=text):
+                template = fixed_library_search_effect_template(text)
+                self.assertIsNotNone(template)
+                assert template is not None
+                _template_id, effects, _target_schema, _mechanics = (
+                    template.compiled()
+                )
+                self.assertEqual(selector, effects[0]["selector"])
+
     def test_multi_tapped_land_search_compiles_as_one_closed_batch(self):
         for count in ("two", "ten"):
             text = (
@@ -221,6 +304,11 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
             "Search your library for a Dinosaur creature card, put it onto the battlefield, then shuffle. It gains indestructible until your next turn.",
             "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Investigate.",
             "Search your library for up to two basic land cards and/or Gate cards, put them onto the battlefield tapped, then shuffle.",
+            "Search your library for a card, put it into your hand, then shuffle.",
+            "Search your library for two creature cards, reveal them, put them into your hand, then shuffle.",
+            "Search your library for a nonlegendary card, put it into your hand, then shuffle.",
+            "Search your library for a card named Lightning Bolt, reveal it, put it into your hand, then shuffle.",
+            "Search target player's library for an artifact card, reveal it, put it into your hand, then shuffle.",
         )
         for text in leaf_unsupported:
             with self.subTest(text=text):
@@ -320,6 +408,62 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
                 ).status,
             )
 
+    def test_fixed_hand_search_shape_and_dependencies_fail_closed(self):
+        text = (
+            "Search your library for an artifact card, reveal it, put it "
+            "into your hand, then shuffle."
+        )
+        template = fixed_library_search_effect_template(text)
+        self.assertIsNotNone(template)
+        assert template is not None
+        _template_id, effects, target_schema, mechanics = template.compiled()
+        dependencies = capability_dependencies_for_node(
+            effects=effects,
+            target_schema=target_schema,
+            mechanic_ids=mechanics,
+        )
+        self.assertIn(FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID, dependencies)
+
+        effect = dict(effects[0])
+        for malformed in (
+            {**effect, "extra": True},
+            {**effect, "destination": "battlefield"},
+            {**effect, "reveal": "yes"},
+            {**effect, "shuffle_after": False},
+            {**effect, "selector": {}},
+            {**effect, "count": {"minimum": 0, "maximum": 2}},
+        ):
+            with self.subTest(malformed=malformed):
+                self.assertFalse(
+                    capability_dependencies_for_node(
+                        effects=(malformed,),
+                        target_schema=None,
+                        mechanic_ids=mechanics,
+                    )
+                )
+
+        for blocked in (
+            FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID,
+            "variant.commander.zone_return",
+            "zone.change.destination_replacement",
+        ):
+            with self.subTest(blocked=blocked):
+                value = deepcopy(self.registry_value)
+                row = next(
+                    item
+                    for item in value["capabilities"]
+                    if item["id"] == blocked
+                )
+                row["status"] = "blocked"
+                row["blockers"] = ["focused restrictive-search mutation"]
+                self.assertNotEqual(
+                    "exact",
+                    self.compile(
+                        text,
+                        capabilities=CapabilityRegistry(value),
+                    ).status,
+                )
+
 
 class FixedLibrarySearchRuntimeTests(unittest.TestCase):
     @classmethod
@@ -356,6 +500,8 @@ class FixedLibrarySearchRuntimeTests(unittest.TestCase):
         cls.changeling = cls.db.lookup("Universal Automaton")
         cls.moggcatcher = cls.db.lookup("Moggcatcher")
         cls.blighted = cls.db.lookup("Blighted Woodland")
+        cls.revealed_search = cls.db.lookup("Revealed Artifact Search Fixture")
+        cls.private_search = cls.db.lookup("Private Artifact Search Fixture")
 
     @classmethod
     def tearDownClass(cls):
@@ -577,6 +723,70 @@ class FixedLibrarySearchRuntimeTests(unittest.TestCase):
             before_shuffle + 1,
             session.state.players["B"].stats["shuffle_count"],
         )
+
+    def test_generated_hand_search_preserves_reveal_privacy_and_replays(self):
+        for index, (record, reveal) in enumerate(
+            (
+                (self.revealed_search, True),
+                (self.private_search, False),
+            )
+        ):
+            with self.subTest(reveal=reveal):
+                session = self.session(701_230_010 + index)
+                card = self.add_changeling_to_library(session)
+                program = self.search_program(session, record)
+                self.begin_search(
+                    session,
+                    program,
+                    ref=f"S-FIXED-HAND-SEARCH-{index}",
+                )
+
+                actor_packet = session.packet("pilot:B", full=True)
+                candidates = actor_packet["decision"]["ctx"]["search_cards"]
+                self.assertIn(card.ref, {value["id"] for value in candidates})
+                schema = actor_packet["decision"]["legal_actions"][0][
+                    "choice_schema"
+                ]
+                self.assertEqual(0, schema["minimum"])
+                self.assertTrue(schema["rules_may_fail_to_find"])
+                for seat in ("A", "C", "D"):
+                    before = json.dumps(
+                        session.packet(f"pilot:{seat}", full=True)
+                    )
+                    self.assertNotIn(card.ref, before)
+                    self.assertNotIn(card.printed_name, before)
+
+                before_shuffle = session.state.players["B"].stats.get(
+                    "shuffle_count", 0
+                )
+                result = session.act(
+                    "pilot:B",
+                    {
+                        "action_id": "choose",
+                        "search_cards": [card.ref],
+                        "plan": "DEVELOP_TYPED_SEARCH",
+                        "reason": "Resolve the typed hand-search projection boundary.",
+                    },
+                )
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("hand", card.zone)
+                self.assertEqual(
+                    before_shuffle + 1,
+                    session.state.players["B"].stats["shuffle_count"],
+                )
+                opposing = json.dumps(session.packet("pilot:A", full=True))
+                if reveal:
+                    self.assertIn(card.ref, opposing)
+                    self.assertIn(card.printed_name, opposing)
+                else:
+                    self.assertNotIn(card.ref, opposing)
+                    self.assertNotIn(card.printed_name, opposing)
+
+                with tempfile.TemporaryDirectory() as temporary:
+                    record_dir = Path(temporary) / f"fixed-hand-search-{index}"
+                    session.save(record_dir)
+                    replay = replay_record(record_dir, self.db, verify=True)
+                self.assertTrue(replay["ok"], replay)
 
 
 if __name__ == "__main__":

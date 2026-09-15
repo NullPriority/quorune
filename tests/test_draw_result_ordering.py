@@ -273,6 +273,7 @@ class DrawResultCoordinatorTests(unittest.TestCase):
                 key="test:draw-result-double",
                 label="Draw result double",
                 oracle_id=sources[0].oracle_id,
+                ability_id="test:draw-result-double",
                 active_zone="battlefield",
                 event="draw",
                 handlers=[

@@ -573,6 +573,31 @@ class CommanderEngine:
                     "scheduler-harvest-contract", plan.matched_rule_ids
                 )
 
+    def test_restrictive_library_search_owner_selects_search_contract(self):
+        for path in (
+            "quorune/compiler/library_search_templates.py",
+            "quorune/rules/library_search_capability_shapes.py",
+            "quorune/selection/searching.py",
+            "tests/fixtures/fixed-library-search-cards.json",
+        ):
+            with self.subTest(path=path):
+                plan = classify_changes([path])
+                self.assertLessEqual(
+                    {
+                        "test_card_program_trust",
+                        "test_fixed_library_searches",
+                        "test_rules_scheduler",
+                        "test_semantic_searches",
+                        "test_storm_rules",
+                        "test_typecycling",
+                    },
+                    set(plan.test_modules),
+                )
+                self.assertIn(
+                    "fixed-restrictive-library-search-contract",
+                    plan.matched_rule_ids,
+                )
+
     def test_shared_target_sources_select_return_capability_inventory(self):
         for path in (
             "quorune/compiler/direct_target.py",

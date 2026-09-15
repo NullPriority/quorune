@@ -5,6 +5,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from ..compiler.library_search_templates import (
     FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
     FIXED_LIBRARY_SEARCH_MECHANIC_ID,
+    FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID,
 )
 from ..commander_pairing import (
     PARTNER_WITH_SEARCH_CAPABILITY_ID,
@@ -19,6 +20,7 @@ _SELECTOR_FIELDS = frozenset(
 _PERMANENT_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
 )
+_CARD_TYPES = _PERMANENT_TYPES | frozenset({"instant", "kindred", "sorcery"})
 FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID = "library.search.fixed_type_to_hand"
 _FIXED_TYPECYCLING_SELECTORS = (
     {"types": ["land"], "supertypes": ["basic"]},
@@ -32,7 +34,25 @@ _FIXED_TYPECYCLING_SELECTORS = (
 )
 
 
-def _query(selector: object) -> ObjectQuerySpec | None:
+def fixed_library_search_covered_mechanics(
+    supplied: Iterable[str],
+) -> set[str]:
+    """Return search mechanics covered by their exact capability shapes."""
+
+    capabilities = set(supplied)
+    covered: set[str] = set()
+    if FIXED_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
+        covered.add(FIXED_LIBRARY_SEARCH_MECHANIC_ID)
+    if FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID in capabilities:
+        covered.add(FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID)
+    return covered
+
+
+def _query(
+    selector: object,
+    *,
+    permanent_only: bool,
+) -> ObjectQuerySpec | None:
     if (
         not isinstance(selector, Mapping)
         or not selector
@@ -58,7 +78,10 @@ def _query(selector: object) -> ObjectQuerySpec | None:
         or query.colors_any
     ):
         return None
-    if not set((*query.types_all, *query.types_any)).issubset(_PERMANENT_TYPES):
+    allowed_types = _PERMANENT_TYPES if permanent_only else _CARD_TYPES
+    if not set((*query.types_all, *query.types_any)).issubset(allowed_types):
+        return None
+    if permanent_only and not (query.types_all or query.types_any):
         return None
     return query
 
@@ -102,7 +125,7 @@ def fixed_library_search_node_capabilities(
         or minimum not in {0, maximum}
     ):
         return ()
-    query = _query(effect.get("selector"))
+    query = _query(effect.get("selector"), permanent_only=True)
     if (
         effect.get("op") != "search"
         or effect.get("zone") != "library"
@@ -127,11 +150,13 @@ def fixed_type_to_hand_search_node_capabilities(
     target_schema: Mapping[str, object] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Recognize only the closed fixed Typecycling search instruction."""
+    """Recognize one closed fixed restrictive type search to hand."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
-        "cycling" not in mechanics
+        not mechanics.intersection(
+            {"cycling", FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID}
+        )
         or target_schema is not None
         or len(effects) != 1
     ):
@@ -149,16 +174,30 @@ def fixed_type_to_hand_search_node_capabilities(
         return ()
     count = effect.get("count")
     selector = effect.get("selector")
+    generic_search = FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID in mechanics
     if (
         effect.get("op") != "search"
         or effect.get("zone") != "library"
         or effect.get("destination") != "hand"
-        or effect.get("reveal") is not True
+        or type(effect.get("reveal")) is not bool
+        or (not generic_search and effect.get("reveal") is not True)
         or effect.get("shuffle_after") is not True
         or not isinstance(count, Mapping)
-        or dict(count) != {"minimum": 1, "maximum": 1}
+        or set(count) != {"minimum", "maximum"}
+        or type(count.get("minimum")) is not int
+        or type(count.get("maximum")) is not int
+        or count.get("maximum") != 1
+        or count.get("minimum") not in {0, 1}
+        or (
+            not generic_search
+            and dict(count) != {"minimum": 1, "maximum": 1}
+        )
         or not isinstance(selector, Mapping)
-        or dict(selector) not in _FIXED_TYPECYCLING_SELECTORS
+        or _query(selector, permanent_only=False) is None
+        or (
+            not generic_search
+            and dict(selector) not in _FIXED_TYPECYCLING_SELECTORS
+        )
     ):
         return ()
     return (FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID,)
@@ -225,9 +264,11 @@ def partner_with_search_node_capabilities(
 __all__ = [
     "FIXED_LIBRARY_SEARCH_CAPABILITY_ID",
     "FIXED_LIBRARY_SEARCH_MECHANIC_ID",
+    "FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID",
     "FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID",
     "PARTNER_WITH_SEARCH_CAPABILITY_ID",
     "PARTNER_WITH_SEARCH_MECHANIC_ID",
+    "fixed_library_search_covered_mechanics",
     "fixed_library_search_node_capabilities",
     "fixed_type_to_hand_search_node_capabilities",
     "partner_with_search_node_capabilities",

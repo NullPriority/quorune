@@ -822,6 +822,7 @@ class FixedZoneCastLifecycleRuntimeTests(unittest.TestCase):
             key="test:rebound-hand-replacement",
             label="Put an opponent's graveyard-bound card into its hand",
             oracle_id=replacement_source.oracle_id,
+            ability_id="test:rebound-hand-replacement",
             active_zone="battlefield",
             event="zone.change",
             trust_level="provisional",

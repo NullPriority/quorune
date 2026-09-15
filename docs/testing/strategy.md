@@ -47,6 +47,11 @@ constructed boundary fixture or another independently justified case. Do not
 derive expected support from the compiler under test or repeatedly substitute
 an unrelated real card without naming the blocker being protected.
 
+A test-created `SemanticProgram` that borrows a runtime card's Oracle identity
+must declare its own explicit `ability_id`. Test-shard validation enforces this
+boundary so a later compiler promotion cannot make the synthetic program
+collide with that card's newly trusted ability.
+
 For a semantic scope expansion, select the reachable boundaries that can change
 the result. Bounded stateful or property exploration should cover meaningful
 sequences around control changes, ability removal and restoration, source

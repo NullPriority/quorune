@@ -303,6 +303,7 @@ class OptionalDrawChoiceIntegrationTests(unittest.TestCase):
                 key="test:prospective-drawer-restriction",
                 label="Prospective drawer restriction",
                 oracle_id=source.oracle_id,
+                ability_id="test:prospective-drawer-restriction",
                 active_zone="battlefield",
                 event="draw.permission",
                 handlers=[

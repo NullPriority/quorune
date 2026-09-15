@@ -93,9 +93,8 @@ from .monarch_capability_shapes import (
 )
 from .transform_capability_shapes import source_transform_node_capabilities
 from .library_search_capability_shapes import (
-    FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
-    FIXED_LIBRARY_SEARCH_MECHANIC_ID, PARTNER_WITH_SEARCH_MECHANIC_ID,
-    fixed_library_search_node_capabilities,
+    PARTNER_WITH_SEARCH_MECHANIC_ID,
+    fixed_library_search_covered_mechanics, fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
 )
 from .library_selection_capability_shapes import (
@@ -1375,7 +1374,6 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         ),
         "zone.mill.fixed": "mill",
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
-        FIXED_LIBRARY_SEARCH_CAPABILITY_ID: FIXED_LIBRARY_SEARCH_MECHANIC_ID,
         "library.select.fixed_controller": (
             FIXED_LIBRARY_SELECTION_MECHANIC
         ),
@@ -1386,7 +1384,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         mechanic
         for capability, mechanic in mapping.items()
         if capability in supplied
-    }
+    } | fixed_library_search_covered_mechanics(supplied)
 
 
 def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:

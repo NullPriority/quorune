@@ -66,7 +66,10 @@ from scripts.harvest_outcome_history import (
 )
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.update_work_selection_cohort_measurements import (
+    _completed_transition_measurement_is_current,
     _preserved_transition_is_current,
+    _source_checkpoint_frontier,
+    _transition_measurements,
     _transition_measurement_is_eligible,
 )
 from scripts.work_selection_cohort_measurements import (
@@ -3193,12 +3196,128 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         self.assertFalse(
             _preserved_transition_is_current(
+                receipt,
+                frontier_fingerprint="frontier",
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="cohort",
+                probe_id="corrected-probe",
+                completed_receipt_fingerprints=frozenset({"receipt"}),
+            )
+        )
+        self.assertFalse(
+            _preserved_transition_is_current(
                 landed,
                 frontier_fingerprint="generated-frontier",
                 oracle_source_sha256="changed-oracle",
                 cohort_fingerprint="generated-cohort",
                 completed_receipt_fingerprints=frozenset({"receipt"}),
             )
+        )
+
+    def test_completed_corrected_measurement_reuses_without_history(self):
+        receipt = {
+            "receipt_fingerprint": "receipt-v2",
+            "oracle_source_sha256": "oracle",
+            "measurement": {"probe_id": "probe-v2"},
+        }
+        self.assertTrue(
+            _completed_transition_measurement_is_current(
+                receipt,
+                oracle_source_sha256="oracle",
+                probe_id="probe-v2",
+                completed_receipt_fingerprints=frozenset({"receipt-v2"}),
+            )
+        )
+        for field, value in (
+            ("oracle_source_sha256", "changed-oracle"),
+            ("probe_id", "probe-v3"),
+            ("completed_receipt_fingerprints", frozenset()),
+        ):
+            arguments = {
+                "oracle_source_sha256": "oracle",
+                "probe_id": "probe-v2",
+                "completed_receipt_fingerprints": frozenset({"receipt-v2"}),
+            }
+            arguments[field] = value
+            with self.subTest(field=field):
+                self.assertFalse(
+                    _completed_transition_measurement_is_current(
+                        receipt,
+                        **arguments,
+                    )
+                )
+
+    def test_completed_corrected_measurement_skips_base_blob_lookup(self):
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        with mock.patch(
+            "scripts.update_work_selection_cohort_measurements."
+            "_source_checkpoint_frontier",
+            side_effect=AssertionError("base frontier should not be read"),
+        ):
+            rows = _transition_measurements(
+                records={},
+                coverage=coverage,
+                bundles=coverage["candidate_bundles"],
+            )
+        self.assertEqual(1, len(rows))
+        self.assertEqual(
+            "fixed-restrictive-library-search-existing-owner-v2",
+            rows[0]["measurement"]["probe_id"],
+        )
+    def test_transition_probe_recovers_immutable_source_frontier(self):
+        transition_id = self.catalog["work_selection"][
+            "semantic_transition_declaration"
+        ]["transition_id"]
+        outcome = next(
+            (
+                row
+                for row in self.work_inputs["harvest_outcome_history"][
+                    "entries"
+                ]
+                if row.get("transition_id") == transition_id
+            ),
+            None,
+        )
+        expected = (
+            outcome["measurement_frontier_fingerprint"]
+            if outcome is not None
+            else self.work_inputs["frontier"]["fingerprint"]
+        )
+        self.assertEqual(
+            expected,
+            _source_checkpoint_frontier(transition_id)["fingerprint"],
+        )
+
+    def test_materialized_forecast_correction_is_idempotent(self):
+        correction = {
+            "transition_id": "oracle-ir-v999-fixture",
+            "original_expected_complete_card_gain": 10,
+            "certified_complete_card_lower_bound": 10,
+            "certified_exact_ability_lower_bound": 12,
+            "certified_material_residual_reduction_lower_bound": 12,
+            "measurement_probe_id": "fixture-probe-v2",
+            "reason": "The corrected fixture probe nets one replaced structural carrier.",
+        }
+        outcome = {
+            "transition_id": correction["transition_id"],
+            "expected_complete_card_gain": 10,
+            "actual_complete_card_gain": 10,
+            "actual_exact_ability_gain": 12,
+            "actual_material_residual_reduction": 13,
+            "measurement_probe_id": "fixture-probe-v2",
+        }
+        with self.assertRaises(WorkSelectionError):
+            validate_harvest_forecast_correction(
+                correction,
+                outcome=outcome,
+            )
+        outcome["forecast_correction"] = correction
+        self.assertEqual(
+            correction,
+            validate_harvest_forecast_correction(
+                correction,
+                outcome=outcome,
+            ),
         )
 
     def test_attached_quoted_grant_probe_is_integrated_and_accounted(self):
