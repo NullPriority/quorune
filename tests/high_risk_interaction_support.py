@@ -77,6 +77,14 @@ _WITNESSES = {
         'Lands you control have "{T}: Add two mana of any one color."',
         "{2}",
     ),
+    "restricted-mana-replacement-boundary": _Witness(
+        "Generic Restricted Mana Replacement Boundary Fixture",
+        "Artifact",
+        "As this artifact enters, choose a creature type.\n"
+        "{T}: Add {G}. Spend this mana only to cast an Elemental spell or "
+        "activate an ability of an Elemental.",
+        "{2}",
+    ),
     "fixed-characteristic-set-regeneration": _Witness(
         "Generic Fixed Characteristic Set Regeneration Boundary Fixture",
         "Sorcery",
@@ -1258,6 +1266,14 @@ CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR = _pair(
     "residual.replacement.damage-prevention",
 )
 
+RESTRICTED_MANA_AND_REPLACEMENT_PAIRS = tuple(
+    _pair("capability.mana.activated.restricted_fixed_output", replacement)
+    for replacement in (
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    )
+)
+
 CONTINUOUS_AND_REPLACEMENT_PAIRS = (
     _pair(
         "residual.continuous_layer.affected-player-ordering",
@@ -1347,6 +1363,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *FIXED_OWNER_ZONE_AND_CHOICE_PAIRS,
             *MADNESS_AND_CHOICE_PAIRS,
             *COST_AND_REPLACEMENT_PAIRS,
+            *RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
             *CONTINUOUS_AND_REPLACEMENT_PAIRS,
             CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
             *TRIGGER_AND_REPLACEMENT_PAIRS,
@@ -1492,6 +1509,10 @@ _bind(
 )
 _bind("etchings-of-the-chosen", *COST_AND_REPLACEMENT_PAIRS[2:4])
 _bind("etchings-of-the-chosen", *COST_AND_REPLACEMENT_PAIRS[6:8])
+_bind(
+    "restricted-mana-replacement-boundary",
+    *RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
+)
 _bind("prismatic-circle", CONTINUOUS_AND_REPLACEMENT_PAIRS[0])
 _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
@@ -1734,6 +1755,7 @@ __all__ = [
     "REANIMATION_RESIDUAL_BOUNDARY_PAIRS",
     "REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS",
     "REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS",
+    "RESTRICTED_MANA_AND_REPLACEMENT_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",
     "TOKEN_AND_DAMAGE_PREVENTION_PAIR",
     "TRIGGER_AND_REPLACEMENT_PAIRS",

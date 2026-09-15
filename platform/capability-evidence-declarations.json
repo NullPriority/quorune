@@ -84,6 +84,14 @@
     {
       "capability_id": "activation.condition.public_query",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_once_per_turn_and_land_condition_use_current_source_state",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Evaluate one current Island-or-Swamp subtype alternative through the shared public battlefield query before making the fixed mana activation payable."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_conditions_gate_existing_effect_and_replacement_owners",
       "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -136,6 +144,22 @@
       "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject an empty-hand condition after a card enters hand and preserve mana, tap, source, and stack state."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_constrained_mana_compiles_spend_limit_and_land_conditions",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower one basic-land-subtype alternative into a closed ObjectQuerySpec on a source-spanned fixed mana activation."
+    },
+    {
+      "capability_id": "activation.condition.public_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_once_per_turn_and_land_condition_use_current_source_state",
+      "official_rule_ids": ["602.1", "602.1b", "602.2", "609.3"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep the activation unavailable without a matching land and make it payable after the controller gains an Island."
     },
     {
       "capability_id": "activation.condition.public_query",
@@ -1616,6 +1640,78 @@
       "official_rule_ids": ["602.1","602.2","702.84","702.84a"],
       "supported_profiles": ["traditional","commander_duel","commander_review"],
       "applicability_note": "Replay the activation, mana payment, battlefield incarnation, Haste journal, unearthed designation, delayed trigger, projection state, and final authoritative hash."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activating_abilities_rules.ActivatingAbilityRuleTests.test_once_per_turn_restriction_survives_control_change",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve a consumed once-per-turn ability across a control change, then reset it at the next turn boundary."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_once_per_turn_and_land_condition_use_current_source_state",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep the same source incarnation unavailable after activation and reset the shared usage journal only after a zone change creates a new incarnation."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_once_per_turn_and_land_condition_use_current_source_state",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Transfer the source between two controllers in four-player state without granting the same zone object another use."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_source_effect_sequences.FixedSourceEffectSequenceRuntimeTests.test_exhaust_usage_commit_mutant_is_killed",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Suppress the shared activation-usage commit and prove its postcondition rejects the activation transaction without mana, tap, or journal mutation."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_once_per_turn_mana_excludes_relative_and_nonstandard_limits",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Leave player-relative, turn-relative, and once-per-game activation limits residual instead of widening the once-each-turn contract."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activating_abilities_rules.ActivatingAbilityRuleTests.test_once_per_turn_restriction_survives_control_change",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Parse and enforce a generic once-each-turn activation limit through the canonical activation-usage owner."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_constrained_mana_compiles_spend_limit_and_land_conditions",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower the printed once-each-turn restriction as a distinct trusted dependency on a source-spanned fixed mana ability."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_once_per_turn_and_land_condition_use_current_source_state",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Offer one fixed mana activation before use, reject it afterward, and restore availability for the new zone incarnation."
+    },
+    {
+      "capability_id": "activation.usage.once_per_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_public_hand_and_graveyard_queries_preserve_privacy_and_replay",
+      "official_rule_ids": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Persist and exactly replay the typed once-per-turn descriptor, committed usage journal, cost payment, and resolved effect."
     },
     {
       "capability_id": "attachment.action.fixed_source",
@@ -18227,6 +18323,22 @@
     {
       "capability_id": "mana.activated.restricted_fixed_output",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaModelTests.test_typed_spend_restrictions_match_public_characteristics",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Apply one typed restriction disjunction to current spell and ability source types, subtypes, and supertypes without changing the produced mana type."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_restricted_fixed_mana_filters_payment_and_rolls_back",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject the same restricted mana for a disallowed spell or creature ability while admitting an instant spell and artifact ability through canonical payment owners."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_predefined_token_profiles_enforce_mana_and_impulse_rules",
       "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -18251,10 +18363,50 @@
     {
       "capability_id": "mana.activated.restricted_fixed_output",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_constrained_mana_compiles_spend_limit_and_land_conditions",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Leave zone, mana-value, dynamic-output, and linked-result spending variants material instead of compiling an approximation."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_restricted_fixed_mana_filters_payment_and_rolls_back",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject disallowed spell and activated-ability payment without consuming any mana or mutating the activation source."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
       "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject open, dynamic, conditional, multi-effect, and unsupported spending restrictions."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_constrained_mana_compiles_spend_limit_and_land_conditions",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower one source-spanned fixed-output activation with a canonical public-characteristic spending predicate."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaModelTests.test_typed_spend_restrictions_match_public_characteristics",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile spell and ability restrictions over card types, creature subtypes, noncreature subtypes, supertypes, and negative creature type."
+    },
+    {
+      "capability_id": "mana.activated.restricted_fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_restricted_fixed_mana_filters_payment_and_rolls_back",
+      "official_rule_ids": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Produce one restricted mana unit, spend it on an admitted instant spell context, and use a second unit on an admitted artifact ability."
     },
     {
       "capability_id": "mana.activated.restricted_fixed_output",

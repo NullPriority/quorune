@@ -877,10 +877,14 @@ planeswalkers, choosing among owned legendary creature cards in a graveyard,
 and adding one mana of each color among controlled permanents. Each form
 lowers an immutable relative `ObjectQuerySpec`. Monocolored-only, linked-exile,
 opponent-relative, additional-condition, and side-effecting variants remain
-source-spanned residuals. A separate restricted fixed-output capability admits
-only the Powerstone one-colorless nonartifact-spell prohibition and selectable
-any-color mana restricted to artifact or creature spells. Other outputs and
-spending restrictions remain residual.
+source-spanned residuals. The fixed-output owner may also retain one typed
+once-each-turn activation limit, one closed controller basic-land-subtype
+query, or one spending predicate over current public spell or ability-source
+types, subtypes, and supertypes. Offer and commit both consume the same
+activation query and object-incarnation usage journal, while casting and
+activation payment share the same canonical mana-spend context. Origin,
+casting-method, color, mana-value, variable, compound-condition, result-rider,
+and delayed-effect restrictions remain source-spanned residuals.
 
 Printed `Affinity for` qualities in the closed casting-payment vocabulary lower
 as source-spanned `cast.cost` descriptors containing canonical effective-object

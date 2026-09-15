@@ -9,6 +9,7 @@ from unittest import mock
 
 from common import keep_all, load_assets, make_session
 from quorune.abilities import parse_activated_abilities
+from quorune.activation_usage import ActivationLimit
 from quorune.carddb import CardRecord
 from quorune.fixed_mana_abilities import (
     FixedActivatedManaAbilitySpec,
@@ -18,6 +19,12 @@ from quorune.fixed_mana_abilities import (
     fixed_mana_modes_from_effect,
 )
 from quorune.oracle_ir import compile_oracle_card, generated_programs
+from quorune.mana_provenance import ManaProvenanceError
+from quorune.mana_restrictions import (
+    ability_mana_spend_context,
+    mana_restriction_allows,
+    spell_mana_spend_context,
+)
 from quorune.record import checkpoint_envelope, replay_record
 from quorune.rules.capabilities import (
     load_default_capability_registry,
@@ -99,6 +106,50 @@ class FixedManaModelTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIsNone(fixed_mana_modes_from_effect(text))
 
+    def test_typed_spend_restrictions_match_public_characteristics(self):
+        cases = (
+            (
+                "{T}: Add {U}. Spend this mana only to cast an instant or sorcery spell.",
+                spell_mana_spend_context("Instant"),
+                spell_mana_spend_context("Creature — Wizard"),
+            ),
+            (
+                "{T}: Add {C}{C}. Spend this mana only to activate abilities of artifacts.",
+                ability_mana_spend_context("Artifact Creature — Golem"),
+                ability_mana_spend_context("Creature — Golem"),
+            ),
+            (
+                "{T}: Add {C}. Spend this mana only to cast artifact spells or activate abilities of artifacts.",
+                ability_mana_spend_context("Artifact — Vehicle"),
+                ability_mana_spend_context("Creature — Pilot"),
+            ),
+            (
+                "{T}: Add two mana of any one color. Spend this mana only to cast a Dragon spell or activate abilities of Dragons.",
+                spell_mana_spend_context("Kindred Enchantment — Dragon"),
+                spell_mana_spend_context("Creature — Angel"),
+            ),
+            (
+                "{T}: Add {W}. Spend this mana only to cast legendary spells.",
+                spell_mana_spend_context("Legendary Planeswalker — Test"),
+                spell_mana_spend_context("Planeswalker — Test"),
+            ),
+        )
+        for text, admitted, rejected in cases:
+            with self.subTest(text=text):
+                ability = parse_activated_abilities(
+                    card_name="Constrained Mana Fixture",
+                    oracle_text=text,
+                )[0]
+                spec = compile_fixed_activated_mana_ability(ability)
+                self.assertIsNotNone(spec)
+                assert spec is not None and spec.spend_restriction is not None
+                self.assertTrue(
+                    mana_restriction_allows(spec.spend_restriction, admitted)
+                )
+                self.assertFalse(
+                    mana_restriction_allows(spec.spend_restriction, rejected)
+                )
+
     def test_descriptor_is_immutable_canonical_and_strict(self):
         parsed = parse_activated_abilities(
             card_name="Typed Mana Relic",
@@ -125,6 +176,24 @@ class FixedManaModelTests(unittest.TestCase):
         malformed["spend_restriction"] = "unsupported"
         with self.assertRaises(FixedManaAbilityError):
             FixedActivatedManaAbilitySpec.from_dict(malformed)
+        malformed = spec.to_dict()
+        malformed["activation_conditions"] = ["unsupported"]
+        with self.assertRaises(FixedManaAbilityError):
+            FixedActivatedManaAbilitySpec.from_dict(malformed)
+
+        conditioned = compile_fixed_activated_mana_ability(
+            parse_activated_abilities(
+                card_name="Conditional Mana Fixture",
+                oracle_text=(
+                    "{T}: Add {U}. Activate only if you control an Island."
+                ),
+            )[0]
+        )
+        assert conditioned is not None
+        self.assertEqual(
+            conditioned,
+            FixedActivatedManaAbilitySpec.from_dict(conditioned.to_dict()),
+        )
 
     def test_fixed_mode_rejects_unknown_or_empty_outputs(self):
         with self.assertRaises(FixedManaAbilityError):
@@ -211,10 +280,75 @@ class FixedManaCompilerTests(unittest.TestCase):
         self.assertEqual(["ab1", "ab2"], [spec.ability_id for spec in specs])
         self.assertEqual(1, specs[1].mana_cost["GENERIC"])
 
+    def test_constrained_mana_compiles_spend_limit_and_land_conditions(self):
+        cases = (
+            (
+                "{T}: Add {U}. Spend this mana only to cast an instant or sorcery spell.",
+                {"mana.activated.restricted_fixed_output"},
+            ),
+            (
+                "{T}: Add {G}. Spend this mana only to cast a creature spell.",
+                {"mana.activated.restricted_fixed_output"},
+            ),
+            (
+                "{T}: Add one mana of any color. Activate only once each turn.",
+                {"activation.usage.once_per_turn", "mana.activated.fixed_output"},
+            ),
+            (
+                "{T}: Add {U} or {B}. Activate only if you control an Island or a Swamp.",
+                {"activation.condition.public_query", "mana.activated.fixed_output"},
+            ),
+        )
+        capabilities = load_default_capability_registry()
+        for text, expected in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(
+                    record(text),
+                    capability_registry=capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertLessEqual(expected, set(node.capability_dependencies))
+                self.assertTrue(node.handlers)
+
+        for unsupported in (
+            "{T}: Add one mana of any color. Spend this mana only to cast spells from exile.",
+            "{T}: Add {C}{C}. Spend this mana only to cast spells with mana value 5 or greater.",
+            "{T}: Add one mana of any color. Activate only if this land entered this turn or if you control a basic land.",
+            "{T}: Add {G}. Activate only if you control a Goblin or an Elf.",
+            "{T}: Add {C}. Activate only if you control three or more artifacts.",
+            "{T}: Add {W}. Activate only during your upkeep and only once each turn.",
+            "{T}: Add {G}. If this mana is spent on a creature spell, it gains haste.",
+        ):
+            with self.subTest(unsupported=unsupported):
+                ir = compile_oracle_card(
+                    record(unsupported),
+                    capability_registry=capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_once_per_turn_mana_excludes_relative_and_nonstandard_limits(self):
+        capabilities = load_default_capability_registry()
+        for unsupported in (
+            "{T}: Add {U}. Activate only once during your turn.",
+            "{T}: Add {U}. Activate only once during each player's turn.",
+            "{T}: Add {U}. Activate only once per game.",
+        ):
+            with self.subTest(unsupported=unsupported):
+                ir = compile_oracle_card(
+                    record(unsupported),
+                    capability_registry=capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
     def test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual(self):
         for text in (
             "{T}: Add {G} for each creature you control.",
-            "{T}: Add {G}. Spend this mana only to cast a creature spell.",
+            "{T}: Add {G}. Spend this mana only to cast spells from exile.",
             "+1: Add {G}.",
             "{T}: Target player adds {G}.",
             "Discard a card: Add {G}.",
@@ -655,6 +789,231 @@ class FixedManaRuntimeTests(unittest.TestCase):
             session.save(game_dir)
             replay = replay_record(game_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+    def test_restricted_fixed_mana_filters_payment_and_rolls_back(self):
+        session = self.session(60531)
+        ring, _ = self._ring(session)
+        engine = session.engine
+        parsed = parse_activated_abilities(
+            card_name="Constrained Mana Fixture",
+            oracle_text=(
+                "{T}: Add {U}. Spend this mana only to cast an instant or "
+                "sorcery spell."
+            ),
+        )[0]
+        spec = compile_fixed_activated_mana_ability(parsed)
+        assert spec is not None
+        ability = spec.to_activated_ability()
+        with mock.patch.object(
+            engine,
+            "_activated_abilities",
+            return_value=(ability,),
+        ):
+            result = session.act(
+                f"pilot:{ring.controller}",
+                {"a": "activate", "source": ring.ref, "ability": ability.ability_id},
+            )
+        self.assertTrue(result.ok, result.summary)
+        player = engine.state.players[ring.controller]
+        self.assertEqual(1, player.mana_pool["U"])
+        self.assertEqual(
+            0,
+            engine._spendable_mana_pool(
+                ring.controller,
+                engine._spell_mana_spend_context("Creature — Wizard"),
+            )["U"],
+        )
+        before = dict(player.mana_pool)
+        with self.assertRaises(ManaProvenanceError):
+            engine._apply_mana_spend(
+                ring.controller,
+                {"U": 1},
+                engine._spell_mana_spend_context("Creature — Wizard"),
+            )
+        self.assertEqual(before, dict(player.mana_pool))
+        engine._apply_mana_spend(
+            ring.controller,
+            {"U": 1},
+            engine._spell_mana_spend_context("Instant"),
+        )
+        self.assertEqual(0, player.mana_pool["U"])
+
+        ring.tapped = False
+        artifact_only = compile_fixed_activated_mana_ability(
+            parse_activated_abilities(
+                card_name="Constrained Mana Fixture",
+                oracle_text=(
+                    "{T}: Add {U}. Spend this mana only to activate abilities "
+                    "of artifacts."
+                ),
+            )[0]
+        )
+        assert artifact_only is not None
+        artifact_mana_ability = artifact_only.to_activated_ability()
+        with mock.patch.object(
+            engine,
+            "_activated_abilities",
+            return_value=(artifact_mana_ability,),
+        ):
+            result = session.act(
+                f"pilot:{ring.controller}",
+                {
+                    "a": "activate",
+                    "source": ring.ref,
+                    "ability": artifact_mana_ability.ability_id,
+                },
+            )
+        self.assertTrue(result.ok, result.summary)
+        costed_ability = parse_activated_abilities(
+            card_name="Constrained Ability Fixture",
+            oracle_text="{U}: Draw a card.",
+        )[0]
+        creature = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == ring.controller
+            and card.is_card_object
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(
+            creature.object_id,
+            "battlefield",
+            controller=ring.controller,
+            tapped=False,
+            log=False,
+        )
+        self.assertEqual(
+            ("unpayable", "insufficient_mana"),
+            engine._ability_availability(
+                ring.controller,
+                creature,
+                costed_ability,
+            ),
+        )
+        self.assertEqual(
+            ("payable", None),
+            engine._ability_availability(
+                ring.controller,
+                ring,
+                costed_ability,
+            ),
+        )
+        with mock.patch.object(
+            engine,
+            "_activated_abilities",
+            return_value=(costed_ability,),
+        ):
+            result = session.act(
+                f"pilot:{ring.controller}",
+                {
+                    "a": "activate",
+                    "source": ring.ref,
+                    "ability": costed_ability.ability_id,
+                },
+            )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, player.mana_pool["U"])
+
+    def test_once_per_turn_and_land_condition_use_current_source_state(self):
+        session = self.session(60532, players=4)
+        ring, _ = self._ring(session)
+        engine = session.engine
+        limited = compile_fixed_activated_mana_ability(
+            parse_activated_abilities(
+                card_name="Limited Mana Fixture",
+                oracle_text=(
+                    "{T}: Add one mana of any color. Activate only once each turn."
+                ),
+            )[0]
+        )
+        assert limited is not None
+        ability = limited.to_activated_ability()
+        self.assertIs(ActivationLimit.ONCE_PER_TURN, ability.activation_limit)
+        with mock.patch.object(
+            engine,
+            "_activated_abilities",
+            return_value=(ability,),
+        ):
+            result = session.act(
+                f"pilot:{ring.controller}",
+                {
+                    "a": "activate",
+                    "source": ring.ref,
+                    "ability": ability.ability_id,
+                    "mana_output": {"U": 1},
+                },
+            )
+            self.assertTrue(result.ok, result.summary)
+            ring.tapped = False
+            self.assertEqual(
+                ("unavailable", "already_activated_this_turn"),
+                engine._ability_availability(ring.controller, ring, ability),
+            )
+            ring.controller = "B"
+            self.assertEqual(
+                ("unavailable", "already_activated_this_turn"),
+                engine._ability_availability("B", ring, ability),
+            )
+            engine.move_card(ring.object_id, "hand", log=False)
+            engine.move_card(
+                ring.object_id,
+                "battlefield",
+                controller="B",
+                tapped=False,
+                log=False,
+            )
+            self.assertEqual(
+                ("payable", None),
+                engine._ability_availability("B", ring, ability),
+            )
+
+        conditioned = compile_fixed_activated_mana_ability(
+            parse_activated_abilities(
+                card_name="Conditional Mana Fixture",
+                oracle_text=(
+                    "{T}: Add {U} or {B}. Activate only if you control an "
+                    "Island or a Swamp."
+                ),
+            )[0]
+        )
+        assert conditioned is not None
+        conditional_ability = conditioned.to_activated_ability()
+        matching_lands = [
+            card
+            for card in engine.state.cards.values()
+            if card.controller == "B"
+            and card.zone == "battlefield"
+            and not {"island", "swamp"}.isdisjoint(
+                engine._type_parts(
+                    str(engine._effective_card_data(card).get("type_line") or "")
+                )[1]
+            )
+        ]
+        for card in matching_lands:
+            engine.move_card(card.object_id, "hand", log=False)
+        self.assertEqual(
+            ("unavailable", "requires_public_activation_query"),
+            engine._ability_availability("B", ring, conditional_ability),
+        )
+        island = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B" and "Island" in card.printed_name
+        )
+        engine.move_card(
+            island.object_id,
+            "battlefield",
+            controller="B",
+            tapped=False,
+            log=False,
+        )
+        self.assertEqual(
+            ("payable", None),
+            engine._ability_availability("B", ring, conditional_ability),
+        )
 
 
 if __name__ == "__main__":

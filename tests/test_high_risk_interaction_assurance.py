@@ -25,6 +25,7 @@ from high_risk_interaction_support import (
     REANIMATION_RESIDUAL_BOUNDARY_PAIRS,
     REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS,
     REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
+    RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
     SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS,
     TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
     TOKEN_AND_DAMAGE_PREVENTION_PAIR,
@@ -58,6 +59,16 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             (CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,),
+            database=self.db,
+        )
+
+    def test_restricted_mana_replacement_residual_pairs_fail_closed(
+        self,
+    ) -> None:
+        self.assertEqual(2, len(RESTRICTED_MANA_AND_REPLACEMENT_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self,
+            RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
             database=self.db,
         )
 

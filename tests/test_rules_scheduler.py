@@ -3259,11 +3259,20 @@ class RulesSchedulerTests(unittest.TestCase):
                 coverage=coverage,
                 bundles=coverage["candidate_bundles"],
             )
+        transition = self.catalog["work_selection"][
+            "semantic_transition_declaration"
+        ]
+        active_bundle = next(
+            bundle
+            for bundle in coverage["candidate_bundles"]
+            if bundle["bundle_id"] == transition["bundle_id"]
+        )
         self.assertEqual(1, len(rows))
         self.assertEqual(
-            "fixed-restrictive-library-search-existing-owner-v2",
+            active_bundle["measurement_probe_id"],
             rows[0]["measurement"]["probe_id"],
         )
+
     def test_transition_probe_recovers_immutable_source_frontier(self):
         transition_id = self.catalog["work_selection"][
             "semantic_transition_declaration"

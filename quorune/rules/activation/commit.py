@@ -28,6 +28,7 @@ from ...counter_placement import (
 from ...errors import GameRuleError
 from ...life_state import LifeStateError, pay_life_cost
 from ...mana_activation import complete_mana_activation
+from ...mana_restrictions import ability_mana_spend_context
 from ...mana_undo import clear_mana_undo_stack
 from ...activation_usage import (
     ActivationUsageError,
@@ -435,15 +436,12 @@ def _pay_object_and_mana_costs(
     spent: dict[str, int] = {}
     activations: list[dict[str, Any]] = []
     if sum(requirements.values()) or snow_required:
-        source_types = host._type_parts(
-            str(host._effective_card_data(source).get("type_line") or "")
-        )[0]
         spent, activations = host._pay_for_cost(
             proposal.seat,
             requirements,
             response,
-            spend_context=(
-                "artifact_ability" if "artifact" in source_types else "ability"
+            spend_context=ability_mana_spend_context(
+                str(host._effective_card_data(source).get("type_line") or "")
             ),
             snow_required=snow_required,
         )

@@ -16,6 +16,9 @@ class ActivationUsageError(ValueError):
     """Activation-usage state or input is malformed."""
 
 
+ACTIVATION_ONCE_PER_TURN_CAPABILITY = "activation.usage.once_per_turn"
+
+
 class ActivationLimit(str, Enum):
     ONCE_PER_TURN = "once_per_turn"
     EXHAUST_ONCE = "exhaust_once"
@@ -128,6 +131,7 @@ def commit_activation_usage(
 
 
 __all__ = [
+    "ACTIVATION_ONCE_PER_TURN_CAPABILITY",
     "ActivationLimit",
     "ActivationUsageError",
     "ActivationUsageVerdict",
