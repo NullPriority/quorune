@@ -237,7 +237,9 @@ def _instruction(
     if target_ref is not None and (type(target_ref) is not str or not target_ref):
         raise CreaturePowerDamageError("Creature-power target is malformed")
     must_be_creature = effect.get("target_must_be_creature")
-    if type(must_be_creature) is not bool or (kind == "fight") is not must_be_creature:
+    if type(must_be_creature) is not bool or (
+        kind == "fight" and must_be_creature is not True
+    ):
         raise CreaturePowerDamageError("Creature-power target domain is malformed")
     return kind, source_ref, target_ref, must_be_creature
 
