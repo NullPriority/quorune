@@ -267,6 +267,7 @@ def validate_harvest_forecast_correction(
             correction["certified_complete_card_lower_bound"]
             == correction["original_expected_complete_card_gain"]
             and measurement_probe_id == outcome.get("measurement_probe_id")
+            and outcome.get("forecast_correction") != correction
         )
     ):
         raise WorkSelectionError(

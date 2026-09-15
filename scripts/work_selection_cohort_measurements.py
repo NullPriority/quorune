@@ -285,7 +285,7 @@ _PROBE_FIXED_PUBLIC_ALTERNATIVE_COSTS = (
     "fixed-public-alternative-cost-existing-owner-v1"
 )
 _PROBE_FIXED_RESTRICTIVE_LIBRARY_SEARCHES = (
-    "fixed-restrictive-library-search-existing-owner-v1"
+    "fixed-restrictive-library-search-existing-owner-v2"
 )
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
@@ -3385,25 +3385,27 @@ def _fixed_restrictive_library_search_measurement(
             str(ability.get("ability_id") or ""): ability
             for ability in card.get("abilities", ())
         }
+        compiled_exact = [
+            node for face in compiled.faces for node in face.nodes if node.exact
+        ]
         represented = [
             node
-            for face in compiled.faces
-            for node in face.nodes
-            if node.exact
-            and search_capabilities.intersection(node.capability_dependencies)
+            for node in compiled_exact
+            if search_capabilities.intersection(node.capability_dependencies)
             and previous.get(node.node_id, {}).get("status") != "exact"
         ]
         if not represented:
             continue
         matched_cards[oracle_id] = len(represented)
-        exact_ability_gain += len(represented)
-        remaining = [
-            node for face in compiled.faces for node in face.nodes if not node.exact
-        ]
-        existing_exact_siblings += sum(
+        existing_exact = sum(
             ability.get("status") == "exact"
             for ability in card.get("abilities", ())
         )
+        exact_ability_gain += max(0, len(compiled_exact) - existing_exact)
+        remaining = [
+            node for face in compiled.faces for node in face.nodes if not node.exact
+        ]
+        existing_exact_siblings += existing_exact
         remaining_residual_siblings += len(remaining)
         one_additional += len(remaining) == 1
         two_additional += len(remaining) == 2

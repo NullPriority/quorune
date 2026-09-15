@@ -81,7 +81,65 @@ def _build(database: Path) -> dict:
     return value
 
 
-def _source_checkpoint_frontier() -> dict:
+def _decode_frontier(raw: bytes, *, label: str) -> dict:
+    try:
+        value = json.loads(gzip.decompress(raw))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{label} card frontier is malformed") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} card frontier must be an object")
+    return value
+
+
+def _source_checkpoint_frontier(transition_id: str) -> dict:
+    try:
+        history = json.loads(HARVEST_HISTORY.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        history = {}
+    entries = history.get("entries", ()) if isinstance(history, dict) else ()
+    landed = next(
+        (
+            entry
+            for entry in entries
+            if isinstance(entry, dict)
+            and entry.get("transition_id") == transition_id
+        ),
+        None,
+    )
+    if landed is not None:
+        base = landed.get("base_receipt")
+        blobs = base.get("blobs") if isinstance(base, dict) else None
+        blob = (
+            blobs.get("coverage/card-unlock-frontier.json.gz")
+            if isinstance(blobs, dict)
+            else None
+        )
+        object_id = blob.get("git_blob_oid") if isinstance(blob, dict) else None
+        expected = landed.get("measurement_frontier_fingerprint")
+        if not isinstance(object_id, str) or not isinstance(expected, str):
+            raise ValueError(
+                "Landed transition lacks its immutable base-frontier identity"
+            )
+        completed = subprocess.run(
+            ["git", "cat-file", "blob", object_id],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if completed.returncode:
+            raise ValueError(
+                "Cannot read the landed transition's base-frontier blob"
+            )
+        value = _decode_frontier(
+            completed.stdout,
+            label="Landed transition base",
+        )
+        if value.get("fingerprint") != expected:
+            raise ValueError(
+                "Landed transition base-frontier identity is inconsistent"
+            )
+        return value
     completed = subprocess.run(
         ["git", "show", "HEAD:coverage/card-unlock-frontier.json.gz"],
         cwd=ROOT,
@@ -93,15 +151,7 @@ def _source_checkpoint_frontier() -> dict:
         raise ValueError(
             "Cannot read the source-checkpoint card frontier for transition measurement"
         )
-    try:
-        value = json.loads(gzip.decompress(completed.stdout))
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        raise ValueError(
-            "Source-checkpoint card frontier is malformed"
-        ) from exc
-    if not isinstance(value, dict):
-        raise ValueError("Source-checkpoint card frontier must be an object")
-    return value
+    return _decode_frontier(completed.stdout, label="Source-checkpoint")
 
 
 def _preserved_transition_measurement(
@@ -128,6 +178,7 @@ def _preserved_transition_is_current(
     frontier_fingerprint: str,
     oracle_source_sha256: str,
     cohort_fingerprint: str,
+    probe_id: str | None = None,
     completed_receipt_fingerprints: frozenset[str] = frozenset(),
 ) -> bool:
     if preserved is None:
@@ -136,6 +187,10 @@ def _preserved_transition_is_current(
     if (
         not isinstance(measurement, dict)
         or preserved.get("oracle_source_sha256") != oracle_source_sha256
+        or (
+            probe_id is not None
+            and measurement.get("probe_id") != probe_id
+        )
     ):
         return False
     return bool(
@@ -251,7 +306,7 @@ def _transition_measurements(
         raise ValueError(
             "Semantic transition measurement does not identify its candidate bundle"
         )
-    frontier = _source_checkpoint_frontier()
+    frontier = _source_checkpoint_frontier(transition_id)
     fingerprints = {
         bundle_id: bundle_measurement_fingerprint(frontier, bundle)
     }
@@ -270,6 +325,7 @@ def _transition_measurements(
         frontier_fingerprint=str(frontier.get("fingerprint") or ""),
         oracle_source_sha256=oracle_source_sha256,
         cohort_fingerprint=fingerprints[bundle_id],
+        probe_id=str(bundle.get("measurement_probe_id") or ""),
         completed_receipt_fingerprints=(
             _completed_transition_measurement_receipts(transition_id)
         ),

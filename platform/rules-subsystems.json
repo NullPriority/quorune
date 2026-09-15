@@ -3306,7 +3306,7 @@
             "unrestricted, undefined, named, chosen, dynamic, numeric-characteristic, ability-presence, and cross-field alternative qualities"
           ],
           "measurement_status": "generated_probe",
-          "measurement_probe_id": "fixed-restrictive-library-search-existing-owner-v1"
+          "measurement_probe_id": "fixed-restrictive-library-search-existing-owner-v2"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3370,6 +3370,15 @@
         "certified_material_residual_reduction_lower_bound": 126,
         "measurement_probe_id": "fixed-casting-surface-existing-owner-v2",
         "reason": "The immutable source receipt predates the ordinal type-journal correction and measured 128 carriers. The corrected closed probe excludes two unsupported ordinal characteristic forms while retaining a 71-card, 126-ability lower bound; exact-source certification realizes 72 cards and 127 abilities."
+      },
+      {
+        "transition_id": "oracle-ir-v190-fixed-restrictive-library-searches",
+        "original_expected_complete_card_gain": 98,
+        "certified_complete_card_lower_bound": 98,
+        "certified_exact_ability_lower_bound": 146,
+        "certified_material_residual_reduction_lower_bound": 156,
+        "measurement_probe_id": "fixed-restrictive-library-search-existing-owner-v2",
+        "reason": "The v1 integrated probe counted 147 newly exact search-bearing Oracle node identities without netting one previously exact structural carrier replaced by whole-card lowering. The v2 probe derives compiled exact nodes minus prior exact nodes per card, preserving the realized 98-card closure and a conservative 146-ability, 156-residual lower bound."
       }
     ],
     "harvest_provenance": [
