@@ -14,6 +14,7 @@ from quorune.work_selection_common import (
     WorkSelectionError,
 )
 from quorune.work_selection_evidence import (
+    non_harvest_metrics_are_conservative,
     validate_harvest_forecast_correction,
 )
 
@@ -1155,47 +1156,6 @@ def _content_entry(
     return entry
 
 
-_NON_HARVEST_ZERO_FIELDS = (
-    "actual_complete_card_gain",
-    "actual_exact_card_gain",
-    "actual_trusted_card_gain",
-    "actual_capability_closed_card_gain",
-    "actual_exact_ability_gain",
-    "actual_material_residual_reduction",
-    "actual_material_oracle_residual_reduction",
-    "actual_material_card_program_residual_reduction",
-    "failed_card_delta",
-    "hard_construction_failure_delta",
-    "oracle_exact_ability_node_delta",
-    "card_program_ability_record_delta",
-    "executable_trust_transition_delta",
-)
-
-
-def _non_harvest_metrics_are_zero(metrics: Mapping[str, Any]) -> bool:
-    if any(metrics.get(field) != 0 for field in _NON_HARVEST_ZERO_FIELDS):
-        return False
-    for field in (
-        "oracle_status_delta",
-        "card_program_status_delta",
-    ):
-        values = metrics.get(field)
-        if not isinstance(values, Mapping) or any(values.values()):
-            return False
-    transitions = metrics.get("executable_trust_transitions")
-    carriers = metrics.get("frontier_ability_carrier_delta")
-    return bool(
-        isinstance(transitions, Mapping)
-        and transitions.get("promoted") == 0
-        and transitions.get("regressed") == 0
-        and not transitions.get("by_transition")
-        and isinstance(carriers, Mapping)
-        and carriers.get("additions") == 0
-        and carriers.get("removals") == 0
-        and carriers.get("reclassifications") == 0
-    )
-
-
 def _non_harvest_content_entry(
     declaration: Mapping[str, Any],
     *,
@@ -1212,9 +1172,9 @@ def _non_harvest_content_entry(
             "Non-harvest semantic transition identity is inconsistent"
         )
     metrics = _transition_metrics(base, head)
-    if not _non_harvest_metrics_are_zero(metrics):
+    if not non_harvest_metrics_are_conservative(metrics):
         raise HarvestOutcomeHistoryError(
-            "A non-harvest transition cannot change card support"
+            "A non-harvest transition cannot increase card support or failures"
         )
     entry = {
         "transition_id": str(declaration["transition_id"]),
@@ -1244,18 +1204,6 @@ def _validate_non_harvest_content_entry(entry: Any) -> dict[str, Any]:
     fingerprint = candidate.pop("entry_fingerprint", None)
     base = candidate.get("base_receipt")
     head = candidate.get("head_receipt")
-    metrics = {
-        key: value
-        for key, value in candidate.items()
-        if key in _NON_HARVEST_ZERO_FIELDS
-        or key
-        in {
-            "oracle_status_delta",
-            "card_program_status_delta",
-            "executable_trust_transitions",
-            "frontier_ability_carrier_delta",
-        }
-    }
     if (
         fingerprint != _hash(candidate)
         or candidate.get("receipt_identity_kind") != "semantic_content"
@@ -1279,7 +1227,7 @@ def _validate_non_harvest_content_entry(entry: Any) -> dict[str, Any]:
         or head.get("content_fingerprint")
         != _receipt_content_fingerprint(head)
         or base.get("content_fingerprint") == head.get("content_fingerprint")
-        or not _non_harvest_metrics_are_zero(metrics)
+        or not non_harvest_metrics_are_conservative(candidate)
     ):
         raise HarvestOutcomeHistoryError(
             "Content-bound non-harvest transition is malformed"

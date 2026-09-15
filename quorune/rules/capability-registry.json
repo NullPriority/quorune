@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 152,
+  "registry_version": 153,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4477,20 +4477,20 @@
     },
     {
       "id": "mana.activated.restricted_fixed_output",
-      "version": 2,
+      "version": 3,
       "official_rules": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Immediately resolve one target-free activated mana ability that produces a closed fixed output carrying one canonical public spell- or ability-characteristic spending predicate.",
-        "inputs": ["typed closed fixed output modes", "current source-cost availability", "one canonical disjunction over spell or ability source types, subtypes, supertypes, or a negative creature-type predicate", "current effective public characteristics of the spell or ability source being paid for"],
+        "summary": "Immediately resolve one target-free activated mana ability whose complete spending-restriction suffix produces a closed fixed output carrying one canonical public spell- or ability-characteristic predicate.",
+        "inputs": ["typed closed fixed output modes", "current source-cost availability", "one completely consumed canonical disjunction over spell or ability source types, subtypes, supertypes, or a negative creature-type predicate", "current effective public characteristics of the spell or ability source being paid for"],
         "outputs": ["one stackless restricted mana unit", "shared advertised and accepted activation", "casting and activation payment filtered by one typed public-characteristic context", "transactional rejection of disallowed payment", "exact replay"],
         "exclusions": ["origin, zone, casting-method, face-down, foretell, kicker, disturb, and alternative-cost restrictions", "color, multicolor, mana-value, X, and dynamically chosen predicates", "result riders, delayed triggers, and mana-production replacement or trigger effects", "dynamic or conditional output", "targeted, loyalty, and triggered mana abilities"]
       },
       "dependencies": ["activation.tap_untap_cost.haste"],
-      "implementation_components": ["quorune.standard_token_abilities.StandardTokenAbilityProfile", "quorune.fixed_mana_abilities.FixedActivatedManaAbilitySpec", "quorune.fixed_mana_abilities.FixedManaMode", "quorune.mana_activation.complete_mana_activation", "quorune.mana_restrictions.spell_mana_spend_context", "quorune.mana_restrictions.ability_mana_spend_context", "quorune.mana_restrictions.mana_restriction_allows", "quorune.activation_mana_cost.payable_activation_mana_options", "quorune.rules.activation.commit._pay_object_and_mana_costs", "quorune.engine.CommanderEngine._pay_mana_cost"],
-      "positive_tests": ["test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_investigate_and_predefined_tokens_use_canonical_abilities", "test_predefined_token_profiles_enforce_mana_and_impulse_rules", "test_typed_spend_restrictions_match_public_characteristics", "test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_restricted_fixed_mana_filters_payment_and_rolls_back"],
-      "negative_tests": ["test_token_production_grammar_and_capability_mutants_fail_closed", "test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_restricted_fixed_mana_filters_payment_and_rolls_back"],
-      "interaction_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_predefined_token_profiles_enforce_mana_and_impulse_rules", "test_typed_spend_restrictions_match_public_characteristics", "test_restricted_fixed_mana_filters_payment_and_rolls_back"],
+      "implementation_components": ["quorune.standard_token_abilities.StandardTokenAbilityProfile", "quorune.abilities._mana_spend_restriction", "quorune.fixed_mana_abilities.FixedActivatedManaAbilitySpec", "quorune.fixed_mana_abilities.FixedManaMode", "quorune.fixed_mana_abilities._without_spend_restriction", "quorune.mana_activation.complete_mana_activation", "quorune.mana_restrictions.legacy_mana_spend_restriction_for_tail", "quorune.mana_restrictions.spell_mana_spend_context", "quorune.mana_restrictions.ability_mana_spend_context", "quorune.mana_restrictions.mana_restriction_allows", "quorune.activation_mana_cost.payable_activation_mana_options", "quorune.rules.activation.commit._pay_object_and_mana_costs", "quorune.engine.CommanderEngine._pay_mana_cost"],
+      "positive_tests": ["test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_investigate_and_predefined_tokens_use_canonical_abilities", "test_predefined_token_profiles_enforce_mana_and_impulse_rules", "test_typed_spend_restrictions_match_public_characteristics", "test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_restricted_fixed_mana_filters_payment_and_rolls_back", "test_complete_legacy_restrictions_preserve_serialized_identity", "test_shadowed_legacy_prefixes_use_complete_typed_restrictions"],
+      "negative_tests": ["test_token_production_grammar_and_capability_mutants_fail_closed", "test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_restricted_fixed_mana_filters_payment_and_rolls_back", "test_legacy_restriction_prefix_requires_complete_suffix", "test_unsupported_restriction_suffix_cannot_seed_a_payment"],
+      "interaction_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_predefined_token_profiles_enforce_mana_and_impulse_rules", "test_typed_spend_restrictions_match_public_characteristics", "test_restricted_fixed_mana_filters_payment_and_rolls_back", "test_unsupported_restriction_suffix_cannot_seed_a_payment"],
       "multiplayer_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays"],
       "privacy_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays"],
       "replay_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_predefined_token_profiles_enforce_mana_and_impulse_rules"],

@@ -3421,14 +3421,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v193-creature-only-bite-domain",
-      "compiler_version": "oracle-ir-v193",
+      "transition_id": "oracle-ir-v194-complete-mana-spend-restrictions",
+      "compiler_version": "oracle-ir-v194",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Accept the already-compiled creature-only one-way power-damage domain at runtime without widening compiler grammar or claiming a card-support harvest."
+      "non_harvest_reason": "Require complete fixed-mana spending-restriction consumption, preserve representable typed variants, and demote unsupported suffixes without claiming a card-support harvest."
     },
     "forecast_corrections": [
       {
