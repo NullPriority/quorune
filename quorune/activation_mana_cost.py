@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
 from .replacement.immutable import FrozenMap, thaw_value
+from .mana_restrictions import ability_mana_spend_context
 
 
 _MANA_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
@@ -236,11 +237,8 @@ def payable_activation_mana_options(
         if bool(getattr(ability, "tap_source", False))
         else set()
     )
-    source_types = host._type_parts(
+    spend_context = ability_mana_spend_context(
         str(host._effective_card_data(source).get("type_line") or "")
-    )[0]
-    spend_context = (
-        "artifact_ability" if "artifact" in source_types else "ability"
     )
     return tuple(
         option

@@ -14,6 +14,9 @@ from .object_predicate import ObjectQueryError, ObjectQuerySpec
 
 ACTIVATION_PHASE_CONDITION_CAPABILITY = "activation.condition.phase_window"
 ACTIVATION_PUBLIC_QUERY_CAPABILITY = "activation.condition.public_query"
+_BASIC_LAND_SUBTYPES = frozenset(
+    {"plains", "island", "swamp", "mountain", "forest"}
+)
 
 
 class ActivationConditionKind(str, Enum):
@@ -39,7 +42,13 @@ def _closed_public_query(query: ObjectQuerySpec) -> bool:
         or query.controller is not None
         or query.excluded_controllers
         or query.excluded_types
-        or query.subtypes_any
+        or (
+            query.subtypes_any
+            and (
+                query.types_all != ("land",)
+                or not set(query.subtypes_any) <= _BASIC_LAND_SUBTYPES
+            )
+        )
         or query.excluded_subtypes
         or query.colors_any
         or query.colorless is not None
@@ -235,6 +244,7 @@ def _number(value: str) -> int:
 
 def _permanent_query(descriptor: str) -> ObjectQuerySpec | None:
     normalized = " ".join(descriptor.casefold().split())
+    normalized = re.sub(r"\b(?:a|an)\s+", "", normalized)
     singular = {
         "artifacts": "artifact",
         "battles": "battle",
@@ -247,7 +257,17 @@ def _permanent_query(descriptor: str) -> ObjectQuerySpec | None:
     if singular.endswith(" permanents"):
         singular = singular.removesuffix("s")
     fields: dict[str, Any] = {"zones": ("battlefield",)}
-    if singular in {"artifact", "creature", "land"}:
+    land_subtypes = tuple(
+        part.strip()
+        for part in re.split(r"\s+or\s+", singular)
+        if part.strip()
+    )
+    if land_subtypes and all(
+        value in _BASIC_LAND_SUBTYPES for value in land_subtypes
+    ):
+        fields["types_all"] = ("land",)
+        fields["subtypes_any"] = tuple(sorted(land_subtypes))
+    elif singular in {"artifact", "creature", "land"}:
         fields["types_all"] = (singular,)
     elif singular == "permanent":
         fields["types_any"] = _PERMANENT_TYPES
@@ -348,6 +368,7 @@ def _public_query_condition(text: str) -> ActivationCondition | None:
         and not any(
             (
                 query.subtypes_all,
+                query.subtypes_any,
                 query.supertypes_all,
                 query.colors_all,
                 query.keywords_all,

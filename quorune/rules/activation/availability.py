@@ -6,6 +6,7 @@ from ...abilities import ActivatedAbility, reduced_requirements
 from ...activation_mana_cost import payable_activation_mana_options
 from ...crew import available_crew_power
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
+from ...mana_restrictions import ability_mana_spend_context
 from ...station import (
     StationAbilityError,
     station_candidates,
@@ -111,8 +112,14 @@ def activation_availability(
             legendary_creatures=host._legendary_creatures_controlled(seat),
         )
         excluded = {card.object_id} if ability.tap_source else set()
+        spend_context = ability_mana_spend_context(
+            str(host._effective_card_data(card).get("type_line") or "")
+        )
         if sum(requirements.values()) and not host._cost_is_affordable(
-            seat, requirements, exclude_sources=excluded
+            seat,
+            requirements,
+            exclude_sources=excluded,
+            spend_context=spend_context,
         ):
             return "unpayable", "insufficient_mana"
     return "payable", None

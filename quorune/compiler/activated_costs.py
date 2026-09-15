@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..abilities import ActivatedAbility, ActivationLimit
+from ..activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
 from ..activation_condition_model import (
     ACTIVATION_PHASE_CONDITION_CAPABILITY,
     ACTIVATION_PUBLIC_QUERY_CAPABILITY,
@@ -20,6 +21,8 @@ def activated_ability_cost_capabilities(
         additional.append("activation.loyalty.positive_counter_cost")
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         additional.append("activation.exhaust.once_per_object")
+    if ability.activation_limit is ActivationLimit.ONCE_PER_TURN:
+        additional.append(ACTIVATION_ONCE_PER_TURN_CAPABILITY)
     condition_kinds = {
         condition.kind for condition in ability.activation_conditions
     }

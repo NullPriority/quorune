@@ -3307,6 +3307,58 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-restrictive-library-search-existing-owner-v2"
+        },
+        {
+          "bundle_id": "bundle:fixed-constrained-mana-abilities",
+          "member_family_ids": [
+            "effect_clause:dynamic-or-conditional-mana-output",
+            "effect_clause:restricted-mana-or-effect-clause-side-effects",
+            "effect_clause:unrepresented-activation-cost-variant"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.condition.public_query",
+            "capability:activation.usage.once_per_turn",
+            "capability:mana.activated.restricted_fixed_output",
+            "component:quorune.abilities.parse_activated_abilities",
+            "component:quorune.activation_condition_model.activation_restriction_spec",
+            "component:quorune.activation_usage.activation_usage_verdict",
+            "component:quorune.fixed_mana_abilities.compile_fixed_activated_mana_ability",
+            "component:quorune.mana_restrictions.mana_restriction_allows",
+            "component:quorune.rules.activation.availability.activation_availability",
+            "component:quorune.rules.activation.commit.commit_activation"
+          ],
+          "source_contexts": [
+            "activated"
+          ],
+          "normalized_literal_parameters": [
+            "closed-fixed-mana-output-modes",
+            "once-each-turn-object-incarnation-limit",
+            "public-basic-land-subtype-alternative",
+            "typed-spell-or-ability-source-spend-predicate"
+          ],
+          "shared_dependencies": [
+            "activation.condition.public_query",
+            "activation.tap_untap_cost.haste",
+            "activation.usage.once_per_turn",
+            "mana.activated.fixed_output",
+            "mana.activated.restricted_fixed_output",
+            "state_query.permanent.public_state_predicate"
+          ],
+          "shared_grammar": "one closed fixed-output activated mana ability with a public spell- or ability-source characteristic spending predicate, one public basic-land-subtype activation query, or one once-each-turn object-incarnation limit through the existing typed mana, query, availability, commit, provenance, and replay owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a measured activated-mana cohort across typed spell and ability payment contexts, current public land characteristics, control changes, and zone-incarnation resets while preserving the existing stackless mana and provenance owners.",
+          "explicit_exclusions": [
+            "activation conditions other than one closed basic-land-subtype alternative or the exact once-each-turn limit",
+            "color, multicolor, mana-value, X, and dynamically chosen spending predicates",
+            "compound entered-this-turn-or-basic-land conditions and other condition-level disjunctions",
+            "dynamic, conditional, variable, targeted, loyalty, and triggered mana output",
+            "origin, zone, casting-method, face-down, foretell, kicker, disturb, and alternative-cost restrictions",
+            "result riders, delayed triggers, pain or life riders, and mana-production replacement or trigger effects"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-constrained-mana-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3318,29 +3370,22 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v190-fixed-restrictive-library-searches",
-      "compiler_version": "oracle-ir-v190",
-      "bundle_id": "bundle:fixed-restrictive-library-searches",
-      "candidate_ids": ["compiler:fixed-restrictive-library-searches"],
+      "transition_id": "oracle-ir-v191-fixed-constrained-mana-abilities",
+      "compiler_version": "oracle-ir-v191",
+      "bundle_id": "bundle:fixed-constrained-mana-abilities",
+      "candidate_ids": ["compiler:fixed-constrained-mana-abilities"],
       "family_ids": [
-        "activated_effect:look-reveal",
-        "activated_effect:ordered-effect-composition",
-        "activated_effect:put-onto-battlefield",
-        "activated_effect:search",
-        "effect_clause:look-reveal",
-        "effect_clause:ordered-effect-composition",
-        "effect_clause:put-onto-battlefield",
-        "effect_clause:search",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "reference_binding:linked-result-reference",
-        "target_or_choice:target-predicate"
+        "effect_clause:dynamic-or-conditional-mana-output",
+        "effect_clause:restricted-mana-or-effect-clause-side-effects",
+        "effect_clause:unrepresented-activation-cost-variant"
       ],
       "capability_ids": [
-        "library.search.fixed_to_battlefield",
-        "library.search.fixed_type_to_hand"
+        "activation.condition.public_query",
+        "activation.usage.once_per_turn",
+        "mana.activated.fixed_output",
+        "mana.activated.restricted_fixed_output"
       ],
-      "measurement_id": "measurement:fixed-restrictive-library-searches",
+      "measurement_id": "measurement:fixed-constrained-mana-abilities",
       "non_harvest_reason": null
     },
     "forecast_corrections": [

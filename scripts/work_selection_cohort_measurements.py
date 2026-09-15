@@ -287,6 +287,9 @@ _PROBE_FIXED_PUBLIC_ALTERNATIVE_COSTS = (
 _PROBE_FIXED_RESTRICTIVE_LIBRARY_SEARCHES = (
     "fixed-restrictive-library-search-existing-owner-v2"
 )
+_PROBE_FIXED_CONSTRAINED_MANA = (
+    "fixed-constrained-mana-existing-owner-v1"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -408,6 +411,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_CREATURE_POWER_DAMAGE,
     _PROBE_FIXED_PUBLIC_ALTERNATIVE_COSTS,
     _PROBE_FIXED_RESTRICTIVE_LIBRARY_SEARCHES,
+    _PROBE_FIXED_CONSTRAINED_MANA,
     _PROBE_FIXED_BATTLEFIELD_QUERY_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_STATE_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_CONDITION_QUERY,
@@ -3461,6 +3465,144 @@ def _fixed_restrictive_library_search_measurement(
     }
 
 
+def _fixed_constrained_mana_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure newly exact fixed mana nodes through shared typed constraints."""
+
+    registry = load_default_capability_registry()
+    constrained_capabilities = {
+        "activation.condition.public_query",
+        "activation.usage.once_per_turn",
+        "mana.activated.restricted_fixed_output",
+    }
+    broad_cards: set[str] = set()
+    matched_cards: dict[str, int] = {}
+    exact_ability_gain = 0
+    complete_cards = 0
+    residual_reduction = 0
+    existing_exact_siblings = 0
+    remaining_residual_siblings = 0
+    one_additional = 0
+    two_additional = 0
+    for card in frontier.get("cards", []):
+        if card.get("oracle_ir_status") == "exact":
+            continue
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        if any(
+            member_ids.intersection(
+                str(value)
+                for value in ability.get("blockers", {}).get(
+                    "canonical_family_ids", ()
+                )
+            )
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        ):
+            broad_cards.add(oracle_id)
+        else:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        previous = {
+            str(ability.get("ability_id") or ""): ability
+            for ability in card.get("abilities", ())
+        }
+        compiled_exact = [
+            node for face in compiled.faces for node in face.nodes if node.exact
+        ]
+        represented = [
+            node
+            for node in compiled_exact
+            if constrained_capabilities.intersection(
+                node.capability_dependencies
+            )
+            and previous.get(node.node_id, {}).get("status") != "exact"
+        ]
+        if not represented:
+            continue
+        matched_cards[oracle_id] = len(represented)
+        existing_exact = sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        exact_ability_gain += max(0, len(compiled_exact) - existing_exact)
+        remaining = [
+            node for face in compiled.faces for node in face.nodes if not node.exact
+        ]
+        existing_exact_siblings += existing_exact
+        remaining_residual_siblings += len(remaining)
+        one_additional += len(remaining) == 1
+        two_additional += len(remaining) == 2
+        complete_cards += compiled.status == "exact"
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        residual_reduction += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": exact_ability_gain,
+            "existing_exact_sibling_nodes": existing_exact_siblings,
+            "remaining_residual_sibling_nodes": remaining_residual_siblings,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": (
+                len(matched_cards) - complete_cards
+            ),
+            "expected_oracle_residual_reduction": residual_reduction,
+            "expected_card_program_residual_reduction": residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                len(matched_cards) - complete_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                broad_cards - set(matched_cards)
+            ),
+        },
+    }
+
+
 def _measurement(
     *,
     frontier: Mapping[str, Any],
@@ -3535,6 +3677,16 @@ def _measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_FIXED_CONSTRAINED_MANA:
+        return _fixed_constrained_mana_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids={str(value) for value in bundle["member_family_ids"]},
             cards_by_oracle_id=cards_by_oracle_id,
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,

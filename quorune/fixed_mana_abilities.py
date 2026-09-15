@@ -13,6 +13,12 @@ import re
 from typing import Any, Mapping
 
 from .activation_usage import ActivationLimit
+from .activation_condition_model import (
+    ActivationCondition,
+    ActivationConditionKind,
+    activation_restriction_spec,
+)
+from .mana_restrictions import valid_mana_spend_restriction
 from .replacement.immutable import FrozenMap, thaw_value
 from .util import normalize_mana_bundle
 
@@ -26,18 +32,10 @@ _ANY_COLOR = re.compile(
     r"^Add (?P<count>one|two|three) mana of any one color\.$",
     re.IGNORECASE,
 )
-_FIXED_SPEND_RESTRICTIONS = {
-    "artifact_spell_only",
-    "creature_spell_only",
-    "nonartifact_spell_prohibited",
-}
-_RESTRICTION_SUFFIXES = {
-    " This mana can't be spent to cast a nonartifact spell.": (
-        "nonartifact_spell_prohibited"
-    ),
-    " Spend this mana only to cast an artifact spell.": "artifact_spell_only",
-    " Spend this mana only to cast a creature spell.": "creature_spell_only",
-}
+_SPEND_RESTRICTION_MARKERS = (
+    " Spend this mana only to ",
+    " This mana can't be spent to ",
+)
 
 
 class FixedManaAbilityError(ValueError):
@@ -146,6 +144,7 @@ class FixedActivatedManaAbilitySpec:
     modes: tuple[FixedManaMode, ...]
     spend_restriction: str | None = None
     activation_limit: ActivationLimit | None = None
+    activation_conditions: tuple[ActivationCondition, ...] = ()
 
     def __post_init__(self) -> None:
         if (
@@ -202,8 +201,7 @@ class FixedActivatedManaAbilitySpec:
                 "Fixed mana ability output modes must be unique"
             )
         if self.spend_restriction is not None and (
-            type(self.spend_restriction) is not str
-            or self.spend_restriction not in _FIXED_SPEND_RESTRICTIONS
+            not valid_mana_spend_restriction(self.spend_restriction)
         ):
             raise FixedManaAbilityError(
                 "Fixed mana spending restriction is unsupported"
@@ -221,6 +219,13 @@ class FixedActivatedManaAbilitySpec:
                 raise FixedManaAbilityError(
                     "Fixed mana activation limit is unsupported"
                 ) from exc
+        if not isinstance(self.activation_conditions, tuple) or any(
+            not isinstance(condition, ActivationCondition)
+            for condition in self.activation_conditions
+        ):
+            raise FixedManaAbilityError(
+                "Fixed mana activation conditions must be typed predicates"
+            )
 
     def to_dict(self) -> dict[str, Any]:
         value = {
@@ -237,6 +242,10 @@ class FixedActivatedManaAbilitySpec:
         }
         if self.activation_limit is not None:
             value["activation_limit"] = self.activation_limit.value
+        if self.activation_conditions:
+            value["activation_conditions"] = [
+                condition.to_dict() for condition in self.activation_conditions
+            ]
         if self.spend_restriction is not None:
             value["spend_restriction"] = self.spend_restriction
         return value
@@ -259,22 +268,39 @@ class FixedActivatedManaAbilitySpec:
         }
         if "activation_limit" in value:
             expected.add("activation_limit")
+        if "activation_conditions" in value:
+            expected.add("activation_conditions")
         if "spend_restriction" in value:
             expected.add("spend_restriction")
         _exact_fields(value, expected, field="fixed mana ability")
         mana_cost = value["mana_cost"]
         modes = value["modes"]
+        activation_conditions = value.get("activation_conditions", [])
         if not isinstance(mana_cost, Mapping):
             raise FixedManaAbilityError("Fixed mana activation cost must be an object")
         if not isinstance(modes, list) or any(
             not isinstance(mode, Mapping) for mode in modes
         ):
             raise FixedManaAbilityError("Fixed mana output modes must be an array")
+        if not isinstance(activation_conditions, list) or any(
+            not isinstance(condition, Mapping)
+            for condition in activation_conditions
+        ):
+            raise FixedManaAbilityError(
+                "Fixed mana activation conditions must be an array"
+            )
         for field in ("ability_id", "oracle_line", "cost_text", "effect_text"):
             if not isinstance(value[field], str):
                 raise FixedManaAbilityError(
                     f"Fixed mana ability {field} must be a string"
                 )
+        try:
+            conditions = tuple(
+                ActivationCondition.from_dict(condition)
+                for condition in activation_conditions
+            )
+        except (TypeError, ValueError) as exc:
+            raise FixedManaAbilityError(str(exc)) from exc
         return cls(
             ability_id=value["ability_id"],
             line_index=value["line_index"],
@@ -288,6 +314,7 @@ class FixedActivatedManaAbilitySpec:
             modes=tuple(FixedManaMode.from_dict(mode) for mode in modes),
             spend_restriction=value.get("spend_restriction"),
             activation_limit=value.get("activation_limit"),
+            activation_conditions=conditions,
         )
 
     def to_activated_ability(self) -> Any:
@@ -308,6 +335,7 @@ class FixedActivatedManaAbilitySpec:
             fixed_mana_outputs=self.modes,
             mana_spend_restriction=self.spend_restriction,
             activation_limit=self.activation_limit,
+            activation_conditions=self.activation_conditions,
         )
 
 
@@ -362,16 +390,64 @@ def _restricted_modes_are_closed(
     restriction: str | None,
     modes: tuple[FixedManaMode, ...],
 ) -> bool:
+    del modes
     if restriction is None:
         return True
-    bundles = tuple(mode.bundle for mode in modes)
-    if restriction == "nonartifact_spell_prohibited":
-        return bundles == (normalize_mana_bundle({"C": 1}),)
-    if restriction in {"artifact_spell_only", "creature_spell_only"}:
-        return bundles == tuple(
-            normalize_mana_bundle({color: 1}) for color in "WUBRG"
-        )
-    return False
+    return valid_mana_spend_restriction(restriction)
+
+
+def _without_activation_restriction(ability: Any, effect_text: str) -> str | None:
+    marker = " Activate only "
+    if marker not in effect_text:
+        return effect_text
+    base, tail = effect_text.rsplit(marker, 1)
+    restriction = activation_restriction_spec(tail)
+    if (
+        restriction is None
+        or restriction.sorcery_speed != bool(ability.sorcery_speed)
+        or restriction.activation_limit != ability.activation_limit
+        or restriction.conditions != tuple(ability.activation_conditions)
+    ):
+        return None
+    return base.strip()
+
+
+def _without_spend_restriction(
+    effect_text: str,
+    restriction: str | None,
+) -> str | None:
+    marker = next(
+        (value for value in _SPEND_RESTRICTION_MARKERS if value in effect_text),
+        None,
+    )
+    if marker is None:
+        return effect_text if restriction is None else None
+    if restriction is None:
+        return None
+    base, _tail = effect_text.split(marker, 1)
+    return base.strip()
+
+
+def _supported_activation_constraints(ability: Any) -> bool:
+    if ability.activation_limit not in {
+        None,
+        ActivationLimit.ONCE_PER_TURN,
+        ActivationLimit.EXHAUST_ONCE,
+    }:
+        return False
+    conditions = tuple(ability.activation_conditions)
+    if not conditions:
+        return True
+    if len(conditions) != 1:
+        return False
+    condition = conditions[0]
+    query = condition.query
+    return bool(
+        condition.kind is ActivationConditionKind.PUBLIC_QUERY_COUNT
+        and query is not None
+        and query.types_all == ("land",)
+        and query.subtypes_any
+    )
 
 
 def compile_fixed_activated_mana_ability(
@@ -386,15 +462,12 @@ def compile_fixed_activated_mana_ability(
         # separate rules owner and must not be promoted by this family.
         return None
     effect_text = " ".join(str(ability.effect_text).split())
+    effect_text = _without_activation_restriction(ability, effect_text)
+    if effect_text is None:
+        return None
     restriction = ability.mana_spend_restriction
-    base_effect = effect_text
-    parsed_restriction = None
-    for suffix, candidate in _RESTRICTION_SUFFIXES.items():
-        if effect_text.endswith(suffix):
-            base_effect = effect_text[: -len(suffix)]
-            parsed_restriction = candidate
-            break
-    if restriction != parsed_restriction:
+    base_effect = _without_spend_restriction(effect_text, restriction)
+    if base_effect is None:
         return None
     modes = fixed_mana_modes_from_effect(base_effect)
     if modes is None or not _restricted_modes_are_closed(
@@ -419,6 +492,7 @@ def compile_fixed_activated_mana_ability(
         or ability.builtin_semantic_key is not None
         or ability.target_schema is not None
         or ability.crew_threshold is not None
+        or not _supported_activation_constraints(ability)
     ):
         return None
     return FixedActivatedManaAbilitySpec(
@@ -436,6 +510,7 @@ def compile_fixed_activated_mana_ability(
         modes=modes,
         spend_restriction=restriction,
         activation_limit=ability.activation_limit,
+        activation_conditions=tuple(ability.activation_conditions),
     )
 
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 150,
+  "registry_version": 151,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -346,20 +346,20 @@
     },
     {
       "id": "activation.condition.public_query",
-      "version": 1,
+      "version": 2,
       "official_rules": ["602.1", "602.1b", "602.2", "609.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile one controller battlefield, graveyard, or identity-free hand count restriction into a typed ObjectQuerySpec and evaluate current characteristics through the canonical activation availability and commit-revalidation path.",
+        "summary": "Compile one controller battlefield, graveyard, or identity-free hand count restriction, including a closed basic-land-subtype alternative inside one public object query, and evaluate current characteristics through the canonical activation availability and commit-revalidation path.",
         "inputs": ["one source-spanned complete activation restriction", "one closed controller-zone ObjectQuerySpec", "one fixed inclusive count range", "current effective public characteristics", "current typed ability and source incarnation"],
         "outputs": ["one closed activation-condition descriptor", "current public count without hidden identity exposure", "offer and commit parity", "stale-condition rejection before cost mutation", "exact replay"],
-        "exclusions": ["opponent or target-player zones", "hidden identity predicates", "attachment, counter, tapped, combat, modified, chosen, named-card, same-name, distinct-value, total-power, and arbitrary ability predicates", "disjunctions and compound conditions", "source-relative and historical queries", "copied, granted, removed, and text-changing restrictions outside current typed ability discovery"]
+        "exclusions": ["opponent or target-player zones", "hidden identity predicates", "attachment, counter, tapped, combat, modified, chosen, named-card, same-name, distinct-value, total-power, and arbitrary ability predicates", "condition-level disjunctions and compound conditions", "source-relative and historical queries", "copied, granted, removed, and text-changing restrictions outside current typed ability discovery"]
       },
       "dependencies": ["state_query.permanent.public_state_predicate"],
       "implementation_components": ["quorune.activation_condition_model.ActivationCondition", "quorune.activation_condition_model.activation_restriction_spec", "quorune.abilities.parse_activated_abilities", "quorune.rules.activation.conditions.activation_condition_status", "quorune.rules.activation.availability.activation_availability", "quorune.rules.activation.commit._revalidate_activation", "quorune.object_predicate.ObjectQuerySpec", "quorune.object_query.object_matches_query"],
-      "positive_tests": ["test_public_activation_conditions_compile_across_effect_families", "test_public_queries_use_current_type_color_and_ability_characteristics", "test_conditions_gate_existing_effect_and_replacement_owners"],
+      "positive_tests": ["test_public_activation_conditions_compile_across_effect_families", "test_public_queries_use_current_type_color_and_ability_characteristics", "test_conditions_gate_existing_effect_and_replacement_owners", "test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_once_per_turn_and_land_condition_use_current_source_state"],
       "negative_tests": ["test_public_activation_condition_grammar_and_schema_fail_closed", "test_stale_public_query_offer_rolls_back_before_cost_mutation"],
-      "interaction_tests": ["test_public_queries_use_current_type_color_and_ability_characteristics", "test_stale_public_query_offer_rolls_back_before_cost_mutation", "test_conditions_gate_existing_effect_and_replacement_owners"],
+      "interaction_tests": ["test_public_queries_use_current_type_color_and_ability_characteristics", "test_stale_public_query_offer_rolls_back_before_cost_mutation", "test_conditions_gate_existing_effect_and_replacement_owners", "test_once_per_turn_and_land_condition_use_current_source_state"],
       "multiplayer_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
       "privacy_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
       "replay_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
@@ -368,6 +368,33 @@
       "dependency_fail_closed_rationale": "The focused dependency test blocks the public-query capability and proves only the affected source-spanned activation remains inexact.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The focused parser and query-evaluator mutations remove or corrupt the typed condition; exact compiler and current-state assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.usage.once_per_turn",
+      "version": 1,
+      "official_rules": ["400.7", "602.2", "602.5b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile one printed once-each-turn activation limit, preserve its use across control changes and phasing for the same ability and zone object, reset it for a new incarnation or turn, and revalidate it through the canonical activation offer and commit path.",
+        "inputs": ["one source-spanned printed activated ability", "one typed once-per-turn activation limit", "stable physical source and current logical incarnation", "typed activated-ability identity", "current turn sequence"],
+        "outputs": ["one exact activation-limit descriptor", "payable offer before first use", "transactionally committed per-ability use", "unavailable offer and rejected stale commit after use", "reset availability on a later turn or new source incarnation", "deterministic replay state"],
+        "exclusions": ["once during each player's turn and other player-relative limits", "once during your turn and named phase or step limits", "once per game, once ever, and additional-use permissions", "copied or granted abilities outside represented typed ability discovery", "trigger grammar referring to activations"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.activation_usage.activation_usage_verdict", "quorune.activation_usage.commit_activation_usage", "quorune.abilities.parse_activated_abilities", "quorune.rules.activation.conditions.activation_condition_status", "quorune.rules.activation.commit.commit_activation", "quorune.mana_source_discovery.available_mana_sources"],
+      "positive_tests": ["test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_once_per_turn_and_land_condition_use_current_source_state", "test_once_per_turn_restriction_survives_control_change"],
+      "negative_tests": ["test_once_per_turn_mana_excludes_relative_and_nonstandard_limits", "test_stale_public_query_offer_rolls_back_before_cost_mutation"],
+      "interaction_tests": ["test_once_per_turn_and_land_condition_use_current_source_state", "test_once_per_turn_restriction_survives_control_change"],
+      "multiplayer_tests": ["test_once_per_turn_restriction_survives_control_change"],
+      "privacy_tests": [],
+      "replay_tests": ["test_public_hand_and_graveyard_queries_preserve_privacy_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The bounded once-per-turn activation limit has no capability dependencies; each represented effect and cost independently declares its own closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler and runtime witnesses reject omission of the typed limit, bypass of the shared usage journal, loss across control change, or failure to reset for a new object incarnation.",
       "blockers": [],
       "status": "trusted"
     },
@@ -4423,20 +4450,20 @@
     },
     {
       "id": "mana.activated.restricted_fixed_output",
-      "version": 1,
+      "version": 2,
       "official_rules": ["106.1", "106.4", "106.6", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Immediately resolve one target-free tap ability that produces one fixed colorless or selectable any-color mana unit carrying one exact spell-type spending restriction.",
-        "inputs": ["typed fixed colorless or selectable any-color output", "current source-cost availability", "nonartifact-spell-prohibited, artifact-spell-only, or creature-spell-only spending tag"],
-        "outputs": ["one stackless restricted mana unit", "shared advertised and accepted activation", "casting payment filtered by current spell card types", "exact replay"],
-        "exclusions": ["other spending restrictions or additional effects", "dynamic, conditional, fixed-colored, or multiple output", "triggered mana", "targeted or loyalty abilities", "mana replacement and trigger effects"]
+        "summary": "Immediately resolve one target-free activated mana ability that produces a closed fixed output carrying one canonical public spell- or ability-characteristic spending predicate.",
+        "inputs": ["typed closed fixed output modes", "current source-cost availability", "one canonical disjunction over spell or ability source types, subtypes, supertypes, or a negative creature-type predicate", "current effective public characteristics of the spell or ability source being paid for"],
+        "outputs": ["one stackless restricted mana unit", "shared advertised and accepted activation", "casting and activation payment filtered by one typed public-characteristic context", "transactional rejection of disallowed payment", "exact replay"],
+        "exclusions": ["origin, zone, casting-method, face-down, foretell, kicker, disturb, and alternative-cost restrictions", "color, multicolor, mana-value, X, and dynamically chosen predicates", "result riders, delayed triggers, and mana-production replacement or trigger effects", "dynamic or conditional output", "targeted, loyalty, and triggered mana abilities"]
       },
       "dependencies": ["activation.tap_untap_cost.haste"],
-      "implementation_components": ["quorune.standard_token_abilities.StandardTokenAbilityProfile", "quorune.fixed_mana_abilities.FixedActivatedManaAbilitySpec", "quorune.fixed_mana_abilities.FixedManaMode", "quorune.mana_activation.complete_mana_activation", "quorune.mana_restrictions.mana_restriction_allows", "quorune.engine.CommanderEngine._pay_mana_cost"],
-      "positive_tests": ["test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_investigate_and_predefined_tokens_use_canonical_abilities", "test_predefined_token_profiles_enforce_mana_and_impulse_rules"],
-      "negative_tests": ["test_token_production_grammar_and_capability_mutants_fail_closed"],
-      "interaction_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_predefined_token_profiles_enforce_mana_and_impulse_rules"],
+      "implementation_components": ["quorune.standard_token_abilities.StandardTokenAbilityProfile", "quorune.fixed_mana_abilities.FixedActivatedManaAbilitySpec", "quorune.fixed_mana_abilities.FixedManaMode", "quorune.mana_activation.complete_mana_activation", "quorune.mana_restrictions.spell_mana_spend_context", "quorune.mana_restrictions.ability_mana_spend_context", "quorune.mana_restrictions.mana_restriction_allows", "quorune.activation_mana_cost.payable_activation_mana_options", "quorune.rules.activation.commit._pay_object_and_mana_costs", "quorune.engine.CommanderEngine._pay_mana_cost"],
+      "positive_tests": ["test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_investigate_and_predefined_tokens_use_canonical_abilities", "test_predefined_token_profiles_enforce_mana_and_impulse_rules", "test_typed_spend_restrictions_match_public_characteristics", "test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_restricted_fixed_mana_filters_payment_and_rolls_back"],
+      "negative_tests": ["test_token_production_grammar_and_capability_mutants_fail_closed", "test_constrained_mana_compiles_spend_limit_and_land_conditions", "test_restricted_fixed_mana_filters_payment_and_rolls_back"],
+      "interaction_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_predefined_token_profiles_enforce_mana_and_impulse_rules", "test_typed_spend_restrictions_match_public_characteristics", "test_restricted_fixed_mana_filters_payment_and_rolls_back"],
       "multiplayer_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays"],
       "privacy_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays"],
       "replay_tests": ["test_compiled_restricted_mana_is_controller_scoped_and_replays", "test_predefined_token_profiles_enforce_mana_and_impulse_rules"],
