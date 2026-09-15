@@ -588,6 +588,7 @@ class CommanderEngine:
                         "test_fixed_library_searches",
                         "test_rules_scheduler",
                         "test_semantic_searches",
+                        "test_storm_rules",
                         "test_typecycling",
                     },
                     set(plan.test_modules),

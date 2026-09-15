@@ -133,6 +133,7 @@ class StormCompilerTests(unittest.TestCase):
                 "Radstorm",
                 "Reaping the Graves",
                 "Scattershot",
+                "Sprouting Vines",
                 "Stormscale Scion",
                 "Tendrils of Agony",
                 "Tempest Technique",

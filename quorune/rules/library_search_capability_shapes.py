@@ -188,6 +188,10 @@ def fixed_type_to_hand_search_node_capabilities(
         or type(count.get("maximum")) is not int
         or count.get("maximum") != 1
         or count.get("minimum") not in {0, 1}
+        or (
+            not generic_search
+            and dict(count) != {"minimum": 1, "maximum": 1}
+        )
         or not isinstance(selector, Mapping)
         or _query(selector, permanent_only=False) is None
         or (
