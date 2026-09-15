@@ -4490,6 +4490,34 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_dynamic_self_entry_replacement_residual_pairs_fail_closed",
+      "piece_ids": [
+        "capability.counter.producer.dynamic_self_entry",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "counter.producer.dynamic_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "A generic artifact compiles its cast-X charge-counter entry replacement while its as-enters color choice remains material, so the complete CardProgram is unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_dynamic_self_entry_replacement_residual_pairs_fail_closed",
+      "piece_ids": [
+        "capability.counter.producer.dynamic_self_entry",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "counter.producer.dynamic_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "A generic artifact retains unresolved self-replacement ordering alongside its exact cast-X counter entry component, so neither strict nor compatible runtime admission can execute the partial card."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
       "test_id": "test_fixed_self_entry_uses_quantity_replacement",
       "piece_ids": [

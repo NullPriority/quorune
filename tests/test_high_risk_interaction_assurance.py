@@ -11,6 +11,7 @@ from high_risk_interaction_support import (
     CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
     DESTROY_DAMAGE_PREVENTION_PAIR,
     DESTROY_REGENERATION_PAIR,
+    DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
     FIXED_CHARACTERISTIC_SET_AND_REGENERATION_PAIR,
     FIXED_ATTACHMENT_ACTION_AND_CONTINUOUS_PAIRS,
     FIXED_RESTRICTED_EQUIP_AND_CONTINUOUS_PAIRS,
@@ -69,6 +70,16 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
+            database=self.db,
+        )
+
+    def test_dynamic_self_entry_replacement_residual_pairs_fail_closed(
+        self,
+    ) -> None:
+        self.assertEqual(2, len(DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self,
+            DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             database=self.db,
         )
 

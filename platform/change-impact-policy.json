@@ -884,9 +884,11 @@
         "quorune/semantic_runtime/zone_replacement_inputs.py",
         "quorune/semantic_runtime/zone_replacements.py",
         "scripts/work_selection_cohort_measurements.py",
+        "tests/high_risk_interaction_support.py",
         "tests/fixtures/fixed-self-entry-counter-cards.json",
         "tests/test_card_program_trust.py",
-        "tests/test_fixed_keyword_entry_counters.py"
+        "tests/test_fixed_keyword_entry_counters.py",
+        "tests/test_high_risk_interaction_assurance.py"
       ],
       "test_modules": [
         "test_capability_implementation_mutations",
