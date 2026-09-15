@@ -1609,13 +1609,72 @@ class RulesSchedulerTests(unittest.TestCase):
         changed_support["trusted_programs"] += 1
         with self.assertRaisesRegex(
             HarvestOutcomeHistoryError,
-            "cannot change card support",
+            "cannot increase card support",
         ):
             _non_harvest_content_entry(
                 declaration,
                 base=base,
                 head=changed_support,
             )
+
+        conservative = deepcopy(head)
+        conservative["oracle_exact_ability_nodes"] -= 1
+        conservative["card_program_ability_records"] += 1
+        conservative["oracle_material_residuals"] += 1
+        conservative["card_program_material_residuals"] += 1
+        oracle_id = next(
+            oracle_id
+            for oracle_id, state in base["_card_states"].items()
+            if state == ("partial", "residual", "unresolved")
+            and any(
+                key[0] == oracle_id and value[0] == "exact"
+                for key, value in base["_ability_carriers"].items()
+            )
+        )
+        conservative["_card_states"][oracle_id] = (
+            "unresolved",
+            "residual",
+            "unresolved",
+        )
+        carrier = next(
+            key
+            for key, value in base["_ability_carriers"].items()
+            if key[0] == oracle_id and value[0] == "exact"
+        )
+        before_carrier = conservative["_ability_carriers"][carrier]
+        conservative["_ability_carriers"][carrier] = (
+            "unresolved",
+            before_carrier[1],
+            before_carrier[2],
+            False,
+        )
+        conservative_entry = _non_harvest_content_entry(
+            declaration,
+            base=base,
+            head=conservative,
+        )
+        self.assertEqual(
+            -1,
+            conservative_entry["actual_exact_ability_gain"],
+        )
+        self.assertEqual(
+            -1,
+            conservative_entry["actual_material_residual_reduction"],
+        )
+        self.assertEqual(
+            1,
+            conservative_entry["card_program_ability_record_delta"],
+        )
+        self.assertEqual(
+            1,
+            conservative_entry["frontier_ability_carrier_delta"][
+                "reclassifications"
+            ],
+        )
+        self.assertEqual(
+            conservative_entry,
+            _validate_non_harvest_content_entry(conservative_entry),
+        )
 
     def test_non_harvest_transition_chains_across_nonsemantic_content(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]
