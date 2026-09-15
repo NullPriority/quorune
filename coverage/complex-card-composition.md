@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "4628f3a5f4f92c78df6e5db4dbfde0aa3dfff3617f28e0055af02c449b0203e8"
+verified: "0da50dc98e653e13446185191e68e342998ee69a9b5c28fbe3ff05abdcb3e32c"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -47,6 +47,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Okiba Reckoner Raid // Nezumi Road Captain | 189 | 24 | 7 | 6 | 6 | 6 | `blocked` |
 | Conqueror's Galleon // Conqueror's Foothold | 187 | 28 | 5 | 7 | 3 | 14 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
+| The Restoration of Eiganjo // Architect of Restoration | 186 | 21 | 7 | 6 | 8 | 7 | `blocked` |
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Cleric Class | 183 | 22 | 6 | 6 | 7 | 12 | `blocked` |
@@ -55,12 +56,11 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Ojer Axonil, Deepest Might // Temple of Power | 183 | 23 | 7 | 6 | 9 | 6 | `blocked` |
 | Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
 | Tribute to Horobi // Echo of Death's Wail | 181 | 20 | 7 | 6 | 8 | 6 | `blocked` |
+| Huatli, Poet of Unity // Roar of the Fifth People | 180 | 29 | 6 | 6 | 6 | 1 | `blocked` |
 | Ral, Monsoon Mage // Ral, Leyline Prodigy | 180 | 19 | 5 | 6 | 12 | 17 | `blocked` |
 | Era of Enlightenment // Hand of Enlightenment | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
-| Huatli, Poet of Unity // Roar of the Fifth People | 178 | 27 | 6 | 6 | 8 | 1 | `blocked` |
 | Invasion of Tolvada // The Broken Sky | 178 | 21 | 6 | 4 | 5 | 17 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
-| Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
