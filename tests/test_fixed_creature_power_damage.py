@@ -128,6 +128,18 @@ class FixedCreaturePowerDamageCompilerTests(unittest.TestCase):
                 "fixed-target-creature-power-damage-v1",
             ),
             (
+                "Target creature you control deals damage equal to its power "
+                "to target creature an opponent controls.",
+                "Sorcery",
+                "fixed-target-creature-power-damage-v1",
+            ),
+            (
+                "{T}: This creature deals damage equal to its power to "
+                "target creature an opponent controls.",
+                "Creature — Beast",
+                "fixed-source-creature-power-damage-v1",
+            ),
+            (
                 "Target blocking creature fights another target blocking creature.",
                 "Instant",
                 "fixed-target-blocking-creature-fight-v1",
@@ -148,6 +160,47 @@ class FixedCreaturePowerDamageCompilerTests(unittest.TestCase):
                 self.assertIn(
                     CREATURE_POWER_DAMAGE_CAPABILITY,
                     node.capability_closure,
+                )
+
+    def test_compiler_and_capability_descriptor_matrix_is_consistent(self):
+        cases = (
+            (
+                "Target creature you control fights target creature an "
+                "opponent controls.",
+                "fight",
+                True,
+            ),
+            (
+                "Target creature you control deals damage equal to its power "
+                "to target creature an opponent controls.",
+                "bite",
+                True,
+            ),
+            (
+                "Target creature you control deals damage equal to its power "
+                "to any target.",
+                "bite",
+                False,
+            ),
+        )
+        for text, kind, creature_only in cases:
+            with self.subTest(kind=kind, creature_only=creature_only):
+                template = fixed_creature_power_damage_effect_template(
+                    text,
+                    card_name="Power Damage Fixture",
+                )
+                self.assertIsNotNone(template)
+                assert template is not None
+                effect = template.effects[-1]
+                self.assertEqual(kind, effect["kind"])
+                self.assertIs(creature_only, effect["target_must_be_creature"])
+                self.assertIn(
+                    CREATURE_POWER_DAMAGE_CAPABILITY,
+                    fixed_creature_power_damage_node_capabilities(
+                        effects=template.effects,
+                        target_schema=template.target_schema,
+                        mechanic_ids=template.mechanics,
+                    ),
                 )
 
     def test_fixed_prep_fight_sequences_share_target_roles(self):
@@ -537,6 +590,71 @@ class FixedCreaturePowerDamageRuntimeTests(unittest.TestCase):
             "source_lki": lki,
         }
 
+    def test_compiler_capability_runtime_descriptor_matrix_is_consistent(self):
+        cases = (
+            (
+                "Target creature you control fights target creature an "
+                "opponent controls.",
+                "fight",
+                True,
+                (3, 2),
+            ),
+            (
+                "Target creature you control deals damage equal to its power "
+                "to target creature an opponent controls.",
+                "bite",
+                True,
+                (3,),
+            ),
+            (
+                "Target creature you control deals damage equal to its power "
+                "to any target.",
+                "bite",
+                False,
+                (3,),
+            ),
+        )
+        for index, (text, kind, creature_only, expected) in enumerate(cases):
+            with self.subTest(kind=kind, creature_only=creature_only):
+                session = self.session(40_200 + index)
+                engine = session.engine
+                source, target = self.stage_creatures(
+                    session,
+                    source_power=3,
+                    target_power=2,
+                )
+                template = fixed_creature_power_damage_effect_template(
+                    text,
+                    card_name="Power Damage Fixture",
+                )
+                self.assertIsNotNone(template)
+                assert template is not None
+                self.assertIn(
+                    CREATURE_POWER_DAMAGE_CAPABILITY,
+                    fixed_creature_power_damage_node_capabilities(
+                        effects=template.effects,
+                        target_schema=template.target_schema,
+                        mechanic_ids=template.mechanics,
+                    ),
+                )
+                effect = {
+                    **template.effects[-1],
+                    "source": source.ref,
+                    "target": target.ref if creature_only else "B",
+                }
+                life_before = engine.state.players["B"].life
+
+                dealt = engine.apply_effect(effect, actor="A")
+
+                self.assertEqual(expected, dealt)
+                if creature_only:
+                    self.assertEqual(3, target.marked_damage)
+                else:
+                    self.assertEqual(
+                        life_before - 3,
+                        engine.state.players["B"].life,
+                    )
+
     def test_fight_and_bite_resolve_through_canonical_damage(self):
         session = self.session(40200)
         engine = session.engine
@@ -563,6 +681,83 @@ class FixedCreaturePowerDamageRuntimeTests(unittest.TestCase):
         self.assertEqual((3,), dealt)
         self.assertEqual(0, source.marked_damage)
         self.assertEqual(3, target.marked_damage)
+
+    def test_targeted_source_creature_only_bite_compiles_and_executes(self):
+        session = self.session(40_210, card_name="Targeted Creature Bite")
+        engine = session.engine
+        self.promote(engine, "Targeted Creature Bite")
+        source, target = self.stage_creatures(
+            session,
+            source_power=4,
+            target_power=2,
+        )
+        spell, action = self.ready_spell(
+            session,
+            "Targeted Creature Bite",
+            {"C": 1, "G": 1},
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [source.ref, target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "G": 1},
+            },
+        )
+
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve_all(session))
+        self.assertEqual(4, target.marked_damage)
+        self.assertEqual(0, source.marked_damage)
+        self.assertEqual("graveyard", spell.zone)
+        self.assert_replays(session, "targeted-creature-only-bite")
+
+    def test_source_self_creature_only_bite_compiles_and_executes(self):
+        session = self.session(40_211, card_name="Source Creature Bite")
+        engine = session.engine
+        self.promote(engine, "Source Creature Bite")
+        source = self.named_card(engine, "Source Creature Bite")
+        target = self.creature(engine, "B")
+        engine.move_card(source.object_id, "battlefield", controller="A", log=False)
+        engine.move_card(target.object_id, "battlefield", controller="B", log=False)
+        source.annotations.update(
+            {"continuous_power": 3, "continuous_toughness": 20}
+        )
+        target.annotations["continuous_toughness"] = 20
+        engine.state.players["A"].turns_begun = 1
+        source.acquired_control_turn_count = 0
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = "A"
+        hints = engine._priority_action_hints("A")
+        action = next(
+            row
+            for row in hints["actions"]
+            if row.get("source") == source.ref
+            and str(row.get("id") or "").startswith("activate:")
+        )
+        engine._issue_priority("A", hints)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        activated = session.act(
+            "pilot:A",
+            {"action_id": action["id"], "targets": [target.ref]},
+        )
+
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertTrue(source.tapped)
+        self.assertIsNone(self.resolve_all(session))
+        self.assertEqual(3, target.marked_damage)
+        self.assertEqual(0, source.marked_damage)
+        self.assert_replays(session, "source-creature-only-bite")
 
     def test_fight_requires_both_current_creatures_and_bite_revalidates_targets(self):
         session = self.session(40201)
@@ -646,6 +841,10 @@ class FixedCreaturePowerDamageRuntimeTests(unittest.TestCase):
             {**self.effect("fight", source.ref, source.ref), "kind": "duel"},
             {**self.effect("fight", source.ref, source.ref), "unknown": True},
             {**self.effect("fight", source.ref, source.ref), "target_must_be_creature": False},
+            {
+                **self.effect("bite", source.ref, source.ref),
+                "target_must_be_creature": "true",
+            },
         ):
             with self.subTest(mutation=mutation):
                 before = authoritative_state_hash(engine.state)
