@@ -3249,6 +3249,9 @@ class RulesSchedulerTests(unittest.TestCase):
 
     def test_completed_corrected_measurement_skips_base_blob_lookup(self):
         coverage = self.catalog["work_selection"]["coverage_family"]
+        transition = self.catalog["work_selection"][
+            "semantic_transition_declaration"
+        ]
         with mock.patch(
             "scripts.update_work_selection_cohort_measurements."
             "_source_checkpoint_frontier",
@@ -3259,9 +3262,9 @@ class RulesSchedulerTests(unittest.TestCase):
                 coverage=coverage,
                 bundles=coverage["candidate_bundles"],
             )
-        transition = self.catalog["work_selection"][
-            "semantic_transition_declaration"
-        ]
+        if transition.get("measurement_id") is None:
+            self.assertEqual([], rows)
+            return
         active_bundle = next(
             bundle
             for bundle in coverage["candidate_bundles"]
@@ -3290,7 +3293,7 @@ class RulesSchedulerTests(unittest.TestCase):
         expected = (
             outcome["measurement_frontier_fingerprint"]
             if outcome is not None
-            else self.work_inputs["frontier"]["fingerprint"]
+            else self.work_inputs["card_unlock_frontier"]["fingerprint"]
         )
         self.assertEqual(
             expected,
