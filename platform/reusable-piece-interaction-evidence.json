@@ -6858,6 +6858,24 @@
       "capability_ids": ["damage.creature_power.fixed_interaction"],
       "interaction_order": 2,
       "assertion": "Polukranos's exact Fight activation does not bypass its unresolved self-replacement and prevention ordering; strict runtime admission withholds every activation from the partial card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_restricted_mana_replacement_residual_pairs_fail_closed",
+      "piece_ids": ["capability.mana.activated.restricted_fixed_output", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["mana.activated.restricted_fixed_output"],
+      "interaction_order": 2,
+      "assertion": "A typed fixed restricted-mana ability remains represented while a separate unresolved as-enters choice keeps the complete CardProgram unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_restricted_mana_replacement_residual_pairs_fail_closed",
+      "piece_ids": ["capability.mana.activated.restricted_fixed_output", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["mana.activated.restricted_fixed_output"],
+      "interaction_order": 2,
+      "assertion": "The exact restricted-mana activation cannot bypass unresolved self-entry replacement ordering; runtime admission rejects the incomplete generic fixture before authoritative mutation."
     }
   ]
 }

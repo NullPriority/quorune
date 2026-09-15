@@ -871,6 +871,7 @@
     {
       "id": "fixed-constrained-mana-contract",
       "patterns": [
+        "platform/reusable-piece-interaction-evidence.json",
         "quorune/abilities.py",
         "quorune/activation_condition_model.py",
         "quorune/activation_mana_cost.py",
@@ -882,7 +883,9 @@
         "quorune/rules/activation/availability.py",
         "quorune/rules/activation/commit.py",
         "scripts/work_selection_cohort_measurements.py",
-        "tests/test_fixed_mana_abilities.py"
+        "tests/high_risk_interaction_support.py",
+        "tests/test_fixed_mana_abilities.py",
+        "tests/test_high_risk_interaction_assurance.py"
       ],
       "test_modules": [
         "test_activated_abilities",
@@ -893,6 +896,7 @@
         "test_exact_zimone_closure",
         "test_fixed_mana_abilities",
         "test_fixed_token_production",
+        "test_high_risk_interaction_assurance",
         "test_mana_abilities",
         "test_public_activation_conditions",
         "test_rules_scheduler"
