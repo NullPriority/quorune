@@ -5,6 +5,10 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
 from .errors import StateInvariantError
+from .entry_counter_model import DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT
+from .semantic_runtime.self_entry_counters import (
+    dynamic_self_entry_counter_amounts,
+)
 from .semantic_runtime.zone_replacements import (
     PreparedZoneChange,
     prepare_zone_change_replacement,
@@ -90,6 +94,34 @@ def prepare_resolving_entry_replacement(
             )
     if entry_card is None or entry_destination is None:
         return ResolvingEntryPreparation(None, None)
+    raw_amounts = item.context.get(DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT)
+    if raw_amounts is None:
+        frozen_amounts = dict(
+            dynamic_self_entry_counter_amounts(
+                host,
+                card=entry_card,
+                destination=entry_destination,
+                destination_controller=item.controller,
+                mana_colors_spent=item.mana_colors_spent,
+            )
+        )
+        if frozen_amounts:
+            item.context[DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT] = dict(
+                frozen_amounts
+            )
+    elif (
+        not isinstance(raw_amounts, Mapping)
+        or any(
+            type(component_id) is not str
+            or not component_id
+            or type(amount) is not int
+            or amount < 0
+            for component_id, amount in raw_amounts.items()
+        )
+    ):
+        raise error_type("Frozen dynamic entry counter amounts are malformed")
+    else:
+        frozen_amounts = dict(raw_amounts)
     try:
         prepared = prepare_zone_change_replacement(
             host,
@@ -97,6 +129,9 @@ def prepare_resolving_entry_replacement(
             entry_destination,
             destination_controller=item.controller,
             entry_characteristics=entry_characteristics,
+            self_entry_counter_amounts=(
+                frozen_amounts if frozen_amounts else None
+            ),
             mana_colors_spent=item.mana_colors_spent,
             selections=tuple(selections),
             error_type=error_type,

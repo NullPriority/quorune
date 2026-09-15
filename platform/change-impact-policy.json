@@ -869,6 +869,47 @@
       ]
     },
     {
+      "id": "dynamic-self-entry-counter-contract",
+      "patterns": [
+        "platform/reusable-piece-interaction-evidence.json",
+        "quorune/compiler/fixed_self_entry_counter_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/entry_counter_coordination.py",
+        "quorune/entry_counter_model.py",
+        "quorune/entry_counters.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/semantic_runtime/self_entry_counters.py",
+        "quorune/semantic_runtime/zone_replacement_model.py",
+        "quorune/semantic_runtime/zone_replacement_inputs.py",
+        "quorune/semantic_runtime/zone_replacements.py",
+        "scripts/work_selection_cohort_measurements.py",
+        "tests/fixtures/fixed-self-entry-counter-cards.json",
+        "tests/test_card_program_trust.py",
+        "tests/test_fixed_keyword_entry_counters.py"
+      ],
+      "test_modules": [
+        "test_capability_implementation_mutations",
+        "test_card_program_trust",
+        "test_casting_spells_rules",
+        "test_counter_placement_replacements",
+        "test_fixed_keyword_entry_counters",
+        "test_game_record_v3",
+        "test_high_risk_interaction_assurance",
+        "test_intrinsic_entry_counters",
+        "test_kicker_rules",
+        "test_rules_scheduler",
+        "test_sunburst_rules",
+        "test_zone_replacement_compiler"
+      ],
+      "test_suites": [
+        "casting-costs-mana",
+        "compiler-cardprogram",
+        "counter-continuous-effects",
+        "events-replacement-zone"
+      ]
+    },
+    {
       "id": "fixed-constrained-mana-contract",
       "patterns": [
         "platform/reusable-piece-interaction-evidence.json",

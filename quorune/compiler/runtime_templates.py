@@ -44,6 +44,7 @@ from .draw_templates import (
 )
 from .entry_state_templates import static_entry_state_handler
 from .fixed_self_entry_counter_templates import (
+    dynamic_self_entry_counter_handler,
     fixed_self_entry_counter_handler,
 )
 from ..entry_state_conditions import FIXED_ENTRY_CONDITION_HANDLER_ID
@@ -466,6 +467,42 @@ def _continuous_static_runtime_template(
     )
 
 
+def _self_entry_counter_runtime_template(
+    text: str,
+    *,
+    source_name: str | None,
+    source_is_class: bool,
+) -> StaticRuntimeTemplate | None:
+    if source_name is None or source_is_class:
+        return None
+    fixed = fixed_self_entry_counter_handler(text, source_name=source_name)
+    if fixed is not None:
+        return StaticRuntimeTemplate(
+            compiled=fixed,
+            kind="replacement_effect",
+            event="zone.change",
+            active_zone="all",
+            dependency_reason=(
+                "generic fixed self-entry counters depend on the canonical "
+                "zone and counter replacement owners"
+            ),
+        )
+    dynamic = dynamic_self_entry_counter_handler(text, source_name=source_name)
+    if dynamic is None:
+        return None
+    return StaticRuntimeTemplate(
+        compiled=dynamic,
+        kind="replacement_effect",
+        event="zone.change",
+        active_zone="all",
+        dependency_reason=(
+            "dynamic self-entry counters depend on frozen public facts and "
+            "the canonical zone and counter replacement owners"
+        ),
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+    )
+
+
 def static_runtime_template(
     text: str,
     *,
@@ -491,22 +528,13 @@ def static_runtime_template(
         )
 
     if source_permanent:
-        if source_name is not None and not source_is_class:
-            entry_counter = fixed_self_entry_counter_handler(
-                text,
-                source_name=source_name,
-            )
-            if entry_counter is not None:
-                return StaticRuntimeTemplate(
-                    compiled=entry_counter,
-                    kind="replacement_effect",
-                    event="zone.change",
-                    active_zone="all",
-                    dependency_reason=(
-                        "generic fixed self-entry counters depend on the "
-                        "canonical zone and counter replacement owners"
-                    ),
-                )
+        entry_counter = _self_entry_counter_runtime_template(
+            text,
+            source_name=source_name,
+            source_is_class=source_is_class,
+        )
+        if entry_counter is not None:
+            return entry_counter
         participation = _source_permanent_participation_template(
             text,
             source_name=source_name,

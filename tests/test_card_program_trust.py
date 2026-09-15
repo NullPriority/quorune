@@ -273,6 +273,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.destination",
                 "replacement.zone.entry_state",
                 "replacement.zone.conditional-self-entry-counter",
+                "replacement.zone.dynamic-self-entry-counter",
                 "replacement.zone.read-ahead-entry-choice",
                 "replacement.zone.riot-entry-choice",
                 "replacement.zone.self-entry-counter",

@@ -4473,6 +4473,23 @@
     },
     {
       "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_dynamic_x_and_query_amounts_use_frozen_preentry_state",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.dynamic_self_entry",
+        "capability.state_query.permanent.public_state_predicate"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.dynamic_self_entry",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "interaction_order": 3,
+      "assertion": "One cycle-safe layer-5 creature query is frozen before the dynamic self-entry replacement enters the canonical counter-quantity ordering tree, and a suspended competing replacement cannot recompute that amount."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
       "test_id": "test_fixed_self_entry_uses_quantity_replacement",
       "piece_ids": [

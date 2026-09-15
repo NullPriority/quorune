@@ -8,6 +8,43 @@ from ..entry_counters import EffectEntryCounter
 from ..zone_trigger_events import ZoneTransitionKind
 
 
+def active_zone_replacement_sources(
+    host: Any,
+    *,
+    sources: Sequence[Any] | None,
+    source_zones: Mapping[str, str] | None,
+) -> tuple[Any, ...]:
+    candidates = (
+        tuple(sources)
+        if sources is not None
+        else tuple(host._semantic_event_sources(zones={"battlefield"}))
+    )
+    return tuple(
+        source
+        for source in candidates
+        if (
+            (
+                source_zones.get(source.object_id, source.zone)
+                if source_zones is not None
+                else source.zone
+            )
+            == "battlefield"
+            and not source.phased_out
+            and source.controller in host.active_seats
+        )
+    )
+
+
+def prospective_destination_controller(
+    card: Any,
+    destination_controllers: Mapping[str, str | None],
+) -> str | None:
+    return destination_controllers.get(
+        card.object_id,
+        card.controller if card.zone == "stack" else card.owner,
+    )
+
+
 def validated_zone_change_snapshot_inputs(
     host: Any,
     changes: Sequence[tuple[str, str]],
@@ -121,4 +158,8 @@ def validated_zone_change_snapshot_inputs(
     )
 
 
-__all__ = ["validated_zone_change_snapshot_inputs"]
+__all__ = [
+    "active_zone_replacement_sources",
+    "prospective_destination_controller",
+    "validated_zone_change_snapshot_inputs",
+]

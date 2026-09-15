@@ -789,6 +789,20 @@ def _mark_selected_cast_lifecycle(
         mark_card_fixed_cast_lifecycle(card, rebound)
 
 
+def _cast_provenance_context(
+    proposal: CastProposal,
+    spent: Mapping[str, int],
+) -> dict[str, Any]:
+    return {
+        "cast_origin": proposal.origin,
+        "mana_spent_total": sum(
+            int(amount)
+            for amount in spent.values()
+            if type(amount) is int and amount > 0
+        ),
+    }
+
+
 def _create_spell_item(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -878,6 +892,7 @@ def _create_spell_item(
             if type(spent.get(color, 0)) is int and spent.get(color, 0) > 0
         ),
         context={
+            **_cast_provenance_context(proposal, spent),
             "target_groups": thaw_json(proposal.target_groups),
             "target_snapshots": thaw_json(proposal.target_snapshots),
             "targets_revalidated": False,
