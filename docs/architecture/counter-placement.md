@@ -478,9 +478,14 @@ component identity before replacement ordering; a private replacement choice,
 save/load, or exact replay cannot recompute it. Zero creates no counter child.
 Permanent spell copies reuse the canonical copy object's copied X but never
 inherit cast-origin, mana-payment, or mana-color facts. Programs carrying the
-current-component marker consult the shared layer-6 applicability owner, so a
-relevant off-battlefield ability removal suppresses the replacement before its
-amount is frozen.
+current-component marker consult the shared layer-6 applicability owner at the
+prospective battlefield boundary. An origin-zone-only ability removal on an
+object that becomes a new incarnation no longer suppresses the replacement;
+an effect that will apply on the battlefield still does. A represented
+characteristic change on a permanent spell follows the same stack-to-
+battlefield identity described by CR 400.7a. Applicability outside this typed
+prospective query remains unsupported instead of authorizing entry with an
+assumed printed component or silently omitting its counters.
 Choice or multikind counters, repeated kicker, unavailable history such as
 permanent departures or life gain, dynamic characteristics beyond layer 5,
 and counters placed on other entering permanents remain material residuals.

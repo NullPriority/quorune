@@ -109,7 +109,11 @@ class ZoneReplacementHost(Protocol):
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
     def _effective_static_component_keys(
-        self, card: Any
+        self,
+        card: Any,
+        *,
+        prospective_zone: str | None = None,
+        prospective_controller: str | None = None,
     ) -> tuple[str, ...]: ...
 
     def card_record(self, card: Any) -> Any: ...
@@ -609,6 +613,7 @@ def _read_ahead_entry_is_supported(
     card: Any,
     *,
     prospective_name: str,
+    destination_controller: str | None,
     characteristics: Mapping[str, Any],
     subtypes: set[str],
 ) -> bool:
@@ -641,7 +646,13 @@ def _read_ahead_entry_is_supported(
             program,
             card,
             prospective_name=prospective_name or None,
-        ) or not program_static_component_is_applicable(host, program, card):
+        ) or not program_static_component_is_applicable(
+            host,
+            program,
+            card,
+            prospective_zone="battlefield",
+            prospective_controller=destination_controller,
+        ):
             continue
         for descriptor in program.handlers:
             if descriptor.get("handler_id") == READ_AHEAD_ENTRY_HANDLER_ID:
@@ -756,6 +767,7 @@ def _zone_change_snapshot_subjects(
                 record,
                 card,
                 prospective_name=prospective_name,
+                destination_controller=destination_controller,
                 characteristics=characteristics,
                 subtypes=subtypes,
             )
@@ -945,7 +957,11 @@ def _zone_change_snapshot_effects(
                     else None
                 ),
             ) or not program_static_component_is_applicable(
-                host, program, card
+                host,
+                program,
+                card,
+                prospective_zone="battlefield",
+                prospective_controller=subject.destination_controller,
             ):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from functools import partial
 from typing import Any, Mapping, Sequence
 
@@ -233,21 +234,7 @@ class CharacteristicEvaluationHostMixin:
     ) -> dict[str, tuple[str, ...]]:
         """Resolve every source's shared layer-6 component snapshot once."""
 
-        candidate_effects = collect_card_program_continuous_effects(
-            self.state,
-            self.semantics,
-            self.semantic_program_is_current_trusted,
-            maximum_layer=Layer.ABILITY,
-            public_object_resolver=partial(
-                self._public_object_query_result,
-                _enforce_static_component_applicability=False,
-            ),
-            quantity_resolver=partial(
-                query_characteristic_count,
-                self,
-                _enforce_static_component_applicability=False,
-            ),
-        )
+        candidate_effects = self._static_component_candidate_effects()
         component_effects = _static_component_presence_effects(
             candidate_effects
         )
@@ -339,12 +326,86 @@ class CharacteristicEvaluationHostMixin:
                 )
         return result
 
+    def _static_component_candidate_effects(
+        self,
+    ) -> tuple[ContinuousEffect, ...]:
+        """Collect typed effects needed by current or prospective layer 6."""
+
+        return collect_card_program_continuous_effects(
+            self.state,
+            self.semantics,
+            self.semantic_program_is_current_trusted,
+            maximum_layer=Layer.ABILITY,
+            public_object_resolver=partial(
+                self._public_object_query_result,
+                _enforce_static_component_applicability=False,
+            ),
+            quantity_resolver=partial(
+                query_characteristic_count,
+                self,
+                _enforce_static_component_applicability=False,
+            ),
+        )
+
+    def _prospective_static_component_keys(
+        self,
+        card: CardInstance,
+        *,
+        prospective_zone: str,
+        prospective_controller: str | None,
+    ) -> tuple[str, ...]:
+        """Resolve one supported future-zone layer-6 snapshot without mutation."""
+
+        if prospective_zone != "battlefield":
+            raise GameRuleError(
+                "Prospective static components support battlefield entry only"
+            )
+        prospective = copy.copy(card)
+        prospective.zone = prospective_zone
+        if prospective_controller is not None:
+            prospective.controller = prospective_controller
+        base = self._compiled_base_characteristics(
+            prospective,
+            self.card_record(card),
+            error_type=GameRuleError,
+        )
+        identity_continues = (
+            card.zone == "stack" and prospective_zone == "battlefield"
+        )
+        resolution_effects = (
+            active_resolution_effects(self.state, card)
+            if identity_continues
+            else ()
+        )
+        effective = self._apply_layered_characteristic_annotations(
+            prospective,
+            base,
+            runtime_effects=(
+                *resolution_effects,
+                *self._static_component_candidate_effects(),
+            ),
+            maximum_layer=Layer.ABILITY,
+            _enforce_static_component_applicability=False,
+        )
+        return static_component_keys(
+            effective.get("ability_fragments", ())
+        )
+
     def _effective_static_component_keys(
         self,
         card: CardInstance,
+        *,
+        prospective_zone: str | None = None,
+        prospective_controller: str | None = None,
     ) -> tuple[str, ...]:
         """Resolve one source through the shared layer-6 batch owner."""
 
+        if prospective_zone is not None:
+            return self._prospective_static_component_keys(
+                card,
+                prospective_zone=prospective_zone,
+                prospective_controller=prospective_controller,
+            )
         if card.zone != "battlefield":
             if card.face_down or _static_component_presence_effects(
                 active_resolution_effects(self.state, card)

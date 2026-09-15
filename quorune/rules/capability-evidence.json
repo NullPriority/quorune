@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5f8280988bec3f1c6b1df2021bdae113ccf7eebcff5b77d99b84d45dffea3314",
-  "declaration_source_fingerprint": "e08b4b3a0a3b3f00cf80d80305df65f329bd9827d828470d22dc8092dcf1ca73",
+  "registry_fingerprint": "08328af176292302fc61615e29423bc1fbd75506ae254354a3fe8b0a25f3de73",
+  "declaration_source_fingerprint": "f82f97ffe9858dd006ac5cb39f74ad357d290095232c18ecae785c73587b192f",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -25819,6 +25819,44 @@
     {
       "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_ignores_origin_only_ability_removal",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate the shared component at the prospective battlefield boundary and stop applying a graveyard-only ability removal when the card becomes a new object."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_obeys_prospective_battlefield_ability_removal",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suppress the entry replacement when the same typed ability removal applies to the permanent on the prospective battlefield."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_replacement_choice_is_private_and_replays",
       "official_rule_ids": [
         "107.3m",
@@ -25971,6 +26009,25 @@
     {
       "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_obeys_prospective_battlefield_ability_removal",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Do not authorize a source-pinned entry replacement when the prospective battlefield object will lack that component."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_removed_current_ability_is_inapplicable",
       "official_rule_ids": [
         "107.3m",
@@ -26047,6 +26104,25 @@
     {
       "capability_id": "counter.producer.dynamic_self_entry",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_ignores_origin_only_ability_removal",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retain the printed entry component when an ability removal is confined to the origin-zone incarnation and cannot affect the entering permanent."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance",
       "official_rule_ids": [
         "107.3m",
@@ -26119,6 +26195,25 @@
         "commander_review"
       ],
       "applicability_note": "Resolve cast X, distinct mana colors, and a cycle-safe public object count into exact positive entry counters."
+    },
+    {
+      "capability_id": "counter.producer.dynamic_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_permanent_spell_characteristic_change_carries_through_entry",
+      "official_rule_ids": [
+        "107.3m",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve a typed characteristic change and the dynamic entry component across the permanent spell's stack-to-battlefield identity."
     },
     {
       "capability_id": "counter.producer.dynamic_self_entry",
@@ -63398,5 +63493,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "8ba2293f88eb577f7616e1b5de29c4f4e6dde2bf91dd36ec00ab0987d29a2528"
+  "fingerprint": "2b40caeef547f8e9a26b84a72a91f7844d69fecd9d2700a0afad170c5529c7d6"
 }

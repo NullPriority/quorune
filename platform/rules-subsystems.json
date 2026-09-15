@@ -3421,14 +3421,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v194-complete-mana-spend-restrictions",
-      "compiler_version": "oracle-ir-v194",
+      "transition_id": "oracle-ir-v195-prospective-entry-applicability",
+      "compiler_version": "oracle-ir-v195",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Require complete fixed-mana spending-restriction consumption, preserve representable typed variants, and demote unsupported suffixes without claiming a card-support harvest."
+      "non_harvest_reason": "Distinguish origin-only, prospective battlefield, and permanent-spell-continuing typed effects at the shared entry component boundary without claiming a card-support harvest."
     },
     "forecast_corrections": [
       {

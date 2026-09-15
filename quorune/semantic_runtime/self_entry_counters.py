@@ -292,12 +292,20 @@ def program_static_component_is_applicable(
     host: Any,
     program: Any,
     card: Any,
+    *,
+    prospective_zone: str | None = None,
+    prospective_controller: str | None = None,
 ) -> bool:
     """Apply the shared layer-6 component-presence result when required."""
 
     return (
         CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
-        or program.key in host._effective_static_component_keys(card)
+        or program.key
+        in host._effective_static_component_keys(
+            card,
+            prospective_zone=prospective_zone,
+            prospective_controller=prospective_controller,
+        )
     )
 
 
@@ -324,7 +332,13 @@ def dynamic_self_entry_counter_amounts_from_programs(
             program,
             card,
             prospective_name=prospective_name or None,
-        ) or not program_static_component_is_applicable(host, program, card):
+        ) or not program_static_component_is_applicable(
+            host,
+            program,
+            card,
+            prospective_zone=destination,
+            prospective_controller=destination_controller,
+        ):
             continue
         for descriptor_index, descriptor in enumerate(program.handlers):
             if (
