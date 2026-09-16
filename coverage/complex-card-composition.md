@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "0e88ee913ac97a4e4f452d4a9540d96441442c9a58a94b9b06c7c933b26e6ac0"
+verified: "f245f7e5903fec63e07b6ecacd61db441e70678a6ef3434602c17c8559b5f90c"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -26,6 +26,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Vorinclex // The Grand Evolution | 214 | 24 | 8 | 7 | 12 | 4 | `blocked` |
 | Sheoldred // The True Scriptures | 213 | 23 | 8 | 7 | 13 | 4 | `blocked` |
 | Teachings of the Kirin // Kirin-Touched Orochi | 211 | 28 | 7 | 7 | 9 | 6 | `blocked` |
+| Rowan Kenrith | 209 | 28 | 5 | 6 | 5 | 21 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
 | Crystal Fragments // Summon: Alexander | 204 | 26 | 7 | 7 | 7 | 8 | `blocked` |
@@ -36,7 +37,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Ugin, Eye of the Storms | 199 | 39 | 5 | 5 | 11 | 3 | `blocked` |
-| Rowan Kenrith | 196 | 23 | 5 | 6 | 6 | 21 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
