@@ -1119,6 +1119,34 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0048",
+      "adr": "docs/adr/0098-typed-ordinary-class-lifecycle.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "ebf27194e114fb76cfba0c80d3ed24338ad04966886a47ddec2c8e2e3c067f74",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed gain_class_level operation serialized for the ordinary Class lifecycle harvest.",
+      "rationale": "The measured Class harvest adds one strict source-incarnation operation that delegates its only write to the permanent-designation owner, plus a normalized trigger and read-only cleanup permission query. CommanderEngine gains no method or logical line; direct and unowned GameState writes, Oracle-ID literals, runtime Oracle prose, prohibited identity dispatch, and size debt remain flat. The cross-platform semantic-registry sentinel identified the missing validity identity on the feature PR, and this reviewed correction binds the operation to the exact architecture allowance.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact structural baseline plus gain_class_level, FixedClassLevelAbilitySpec, the ordinary Class compiler context, source-incarnation and permanent-designation owner, shared layer-6 component applicability, normalized level-change trigger, and current no-maximum-hand-size cleanup query described by ADR 0098; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, arbitrary callbacks, family-specific ability-presence checks, broader level or hand-size grammar, cycle-unsafe dynamic characteristics, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain gain_class_level only while closed source-spanned validation, sequential activation legality, logical-incarnation pinning, noncopiable designation semantics, shared layer-6 applicability, normalized trigger placement, cleanup offer/commit parity, rollback, privacy, save/load, and exact replay remain enforced.",
+      "target_milestone": "capability-closed ordinary Class lifecycle harvest through canonical activation, designation, trigger, cleanup, and layer owners",
+      "replay_implications": "CardPrograms record only the fixed level, source-zone-object placeholder, static scopes, normalized trigger, and cleanup permission; Game Record v3 preserves the additive designation, source incarnation, trigger placement, private draws, cleanup decisions, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "Class level and applicable battlefield abilities are public. Level-trigger and cleanup decisions remain principal-scoped, while physical identities, logical identities, private draws, and unchosen hand contents remain absent from opponent projections.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict operation; unknown fields, levels outside 2 or 3, stale or re-entered sources, blocked dependencies, removed current components, malformed Class grammar, and broader hand-size forms fail before authoritative mutation or remain explicit residuals.",
+      "tests": [
+        "tests.test_semantic_handlers.TypedSemanticHandlerTests.test_registry_is_deterministic_and_rejects_duplicate_ownership",
+        "tests.test_change_impact.ChangeImpactTests.test_effect_operation_sources_select_semantic_registry",
+        "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
+        "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_level_trigger_and_no_maximum_hand_size_compile_exactly",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_offer_commit_and_sequential_stack_resolution",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

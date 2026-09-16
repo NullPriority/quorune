@@ -102,6 +102,7 @@ VALID_EFFECT_OPERATIONS = {
     "fixed_self_counter_keyword_action",
     "fixed_bolster",
     "fixed_impulse_access",
+    "gain_class_level",
     "energy",
     "exile",
     "exile_permanent",

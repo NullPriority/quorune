@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "3cae072fdcd946930edb326930bbcc72511cd1b2",
+  "baseline_commit": "876f517b934183655ba2f07b4e0e13afa998a49d",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -1581,9 +1581,9 @@
     "physical_lines": 7488
   },
   "exception_binding": {
-    "adr": "docs/adr/0097-typed-fixed-creature-power-damage.md",
-    "allowance_fingerprint": "76df2f5715d0bdb0fbb658028226924a151621408990adceb5aa898c1bb4985d",
-    "exception_id": "ARCH-EXC-0047"
+    "adr": "docs/adr/0098-typed-ordinary-class-lifecycle.md",
+    "allowance_fingerprint": "ebf27194e114fb76cfba0c80d3ed24338ad04966886a47ddec2c8e2e3c067f74",
+    "exception_id": "ARCH-EXC-0048"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1717,7 +1717,7 @@
     },
     {
       "file": "quorune/oracle_ir.py",
-      "logical_lines": 227,
+      "logical_lines": 226,
       "symbol": "_compile_face"
     },
     {
@@ -1787,10 +1787,6 @@
     {
       "file": "quorune/rules/capabilities.py",
       "logical_lines": 1504
-    },
-    {
-      "file": "quorune/rules/node_capability_shapes.py",
-      "logical_lines": 1540
     },
     {
       "file": "web/src/App.tsx",
@@ -1885,6 +1881,7 @@
     "fixed_impulse_access",
     "fixed_self_counter_keyword_action",
     "fomori_vault",
+    "gain_class_level",
     "goad",
     "grant_ability_fragment",
     "grant_ability_marker",
