@@ -11857,11 +11857,11 @@
       "applicable_high_risk_pairs": 315,
       "applicable_piece_pairs": 80229,
       "available": true,
-      "covered_high_risk_pairs": 314,
-      "covered_piece_pairs": 983,
+      "covered_high_risk_pairs": 315,
+      "covered_piece_pairs": 984,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "52c651ee694cb171442c589c7db79622e029eb82df1a21e47b816819217767ca",
-      "uncovered_high_risk_pairs": 1
+      "source_fingerprint": "766454241511c4842608461ee75c5aed24e51e2bf9db4569c47c55271d1ca85f",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -31158,7 +31158,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "64e3ccad81f6377299c63389e45e16f028bbe399a690a69bf428acb6ee05294a",
+      "fingerprint": "1c61526d636b44273e8a6d2207bcc23636b5ac672267b8c15cd416cbec661bb2",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -32016,8 +32016,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4165,
-      "discovered_total": 7474,
+      "conventional_ast_cases": 4166,
+      "discovered_total": 7475,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 232,
