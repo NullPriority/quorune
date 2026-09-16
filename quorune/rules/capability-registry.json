@@ -4125,6 +4125,33 @@
       "status": "trusted"
     },
     {
+      "id": "combat.declaration.public_state_conditions",
+      "version": 1,
+      "official_rules": ["508.1c", "509.1b", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Gate one typed combat declaration restriction through the same fixed public-state condition snapshot used by static characteristic components.",
+        "inputs": ["one exact source-spanned declaration restriction", "one fixed controller hand, graveyard, draw, spell-cast, source-counter, attachment-state, or cycle-safe public object query condition", "current source controller and source incarnation", "current authoritative public-state snapshot"],
+        "outputs": ["one current condition verdict", "the ordinary typed declaration restriction when its polarity applies", "the same offer and commit legality through the canonical declaration solver"],
+        "exclusions": ["defending-player, chosen, named, designation, crime, sacrifice-history, and unsupported previous-turn predicates", "hidden object identity and top-library conditions", "open dynamic characteristic counts, summed values, and unsupported cross-stat comparisons", "conditional declaration costs and temporary resolving effects"]
+      },
+      "dependencies": ["combat.declaration.typed_components", "continuous.characteristics.fixed_public_state"],
+      "implementation_components": ["quorune.compiler.public_state_queries.fixed_public_state_condition", "quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.card_programs.runtime.fixed_public_state_condition_matches", "quorune.declaration_condition_runtime.fixed_declaration_condition_verdict", "quorune.declaration_fragments.DeclarationRestrictionTemplate", "quorune.declaration_restrictions.parse_declaration_restriction_line", "CommanderEngine._declaration_condition_holds"],
+      "positive_tests": ["test_broad_public_declaration_condition_grammar_compiles_exactly", "test_public_state_declaration_conditions_revalidate_and_replay"],
+      "negative_tests": ["test_broad_public_declaration_condition_grammar_compiles_exactly", "test_shared_parser_is_anchored_and_classifies_exact_families"],
+      "interaction_tests": ["test_counter_and_current_stat_conditions_share_live_characteristics", "test_source_controller_recipient_and_history_evasion_revalidate"],
+      "multiplayer_tests": ["test_source_controller_recipient_and_history_evasion_revalidate"],
+      "privacy_tests": ["test_public_state_declaration_conditions_revalidate_and_replay"],
+      "replay_tests": ["test_public_state_declaration_conditions_revalidate_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking either typed declaration components or fixed public-state conditions removes exact closure; unsupported condition grammar remains a material residual before runtime.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused hand, counter, current-stat, history, and source-controller witnesses fail if the condition adapter is bypassed, inverted, or evaluated from stale printed characteristics.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "combat.declaration.typed_components",
       "version": 5,
       "official_rules": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
@@ -4418,6 +4445,33 @@
       "dependency_fail_closed_rationale": "The exact self-zone descriptor authorizes only the owner's card and one current controlled-subtype condition; ordinary priority, timing, cost, proposal, and zone-mutation owners remain independently authoritative.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_casting_activation_metadata_compiler_mutant_is_killed removes each closed lowering and proves the represented sentence returns to a material residual.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.restriction.attached",
+      "version": 1,
+      "official_rules": ["602.1", "602.5", "605.1a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and enforce one attached-object prohibition on all activated abilities or on nonmana activated abilities while preserving the shared layer-6 component applicability boundary.",
+        "inputs": ["one exact attached permanent or creature restraint sentence", "one current phased-in attached source", "one layer-6 activation-prohibition fragment on the attached object", "typed candidate mana-ability classification"],
+        "outputs": ["shared prohibition result for advertised and accepted activations", "ordinary mana-ability exemption only when printed", "immediate removal when the attachment or source ability ceases to apply"],
+        "exclusions": ["crew and other keyword actions", "triggered, static, spell, and loyalty-only prohibitions", "temporary ignore-this-effect payments", "conditional, chosen, named, controller-relative, and global source sets", "copied or quoted activation restrictions outside current static-component propagation"]
+      },
+      "dependencies": ["continuous.attached.fixed_characteristics"],
+      "implementation_components": ["quorune.ability_fragments.ActivationProhibitionSpec", "quorune.compiler.declaration_nodes._attached_restraint_composition", "quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions", "quorune.rules.activation.availability.activation_availability", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_keys"],
+      "positive_tests": ["test_broad_public_declaration_condition_grammar_compiles_exactly", "test_attached_restraint_shares_layer_six_declaration_and_activation_queries"],
+      "negative_tests": ["test_declaration_component_descriptors_reject_malformed_values"],
+      "interaction_tests": ["test_attached_restraint_shares_layer_six_declaration_and_activation_queries"],
+      "multiplayer_tests": ["test_attached_restraint_shares_layer_six_declaration_and_activation_queries"],
+      "privacy_tests": ["test_attached_restraint_shares_layer_six_declaration_and_activation_queries"],
+      "replay_tests": ["test_attached_restraint_shares_layer_six_declaration_and_activation_queries"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the existing attached-characteristic capability removes trust from the combined restraint node; malformed fragment scope and stale or absent attachments produce no activation prohibition.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler and runtime witness requires both the declaration fragment and activation-prohibition fragment to survive the shared attached-component path; removing either restores an illegal offer or activation.",
       "blockers": [],
       "status": "trusted"
     },

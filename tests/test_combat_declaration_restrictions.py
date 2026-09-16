@@ -41,6 +41,7 @@ from quorune.declaration_restrictions import (
 )
 from quorune.declaration_requirements import parse_declaration_requirement_line
 from quorune.declaration_fragments import DeclarationRestrictionTemplate
+from quorune.errors import GameRuleError
 from quorune.semantic_runtime.context import SemanticNodeError
 from quorune.model import CombatState
 from quorune.oracle_ir import compile_oracle_card
@@ -54,6 +55,7 @@ from quorune.semantic_runtime.ability_fragments import (
     DECLARATION_REQUIREMENT_FRAGMENT_HANDLER_ID,
     DECLARATION_RESTRICTION_FRAGMENT_HANDLER_ID,
     default_ability_fragment_registry,
+    fragments_from_descriptors,
 )
 from quorune.record import (
     authoritative_state_hash,
@@ -206,13 +208,22 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
             "-",
             name.casefold(),
         ).strip("-")
+        handler_values = (
+            tuple(dict(value) for value in compiled[1])
+            if isinstance(compiled[1], tuple)
+            else (dict(compiled[1]),)
+        )
         source = self.permanent(
             engine,
             seat,
             name,
             type_line="Token Enchantment",
             ability_fragments=[
-                ability_fragment_to_dict(StaticComponentSpec(semantic_key))
+                ability_fragment_to_dict(StaticComponentSpec(semantic_key)),
+                *(
+                    ability_fragment_to_dict(fragment)
+                    for fragment in fragments_from_descriptors(handler_values)
+                ),
             ],
         )
         if aura_target_ref is not None:
@@ -232,7 +243,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 ability_id=f"static:{semantic_key}",
                 active_zone="battlefield",
                 event="characteristics.evaluate",
-                handlers=[compiled[1]],
+                handlers=list(handler_values),
                 trust_level="provisional",
             )
         )
@@ -375,15 +386,10 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
         )
         self.assertFalse(triggered.recognized)
 
-        unsupported = parse_declaration_restriction_line(
-            "This creature can't attack unless you have seven cards in hand."
-        )
-        self.assertTrue(unsupported.recognized)
-        self.assertFalse(unsupported.exact)
-        self.assertEqual(("attack",), unsupported.declarations)
         for complex_filter in (
             "This creature can't be blocked by creatures that don't have a name.",
-            "This creature can't block unless you have four or more cards in hand.",
+            "Creatures with power greater than the number of cards in your "
+            "hand can't attack.",
         ):
             with self.subTest(complex_filter=complex_filter):
                 parsed = parse_declaration_restriction_line(complex_filter)
@@ -2621,6 +2627,378 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
             accepted = session.act("pilot:A", {"a": "attack", "atk": {}})
             self.assertTrue(accepted.ok, accepted.summary)
 
+    def test_attached_restraint_shares_layer_six_declaration_and_activation_queries(
+        self,
+    ):
+        session = self.make_combat_session(508_020_006, players=4)
+        engine = session.engine
+        top = next(
+            card
+            for card in engine.state.cards.values()
+            if card.printed_name == "Sensei's Divining Top"
+        )
+        sol_ring = next(
+            card
+            for card in engine.state.cards.values()
+            if card.printed_name == "Sol Ring" and card.object_id != top.object_id
+        )
+        engine.move_card(top.object_id, "battlefield", controller="C", log=False)
+        engine.move_card(
+            sol_ring.object_id,
+            "battlefield",
+            controller="C",
+            log=False,
+        )
+        engine.state.players["C"].mana_pool["C"] = 2
+        all_abilities = self.compiled_static_grant_source(
+            engine,
+            seat="B",
+            name="Attached All-Ability Restraint Fixture",
+            text=(
+                "Enchanted permanent can't attack or block, and its "
+                "activated abilities can't be activated."
+            ),
+            aura_target_ref=top.ref,
+        )
+        self.compiled_static_grant_source(
+            engine,
+            seat="B",
+            name="Attached Nonmana Restraint Fixture",
+            text=(
+                "Enchanted permanent can't attack or block, and its "
+                "activated abilities can't be activated unless they're mana "
+                "abilities."
+            ),
+            aura_target_ref=sol_ring.ref,
+        )
+
+        with patch.object(
+            type(engine),
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            top_ability = next(
+                ability
+                for ability in engine._activated_abilities(top)
+                if not ability.mana_ability
+            )
+            mana_ability = next(
+                ability
+                for ability in engine._activated_abilities(sol_ring)
+                if ability.mana_ability
+            )
+            self.assertEqual(
+                ("unavailable", "current_ability_fragment_prohibition"),
+                engine._ability_availability("C", top, top_ability),
+            )
+            engine.state.active_player = "C"
+            engine.state.phase = "precombat_main"
+            engine.state.step = "main"
+            engine.state.priority_player = "C"
+            before = authoritative_state_hash(engine.state)
+            with self.assertRaisesRegex(
+                GameRuleError,
+                "current_ability_fragment_prohibition",
+            ):
+                engine._activate(
+                    "C",
+                    {
+                        "source": top.ref,
+                        "ability": top_ability.ability_id,
+                        "pay": "auto",
+                    },
+                )
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+            self.assertEqual(
+                ("payable", None),
+                engine._ability_availability("C", sol_ring, mana_ability),
+            )
+            with patch(
+                "quorune.semantic_runtime.activation_restrictions."
+                "activation_prohibition_specs",
+                return_value=(),
+            ):
+                self.assertEqual(
+                    ("payable", None),
+                    engine._ability_availability("C", top, top_ability),
+                )
+
+            commit_continuous_effect(
+                engine.state,
+                ContinuousEffect(
+                    effect_id="test:remove-attached-restraint-source",
+                    source_id="test:remove-attached-restraint-source",
+                    layer=Layer.ABILITY,
+                    sublayer="6",
+                    timestamp=engine._next_zone_timestamp(),
+                    operations=(ContinuousOperation("remove_all_abilities"),),
+                    origin=ContinuousEffectOrigin.RESOLUTION,
+                    duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                    locked_objects=(
+                        ContinuousObjectIdentity(
+                            object_id=all_abilities.object_id,
+                            logical_object_id=all_abilities.logical_object_id,
+                        ),
+                    ),
+                ),
+            )
+            self.assertEqual(
+                ("payable", None),
+                engine._ability_availability("C", top, top_ability),
+            )
+
+    def test_public_state_declaration_conditions_revalidate_and_replay(self):
+        session = self.make_combat_session(508_020_007, players=2)
+        engine = session.engine
+        player = engine.state.players["A"]
+        while len(player.zones["hand"]) > 6:
+            engine.move_card(player.zones["hand"][-1], "library", log=False)
+        while len(player.zones["hand"]) < 6:
+            engine.move_card(player.zones["library"][-1], "hand", log=False)
+        attacker = self.creature(
+            engine,
+            "A",
+            "Public Hand Threshold Attacker",
+            oracle_text=(
+                "This creature can't attack unless you have seven or more "
+                "cards in hand."
+            ),
+            keywords=("Haste",),
+        )
+        self.creature(
+            engine,
+            "A",
+            "Hand Threshold Free Attacker",
+            keywords=("Haste",),
+        )
+
+        engine._issue_attackers()
+        first_domains = engine.state.pending_decision.payload_by_actor["A"][
+            "declaration_constraints"
+        ]["domains"]
+        self.assertNotIn(attacker.ref, first_domains)
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.combat = CombatState()
+        engine.move_card(player.zones["library"][-1], "hand", log=False)
+        engine._issue_attackers()
+        refreshed = engine.state.pending_decision.payload_by_actor["A"][
+            "declaration_constraints"
+        ]["domains"]
+        self.assertIn(attacker.ref, refreshed)
+
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        accepted = session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {attacker.ref: "B"}},
+        )
+        self.assertTrue(accepted.ok, accepted.summary)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "public-condition-declaration"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(
+            authoritative_state_hash(session.state),
+            replay["final_state_hash"],
+        )
+
+    def test_counter_and_current_stat_conditions_share_live_characteristics(self):
+        counter_session = self.make_combat_session(508_020_008, players=2)
+        counter_engine = counter_session.engine
+        counter_source = self.creature(
+            counter_engine,
+            "A",
+            "Counter Threshold Attacker",
+            oracle_text=(
+                "This creature can't attack or block unless it has five or "
+                "more +1/+1 counters on it."
+            ),
+            keywords=("Haste",),
+        )
+        self.creature(
+            counter_engine,
+            "A",
+            "Counter Threshold Free Attacker",
+            keywords=("Haste",),
+        )
+        counter_source.counters["+1/+1"] = 4
+        counter_engine._issue_attackers()
+        self.assertNotIn(
+            counter_source.ref,
+            counter_engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]["domains"],
+        )
+        counter_engine.permissions.invalidate_current()
+        counter_engine.state.pending_decision = None
+        counter_engine.state.combat = CombatState()
+        counter_source.counters["+1/+1"] = 5
+        counter_engine._issue_attackers()
+        self.assertIn(
+            counter_source.ref,
+            counter_engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]["domains"],
+        )
+
+        stat_session = self.make_combat_session(508_020_009, players=2)
+        stat_engine = stat_session.engine
+        stat_source = self.creature(
+            stat_engine,
+            "A",
+            "Current Power Threshold Attacker",
+            oracle_text=(
+                "This creature can't attack or block unless its power is 6 "
+                "or greater."
+            ),
+            keywords=("Haste",),
+            power="5",
+        )
+        self.creature(
+            stat_engine,
+            "A",
+            "Current Power Free Attacker",
+            keywords=("Haste",),
+        )
+        stat_engine._issue_attackers()
+        self.assertNotIn(
+            stat_source.ref,
+            stat_engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]["domains"],
+        )
+        commit_continuous_effect(
+            stat_engine.state,
+            ContinuousEffect(
+                effect_id="test:declaration-current-power",
+                source_id="test:declaration-current-power",
+                layer=Layer.POWER_TOUGHNESS,
+                sublayer="7c",
+                timestamp=stat_engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("modify_power_toughness", [1, 0]),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        object_id=stat_source.object_id,
+                        logical_object_id=stat_source.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+        stat_engine.permissions.invalidate_current()
+        stat_engine.state.pending_decision = None
+        stat_engine.state.combat = CombatState()
+        stat_engine._issue_attackers()
+        self.assertIn(
+            stat_source.ref,
+            stat_engine.state.pending_decision.payload_by_actor["A"][
+                "declaration_constraints"
+            ]["domains"],
+        )
+
+    def test_source_controller_recipient_and_history_evasion_revalidate(self):
+        session = self.make_combat_session(508_020_010, players=3)
+        engine = session.engine
+        attacker = self.creature(
+            engine,
+            "A",
+            "Recipient Restricted Attacker",
+            keywords=("Haste",),
+        )
+        aura = self.compiled_static_grant_source(
+            engine,
+            seat="B",
+            name="Recipient Restriction Fixture",
+            text=(
+                "Enchanted creature gets +2/+2, has vigilance, and can't "
+                "attack you or planeswalkers you control."
+            ),
+            aura_target_ref=attacker.ref,
+        )
+        with patch.object(
+            type(engine),
+            "semantic_program_is_current_trusted",
+            return_value=True,
+        ):
+            from quorune.rules.temporary_declaration_restrictions import (
+                current_declaration_restrictions,
+            )
+
+            current = current_declaration_restrictions(
+                engine,
+                error_type=AssertionError,
+            )
+            self.assertTrue(
+                any(
+                    value.source.object_id == aura.object_id
+                    and value.template.scope == "attached"
+                    and value.template.option_relation == "source_controller"
+                    for value in current
+                ),
+                current,
+            )
+            engine._issue_attackers()
+            self.assertFalse(
+                session.act(
+                    "pilot:A",
+                    {"a": "attack", "atk": {attacker.ref: "B"}},
+                ).ok
+            )
+
+            engine.change_control(
+                aura.object_id,
+                "C",
+                reason="declaration source-controller fixture",
+            )
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            engine.state.combat = CombatState()
+            engine._issue_attackers()
+            self.assertFalse(
+                session.act(
+                    "pilot:A",
+                    {"a": "attack", "atk": {attacker.ref: "C"}},
+                ).ok
+            )
+            self.assertTrue(
+                session.act(
+                    "pilot:A",
+                    {"a": "attack", "atk": {attacker.ref: "B"}},
+                ).ok
+            )
+
+        history_session = self.make_combat_session(509_020_011, players=2)
+        history_engine = history_session.engine
+        history_attacker = self.creature(
+            history_engine,
+            "A",
+            "History Evasion Attacker",
+            oracle_text=(
+                "This creature can't be blocked if you've cast two or more "
+                "spells this turn."
+            ),
+            keywords=("Haste",),
+        )
+        blocker = self.creature(history_engine, "B", "History Blocker")
+        self.assertEqual((True, None), history_engine._can_block(history_attacker, blocker))
+        for index in range(2):
+            history_engine._record_turn_history(
+                kind="spell_cast",
+                actor="A",
+                object_incarnation=f"history-spell-{index}",
+                types=("instant",),
+            )
+        self.assertEqual(
+            (
+                False,
+                "declaration_restriction:intrinsic-public-state-evasion-if-v1",
+            ),
+            history_engine._can_block(history_attacker, blocker),
+        )
+
     def test_declaration_component_descriptors_reject_malformed_values(self):
         fragments = compiled_declaration_fragments(
             "Closed Fixture",
@@ -2651,6 +3029,23 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                         "fragment": malformed,
                     }
                 )
+        for malformed in (
+            {"kind": "activation_prohibition", "value": {"scope": "all"}},
+            {
+                "kind": "activation_prohibition",
+                "value": {"schema_version": 1, "scope": "chosen"},
+            },
+            {
+                "kind": "activation_prohibition",
+                "value": {
+                    "schema_version": 1,
+                    "scope": "all",
+                    "unknown": True,
+                },
+            },
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(ValueError):
+                ability_fragment_from_dict(malformed)
 
     def test_oracle_ir_uses_runtime_restriction_grammar(self):
         def restriction_fragment(node):
@@ -2783,6 +3178,177 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 "condition"
             ],
         )
+
+    def test_broad_public_declaration_condition_grammar_compiles_exactly(self):
+        base = self.db.lookup("Arcum Dagsson")
+        fixtures = (
+            (
+                "This creature can't attack or block unless you have seven "
+                "or more cards in hand.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack unless there are seven or more "
+                "cards in your graveyard.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't be blocked as long as you've drawn two "
+                "or more cards this turn.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't be blocked if you've cast two or more "
+                "spells this turn.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack or block unless it has five or "
+                "more +1/+1 counters on it.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack or block unless it's equipped.",
+                "Creature — Test",
+            ),
+            (
+                "Enchanted creature gets +2/+2, has vigilance, and can't "
+                "attack you or planeswalkers you control.",
+                "Enchantment — Aura",
+            ),
+            (
+                "This creature can't be blocked as long as you control a Gate.",
+                "Creature — Test",
+            ),
+            (
+                "Creatures with flying can't block creatures you control.",
+                "Enchantment",
+            ),
+            (
+                "This creature can't attack or block unless you control at "
+                "least three other creatures.",
+                "Creature — Test",
+            ),
+            (
+                "Enchanted creature can't attack or block, and its activated "
+                "abilities can't be activated.",
+                "Enchantment — Aura",
+            ),
+            (
+                "Enchanted permanent can't attack or block, and its activated "
+                "abilities can't be activated unless they're mana abilities.",
+                "Enchantment — Aura",
+            ),
+            (
+                "This creature can't block or be blocked by creatures with "
+                "power 2 or greater.",
+                "Creature — Test",
+            ),
+            (
+                "Creatures your opponents control without flying or reach "
+                "can't block creatures with power 2 or less.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't block white creatures with power 2 or "
+                "greater.",
+                "Creature — Test",
+            ),
+            (
+                "Creatures with power less than this creature's power can't "
+                "block creatures you control.",
+                "Creature — Test",
+            ),
+            (
+                "Creatures you control with power or toughness 1 or less "
+                "can't be blocked.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack unless there is a Mountain on "
+                "the battlefield.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack or block unless an opponent has "
+                "eight or more cards in their graveyard.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack or block unless a player has no "
+                "cards in hand.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack alone unless it has a +1/+1 "
+                "counter on it.",
+                "Creature — Test",
+            ),
+            (
+                "Creatures your opponents control with counters on them can't "
+                "attack or block.",
+                "Creature — Test",
+            ),
+            (
+                "Enchanted creature can't be blocked and has shroud.",
+                "Enchantment — Aura",
+            ),
+            (
+                "This creature can't attack if there's another creature on "
+                "the battlefield.",
+                "Creature — Test",
+            ),
+            (
+                "This creature can't attack or block if an enchantment is on "
+                "the battlefield.",
+                "Creature — Test",
+            ),
+        )
+        for oracle_text, type_line in fixtures:
+            with self.subTest(oracle_text=oracle_text):
+                compiled = compile_oracle_card(
+                    replace(
+                        base,
+                        name="Broad declaration condition fixture",
+                        oracle_text=oracle_text,
+                        type_line=type_line,
+                        keywords=(),
+                        faces=(),
+                    ),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", compiled.status, compiled.to_dict())
+
+        excluded = (
+            "Creatures without flying can't block this turn.",
+            (
+                "Enchanted permanent can't attack, block, or crew Vehicles, "
+                "and its activated abilities can't be activated."
+            ),
+            (
+                "Creatures with power greater than the number of cards in "
+                "your hand can't attack."
+            ),
+            "This creature can't attack unless you sacrifice a land.",
+            "Creatures of the chosen color without flying can't attack you.",
+        )
+        for oracle_text in excluded:
+            with self.subTest(excluded=oracle_text):
+                compiled = compile_oracle_card(
+                    replace(
+                        base,
+                        name="Excluded declaration condition fixture",
+                        oracle_text=oracle_text,
+                        type_line="Enchantment",
+                        keywords=(),
+                        faces=(),
+                    ),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", compiled.status)
+                self.assertTrue(compiled.material_residuals)
 
 
 if __name__ == "__main__":

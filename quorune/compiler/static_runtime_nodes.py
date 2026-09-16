@@ -20,7 +20,7 @@ def runtime_handler_node(
     span: SourceSpan,
     compiled: tuple[
         str,
-        Mapping[str, Any],
+        Mapping[str, Any] | tuple[Mapping[str, Any], ...],
         str | tuple[str, ...],
     ],
     kind: str,
@@ -34,7 +34,12 @@ def runtime_handler_node(
 ) -> OracleNode:
     """Lower one already-compiled runtime descriptor into a guarded node."""
 
-    template_id, handler, capabilities = compiled
+    template_id, raw_handlers, capabilities = compiled
+    handlers = (
+        raw_handlers
+        if isinstance(raw_handlers, tuple)
+        else (raw_handlers,)
+    )
     gate = explicit_capabilities_gate(
         (capabilities,) if isinstance(capabilities, str) else capabilities,
         capability_registry=capability_registry,
@@ -65,7 +70,7 @@ def runtime_handler_node(
         lowerable=True,
         exact=not gate.blockers,
         template_id=template_id,
-        handlers=(handler,),
+        handlers=handlers,
         runtime_coverage=runtime_coverage,
         residual_ids=residual_ids,
         capability_dependencies=gate.capabilities,

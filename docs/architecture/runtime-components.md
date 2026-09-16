@@ -2,7 +2,7 @@
 title: "CardProgram runtime components"
 status: "current"
 authoritative_source: "quorune/semantic_runtime component registries and schemas/card-program-v2.schema.json"
-verified: "2026-09-03"
+verified: "2026-09-16"
 audience: "rules, compiler, runtime, replay, and extension contributors"
 maintenance: "hand-maintained"
 ---
@@ -267,8 +267,9 @@ resolver and skip this layer-6/7c component while resolving that boundary, so a
 type-changing effect can change the count without creating a characteristic
 evaluation cycle. Direct attacking, blocking, tapped, untapped, enchanted,
 equipped, and modified affected sets use the same `ObjectQuerySpec` permanent-
-state predicate. No runtime Oracle parser or parallel applicability registry is
-involved.
+state predicate. Declaration restrictions consume the same snapshot for their
+closed public conditions; they do not add a combat-local query registry. No
+runtime Oracle parser or parallel applicability registry is involved.
 
 `continuous.attached.fixed-characteristics.v1` keeps one reciprocal live
 attachment relation while lowering its closed operations into layers 4, 5, 6,
@@ -289,8 +290,10 @@ Dynamic quantities resolve through the shared cycle-safe layer-5 boundary; an
 "other" attached-object quantity excludes the attached subject rather than the
 Aura or Equipment source. Ability removal is ordered before additions from the
 same effect, and the shared static-component query determines whether the
-source still contributes any component. Conditions, names, text changes,
-declaration restrictions, target-relative state, multiple quotes, source
+source still contributes any component. Exact attached restraints may carry a
+typed declaration fragment and an all-ability or nonmana activation
+prohibition; source-controller relations remain anchored to the granting
+source. Names, text changes, target-relative state, multiple quotes, source
 discard or exile, energy, loyalty, variable, dynamic, alternative-zone or
 usage-limited activation costs, external attachment-source references, and
 untrusted granted rules remain outside this owner.

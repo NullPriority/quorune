@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "eea1734cf7586cd6056b1161b0a87a6d89d01ceee7ae1a8109f68caefeef47c7",
-  "declaration_source_fingerprint": "07d719f6297cfe24ea4aa702a24c1d6f849acc8e428f3963e67d0343ea0de07c",
+  "registry_fingerprint": "e320e3af8d16a5c19776ecfbd1f334c29481bbd48d837d04b0b5e0400b8241e8",
+  "declaration_source_fingerprint": "81773afdd601b990cb49d08f11410fbb4d6e45e41e1a9286f917e4c26cc3b02d",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -2263,6 +2263,134 @@
         "commander_review"
       ],
       "applicability_note": "Replay a mana activation authorized by the controller-wide as-though-haste permission to the exact state hash."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Attach one typed restraint, consume both its combat and activation fragments, and remove both through the shared layer-6 component applicability query."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply the public attached restriction to an opponent-controlled source without transferring activation authority or changing another seat's objects."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suppress current activation-prohibition fragments and prove the formerly prohibited nonmana ability becomes payable."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_declaration_component_descriptors_reject_malformed_values",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject missing, unknown, non-Boolean, and unsupported-scope activation-prohibition fragment shapes."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suppress all activated abilities on the attached object while preserving the explicitly printed mana-ability exemption."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_broad_public_declaration_condition_grammar_compiles_exactly",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile exact all-ability and nonmana-only attached restraint sentences into current layer-6 fragments."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only the public absence of an activation offer; no hidden source, card, or choice identity is introduced."
+    },
+    {
+      "capability_id": "activation.restriction.attached",
+      "evidence_class": "replay",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
+      "official_rule_ids": [
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the public restraint state and accepted mana activation to the same authoritative final hash."
     },
     {
       "capability_id": "activation.restriction.chosen_name_nonmana",
@@ -17313,6 +17441,166 @@
         "commander_review"
       ],
       "applicability_note": "Replay both real combat-damage steps and their intervening priority window exactly."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_counter_and_current_stat_conditions_share_live_characteristics",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute named source counters and current effective power before each declaration without using printed or stale values."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_source_controller_recipient_and_history_evasion_revalidate",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute cast history and keep recipient restrictions anchored to the current controller of the originating static source."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_source_controller_recipient_and_history_evasion_revalidate",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "In a three-player game, prohibit only the source controller as the attacked recipient and update that recipient after control changes."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_counter_and_current_stat_conditions_share_live_characteristics",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Change the live counter or layer-7c characteristic boundary and prove declaration legality changes immediately."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_broad_public_declaration_condition_grammar_compiles_exactly",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep nonmana costs, chosen values, temporary mass effects, crew riders, and open dynamic-count conditions residual."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_shared_parser_is_anchored_and_classifies_exact_families",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve historical exact declaration identities and reject unresolved open comparison wording."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_broad_public_declaration_condition_grammar_compiles_exactly",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile the closed hand, graveyard, turn-history, counter, attachment, current-stat, and public-query condition matrix."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_public_state_declaration_conditions_revalidate_and_replay",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer and accept the restricted attacker only after the current controller hand reaches the exact threshold."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_public_state_declaration_conditions_revalidate_and_replay",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use only the public hand count and never expose a hidden hand card identity in declaration projection or replay."
+    },
+    {
+      "capability_id": "combat.declaration.public_state_conditions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_public_state_declaration_conditions_revalidate_and_replay",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the accepted threshold-gated declaration to the identical authoritative final hash."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -64175,5 +64463,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "5166f135f05a79500df81bb1e744d0dde160d122be000100bde20f8a67d30765"
+  "fingerprint": "1b6eb48a4d3bf8d258bc39c118b1d824a65a46cd717804180465b8d445535be1"
 }

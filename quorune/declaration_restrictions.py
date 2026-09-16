@@ -20,12 +20,14 @@ from .declaration_fragments import (
     DeclarationRestrictionScope,
     DeclarationRestrictionTemplate,
     DeclarationSharedSubtypeCondition,
+    DeclarationSourceStatCondition,
     DeclarationTurnHistoryCondition,
     DeclarationTurnHistoryFact,
     PowerOperand,
     PowerOperator,
     StatComparison,
 )
+from .compiler.public_state_queries import fixed_public_state_condition
 
 
 _COLORS = {
@@ -40,6 +42,52 @@ _ABILITY_WORD_PREFIX = re.compile(
 )
 _SELF_PROHIBITION = re.compile(
     r"this creature can't (?P<kind>attack|block|attack or block)\."
+)
+_PUBLIC_STATE_PROHIBITION = re.compile(
+    r"(?P<subject>this creature|enchanted creature|enchanted permanent) "
+    r"can't (?P<kind>attack|block|attack or block) "
+    r"(?P<link>unless|if|as long as) (?P<condition>.+)\."
+)
+_PUBLIC_STATE_EVASION = re.compile(
+    r"(?P<subject>this creature|enchanted creature) can't be blocked "
+    r"(?P<link>unless|if|as long as) (?P<condition>.+)\."
+)
+_SELF_SOURCE_CONTROLLER_ATTACK = re.compile(
+    r"this creature can't attack you"
+    r"(?P<planeswalkers> or planeswalkers you control)?\."
+)
+_SOURCE_CONTROLLER_BLOCK = re.compile(
+    r"(?P<subject>enchanted creature|creatures with [a-z-]+) "
+    r"can't block creatures you control\."
+)
+_SELF_ATTACK_ALONE_PUBLIC_STATE = re.compile(
+    r"this creature can't attack alone unless (?P<condition>.+)\."
+)
+_SELF_SOURCE_STAT_PROHIBITION = re.compile(
+    r"this creature can't (?P<kind>attack|block|attack or block) unless its "
+    r"(?P<stat>power|toughness) is (?P<count>\d+) or "
+    r"(?P<direction>greater|less)\."
+)
+_SELF_COLOR_POWER_BLOCK = re.compile(
+    r"this creature can't block (?P<color>white|blue|black|red|green) "
+    r"creatures with power (?P<count>\d+) or (?P<direction>greater|less)\."
+)
+_OPPONENT_KEYWORD_POWER_BLOCK = re.compile(
+    r"creatures your opponents control without (?P<keywords>[a-z-]+) or "
+    r"(?P<second>[a-z-]+) can't block creatures with power "
+    r"(?P<count>\d+) or (?P<direction>greater|less)\."
+)
+_SOURCE_POWER_CONTROLLER_BLOCK = re.compile(
+    r"creatures with power less than this creature's power can't block "
+    r"creatures you control\."
+)
+_CONTROLLER_STAT_UNBLOCKABLE = re.compile(
+    r"creatures you control with (?P<stat>power|toughness) "
+    r"(?P<count>\d+) or less can't be blocked\."
+)
+_OPPONENT_COUNTERED_PROHIBITION = re.compile(
+    r"creatures your opponents control with counters on them can't "
+    r"(?P<kind>attack|block|attack or block)\."
 )
 _ATTACHED_PROHIBITION = re.compile(
     r"enchanted (?:creature|permanent) can't "
@@ -660,6 +708,287 @@ def parse_declaration_restriction_line(
 
     if parse_declaration_cost_line(line).recognized:
         return DeclarationRestrictionParse(False)
+
+    legacy_battlefield = _SELF_BATTLEFIELD_CONDITION.fullmatch(line)
+    legacy_conditional_evasion = _SELF_CONDITIONAL_UNBLOCKABLE.fullmatch(line)
+    legacy_public_condition = (
+        legacy_battlefield is not None
+        and _battlefield_condition(
+            (
+                "source_controller"
+                if legacy_battlefield.group("source")
+                else "defending_player"
+            ),
+            legacy_battlefield.group("filter"),
+        )
+        is not None
+    ) or (
+        legacy_conditional_evasion is not None
+        and _battlefield_condition(
+            "defending_player",
+            legacy_conditional_evasion.group("condition"),
+        )
+        is not None
+    ) or any(
+        pattern.fullmatch(line) is not None
+        for pattern in (
+            _SELF_PLAYER_STATE_CONDITION,
+            _SELF_CAST_SPELL_THIS_TURN,
+            _SELF_OPPONENT_DAMAGED_THIS_TURN,
+            _SELF_CONTROLLED_CREATURE_DIED_THIS_TURN,
+            _SELF_ALREADY_ATTACKED_PLAYER_THIS_TURN,
+            _SELF_CONDITIONAL_BLOCKER_FILTER,
+            _SELF_ATTACKING_ALONE_EVASION,
+            _ATTACHED_ATTACKING_ALONE_EVASION,
+            _SELF_NO_OTHER_CREATURE_EVASION,
+        )
+    )
+    match = (
+        None
+        if legacy_public_condition
+        else _PUBLIC_STATE_PROHIBITION.fullmatch(line)
+    )
+    if match:
+        condition = fixed_public_state_condition(
+            match.group("condition"),
+            source_name=card_name or "this creature",
+        )
+        if condition is not None:
+            declarations = _declarations(match.group("kind"))
+            attached = match.group("subject").startswith("enchanted ")
+            return DeclarationRestrictionParse(
+                True,
+                DeclarationRestrictionTemplate(
+                    template_id=(
+                        f"{'attached' if attached else 'intrinsic'}-"
+                        f"public-state-{'-'.join(declarations)}-"
+                        f"{match.group('link').replace(' ', '-')}-v1"
+                    ),
+                    declarations=declarations,
+                    scope="attached" if attached else "self",
+                    condition=condition,
+                    applies_when_condition=(match.group("link") != "unless"),
+                ),
+                declarations=declarations,
+                scope="attached" if attached else "self",
+            )
+
+    match = (
+        None
+        if legacy_public_condition
+        else _PUBLIC_STATE_EVASION.fullmatch(line)
+    )
+    if match:
+        condition = fixed_public_state_condition(
+            match.group("condition"),
+            source_name=card_name or "this creature",
+        )
+        if condition is not None:
+            attached = match.group("subject") == "enchanted creature"
+            return DeclarationRestrictionParse(
+                True,
+                DeclarationRestrictionTemplate(
+                    template_id=(
+                        f"{'attached' if attached else 'intrinsic'}-"
+                        f"public-state-evasion-"
+                        f"{match.group('link').replace(' ', '-')}-v1"
+                    ),
+                    declarations=("block",),
+                    scope="attached_option" if attached else "source_option",
+                    condition=condition,
+                    applies_when_condition=(match.group("link") != "unless"),
+                ),
+                declarations=("block",),
+                scope="attached_option" if attached else "source_option",
+            )
+
+    match = _SELF_SOURCE_CONTROLLER_ATTACK.fullmatch(line)
+    if match:
+        return DeclarationRestrictionParse(
+            True,
+            DeclarationRestrictionTemplate(
+                template_id="intrinsic-source-controller-attack-v1",
+                declarations=("attack",),
+                scope="self",
+                option_relation="source_controller",
+                includes_planeswalkers=match.group("planeswalkers") is not None,
+            ),
+            declarations=("attack",),
+            scope="self",
+        )
+
+    match = _SOURCE_CONTROLLER_BLOCK.fullmatch(line)
+    if match:
+        attached = match.group("subject") == "enchanted creature"
+        subject = (
+            DeclarationObjectPredicate()
+            if attached
+            else _matching_creature_filter(match.group("subject"))
+        )
+        if subject is not None:
+            return DeclarationRestrictionParse(
+                True,
+                DeclarationRestrictionTemplate(
+                    template_id=(
+                        "attached-source-controller-block-v1"
+                        if attached
+                        else "global-source-controller-block-v1"
+                    ),
+                    declarations=("block",),
+                    scope="attached" if attached else "global",
+                    subject=subject,
+                    option_relation="source_controller",
+                ),
+                declarations=("block",),
+                scope="attached" if attached else "global",
+            )
+
+    match = _SELF_ATTACK_ALONE_PUBLIC_STATE.fullmatch(line)
+    if match:
+        condition = fixed_public_state_condition(
+            match.group("condition"),
+            source_name=card_name or "this creature",
+        )
+        if condition is not None:
+            return DeclarationRestrictionParse(
+                True,
+                DeclarationRestrictionTemplate(
+                    template_id="intrinsic-public-state-attack-alone-unless-v1",
+                    declarations=("attack",),
+                    scope="self",
+                    mode="minimum_total_selections",
+                    count=2,
+                    condition=condition,
+                    applies_when_condition=False,
+                ),
+                declarations=("attack",),
+                scope="self",
+            )
+
+    match = _SELF_SOURCE_STAT_PROHIBITION.fullmatch(line)
+    if match:
+        declarations = _declarations(match.group("kind"))
+        operator: PowerOperator = (
+            "ge" if match.group("direction") == "greater" else "le"
+        )
+        return DeclarationRestrictionParse(
+            True,
+            DeclarationRestrictionTemplate(
+                template_id="intrinsic-source-stat-prohibition-unless-v1",
+                declarations=declarations,
+                scope="self",
+                condition=DeclarationSourceStatCondition(
+                    stat=match.group("stat"),
+                    operator=operator,
+                    value=int(match.group("count")),
+                ),
+                applies_when_condition=False,
+            ),
+            declarations=declarations,
+            scope="self",
+        )
+
+    match = _SELF_COLOR_POWER_BLOCK.fullmatch(line)
+    if match:
+        operator: PowerOperator = (
+            "ge" if match.group("direction") == "greater" else "le"
+        )
+        return DeclarationRestrictionParse(
+            True,
+            DeclarationRestrictionTemplate(
+                template_id="intrinsic-color-power-block-prohibition-v1",
+                declarations=("block",),
+                scope="self",
+                opposing=DeclarationObjectPredicate(
+                    colors_any=(_COLORS[match.group("color")],),
+                    stat=StatComparison(
+                        "power", operator, "fixed", int(match.group("count"))
+                    ),
+                ),
+            ),
+            declarations=("block",),
+            scope="self",
+        )
+
+    match = _OPPONENT_KEYWORD_POWER_BLOCK.fullmatch(line)
+    if match:
+        operator: PowerOperator = (
+            "ge" if match.group("direction") == "greater" else "le"
+        )
+        return DeclarationRestrictionParse(
+            True,
+            DeclarationRestrictionTemplate(
+                template_id="opponent-keywordless-power-block-prohibition-v1",
+                declarations=("block",),
+                scope="source_opponents",
+                subject=DeclarationObjectPredicate(
+                    keywords_none=(
+                        match.group("keywords").title(),
+                        match.group("second").title(),
+                    )
+                ),
+                opposing=DeclarationObjectPredicate(
+                    stat=StatComparison(
+                        "power", operator, "fixed", int(match.group("count"))
+                    )
+                ),
+            ),
+            declarations=("block",),
+            scope="source_opponents",
+        )
+
+    if _SOURCE_POWER_CONTROLLER_BLOCK.fullmatch(line):
+        return DeclarationRestrictionParse(
+            True,
+            DeclarationRestrictionTemplate(
+                template_id="source-power-controller-block-prohibition-v1",
+                declarations=("block",),
+                scope="global",
+                subject=DeclarationObjectPredicate(
+                    stat=StatComparison("power", "lt", "source")
+                ),
+                option_relation="source_controller",
+            ),
+            declarations=("block",),
+            scope="global",
+        )
+
+    match = _CONTROLLER_STAT_UNBLOCKABLE.fullmatch(line)
+    if match:
+        return DeclarationRestrictionParse(
+            True,
+            DeclarationRestrictionTemplate(
+                template_id="controller-stat-unblockable-v1",
+                declarations=("block",),
+                scope="global",
+                opposing=DeclarationObjectPredicate(
+                    stat=StatComparison(
+                        match.group("stat"),
+                        "le",
+                        "fixed",
+                        int(match.group("count")),
+                    )
+                ),
+                option_relation="source_controller",
+            ),
+            declarations=("block",),
+            scope="global",
+        )
+
+    match = _OPPONENT_COUNTERED_PROHIBITION.fullmatch(line)
+    if match:
+        declarations = _declarations(match.group("kind"))
+        return DeclarationRestrictionParse(
+            True,
+            DeclarationRestrictionTemplate(
+                template_id="opponent-countered-declaration-prohibition-v1",
+                declarations=declarations,
+                scope="source_opponents",
+                subject=DeclarationObjectPredicate(has_any_counter=True),
+            ),
+            declarations=declarations,
+            scope="source_opponents",
+        )
 
     match = _SELF_CAST_SPELL_THIS_TURN.fullmatch(line)
     if match:

@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "876f517b934183655ba2f07b4e0e13afa998a49d",
+  "baseline_commit": "024dbda3682b00dbbfcf37ff972f3c11dae4a34e",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -450,7 +450,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 6987,
+    "logical_lines": 6986,
     "methods": [
       {
         "kind": "method",
@@ -1578,12 +1578,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7488
+    "physical_lines": 7487
   },
   "exception_binding": {
-    "adr": "docs/adr/0098-typed-ordinary-class-lifecycle.md",
-    "allowance_fingerprint": "ebf27194e114fb76cfba0c80d3ed24338ad04966886a47ddec2c8e2e3c067f74",
-    "exception_id": "ARCH-EXC-0048"
+    "adr": "docs/adr/0099-typed-public-declaration-conditions.md",
+    "allowance_fingerprint": "c1154785c13092672dd0d4a1ddc2cc4da3c81fad8242602c12373c550c7d41dd",
+    "exception_id": "ARCH-EXC-0049"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1682,7 +1682,7 @@
     },
     {
       "file": "quorune/declaration_restrictions.py",
-      "logical_lines": 881,
+      "logical_lines": 1151,
       "symbol": "parse_declaration_restriction_line"
     },
     {
@@ -1773,8 +1773,12 @@
   ],
   "oversized_modules": [
     {
+      "file": "quorune/declaration_restrictions.py",
+      "logical_lines": 1791
+    },
+    {
       "file": "quorune/engine.py",
-      "logical_lines": 6987
+      "logical_lines": 6986
     },
     {
       "file": "quorune/record.py",

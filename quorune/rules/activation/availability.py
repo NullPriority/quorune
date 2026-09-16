@@ -13,7 +13,7 @@ from ...station import (
     station_cost_choice,
 )
 from ...semantic_runtime.activation_restrictions import (
-    nonmana_activation_prohibited_by_chosen_name,
+    current_activation_prohibitions,
 )
 from .conditions import activation_condition_status
 
@@ -66,8 +66,13 @@ def activation_availability(
         return "unavailable", "wrong_zone"
     if not ability.compiled_cost:
         return "unresolved", "unresolved_cost_semantics"
-    if nonmana_activation_prohibited_by_chosen_name(host, card, ability):
-        return "unavailable", "named_ability_prohibition"
+    activation_prohibitions = current_activation_prohibitions(
+        host,
+        card,
+        ability,
+    )
+    if activation_prohibitions:
+        return "unavailable", activation_prohibitions[0].reason
     condition_status, condition_reason = activation_condition_status(
         host,
         seat, ability, card

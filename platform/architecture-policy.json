@@ -158,6 +158,7 @@
     "quorune/damage_results.py",
     "quorune/deathtouch.py",
     "quorune/defender.py",
+    "quorune/declaration_condition_runtime.py",
     "quorune/declaration_costs.py",
     "quorune/declaration_restrictions.py",
     "quorune/delayed_triggers.py",

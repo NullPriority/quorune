@@ -101,6 +101,7 @@ from .commander_zones import (
 from .declaration_costs import (
     DeclarationCost,
 )
+from .declaration_condition_runtime import fixed_declaration_condition_verdict
 from .declaration_requirement_runtime import (
     typed_attacker_block_requirements,
     typed_blocker_requirements,
@@ -111,7 +112,6 @@ from .declaration_restrictions import (
     DeclarationCondition,
     DeclarationConditionPlayer,
     DeclarationObjectPredicate,
-    DeclarationPlayerStateCondition,
     DeclarationRestrictionTemplate,
     DeclarationSharedSubtypeCondition,
     DeclarationTurnHistoryCondition,
@@ -4721,6 +4721,8 @@ class CommanderEngine(
                     break
             if enchanted != predicate.enchanted:
                 return False
+        if not predicate.matches_counter_state(card.counters):
+            return False
         for comparison_rule in (
             *((predicate.stat,) if predicate.stat is not None else ()),
             *predicate.additional_stats,
@@ -4860,25 +4862,22 @@ class CommanderEngine(
         option: str,
         by_ref: Mapping[str, CardInstance],
     ) -> bool:
+        fixed_verdict = fixed_declaration_condition_verdict(
+            self,
+            condition,
+            kind=kind,
+            source=source,
+            variable=variable,
+            option=option,
+            by_ref=by_ref,
+        )
+        if fixed_verdict is not None:
+            return fixed_verdict
         if isinstance(condition, DeclarationCombatCondition):
             return (
                 condition.kind == "attacking_alone"
                 and len(self._current_attacker_cards()) == 1
             )
-        if isinstance(condition, DeclarationPlayerStateCondition):
-            player = self._declaration_condition_player(
-                condition.player,
-                kind=kind,
-                source=source,
-                variable=variable,
-                option=option,
-                by_ref=by_ref,
-            )
-            if player is None:
-                return False
-            if condition.state == "monarch":
-                return self.state.monarch == player
-            return self.state.players[player].poison > 0
         if isinstance(condition, DeclarationTurnHistoryCondition):
             if condition.fact == "attacked_player":
                 if kind != "attack" or option not in self.active_seats:

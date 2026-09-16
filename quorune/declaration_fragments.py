@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Literal, Mapping
 
+from .continuous_conditions import FixedPublicStateConditionSpec
+
 
 DeclarationKind = Literal["attack", "block"]
 DeclarationCostScope = Literal[
@@ -307,6 +309,14 @@ class DeclarationObjectPredicate:
     additional_stats: tuple[StatComparison, ...] = ()
     tapped: bool | None = None
     enchanted: bool | None = None
+    has_any_counter: bool | None = None
+
+    def matches_counter_state(self, counters: Mapping[str, Any]) -> bool:
+        if self.has_any_counter is None:
+            return True
+        return (any(int(amount) > 0 for amount in counters.values())) == (
+            self.has_any_counter
+        )
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -326,6 +336,7 @@ class DeclarationObjectPredicate:
             "additional_stats": [item.to_dict() for item in self.additional_stats],
             "tapped": self.tapped,
             "enchanted": self.enchanted,
+            "has_any_counter": self.has_any_counter,
         }
 
     @classmethod
@@ -352,8 +363,12 @@ class DeclarationObjectPredicate:
             "additional_stats",
             "tapped",
             "enchanted",
+            "has_any_counter",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        if not isinstance(value, Mapping) or frozenset(value) not in {
+            frozenset(expected),
+            frozenset(expected - {"has_any_counter"}),
+        }:
             raise ValueError(
                 "Declaration object predicates have a closed schema"
             )
@@ -363,8 +378,14 @@ class DeclarationObjectPredicate:
         for field in sequence_fields:
             if any(type(item) is not str for item in value[field]):
                 raise ValueError("Declaration predicate values must be strings")
-        for field in ("token", "goaded", "tapped", "enchanted"):
-            if value[field] is not None and type(value[field]) is not bool:
+        for field in (
+            "token",
+            "goaded",
+            "tapped",
+            "enchanted",
+            "has_any_counter",
+        ):
+            if value.get(field) is not None and type(value.get(field)) is not bool:
                 raise ValueError(
                     "Declaration predicate flags must be booleans or null"
                 )
@@ -386,6 +407,7 @@ class DeclarationObjectPredicate:
             ),
             tapped=value["tapped"],
             enchanted=value["enchanted"],
+            has_any_counter=value.get("has_any_counter"),
         )
 
 
@@ -507,18 +529,45 @@ class DeclarationTurnHistoryCondition:
         return {"kind": "turn_history", "fact": self.fact, "player": self.player}
 
 
+@dataclass(frozen=True, slots=True)
+class DeclarationSourceStatCondition:
+    stat: ComparedStat
+    operator: PowerOperator
+    value: int
+
+    def __post_init__(self) -> None:
+        if self.stat not in {"power", "toughness"}:
+            raise ValueError("Unknown declaration source stat")
+        if self.operator not in {"eq", "lt", "le", "gt", "ge"}:
+            raise ValueError("Unknown declaration source-stat operator")
+        if type(self.value) is not int:
+            raise ValueError("Declaration source-stat values must be integers")
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "kind": "source_stat",
+            "stat": self.stat,
+            "operator": self.operator,
+            "value": self.value,
+        }
+
+
 DeclarationCondition = (
     DeclarationBattlefieldCondition
     | DeclarationCombatCondition
     | DeclarationPlayerStateCondition
     | DeclarationSharedSubtypeCondition
     | DeclarationTurnHistoryCondition
+    | DeclarationSourceStatCondition
+    | FixedPublicStateConditionSpec
 )
 
 
 def declaration_condition_from_dict(
     value: Mapping[str, Any],
 ) -> DeclarationCondition:
+    if isinstance(value, Mapping) and "schema_version" in value:
+        return FixedPublicStateConditionSpec.from_dict(value)
     if not isinstance(value, Mapping) or type(value.get("kind")) is not str:
         raise ValueError("Declaration conditions require a typed kind")
     kind = value["kind"]
@@ -555,6 +604,17 @@ def declaration_condition_from_dict(
         )
     if kind == "attacking_alone" and set(value) == {"kind"}:
         return DeclarationCombatCondition(kind="attacking_alone")
+    if kind == "source_stat" and set(value) == {
+        "kind",
+        "stat",
+        "operator",
+        "value",
+    }:
+        return DeclarationSourceStatCondition(
+            stat=value["stat"],
+            operator=value["operator"],
+            value=value["value"],
+        )
     if kind == "shared_creature_subtype_count" and set(value) == {
         "kind",
         "player",
@@ -642,6 +702,8 @@ class DeclarationRestrictionTemplate:
                 DeclarationPlayerStateCondition,
                 DeclarationSharedSubtypeCondition,
                 DeclarationTurnHistoryCondition,
+                DeclarationSourceStatCondition,
+                FixedPublicStateConditionSpec,
             ),
         ):
             raise ValueError("Declaration restriction condition must be typed")
@@ -746,6 +808,7 @@ __all__ = [
     "DeclarationRestrictionScope",
     "DeclarationRestrictionTemplate",
     "DeclarationSharedSubtypeCondition",
+    "DeclarationSourceStatCondition",
     "DeclarationSourceCondition",
     "DeclarationTurnHistoryCondition",
     "DeclarationTurnHistoryFact",

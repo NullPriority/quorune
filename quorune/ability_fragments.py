@@ -84,6 +84,38 @@ class DamageKeywordTriggerKind(str, Enum):
     RENOWN = "renown"
 
 
+@dataclass(frozen=True, slots=True)
+class ActivationProhibitionSpec:
+    """One layer-6 prohibition carried by the affected source object."""
+
+    scope: str
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if self.scope not in {"all", "nonmana"}:
+            raise AbilityFragmentError(
+                "Activation prohibitions require all or nonmana scope"
+            )
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise AbilityFragmentError(
+                "Activation-prohibition schema version is unsupported"
+            )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"schema_version": self.schema_version, "scope": self.scope}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> "ActivationProhibitionSpec":
+        if not isinstance(value, Mapping) or set(value) != {
+            "schema_version",
+            "scope",
+        }:
+            raise AbilityFragmentError(
+                "Activation-prohibition fragments have a closed schema"
+            )
+        return cls(**dict(value))
+
+
 CURRENT_ABILITY_FRAGMENT_COVERAGE = "current_ability_fragment_required"
 STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID = (
     "ability.static.component-scope.v1"
@@ -954,6 +986,7 @@ StaticAbilityFragment: TypeAlias = (
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
+    | ActivationProhibitionSpec
 )
 
 
@@ -1010,6 +1043,8 @@ def ability_fragment_to_dict(
         kind = "declaration_requirement"
     elif isinstance(fragment, DeclarationRestrictionTemplate):
         kind = "declaration_restriction"
+    elif isinstance(fragment, ActivationProhibitionSpec):
+        kind = "activation_prohibition"
     else:
         raise AbilityFragmentError(
             f"Unsupported ability fragment {type(fragment).__name__}"
@@ -1115,6 +1150,8 @@ def ability_fragment_from_dict(
             return DeclarationRestrictionTemplate.from_dict(value["value"])
         except ValueError as exc:
             raise AbilityFragmentError(str(exc)) from exc
+    if value["kind"] == "activation_prohibition":
+        return ActivationProhibitionSpec.from_dict(value["value"])
     raise AbilityFragmentError(
         f"Unsupported ability fragment kind {value['kind']!r}"
     )
@@ -1153,6 +1190,7 @@ def canonical_ability_fragments(
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,
                 DeclarationRestrictionTemplate,
+                ActivationProhibitionSpec,
             ),
         )
         else ability_fragment_from_dict(value)
@@ -1422,6 +1460,16 @@ def declaration_restriction_specs(
     )
 
 
+def activation_prohibition_specs(
+    fragments: Iterable[StaticAbilityFragment],
+) -> tuple[ActivationProhibitionSpec, ...]:
+    return tuple(
+        fragment
+        for fragment in fragments
+        if isinstance(fragment, ActivationProhibitionSpec)
+    )
+
+
 def granted_activated_specs(
     fragments: Iterable[StaticAbilityFragment],
 ) -> tuple[GrantedActivatedAbilitySpec, ...]:
@@ -1523,6 +1571,7 @@ __all__ = [
     "GrantedActivatedAbilitySpec",
     "GrantedTriggeredAbilitySpec",
     "PartnerWithSpec",
+    "ActivationProhibitionSpec",
     "PARTNER_WITH_FRAGMENT_HANDLER_ID",
     "ProtectionQualityKind",
     "ProtectionSourcePredicateSpec",
@@ -1539,6 +1588,7 @@ __all__ = [
     "WardSpec",
     "ability_fragment_from_dict",
     "ability_fragment_to_dict",
+    "activation_prohibition_specs",
     "canonical_ability_fragments",
     "combat_keyword_trigger_specs",
     "counter_maximum_specs",

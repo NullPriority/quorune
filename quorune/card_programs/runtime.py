@@ -165,6 +165,16 @@ class _FixedPublicStateSnapshotResolver:
             is FixedPublicStateConditionKind.OPPONENT_POISON_COUNTER_AT_LEAST
             else ()
         )
+        player_hand_counts = (
+            tuple(
+                len(self.state.players[player].zones["hand"])
+                for player in self.state.turn_order
+                if self.state.players[player].in_game
+            )
+            if kind
+            is FixedPublicStateConditionKind.ANY_PLAYER_HAND_COUNT_AT_MOST
+            else ()
+        )
         controller_is_monarch = kind is (
             FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
         ) and getattr(self.state, "monarch", None) == source.controller
@@ -214,6 +224,7 @@ class _FixedPublicStateSnapshotResolver:
                 controller_instant_sorcery_cast_count
             ),
             opponent_poison_counter_counts=opponent_poison_counter_counts,
+            player_hand_counts=player_hand_counts,
             controller_is_monarch=controller_is_monarch,
             source_query_matches=(
                 self._query_matches(source, condition)
@@ -229,6 +240,24 @@ class _FixedPublicStateSnapshotResolver:
             ),
             condition_quantity=self._condition_quantity(source, condition),
         )
+
+
+def fixed_public_state_condition_matches(
+    state: ContinuousRuntimeState,
+    source: Any,
+    condition: FixedPublicStateConditionSpec,
+    *,
+    public_object_resolver: Callable[[Any], ObjectQueryResult] | None,
+    quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int] | None,
+) -> bool:
+    """Evaluate one shared public-state condition at its canonical boundary."""
+
+    resolver = _FixedPublicStateSnapshotResolver(
+        state=state,
+        public_object_resolver=public_object_resolver,
+        quantity_resolver=quantity_resolver,
+    )
+    return condition.matches(resolver.snapshot(source, condition))
 
 
 def _applicable_static_programs(
