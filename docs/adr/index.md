@@ -112,3 +112,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0095 — typed fixed owner-zone moves](0095-typed-fixed-owner-zone-moves.md)
 - [ADR 0096 — typed fixed source characteristic effects](0096-typed-fixed-source-characteristic-effects.md)
 - [ADR 0097 — typed fixed creature-power damage](0097-typed-fixed-creature-power-damage.md)
+- [ADR 0098 — typed ordinary Class lifecycle](0098-typed-ordinary-class-lifecycle.md)

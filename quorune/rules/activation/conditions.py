@@ -15,6 +15,10 @@ from ...activation_usage import (
     activation_usage_verdict,
 )
 from ...object_query import object_matches_query, object_query_result
+from ...permanent_designations import (
+    PermanentDesignationError,
+    current_class_level,
+)
 
 
 class ActivationConditionHost(Protocol):
@@ -105,6 +109,7 @@ def _typed_condition_status(
     host: ActivationConditionHost,
     seat: str,
     condition: ActivationCondition,
+    source: Any | None,
 ) -> tuple[str, str | None]:
     kind = condition.kind
     if kind is ActivationConditionKind.CONTROLLERS_TURN:
@@ -197,6 +202,19 @@ def _typed_condition_status(
             if count >= minimum and (maximum is None or count <= maximum)
             else ("unavailable", "requires_public_activation_query")
         )
+    if kind is ActivationConditionKind.CLASS_LEVEL_EQUALS:
+        if source is None:
+            return "unresolved", "activation_source_required"
+        try:
+            level = current_class_level(source)
+        except PermanentDesignationError:
+            return "unresolved", "malformed_class_level"
+        required = int(condition.minimum or 0)
+        return (
+            ("payable", None)
+            if level == required
+            else ("unavailable", f"requires_class_level_{required}")
+        )
     return "unresolved", "unresolved_activation_condition"
 
 
@@ -223,7 +241,9 @@ def activation_condition_status(
         if not usage.available:
             return "unavailable", usage.reason
     for condition in ability.activation_conditions:
-        status, reason = _typed_condition_status(host, seat, condition)
+        status, reason = _typed_condition_status(
+            host, seat, condition, source
+        )
         if status != "payable":
             return status, reason
     return "payable", None

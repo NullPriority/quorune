@@ -206,6 +206,7 @@ def reset_card_after_zone_change(
     card.goaded_by.clear()
     card.monstrous_value = None
     card.renowned = False
+    card.class_level = None
     card.unearthed = False
     if not stack_to_battlefield:
         card.transform_count = 0

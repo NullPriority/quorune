@@ -184,6 +184,7 @@ class CardProgramTrustTests(unittest.TestCase):
         self.assertEqual(
             {
                 "ability.activated.catalog",
+                "ability.activated.class-level",
                 "ability.activated.mana.color-set",
                 "ability.activated.mana.fixed-output",
                 "ability.activated.fixed-counter-keyword",
@@ -278,6 +279,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.riot-entry-choice",
                 "replacement.zone.self-entry-counter",
                 "replacement.zone.sunburst",
+                "rule.cleanup.no_maximum_hand_size",
                 "restriction.activation.chosen_name_nonmana",
                 "restriction.draw.maximum_per_turn",
             },

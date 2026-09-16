@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "cr-716-class-cards",
+  "official_name": "Class Cards",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["107.16", "107.16a", "716", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+  "glossary_references": ["Class", "level"],
+  "dependencies": ["activated abilities", "continuous effects", "copying objects", "layers", "mana", "the stack", "zones"],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["battlefield"],
+    "objects": ["one ordinary permanent Class with exactly two canonical level bars", "one copied Class permanent with an independent level designation"],
+    "events": ["activate the next legal level bar", "resolve a level activation", "dispatch one normalized source-self level-change occurrence", "evaluate current static components", "remove or restore a level-bar component"],
+    "state_reads": ["current source physical and logical incarnation", "current public Class level", "current shared layer-6 static-component set", "current activation timing and payment authority"],
+    "state_writes": ["the canonical permanent-designation owner records level 2 or 3 only when the identity-pinned activation resolves"],
+    "costs": ["one independently compiled fixed ordinary-mana cost per level bar"],
+    "timing": ["level advancement is offered and accepted only at sorcery speed", "Level 2 is available only at level 1 and Level 3 only at level 2"],
+    "targets": [],
+    "choices": [],
+    "hidden_information": ["Class level and resulting battlefield abilities are public", "only the controller receives the activation capability"],
+    "apnap": ["ordinary priority and stack ordering apply; the lifecycle creates no simultaneous choice"],
+    "layers": ["each level bar has a distinct static component whose independently exact children use the shared layer-6 applicability query", "level 3 adds its children without removing level 2 children", "ability removal uses the same component map as activation and trigger discovery"],
+    "replacement_effects": [],
+    "copy": ["the printed Class structure is copiable but the source permanent's level designation is not"],
+    "control_change": ["the level designation and unlocked children remain on the same permanent while activation authority follows the current controller"],
+    "zone_change": ["a new logical object has no explicit level designation and is treated as level 1"],
+    "source_leaves": ["an old resolving activation cannot advance an absent or re-entered source"]
+  },
+  "variants": ["fixed colored and generic ordinary mana costs", "multiple independently exact child lines in one level section", "type loss, ability loss, control change, phasing, copying, save/load, and exact replay"],
+  "witness_cards": [
+    {"name": "Wizard Class", "oracle_id": "36f68aa3-9955-46f1-bc87-497f16ef5222"},
+    {"name": "Cleric Class", "oracle_id": "f0ead7f5-5c82-40fd-8e89-3e3c5d31fbad"}
+  ],
+  "rulings": [],
+  "test_ids": ["test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children", "test_class_level_trigger_and_no_maximum_hand_size_compile_exactly", "test_class_grammar_exclusions_remain_residual", "test_class_capability_and_compiler_mutations_fail_closed", "test_class_offer_commit_and_sequential_stack_resolution", "test_class_insufficient_stale_and_removed_ability_roll_back", "test_class_source_incarnation_counter_and_resolution_locking", "test_class_level_gates_children_and_is_noncopiable_and_zone_scoped", "test_class_save_load_replay_and_four_player_projection", "test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program", "test_no_maximum_hand_size_component_removal_restores_cleanup_discard", "test_class_designation_mutation_is_killed"],
+  "implementation": {
+    "component": "FixedClassLevelAbilitySpec, Class compiler context, normalized level-change binding, activation catalog, shared StaticComponentScopeSpec applicability, permanent designation owner, projection, persistence, and replay",
+    "version": "typed-class-lifecycle-v1",
+    "capability_ids": ["permanent.class.fixed_lifecycle"],
+    "supported_slice": "One ordinary Class with the exact reminder, one fixed ordinary-mana Level 2 bar, one fixed ordinary-mana Level 3 bar, and independently exact child abilities."
+  },
+  "known_blockers": ["missing, duplicate, reordered, variable, hybrid, Phyrexian, snow, nonmana, and additional level bars", "Room, Leveler, Prototype, granted, copied, and text-changed structures outside ordinary copiable printed values", "effects that directly set, lower, or remove a Class level", "independently unsupported child abilities", "cycle-sensitive dynamic characteristic children and affected type-changing interactions outside the safe current-characteristic boundary", "aggregate Class Cards coverage remains incomplete"],
+  "review_status": "reviewed"
+}

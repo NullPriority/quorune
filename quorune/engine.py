@@ -191,6 +191,7 @@ from .mana import (
     auto_plan_payment,
     parsed_cost,
 )
+from .maximum_hand_size import effective_maximum_hand_size
 from .mana_restrictions import (
     mana_restriction_allows,
     spell_mana_spend_context,
@@ -1925,10 +1926,8 @@ class CommanderEngine(
             )
             enqueue_trigger_batch(self, cleanup_triggers)
             hand = self.state.players[active].zones["hand"]
-            excess = (
-                len(hand)
-                - self.state.players[active].max_hand_size
-            )
+            maximum = effective_maximum_hand_size(self, active)
+            excess = 0 if maximum is None else len(hand) - maximum
             if excess > 0:
                 self.permissions.issue(
                     kind="cleanup.discard",
@@ -6521,7 +6520,8 @@ class CommanderEngine(
         seat = decision.actors[0]
         player = self.state.players[seat]
         values = list(decision.responses[seat].get("cards") or [])
-        required = max(0, len(player.zones["hand"]) - player.max_hand_size)
+        maximum = effective_maximum_hand_size(self, seat)
+        required = 0 if maximum is None else max(0, len(player.zones["hand"]) - maximum)
         if len(values) != required:
             raise GameRuleError(f"{seat} must discard exactly {required} card(s)")
         objects: list[str] = []

@@ -201,6 +201,7 @@ class FixedCounterTriggerEvent(str, Enum):
     PERMANENT_TURNED_FACE_UP = "permanent.turned_face_up"
     OPPONENT_CARD_DRAW = "card.drawn"
     SPELL_CAST_OR_COPY = "spell.cast_or_copy"
+    CLASS_LEVEL_CHANGED = "permanent.class_level_changed.self"
 
 
 class FixedCounterZoneController(str, Enum):
@@ -1075,6 +1076,7 @@ def fixed_counter_event_trigger_node(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
             if requires_current_ability
             or binding.variant in _ABILITY_WORD_PUBLIC_EVENT_VARIANTS
+            or binding.variant == "class_level_changed"
             else ()
         ),
         mechanics=mechanics,

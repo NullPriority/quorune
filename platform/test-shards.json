@@ -124,6 +124,7 @@
       "test_attached_static_characteristics",
       "test_bestow_rules",
       "test_casting_spells_rules",
+      "test_class_lifecycle",
       "test_fixed_counter_keyword_activations",
       "test_fixed_counter_removal_effects",
       "test_fixed_damage_effect_clauses",

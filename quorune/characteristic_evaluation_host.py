@@ -8,8 +8,10 @@ from .carddb_characteristics import separate_custom_display_text
 from .card_programs.runtime import collect_card_program_continuous_effects
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
+    StaticComponentScopeSpec,
     StaticComponentSpec,
     ability_fragment_to_dict,
+    canonical_ability_fragments,
     declared_static_component_keys,
     static_component_keys,
 )
@@ -29,6 +31,7 @@ from .dynamic_characteristics import (
 )
 from .errors import GameRuleError
 from .model import CardInstance
+from .permanent_designations import permanent_numeric_designations
 from .object_query import ObjectQueryResult, object_query_result
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
 
@@ -301,7 +304,10 @@ class CharacteristicEvaluationHostMixin:
                     and not has_local_component_changes
                 ):
                     result[object_id] = static_component_keys(
-                        base.get("ability_fragments", ())
+                        base.get("ability_fragments", ()),
+                        source_designations=permanent_numeric_designations(
+                            source
+                        ),
                     )
                     continue
                 enchanted, equipped, modified = self._attachment_public_state(
@@ -322,7 +328,10 @@ class CharacteristicEvaluationHostMixin:
                     _enforce_static_component_applicability=False,
                 )
                 result[object_id] = static_component_keys(
-                    effective.get("ability_fragments", ())
+                    effective.get("ability_fragments", ()),
+                    source_designations=permanent_numeric_designations(
+                        source
+                    ),
                 )
         return result
 
@@ -388,7 +397,8 @@ class CharacteristicEvaluationHostMixin:
             _enforce_static_component_applicability=False,
         )
         return static_component_keys(
-            effective.get("ability_fragments", ())
+            effective.get("ability_fragments", ()),
+            source_designations=permanent_numeric_designations(prospective),
         )
 
     def _effective_static_component_keys(
@@ -422,7 +432,8 @@ class CharacteristicEvaluationHostMixin:
                 error_type=GameRuleError,
             )
             return static_component_keys(
-                self._declared_component_fragments(card, base)
+                self._declared_component_fragments(card, base),
+                source_designations=permanent_numeric_designations(card),
             )
         return self._effective_static_component_key_map().get(
             card.object_id, ()
@@ -462,6 +473,35 @@ class CharacteristicEvaluationHostMixin:
                 )
                 for fragment in fragments_from_descriptors(program.handlers)
             )
+        applicable = set(applicable_keys)
+        scopes = (
+            fragment
+            for fragment in canonical_ability_fragments(
+                self._declared_component_fragments(card, base)
+            )
+            if isinstance(fragment, StaticComponentScopeSpec)
+            and fragment.applicability is not None
+            and fragment.parent_semantic_key in applicable
+        )
+        for scope in scopes:
+            active_children = set(scope.child_semantic_keys).intersection(
+                applicable
+            )
+            for keyword in scope.keywords:
+                if any(
+                    (
+                        program := self.semantics.get(semantic_key)
+                    ) is not None
+                    and keyword.casefold()
+                    in {
+                        str(value).casefold()
+                        for value in program.coverage
+                    }
+                    for semantic_key in active_children
+                ):
+                    operations.append(
+                        ContinuousOperation("add_ability", keyword)
+                    )
         if not operations:
             return ()
         identity = ContinuousObjectIdentity(

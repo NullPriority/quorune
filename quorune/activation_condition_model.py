@@ -14,6 +14,7 @@ from .object_predicate import ObjectQueryError, ObjectQuerySpec
 
 ACTIVATION_PHASE_CONDITION_CAPABILITY = "activation.condition.phase_window"
 ACTIVATION_PUBLIC_QUERY_CAPABILITY = "activation.condition.public_query"
+CLASS_LEVEL_ACTIVATION_CAPABILITY = "permanent.class.fixed_lifecycle"
 _BASIC_LAND_SUBTYPES = frozenset(
     {"plains", "island", "swamp", "mountain", "forest"}
 )
@@ -28,6 +29,7 @@ class ActivationConditionKind(str, Enum):
     CONTROLS_TYPE = "controls_type"
     GRAVEYARD_DISTINCT_TYPES = "graveyard_distinct_types"
     PUBLIC_QUERY_COUNT = "public_query_count"
+    CLASS_LEVEL_EQUALS = "class_level_equals"
     UNSUPPORTED = "unsupported"
 
 
@@ -137,6 +139,11 @@ class ActivationCondition:
             if self.minimum is None or self.card_type is not None:
                 raise ValueError(
                     "graveyard-type conditions require only a minimum"
+                )
+        elif self.kind is ActivationConditionKind.CLASS_LEVEL_EQUALS:
+            if self.minimum not in {1, 2} or self.card_type is not None:
+                raise ValueError(
+                    "Class-level conditions require current level 1 or 2"
                 )
         elif self.minimum is not None or self.card_type is not None:
             raise ValueError("this activation condition takes no parameters")
@@ -460,6 +467,7 @@ def activation_restriction_spec(text: str) -> ActivationRestrictionSpec | None:
 __all__ = [
     "ACTIVATION_PHASE_CONDITION_CAPABILITY",
     "ACTIVATION_PUBLIC_QUERY_CAPABILITY",
+    "CLASS_LEVEL_ACTIVATION_CAPABILITY",
     "ActivationCondition",
     "ActivationConditionKind",
     "ActivationRestrictionSpec",

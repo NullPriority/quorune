@@ -566,6 +566,29 @@
       ]
     },
     {
+      "id": "ordinary-class-lifecycle-contract",
+      "patterns": [
+        "quorune/class_levels.py",
+        "quorune/maximum_hand_size.py",
+        "quorune/compiler/class_context_nodes.py",
+        "quorune/compiler/maximum_hand_size_nodes.py",
+        "quorune/rules/class_level_capability_shapes.py",
+        "quorune/semantic_runtime/class_levels.py",
+        "quorune/semantic_runtime/maximum_hand_size.py",
+        "mechanics/contracts/class-cards.json",
+        "rules/conformance-reviews/cr-716-class-cards.json",
+        "tests/fixtures/class-lifecycle-cards.json",
+        "tests/test_class_lifecycle.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_class_lifecycle",
+        "test_cleanup_step_rules",
+        "test_leveler_bands",
+        "test_public_activation_conditions"
+      ]
+    },
+    {
       "id": "spell-history-transformation-contract",
       "patterns": [
         "quorune/day_night.py",

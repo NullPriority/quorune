@@ -76,6 +76,7 @@ from .compiler.leveler_context_nodes import (
     leveler_face_ir as _leveler_face_ir,
     leveler_source_context as _leveler_source_context,
 )
+from .compiler import class_context_nodes as _class_context
 from .compiler.mill_templates import fixed_mill_effect_template
 from .compiler.impulse_access_templates import (
     fixed_impulse_access_effect_template,
@@ -156,7 +157,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v197"
+ORACLE_COMPILER_VERSION = "oracle-ir-v198"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1207,10 +1208,8 @@ def _compile_face(
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
     contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
-    material_rows, leveler_context = _leveler_source_context(
-        record.layout, type_line, oracle_text,
-        ordinary_saga="saga" in type_parts(type_line)[1],
-    )
+    material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
+    class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=material_rows)
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
     if spell:
         typed_face = _typed_whole_spell_face(
@@ -1227,7 +1226,7 @@ def _compile_face(
         effect_template=contextual_effect_template,
         activated_or_event_node=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node,
     )
-    for index, row in _leveler_compilation_rows(leveler_context, material_rows):
+    for index, row in (_class_context.class_compilation_rows(class_context, material_rows) if class_context is not None else _leveler_compilation_rows(leveler_context, material_rows)):
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue
         line, material_line, span = row; node_id = f"{face_id}:n{index}"
@@ -1417,9 +1416,10 @@ def _compile_face(
                 residual_ids=(residual_id,),
             )
         )
+    resolved_nodes = _class_context.apply_class_context(context=class_context, oracle_id=record.oracle_id, face_id=face_id, material_rows=material_rows, printed_keywords=keywords, nodes=reject_cast_cost_composition(nodes, residuals), residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
     return _leveler_face_ir(
         leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
-        keywords, reject_cast_cost_composition(nodes, residuals), residuals, capability_registry, capability_profile,
+        keywords, resolved_nodes, residuals, capability_registry, capability_profile,
     )
 
 

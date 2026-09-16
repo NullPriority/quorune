@@ -6,11 +6,62 @@ from ..counter_placement import CounterPlacementError, place_counters_on_refs
 from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
 from ..model import GoadDesignation
+from ..permanent_designations import (
+    AdvanceClassLevelRequest,
+    PermanentDesignationError,
+    advance_class_level,
+)
 from ..trigger_processing import schedule_delayed_trigger
 
 
 OPERATIONS = effect_family_contract("state-and-permissions.v1").operations
 _REASON_FIELD = "reason"
+
+
+def _apply_gain_class_level(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> Any:
+    del operation
+    allowed = {"op", "card", "level", "reason", "_runtime_source"}
+    if set(effect) - allowed or not {"op", "card", "level"}.issubset(effect):
+        raise GameRuleError("Class level effect has an invalid shape")
+    level = effect.get("level")
+    if type(level) is not int or level not in {2, 3}:
+        raise GameRuleError("Class level effect requires level 2 or 3")
+    try:
+        card = host._resolve_object(
+            actor,
+            str(effect.get("card") or ""),
+            zones={"battlefield"},
+        )
+    except GameRuleError:
+        return None
+    runtime_source = effect.get("_runtime_source")
+    if not isinstance(runtime_source, Mapping) or (
+        runtime_source.get("object_id") != card.object_id
+        or runtime_source.get("logical_object_id") != card.logical_object_id
+        or runtime_source.get("card_ref") != card.ref
+    ):
+        return None
+    try:
+        return advance_class_level(
+            host,
+            AdvanceClassLevelRequest(
+                object_id=card.object_id,
+                object_ref=card.ref,
+                logical_object_id=card.logical_object_id,
+                level=level,
+                actor=actor,
+                reason=reason,
+            ),
+        )
+    except PermanentDesignationError as exc:
+        raise GameRuleError(str(exc)) from exc
 
 
 def _apply_goad(
@@ -369,6 +420,7 @@ HANDLERS = {
     'delayed_mana': _apply_delayed_mana,
     'delayed_pact_payment': _apply_delayed_pact_payment,
     'goad': _apply_goad,
+    'gain_class_level': _apply_gain_class_level,
     'grant_uncounterable_hexproof_from_colors_until_end': _apply_grant_uncounterable_hexproof_from_colors_until_end,
     'mana': _apply_mana,
     'next_spell_improvise': _apply_next_spell_improvise_or_next_spell_uncounterable,

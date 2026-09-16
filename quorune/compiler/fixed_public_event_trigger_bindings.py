@@ -7,6 +7,7 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..class_levels import CLASS_MECHANIC_ID
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_entry_return_requirements import (
     fixed_entry_return_requirement_spec,
@@ -71,6 +72,10 @@ _CONSTELLATION_TRIGGER = re.compile(
 _BATTALION_TRIGGER = re.compile(
     r"^Whenever (?P<subject>.+?) and at least two other creatures attack, "
     r"(?P<body>.+)$",
+    re.IGNORECASE,
+)
+_CLASS_LEVEL_TRIGGER = re.compile(
+    r"^When this Class becomes level (?P<level>[23]), (?P<body>.+)$",
     re.IGNORECASE,
 )
 
@@ -154,6 +159,23 @@ def _entry_return_spec(
         "fixed-counter-entry-return-public-zone-trigger-v1",
         "trigger-event-normalized-zone-change",
         condition=condition,
+    )
+
+
+def _class_level_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    matched = _CLASS_LEVEL_TRIGGER.fullmatch(material_line)
+    if matched is None:
+        return None
+    level = int(matched.group("level"))
+    return _spec(
+        "permanent.class_level_changed.self",
+        "class_level_changed",
+        matched.group("body"),
+        "class-level-change-trigger-v1",
+        CLASS_MECHANIC_ID,
+        condition={"field": "level", "op": "eq", "value": level},
     )
 
 
@@ -731,7 +753,8 @@ def fixed_public_event_binding_spec(
     """Parse one bounded public occurrence without compiling its effect body."""
 
     return (
-        _public_spell_action_spec(material_line, card_name=card_name)
+        _class_level_spec(material_line)
+        or _public_spell_action_spec(material_line, card_name=card_name)
         or _constellation_spec(material_line, card_name=card_name)
         or _battalion_spec(material_line, card_name=card_name)
         or _public_zone_spec(material_line, card_name=card_name)

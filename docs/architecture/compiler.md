@@ -827,6 +827,23 @@ striations, malformed ranges, variable characteristics, unsupported children,
 granted or text-changed symbols, and cycle-sensitive dynamic characteristic
 interactions remain residual or explicitly outside trust.
 
+`compiler/class_context_nodes.py` recognizes the ordinary Class layout only
+when the exact reminder is followed by one fixed ordinary-mana Level 2 bar and
+one fixed ordinary-mana Level 3 bar in order. Each bar lowers into an ordinary
+sorcery-speed stack activation plus a distinct static scope. The activation
+catalog and proposal/commit owner enforce the current sequential level and
+payment; resolution asks the permanent-designation owner to advance only the
+pinned source incarnation. Independently exact children receive the existing
+current-component marker, and both level scopes use the shared layer-6
+applicability query so level 3 adds rather than replaces level 2 abilities.
+The same context admits the exact source-self "becomes level N" occurrence
+through normalized trigger placement, and the ordinary static compiler exposes
+the reusable no-maximum-hand-size component used by cleanup offer and commit
+validation.
+Variable, hybrid, Phyrexian, snow, nonmana, malformed, granted, text-changed,
+direct level-setting, independently unsupported, and cycle-sensitive dynamic
+characteristic forms remain residual.
+
 `compiler/day_night_nodes.py` and
 `compiler/spell_history_transform_nodes.py` close one paired-face family.
 Canonical Daybound and Nightbound keywords must occupy opposite faces of a

@@ -113,9 +113,18 @@ power/toughness in layer 7b. Triggered and continuous discovery consult the
 surviving component, while the same generic fragment-removal operation
 suppresses its materialized activated ability. Copies carry the descriptor but
 use their own counters and timestamp. Level Up remains an independent
-always-present activation. Class,
-Room, Prototype, arbitrary striations, unsupported children, and dynamic
-count/type-change edges remain outside this boundary. Every trusted battlefield
+always-present activation. Room, Prototype, arbitrary striations, unsupported
+children, and dynamic count/type-change edges remain outside this boundary.
+Ordinary Class level bars reuse the same component query with a typed minimum
+public designation: the activation remains a normal current ability, while
+each bar's separate static component exposes only its independently exact
+children at level 2 or 3. Level advancement emits one source-self normalized
+occurrence after the designation changes, so a newly applicable child trigger
+uses ordinary APNAP placement. The reusable no-maximum-hand-size component
+consults that same current-component snapshot during both cleanup advertisement
+and command validation. The noncopiable designation survives type loss,
+ability loss, control changes, and phasing on the same permanent and resets at
+the canonical zone-object boundary. Every trusted battlefield
 `characteristics.evaluate` program contributes one `StaticComponentSpec` to
 the source's effective ability fragments. Continuous-component collection uses
 that single layer-6 component-presence query for printed programs, explicit
