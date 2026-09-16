@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "1055ccf30743da38e5adcfc7a9c90003d0fe0fceeccc2ad7329f0c3ca64e5057"
+verified: "404f7fc12756883e61e23aba08168c656d7431acb72979486123871c01142135"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -36,6 +36,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
+| Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
 | Ugin, Eye of the Storms | 199 | 39 | 5 | 5 | 11 | 3 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
@@ -50,7 +51,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Restoration of Eiganjo // Architect of Restoration | 186 | 21 | 7 | 6 | 8 | 7 | `blocked` |
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
-| Cleric Class | 183 | 22 | 6 | 6 | 7 | 12 | `blocked` |
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Ojer Axonil, Deepest Might // Temple of Power | 183 | 23 | 7 | 6 | 9 | 6 | `blocked` |
