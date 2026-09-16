@@ -34,7 +34,7 @@ from quorune.rules.capabilities import (
     capability_dependencies_for_node,
     load_default_capability_registry,
 )
-from quorune.rules import node_capability_shapes
+from quorune.rules import damage_capability_shapes
 from quorune.semantics import SemanticProgram, SemanticRegistry
 
 
@@ -123,6 +123,68 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
             "attacking_or_blocking", template.target_schema["combat_state"]
         )
 
+    def test_public_damage_predicates_share_the_direct_target_owner(self):
+        cases = (
+            (
+                "target white or blue creature",
+                {"colors_any": ["U", "W"], "types_any": ["creature"]},
+            ),
+            (
+                "target creature or planeswalker that's white or blue",
+                {
+                    "colors_any": ["U", "W"],
+                    "types_any": ["creature", "planeswalker"],
+                },
+            ),
+            (
+                "target creature without flying that's attacking you",
+                {
+                    "types_all": ["creature"],
+                    "keywords_none": ["flying"],
+                    "combat_state": "attacking_actor",
+                },
+            ),
+            (
+                "target attacking or blocking Spirit",
+                {
+                    "subtypes_any": ["spirit"],
+                    "combat_state": "attacking_or_blocking",
+                },
+            ),
+            (
+                "target creature blocking it",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "blocking_source",
+                },
+            ),
+            (
+                "target creature it's blocking",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "blocked_by_source",
+                },
+            ),
+        )
+        for recipient, expected in cases:
+            with self.subTest(recipient=recipient):
+                template = fixed_damage_effect_template(
+                    f"Fixture deals 3 damage to {recipient}.",
+                    card_name="Fixture",
+                )
+                self.assertIsInstance(template, FixedDamageEffectTemplate)
+                assert isinstance(template, FixedDamageEffectTemplate)
+                for key, value in expected.items():
+                    self.assertEqual(value, template.target_schema[key])
+
+        aura = fixed_damage_effect_template(
+            "This Aura deals 2 damage to any target.",
+            card_name="Damage Aura",
+        )
+        self.assertIsInstance(aura, FixedDamageEffectTemplate)
+        assert isinstance(aura, FixedDamageEffectTemplate)
+        self.assertEqual("aura", aura.source_kind)
+
     def test_source_pronoun_has_one_closed_contextual_parser(self):
         template = source_pronoun_damage_effect_template(
             "It deals 2 damage to any target."
@@ -157,21 +219,21 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
                 )
 
     def test_recipient_and_positive_amount_mutants_are_killed(self):
-        def assert_creature_recipient() -> None:
+        def assert_exact_recipient() -> None:
             template = fixed_damage_effect_template(
-                "Fixture deals 2 damage to target creature.",
+                "Fixture deals 2 damage to any target.",
                 card_name="Fixture",
             )
             self.assertIsNotNone(template)
-            self.assertEqual(FixedDamageRecipient.CREATURE, template.recipient)
+            self.assertEqual(FixedDamageRecipient.ANY_TARGET, template.recipient)
 
-        assert_creature_recipient()
+        assert_exact_recipient()
         mutated_recipients = tuple(
             (
                 phrase,
                 (
                     FixedDamageRecipient.PLAYER
-                    if phrase == "target creature"
+                    if phrase == "any target"
                     else recipient
                 ),
             )
@@ -183,7 +245,7 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
             mutated_recipients,
         ):
             with self.assertRaises(AssertionError):
-                assert_creature_recipient()
+                assert_exact_recipient()
 
         effect = {
             "op": "damage",
@@ -206,7 +268,7 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
 
         assert_zero_is_untrusted()
         with patch.object(
-            node_capability_shapes,
+            damage_capability_shapes,
             "_positive_int",
             lambda _value: True,
         ):

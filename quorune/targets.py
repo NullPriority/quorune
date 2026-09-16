@@ -271,6 +271,9 @@ def _target_combat_state(raw: Mapping[str, Any]) -> str | None:
         "attacking",
         "blocking",
         "attacking_or_blocking",
+        "attacking_actor",
+        "blocking_source",
+        "blocked_by_source",
     }:
         raise ValueError("Target combat_state is unsupported")
     return value
@@ -426,6 +429,8 @@ class TargetGroup:
         if self.combat_state is not None and (
             self.combat_state
             not in {"attacking", "blocking", "attacking_or_blocking"}
+            and self.combat_state
+            not in {"attacking_actor", "blocking_source", "blocked_by_source"}
             or self.attacking is not None
             or self.blocking is not None
         ):

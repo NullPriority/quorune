@@ -101,6 +101,9 @@ def _target_group_combat_state_matches(
     group: TargetGroup,
     *,
     card: CardInstance | None,
+    actor: str,
+    source_ref: str | None,
+    cards: Mapping[str, CardInstance],
 ) -> bool:
     """Evaluate legacy flags and the closed current combat-state predicate."""
 
@@ -116,6 +119,22 @@ def _target_group_combat_state_matches(
         return blocking
     if group.combat_state == "attacking_or_blocking":
         return attacking or blocking
+    if group.combat_state == "attacking_actor":
+        return bool(card and card.attacking == actor)
+    if group.combat_state in {"blocking_source", "blocked_by_source"}:
+        source = next(
+            (
+                candidate
+                for candidate in cards.values()
+                if candidate.ref == source_ref
+                and candidate.zone == "battlefield"
+                and not candidate.phased_out
+            ),
+            None,
+        )
+        if group.combat_state == "blocking_source":
+            return bool(source and card and card.blocking == source.object_id)
+        return bool(source and card and source.blocking == card.object_id)
     return True
 
 
@@ -420,7 +439,13 @@ class TargetSelectionOwnerMixin:
         ):
             return False
         card = row.get("card")
-        if not _target_group_combat_state_matches(group, card=card):
+        if not _target_group_combat_state_matches(
+            group,
+            card=card,
+            actor=controller,
+            source_ref=source_ref,
+            cards=self.state.cards,
+        ):
             return False
         if group.tapped is not None and (
             bool(card and card.tapped) != group.tapped

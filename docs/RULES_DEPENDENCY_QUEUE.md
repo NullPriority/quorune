@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "520baf01807a35a25d73cca945f3b6950b11283db0f40a8aa43de45416612e71"
+verified: "f1b32de33018d76577693352257c4331617879875f133a5e7d1e069be3e7af9e"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `6ec3b4b7481db13b734610de501d4cb82230815824547686df75bf829a74786a`
+Source fingerprint: `f30704757442fd9714904ce525b68440ba896754dd27a13ac0f617f8691371e8`
 
 ## Current top-level state
 
@@ -40,7 +40,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 49 |
 | 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 2096 | 4813 | 34.360656 | 0 | 0 |
+| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 2098 | 4813 | 34.393443 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 10 | blocked | implementation | false | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -67,7 +67,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 31 | blocked | implementation | false | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 18 | 106 | 0.857143 | 0 | 0 |
 | 32 | blocked | implementation | false | `bundle:fixed-exile-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
 | 33 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 18 | 0.0 | 0 | 0 |
-| 34 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 204 | 0.0 | 0 | 0 |
+| 34 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 194 | 0.0 | 0 | 0 |
 | 35 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
 | 36 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 

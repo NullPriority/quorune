@@ -79,6 +79,7 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_activation_zone_change_predicate_measurement,
     _fixed_entry_return_requirement_measurement,
     _fixed_creature_power_damage_measurement,
+    _fixed_public_damage_predicate_measurement,
     _fixed_mana_madness_measurement,
     _fixed_owner_zone_move_measurement,
     _fixed_single_object_reanimation_measurement,
@@ -3970,6 +3971,98 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(2, measurement["exact_ability_gain"])
         self.assertEqual(1, measurement["material_residual_reduction"])
         self.assertEqual(1, measurement["one_additional_blocker_cards"])
+
+    def test_public_damage_predicate_probe_requires_closed_frontier_bundle(self):
+        records = {
+            value: SimpleNamespace(oracle_id=value, oracle_text="Damage fixture")
+            for value in ("fixture:closed", "fixture:outside")
+        }
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": "fixture:closed",
+                    "oracle_ir_status": "partial",
+                    "minimum_known_blocker_set": [
+                        "effect_clause:deal-damage",
+                        "target_or_choice:target-predicate",
+                    ],
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                },
+                {
+                    "oracle_id": "fixture:outside",
+                    "oracle_ir_status": "partial",
+                    "minimum_known_blocker_set": [
+                        "effect_clause:deal-damage",
+                        "effect_clause:unsupported-rider",
+                    ],
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                },
+            ]
+        }
+        exact = SimpleNamespace(node_id="front:n1", exact=True)
+        compiled = {
+            "fixture:closed": SimpleNamespace(
+                faces=(SimpleNamespace(nodes=(exact,)),),
+                material_residuals=(),
+                status="exact",
+            ),
+            "fixture:outside": SimpleNamespace(
+                faces=(SimpleNamespace(nodes=(exact,)),),
+                material_residuals=(),
+                status="exact",
+            ),
+        }
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements.compile_oracle_card",
+                side_effect=lambda record, **_kwargs: compiled[record.oracle_id],
+            ),
+        ):
+            measurement = _fixed_public_damage_predicate_measurement(
+                frontier=frontier,
+                bundle_id="bundle:fixed-public-damage-predicates",
+                probe_id="fixed-public-damage-predicate-existing-owner-v1",
+                member_ids={
+                    "activated_effect:deal-damage",
+                    "effect_clause:deal-damage",
+                    "target_or_choice:target-predicate",
+                },
+                cards_by_oracle_id=records,
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+        self.assertEqual(
+            0,
+            measurement["candidate_accounting"][
+                "cards_excluded_by_unsupported_grammar"
+            ],
+        )
 
     def test_source_combat_growth_probe_requires_integrated_exact_node(self):
         source = (

@@ -308,6 +308,7 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
                         "continuous.resolution.fixed_keyword_zone_object",
                         "counter.producer.fixed_effect",
                         SEQUENCE_CAPABILITY,
+                        "target.permanent.characteristic_predicate",
                         "target.revalidate_resolution",
                         capability,
                     },
@@ -366,6 +367,7 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
             "continuous.resolution.fixed_keyword_zone_object",
             "counter.producer.fixed_effect",
             SEQUENCE_CAPABILITY,
+            "target.permanent.characteristic_predicate",
             "target.revalidate_resolution",
         }
         self.assertEqual(

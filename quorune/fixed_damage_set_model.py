@@ -21,9 +21,10 @@ class PlayerDamageRelation(str, Enum):
 
 _DAMAGEABLE_TYPES = frozenset({"battle", "creature", "planeswalker"})
 _PLAYER_GROUP_FIELDS = frozenset({"kind", "relation"})
-_PERMANENT_GROUP_FIELDS = frozenset(
+_LEGACY_PERMANENT_GROUP_FIELDS = frozenset(
     {"kind", "controller_relation", "target_controller", "query"}
 )
+_PERMANENT_GROUP_FIELDS = _LEGACY_PERMANENT_GROUP_FIELDS | {"exclude_source"}
 
 
 def require_nonempty_string(value: Any, *, field: str) -> str:
@@ -51,6 +52,7 @@ class PermanentDamageGroup:
         PermanentControllerRelation.ANY
     )
     target_controller: str | None = None
+    exclude_source: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.query, ObjectQuerySpec):
@@ -79,9 +81,13 @@ class PermanentDamageGroup:
             raise FixedDamageSetError(
                 "Public battlefield damage queries do not use knowledge predicates"
             )
+        if type(self.exclude_source) is not bool:
+            raise FixedDamageSetError(
+                "Fixed permanent damage source exclusion must be boolean"
+            )
         if self.query.exclude_ref is not None:
             raise FixedDamageSetError(
-                "Fixed permanent damage does not support source exclusions"
+                "Fixed permanent damage uses its typed source-exclusion flag"
             )
         if self.controller_relation is PermanentControllerRelation.ACTOR:
             raise FixedDamageSetError(
@@ -108,12 +114,15 @@ class PermanentDamageGroup:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload = {
             "kind": "permanents",
             "controller_relation": self.controller_relation.value,
             "target_controller": self.target_controller,
             "query": self.query.canonical_dict(),
         }
+        if self.exclude_source:
+            payload["exclude_source"] = True
+        return payload
 
 
 FixedDamageGroup = PlayerDamageGroup | PermanentDamageGroup
@@ -136,7 +145,11 @@ def _group_from_dict(value: Mapping[str, Any]) -> FixedDamageGroup:
             ) from exc
     if kind != "permanents":
         raise FixedDamageSetError("Fixed damage group kind is unsupported")
-    if frozenset(value) != _PERMANENT_GROUP_FIELDS:
+    fields = frozenset(value)
+    if fields not in {
+        _LEGACY_PERMANENT_GROUP_FIELDS,
+        _PERMANENT_GROUP_FIELDS,
+    }:
         raise FixedDamageSetError(
             "Permanent damage group fields are incomplete or unknown"
         )
@@ -151,6 +164,7 @@ def _group_from_dict(value: Mapping[str, Any]) -> FixedDamageGroup:
         query=query,
         controller_relation=relation,
         target_controller=value["target_controller"],
+        exclude_source=value.get("exclude_source", False),
     )
 
 

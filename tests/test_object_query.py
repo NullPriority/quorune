@@ -227,6 +227,41 @@ class ObjectQueryTests(unittest.TestCase):
         self.assertEqual(serialized, restored.to_dict())
         self.assertEqual([], restored.canonical_dict()["types_any"])
 
+    def test_negative_keyword_query_is_versioned_and_round_trips(self):
+        rows = (
+            ObjectQueryResult(
+                "ground",
+                "GROUND",
+                "Ground",
+                "A",
+                "A",
+                "battlefield",
+                types=("creature",),
+            ),
+            ObjectQueryResult(
+                "flying",
+                "FLYING",
+                "Flying",
+                "B",
+                "B",
+                "battlefield",
+                types=("creature",),
+                keywords=("flying",),
+            ),
+        )
+        spec = ObjectQuerySpec(
+            zones=("battlefield",),
+            types_all=("creature",),
+            keywords_none=("flying",),
+        )
+        self.assertEqual(
+            ("GROUND",),
+            tuple(row.ref for row in query_objects(rows, spec)),
+        )
+        serialized = spec.to_dict()
+        self.assertEqual(["flying"], serialized["keywords_none"])
+        self.assertEqual(spec, ObjectQuerySpec.from_dict(serialized))
+
     def test_term_lists_reject_nonstrings_empty_values_and_case_duplicates(self):
         malformed_values = (
             (1,),

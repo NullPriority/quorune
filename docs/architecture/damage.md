@@ -1,7 +1,7 @@
 ---
 title: "Damage transaction"
 status: "current"
-authoritative_source: "quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, and quorune/combat_damage_*"
+authoritative_source: "quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, quorune/rules/damage_capability_shapes.py, and quorune/combat_damage_*"
 verified: "2026-08-07"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
@@ -37,12 +37,15 @@ or logical source identities.
 Fixed simultaneous affected-set instructions compile to an immutable ordered
 group descriptor. `fixed_damage_set_model.py` owns its closed player and
 permanent vocabulary; `fixed_damage_set.py` materializes current public
-effective-characteristic rows through a narrow query port. The snapshot uses
-APNAP controller order plus stable logical object identity, excludes phased-out
-objects, and deduplicates overlapping groups before creating proposals. Every
-recipient then enters one `resolve_damage_batch` call, so replacement,
-prevention, result, trigger, rollback, and replay behavior cannot diverge from
-single-target or combat damage.
+effective-characteristic and public-state rows through the shared object-query
+port. Direct damage targets and affected sets project the same typed target
+predicate boundary for represented controller, characteristic, combat-state,
+and source-exclusion forms. The snapshot uses APNAP controller order plus
+stable logical object identity, excludes phased-out objects, and deduplicates
+overlapping groups before creating proposals. Every recipient then enters one
+`resolve_damage_batch` call, so replacement, prevention, result, trigger,
+rollback, and replay behavior cannot diverge from single-target or combat
+damage.
 
 Preparation discovers applicable runtime components against the current
 event, validates the affected player or permanent controller, records any
@@ -94,10 +97,12 @@ stage, and adding multiplayer ordering, rollback, privacy, replay, and mutation
 witnesses. Card-name or Oracle-ID branches are not permitted in the generic
 transaction.
 
-The fixed-set grammar currently covers positive fixed damage to closed player,
-creature, planeswalker, opponent-controlled, flying, color-qualified,
-nonartifact, nontoken, and shadow sets. Divided or variable damage, negative
-keyword or subtype predicates, multiple independent damage instructions,
+The fixed-set grammar covers positive fixed damage to closed player and
+damageable-permanent sets with represented type, subtype, color, keyword
+presence or absence, token, controller, tap, combat-state, source-exclusion,
+and target-player controller predicates. Divided or variable damage, chosen,
+linked-result, history-derived, dynamic-characteristic, or additive
+non-deduplicable predicates, multiple independent damage instructions,
 unpreventable wording, and linked life/draw/scry/conditional riders remain
 compiler residuals. Do not widen the runtime query to approximate them.
 

@@ -149,6 +149,38 @@ class FixedDamageSetModelTests(unittest.TestCase):
         serialized["groups"][0]["query"]["types_all"].append("artifact")
         self.assertEqual(("creature",), spec.groups[0].query.types_all)
 
+    def test_source_exclusion_is_typed_backward_compatible_and_applied(self):
+        legacy = PermanentDamageGroup(
+            ObjectQuerySpec(
+                zones=("battlefield",),
+                types_all=("creature",),
+            )
+        )
+        excluded = PermanentDamageGroup(
+            ObjectQuerySpec(
+                zones=("battlefield",),
+                types_all=("creature",),
+                keywords_none=("flying",),
+            ),
+            exclude_source=True,
+        )
+        legacy_payload = legacy.to_dict()
+        self.assertNotIn("exclude_source", legacy_payload)
+        spec = FixedDamageSetSpec((excluded,))
+        self.assertEqual(spec, FixedDamageSetSpec.from_dict(spec.to_dict()))
+        rows = (
+            _row("source", controller="A"),
+            _row("other", controller="B"),
+            _row("flying", controller="C", keywords=("flying",)),
+        )
+        snapshot = snapshot_fixed_damage_set(
+            _SnapshotQuery(rows),
+            actor="A",
+            spec=spec,
+            source_ref="source",
+        )
+        self.assertEqual(["other"], [row.ref for row in snapshot.recipients])
+
     def test_fixed_set_handler_rejects_malformed_or_unrepresented_groups(self):
         context = ReadOnlyHandlerContext.from_sequences(
             actor="A",
@@ -253,6 +285,12 @@ class FixedMassDamageCompilerTests(unittest.TestCase):
             "each nonartifact creature",
             "each nontoken creature",
             "each creature with shadow",
+            "each creature without flying",
+            "each other creature with flying",
+            "each non-Dragon creature",
+            "each untapped creature",
+            "each attacking creature",
+            "each creature you don't control",
         )
         for phrase in cases:
             text = f"Fixture deals 2 damage to {phrase}."
@@ -268,6 +306,23 @@ class FixedMassDamageCompilerTests(unittest.TestCase):
                 self.assertIn(
                     "damage.batch.fixed_set", node.capability_dependencies
                 )
+                if phrase in {
+                    "each creature without flying",
+                    "each other creature with flying",
+                    "each non-Dragon creature",
+                }:
+                    self.assertIn(
+                        "target.permanent.characteristic_predicate",
+                        node.capability_dependencies,
+                    )
+                if phrase in {
+                    "each untapped creature",
+                    "each attacking creature",
+                }:
+                    self.assertIn(
+                        "state_query.permanent.public_state_predicate",
+                        node.capability_dependencies,
+                    )
                 self.assertEqual(
                     text,
                     ir.faces[0].oracle_text[node.span.start : node.span.end],
@@ -288,6 +343,27 @@ class FixedMassDamageCompilerTests(unittest.TestCase):
             node.target_schema,
         )
         self.assertIn("target.revalidate_resolution", node.capability_dependencies)
+
+        player_text = (
+            "Fixture deals 2 damage to each attacking or blocking creature "
+            "target player controls."
+        )
+        player_ir = self.compile(player_text)
+        player_node = player_ir.faces[0].nodes[0]
+        self.assertEqual("exact", player_ir.status, player_ir.material_residuals)
+        self.assertEqual(
+            {
+                "zones": ["player"],
+                "categories": ["player"],
+                "count": 1,
+            },
+            player_node.target_schema,
+        )
+        self.assertEqual(2, len(player_node.effects[0]["groups"]))
+        self.assertIn(
+            "state_query.permanent.public_state_predicate",
+            player_node.capability_dependencies,
+        )
 
     def test_activated_fixed_damage_set_uses_the_shared_capability_gate(self):
         text = "{T}: Fixture deals 1 damage to each player."
@@ -317,12 +393,9 @@ class FixedMassDamageCompilerTests(unittest.TestCase):
             )
         )
         variants = (
-            "each creature without flying",
-            "each non-Pirate creature",
-            "each Dragon creature",
-            "each attacking creature",
             "each creature equal to the number of Mountains you control",
             "each of up to two target creatures",
+            "each creature dealt damage this turn",
         )
         for recipient in variants:
             text = f"Fixture deals 2 damage to {recipient}."
@@ -571,6 +644,58 @@ class FixedMassDamageRuntimeTests(unittest.TestCase):
 
 
 class FixedMassDamageInteractionTests(DamageReplacementPipelineBase):
+    def test_public_predicate_set_excludes_source_and_negative_keyword(self):
+        session = self.session(12013006, players=4)
+        engine = session.engine
+        source = self.add_permanent(
+            engine, seat="A", name="Mishra, Eminent One", ref="a-source"
+        )
+        ground = self.add_permanent(
+            engine, seat="B", name="Scute Swarm", ref="b-ground"
+        )
+        flying = self.add_permanent(
+            engine, seat="C", name="Scute Swarm", ref="c-flying"
+        )
+        for card in (source, ground, flying):
+            card.counters["+1/+1"] = 10
+        spec = FixedDamageSetSpec(
+            (
+                PermanentDamageGroup(
+                    ObjectQuerySpec(
+                        zones=("battlefield",),
+                        types_all=("creature",),
+                        keywords_none=("flying",),
+                    ),
+                    exclude_source=True,
+                ),
+            )
+        )
+
+        original_rows = engine.fixed_damage_object_rows("A")
+        with patch.object(
+            engine,
+            "fixed_damage_object_rows",
+            return_value=tuple(
+                replace(row, keywords=("flying",))
+                if row.ref == flying.ref
+                else row
+                for row in original_rows
+            ),
+        ):
+            result = resolve_fixed_damage_set(
+                engine,
+                actor="A",
+                source_ref=source.ref,
+                amount=2,
+                spec=spec,
+                reason="public predicate fixed damage",
+            )
+
+        self.assertEqual(2, result.dealt_amount)
+        self.assertEqual(0, source.marked_damage)
+        self.assertEqual(2, ground.marked_damage)
+        self.assertEqual(0, flying.marked_damage)
+
     def test_fixed_set_damage_uses_effective_types_and_replacement_order(self):
         session = self.session(12013004, players=4)
         engine = session.engine

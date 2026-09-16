@@ -3180,6 +3180,59 @@
           "measurement_probe_id": "fixed-creature-power-damage-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-public-damage-predicates",
+          "member_family_ids": [
+            "activated_effect:deal-damage",
+            "effect_clause:deal-damage",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:damage.amount.positive",
+            "capability:damage.batch.fixed_set",
+            "capability:damage.result.multitype_permanent",
+            "capability:state_query.permanent.public_state_predicate",
+            "capability:target.permanent.characteristic_predicate",
+            "capability:target.revalidate_resolution",
+            "component:quorune.compiler.damage_templates.fixed_damage_effect_template",
+            "component:quorune.compiler.direct_target.direct_permanent_target_spec",
+            "component:quorune.fixed_damage_set.resolve_fixed_damage_set",
+            "component:quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities",
+            "component:quorune.selection.targeting.legal_target_refs"
+          ],
+          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "normalized_literal_parameters": [
+            "current-public-characteristic-predicate",
+            "current-public-combat-state-predicate",
+            "fixed-positive-damage-amount",
+            "source-incarnation-exclusion",
+            "target-player-controlled-affected-set",
+            "typed-damageable-permanent-domain"
+          ],
+          "shared_dependencies": [
+            "damage.amount.positive",
+            "damage.batch.fixed_set",
+            "damage.result.multitype_permanent",
+            "state_query.permanent.public_state_predicate",
+            "target.permanent.characteristic_predicate",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one fixed positive direct or affected-set damage instruction over a closed public characteristic, controller, combat-state, source-exclusion, or target-player-controlled permanent predicate through the existing target, query, damage-batch, replacement, prevention, and replay owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a measured policy-floor cross-context cohort while sharing one typed predicate projection between direct targets and fixed affected sets instead of adding card- or family-specific damage dispatch.",
+          "explicit_exclusions": [
+            "additive or overlapping affected sets whose membership cannot be deduplicated before one damage event",
+            "chosen, remembered, random, divided, variable, dynamic-characteristic, and history-derived damage amounts",
+            "copied, granted, text-changed, face-down, and runtime Oracle-derived behavior",
+            "independently unsupported costs, conditions, modes, events, targets, or sibling abilities",
+            "linked-result, exception-set, indefinite-article, nonpermanent, and non-damageable recipient domains",
+            "unrepresented characteristic-defining, cyclic, type-changing, protection, and ability-presence interactions outside the existing public query boundary"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-public-damage-predicate-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-public-alternative-costs",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -3421,14 +3474,25 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v195-prospective-entry-applicability",
-      "compiler_version": "oracle-ir-v195",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Distinguish origin-only, prospective battlefield, and permanent-spell-continuing typed effects at the shared entry component boundary without claiming a card-support harvest."
+      "transition_id": "oracle-ir-v196-fixed-public-damage-predicates",
+      "compiler_version": "oracle-ir-v196",
+      "bundle_id": "bundle:fixed-public-damage-predicates",
+      "candidate_ids": ["compiler:fixed-public-damage-predicates"],
+      "family_ids": [
+        "activated_effect:deal-damage",
+        "effect_clause:deal-damage",
+        "target_or_choice:target-predicate"
+      ],
+      "capability_ids": [
+        "damage.amount.positive",
+        "damage.batch.fixed_set",
+        "damage.result.multitype_permanent",
+        "state_query.permanent.public_state_predicate",
+        "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution"
+      ],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:fixed-public-damage-predicates"
     },
     "forecast_corrections": [
       {
