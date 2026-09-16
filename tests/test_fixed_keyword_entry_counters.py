@@ -40,6 +40,7 @@ from quorune.entry_counter_model import (
 )
 from quorune.entry_counters import dynamic_entry_counter_amount
 from quorune.model import CardInstance, StackItem
+from quorune.object_predicate import ObjectQuerySpec
 from quorune.oracle_ir import compile_oracle_card, generated_programs
 from quorune.projection import StateProjector
 from quorune.record import (
@@ -766,7 +767,12 @@ class FixedKeywordEntryRuntimeTests(unittest.TestCase):
         )
 
     @staticmethod
-    def remove_all_abilities(engine, card: CardInstance) -> None:
+    def remove_all_abilities(
+        engine,
+        card: CardInstance,
+        *,
+        zones: tuple[str, ...] = (),
+    ) -> None:
         commit_continuous_effect(
             engine.state,
             ContinuousEffect(
@@ -778,6 +784,7 @@ class FixedKeywordEntryRuntimeTests(unittest.TestCase):
                 operations=(ContinuousOperation("remove_all_abilities"),),
                 origin=ContinuousEffectOrigin.RESOLUTION,
                 duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                applies=ObjectQuerySpec(zones=zones),
                 locked_objects=(
                     ContinuousObjectIdentity(
                         object_id=card.object_id,
@@ -1592,6 +1599,119 @@ class FixedKeywordEntryRuntimeTests(unittest.TestCase):
         )
         self.assertEqual("battlefield", removed.zone)
         self.assertNotIn("+1/+1", removed.counters)
+
+    def test_dynamic_entry_ignores_origin_only_ability_removal(self):
+        session = self.session(6140220)
+        engine = session.engine
+        entrant = self.add_card(
+            engine,
+            seat="A",
+            name="Dynamic Grave Count Entrant",
+            ref="dynamic-origin-only-removal",
+            zone="graveyard",
+        )
+        self.add_card(
+            engine,
+            seat="A",
+            name="Fixed Counter Entrant",
+            ref="dynamic-origin-only-companion",
+            zone="graveyard",
+        )
+        self.register_entry(engine, entrant)
+        self.remove_all_abilities(
+            engine,
+            entrant,
+            zones=("graveyard",),
+        )
+
+        engine.move_card(
+            entrant.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+
+        self.assertEqual("battlefield", entrant.zone)
+        self.assertEqual(2, entrant.counters.get("+1/+1"))
+
+    def test_dynamic_entry_obeys_prospective_battlefield_ability_removal(self):
+        session = self.session(6140221)
+        engine = session.engine
+        entrant = self.add_card(
+            engine,
+            seat="A",
+            name="Dynamic X Entrant",
+            ref="dynamic-battlefield-removal",
+            zone="stack",
+        )
+        self.register_entry(engine, entrant)
+        self.remove_all_abilities(
+            engine,
+            entrant,
+            zones=("battlefield",),
+        )
+
+        self.begin_entry(
+            session,
+            entrant,
+            x_value=3,
+            mana_spent_total=4,
+        )
+
+        self.assertEqual("battlefield", entrant.zone)
+        self.assertNotIn("+1/+1", entrant.counters)
+        self.assertEqual((), engine._effective_static_component_keys(entrant))
+
+    def test_permanent_spell_characteristic_change_carries_through_entry(self):
+        session = self.session(6140222)
+        engine = session.engine
+        entrant = self.add_card(
+            engine,
+            seat="A",
+            name="Dynamic X Entrant",
+            ref="dynamic-entry-type-change",
+            zone="stack",
+        )
+        self.register_entry(engine, entrant)
+        commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id="test:dynamic-entry-type-change",
+                source_id="test:dynamic-entry-type-change",
+                layer=Layer.TYPE,
+                sublayer="4",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(
+                    ContinuousOperation(
+                        "add_types",
+                        ["Artifact"],
+                        field="card_types",
+                    ),
+                ),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        object_id=entrant.object_id,
+                        logical_object_id=entrant.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+
+        self.begin_entry(
+            session,
+            entrant,
+            x_value=3,
+            mana_spent_total=4,
+        )
+
+        types, _subtypes, _supertypes = engine._type_parts(
+            str(engine._effective_card_data(entrant).get("type_line") or "")
+        )
+        self.assertEqual("battlefield", entrant.zone)
+        self.assertIn("artifact", types)
+        self.assertEqual(3, entrant.counters.get("+1/+1"))
 
     def test_dynamic_zero_and_stale_entry_leave_no_counter_mutation(self):
         zero_session = self.session(6140209)
