@@ -3220,7 +3220,7 @@
           "estimated_implementation_hours": 4,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Promotes a measured cross-context cohort of fifty-one complete cards while sharing one typed predicate projection between direct targets and fixed affected sets instead of adding card- or family-specific damage dispatch.",
+          "expected_downstream_closure": "Promotes a measured policy-floor cross-context cohort while sharing one typed predicate projection between direct targets and fixed affected sets instead of adding card- or family-specific damage dispatch.",
           "explicit_exclusions": [
             "additive or overlapping affected sets whose membership cannot be deduplicated before one damage event",
             "chosen, remembered, random, divided, variable, dynamic-characteristic, and history-derived damage amounts",
@@ -3491,7 +3491,8 @@
         "target.permanent.characteristic_predicate",
         "target.revalidate_resolution"
       ],
-      "expected_complete_card_gain": 51
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:fixed-public-damage-predicates"
     },
     "forecast_corrections": [
       {
