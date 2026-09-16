@@ -569,6 +569,7 @@ def build_activation_offer(
                 "life",
                 "energy",
                 "loyalty",
+                "remove_source_counter",
                 "sac_self",
                 "discard_self",
                 "exile_self",

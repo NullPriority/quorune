@@ -59,6 +59,10 @@ from ...cycling_abilities import (
 from ..action_proposals import ActivationProposal, thaw_json
 from .model import ActivationProposalError
 from .conditions import activation_condition_status
+from .counter_costs import (
+    commit_source_counter_removal_cost,
+    SourceCounterActivationCostError,
+)
 
 
 class ActivationCommitHost(Protocol):
@@ -448,6 +452,32 @@ def _pay_object_and_mana_costs(
     return paid_objects, activations, spent, special_cost_context
 
 
+def _commit_activation_resource_costs(
+    host: ActivationCommitHost,
+    proposal: ActivationProposal,
+    source: Any,
+    ability: ActivatedAbility,
+    response: Mapping[str, Any],
+    mana_option: ActivationManaCostOption | None,
+) -> None:
+    try:
+        commit_source_counter_removal_cost(host, source, ability)
+    except SourceCounterActivationCostError as exc:
+        raise ActivationProposalError(
+            str(exc),
+            status="unpayable",
+            reason="source_counter_cost_unpayable",
+        ) from exc
+    _commit_resource_costs(
+        host,
+        proposal,
+        source,
+        ability,
+        response,
+        mana_option,
+    )
+
+
 def _commit_source_cost(
     host: ActivationCommitHost,
     source: Any,
@@ -701,7 +731,7 @@ def commit_activation(
             host, proposal, source, ability, response
         )
     )
-    _commit_resource_costs(
+    _commit_activation_resource_costs(
         host,
         proposal,
         source,
@@ -781,6 +811,11 @@ def commit_activation(
                 mana_option.life_payment if mana_option is not None else 0
             ),
             "energy_paid": ability.energy_payment,
+            "source_counter_cost": (
+                None
+                if ability.source_counter_removal_cost is None
+                else ability.source_counter_removal_cost.to_dict()
+            ),
         },
         importance=2,
         changed_objects=[source.object_id, *paid_objects],

@@ -18,6 +18,7 @@ from .activation_condition_model import (
     ActivationConditionKind,
     activation_restriction_spec,
 )
+from .rules.activation_counter_cost import SourceCounterRemovalCost
 from .mana_restrictions import (
     legacy_mana_spend_restriction_for_tail,
     valid_mana_spend_restriction,
@@ -148,6 +149,7 @@ class FixedActivatedManaAbilitySpec:
     spend_restriction: str | None = None
     activation_limit: ActivationLimit | None = None
     activation_conditions: tuple[ActivationCondition, ...] = ()
+    source_counter_removal_cost: SourceCounterRemovalCost | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -229,6 +231,12 @@ class FixedActivatedManaAbilitySpec:
             raise FixedManaAbilityError(
                 "Fixed mana activation conditions must be typed predicates"
             )
+        if self.source_counter_removal_cost is not None and not isinstance(
+            self.source_counter_removal_cost, SourceCounterRemovalCost
+        ):
+            raise FixedManaAbilityError(
+                "Fixed mana source counter cost must be typed or null"
+            )
 
     def to_dict(self) -> dict[str, Any]:
         value = {
@@ -251,6 +259,10 @@ class FixedActivatedManaAbilitySpec:
             ]
         if self.spend_restriction is not None:
             value["spend_restriction"] = self.spend_restriction
+        if self.source_counter_removal_cost is not None:
+            value["source_counter_removal_cost"] = (
+                self.source_counter_removal_cost.to_dict()
+            )
         return value
 
     @classmethod
@@ -275,10 +287,13 @@ class FixedActivatedManaAbilitySpec:
             expected.add("activation_conditions")
         if "spend_restriction" in value:
             expected.add("spend_restriction")
+        if "source_counter_removal_cost" in value:
+            expected.add("source_counter_removal_cost")
         _exact_fields(value, expected, field="fixed mana ability")
         mana_cost = value["mana_cost"]
         modes = value["modes"]
         activation_conditions = value.get("activation_conditions", [])
+        raw_source_counter_cost = value.get("source_counter_removal_cost")
         if not isinstance(mana_cost, Mapping):
             raise FixedManaAbilityError("Fixed mana activation cost must be an object")
         if not isinstance(modes, list) or any(
@@ -291,6 +306,12 @@ class FixedActivatedManaAbilitySpec:
         ):
             raise FixedManaAbilityError(
                 "Fixed mana activation conditions must be an array"
+            )
+        if raw_source_counter_cost is not None and not isinstance(
+            raw_source_counter_cost, Mapping
+        ):
+            raise FixedManaAbilityError(
+                "Fixed mana source counter cost must be an object"
             )
         for field in ("ability_id", "oracle_line", "cost_text", "effect_text"):
             if not isinstance(value[field], str):
@@ -318,6 +339,13 @@ class FixedActivatedManaAbilitySpec:
             spend_restriction=value.get("spend_restriction"),
             activation_limit=value.get("activation_limit"),
             activation_conditions=conditions,
+            source_counter_removal_cost=(
+                None
+                if raw_source_counter_cost is None
+                else SourceCounterRemovalCost.from_dict(
+                    raw_source_counter_cost
+                )
+            ),
         )
 
     def to_activated_ability(self) -> Any:
@@ -339,6 +367,7 @@ class FixedActivatedManaAbilitySpec:
             mana_spend_restriction=self.spend_restriction,
             activation_limit=self.activation_limit,
             activation_conditions=self.activation_conditions,
+            source_counter_removal_cost=self.source_counter_removal_cost,
         )
 
 
@@ -521,6 +550,7 @@ def compile_fixed_activated_mana_ability(
         spend_restriction=restriction,
         activation_limit=ability.activation_limit,
         activation_conditions=tuple(ability.activation_conditions),
+        source_counter_removal_cost=ability.source_counter_removal_cost,
     )
 
 

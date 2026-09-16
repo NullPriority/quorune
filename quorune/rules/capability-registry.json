@@ -534,6 +534,33 @@
       "status": "trusted"
     },
     {
+      "id": "activation.source_counter_removal.fixed",
+      "version": 1,
+      "official_rules": ["118.3", "122.1", "602.2", "602.2b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and pay exactly one fixed positive named-counter removal cost from the activated ability's current battlefield source through the canonical exact counter-removal transaction.",
+        "inputs": ["one source-spanned activated ability", "one fixed positive counter amount and canonical counter name", "same physical battlefield source and logical incarnation", "current public source counter state", "authoritative activation transaction"],
+        "outputs": ["payable offer only when every required counter exists", "exact counter removal before stack placement or immediate mana production", "current source and ability revalidation", "transactional rollback", "public deterministic replay"],
+        "exclusions": ["zero, variable, all, any-number, among, optional, repeated, or chosen-kind counter removal", "counter movement or removal from another object or player", "nonbattlefield source counters", "multiple source counter-removal clauses", "granted counter-removal costs outside the current granted-ability schema", "cost modification, replacement, or prevention not already represented by the activation transaction"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.rules.activation_counter_cost.SourceCounterRemovalCost", "quorune.abilities._source_counter_removal_cost", "quorune.rules.activation.availability.activation_availability", "quorune.rules.activation.counter_costs.commit_source_counter_removal_cost", "quorune.counter_removal.plan_counter_removals", "quorune.counter_removal.commit_counter_removals"],
+      "positive_tests": ["test_fixed_source_counter_cost_compiler_runtime_contract", "test_source_counter_cost_activation_pays_before_resolution", "test_source_counter_cost_mana_ability_is_nonreversible"],
+      "negative_tests": ["test_open_and_non_source_counter_costs_remain_residual", "test_insufficient_and_stale_counter_costs_roll_back", "test_current_ability_removal_rejects_counter_cost_activation"],
+      "interaction_tests": ["test_source_counter_cost_activation_pays_before_resolution", "test_source_counter_cost_mana_ability_is_nonreversible"],
+      "multiplayer_tests": ["test_counter_cost_projection_is_public_and_seat_scoped"],
+      "privacy_tests": ["test_counter_cost_projection_is_public_and_seat_scoped"],
+      "replay_tests": ["test_source_counter_cost_activation_pays_before_resolution"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "test_source_counter_cost_capability_fails_closed blocks the fine-grained cost capability and proves the affected source-spanned activation remains material.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused parser and commit mutations remove the typed cost or bypass exact removal; compiler and paid-counter behavioral assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "activation.exhaust.once_per_object",
       "version": 1,
       "official_rules": ["400.7", "602.2", "602.5b", "702.177", "702.177a", "702.177b"],

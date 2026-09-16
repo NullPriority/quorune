@@ -221,6 +221,9 @@ _PROBE_FIXED_FACE_DOWN_LIFECYCLE = (
 _PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES = (
     "fixed-activation-zone-change-predicates-existing-owner-v2"
 )
+_PROBE_FIXED_SOURCE_COUNTER_ACTIVATION_COST = (
+    "fixed-source-counter-activation-cost-existing-owner-v1"
+)
 _PROBE_ORDINARY_SAGA_CHAPTER_PROGRAMS = (
     "ordinary-saga-chapter-programs-existing-owner-v1"
 )
@@ -434,6 +437,7 @@ _PROBE_IDS = {
     _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     _PROBE_ATTACHED_CHARACTERISTIC_CLOSURE,
     _PROBE_FIXED_ACTIVATION_ZONE_CHANGE_PREDICATES,
+    _PROBE_FIXED_SOURCE_COUNTER_ACTIVATION_COST,
     _PROBE_FIXED_ALL_DAMAGE_PREVENTION,
     _PROBE_FIXED_FACE_DOWN_LIFECYCLE,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
@@ -1134,6 +1138,25 @@ def _matches_probe(
             lowered.compiled_cost
             and len(lowered.choices) == 1
             and lowered.choices[0].fixed_zone_change_cost() is not None
+        )
+    if probe_id == _PROBE_FIXED_SOURCE_COUNTER_ACTIVATION_COST:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Fixed source-counter activation-cost measurement requires "
+                "card context"
+            )
+        source_name, _source_is_permanent, _attachment_relation = (
+            _source_face_context(card_record, ability)
+        )
+        parsed = parse_activated_abilities(
+            card_name=source_name,
+            oracle_text=source,
+            keywords=getattr(card_record, "keywords", ()),
+        )
+        return bool(
+            len(parsed) == 1
+            and parsed[0].compiled_cost
+            and parsed[0].source_counter_removal_cost is not None
         )
     if probe_id == _PROBE_TOKEN:
         return any(

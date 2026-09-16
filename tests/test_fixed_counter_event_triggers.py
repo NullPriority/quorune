@@ -1923,7 +1923,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             capability_registry=self.capabilities,
             capability_profile="commander_review",
         )
-        self.assertEqual("partial", compiled.status)
+        self.assertEqual("exact", compiled.status)
         templates = {
             node.template_id: node
             for face in compiled.faces
@@ -1937,8 +1937,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertEqual(1, len(trigger_nodes))
         self.assertTrue(trigger_nodes[0].exact)
         prevention = templates["damage-prevention-all-combat-v1"]
-        self.assertFalse(prevention.lowerable)
-        self.assertFalse(prevention.exact)
+        self.assertTrue(prevention.lowerable)
+        self.assertTrue(prevention.exact)
         self.assertEqual(
             "create_damage_prevention_shield",
             prevention.effects[0]["op"],
@@ -1947,18 +1947,17 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "damage.prevention.persistent_amount",
             prevention.capability_dependencies,
         )
+        self.assertIn(
+            "activation.source_counter_removal.fixed",
+            prevention.capability_dependencies,
+        )
         self.assertFalse(
             any(
                 "Prevent all combat damage" in residual.text
                 for residual in compiled.material_residuals
             )
         )
-        self.assertTrue(
-            any(
-                residual.kind == "cost"
-                for residual in compiled.material_residuals
-            )
-        )
+        self.assertFalse(compiled.material_residuals)
 
     def test_adjacent_event_and_effect_variants_remain_material(self):
         variants = (

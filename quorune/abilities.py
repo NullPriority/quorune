@@ -16,6 +16,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .activation_usage import ActivationLimit
 from .activation_mana_cost import ActivationManaCostOption
+from .rules.activation_counter_cost import SourceCounterRemovalCost
 from .activation_condition_model import (
     ActivationCondition,
     ActivationConditionKind,
@@ -32,7 +33,10 @@ from .mana_restrictions import (
     valid_mana_spend_restriction,
 )
 from .rules.attachment_actions import fixed_equip_ability_spec
-from .rules.source_references import SourceReferenceSpec
+from .rules.source_references import (
+    SourceReferenceSpec,
+    source_self_permanent_type,
+)
 from .util import mana_cost_to_vector, normalize_mana_bundle, parse_mana_symbols
 
 _ACTIVATE_ONLY_SORCERY = re.compile(
@@ -41,6 +45,12 @@ _ACTIVATE_ONLY_SORCERY = re.compile(
 _PAY_LIFE = re.compile(r"^pay\s+(\d+)\s+life$", re.IGNORECASE)
 _PAY_ENERGY = re.compile(
     r"^pay\s+(?P<count>\d+|one|two|three|four|five|six|seven|eight|nine|ten)$",
+    re.IGNORECASE,
+)
+_REMOVE_SOURCE_COUNTER = re.compile(
+    r"^remove\s+(?P<count>a|an|one|two|three|four|five|six|seven|eight|"
+    r"nine|ten|[1-9][0-9]*)\s+(?P<counter>[A-Za-z0-9+/-]+)\s+"
+    r"counters?\s+from\s+(?P<source>.+)$",
     re.IGNORECASE,
 )
 _SACRIFICE_CHOICE = re.compile(
@@ -258,6 +268,7 @@ class ActivatedAbility:
     life_payment: int = 0
     energy_payment: int = 0
     loyalty_delta: int | None = None
+    source_counter_removal_cost: SourceCounterRemovalCost | None = None
     choices: tuple[CostChoice, ...] = ()
     uncompiled_costs: tuple[str, ...] = ()
     mana_ability: bool = False
@@ -337,6 +348,10 @@ class ActivatedAbility:
             result["mana_cost_options"] = [
                 option.to_dict() for option in self.mana_cost_options
             ]
+        if self.source_counter_removal_cost is not None:
+            result["source_counter_removal_cost"] = (
+                self.source_counter_removal_cost.to_dict()
+            )
         return result
 
     @classmethod
@@ -363,6 +378,13 @@ class ActivatedAbility:
             life_payment=value["life_payment"],
             energy_payment=value["energy_payment"],
             loyalty_delta=value["loyalty_delta"],
+            source_counter_removal_cost=(
+                None
+                if value.get("source_counter_removal_cost") is None
+                else SourceCounterRemovalCost.from_dict(
+                    value["source_counter_removal_cost"]
+                )
+            ),
             choices=tuple(
                 CostChoice.from_dict(choice) for choice in value["choices"]
             ),
@@ -432,6 +454,10 @@ class ActivatedAbility:
             result["energy"] = self.energy_payment
         if self.loyalty_delta is not None:
             result["loyalty"] = self.loyalty_delta
+        if self.source_counter_removal_cost is not None:
+            result["remove_source_counter"] = (
+                self.source_counter_removal_cost.to_dict()
+            )
         if self.choices:
             result["choose_cost"] = [choice.compact() for choice in self.choices]
         if not self.compiled_cost:
@@ -595,6 +621,12 @@ def _normalize_and_validate_ability_descriptors(
             )
         except (TypeError, ValueError) as exc:
             raise ValueError("activation_limit is unsupported") from exc
+    if ability.source_counter_removal_cost is not None and not isinstance(
+        ability.source_counter_removal_cost, SourceCounterRemovalCost
+    ):
+        raise ValueError(
+            "source_counter_removal_cost must be a typed cost or null"
+        )
 
 
 def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:
@@ -931,6 +963,7 @@ class _ParsedCost:
     life_payment: int
     energy_payment: int
     loyalty_delta: int | None
+    source_counter_removal_cost: SourceCounterRemovalCost | None
     choices: tuple[CostChoice, ...]
     uncompiled: tuple[str, ...]
 
@@ -942,6 +975,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     life_payment = 0
     energy_payment = 0
     loyalty_delta: int | None = None
+    source_counter_removal_cost: SourceCounterRemovalCost | None = None
     loyalty_clauses = 0
     choices: list[CostChoice] = []
     uncompiled: list[str] = []
@@ -1009,6 +1043,16 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
             energy_payment += _number(energy_match.group("count"))
             complex_symbols = [value for value in complex_symbols if value != "E"]
             continue
+        counter_cost = _source_counter_removal_cost(
+            residue,
+            card_name=card_name,
+        )
+        if counter_cost is not None:
+            if source_counter_removal_cost is None:
+                source_counter_removal_cost = counter_cost
+            else:
+                uncompiled.append(residue)
+            continue
         choice = _cost_choice(lower)
         if choice is not None:
             choices.append(choice)
@@ -1025,8 +1069,31 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         life_payment=life_payment,
         energy_payment=energy_payment,
         loyalty_delta=loyalty_delta,
+        source_counter_removal_cost=source_counter_removal_cost,
         choices=tuple(choices),
         uncompiled=tuple(uncompiled),
+    )
+
+
+def _source_counter_removal_cost(
+    clause: str,
+    *,
+    card_name: str,
+) -> SourceCounterRemovalCost | None:
+    match = _REMOVE_SOURCE_COUNTER.fullmatch(clause.strip().strip(" ."))
+    if match is None:
+        return None
+    source = match.group("source").strip(" .")
+    if (
+        source_self_permanent_type(source) is None
+        and not SourceReferenceSpec(card_name).matches(source)
+    ):
+        return None
+    raw_count = match.group("count").casefold()
+    amount = int(raw_count) if raw_count.isdigit() else _NUMBER_WORDS[raw_count]
+    return SourceCounterRemovalCost(
+        counter_name=match.group("counter"),
+        amount=amount,
     )
 
 
@@ -1415,6 +1482,7 @@ def _parse_activated_line(
             life_payment=cost.life_payment,
             energy_payment=cost.energy_payment,
             loyalty_delta=cost.loyalty_delta,
+            source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,
             uncompiled_costs=cost.uncompiled,
             mana_ability=mana_ability,

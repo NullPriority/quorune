@@ -13,6 +13,7 @@ import re
 from typing import Any, Mapping
 
 from .activation_usage import ActivationLimit
+from .rules.activation_counter_cost import SourceCounterRemovalCost
 from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import FrozenMap, thaw_value
 
@@ -121,6 +122,7 @@ class ColorSetActivatedManaAbilitySpec:
     selection: ColorSetSelection
     query: ObjectQuerySpec
     activation_limit: ActivationLimit | None = None
+    source_counter_removal_cost: SourceCounterRemovalCost | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -199,6 +201,12 @@ class ColorSetActivatedManaAbilitySpec:
                 raise ColorSetManaAbilityError(
                     "Color-set mana activation limit is unsupported"
                 ) from exc
+        if self.source_counter_removal_cost is not None and not isinstance(
+            self.source_counter_removal_cost, SourceCounterRemovalCost
+        ):
+            raise ColorSetManaAbilityError(
+                "Color-set mana source counter cost must be typed or null"
+            )
         self._validate_query()
 
     def _validate_query(self) -> None:
@@ -272,6 +280,10 @@ class ColorSetActivatedManaAbilitySpec:
         }
         if self.activation_limit is not None:
             value["activation_limit"] = self.activation_limit.value
+        if self.source_counter_removal_cost is not None:
+            value["source_counter_removal_cost"] = (
+                self.source_counter_removal_cost.to_dict()
+            )
         return value
 
     @classmethod
@@ -294,9 +306,12 @@ class ColorSetActivatedManaAbilitySpec:
         }
         if "activation_limit" in value:
             expected.add("activation_limit")
+        if "source_counter_removal_cost" in value:
+            expected.add("source_counter_removal_cost")
         _exact_fields(value, expected, field="color-set mana ability")
         mana_cost = value["mana_cost"]
         query = value["query"]
+        raw_source_counter_cost = value.get("source_counter_removal_cost")
         if not isinstance(mana_cost, Mapping):
             raise ColorSetManaAbilityError(
                 "Color-set mana activation cost must be an object"
@@ -304,6 +319,12 @@ class ColorSetActivatedManaAbilitySpec:
         if not isinstance(query, Mapping):
             raise ColorSetManaAbilityError(
                 "Color-set mana query must be an object"
+            )
+        if raw_source_counter_cost is not None and not isinstance(
+            raw_source_counter_cost, Mapping
+        ):
+            raise ColorSetManaAbilityError(
+                "Color-set mana source counter cost must be an object"
             )
         for field in ("ability_id", "oracle_line", "cost_text", "effect_text"):
             if not isinstance(value[field], str):
@@ -324,6 +345,13 @@ class ColorSetActivatedManaAbilitySpec:
             selection=value["selection"],
             query=ObjectQuerySpec.from_dict(query),
             activation_limit=value.get("activation_limit"),
+            source_counter_removal_cost=(
+                None
+                if raw_source_counter_cost is None
+                else SourceCounterRemovalCost.from_dict(
+                    raw_source_counter_cost
+                )
+            ),
         )
 
     def to_activated_ability(self) -> Any:
@@ -343,6 +371,7 @@ class ColorSetActivatedManaAbilitySpec:
             mana_ability=True,
             color_set_mana_output=self,
             activation_limit=self.activation_limit,
+            source_counter_removal_cost=self.source_counter_removal_cost,
         )
 
 
@@ -434,6 +463,7 @@ def compile_color_set_activated_mana_ability(
         selection=selection,
         query=query,
         activation_limit=ability.activation_limit,
+        source_counter_removal_cost=ability.source_counter_removal_cost,
     )
 
 

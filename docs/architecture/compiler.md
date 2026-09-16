@@ -221,7 +221,8 @@ transaction, including fixed mana, tap or untap, source sacrifice, life
 payment, selected public objects, and the represented restricted-mana profile.
 Multiple quotes, quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
-material residuals.
+material residuals. Granted fixed source-counter removal costs also remain
+residual until the granted-ability fragment schema can carry that typed cost.
 
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line

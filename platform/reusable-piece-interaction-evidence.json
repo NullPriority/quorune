@@ -6921,6 +6921,15 @@
       "capability_ids": ["mana.activated.restricted_fixed_output"],
       "interaction_order": 2,
       "assertion": "The exact restricted-mana activation cannot bypass unresolved self-entry replacement ordering; runtime admission rejects the incomplete generic fixture before authoritative mutation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_equip_and_resolved_declaration_rule_share_one_activation_catalog",
+      "piece_ids": ["capability.attachment.equip.fixed_mana", "capability.continuous.resolution.declaration_rules_until_end_of_turn"],
+      "capability_ids": ["attachment.equip.fixed_mana", "continuous.resolution.declaration_rules_until_end_of_turn"],
+      "interaction_order": 2,
+      "assertion": "One generic Equipment attaches through its fixed-mana Equip action, then a sibling source-counter activation creates an identity-locked declaration rule without disturbing the attachment; exact replay preserves both results."
     }
   ]
 }

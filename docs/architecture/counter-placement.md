@@ -717,6 +717,8 @@ The following producers and wordings remain deliberately outside this slice:
 - negative loyalty counter-removal costs and player-counter removal;
 - optional, variable, alternate, compound, multiple, noncreature, and
   non-counter casting costs outside the bounded fixed creature-counter family;
+- activated-ability counter-removal costs outside one fixed positive named
+  counter removed from the current battlefield source;
 - cumulative-upkeep forms outside the fixed positive ordinary-mana and fixed
   positive life families;
 - Support X or zero and conditional, optional, repeated, copied, granted,
@@ -736,7 +738,8 @@ The following producers and wordings remain deliberately outside this slice:
   the represented prospective-token boundary;
 - unsupported Battle subtype protector procedures and unrepresented
   copy-layer, face-down, or dynamic entry-characteristic interactions;
-- counter-removal costs, counter movement, player-counter removal,
+- counter-removal costs outside the fixed source activation family, counter
+  movement, player-counter removal,
   unrepresented rule-generated removals, and effect variants outside the
   mandatory fixed named and direct all-counter permanent families, including
   card-specific continuation paths such as Demonic Junker.

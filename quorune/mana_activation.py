@@ -160,6 +160,7 @@ def complete_mana_activation(
                 ability.life_payment,
                 ability.energy_payment,
                 ability.loyalty_delta is not None,
+                ability.source_counter_removal_cost is not None,
                 paid_objects,
                 payment_activations,
                 restriction,

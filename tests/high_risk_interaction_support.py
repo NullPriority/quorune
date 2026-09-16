@@ -588,6 +588,19 @@ _WITNESSES = {
         "gains flying until end of turn.",
         "{2}",
     ),
+    "counter-cost-prevention-boundary": _Witness(
+        "Generic Counter Cost Prevention Boundary",
+        "Artifact Creature — Construct",
+        "This creature enters with seven dream counters on it.\n"
+        "Remove any number of dream counters from Generic Counter Cost "
+        "Prevention Boundary: Add {C} for each counter removed this way.\n"
+        "Remove a dream counter from Generic Counter Cost Prevention Boundary: "
+        "Prevent the next 1 damage that would be dealt to Generic Counter Cost "
+        "Prevention Boundary this turn.",
+        "{4}",
+        power="4",
+        toughness="4",
+    ),
     "rasputin": _Witness(
         "Rasputin Dreamweaver",
         "Legendary Creature — Human Wizard",
@@ -1514,7 +1527,7 @@ _bind("madness-target-predicate", MADNESS_AND_CHOICE_PAIRS[4])
 _bind("descend-upon-the-sinful", PUBLIC_SET_AND_CHOICE_PAIRS[0])
 _bind("gideon-champion-of-justice", PUBLIC_SET_AND_CHOICE_PAIRS[1])
 _bind(
-    "rasputin",
+    "counter-cost-prevention-boundary",
     COST_AND_REPLACEMENT_PAIRS[0],
     COST_AND_REPLACEMENT_PAIRS[4],
 )

@@ -293,6 +293,7 @@ def _ability_offers(
                     or ability.discard_source
                     or ability.sacrifice_source
                     or ability.exile_source
+                    or ability.source_counter_removal_cost is not None
                     or ability.uncompiled_costs
                 )
                 if not ordinary_mana:
