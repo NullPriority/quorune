@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "08328af176292302fc61615e29423bc1fbd75506ae254354a3fe8b0a25f3de73",
-  "declaration_source_fingerprint": "f82f97ffe9858dd006ac5cb39f74ad357d290095232c18ecae785c73587b192f",
+  "registry_fingerprint": "3648ed4852298ab305ea7654ff3c483c0efbda99b8e907080c52b59e3a2936ae",
+  "declaration_source_fingerprint": "aefd1cc4318a8e8bb6e9889dfe9c1563f29bcd8d6e48b4dfb2e0b18a3ab92c81",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -35553,6 +35553,24 @@
     },
     {
       "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mass_damage.FixedMassDamageInteractionTests.test_public_predicate_set_excludes_source_and_negative_keyword",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude the source logical object and a permanent with the forbidden current keyword before committing the remaining recipient through the canonical damage transaction."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_mass_damage.FixedMassDamageRuntimeTests.test_compiled_mass_damage_resolves_one_canonical_batch",
       "official_rule_ids": [
@@ -35621,7 +35639,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Leave negative predicates, subtype qualifiers, variable amounts, divided damage, and linked riders as precise material residuals."
+      "applicability_note": "Leave dynamic quantities, divided selection, damage-history predicates, and linked riders as precise material residuals."
     },
     {
       "capability_id": "damage.batch.fixed_set",
@@ -35640,6 +35658,42 @@
         "commander_review"
       ],
       "applicability_note": "Materialize one immutable, canonical, APNAP-ordered and identity-deduplicated public recipient set from typed effective-characteristic queries."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mass_damage.FixedDamageSetModelTests.test_source_exclusion_is_typed_backward_compatible_and_applied",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Round-trip the versioned source-exclusion flag without changing legacy serialized groups, then omit the source and a forbidden-keyword permanent from the snapshot."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mass_damage.FixedMassDamageCompilerTests.test_closed_mass_damage_grammar_lowers_typed_queries_and_spans",
+      "official_rule_ids": [
+        "120.1",
+        "120.2",
+        "120.4",
+        "608.2c",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower represented type, subtype, keyword-presence, keyword-absence, controller, tap, combat-state, and source-exclusion recipients to the shared typed affected set."
     },
     {
       "capability_id": "damage.batch.fixed_set",
@@ -52947,6 +53001,31 @@
     {
       "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_public_damage_predicates_share_the_direct_target_owner",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower represented color, damageable-type, absent-keyword, combatant-subtype, and source-relative blocking recipients through the shared direct-target descriptor."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_shared_characteristic_grammar_covers_the_bounded_shapes",
       "official_rule_ids": [
         "105.2",
@@ -63493,5 +63572,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "2b40caeef547f8e9a26b84a72a91f7844d69fecd9d2700a0afad170c5529c7d6"
+  "fingerprint": "78c805940c024d82bce9837084d9d47d6fa1254ffc066c9854704df31b25a31c"
 }

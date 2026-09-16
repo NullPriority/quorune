@@ -6142,6 +6142,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/damage_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/delayed_draw_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -9395,5 +9409,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "090c73f8f250cb8f7bc6a245a63e846b41940282f8d4dcc6752f6f2a70da2169"
+  "fingerprint": "ffe243935897725f97218a6578aa2f0969e2ffa0901c95c8a0b0e1f0397892e2"
 }

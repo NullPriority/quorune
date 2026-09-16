@@ -123,6 +123,68 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
             "attacking_or_blocking", template.target_schema["combat_state"]
         )
 
+    def test_public_damage_predicates_share_the_direct_target_owner(self):
+        cases = (
+            (
+                "target white or blue creature",
+                {"colors_any": ["U", "W"], "types_any": ["creature"]},
+            ),
+            (
+                "target creature or planeswalker that's white or blue",
+                {
+                    "colors_any": ["U", "W"],
+                    "types_any": ["creature", "planeswalker"],
+                },
+            ),
+            (
+                "target creature without flying that's attacking you",
+                {
+                    "types_all": ["creature"],
+                    "keywords_none": ["flying"],
+                    "combat_state": "attacking_actor",
+                },
+            ),
+            (
+                "target attacking or blocking Spirit",
+                {
+                    "subtypes_any": ["spirit"],
+                    "combat_state": "attacking_or_blocking",
+                },
+            ),
+            (
+                "target creature blocking it",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "blocking_source",
+                },
+            ),
+            (
+                "target creature it's blocking",
+                {
+                    "types_any": ["creature"],
+                    "combat_state": "blocked_by_source",
+                },
+            ),
+        )
+        for recipient, expected in cases:
+            with self.subTest(recipient=recipient):
+                template = fixed_damage_effect_template(
+                    f"Fixture deals 3 damage to {recipient}.",
+                    card_name="Fixture",
+                )
+                self.assertIsInstance(template, FixedDamageEffectTemplate)
+                assert isinstance(template, FixedDamageEffectTemplate)
+                for key, value in expected.items():
+                    self.assertEqual(value, template.target_schema[key])
+
+        aura = fixed_damage_effect_template(
+            "This Aura deals 2 damage to any target.",
+            card_name="Damage Aura",
+        )
+        self.assertIsInstance(aura, FixedDamageEffectTemplate)
+        assert isinstance(aura, FixedDamageEffectTemplate)
+        self.assertEqual("aura", aura.source_kind)
+
     def test_source_pronoun_has_one_closed_contextual_parser(self):
         template = source_pronoun_damage_effect_template(
             "It deals 2 damage to any target."

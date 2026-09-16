@@ -5935,12 +5935,12 @@
     },
     {
       "id": "state_query.permanent.public_state_predicate",
-      "version": 4,
+      "version": 5,
       "official_rules": ["110.5", "115.1", "115.2", "115.6", "122.1", "122.1a", "122.6", "506.4", "508.1", "509.1", "608.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Evaluate one immutable shared public battlefield query for direct targets, live characteristic applicability, resolution-locked sets, untap participation, and cycle-safe fixed public condition quantities from current effective characteristics and authoritative public state.",
-        "inputs": ["one public battlefield permanent", "current effective type, subtype, supertype, color, token, and positive ability characteristics", "canonical current counter map", "positive battlefield-entry turn sequence", "current game turn sequence", "current authoritative attacking, blocking, enchanted, equipped, and modified relationships", "one immutable typed public query"],
+        "inputs": ["one public battlefield permanent", "current effective type, subtype, supertype, color, token, and positive ability characteristics", "canonical current counter map", "positive battlefield-entry turn sequence", "current game turn sequence", "current authoritative attacking, blocking, enchanted, equipped, and modified relationships", "current attacking player and source-relative blocking relationship", "one immutable typed public query"],
         "outputs": ["deterministic target offer and command verdict", "resolution-time target revalidation", "deterministic live or locked affected-set membership", "cycle-safe layer-5 controller or opponent quantity including public tap, attachment, counter, and modified state", "generic same-layer dependency ordering for positive ability presence", "deterministic untap participation", "exact replay"],
         "exclusions": ["hidden-zone state", "arbitrary Oracle-text predicates", "generic counter-presence without a named counter", "negative or absent ability predicates", "counter quantities other than a fixed positive minimum", "entered-before or left-this-turn history", "combat history or aggregate combat groups", "attachment-relative identity, damage, or controller-history predicates", "dynamic numeric characteristics and counts"]
       },
@@ -5962,18 +5962,18 @@
     },
     {
       "id": "target.permanent.characteristic_predicate",
-      "version": 5,
+      "version": 6,
       "official_rules": ["105.2", "115.1", "115.2", "115.6", "202.3", "205.3", "205.3g", "205.3m", "608.2b", "613.1d", "613.1f", "702.9"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, keywords, power, toughness, token status, fixed mana-value bound, controller relation, and source exclusion identically at offer, command-validation, and resolution time.",
+        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, present or absent keywords, power, toughness, token status, fixed mana-value bound, controller relation, source exclusion, and represented combat relation identically at offer, command-validation, and resolution time.",
         "inputs": ["one public battlefield permanent", "canonical effective card types, subtypes, supertypes, colors, mana value, power, and toughness", "canonical effective keyword set", "current token status", "acting controller", "stable source identity", "one immutable typed direct-target descriptor"],
         "outputs": ["deterministic public legal-target set", "submitted-command verdict", "resolution-time CR 608.2b revalidation", "exact replay"],
         "exclusions": ["hidden-zone targets", "arbitrary Oracle-text predicates", "modified, attachment-state, nontoken, name, variable, greatest, source-relative, or owner predicates", "numeric predicates over noncreatures, scoped disjunctions, variable values, and comparisons other than fixed at-least or at-most power, toughness, either value, or their total", "combined mana-value and public-state predicates", "chosen, relative, or variable colors", "scoped disjunctions whose qualifiers do not apply to every alternative", "dynamic or relative type and subtype predicates outside the represented current effective characteristic boundary", "generic unnamed counter presence", "ability-presence predicates outside the shared layer-6 ability applicability query", "noncreature subtypes other than Forest, Gate, and Vehicle", "target-changing effects"]
       },
       "dependencies": ["target.revalidate_resolution"],
       "implementation_components": ["quorune.compiler.direct_target.DirectPermanentTargetSpec", "quorune.compiler.direct_target.direct_permanent_target_spec", "quorune.target_numeric.TargetNumericCharacteristicSpec", "quorune.targets.TargetGroup", "quorune.target_characteristics.TargetCharacteristicSnapshot", "quorune.object_query.exact_numeric_characteristic", "quorune.engine.CommanderEngine._target_row_matches"],
-      "positive_tests": ["test_closed_direct_target_grammar_compiles_typed_predicates", "test_compound_target_sequence_harvests_enchantment_creature", "test_public_state_direct_targets_compile_typed_predicates", "test_fixed_mana_value_targets_compile_across_effect_contexts", "test_fixed_power_toughness_targets_compile_across_effect_contexts", "test_shared_characteristic_grammar_covers_the_bounded_shapes", "test_shared_grammar_compiles_across_effect_owners_and_contexts"],
+      "positive_tests": ["test_closed_direct_target_grammar_compiles_typed_predicates", "test_compound_target_sequence_harvests_enchantment_creature", "test_public_state_direct_targets_compile_typed_predicates", "test_fixed_mana_value_targets_compile_across_effect_contexts", "test_fixed_power_toughness_targets_compile_across_effect_contexts", "test_shared_characteristic_grammar_covers_the_bounded_shapes", "test_shared_grammar_compiles_across_effect_owners_and_contexts", "test_public_damage_predicates_share_the_direct_target_owner"],
       "negative_tests": ["test_unsupported_and_malformed_direct_target_predicates_fail_closed", "test_mana_value_target_model_roundtrips_and_rejects_competing_bounds", "test_numeric_target_model_roundtrips_and_rejects_open_forms", "test_scoped_dynamic_and_ability_presence_predicates_fail_closed"],
       "interaction_tests": ["test_current_effective_characteristics_govern_offer_command_and_resolution", "test_public_state_targets_share_offer_command_and_resolution_revalidation", "test_furnace_skullbomb_target_predicate_and_draw_compose", "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target", "test_current_copy_derived_mana_value_governs_offer_command_and_resolution", "test_current_effective_color_count_governs_offer_command_and_resolution", "test_current_power_toughness_governs_offer_command_and_resolution"],
       "multiplayer_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay"],
@@ -6178,20 +6178,20 @@
     },
     {
       "id": "damage.batch.fixed_set",
-      "version": 1,
+      "version": 2,
       "official_rules": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Snapshot a closed public player/permanent recipient set and commit one positive amount to every current recipient as one canonical simultaneous damage batch.",
-        "inputs": ["positive fixed damage amount", "typed ordered recipient groups", "effective public battlefield characteristics", "current APNAP player order"],
+        "summary": "Snapshot a closed public player/permanent recipient set, including controller, characteristic, combat-state, and source-exclusion predicates, then commit one positive amount to every current recipient as one canonical simultaneous damage batch.",
+        "inputs": ["positive fixed damage amount", "typed ordered recipient groups", "effective public battlefield characteristics and state", "optional source logical reference", "optional targeted player's controller scope", "current APNAP player order"],
         "outputs": ["immutable deduplicated affected-set snapshot", "one canonical replacement-aware damage batch", "stable per-recipient event identities"],
-        "exclusions": ["variable or divided amounts", "negative keyword or subtype predicates", "multiple independent damage instructions", "linked life, draw, scry, or conditional riders", "unpreventable wording"]
+        "exclusions": ["variable or divided amounts", "chosen, linked-result, history-derived, and dynamic-characteristic predicates", "additive affected groups that cannot be identity-deduplicated", "multiple independent damage instructions", "linked life, draw, scry, or conditional riders", "unpreventable wording"]
       },
       "dependencies": ["damage.amount.positive"],
-      "implementation_components": ["quorune.fixed_damage_set_model.FixedDamageSetSpec", "quorune.fixed_damage_set.snapshot_fixed_damage_set", "quorune.fixed_damage_set.resolve_fixed_damage_set", "quorune.semantic_runtime.fixed_damage_set_handlers.FixedDamageSetHandler"],
-      "positive_tests": ["test_fixed_set_snapshot_is_immutable_canonical_and_deduplicated", "test_compiled_mass_damage_resolves_one_canonical_batch"],
+      "implementation_components": ["quorune.fixed_damage_set_model.FixedDamageSetSpec", "quorune.fixed_damage_set.snapshot_fixed_damage_set", "quorune.fixed_damage_set.resolve_fixed_damage_set", "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities", "quorune.semantic_runtime.fixed_damage_set_handlers.FixedDamageSetHandler"],
+      "positive_tests": ["test_fixed_set_snapshot_is_immutable_canonical_and_deduplicated", "test_source_exclusion_is_typed_backward_compatible_and_applied", "test_closed_mass_damage_grammar_lowers_typed_queries_and_spans", "test_compiled_mass_damage_resolves_one_canonical_batch"],
       "negative_tests": ["test_fixed_set_handler_rejects_malformed_or_unrepresented_groups", "test_unsupported_mass_damage_wording_remains_residual"],
-      "interaction_tests": ["test_fixed_set_damage_uses_effective_types_and_replacement_order"],
+      "interaction_tests": ["test_fixed_set_damage_uses_effective_types_and_replacement_order", "test_public_predicate_set_excludes_source_and_negative_keyword"],
       "multiplayer_tests": ["test_compiled_mass_damage_resolves_one_canonical_batch"],
       "privacy_tests": ["test_fixed_set_damage_projects_no_hidden_zone_cards"],
       "replay_tests": ["test_compiled_mass_damage_replays_exactly"],

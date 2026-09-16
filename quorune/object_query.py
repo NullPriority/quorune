@@ -197,6 +197,7 @@ def object_matches_query(
             or len(colors) >= spec.minimum_color_count
         )
         and set(spec.keywords_all).issubset(row.keywords)
+        and set(spec.keywords_none).isdisjoint(row.keywords)
         and (spec.token is None or row.token is spec.token)
         and (spec.tapped is None or row.tapped is spec.tapped)
         and (spec.include_phased_out or not row.phased_out)

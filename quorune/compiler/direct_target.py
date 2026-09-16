@@ -56,7 +56,14 @@ _DIRECT_COLOR_WORDS = {
 }
 _OUTLAW_SUBTYPES = ("assassin", "mercenary", "pirate", "rogue", "warlock")
 _DIRECT_COMBAT_STATES = frozenset(
-    {"attacking", "blocking", "attacking_or_blocking"}
+    {
+        "attacking",
+        "blocking",
+        "attacking_or_blocking",
+        "attacking_actor",
+        "blocking_source",
+        "blocked_by_source",
+    }
 )
 
 
@@ -255,6 +262,19 @@ def _strip_damage_history_predicate(
     return phrase, None
 
 
+def _strip_relative_combat_state(
+    phrase: str,
+) -> tuple[str, str | None]:
+    for suffix, combat_state in (
+        (" that's attacking you", "attacking_actor"),
+        (" blocking it", "blocking_source"),
+        (" it's blocking", "blocked_by_source"),
+    ):
+        if phrase.endswith(suffix):
+            return phrase[: -len(suffix)], combat_state
+    return phrase, None
+
+
 def _split_direct_or_terms(value: str) -> tuple[str, ...]:
     return tuple(
         term.strip()
@@ -294,6 +314,11 @@ def _closed_direct_characteristic_fields(
         return {
             "types_any": ("artifact", "enchantment"),
             "types_none": ("creature",),
+        }
+    if phrase == "creature or planeswalker that's white or blue":
+        return {
+            "types_any": ("creature", "planeswalker"),
+            "colors_any": ("W", "U"),
         }
     if phrase == "multicolored creature or multicolored enchantment":
         return {
@@ -507,7 +532,7 @@ def _validate_direct_subtype_predicates(
     if spec.subtypes_any:
         if (
             spec.types_any
-            or spec.types_all
+            or spec.types_all not in {(), ("creature",)}
             or spec.types_none
             or len(spec.subtypes_any) > 8
         ):
@@ -633,6 +658,7 @@ def _validate_direct_target_flags(
                 ("creature",),
                 ("artifact", "creature"),
             }
+            or bool(spec.subtypes_any)
         )
         or spec.state_predicate is not None
     ):
@@ -1005,6 +1031,7 @@ def direct_permanent_target_spec(
         phrase
     )
     phrase, damage_history = _strip_damage_history_predicate(phrase)
+    phrase, suffix_combat_state = _strip_relative_combat_state(phrase)
     state_predicate: PermanentStatePredicateSpec | None = None
     phrase, mana_value_fields = _strip_mana_value_predicate(phrase)
     counter_state = re.fullmatch(
@@ -1053,6 +1080,8 @@ def direct_permanent_target_spec(
         "damage_history": damage_history,
         **mana_value_fields,
     }
+    if suffix_combat_state is not None:
+        kwargs["combat_state"] = suffix_combat_state
     if (
         counter_state is not None
         and counter_state.group("counter") == "counter"
@@ -1065,7 +1094,7 @@ def direct_permanent_target_spec(
         ("blocking ", "blocking"),
     ):
         if phrase.startswith(prefix):
-            if state_predicate is not None:
+            if state_predicate is not None or suffix_combat_state is not None:
                 return None
             phrase = phrase[len(prefix) :]
             kwargs["combat_state"] = combat_state
@@ -1128,6 +1157,8 @@ def direct_permanent_target_spec(
                 return None
             subtypes.append(subtype or value)
         kwargs["subtypes_any"] = tuple(subtypes)
+        if explicit_creature:
+            kwargs["types_all"] = ("creature",)
     try:
         return DirectPermanentTargetSpec(**kwargs)
     except ValueError:

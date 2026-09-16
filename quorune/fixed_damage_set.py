@@ -139,6 +139,7 @@ def snapshot_fixed_damage_set(
     *,
     actor: str,
     spec: FixedDamageSetSpec,
+    source_ref: str | None = None,
 ) -> FixedDamageSetSnapshot:
     """Materialize one immutable simultaneous recipient set from public facts."""
 
@@ -190,10 +191,12 @@ def snapshot_fixed_damage_set(
                     query=group.query,
                     controller_relation=group.controller_relation,
                     target_controller=group.target_controller,
+                    exclude_source=group.exclude_source,
                 ),
                 actor=actor,
                 active_seats=active,
                 apnap_order=order,
+                source_ref=source_ref,
             )
         except AffectedPermanentSetError as exc:
             raise FixedDamageSetError(str(exc)) from exc
@@ -241,7 +244,12 @@ def resolve_fixed_damage_set(
         raise FixedDamageSetError(
             "Fixed damage set amount must be a positive integer"
         )
-    snapshot = snapshot_fixed_damage_set(host, actor=actor, spec=spec)
+    snapshot = snapshot_fixed_damage_set(
+        host,
+        actor=actor,
+        spec=spec,
+        source_ref=source_ref,
+    )
     event_ids = tuple(replacement_event_ids)
     if any(type(value) is not str or not value for value in event_ids):
         raise FixedDamageSetError(

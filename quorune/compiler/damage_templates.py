@@ -12,7 +12,7 @@ from ..fixed_damage_set_model import (
     PlayerDamageGroup,
     PlayerDamageRelation,
 )
-from ..object_predicate import ObjectQuerySpec
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import (
     DirectPermanentTargetSpec,
@@ -83,6 +83,7 @@ _FIXED_DAMAGE_RECIPIENTS: tuple[tuple[str, FixedDamageRecipient], ...] = (
 )
 _FIXED_DAMAGE_SOURCE_KINDS = (
     "artifact",
+    "aura",
     "battle",
     "creature",
     "enchantment",
@@ -116,11 +117,11 @@ class FixedDamageEffectTemplate:
             raise ValueError("Fixed damage source kind is unsupported")
         if self.target_spec is not None and (
             not isinstance(self.target_spec, DirectPermanentTargetSpec)
-            or self.target_spec.combat_state is None
             or self.recipient is not FixedDamageRecipient.CREATURE
+            or not _direct_damage_target_is_damageable(self.target_spec)
         ):
             raise ValueError(
-                "Fixed damage direct target requires one combat-state creature"
+                "Fixed damage direct target requires a damageable permanent"
             )
 
     @property
@@ -231,6 +232,7 @@ class FixedMassDamageEffectTemplate:
     spec: FixedDamageSetSpec
     source_kind: str | None = None
     target_opponent: bool = False
+    target_player: bool = False
 
     def __post_init__(self) -> None:
         if type(self.amount) is not int or self.amount <= 0:
@@ -244,12 +246,18 @@ class FixedMassDamageEffectTemplate:
             raise ValueError("Fixed mass damage source kind is unsupported")
         if type(self.target_opponent) is not bool:
             raise ValueError("Fixed mass target marker must be boolean")
+        if type(self.target_player) is not bool or (
+            self.target_opponent and self.target_player
+        ):
+            raise ValueError("Fixed mass target-player marker is malformed")
 
     @property
     def template_id(self) -> str:
         return (
             "damage-fixed-target-opponent-controlled-set-v1"
             if self.target_opponent
+            else "damage-fixed-target-player-controlled-set-v1"
+            if self.target_player
             else "damage-fixed-simultaneous-set-v1"
         )
 
@@ -266,20 +274,22 @@ class FixedMassDamageEffectTemplate:
 
     @property
     def target_schema(self) -> Mapping[str, Any] | None:
-        if not self.target_opponent:
+        if not (self.target_opponent or self.target_player):
             return None
-        return {
+        schema = {
             "zones": ["player"],
             "categories": ["player"],
-            "player_relation": "opponent",
             "count": 1,
         }
+        if self.target_opponent:
+            schema["player_relation"] = "opponent"
+        return schema
 
     @property
     def mechanics(self) -> tuple[str, ...]:
         return (
             ("cr-120-damage", "cr-115-targets")
-            if self.target_opponent
+            if self.target_opponent or self.target_player
             else ("cr-120-damage",)
         )
 
@@ -304,13 +314,21 @@ def _permanent_group(
     types_all: tuple[str, ...] = (),
     types_any: tuple[str, ...] = (),
     excluded_types: tuple[str, ...] = (),
+    subtypes_any: tuple[str, ...] = (),
+    supertypes_all: tuple[str, ...] = (),
     colors_any: tuple[str, ...] = (),
+    colorless: bool | None = None,
+    minimum_color_count: int | None = None,
     keywords_all: tuple[str, ...] = (),
+    keywords_none: tuple[str, ...] = (),
+    excluded_subtypes: tuple[str, ...] = (),
     token: bool | None = None,
+    state_predicate: PermanentStatePredicateSpec | None = None,
     controller_relation: PermanentControllerRelation = (
         PermanentControllerRelation.ANY
     ),
     target_controller: str | None = None,
+    exclude_source: bool = False,
 ) -> PermanentDamageGroup:
     return PermanentDamageGroup(
         query=ObjectQuerySpec(
@@ -318,12 +336,20 @@ def _permanent_group(
             types_all=types_all,
             types_any=types_any,
             excluded_types=excluded_types,
+            subtypes_any=subtypes_any,
+            supertypes_all=supertypes_all,
             colors_any=colors_any,
+            colorless=colorless,
+            minimum_color_count=minimum_color_count,
             keywords_all=keywords_all,
+            keywords_none=keywords_none,
+            excluded_subtypes=excluded_subtypes,
             token=token,
+            state_predicate=state_predicate,
         ),
         controller_relation=controller_relation,
         target_controller=target_controller,
+        exclude_source=exclude_source,
     )
 
 
@@ -336,9 +362,134 @@ _COLOR_WORDS = {
 }
 
 
+def _direct_damage_target_is_damageable(
+    spec: DirectPermanentTargetSpec,
+) -> bool:
+    positive = set(spec.types_any or spec.types_all)
+    if spec.combat_state is not None and spec.subtypes_any:
+        return True
+    if spec.types_all:
+        return bool(positive.intersection({"battle", "creature", "planeswalker"}))
+    return bool(positive) and positive.issubset(
+        {"battle", "creature", "planeswalker"}
+    )
+
+
+def _damage_groups_from_target_spec(
+    spec: DirectPermanentTargetSpec,
+    *,
+    controller_relation: PermanentControllerRelation | None = None,
+    target_controller: str | None = None,
+) -> tuple[PermanentDamageGroup, ...] | None:
+    """Project one closed direct predicate into an affected damage set."""
+
+    if (
+        not _direct_damage_target_is_damageable(spec)
+        or spec.damage_history is not None
+        or spec.numeric_characteristic is not None
+        or spec.mana_value_min is not None
+        or spec.mana_value_max is not None
+        or spec.mana_value_equal is not None
+        or spec.commander is not None
+        or spec.supertypes_none
+        or spec.colors_none
+        or spec.color_count_equal is not None
+    ):
+        return None
+    relation = controller_relation or {
+        "any": PermanentControllerRelation.ANY,
+        "you": PermanentControllerRelation.ACTOR,
+        "opponent": PermanentControllerRelation.OPPONENTS,
+    }.get(spec.controller_relation)
+    if relation is None:
+        return None
+    states = (spec.combat_state,)
+    if spec.combat_state == "attacking_or_blocking":
+        states = ("attacking", "blocking")
+    if any(
+        value in {"attacking_actor", "blocking_source", "blocked_by_source"}
+        for value in states
+    ):
+        return None
+    groups: list[PermanentDamageGroup] = []
+    for combat_state in states:
+        state = spec.state_predicate
+        if combat_state is not None:
+            state = PermanentStatePredicateSpec(
+                attacking=(True if combat_state == "attacking" else None),
+                blocking=(True if combat_state == "blocking" else None),
+            )
+        try:
+            groups.append(
+                _permanent_group(
+                    types_all=spec.types_all,
+                    types_any=spec.types_any,
+                    excluded_types=spec.types_none,
+                    subtypes_any=spec.subtypes_any,
+                    supertypes_all=spec.supertypes_any,
+                    colors_any=spec.colors_any,
+                    colorless=spec.colorless,
+                    minimum_color_count=spec.color_count_min,
+                    keywords_all=spec.keywords_all,
+                    keywords_none=spec.keywords_none,
+                    excluded_subtypes=spec.subtypes_none,
+                    token=spec.token,
+                    state_predicate=state,
+                    controller_relation=relation,
+                    target_controller=target_controller,
+                    exclude_source=spec.source_exclusion,
+                )
+            )
+        except (TypeError, ValueError):
+            return None
+    return tuple(groups)
+
+
+def _public_fixed_mass_damage_spec(
+    normalized: str,
+) -> tuple[FixedDamageSetSpec, bool, bool] | None:
+    target_player = re.fullmatch(
+        r"each (?P<body>.+) target player controls",
+        normalized,
+    )
+    if target_player is not None:
+        spec = direct_permanent_target_spec(
+            f"target {target_player.group('body')}"
+        )
+        groups = (
+            _damage_groups_from_target_spec(
+                spec,
+                controller_relation=PermanentControllerRelation.TARGET_PLAYER,
+                target_controller="$target.0",
+            )
+            if spec is not None
+            else None
+        )
+        if groups is not None:
+            return FixedDamageSetSpec(groups), False, True
+    generic = re.fullmatch(r"each (?P<body>.+)", normalized)
+    if generic is None:
+        return None
+    body = generic.group("body")
+    subject = (
+        f"another target {body.removeprefix('other ')}"
+        if body.startswith("other ")
+        else f"target {body}"
+    )
+    spec = direct_permanent_target_spec(subject)
+    groups = (
+        _damage_groups_from_target_spec(spec) if spec is not None else None
+    )
+    return (
+        (FixedDamageSetSpec(groups), False, False)
+        if groups is not None
+        else None
+    )
+
+
 def _fixed_mass_damage_spec(
     recipient_text: str,
-) -> tuple[FixedDamageSetSpec, bool] | None:
+) -> tuple[FixedDamageSetSpec, bool, bool] | None:
     normalized = " ".join(recipient_text.casefold().split())
     exact: dict[str, tuple[object, ...]] = {
         "each creature": (_permanent_group(types_all=("creature",)),),
@@ -409,7 +560,7 @@ def _fixed_mass_damage_spec(
         ),
     }
     if normalized in exact:
-        return FixedDamageSetSpec(exact[normalized]), False
+        return FixedDamageSetSpec(exact[normalized]), False, False
     if normalized == "each creature target opponent controls":
         return (
             FixedDamageSetSpec(
@@ -424,6 +575,7 @@ def _fixed_mass_damage_spec(
                 )
             ),
             True,
+            False,
         )
     color_match = re.fullmatch(
         r"each (?P<colors>white|blue|black|red|green)"
@@ -450,8 +602,9 @@ def _fixed_mass_damage_spec(
                 )
             ),
             False,
+            False,
         )
-    return None
+    return _public_fixed_mass_damage_spec(normalized)
 
 
 def _fixed_damage_instruction_template(
@@ -465,15 +618,18 @@ def _fixed_damage_instruction_template(
     recipient_text = recipient_text.casefold()
     fixed_set = _fixed_mass_damage_spec(recipient_text)
     if fixed_set is not None:
-        spec, target_opponent = fixed_set
+        spec, target_opponent, target_player = fixed_set
         return FixedMassDamageEffectTemplate(
             amount=amount,
             spec=spec,
             source_kind=source_kind,
             target_opponent=target_opponent,
+            target_player=target_player,
         )
     target_spec = direct_permanent_target_spec(recipient_text)
-    if target_spec is not None and target_spec.combat_state is not None:
+    if target_spec is not None and _direct_damage_target_is_damageable(
+        target_spec
+    ):
         return FixedDamageEffectTemplate(
             amount=amount,
             recipient=FixedDamageRecipient.CREATURE,

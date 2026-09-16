@@ -453,6 +453,7 @@ class FixedDirectTargetRuntimeTests(unittest.TestCase):
             "attacking": {attacker.ref},
             "blocking": {blocker.ref},
             "attacking_or_blocking": {attacker.ref, blocker.ref},
+            "attacking_actor": {attacker.ref},
         }
         for combat_state, legal in expected.items():
             with self.subTest(combat_state=combat_state):
@@ -486,6 +487,32 @@ class FixedDirectTargetRuntimeTests(unittest.TestCase):
                         source_ref=None,
                         target_schema=schema,
                     )
+
+        relative_cases = (
+            ("blocking_source", attacker.ref, blocker.ref),
+            ("blocked_by_source", blocker.ref, attacker.ref),
+        )
+        for combat_state, source_ref, legal_ref in relative_cases:
+            with self.subTest(combat_state=combat_state):
+                schema = DirectPermanentTargetSpec(
+                    types_any=("creature",),
+                    combat_state=combat_state,
+                ).to_target_schema()
+                public = engine._public_target_schema(
+                    "B", schema, source_ref=source_ref
+                )
+                self.assertIsNotNone(public)
+                assert public is not None
+                self.assertIn(legal_ref, public["legal_refs"])
+                self.assertNotIn(bystander.ref, public["legal_refs"])
+                selected, _grouped = engine._validate_semantic_targets(
+                    "B",
+                    None,
+                    [legal_ref],
+                    source_ref=source_ref,
+                    target_schema=schema,
+                )
+                self.assertEqual([legal_ref], selected)
 
     def test_characteristic_target_exile_uses_destination_replacement(self):
         session = make_session(
