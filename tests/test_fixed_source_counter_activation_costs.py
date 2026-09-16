@@ -470,6 +470,92 @@ class FixedSourceCounterCostRuntimeTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 assert_paid(19707)
 
+    def test_equip_and_resolved_declaration_rule_share_one_activation_catalog(self):
+        session = self.session(19708)
+        engine = session.engine
+        equipment = self.add_source(
+            session,
+            name="Counter Cost Equipment",
+            ref="A-equipment",
+        )
+        equipment.counters["charge"] = 1
+        carrier_ref = engine.create_token(
+            "A",
+            name="Generic Equipment Carrier",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "2",
+                "toughness": "2",
+            },
+        )[0]
+        blocker_ref = engine.create_token(
+            "B",
+            name="Generic Restricted Blocker",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "2",
+                "toughness": "2",
+            },
+        )[0]
+        carrier = engine._resolve_object("A", carrier_ref, zones={"battlefield"})
+        blocker = engine._resolve_object("B", blocker_ref, zones={"battlefield"})
+        self.prepare_priority(session)
+        abilities = engine._activated_abilities(equipment)
+        equip = next(
+            ability
+            for ability in abilities
+            if ability.builtin_semantic_key == "builtin:equip"
+        )
+        restriction = next(
+            ability
+            for ability in abilities
+            if ability.source_counter_removal_cost is not None
+        )
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        equip_result = session.act(
+            "pilot:A",
+            {
+                "action_id": f"activate:{equipment.ref}:{equip.ability_id}",
+                "targets": [carrier.ref],
+            },
+        )
+        self.assertTrue(equip_result.ok, equip_result.summary)
+        self.pass_until(session, lambda: not session.state.stack)
+        self.assertEqual(carrier.object_id, equipment.attached_to)
+
+        restriction_result = session.act(
+            "pilot:A",
+            {
+                "action_id": (
+                    f"activate:{equipment.ref}:{restriction.ability_id}"
+                ),
+                "targets": [blocker.ref],
+            },
+        )
+        self.assertTrue(restriction_result.ok, restriction_result.summary)
+        self.assertNotIn("charge", equipment.counters)
+        self.pass_until(session, lambda: not session.state.stack)
+        self.assertEqual(carrier.object_id, equipment.attached_to)
+        self.assertEqual(
+            (
+                False,
+                (
+                    "declaration_restriction:"
+                    "intrinsic-block-prohibition-v1"
+                ),
+            ),
+            engine._can_block(carrier, blocker),
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "equip-declaration-interaction-replay"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
     def test_counter_cost_projection_is_public_and_seat_scoped(self):
         session = self.session(19705, players=4)
         source = self.add_source(session, name="Counter Cost Reservoir", ref="A-reservoir")
