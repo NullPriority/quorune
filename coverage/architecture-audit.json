@@ -31158,7 +31158,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "1c61526d636b44273e8a6d2207bcc23636b5ac672267b8c15cd416cbec661bb2",
+      "fingerprint": "f96c8ad3adc9b1d0ce3a98108c1f80002a78fea48a7c73669360a734b49d2d0c",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
