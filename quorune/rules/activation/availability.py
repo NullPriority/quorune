@@ -86,6 +86,12 @@ def activation_availability(
         return "unpayable", "insufficient_life"
     if ability.energy_payment and player.energy < ability.energy_payment:
         return "unpayable", "insufficient_energy"
+    if ability.source_counter_removal_cost is not None:
+        cost = ability.source_counter_removal_cost
+        if zone != "battlefield":
+            return "unavailable", "source_counter_cost_wrong_zone"
+        if int(card.counters.get(cost.counter_name, 0)) < cost.amount:
+            return "unpayable", "insufficient_source_counters"
     station_choice = station_cost_choice(ability)
     if station_choice is not None:
         try:

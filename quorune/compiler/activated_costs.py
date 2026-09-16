@@ -17,6 +17,8 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.source_counter_removal_cost is not None:
+        additional.append("activation.source_counter_removal.fixed")
     if ability.loyalty_delta is not None and ability.loyalty_delta > 0:
         additional.append("activation.loyalty.positive_counter_cost")
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
@@ -70,6 +72,11 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
         "life_payment": ability.life_payment,
         "energy_payment": ability.energy_payment,
         "loyalty_delta": ability.loyalty_delta,
+        "source_counter_removal_cost": (
+            None
+            if ability.source_counter_removal_cost is None
+            else ability.source_counter_removal_cost.to_dict()
+        ),
         "choices": [choice.compact() for choice in ability.choices],
         "uncompiled_costs": list(ability.uncompiled_costs),
     }

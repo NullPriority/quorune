@@ -180,6 +180,12 @@ parser. Discard-self and exile-self activation costs use the same destination-
 replacement continuation as casting costs: a competing choice rolls the
 complete priority action back, keeps the continuation private to the affected
 activator, and resumes the exact source-pinned action before stack placement.
+Exactly one fixed positive named-counter removal from the current battlefield
+source is also part of the pinned catalog. Offer and commit read the same
+public counter state, pin the source incarnation, and pay through the canonical
+exact counter-removal transaction before stack placement or immediate mana
+production. Variable, all, chosen-kind, repeated, another-object,
+nonbattlefield, and granted forms remain fail closed.
 
 Fixed complex activation mana costs remain inside that same catalog and action
 path. One typed option records the selected colored-hybrid or two-brid vector,

@@ -2929,7 +2929,7 @@ class CommanderEngine(
                 or ability.exile_source
                 or ability.life_payment
                 or ability.energy_payment
-                or ability.loyalty_delta is not None
+                or ability.loyalty_delta is not None or ability.source_counter_removal_cost is not None
                 or activation_condition_status(
                     self, seat, ability, source
                 )[0]

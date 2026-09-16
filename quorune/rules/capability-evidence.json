@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3648ed4852298ab305ea7654ff3c483c0efbda99b8e907080c52b59e3a2936ae",
-  "declaration_source_fingerprint": "aefd1cc4318a8e8bb6e9889dfe9c1563f29bcd8d6e48b4dfb2e0b18a3ab92c81",
+  "registry_fingerprint": "d6be27f3f4942e2672cab80f000f73c4c9b62715722f2f47955a1e90289c2fe1",
+  "declaration_source_fingerprint": "fabedc6fc7689f8a5c0a6e25285f90290e8659d5ec3442f373196c9b0877fdab",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -2975,6 +2975,244 @@
         "commander_review"
       ],
       "applicability_note": "Roll back cost movement, mana, and stack placement before presenting a competing replacement choice for the selected object."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_source_counter_cost_activation_pays_before_resolution",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose fixed mana, source tap, and exact named-counter removal before the existing typed draw result reaches the stack."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_source_counter_cost_mana_ability_is_nonreversible",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pay the exact source counter before immediate fixed mana production and prevent mana undo from restoring only part of the activation."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_counter_cost_projection_is_public_and_seat_scoped",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose the public counter total to all four seats while advertising the controlled-source activation only to its controller."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostCompilerTests.test_source_counter_cost_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the source-counter grammar production and require the exact compiler contract to reject the survivor."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_source_counter_cost_commit_mutant_is_killed",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bypass the canonical exact counter-removal commit and require the paid-cost assertion to reject the survivor."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostCompilerTests.test_open_and_non_source_counter_costs_remain_residual",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep variable, all, chosen-kind, repeated, another-object, player, and nonbattlefield removal outside the fixed source grammar."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_current_ability_removal_rejects_counter_cost_activation",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject an advertised activation when its current typed ability is absent before any mana, tap, counter, or stack mutation."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_insufficient_and_stale_counter_costs_roll_back",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Withhold an unpayable offer and reject a formerly advertised action after the source no longer has every required counter."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostCompilerTests.test_fixed_source_counter_cost_compiler_runtime_contract",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed positive single-kind source costs across named-source and this-permanent wordings into the same typed descriptor used by runtime."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_source_counter_cost_activation_pays_before_resolution",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the full fixed amount from the current source before placing and resolving its typed stack ability."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_source_counter_cost_mana_ability_is_nonreversible",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the fixed source counter and produce represented mana immediately without creating a stack object."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_counter_cost_projection_is_public_and_seat_scoped",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public counter state and no controller-only legal activation into another seat's packet."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_source_counter_cost_activation_pays_before_resolution",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay counter payment, tap, mana payment, stack placement, and the typed draw result to the exact authoritative hash."
+    },
+    {
+      "capability_id": "activation.source_counter_removal.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_source_counter_activation_costs.FixedSourceCounterCostRuntimeTests.test_insufficient_and_stale_counter_costs_roll_back",
+      "official_rule_ids": [
+        "118.3",
+        "122.1",
+        "602.2",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject insufficient current counter payment before mana, tap, counter, or stack state changes."
     },
     {
       "capability_id": "activation.source_zone_change.fixed",
@@ -63572,5 +63810,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "78c805940c024d82bce9837084d9d47d6fa1254ffc066c9854704df31b25a31c"
+  "fingerprint": "cf7eac241bc4032fc07f828bf3b01d81c03c80d9686d6e550a545edc7574ee5b"
 }

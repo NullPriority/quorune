@@ -79,6 +79,7 @@ def _closed_granted_activation(ability: ActivatedAbility) -> bool:
         and not ability.exile_source
         and ability.energy_payment == 0
         and ability.loyalty_delta is None
+        and ability.source_counter_removal_cost is None
         and not ability.uncompiled_costs
         and ability.generic_reduction_per_legendary_creature == 0
         and ability.crew_threshold is None

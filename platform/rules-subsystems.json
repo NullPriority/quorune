@@ -955,6 +955,47 @@
           "measurement_probe_id": "fixed-activation-zone-change-predicates-existing-owner-v2"
         },
         {
+          "bundle_id": "bundle:fixed-source-counter-activation-costs",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.source_counter_removal.fixed",
+            "component:quorune.abilities._source_counter_removal_cost",
+            "component:quorune.counter_removal.commit_counter_removals",
+            "component:quorune.counter_removal.plan_counter_removals",
+            "component:quorune.rules.activation.availability.activation_availability",
+            "component:quorune.rules.activation.counter_costs.commit_source_counter_removal_cost",
+            "component:quorune.rules.activation_counter_cost.SourceCounterRemovalCost"
+          ],
+          "source_contexts": [
+            "activated"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-positive-amount",
+            "one-canonical-counter-kind",
+            "same-battlefield-source",
+            "source-logical-incarnation"
+          ],
+          "shared_dependencies": [],
+          "shared_grammar": "exactly one fixed positive named-counter removal cost from the current battlefield source of an activated ability",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the compiler-pinned activated-ability catalog and canonical exact counter-removal transaction across independently exact stack and mana abilities without adding another payment or counter mutation path.",
+          "explicit_exclusions": [
+            "cost modification, replacement, and prevention outside existing activation owners",
+            "counter movement and removal from another object or player",
+            "granted counter-removal costs outside the current granted-ability schema",
+            "multiple source counter-removal clauses",
+            "nonbattlefield source counters",
+            "zero, variable, all, any-number, among, optional, repeated, and chosen-kind counter removal"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-source-counter-activation-cost-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-homogeneous-target-sets",
           "member_family_ids": [
             "activated_effect:destroy",
@@ -3474,25 +3515,19 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v196-fixed-public-damage-predicates",
-      "compiler_version": "oracle-ir-v196",
-      "bundle_id": "bundle:fixed-public-damage-predicates",
-      "candidate_ids": ["compiler:fixed-public-damage-predicates"],
+      "transition_id": "oracle-ir-v197-fixed-source-counter-activation-costs",
+      "compiler_version": "oracle-ir-v197",
+      "bundle_id": "bundle:fixed-source-counter-activation-costs",
+      "candidate_ids": ["compiler:fixed-source-counter-activation-costs"],
       "family_ids": [
-        "activated_effect:deal-damage",
-        "effect_clause:deal-damage",
-        "target_or_choice:target-predicate"
+        "activated_cost:complete-alternate-additional-cost-grammar",
+        "activated_cost:restricted-payment-predicates"
       ],
       "capability_ids": [
-        "damage.amount.positive",
-        "damage.batch.fixed_set",
-        "damage.result.multitype_permanent",
-        "state_query.permanent.public_state_predicate",
-        "target.permanent.characteristic_predicate",
-        "target.revalidate_resolution"
+        "activation.source_counter_removal.fixed"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-public-damage-predicates"
+      "measurement_id": "measurement:fixed-source-counter-activation-costs"
     },
     "forecast_corrections": [
       {
