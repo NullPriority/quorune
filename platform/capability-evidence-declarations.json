@@ -18923,14 +18923,6 @@
     {
       "capability_id": "permanent.class.fixed_lifecycle",
       "evidence_class": "interaction",
-      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_lifecycle_executes_while_replacement_residuals_stay_inert",
-      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Execute the typed lifecycle while a sibling counter-doubling replacement remains an explicit residual and contributes no runtime replacement authority."
-    },
-    {
-      "capability_id": "permanent.class.fixed_lifecycle",
-      "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking",
       "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
