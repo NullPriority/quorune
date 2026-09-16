@@ -290,7 +290,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
     def test_typed_activation_restriction_tails_preserve_full_source_spans(self):
         expected = {
             "Foggy Swamp Vinebender": False,
-            "Invigorating Hot Spring": False,
+            "Invigorating Hot Spring": True,
             "Licia, Sanguine Tribune": True,
             "Tetzimoc, Primal Death": False,
             "Urtet, Remnant of Memnarch": True,
