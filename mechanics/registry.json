@@ -1,5 +1,5 @@
 {
-  "contract_count": 134,
+  "contract_count": 135,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -101,6 +101,12 @@
       "mechanic_id": "changeling",
       "path": "mechanics/contracts/changeling.json",
       "sha256": "a9e2913f4e676b7bb9bf331617a8c5c27b1449017413a7075f2546f07fc7c57b",
+      "version": 1
+    },
+    {
+      "mechanic_id": "cr-716-class-cards",
+      "path": "mechanics/contracts/class-cards.json",
+      "sha256": "a76ce788108e5234fc4392834be54e8417d3550688460b66889110cdc41f5b78",
       "version": 1
     },
     {
@@ -10401,17 +10407,38 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/class-cards.json",
+      "contract_sha256": "a76ce788108e5234fc4392834be54e8417d3550688460b66889110cdc41f5b78",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [],
-      "implementation_component": null,
+      "implementation_component": "FixedClassLevelAbilitySpec, Class compiler context, activation catalog, shared StaticComponentScopeSpec applicability, permanent designation owner, projection, persistence, and replay",
+      "implementation_version": "typed-class-lifecycle-v1",
       "kind": "rules_section",
+      "known_blockers": [
+        "missing, duplicate, reordered, variable, hybrid, Phyrexian, snow, nonmana, and additional level bars",
+        "Room, Leveler, Prototype, granted, copied, and text-changed structures outside ordinary copiable printed values",
+        "effects that directly set, lower, or remove a Class level",
+        "independently unsupported child abilities",
+        "cycle-sensitive dynamic characteristic children and affected type-changing interactions outside the safe current-characteristic boundary",
+        "aggregate Class Cards coverage remains incomplete"
+      ],
       "mechanic_id": "cr-716-class-cards",
       "official_name": "Class Cards",
       "rule_references": [
         "716"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
+        "test_class_grammar_exclusions_remain_residual",
+        "test_class_capability_and_compiler_mutations_fail_closed",
+        "test_class_offer_commit_and_sequential_stack_resolution",
+        "test_class_insufficient_stale_and_removed_ability_roll_back",
+        "test_class_source_incarnation_counter_and_resolution_locking",
+        "test_class_level_gates_children_and_is_noncopiable_and_zone_scoped",
+        "test_class_save_load_replay_and_four_player_projection",
+        "test_class_designation_mutation_is_killed"
+      ],
       "trust_level": "untrusted"
     },
     {

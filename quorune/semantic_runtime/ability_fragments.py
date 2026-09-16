@@ -33,7 +33,6 @@ from ..ability_fragments import (
 )
 from ..enchant_spec import SimpleEnchantSpec, TypedEnchantSpec
 from ..enchant_spec import LinkedGraveyardCreatureEnchantSpec
-from ..leveler_bands import LEVELER_BANDS_CAPABILITY_ID
 from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
@@ -958,10 +957,13 @@ class StaticComponentScopeAbilityFragmentHandler:
     schema_version: int = 1
     family: str = "ability.static.component_scope"
     event: str = "characteristics.evaluate"
-    rule_references: tuple[str, ...] = ("604.1", "613.1f", "711.2")
-    capability_dependencies: tuple[str, ...] = (
-        LEVELER_BANDS_CAPABILITY_ID,
+    rule_references: tuple[str, ...] = (
+        "604.1",
+        "613.1f",
+        "711.2",
+        "716.2a",
     )
+    capability_dependencies: tuple[str, ...] = ()
 
     def validate(
         self,

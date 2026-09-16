@@ -38,6 +38,7 @@ from ..semantic_runtime.self_zone_move import self_zone_move_specs_from_descript
 from ..semantic_runtime.counter_keyword_abilities import (
     fixed_counter_keyword_specs_from_descriptors,
 )
+from ..semantic_runtime.class_levels import class_level_specs_from_descriptors
 from ..semantic_runtime.mana_abilities import (
     fixed_mana_specs_from_descriptors,
 )
@@ -199,6 +200,7 @@ def _specialized_ability(
             ordinary_unearth_specs_from_descriptors(handlers),
             self_zone_move_specs_from_descriptors(handlers),
             fixed_counter_keyword_specs_from_descriptors(handlers),
+            class_level_specs_from_descriptors(handlers),
             ordinary_crew_specs_from_descriptors(handlers),
             ordinary_station_specs_from_descriptors(handlers),
         )

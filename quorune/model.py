@@ -269,6 +269,9 @@ class CardInstance:
     # CR 702.112b public noncopiable designation for this logical object.
     # False is omitted from serialized state for historical replay parity.
     renowned: bool = False
+    # CR 716.2b public noncopiable Class level designation. ``None`` means
+    # the permanent has no explicit designation and is treated as level 1.
+    class_level: int | None = None
     # CR 702.84a creates one public noncopiable designation and leave-
     # battlefield replacement on the returned logical object.
     unearthed: bool = False
@@ -339,6 +342,11 @@ class CardInstance:
             )
         if type(self.renowned) is not bool:
             raise ValueError("A renowned designation must be a boolean")
+        if self.class_level is not None and (
+            type(self.class_level) is not int
+            or self.class_level not in {2, 3}
+        ):
+            raise ValueError("A Class level designation must be 2 or 3")
         if type(self.unearthed) is not bool:
             raise ValueError("An unearthed designation must be a boolean")
         if (
@@ -381,6 +389,8 @@ class CardInstance:
         if not self.renowned:
             # Keep historical Game Record v3 card payloads byte-compatible.
             payload.pop("renowned")
+        if self.class_level is None:
+            payload.pop("class_level")
         if not self.unearthed:
             payload.pop("unearthed")
         if not self.regeneration_shields:

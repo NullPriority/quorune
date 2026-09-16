@@ -17,13 +17,14 @@ EFFECT_FAMILY_CONTRACTS = (
     EffectFamilyContract(
         family_id="state-and-permissions.v1",
         semantic_family="effect.state-permissions",
-        rule_references=("609.1",),
+        rule_references=("609.1", "716.2a"),
         operations=frozenset(
             {
                 "add_counter_selected",
                 "delayed_mana",
                 "delayed_pact_payment",
                 "goad",
+                "gain_class_level",
                 "mana",
                 "next_spell_improvise",
                 "next_spell_uncounterable",

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 """Typed ownership for public noncopiable permanent designations.
 
-CR 701.37b's monstrous value and CR 702.112b's renowned marker are stored on
-the current logical object, survive control changes and phasing, and are
-cleared only by the canonical zone-change owner.
+CR 701.37b's monstrous value, CR 702.112b's renowned marker, and CR 716.2b's
+Class level are stored on the current logical object, survive control changes
+and phasing, and are cleared only by the canonical zone-change owner.
 """
 
 from dataclasses import dataclass
@@ -108,6 +108,127 @@ class RenownedDesignationResult:
     object_ref: str
     logical_object_id: str
     changed: bool
+
+
+@dataclass(frozen=True, slots=True)
+class AdvanceClassLevelRequest:
+    """One identity-pinned CR 716.2a-b level transition."""
+
+    object_id: str
+    object_ref: str
+    logical_object_id: str
+    level: int
+    actor: str
+    reason: str
+
+    def __post_init__(self) -> None:
+        if any(
+            type(value) is not str or not value
+            for value in (
+                self.object_id,
+                self.object_ref,
+                self.logical_object_id,
+                self.actor,
+                self.reason,
+            )
+        ):
+            raise PermanentDesignationError(
+                "Class level identity and provenance are required"
+            )
+        if type(self.level) is not int or self.level not in {2, 3}:
+            raise PermanentDesignationError(
+                "Class level transitions support exactly levels 2 and 3"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class ClassLevelResult:
+    object_ref: str
+    logical_object_id: str
+    level: int | None
+    changed: bool
+
+
+def current_class_level(card: Any) -> int:
+    """Return CR 716.2d's effective level for one permanent object."""
+
+    value = getattr(card, "class_level", None)
+    if value is None:
+        return 1
+    if type(value) is not int or value not in {2, 3}:
+        raise PermanentDesignationError(
+            "The permanent's Class level designation is malformed"
+        )
+    return value
+
+
+def permanent_numeric_designations(card: Any) -> dict[str, int]:
+    """Expose typed public numeric designations to shared applicability."""
+
+    return {"class_level": current_class_level(card)}
+
+
+def advance_class_level(
+    host: PermanentDesignationHost,
+    request: AdvanceClassLevelRequest,
+) -> ClassLevelResult:
+    """Apply a Class level to the exact resolving source incarnation."""
+
+    if not isinstance(request, AdvanceClassLevelRequest):
+        raise PermanentDesignationError(
+            "Class level advancement requires a typed request"
+        )
+    card = host.state.cards.get(request.object_id)
+    if (
+        card is None
+        or card.ref != request.object_ref
+        or card.logical_object_id != request.logical_object_id
+        or card.zone != "battlefield"
+        or card.phased_out
+    ):
+        return ClassLevelResult(
+            object_ref=request.object_ref,
+            logical_object_id=request.logical_object_id,
+            level=None,
+            changed=False,
+        )
+    prior = current_class_level(card)
+    if prior == request.level:
+        return ClassLevelResult(
+            object_ref=card.ref,
+            logical_object_id=card.logical_object_id,
+            level=prior,
+            changed=False,
+        )
+    card.class_level = request.level
+    details = {
+        "object": card.ref,
+        "logical_object_id": card.logical_object_id,
+        "controller": card.controller,
+        "previous_level": prior,
+        "level": request.level,
+        "reason": request.reason,
+    }
+    host._log(
+        request.actor,
+        "permanent.class_level",
+        f"{card.ref} became level {request.level}.",
+        details,
+        importance=2,
+        changed_objects=[card.object_id],
+        changed_players=[card.controller],
+    )
+    host._dispatch_semantic_event(
+        "permanent.class_level_changed",
+        details,
+        sources=(card,),
+    )
+    return ClassLevelResult(
+        object_ref=card.ref,
+        logical_object_id=card.logical_object_id,
+        level=request.level,
+        changed=prior != request.level,
+    )
 
 
 def become_monstrous(
@@ -248,12 +369,17 @@ def become_renowned(
 
 
 __all__ = [
+    "AdvanceClassLevelRequest",
     "BecomeMonstrousRequest",
     "BecomeRenownedRequest",
+    "ClassLevelResult",
     "MonstrousDesignationResult",
     "PermanentDesignationError",
     "PermanentDesignationHost",
     "RenownedDesignationResult",
+    "advance_class_level",
     "become_monstrous",
     "become_renowned",
+    "current_class_level",
+    "permanent_numeric_designations",
 ]

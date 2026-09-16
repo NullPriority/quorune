@@ -42,6 +42,10 @@ from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
 from .replacement.immutable import thaw_value
+from .static_component_scope import (
+    StaticComponentApplicabilitySpec,
+    StaticComponentScopeSpec,
+)
 from .util import stable_json
 
 
@@ -924,94 +928,6 @@ class StaticComponentSpec:
         return cls(**dict(value))
 
 
-@dataclass(frozen=True, slots=True)
-class StaticComponentScopeSpec:
-    """Keywords and child components supplied by one static component."""
-
-    parent_semantic_key: str
-    child_semantic_keys: tuple[str, ...]
-    keywords: tuple[str, ...]
-    schema_version: int = 1
-
-    def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
-            raise AbilityFragmentError(
-                "Unsupported static-component-scope fragment schema version"
-            )
-        if (
-            type(self.parent_semantic_key) is not str
-            or not self.parent_semantic_key.strip()
-            or self.parent_semantic_key != self.parent_semantic_key.strip()
-        ):
-            raise AbilityFragmentError(
-                "Static component scopes require one canonical parent key"
-            )
-        if (
-            not isinstance(self.child_semantic_keys, tuple)
-            or any(
-                type(key) is not str
-                or not key.strip()
-                or key != key.strip()
-                for key in self.child_semantic_keys
-            )
-            or len(set(self.child_semantic_keys))
-            != len(self.child_semantic_keys)
-            or self.child_semantic_keys != tuple(sorted(self.child_semantic_keys))
-            or self.parent_semantic_key in self.child_semantic_keys
-        ):
-            raise AbilityFragmentError(
-                "Static component scopes require unique canonical child keys"
-            )
-        if (
-            not isinstance(self.keywords, tuple)
-            or any(
-                type(keyword) is not str
-                or not keyword.strip()
-                or keyword != keyword.strip()
-                for keyword in self.keywords
-            )
-            or len({keyword.casefold() for keyword in self.keywords})
-            != len(self.keywords)
-            or self.keywords
-            != tuple(sorted(self.keywords, key=str.casefold))
-        ):
-            raise AbilityFragmentError(
-                "Static keyword scopes require unique canonical keywords"
-            )
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "schema_version": self.schema_version,
-            "parent_semantic_key": self.parent_semantic_key,
-            "child_semantic_keys": list(self.child_semantic_keys),
-            "keywords": list(self.keywords),
-        }
-
-    @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "StaticComponentScopeSpec":
-        if not isinstance(value, Mapping) or set(value) != {
-            "schema_version",
-            "parent_semantic_key",
-            "child_semantic_keys",
-            "keywords",
-        }:
-            raise AbilityFragmentError(
-                "Static component scopes have a closed schema"
-            )
-        if not isinstance(value["keywords"], list) or not isinstance(
-            value["child_semantic_keys"], list
-        ):
-            raise AbilityFragmentError(
-                "Static component scope keys and keywords must be arrays"
-            )
-        return cls(
-            schema_version=value["schema_version"],
-            parent_semantic_key=value["parent_semantic_key"],
-            child_semantic_keys=tuple(value["child_semantic_keys"]),
-            keywords=tuple(value["keywords"]),
-        )
-
-
 StaticAbilityFragment: TypeAlias = (
     SimpleEnchantSpec
     | TypedEnchantSpec
@@ -1270,6 +1186,8 @@ def declared_static_component_keys(
 
 def static_component_keys(
     values: Iterable[StaticAbilityFragment | Mapping[str, Any]],
+    *,
+    source_designations: Mapping[str, Any] | None = None,
 ) -> tuple[str, ...]:
     """Return effective static identities after shared parent applicability."""
 
@@ -1284,7 +1202,14 @@ def static_component_keys(
     while changed:
         before = len(keys)
         for scope in scopes:
-            if scope.parent_semantic_key not in keys:
+            if (
+                scope.parent_semantic_key not in keys
+                or (
+                    scope.applicability is not None
+                    and source_designations is not None
+                    and not scope.applicability.applies(source_designations)
+                )
+            ):
                 keys.difference_update(scope.child_semantic_keys)
         changed = len(keys) != before
     return tuple(sorted(keys))
@@ -1607,6 +1532,7 @@ __all__ = [
     "StaticAbilityFragment",
     "StaticComponentSpec",
     "StaticComponentScopeSpec",
+    "StaticComponentApplicabilitySpec",
     "TOXIC_ABILITY_FRAGMENT_KIND",
     "ToxicSpec",
     "TriggerMultiplierSpec",

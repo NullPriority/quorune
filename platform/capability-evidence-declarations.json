@@ -18857,6 +18857,70 @@
       "applicability_note": "Replay the selected subtype identity, stackless tap cost, controller-scoped mana result, and final state hash exactly."
     },
     {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve ordinary stack countering and pin resolution to the old source incarnation while allowing the same object to advance after type or ability loss."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_save_load_replay_and_four_player_projection",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose the activation only to its controller while all four seats observe the same public level after resolution."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_capability_and_compiler_mutations_fail_closed",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block the lifecycle capability and remove contextual Class parsing to prove neither mutation can retain exact admission."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "negative",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_grammar_exclusions_remain_residual",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject malformed reminders, costs, ordering, missing or extra levels, and neighboring Room, Leveler, and Prototype structures."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "positive",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile the exact reminder and two ordinary fixed-mana level bars while binding independently exact child components to their additive level thresholds."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_save_load_replay_and_four_player_projection",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project the public level without exposing authoritative object identities or another seat's legal activation."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "replay",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_save_load_replay_and_four_player_projection",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resume a pending level activation from disk and exactly replay the designation, child applicability, and final authoritative hash."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_insufficient_stale_and_removed_ability_roll_back",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject insufficient payment, stale levels, and removed current abilities before mana or stack mutation."
+    },
+    {
       "capability_id": "permanent.designation.monstrous",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_counter_keyword_actions.PermanentDesignationTests.test_zero_counter_commit_result_still_creates_monstrous_designation",

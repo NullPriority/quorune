@@ -16,6 +16,7 @@ from ..continuous_effects import Layer
 from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..drawing.restrictions import drawn_this_turn
 from ..object_query import ObjectQueryResult, object_matches_query
+from ..permanent_designations import permanent_numeric_designations
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime import (
     ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,
@@ -281,7 +282,8 @@ def _annotated_static_component_keys(source: Any) -> tuple[str, ...]:
         (
             *raw,
             *(annotations.get("granted_ability_fragments") or ()),
-        )
+        ),
+        source_designations=permanent_numeric_designations(source),
     )
 
 

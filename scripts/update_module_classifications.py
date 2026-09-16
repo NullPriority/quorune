@@ -75,6 +75,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/fixed_token_production.py",
         "quorune/day_night_model.py",
         "quorune/spell_history_transform_model.py",
+        "quorune/static_component_scope.py",
         "quorune/leveler_bands.py",
         "quorune/modular.py",
         "quorune/renown.py",
@@ -161,6 +162,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/attack_transition_model.py",
         "quorune/attack_transition_resolution.py",
         "quorune/choice_forms.py",
+        "quorune/class_levels.py",
         "quorune/combat.py",
         "quorune/block_transition_engine_adapter.py",
         "quorune/block_transitions.py",
@@ -372,6 +374,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/ability_fragments.py",
         "quorune/characteristic_fragments.py",
         "quorune/compiled_ability_fragments.py",
+        "quorune/static_component_scope.py",
     }:
         return "ability_fragments"
     if relative in {
@@ -379,6 +382,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/activated_ability_descriptor.py",
         "quorune/compiled_activated_abilities.py",
         "quorune/counter_keyword_abilities.py",
+        "quorune/class_levels.py",
         "quorune/crew.py",
         "quorune/cycling_abilities.py",
         "quorune/station.py",

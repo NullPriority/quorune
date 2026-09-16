@@ -3315,6 +3315,33 @@
       "status": "trusted"
     },
     {
+      "id": "permanent.class.fixed_lifecycle",
+      "version": 1,
+      "official_rules": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile an ordinary two-bar Class lifecycle with fixed ordinary mana, sequential sorcery-speed advancement, a public noncopiable level designation, and additive child applicability through the shared layer-6 static-component query.",
+        "inputs": ["one exact Class reminder line", "exactly one fixed-mana Level 2 bar followed by one fixed-mana Level 3 bar", "one or more source-spanned child abilities in each level section", "current source incarnation and public Class level", "independently capability-closed child programs"],
+        "outputs": ["offer and commit parity for the next legal level", "ordinary stack activation and payment", "identity-pinned level transition on resolution", "additive current child components", "public persistence, projection, and exact replay"],
+        "exclusions": ["Class layouts with missing, duplicate, reordered, variable, hybrid, Phyrexian, snow, nonmana, or additional level bars", "Room, Leveler, Prototype, granted, copied, and text-changed level structures", "independently unsupported child abilities", "cycle-sensitive dynamic characteristic children and affected type-changing interactions outside the safe characteristic boundary", "effects that directly set, lower, or remove Class levels"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.class_levels.FixedClassLevelAbilitySpec", "quorune.compiler.class_context_nodes.parse_class_context", "quorune.compiler.class_context_nodes.apply_class_context", "quorune.semantic_runtime.class_levels.ClassLevelActivationHandler", "quorune.activation_condition_model.ActivationConditionKind.CLASS_LEVEL_EQUALS", "quorune.rules.activation.conditions.activation_condition_status", "quorune.permanent_designations.advance_class_level", "quorune.ability_fragments.StaticComponentApplicabilitySpec", "quorune.ability_fragments.static_component_keys", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._static_component_applicability_effects", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.zone_object_state.reset_zone_object_state", "quorune.projection.StateProjector"],
+      "positive_tests": ["test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children", "test_class_offer_commit_and_sequential_stack_resolution"],
+      "negative_tests": ["test_class_grammar_exclusions_remain_residual", "test_class_insufficient_stale_and_removed_ability_roll_back"],
+      "interaction_tests": ["test_class_source_incarnation_counter_and_resolution_locking", "test_class_level_gates_children_and_is_noncopiable_and_zone_scoped"],
+      "multiplayer_tests": ["test_class_save_load_replay_and_four_player_projection"],
+      "privacy_tests": ["test_class_save_load_replay_and_four_player_projection"],
+      "replay_tests": ["test_class_save_load_replay_and_four_player_projection"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the lifecycle capability leaves the reminder, activations, and independently exact level children outside a trusted Class composition before runtime admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused parser, capability, applicability, source-incarnation, designation, rollback, persistence, and replay witnesses reject omitted or broadened lifecycle behavior.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "continuous.characteristics.query_count_modifier",
       "version": 1,
       "official_rules": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],

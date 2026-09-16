@@ -2028,6 +2028,50 @@
           "measurement_probe_id": "typed-leveler-bands-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:ordinary-class-lifecycle",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:permanent.class.fixed_lifecycle",
+            "component:quorune.ability_fragments.StaticComponentApplicabilitySpec",
+            "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map",
+            "component:quorune.compiler.class_context_nodes.apply_class_context",
+            "component:quorune.permanent_designations.advance_class_level",
+            "component:quorune.rules.activation.conditions.activation_condition_status"
+          ],
+          "source_contexts": [
+            "activated",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "exact-ordinary-class-reminder",
+            "fixed-ordinary-mana-level-cost",
+            "independently-exact-child-program",
+            "noncopiable-public-level-designation",
+            "sequential-level-two-and-three"
+          ],
+          "shared_dependencies": [
+            "permanent.class.fixed_lifecycle"
+          ],
+          "shared_grammar": "one ordinary Class with the exact reminder, one fixed ordinary-mana Level 2 bar, one fixed ordinary-mana Level 3 bar, and independently exact additive children evaluated through the canonical activation and shared layer-6 static-component owners",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes the shared Class lifecycle while leaving each independently unsupported level body residual and reusing ordinary payment, stack, source-incarnation, static-component applicability, projection, persistence, and replay owners.",
+          "explicit_exclusions": [
+            "Room, Leveler, Prototype, and non-Class layouts",
+            "cycle-sensitive dynamic characteristic children and affected type-changing interactions outside the safe current-characteristic boundary",
+            "direct level-setting, lowering, or removal effects",
+            "granted, copied outside ordinary copiable printed values, text-changed, and arbitrary level structures",
+            "independently unsupported abilities within a represented level section",
+            "missing, duplicate, reordered, variable, hybrid, Phyrexian, snow, nonmana, and additional level bars"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "ordinary-class-lifecycle-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:spell-history-transformations",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",
@@ -3515,19 +3559,18 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v197-fixed-source-counter-activation-costs",
-      "compiler_version": "oracle-ir-v197",
-      "bundle_id": "bundle:fixed-source-counter-activation-costs",
-      "candidate_ids": ["compiler:fixed-source-counter-activation-costs"],
+      "transition_id": "oracle-ir-v198-ordinary-class-lifecycle",
+      "compiler_version": "oracle-ir-v198",
+      "bundle_id": "bundle:ordinary-class-lifecycle",
+      "candidate_ids": ["compiler:ordinary-class-lifecycle"],
       "family_ids": [
-        "activated_cost:complete-alternate-additional-cost-grammar",
-        "activated_cost:restricted-payment-predicates"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "activation.source_counter_removal.fixed"
+        "permanent.class.fixed_lifecycle"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-source-counter-activation-costs"
+      "measurement_id": "measurement:ordinary-class-lifecycle"
     },
     "forecast_corrections": [
       {

@@ -7,11 +7,10 @@ from pathlib import Path
 import re
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..fixed_token_production import (
-    AFTERLIFE_CAPABILITY_ID,
-    AFTERLIFE_MECHANIC_ID,
-    INVESTIGATE_CAPABILITY_ID,
-    INVESTIGATE_MECHANIC_ID,
+from ..fixed_token_production import AFTERLIFE_CAPABILITY_ID, AFTERLIFE_MECHANIC_ID, INVESTIGATE_CAPABILITY_ID, INVESTIGATE_MECHANIC_ID
+from ..class_levels import (
+    CLASS_LIFECYCLE_CAPABILITY_ID,
+    CLASS_MECHANIC_ID,
 )
 from .component_resolution import implementation_component_resolves
 from .attachment_action_capability_shapes import (
@@ -92,6 +91,7 @@ from .monarch_capability_shapes import (
     fixed_monarch_node_capabilities,
 )
 from .transform_capability_shapes import source_transform_node_capabilities
+from .class_level_capability_shapes import class_level_node_capabilities
 from .library_search_capability_shapes import (
     PARTNER_WITH_SEARCH_MECHANIC_ID,
     fixed_library_search_covered_mechanics, fixed_library_search_node_capabilities,
@@ -277,6 +277,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
     "fixed-counter-controller-effect-sequence"
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
     AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,),
     INVESTIGATE_MECHANIC_ID: (INVESTIGATE_CAPABILITY_ID,),
     _DEVOID_MECHANIC: ("continuous.characteristics.devoid",),
@@ -1068,6 +1069,7 @@ def _targeted_effect_capabilities(
         fixed_impulse_access_node_capabilities,
         fixed_monarch_node_capabilities,
         source_transform_node_capabilities,
+        class_level_node_capabilities,
         fixed_library_search_node_capabilities,
         fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
         fixed_library_selection_node_capabilities,

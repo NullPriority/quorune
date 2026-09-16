@@ -92272,21 +92272,25 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-716",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children"
+      ],
+      "implementation_components": [
+        "mechanics/contracts/class-cards.json"
+      ],
+      "notes": [
+        "Section heading; the bounded ordinary Class lifecycle is reviewed in the subordinate cases."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "716",
       "rule_text_sha256": "bfec89a824b4cf91afc4057de8ca1b33a23ab7048a42aed4e70bbae13d503207",
       "schema_version": 1,
@@ -92295,26 +92299,40 @@
         "end_line": 6033,
         "start_line": 6032
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "noncanonical, missing, duplicate, reordered, or additional level bars remain residual"
       ],
       "case_id": "cr-716.1",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
       "dependency_rule_ids": [
         "716"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
+        "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_grammar_exclusions_remain_residual"
+      ],
+      "implementation_components": [
+        "quorune.compiler.class_context_nodes.parse_class_context",
+        "mechanics/contracts/class-cards.json"
+      ],
+      "notes": [
+        "The parser requires exactly two source-spanned ordinary level bars in an ordinary Class layout."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "716.1",
       "rule_text_sha256": "1e10d231586e3acb4fc2dc1b007499690e4ffb0a250c67c762f75d568ca97861",
       "schema_version": 1,
@@ -92323,26 +92341,45 @@
         "end_line": 6035,
         "start_line": 6034
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "independently unsupported child abilities remain residual",
+        "direct level-setting or level-removal effects are not represented"
       ],
       "case_id": "cr-716.2",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "716"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped"
+      ],
+      "implementation_components": [
+        "quorune.compiler.class_context_nodes.apply_class_context",
+        "quorune.ability_fragments.StaticComponentScopeSpec"
+      ],
+      "notes": [
+        "Each represented bar produces a normal activated ability and a separate static child-applicability component."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "716.2",
       "rule_text_sha256": "5b62e5ed661bae9e2f57bb80e7824fef0452ee03637f1362ed96393ec37816f1",
       "schema_version": 1,
@@ -92351,26 +92388,46 @@
         "end_line": 6037,
         "start_line": 6036
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "variable, hybrid, Phyrexian, snow, nonmana, granted, and text-changed level activations remain residual"
       ],
       "case_id": "cr-716.2a",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "716.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_offer_commit_and_sequential_stack_resolution",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_insufficient_stale_and_removed_ability_roll_back",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking"
+      ],
+      "implementation_components": [
+        "quorune.class_levels.FixedClassLevelAbilitySpec",
+        "quorune.rules.activation.conditions.activation_condition_status",
+        "quorune.permanent_designations.advance_class_level"
+      ],
+      "notes": [
+        "The canonical activation proposal and commit owners enforce fixed payment, sorcery timing, sequential level legality, current ability presence, and ordinary stack resolution."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "716.2a",
       "rule_text_sha256": "b7f005e8a50c3125b03a9c2cc860eae4df443d9bd9e319948e3d2be56cac1993",
       "schema_version": 1,
@@ -92379,26 +92436,45 @@
         "end_line": 6039,
         "start_line": 6038
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "effects that directly set, lower, or remove a Class level remain unsupported"
       ],
       "case_id": "cr-716.2b",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "716.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped"
+      ],
+      "implementation_components": [
+        "quorune.model.CardInstance.class_level",
+        "quorune.permanent_designations.advance_class_level",
+        "quorune.zone_object_state.reset_zone_object_state"
+      ],
+      "notes": [
+        "The public noncopiable designation survives type loss, ability loss, control change, and phasing but resets on a new logical object."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "716.2b",
       "rule_text_sha256": "ca1599e4932c2b355f2e4e082ef93ff2eed5d1da195346bbe9a9230f0079aaed",
       "schema_version": 1,
@@ -92407,26 +92483,39 @@
         "end_line": 6041,
         "start_line": 6040
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "nonactivation instructions that cause a permanent to gain a Class level remain unsupported"
       ],
       "case_id": "cr-716.2c",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
       "dependency_rule_ids": [
         "716.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_offer_commit_and_sequential_stack_resolution"
+      ],
+      "implementation_components": [
+        "quorune.class_levels.FixedClassLevelAbilitySpec",
+        "quorune.rules.activation.query.activated_abilities"
+      ],
+      "notes": [
+        "The supported gain-a-level action is exactly the activation of the next ordinary level bar."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "reviewed": true,
       "rule_id": "716.2c",
       "rule_text_sha256": "0015c08d9abc727873bf735fd216fc36055ad9ea8b7f83e75c8d21dc77725a42",
       "schema_version": 1,
@@ -92435,26 +92524,39 @@
         "end_line": 6043,
         "start_line": 6042
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "arbitrary effects that interrogate the level of non-Class permanents are not compiled"
       ],
       "case_id": "cr-716.2d",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "716.2"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped"
+      ],
+      "implementation_components": [
+        "quorune.permanent_designations.current_class_level",
+        "quorune.ability_fragments.StaticComponentApplicabilitySpec"
+      ],
+      "notes": [
+        "The absence of an explicit designation evaluates as level 1 inside the shared applicability query."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction"
+      ],
+      "reviewed": true,
       "rule_id": "716.2d",
       "rule_text_sha256": "72172ac884615e014128db784df02b09884cd8004ccd5c7e108506fd6b94681e",
       "schema_version": 1,
@@ -92463,26 +92565,41 @@
         "end_line": 6045,
         "start_line": 6044
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "independently unsupported top-section abilities remain residual"
       ],
       "case_id": "cr-716.3",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "interaction",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "716"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped"
+      ],
+      "implementation_components": [
+        "quorune.compiler.class_context_nodes.apply_class_context",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map"
+      ],
+      "notes": [
+        "Top-section abilities remain ordinary unscoped components while levels 2 and 3 add their independently exact children."
+      ],
+      "required_scenarios": [
+        "positive",
+        "interaction",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "716.3",
       "rule_text_sha256": "d596d5d6b565d4026b1ad406fdbfaf84196ff3b9a8eab0e9bfa24251af145cdd",
       "schema_version": 1,
@@ -92491,26 +92608,32 @@
         "end_line": 6047,
         "start_line": 6046
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "static_traceability",
+      "blockers": [],
       "case_id": "cr-716.4",
       "case_version": 1,
-      "classification": "unclassified",
+      "classification": "definition_only",
       "covered_scenarios": [],
       "dependency_rule_ids": [
         "716"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
+      "executable_test_ids": [
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped",
+        "tests.test_leveler_bands.LevelerBandRuntimeTests.test_leveler_copy_ability_removal_and_layer_ordering"
+      ],
+      "implementation_components": [
+        "quorune.model.CardInstance.class_level",
+        "quorune.leveler_bands.LevelerBandsSpec"
+      ],
+      "notes": [
+        "Class level is a noncounter designation and remains separate from Leveler's level counters."
+      ],
       "required_scenarios": [],
-      "reviewed": false,
+      "reviewed": true,
       "rule_id": "716.4",
       "rule_text_sha256": "de82a98549733062ba390a681bb07c17368633a9a71717ca21f566f71c19e53e",
       "schema_version": 1,
@@ -92519,7 +92642,7 @@
         "end_line": 6049,
         "start_line": 6048
       },
-      "status": "unreviewed"
+      "status": "definition_only"
     },
     {
       "assertion_kind": "inventory_only",

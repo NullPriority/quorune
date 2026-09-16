@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed generic Class lifecycle fixtures",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000071600001",
+      "name": "Generic Training Class",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Class",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nHexproof\n{1}{W}: Level 2\nLifelink\n{2}{W}: Level 3\nVigilance",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": ["Hexproof", "Lifelink", "Vigilance"],
+      "produced_mana": [],
+      "layout": "class",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

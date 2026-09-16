@@ -33,6 +33,7 @@ from .cycling_abilities import default_cycling_ability_registry
 from .counter_keyword_abilities import (
     default_fixed_counter_keyword_ability_registry,
 )
+from .class_levels import default_class_level_activation_registry
 from .life_replacements import default_life_replacement_registry
 from .color_set_mana_abilities import (
     default_color_set_mana_ability_registry,
@@ -83,6 +84,7 @@ def runtime_component_registries() -> tuple[Any, ...]:
         default_ordinary_station_ability_registry(),
         default_cycling_ability_registry(),
         default_fixed_counter_keyword_ability_registry(),
+        default_class_level_activation_registry(),
         default_color_set_mana_ability_registry(),
         default_fixed_mana_ability_registry(),
         default_fixed_mana_morph_registry(),
