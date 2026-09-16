@@ -40,6 +40,25 @@
       "layout": "class",
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000071600003",
+      "name": "Generic Replacement Class",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Class",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nIf you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead.\n{W}: Level 2\nLifelink\n{2}{W}: Level 3\nVigilance",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": ["Lifelink", "Vigilance"],
+      "produced_mana": [],
+      "layout": "class",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
     }
   ],
   "rulings": []

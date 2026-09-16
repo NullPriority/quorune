@@ -11,6 +11,7 @@ from common import ROOT, keep_all, make_session
 from quorune.ability_fragments import StaticComponentSpec
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.continuous_effect_state import commit_continuous_effect
+from quorune.counter_placement import place_counters_on_refs
 from quorune.continuous_effects import (
     ContinuousEffect,
     ContinuousEffectDuration,
@@ -93,6 +94,16 @@ SCHOLAR_CLASS_TEXT = (
     "{1}{U}: Level 2\n"
     "When this Class becomes level 2, draw two cards.\n"
     "{2}{U}: Level 3\n"
+    "Vigilance"
+)
+REPLACEMENT_CLASS_TEXT = (
+    "(Gain the next level as a sorcery to add its ability.)\n"
+    "If you would put one or more counters on a permanent or player, put "
+    "twice that many of each of those kinds of counters on that permanent "
+    "or player instead.\n"
+    "{W}: Level 2\n"
+    "Lifelink\n"
+    "{2}{W}: Level 3\n"
     "Vigilance"
 )
 
@@ -298,7 +309,6 @@ class ClassLifecycleCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_exact()
-
 
 class ClassLifecycleRuntimeTests(unittest.TestCase):
     @classmethod
@@ -787,6 +797,64 @@ class ClassLifecycleRuntimeTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_advances(71612)
+
+    def test_class_lifecycle_executes_while_replacement_residuals_stay_inert(self):
+        compiled = compile_oracle_card(
+            class_record(
+                REPLACEMENT_CLASS_TEXT,
+                name="Constructed Replacement Class",
+                keywords=("Lifelink", "Vigilance"),
+            ),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("partial", compiled.status)
+        blockers = {
+            blocker
+            for residual in compiled.material_residuals
+            for blocker in residual.blockers
+        }
+        self.assertTrue(
+            {
+                "replacement applicability",
+                "self-replacement and prevention ordering",
+            }.issubset(blockers)
+        )
+
+        session = self.session(71617)
+        source = self.add_class(
+            session,
+            name="Generic Replacement Class",
+            ref="A-replacement-class",
+        )
+        self.prepare_priority(session)
+        self.assertEqual({2, 3}, set(self.class_abilities(session.engine, source)))
+        self.activate(session, source, 2)
+        self.resolve_top(session.engine)
+        self.assertEqual(2, source.class_level)
+
+        target_ref = session.engine.create_token(
+            "A",
+            name="Generic Counter Recipient",
+            characteristics={
+                "type_line": "Token Creature — Test",
+                "power": "1",
+                "toughness": "1",
+            },
+        )[0]
+        place_counters_on_refs(
+            session.engine,
+            actor="A",
+            object_refs=(target_ref,),
+            counter_name="+1/+1",
+            amount=1,
+            reason="unsupported Class replacement interaction fixture",
+            source_ref=source.ref,
+        )
+        target = session.engine._resolve_object(
+            "A", target_ref, zones={"battlefield"}
+        )
+        self.assertEqual(1, target.counters["+1/+1"])
 
 
 if __name__ == "__main__":

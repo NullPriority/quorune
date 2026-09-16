@@ -6930,6 +6930,19 @@
       "capability_ids": ["attachment.equip.fixed_mana", "continuous.resolution.declaration_rules_until_end_of_turn"],
       "interaction_order": 2,
       "assertion": "One generic Equipment attaches through its fixed-mana Equip action, then a sibling source-counter activation creates an identity-locked declaration rule without disturbing the attachment; exact replay preserves both results."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_class_lifecycle_executes_while_replacement_residuals_stay_inert",
+      "piece_ids": [
+        "capability.permanent.class.fixed_lifecycle",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": ["permanent.class.fixed_lifecycle"],
+      "interaction_order": 3,
+      "assertion": "The ordinary Class level activation resolves through its typed designation owner while an independently unsupported counter-doubling replacement retains applicability and ordering residuals and contributes no counter-replacement authority."
     }
   ]
 }

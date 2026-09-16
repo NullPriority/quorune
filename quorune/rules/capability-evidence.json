@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "eea1734cf7586cd6056b1161b0a87a6d89d01ceee7ae1a8109f68caefeef47c7",
-  "declaration_source_fingerprint": "07d719f6297cfe24ea4aa702a24c1d6f849acc8e428f3963e67d0343ea0de07c",
+  "registry_fingerprint": "7c60322ab0275505cfaf523fa6cc9d6af51e4ed8e26da745658bb5b4951373cb",
+  "declaration_source_fingerprint": "48085145e42fa588429f7a97e23927361cc14620e47ba90a39443495e237299a",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -45304,6 +45304,29 @@
     {
       "capability_id": "permanent.class.fixed_lifecycle",
       "evidence_class": "interaction",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_lifecycle_executes_while_replacement_residuals_stay_inert",
+      "official_rule_ids": [
+        "107.16",
+        "107.16a",
+        "716.1",
+        "716.2",
+        "716.2a",
+        "716.2b",
+        "716.2c",
+        "716.2d",
+        "716.3",
+        "716.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Execute the typed lifecycle while a sibling counter-doubling replacement remains an explicit residual and contributes no runtime replacement authority."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking",
       "official_rule_ids": [
         "107.16",
@@ -64175,5 +64198,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "5166f135f05a79500df81bb1e744d0dde160d122be000100bde20f8a67d30765"
+  "fingerprint": "fe76776d3ff71666a2a5c95bec72a3aefc98520d65298178cdccdda7a9ea7a04"
 }
