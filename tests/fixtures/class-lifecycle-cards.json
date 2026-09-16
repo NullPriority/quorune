@@ -21,6 +21,25 @@
       "layout": "class",
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000071600002",
+      "name": "Generic Scholar Class",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Class",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nYou have no maximum hand size.\n{1}{U}: Level 2\nWhen this Class becomes level 2, draw two cards.\n{2}{U}: Level 3\nVigilance",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["Vigilance"],
+      "produced_mana": [],
+      "layout": "class",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
     }
   ],
   "rulings": []

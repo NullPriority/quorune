@@ -836,6 +836,10 @@ payment; resolution asks the permanent-designation owner to advance only the
 pinned source incarnation. Independently exact children receive the existing
 current-component marker, and both level scopes use the shared layer-6
 applicability query so level 3 adds rather than replaces level 2 abilities.
+The same context admits the exact source-self "becomes level N" occurrence
+through normalized trigger placement, and the ordinary static compiler exposes
+the reusable no-maximum-hand-size component used by cleanup offer and commit
+validation.
 Variable, hybrid, Phyrexian, snow, nonmana, malformed, granted, text-changed,
 direct level-setting, independently unsupported, and cycle-sensitive dynamic
 characteristic forms remain residual.

@@ -118,7 +118,11 @@ children, and dynamic count/type-change edges remain outside this boundary.
 Ordinary Class level bars reuse the same component query with a typed minimum
 public designation: the activation remains a normal current ability, while
 each bar's separate static component exposes only its independently exact
-children at level 2 or 3. The noncopiable designation survives type loss,
+children at level 2 or 3. Level advancement emits one source-self normalized
+occurrence after the designation changes, so a newly applicable child trigger
+uses ordinary APNAP placement. The reusable no-maximum-hand-size component
+consults that same current-component snapshot during both cleanup advertisement
+and command validation. The noncopiable designation survives type loss,
 ability loss, control changes, and phasing on the same permanent and resets at
 the canonical zone-object boundary. Every trusted battlefield
 `characteristics.evaluate` program contributes one `StaticComponentSpec` to

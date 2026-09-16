@@ -35191,15 +35191,17 @@
       "effective_date": "2026-08-07",
       "executable_test_ids": [
         "tests.test_cleanup_step_rules.CleanupStepRuleTests.test_cleanup_discard_is_exact_simultaneous_private_and_replayable",
-        "tests.test_cleanup_step_rules.CleanupStepRuleTests.test_invalid_cleanup_discard_rolls_back_capability_and_state"
+        "tests.test_cleanup_step_rules.CleanupStepRuleTests.test_invalid_cleanup_discard_rolls_back_capability_and_state",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard"
       ],
       "implementation_components": [
         "CommanderEngine._enter_step",
         "CommanderEngine._complete_cleanup_discard",
-        "CommanderEngine._move_cards_simultaneously"
+        "CommanderEngine._move_cards_simultaneously",
+        "quorune.maximum_hand_size.effective_maximum_hand_size"
       ],
       "notes": [
-        "The active player privately selects exactly the current excess; those cards move simultaneously without using the stack, invalid submissions roll back, and exact command replay passes."
+        "The active player privately selects exactly the current excess; those cards move simultaneously without using the stack, invalid submissions roll back, and exact command replay passes. One exact current static component can make the controller's maximum unlimited, and removing that component restores the ordinary discard through the same offer and commit query."
       ],
       "required_scenarios": [
         "positive",
@@ -92364,10 +92366,13 @@
       "effective_date": "2026-08-07",
       "executable_test_ids": [
         "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
-        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped"
+        "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_level_trigger_and_no_maximum_hand_size_compile_exactly",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program"
       ],
       "implementation_components": [
         "quorune.compiler.class_context_nodes.apply_class_context",
+        "quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
         "quorune.ability_fragments.StaticComponentScopeSpec"
       ],
       "notes": [
@@ -92411,7 +92416,8 @@
       "executable_test_ids": [
         "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_offer_commit_and_sequential_stack_resolution",
         "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_insufficient_stale_and_removed_ability_roll_back",
-        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking"
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program"
       ],
       "implementation_components": [
         "quorune.class_levels.FixedClassLevelAbilitySpec",
@@ -92419,7 +92425,7 @@
         "quorune.permanent_designations.advance_class_level"
       ],
       "notes": [
-        "The canonical activation proposal and commit owners enforce fixed payment, sorcery timing, sequential level legality, current ability presence, and ordinary stack resolution."
+        "The canonical activation proposal and commit owners enforce fixed payment, sorcery timing, sequential level legality, current ability presence, and ordinary stack resolution. The designation transition then emits one normalized source-self occurrence for newly applicable child triggers."
       ],
       "required_scenarios": [
         "positive",
@@ -92543,7 +92549,8 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
-        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped"
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_gates_children_and_is_noncopiable_and_zone_scoped",
+        "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program"
       ],
       "implementation_components": [
         "quorune.permanent_designations.current_class_level",

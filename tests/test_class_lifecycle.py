@@ -20,6 +20,7 @@ from quorune.continuous_effects import (
     Layer,
 )
 from quorune.deck import DeckLoader
+from quorune.engine import TURN_STEPS
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import (
@@ -84,6 +85,14 @@ CLASS_TEXT = (
     "{1}{W}: Level 2\n"
     "Lifelink\n"
     "{2}{W}: Level 3\n"
+    "Vigilance"
+)
+SCHOLAR_CLASS_TEXT = (
+    "(Gain the next level as a sorcery to add its ability.)\n"
+    "You have no maximum hand size.\n"
+    "{1}{U}: Level 2\n"
+    "When this Class becomes level 2, draw two cards.\n"
+    "{2}{U}: Level 3\n"
     "Vigilance"
 )
 
@@ -206,6 +215,69 @@ class ClassLifecycleCompilerTests(unittest.TestCase):
                     self.assertNotEqual("exact", compiled.status)
                     self.assertTrue(compiled.material_residuals)
 
+    def test_class_level_trigger_and_no_maximum_hand_size_compile_exactly(self):
+        compiled = self.compile(
+            class_record(
+                SCHOLAR_CLASS_TEXT,
+                name="Constructed Scholar Class",
+                keywords=("Vigilance",),
+            )
+        )
+        self.assertEqual("exact", compiled.status, compiled.to_dict())
+        nodes = compiled.faces[0].nodes
+        self.assertTrue(
+            any(node.template_id == "no-maximum-hand-size-v1" for node in nodes)
+        )
+        trigger = next(
+            node
+            for node in nodes
+            if node.template_id == "class-level-change-trigger-v1"
+        )
+        self.assertEqual("permanent.class_level_changed.self", trigger.event)
+        self.assertEqual(
+            {"field": "level", "op": "eq", "value": 2},
+            trigger.event_condition,
+        )
+        self.assertEqual(
+            (
+                {
+                    "op": "draw",
+                    "player": "$controller",
+                    "count": 2,
+                    "private": True,
+                },
+            ),
+            trigger.effects,
+        )
+        self.assertIn("current_ability_fragment_required", trigger.runtime_coverage)
+        for unsupported in (
+            SCHOLAR_CLASS_TEXT.replace(
+                "You have no maximum hand size.",
+                "Your maximum hand size is increased by two.",
+            ),
+            SCHOLAR_CLASS_TEXT.replace(
+                "You have no maximum hand size.",
+                "You have no maximum hand size during your turn.",
+            ),
+            SCHOLAR_CLASS_TEXT.replace(
+                "When this Class becomes level 2",
+                "Whenever this Class becomes level 2",
+            ),
+            SCHOLAR_CLASS_TEXT.replace(
+                "When this Class becomes level 2",
+                "When this Class becomes level 4",
+            ),
+        ):
+            with self.subTest(unsupported=unsupported):
+                rejected = self.compile(
+                    class_record(
+                        unsupported,
+                        name="Unsupported Scholar Class",
+                        keywords=("Vigilance",),
+                    )
+                )
+                self.assertNotEqual("exact", rejected.status)
+
     def test_class_capability_and_compiler_mutations_fail_closed(self):
         value = deepcopy(self.registry_value)
         capability = next(row for row in value["capabilities"] if row["id"] == CAPABILITY)
@@ -271,9 +343,15 @@ class ClassLifecycleRuntimeTests(unittest.TestCase):
         session.decisions.clear()
         return session
 
-    def add_class(self, session, *, ref: str = "A-class") -> CardInstance:
+    def add_class(
+        self,
+        session,
+        *,
+        ref: str = "A-class",
+        name: str = "Generic Training Class",
+    ) -> CardInstance:
         engine = session.engine
-        record = self.db.lookup("Generic Training Class")
+        record = self.db.lookup(name)
         card = CardInstance(
             object_id=f"fixture:{ref}",
             ref=ref,
@@ -297,6 +375,7 @@ class ClassLifecycleRuntimeTests(unittest.TestCase):
             capability_registry=self.capabilities,
             capability_profile=engine.state.config.review_profile,
             promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
             promote_exact_effect_programs=True,
             promote_exact_capability_declarations=True,
         )
@@ -587,6 +666,110 @@ class ClassLifecycleRuntimeTests(unittest.TestCase):
             replay = replay_record(directory, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program(self):
+        session = self.session(71613)
+        source = self.add_class(
+            session,
+            name="Generic Scholar Class",
+            ref="A-scholar-class",
+        )
+        self.prepare_priority(session)
+        hand_before = len(session.state.players["A"].zones["hand"])
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        self.activate(session, source, 2)
+        self.pass_until_empty(session)
+
+        self.assertEqual(2, source.class_level)
+        self.assertEqual(
+            hand_before + 2,
+            len(session.state.players["A"].zones["hand"]),
+        )
+        self.assertTrue(
+            any(
+                event.code == "permanent.class_level"
+                and event.details.get("level") == 2
+                for event in session.state.events
+            )
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "class-level-trigger-record"
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_no_maximum_hand_size_component_removal_restores_cleanup_discard(self):
+        def pending_discard(seed: int, *, remove_component: bool) -> int | None:
+            session = self.session(seed)
+            source = self.add_class(
+                session,
+                name="Generic Scholar Class",
+                ref=f"A-scholar-{seed}",
+            )
+            engine = session.engine
+            for _ in range(2):
+                object_id = engine.state.players["A"].zones["library"][-1]
+                engine.move_card(object_id, "hand", log=False)
+            if remove_component:
+                program = next(
+                    value
+                    for value in engine.semantics.programs_for_oracle(
+                        source.oracle_id,
+                        active_zone="battlefield",
+                        event="characteristics.evaluate",
+                    )
+                    if value.provenance.get("template_id")
+                    == "no-maximum-hand-size-v1"
+                )
+                commit_continuous_effect(
+                    engine.state,
+                    ContinuousEffect(
+                        effect_id=f"fixture:remove-no-max:{seed}",
+                        source_id=f"fixture:remove-no-max:{seed}",
+                        layer=Layer.ABILITY,
+                        sublayer="6",
+                        timestamp=engine._next_zone_timestamp(),
+                        operations=(
+                            ContinuousOperation(
+                                "remove_ability_fragment",
+                                {
+                                    "kind": "static_component",
+                                    "value": StaticComponentSpec(
+                                        program.key
+                                    ).to_dict(),
+                                },
+                            ),
+                        ),
+                        origin=ContinuousEffectOrigin.RESOLUTION,
+                        duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                        locked_objects=(
+                            ContinuousObjectIdentity(
+                                source.object_id,
+                                source.logical_object_id,
+                            ),
+                        ),
+                    ),
+                )
+            engine.state.phase_index = TURN_STEPS.index(("ending", "cleanup"))
+            engine._enter_step()
+            decision = engine.state.pending_decision
+            return (
+                int(decision.payload_by_actor["A"]["count"])
+                if decision is not None and decision.kind == "cleanup.discard"
+                else None
+            )
+
+        self.assertIsNone(pending_discard(71614, remove_component=False))
+        self.assertEqual(2, pending_discard(71615, remove_component=True))
+        with mock.patch(
+            "quorune.engine.effective_maximum_hand_size",
+            return_value=None,
+        ):
+            with self.assertRaises(AssertionError):
+                self.assertEqual(2, pending_discard(71616, remove_component=True))
 
     def test_class_designation_mutation_is_killed(self):
         def assert_advances(seed: int) -> None:

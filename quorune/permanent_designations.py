@@ -203,6 +203,7 @@ def advance_class_level(
     card.class_level = request.level
     details = {
         "object": card.ref,
+        "card": card.ref,
         "logical_object_id": card.logical_object_id,
         "controller": card.controller,
         "previous_level": prior,

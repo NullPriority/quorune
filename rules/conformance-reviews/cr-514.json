@@ -25,12 +25,12 @@
       "status": "passing",
       "assertion_kind": "executable_engine",
       "reviewed": true,
-      "implementation_components": ["CommanderEngine._enter_step", "CommanderEngine._complete_cleanup_discard", "CommanderEngine._move_cards_simultaneously"],
-      "executable_test_ids": ["tests.test_cleanup_step_rules.CleanupStepRuleTests.test_cleanup_discard_is_exact_simultaneous_private_and_replayable", "tests.test_cleanup_step_rules.CleanupStepRuleTests.test_invalid_cleanup_discard_rolls_back_capability_and_state"],
+      "implementation_components": ["CommanderEngine._enter_step", "CommanderEngine._complete_cleanup_discard", "CommanderEngine._move_cards_simultaneously", "quorune.maximum_hand_size.effective_maximum_hand_size"],
+      "executable_test_ids": ["tests.test_cleanup_step_rules.CleanupStepRuleTests.test_cleanup_discard_is_exact_simultaneous_private_and_replayable", "tests.test_cleanup_step_rules.CleanupStepRuleTests.test_invalid_cleanup_discard_rolls_back_capability_and_state", "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard"],
       "required_scenarios": ["positive", "negative", "hidden_information", "replay"],
       "covered_scenarios": ["positive", "negative", "hidden_information", "replay"],
       "blockers": [],
-      "notes": ["The active player privately selects exactly the current excess; those cards move simultaneously without using the stack, invalid submissions roll back, and exact command replay passes."]
+      "notes": ["The active player privately selects exactly the current excess; those cards move simultaneously without using the stack, invalid submissions roll back, and exact command replay passes. One exact current static component can make the controller's maximum unlimited, and removing that component restores the ordinary discard through the same offer and commit query."]
     },
     {
       "rule_id": "514.2",

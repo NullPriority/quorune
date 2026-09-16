@@ -2704,6 +2704,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/maximum_hand_size_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/mill_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4839,6 +4854,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/maximum_hand_size.py",
+      "layer": "rules",
+      "owning_subsystem": "turn_priority_and_decisions",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/mechanic_contracts.py",
@@ -8276,6 +8305,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/maximum_hand_size.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/morph.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -9507,5 +9551,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4e7827a51549660eba92ae6c0354d9b6a69df04c82750e677b19cebfca8822ba"
+  "fingerprint": "b19aa817c5374fa45b57ebab75c3e75b608495ba632d8a7e7a1a26e495846188"
 }

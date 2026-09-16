@@ -17076,6 +17076,62 @@
       "applicability_note": "Round-trip all reciprocal Partner with Commander designations through the canonical serialized game state."
     },
     {
+      "capability_id": "hand.cleanup.no_maximum",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
+      "official_rule_ids": ["402.2", "514.1", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the exact static component through layer 6 and prove the same cleanup owner restores the ordinary discard requirement."
+    },
+    {
+      "capability_id": "hand.cleanup.no_maximum",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
+      "official_rule_ids": ["402.2", "514.1", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Force an unconditional no-maximum result and prove the removed-component cleanup witness rejects the survivor."
+    },
+    {
+      "capability_id": "hand.cleanup.no_maximum",
+      "evidence_class": "negative",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_level_trigger_and_no_maximum_hand_size_compile_exactly",
+      "official_rule_ids": ["402.2", "514.1", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep fixed, conditional, temporary, target-player, and other nonexact maximum-hand-size forms residual."
+    },
+    {
+      "capability_id": "hand.cleanup.no_maximum",
+      "evidence_class": "negative",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
+      "official_rule_ids": ["402.2", "514.1", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "An absent or removed current component cannot suppress the ordinary cleanup discard decision."
+    },
+    {
+      "capability_id": "hand.cleanup.no_maximum",
+      "evidence_class": "positive",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_level_trigger_and_no_maximum_hand_size_compile_exactly",
+      "official_rule_ids": ["402.2", "514.1", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower the exact source-spanned static permission into one current component owned by cleanup."
+    },
+    {
+      "capability_id": "hand.cleanup.no_maximum",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
+      "official_rule_ids": ["402.2", "514.1", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "The existing cleanup decision remains principal-scoped and does not expose discarded-card choices to opponents."
+    },
+    {
+      "capability_id": "hand.cleanup.no_maximum",
+      "evidence_class": "replay",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",
+      "official_rule_ids": ["402.2", "514.1", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the trusted Class carrier with the permission component and resulting level-trigger sequence under the exact program fingerprint."
+    },
+    {
       "capability_id": "keyword_action.adapt.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_counter_keyword_actions.PermanentDesignationTests.test_adapt_uses_canonical_counter_replacement_and_replays",
@@ -18859,6 +18915,14 @@
     {
       "capability_id": "permanent.class.fixed_lifecycle",
       "evidence_class": "interaction",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Dispatch the normalized level-change event only after the designation changes and place the currently applicable child trigger through ordinary APNAP handling."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_source_incarnation_counter_and_resolution_locking",
       "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -18891,6 +18955,14 @@
     {
       "capability_id": "permanent.class.fixed_lifecycle",
       "evidence_class": "positive",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_level_trigger_and_no_maximum_hand_size_compile_exactly",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose the exact Level 2 occurrence with an independently typed draw body and current child-component requirement."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "positive",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
       "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -18903,6 +18975,14 @@
       "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project the public level without exposing authoritative object identities or another seat's legal activation."
+    },
+    {
+      "capability_id": "permanent.class.fixed_lifecycle",
+      "evidence_class": "replay",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",
+      "official_rule_ids": ["107.16", "107.16a", "716.1", "716.2", "716.2a", "716.2b", "716.2c", "716.2d", "716.3", "716.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay activation, level designation, normalized trigger placement, and the private draw result under the exact Class program."
     },
     {
       "capability_id": "permanent.class.fixed_lifecycle",

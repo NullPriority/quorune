@@ -8,6 +8,7 @@ from .declaration_nodes import (
     fixed_static_declaration_grant_handler,
 )
 from .intrinsic_counter_nodes import intrinsic_counter_prohibition_node
+from .maximum_hand_size_nodes import no_maximum_hand_size_node
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .kicker_nodes import fixed_kicked_entry_node
 from .public_alternative_cost_nodes import (
@@ -65,6 +66,17 @@ def closed_static_or_replacement_node(
     )
     if alternative_cost is not None:
         return alternative_cost
+    no_maximum = no_maximum_hand_size_node(
+        node_id=node_id,
+        line=line,
+        material_line=material_line,
+        span=span,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        residuals=residuals,
+    )
+    if no_maximum is not None:
+        return no_maximum
     declaration_grant = fixed_static_declaration_grant_handler(
         material_line,
         source_name=source_name,

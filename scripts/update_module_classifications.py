@@ -163,6 +163,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/attack_transition_resolution.py",
         "quorune/choice_forms.py",
         "quorune/class_levels.py",
+        "quorune/maximum_hand_size.py",
         "quorune/combat.py",
         "quorune/block_transition_engine_adapter.py",
         "quorune/block_transitions.py",
@@ -329,6 +330,8 @@ def _owner(relative: str, layer: str) -> str:
         return "reusable_piece_inventory"
     if relative.startswith("quorune/compiler/"):
         return "oracle_compiler"
+    if relative == "quorune/maximum_hand_size.py":
+        return "turn_priority_and_decisions"
     if relative == "quorune/rules/source_references.py":
         return "oracle_compiler"
     if relative in {

@@ -106,13 +106,13 @@
     {
       "mechanic_id": "cr-716-class-cards",
       "path": "mechanics/contracts/class-cards.json",
-      "sha256": "a76ce788108e5234fc4392834be54e8417d3550688460b66889110cdc41f5b78",
+      "sha256": "917a72b27a30dec11e6f6bb26ddaf7b110111c2f54425813b3828595d5f9ab4c",
       "version": 1
     },
     {
       "mechanic_id": "cr-514-cleanup-step",
       "path": "mechanics/contracts/cleanup-step.json",
-      "sha256": "6d4e8ce566299bb27b5e5f4069b90e5c62bf01d2837fd6c3891019d98e578501",
+      "sha256": "dfa2c6aab3f814b191e3d5b01a33cc28f40f09f2df072e6fd6008161e2e180ea",
       "version": 1
     },
     {
@@ -9360,12 +9360,12 @@
     {
       "category": "turn_structure",
       "contract_path": "mechanics/contracts/cleanup-step.json",
-      "contract_sha256": "6d4e8ce566299bb27b5e5f4069b90e5c62bf01d2837fd6c3891019d98e578501",
+      "contract_sha256": "dfa2c6aab3f814b191e3d5b01a33cc28f40f09f2df072e6fd6008161e2e180ea",
       "contract_version": 1,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "CommanderEngine cleanup entry, discard, duration clearing, cleanup-exception frame, stabilization, delayed-trigger, priority, and repeat-step paths",
-      "implementation_version": "cleanup-step-v1",
+      "implementation_component": "CommanderEngine cleanup entry, current maximum-hand-size component query, discard, duration clearing, cleanup-exception frame, stabilization, delayed-trigger, priority, and repeat-step paths",
+      "implementation_version": "cleanup-step-v2",
       "kind": "rules_section",
       "known_blockers": [
         "all until-end-of-turn and this-turn continuous effects are not represented by one duration registry",
@@ -9384,6 +9384,7 @@
         "test_contract_traces_every_cr_514_rule",
         "test_cleanup_discard_is_exact_simultaneous_private_and_replayable",
         "test_invalid_cleanup_discard_rolls_back_capability_and_state",
+        "test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
         "test_ordinary_cleanup_grants_no_priority",
         "test_cleanup_state_action_grants_priority_then_repeats_cleanup",
         "test_next_cleanup_trigger_waits_until_cleanup_actions_finish",
@@ -10408,11 +10409,11 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/class-cards.json",
-      "contract_sha256": "a76ce788108e5234fc4392834be54e8417d3550688460b66889110cdc41f5b78",
+      "contract_sha256": "917a72b27a30dec11e6f6bb26ddaf7b110111c2f54425813b3828595d5f9ab4c",
       "contract_version": 1,
       "coverage_status": "tested",
       "dependencies": [],
-      "implementation_component": "FixedClassLevelAbilitySpec, Class compiler context, activation catalog, shared StaticComponentScopeSpec applicability, permanent designation owner, projection, persistence, and replay",
+      "implementation_component": "FixedClassLevelAbilitySpec, Class compiler context, normalized level-change binding, activation catalog, shared StaticComponentScopeSpec applicability, permanent designation owner, projection, persistence, and replay",
       "implementation_version": "typed-class-lifecycle-v1",
       "kind": "rules_section",
       "known_blockers": [
@@ -10430,6 +10431,7 @@
       ],
       "test_ids": [
         "test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
+        "test_class_level_trigger_and_no_maximum_hand_size_compile_exactly",
         "test_class_grammar_exclusions_remain_residual",
         "test_class_capability_and_compiler_mutations_fail_closed",
         "test_class_offer_commit_and_sequential_stack_resolution",
@@ -10437,6 +10439,8 @@
         "test_class_source_incarnation_counter_and_resolution_locking",
         "test_class_level_gates_children_and_is_noncopiable_and_zone_scoped",
         "test_class_save_load_replay_and_four_player_projection",
+        "test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",
+        "test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
         "test_class_designation_mutation_is_killed"
       ],
       "trust_level": "untrusted"

@@ -2033,10 +2033,13 @@
             "continuous_layer:continuous-effect-layers-and-dependencies"
           ],
           "canonical_owner_ids": [
+            "capability:hand.cleanup.no_maximum",
             "capability:permanent.class.fixed_lifecycle",
             "component:quorune.ability_fragments.StaticComponentApplicabilitySpec",
             "component:quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map",
             "component:quorune.compiler.class_context_nodes.apply_class_context",
+            "component:quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+            "component:quorune.maximum_hand_size.effective_maximum_hand_size",
             "component:quorune.permanent_designations.advance_class_level",
             "component:quorune.rules.activation.conditions.activation_condition_status"
           ],
@@ -2053,13 +2056,14 @@
             "sequential-level-two-and-three"
           ],
           "shared_dependencies": [
+            "hand.cleanup.no_maximum",
             "permanent.class.fixed_lifecycle"
           ],
           "shared_grammar": "one ordinary Class with the exact reminder, one fixed ordinary-mana Level 2 bar, one fixed ordinary-mana Level 3 bar, and independently exact additive children evaluated through the canonical activation and shared layer-6 static-component owners",
           "estimated_implementation_hours": 5,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Closes the shared Class lifecycle while leaving each independently unsupported level body residual and reusing ordinary payment, stack, source-incarnation, static-component applicability, projection, persistence, and replay owners.",
+          "expected_downstream_closure": "Closes the shared Class lifecycle, its normalized level-change trigger boundary, and the reusable no-maximum-hand-size prerequisite needed for a positive complete-card carrier while leaving other independently unsupported level bodies residual and reusing ordinary payment, stack, source-incarnation, cleanup, static-component applicability, projection, persistence, and replay owners.",
           "explicit_exclusions": [
             "Room, Leveler, Prototype, and non-Class layouts",
             "cycle-sensitive dynamic characteristic children and affected type-changing interactions outside the safe current-characteristic boundary",
@@ -3567,6 +3571,7 @@
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
+        "hand.cleanup.no_maximum",
         "permanent.class.fixed_lifecycle"
       ],
       "non_harvest_reason": null,

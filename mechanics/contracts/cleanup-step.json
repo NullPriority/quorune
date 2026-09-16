@@ -56,6 +56,7 @@
     "state_reads": [
       "active player",
       "maximum hand size",
+      "current no-maximum-hand-size static components",
       "private hand",
       "marked and deathtouch damage",
       "temporary keywords and represented turn-duration annotations",
@@ -117,6 +118,7 @@
   "variants": [
     "hand at or below maximum",
     "hand above maximum",
+    "current no-maximum-hand-size permission",
     "cleanup with no state action or trigger",
     "cleanup effect expiration causes a state action",
     "beginning-of-next-cleanup delayed trigger",
@@ -142,6 +144,7 @@
     "test_contract_traces_every_cr_514_rule",
     "test_cleanup_discard_is_exact_simultaneous_private_and_replayable",
     "test_invalid_cleanup_discard_rolls_back_capability_and_state",
+    "test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
     "test_ordinary_cleanup_grants_no_priority",
     "test_cleanup_state_action_grants_priority_then_repeats_cleanup",
     "test_next_cleanup_trigger_waits_until_cleanup_actions_finish",
@@ -151,8 +154,8 @@
     "test_marked_damage_survives_type_loss_until_cleanup"
   ],
   "implementation": {
-    "component": "CommanderEngine cleanup entry, discard, duration clearing, cleanup-exception frame, stabilization, delayed-trigger, priority, and repeat-step paths",
-    "version": "cleanup-step-v1"
+    "component": "CommanderEngine cleanup entry, current maximum-hand-size component query, discard, duration clearing, cleanup-exception frame, stabilization, delayed-trigger, priority, and repeat-step paths",
+    "version": "cleanup-step-v2"
   },
   "known_blockers": [
     "all until-end-of-turn and this-turn continuous effects are not represented by one duration registry",
