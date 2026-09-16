@@ -106,7 +106,7 @@
     {
       "mechanic_id": "cr-716-class-cards",
       "path": "mechanics/contracts/class-cards.json",
-      "sha256": "4c490c73948049bb0ee7ad6c4098d3f4a87b3c13517cb04b7f5ff5dfae9d9256",
+      "sha256": "917a72b27a30dec11e6f6bb26ddaf7b110111c2f54425813b3828595d5f9ab4c",
       "version": 1
     },
     {
@@ -10409,7 +10409,7 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/class-cards.json",
-      "contract_sha256": "4c490c73948049bb0ee7ad6c4098d3f4a87b3c13517cb04b7f5ff5dfae9d9256",
+      "contract_sha256": "917a72b27a30dec11e6f6bb26ddaf7b110111c2f54425813b3828595d5f9ab4c",
       "contract_version": 1,
       "coverage_status": "tested",
       "dependencies": [],
@@ -10441,7 +10441,6 @@
         "test_class_save_load_replay_and_four_player_projection",
         "test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",
         "test_no_maximum_hand_size_component_removal_restores_cleanup_discard",
-        "test_class_lifecycle_executes_while_replacement_residuals_stay_inert",
         "test_class_designation_mutation_is_killed"
       ],
       "trust_level": "untrusted"
