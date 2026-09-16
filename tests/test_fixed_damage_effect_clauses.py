@@ -34,7 +34,7 @@ from quorune.rules.capabilities import (
     capability_dependencies_for_node,
     load_default_capability_registry,
 )
-from quorune.rules import node_capability_shapes
+from quorune.rules import damage_capability_shapes
 from quorune.semantics import SemanticProgram, SemanticRegistry
 
 
@@ -219,21 +219,21 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
                 )
 
     def test_recipient_and_positive_amount_mutants_are_killed(self):
-        def assert_creature_recipient() -> None:
+        def assert_exact_recipient() -> None:
             template = fixed_damage_effect_template(
-                "Fixture deals 2 damage to target creature.",
+                "Fixture deals 2 damage to any target.",
                 card_name="Fixture",
             )
             self.assertIsNotNone(template)
-            self.assertEqual(FixedDamageRecipient.CREATURE, template.recipient)
+            self.assertEqual(FixedDamageRecipient.ANY_TARGET, template.recipient)
 
-        assert_creature_recipient()
+        assert_exact_recipient()
         mutated_recipients = tuple(
             (
                 phrase,
                 (
                     FixedDamageRecipient.PLAYER
-                    if phrase == "target creature"
+                    if phrase == "any target"
                     else recipient
                 ),
             )
@@ -245,7 +245,7 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
             mutated_recipients,
         ):
             with self.assertRaises(AssertionError):
-                assert_creature_recipient()
+                assert_exact_recipient()
 
         effect = {
             "op": "damage",
@@ -268,7 +268,7 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
 
         assert_zero_is_untrusted()
         with patch.object(
-            node_capability_shapes,
+            damage_capability_shapes,
             "_positive_int",
             lambda _value: True,
         ):
