@@ -1148,6 +1148,31 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0049",
+      "adr": "docs/adr/0099-typed-public-declaration-conditions.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "c1154785c13092672dd0d4a1ddc2cc4da3c81fad8242602c12373c550c7d41dd",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and reviewed declaration-condition and activation-prohibition fragments serialized for the v199 public declaration-condition harvest.",
+      "rationale": "The measured declaration harvest extends one already-oversized compiler-only parser with closed public-condition, current-stat, source-recipient, and attached-restraint grammar. Runtime evaluation is extracted to a dedicated read-only rules owner, CommanderEngine shrinks by one logical line, and direct writes, engine-local writes, unowned writes, Oracle-ID literals, runtime Oracle prose, prohibited identity dispatch, and registered effect operations remain flat.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact structural baseline plus FixedPublicStateConditionSpec reuse in DeclarationRestrictionTemplate, DeclarationSourceStatCondition, ActivationProhibitionSpec, source-anchored attached recipient restrictions, fixed public declaration grammar, shared layer-6 component applicability, and the dedicated declaration_condition_runtime owner described by ADR 0099; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine growth, arbitrary callbacks, family-specific ability-presence checks, open dynamic characteristic counts, nonmana declaration costs, chosen or named predicates, temporary mass restrictions, or unrelated grammar remain forbidden.",
+      "removal_condition": "Remove the exception when the compiler-only declaration grammar is split into smaller source-owned productions without duplicating its typed parser or combat solver; retain the runtime boundary only while shared public-state snapshots, cycle-safe characteristics, source-controller identity, layer-6 applicability, offer/commit parity, rollback, projection, save/load, and exact replay remain enforced.",
+      "target_milestone": "capability-closed broad declaration harvest through shared public-state, layer-6, combat, activation, and replay owners",
+      "replay_implications": "CardPrograms add only typed condition and ability-fragment descriptors. Historical predicates without the additive counter-presence field remain readable, while current Game Record v3 preserves public counts, turn history, source control, declaration choices, activation legality, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "Hand conditions consume only public counts, never hidden identities. Battlefield characteristics, counters, attachments, declaration restrictions, and activation prohibitions are public; physical identities and internal component keys remain absent from pilot projections.",
+      "security_implications": "Only capability-closed source-spanned programs may carry the new condition and prohibition shapes; malformed schemas, blocked dependencies, stale attachments, removed components, unsupported conditions, open dynamic counts, and unreviewed compound grammar fail before authoritative mutation.",
+      "tests": [
+        "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_broad_public_declaration_condition_grammar_compiles_exactly",
+        "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_public_state_declaration_conditions_revalidate_and_replay",
+        "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_counter_and_current_stat_conditions_share_live_characteristics",
+        "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_source_controller_recipient_and_history_evasion_revalidate",
+        "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
+        "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_declaration_component_descriptors_reject_malformed_values",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

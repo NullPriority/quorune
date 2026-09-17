@@ -29,6 +29,7 @@ class FixedPublicStateConditionKind(StrEnum):
     )
     CONTROLLER_HAND_COUNT_AT_LEAST = "controller_hand_count_at_least"
     CONTROLLER_HAND_COUNT_AT_MOST = "controller_hand_count_at_most"
+    ANY_PLAYER_HAND_COUNT_AT_MOST = "any_player_hand_count_at_most"
     CONTROLLER_DRAW_COUNT_AT_LEAST = "controller_draw_count_at_least"
     CONTROLLER_SPELL_CAST_COUNT_AT_LEAST = (
         "controller_spell_cast_count_at_least"
@@ -70,6 +71,7 @@ class FixedPublicStateConditionSnapshot:
     controller_noncreature_spell_cast_count: int = 0
     controller_instant_sorcery_cast_count: int = 0
     opponent_poison_counter_counts: tuple[int, ...] = ()
+    player_hand_counts: tuple[int, ...] = ()
     controller_is_monarch: bool = False
     source_query_matches: bool | None = None
     attached_query_matches: bool | None = None
@@ -115,6 +117,13 @@ class FixedPublicStateConditionSnapshot:
         ):
             raise FixedPublicStateConditionError(
                 "Opponent poison-counter counts must be nonnegative integers"
+            )
+        if any(
+            type(value) is not int or value < 0
+            for value in self.player_hand_counts
+        ):
+            raise FixedPublicStateConditionError(
+                "Player hand counts must be nonnegative integers"
             )
         if type(self.controller_is_monarch) is not bool:
             raise FixedPublicStateConditionError(
@@ -189,6 +198,7 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
             FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_LEAST,
             FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_MOST,
+            FixedPublicStateConditionKind.ANY_PLAYER_HAND_COUNT_AT_MOST,
             FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST,
             FixedPublicStateConditionKind.CONTROLLER_SPELL_CAST_COUNT_AT_LEAST,
             (
@@ -381,6 +391,11 @@ class FixedPublicStateConditionSpec:
             return snapshot.controller_hand_count >= int(self.amount)
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_HAND_COUNT_AT_MOST:
             return snapshot.controller_hand_count <= int(self.amount)
+        if self.kind is FixedPublicStateConditionKind.ANY_PLAYER_HAND_COUNT_AT_MOST:
+            return any(
+                count <= int(self.amount)
+                for count in snapshot.player_hand_counts
+            )
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_DRAW_COUNT_AT_LEAST:
             return snapshot.controller_draw_count >= int(self.amount)
         if (

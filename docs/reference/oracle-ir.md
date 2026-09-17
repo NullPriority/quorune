@@ -2,7 +2,7 @@
 title: "Typed Oracle IR"
 status: "current"
 authoritative_source: "Oracle compiler implementation, CardProgram schema, and pinned corpus reports"
-verified: "2026-08-13"
+verified: "2026-09-16"
 audience: "compiler, rules, and CardProgram contributors"
 maintenance: "hand-maintained"
 concern: "oracle-ir"
@@ -99,7 +99,10 @@ Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;
 the declaration solver filters that snapshot by typed fragment class and never
-consults display text.
+consults display text. Fixed public declaration conditions reuse the shared
+public-state condition descriptor, while attached all-ability and nonmana
+activation prohibitions remain typed current fragments rather than runtime
+text. Source-controller restrictions retain their originating static source.
 
 ## Residual and override policy
 

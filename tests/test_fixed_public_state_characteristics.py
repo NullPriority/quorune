@@ -654,6 +654,42 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
         )
         default_continuous_effect_component_registry().validate(descriptor)
 
+    def test_opponent_graveyard_threshold_uses_the_shared_query_owner(self):
+        base = self.db.lookup("Fresh-Faced Recruit")
+        record = replace(
+            base,
+            oracle_id="00000000-0000-4000-8000-000011820005",
+            oracle_text=(
+                "As long as an opponent has eight or more cards in their "
+                "graveyard, creatures you control have flying."
+            ),
+            keywords=(),
+        )
+        program = compile_card_program(
+            self.db,
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+
+        self.assertEqual((), program.residuals)
+        descriptor = next(
+            descriptor
+            for ability in program.abilities
+            for descriptor in ability.handlers
+            if descriptor.get("handler_id")
+            == FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+        )
+        condition = descriptor["source_condition"]
+        self.assertEqual("query_count_at_least", condition["kind"])
+        self.assertEqual(8, condition["amount"])
+        self.assertEqual("opponent_zones", condition["quantity"]["scope"])
+        self.assertEqual(
+            ["graveyard"], condition["quantity"]["query"]["zones"]
+        )
+        default_continuous_effect_component_registry().validate(descriptor)
+
     def test_unrepresented_conditions_and_bodies_remain_residual(self):
         base = self.db.lookup("Fresh-Faced Recruit")
         unsupported = (
@@ -671,8 +707,6 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "controls two or more artifacts.",
             "As long as you control a creature with flying, this creature "
             "gets +1/+1.",
-            "As long as an opponent has eight or more cards in their "
-            "graveyard, creatures you control have flying.",
             "As long as there are five or more mana values among cards in "
             "your graveyard, this creature gets +1/+1.",
             "As long as this Equipment has four or more counters on it, "
@@ -1135,6 +1169,42 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+    def test_opponent_graveyard_threshold_revalidates_by_seat_relation(self):
+        session = self.session(118_220_010)
+        engine = session.engine
+        source = self.add_constructed_condition_source(
+            session,
+            ref="OPPONENT-GRAVEYARD",
+            texts=(
+                "As long as an opponent has eight or more cards in their "
+                "graveyard, creatures you control have flying.",
+            ),
+        )
+
+        for seat, count in (("A", 8), ("B", 7)):
+            player = engine.state.players[seat]
+            while len(player.zones["graveyard"]) < count:
+                engine.move_card(
+                    player.zones["library"][-1],
+                    "graveyard",
+                    log=False,
+                )
+
+        def keywords() -> set[str]:
+            with mock.patch.object(
+                CommanderEngine,
+                "semantic_program_is_current_trusted",
+                return_value=True,
+            ):
+                return set(engine._effective_card_data(source)["keywords"])
+
+        self.assertNotIn("Flying", keywords())
+        opponent = engine.state.players["B"]
+        engine.move_card(opponent.zones["library"][-1], "graveyard", log=False)
+        self.assertIn("Flying", keywords())
+        engine.move_card(opponent.zones["graveyard"][-1], "exile", log=False)
+        self.assertNotIn("Flying", keywords())
 
     def test_public_condition_queries_follow_authoritative_history_and_control(self):
         session = self.session(118_220_007)

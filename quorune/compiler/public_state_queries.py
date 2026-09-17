@@ -133,6 +133,9 @@ _CONDITION_NUMBER_WORDS = {
     "nine": 9,
     "ten": 10,
 }
+_FIXED_NONCREATURE_CONDITION_SUBTYPES = frozenset(
+    {"aura", "equipment", "gate"}
+)
 
 
 def _singular_creature_subtype(plural: str) -> str | None:
@@ -844,6 +847,9 @@ def _fixed_condition_object_query(
     if semantic_quality == "equipment":
         fields.update(types_all=("artifact",), subtypes_all=("equipment",))
         return ObjectQuerySpec(**fields)
+    if semantic_quality in _FIXED_NONCREATURE_CONDITION_SUBTYPES:
+        fields["subtypes_all"] = (semantic_quality,)
+        return ObjectQuerySpec(**fields)
     if semantic_quality in _COLOR_SYMBOLS:
         fields["colors_all"] = (_COLOR_SYMBOLS[semantic_quality],)
         return ObjectQuerySpec(**fields)
@@ -872,7 +878,17 @@ def _fixed_condition_object_query(
     subtypes = tuple(
         subtype
         for raw in raw_subtypes
-        if (subtype := canonical_creature_subtype(raw)) is not None
+        if (
+            subtype := (
+                canonical_creature_subtype(raw)
+                or (
+                    raw.casefold()
+                    if raw.casefold()
+                    in _FIXED_NONCREATURE_CONDITION_SUBTYPES
+                    else None
+                )
+            )
+        ) is not None
     )
     if not subtypes or len(subtypes) != len(raw_subtypes):
         return None
@@ -915,7 +931,8 @@ def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | 
         re.IGNORECASE,
     )
     if legacy is None:
-        return None
+        query = _fixed_condition_object_query("permanent", material)
+        return (query, False) if query is not None else None
     query = (
         _fixed_condition_object_query("artifact", "equipment")
         if legacy.group("equipment")
@@ -1032,7 +1049,8 @@ def _graveyard_query_count_condition(
     )
     typed_count = re.fullmatch(
         r"there are (?P<count>two|three|four|five|six|seven|eight|nine|ten|"
-        r"[0-9]+) or more (?P<quality>instant and/or sorcery )?cards in "
+        r"[0-9]+) or more (?P<quality>[A-Za-z][A-Za-z'/-]* |"
+        r"instant and/or sorcery )?cards in "
         r"your graveyard",
         normalized,
         re.IGNORECASE,
@@ -1065,6 +1083,80 @@ def _fixed_public_query_count_condition(
     text: str,
 ) -> FixedPublicStateConditionSpec | None:
     normalized = " ".join(text.strip().rstrip(".").split())
+    global_count = re.fullmatch(
+        r"there(?: is| are|'s) (?:(?P<another>another)|"
+        r"(?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|"
+        r"[0-9]+)(?: or more)?) (?P<subject>[A-Za-z][A-Za-z' -]+) "
+        r"on the battlefield",
+        normalized,
+        re.IGNORECASE,
+    )
+    global_presence = re.fullmatch(
+        r"(?P<article>a|an) (?P<subject>[A-Za-z][A-Za-z' -]+) is on "
+        r"the battlefield",
+        normalized,
+        re.IGNORECASE,
+    )
+    if global_presence is not None:
+        query = _fixed_condition_object_query(
+            "permanent",
+            f"{global_presence.group('article')} "
+            f"{global_presence.group('subject')}",
+        )
+        if query is not None:
+            return _query_count_condition(
+                kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+                amount=1,
+                scope=CharacteristicQuantityScope.ALL_ZONES,
+                query=query,
+            )
+    if global_count is not None:
+        raw_count = global_count.group("count") or "one"
+        amount = _fixed_condition_amount(raw_count)
+        subject = " ".join(global_count.group("subject").casefold().split())
+        basic_subtypes = {
+            "plains": "plains",
+            "island": "island",
+            "islands": "island",
+            "swamp": "swamp",
+            "swamps": "swamp",
+            "mountain": "mountain",
+            "mountains": "mountain",
+            "forest": "forest",
+            "forests": "forest",
+        }
+        if subject in basic_subtypes:
+            query = ObjectQuerySpec(
+                zones=("battlefield",),
+                types_all=("land",),
+                subtypes_all=(basic_subtypes[subject],),
+            )
+        else:
+            singular = subject.removesuffix("s")
+            query = _fixed_condition_object_query("permanent", singular)
+        if amount is not None and amount > 0 and query is not None:
+            return _query_count_condition(
+                kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+                amount=amount,
+                scope=CharacteristicQuantityScope.ALL_ZONES,
+                query=query,
+                exclude_source=global_count.group("another") is not None,
+            )
+    opponent_graveyard = re.fullmatch(
+        r"an opponent has (?P<count>one|two|three|four|five|six|seven|"
+        r"eight|nine|ten|[0-9]+) or more cards in their graveyard",
+        normalized,
+        re.IGNORECASE,
+    )
+    if opponent_graveyard is not None:
+        amount = _fixed_condition_amount(opponent_graveyard.group("count"))
+        assert amount is not None and amount > 0
+        return _query_count_condition(
+            kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+            amount=amount,
+            scope=CharacteristicQuantityScope.OPPONENT_ZONES,
+            query=ObjectQuerySpec(zones=("graveyard",)),
+        )
     for compiler in (
         _controller_query_count_condition,
         _opponent_query_existence_condition,
@@ -1174,6 +1266,17 @@ def _legacy_public_state_condition(
         return FixedPublicStateConditionSpec(
             FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
             amount=7,
+        )
+    any_empty_hand = re.fullmatch(
+        r"a player has (?P<count>no|[0-9]+) cards? in hand",
+        lower,
+    )
+    if any_empty_hand is not None:
+        amount = _fixed_condition_amount(any_empty_hand.group("count"))
+        assert amount is not None
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.ANY_PLAYER_HAND_COUNT_AT_MOST,
+            amount=amount,
         )
     hand = re.fullmatch(
         r"you have (?P<count>no|one|[0-9]+) "
@@ -1368,6 +1471,16 @@ def _fixed_public_state_condition(
     )
 
 
+def fixed_public_state_condition(
+    text: str,
+    *,
+    source_name: str,
+) -> FixedPublicStateConditionSpec | None:
+    """Parse one closed condition without coupling it to a result body."""
+
+    return _fixed_public_state_condition(text, source_name=source_name)
+
+
 def _explicit_condition_subject(condition: str, body: str) -> str:
     contraction = re.fullmatch(
         r"it['’]s (?P<quality>.+)",
@@ -1446,4 +1559,5 @@ __all__ = [
     "fixed_characteristic_battlefield_query_subject",
     "fixed_power_toughness_battlefield_query",
     "fixed_public_state_parts",
+    "fixed_public_state_condition",
 ]

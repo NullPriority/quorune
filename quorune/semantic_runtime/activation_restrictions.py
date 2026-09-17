@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
+from ..ability_fragments import activation_prohibition_specs
 from ..abilities import ActivatedAbility
 from ..card_program_faces import program_matches_face
 from ..rules.capabilities import load_default_capability_registry
@@ -16,6 +17,9 @@ from .context import SemanticNodeError
 ACTIVATION_PERMISSION_EVENT = "activation.permission"
 CHOSEN_NAME_NONMANA_PROHIBITION_HANDLER_ID = (
     "restriction.activation.chosen-name-nonmana.v1"
+)
+ATTACHED_ACTIVATION_PROHIBITION_FRAGMENT_ID = (
+    "ability.fragment.activation-prohibition.v1"
 )
 
 
@@ -180,6 +184,13 @@ class ActivationRestrictionHost(Protocol):
 
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
+    def _effective_ability_fragments(
+        self,
+        card: Any,
+        *,
+        error_type: type[Exception],
+    ) -> Sequence[Any]: ...
+
     def card_record(self, card: Any) -> Any: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
@@ -198,6 +209,18 @@ def current_activation_prohibitions(
         or source.printed_name
     )
     prohibitions: list[ActivationProhibition] = []
+    for specification in activation_prohibition_specs(
+        host._effective_ability_fragments(source, error_type=RuntimeError)
+    ):
+        if specification.scope == "all" or not ability.mana_ability:
+            prohibitions.append(
+                ActivationProhibition(
+                    restriction_source_ref=source.ref,
+                    candidate_source_name=str(candidate_name),
+                    handler_id=ATTACHED_ACTIVATION_PROHIBITION_FRAGMENT_ID,
+                    reason="current_ability_fragment_prohibition",
+                )
+            )
     for restriction_source in host._semantic_event_sources(
         zones={"battlefield"}
     ):
@@ -260,6 +283,7 @@ def nonmana_activation_prohibited_by_chosen_name(
 
 __all__ = [
     "ACTIVATION_PERMISSION_EVENT",
+    "ATTACHED_ACTIVATION_PROHIBITION_FRAGMENT_ID",
     "CHOSEN_NAME_NONMANA_PROHIBITION_HANDLER_ID",
     "ActivationProhibition",
     "ActivationRestrictionContext",

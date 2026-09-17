@@ -3552,6 +3552,59 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "dynamic-self-entry-counter-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-public-declaration-conditions",
+          "member_family_ids": [
+            "static_clause:broader-evasion-and-group-constraints",
+            "static_clause:conditional-declaration-predicates",
+            "static_clause:temporary-declaration-restrictions"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.restriction.attached",
+            "capability:combat.declaration.public_state_conditions",
+            "capability:combat.declaration.typed_components",
+            "capability:continuous.attached.fixed_characteristics",
+            "capability:continuous.characteristics.fixed_public_state",
+            "component:quorune.ability_fragments.ActivationProhibitionSpec",
+            "component:quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler",
+            "component:quorune.compiler.public_state_queries.fixed_public_state_condition",
+            "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+            "component:quorune.declaration_condition_runtime.fixed_declaration_condition_verdict",
+            "component:quorune.declaration_restrictions.parse_declaration_restriction_line"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "attached-or-source-local-restriction",
+            "fixed-public-condition",
+            "fixed-source-or-opposing-stat-comparison",
+            "source-controller-recipient-relation",
+            "typed-all-or-nonmana-activation-prohibition"
+          ],
+          "shared_dependencies": [
+            "activation.restriction.attached",
+            "combat.declaration.public_state_conditions",
+            "combat.declaration.typed_components",
+            "continuous.attached.fixed_characteristics",
+            "continuous.characteristics.fixed_public_state"
+          ],
+          "shared_grammar": "one fixed public hand, graveyard, battlefield, counter, attachment, turn-history, or current-stat condition over a source or attached declaration restriction, plus the exact attached all-ability or nonmana activation restraint composed through the same current layer-6 component query",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era declaration cohort while sharing the existing public-state snapshot, cycle-safe current characteristics, combat constraint solver, attachment component, activation offer/commit, projection, and replay owners.",
+          "explicit_exclusions": [
+            "ability addition or removal outside the shared layer-6 static-component applicability query",
+            "chosen, named, designation, crime, sacrifice-history, and unsupported previous-turn predicates",
+            "crew, transform, quoted activation, ignore-this-effect, and conditional activation prohibitions",
+            "nonmana declaration costs, pay-to-block costs, and optional payment grammar",
+            "open dynamic characteristic counts, summed quantities, and cross-stat source comparisons outside the cycle-safe current characteristic boundary",
+            "temporary mass or target-player restrictions and independently unsupported effect siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-public-declaration-condition-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3563,19 +3616,23 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v198-ordinary-class-lifecycle",
-      "compiler_version": "oracle-ir-v198",
-      "bundle_id": "bundle:ordinary-class-lifecycle",
-      "candidate_ids": ["compiler:ordinary-class-lifecycle"],
+      "transition_id": "oracle-ir-v199-fixed-public-declaration-conditions",
+      "compiler_version": "oracle-ir-v199",
+      "bundle_id": "bundle:fixed-public-declaration-conditions",
+      "candidate_ids": ["compiler:fixed-public-declaration-conditions"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "static_clause:broader-evasion-and-group-constraints",
+        "static_clause:conditional-declaration-predicates",
+        "static_clause:temporary-declaration-restrictions"
       ],
       "capability_ids": [
-        "hand.cleanup.no_maximum",
-        "permanent.class.fixed_lifecycle"
+        "activation.restriction.attached",
+        "combat.declaration.public_state_conditions",
+        "combat.declaration.typed_components",
+        "continuous.characteristics.fixed_public_state"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:ordinary-class-lifecycle"
+      "measurement_id": "measurement:fixed-public-declaration-conditions"
     },
     "forecast_corrections": [
       {

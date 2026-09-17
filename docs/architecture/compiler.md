@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-05"
+verified: "2026-09-16"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -229,12 +229,18 @@ restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment
 conjunctions. Public-query and attached forms grant the same fragments through
 their existing layer-6 owners, optionally beside an exact public keyword or
-fixed attached characteristic prefix. Offer and commit therefore consume the
-same current fragment snapshot, and source departure, detachment, phasing, and
-ability removal end applicability through the ordinary continuous-effect
-boundary. Costs, dynamic or temporary conditions, defender suppression,
-multiple-block capacity, combat-damage assignment, and independently inexact
-clauses remain material residuals.
+fixed attached characteristic prefix. Fixed hand, graveyard, battlefield,
+counter, attachment, draw, cast, and current-stat conditions reuse the same
+public-state snapshot and cycle-safe characteristic boundary as conditional
+static components. Exact attached restraints may also add one all-ability or
+nonmana activation-prohibition fragment through that shared applicability
+query. Source-controller recipient restrictions stay anchored to the
+originating source after the affected creature receives its characteristics.
+Offer and commit consume the same current fragment snapshot. Nonmana costs,
+chosen or named values, temporary mass effects, crew and transform riders,
+unsupported previous-turn facts, open dynamic counts, defender suppression,
+multiple-block capacity, and combat-damage assignment remain material
+residuals. See [ADR 0099](../adr/0099-typed-public-declaration-conditions.md).
 
 `activation_condition_model.py` owns complete trailing activation
 restrictions shared by the compiler-pinned catalog and activation lowering.

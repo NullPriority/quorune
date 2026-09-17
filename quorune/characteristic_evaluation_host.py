@@ -5,7 +5,11 @@ from functools import partial
 from typing import Any, Mapping, Sequence
 
 from .carddb_characteristics import separate_custom_display_text
-from .card_programs.runtime import collect_card_program_continuous_effects
+from .card_programs.runtime import (
+    collect_card_program_continuous_effects,
+    fixed_public_state_condition_matches,
+)
+from .continuous_conditions import FixedPublicStateConditionSpec
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
     StaticComponentScopeSpec,
@@ -79,6 +83,26 @@ def _carries_query_power_toughness_definition(
 
 class CharacteristicEvaluationHostMixin:
     """Keep authoritative effective-characteristic integration out of the kernel."""
+
+    def _fixed_public_state_condition_holds(
+        self,
+        source: CardInstance,
+        condition: FixedPublicStateConditionSpec,
+    ) -> bool:
+        return fixed_public_state_condition_matches(
+            self.state,
+            source,
+            condition,
+            public_object_resolver=partial(
+                self._public_object_query_result,
+                _enforce_static_component_applicability=True,
+            ),
+            quantity_resolver=partial(
+                query_characteristic_count,
+                self,
+                _enforce_static_component_applicability=True,
+            ),
+        )
 
     def _apply_layered_characteristic_annotations(
         self,

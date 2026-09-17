@@ -2,7 +2,7 @@
 title: "Rules kernel"
 status: "current"
 authoritative_source: "quorune engine and rules modules, including quorune/control_history.py, quorune/day_night.py, quorune/permanent_transform.py, quorune/turn_history.py, quorune/echo.py, quorune/saga_progression.py, quorune/mentor.py, quorune/relative_power_target.py, and quorune/target_predicates.py"
-verified: "2026-09-04"
+verified: "2026-09-16"
 audience: "rules and engine contributors"
 maintenance: "hand-maintained"
 ---
@@ -391,6 +391,14 @@ The snapshot contains no hidden object identity and is recomputed under the
 source's current controller. Query counts may use authoritative tap,
 attachment, counter, and modified state, but never later-layer ability presence
 or dynamic power/toughness.
+
+Combat declaration restrictions consume that same snapshot for fixed public
+conditions rather than maintaining a combat-local condition registry. Direct
+source-stat comparisons read current effective power or toughness at the
+declaration boundary. Attached source-controller restrictions retain their
+originating source, while all-ability and nonmana activation prohibitions on
+the affected object remain ordinary current layer-6 fragments. See
+[ADR 0099](../adr/0099-typed-public-declaration-conditions.md).
 
 ## Visibility and replay
 

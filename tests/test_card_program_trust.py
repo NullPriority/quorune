@@ -204,6 +204,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.declaration_cost",
                 "ability.static.declaration_requirement",
                 "ability.static.declaration_restriction",
+                "ability.static.declaration_restriction_component",
                 "ability.static.dynamic_power_toughness",
                 "ability.static.component_scope",
                 "ability.static.protection",

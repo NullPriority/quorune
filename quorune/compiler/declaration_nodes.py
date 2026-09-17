@@ -3,9 +3,13 @@ from __future__ import annotations
 """Typed Oracle-IR lowering for combat declaration static abilities."""
 
 import re
+from dataclasses import replace
 from typing import Any, Mapping
 
-from ..ability_fragments import ability_fragment_to_dict
+from ..ability_fragments import (
+    ActivationProhibitionSpec,
+    ability_fragment_to_dict,
+)
 from ..declaration_costs import normalized_oracle_line, parse_declaration_cost_line
 from ..declaration_fragments import (
     DECLARATION_COMPONENT_CAPABILITY_ID,
@@ -13,15 +17,17 @@ from ..declaration_fragments import (
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
 )
+from ..continuous_conditions import FixedPublicStateConditionSpec
 from ..declaration_requirements import parse_declaration_requirement_line
 from ..declaration_restrictions import parse_declaration_restriction_line
 from ..rules.capabilities import CapabilityRegistry
 from ..semantic_runtime.ability_fragments import (
     DECLARATION_COST_FRAGMENT_HANDLER_ID,
     DECLARATION_REQUIREMENT_FRAGMENT_HANDLER_ID,
+    DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID,
     DECLARATION_RESTRICTION_FRAGMENT_HANDLER_ID,
 )
-from .dependency_gate import explicit_capability_gate
+from .dependency_gate import explicit_capabilities_gate, explicit_capability_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
 from .continuous_templates import (
     _ATTACHED_SUBJECT,
@@ -37,6 +43,9 @@ DeclarationTemplate = (
     DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
+)
+PUBLIC_STATE_DECLARATION_CAPABILITY_ID = (
+    "combat.declaration.public_state_conditions"
 )
 
 
@@ -62,6 +71,22 @@ def fixed_declaration_fragment_sequence(
         component_lines = (
             "This creature can't block.",
             "This creature can't be blocked.",
+        )
+    elif normalized == (
+        "this creature can't block or be blocked by creatures with power 2 "
+        "or greater."
+    ):
+        component_lines = (
+            "This creature can't block creatures with power 2 or greater.",
+            "This creature can't be blocked by creatures with power 2 or greater.",
+        )
+    elif normalized == (
+        "creatures you control with power or toughness 1 or less can't be "
+        "blocked."
+    ):
+        component_lines = (
+            "Creatures you control with power 1 or less can't be blocked.",
+            "Creatures you control with toughness 1 or less can't be blocked.",
         )
     elif normalized == "this creature attacks or blocks each combat if able.":
         component_lines = (
@@ -108,8 +133,18 @@ def _typed_declaration_node(
     cost: dict[str, Any] | None = None,
 ) -> OracleNode:
     dependencies = template.mechanics
-    gate = explicit_capability_gate(
-        DECLARATION_COMPONENT_CAPABILITY_ID,
+    gate = explicit_capabilities_gate(
+        (
+            DECLARATION_COMPONENT_CAPABILITY_ID,
+            *(
+                (PUBLIC_STATE_DECLARATION_CAPABILITY_ID,)
+                if isinstance(
+                    getattr(template, "condition", None),
+                    FixedPublicStateConditionSpec,
+                )
+                else ()
+            ),
+        ),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -171,8 +206,21 @@ def _typed_declaration_fragment_sequence_node(
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
 ) -> OracleNode:
-    gate = explicit_capability_gate(
-        DECLARATION_COMPONENT_CAPABILITY_ID,
+    gate = explicit_capabilities_gate(
+        (
+            DECLARATION_COMPONENT_CAPABILITY_ID,
+            *(
+                (PUBLIC_STATE_DECLARATION_CAPABILITY_ID,)
+                if any(
+                    isinstance(
+                        getattr(template, "condition", None),
+                        FixedPublicStateConditionSpec,
+                    )
+                    for template in templates
+                )
+                else ()
+            ),
+        ),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -389,6 +437,64 @@ DeclarationGrantFragment = (
 )
 
 
+_ATTACHED_RESTRAINT_COMPOSITION = re.compile(
+    r"^(?P<subject>Enchanted (?:creature|permanent)) can't "
+    r"(?P<declarations>attack or block|block), and its activated abilities "
+    r"can't be activated(?P<nonmana> unless they're mana abilities)?\.?$",
+    re.IGNORECASE,
+)
+
+
+def _attached_restraint_composition(
+    text: str,
+    *,
+    source_name: str,
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    match = _ATTACHED_RESTRAINT_COMPOSITION.fullmatch(text)
+    if match is None:
+        return None
+    declaration = parse_declaration_restriction_line(
+        f"{match.group('subject')} can't {match.group('declarations')}.",
+        card_name=source_name,
+    )
+    if not declaration.exact or declaration.template is None:
+        return None
+    modifier = _attached_modifier()
+    modifier["add_ability_fragments"].extend(
+        (
+            ability_fragment_to_dict(declaration.template),
+            ability_fragment_to_dict(
+                ActivationProhibitionSpec(
+                    "nonmana" if match.group("nonmana") else "all"
+                )
+            ),
+        )
+    )
+    attached_creature = match.group("subject").casefold() == "enchanted creature"
+    return (
+        "continuous-attached-static-restraint-composition-v1",
+        {
+            "handler_id": "continuous.attached.fixed-characteristics.v1",
+            "schema_version": 1,
+            "event": "characteristics.evaluate",
+            "condition": {
+                "relation": "source_attached_object",
+                "types_all": ["creature"] if attached_creature else [],
+            },
+            "modifier": modifier,
+        },
+        tuple(
+            sorted(
+                {
+                    "activation.restriction.attached",
+                    "continuous.attached.fixed_characteristics",
+                    DECLARATION_COMPONENT_CAPABILITY_ID,
+                }
+            )
+        ),
+    )
+
+
 def _declaration_grant_fragments(
     text: str,
     *,
@@ -448,20 +554,60 @@ def _declaration_grant_target(
 def _append_attached_declaration_fragments(
     compiled: tuple[str, Mapping[str, Any], tuple[str, ...]],
     fragments: tuple[DeclarationGrantFragment, ...],
-) -> tuple[str, Mapping[str, Any], tuple[str, ...]]:
+) -> tuple[
+    str,
+    Mapping[str, Any] | tuple[Mapping[str, Any], ...],
+    tuple[str, ...],
+]:
     _template_id, raw_handler, raw_capabilities = compiled
     handler = dict(raw_handler)
     modifier = {
         key: list(value) if isinstance(value, list) else value
         for key, value in dict(handler["modifier"]).items()
     }
+    source_fragment_inputs = tuple(
+        fragment
+        for fragment in fragments
+        if isinstance(fragment, DeclarationRestrictionTemplate)
+        and fragment.option_relation == "source_controller"
+    )
+    source_fragments = tuple(
+        replace(
+            fragment,
+            scope=(
+                "attached"
+                if fragment.scope == "self"
+                else "attached_option"
+                if fragment.scope == "source_option"
+                else fragment.scope
+            ),
+        )
+        for fragment in source_fragment_inputs
+    )
+    target_fragments = tuple(
+        fragment
+        for fragment in fragments
+        if fragment not in source_fragment_inputs
+    )
     modifier["add_ability_fragments"].extend(
-        ability_fragment_to_dict(fragment) for fragment in fragments
+        ability_fragment_to_dict(fragment) for fragment in target_fragments
     )
     handler["modifier"] = modifier
+    handlers: tuple[Mapping[str, Any], ...] = (
+        handler,
+        *(
+            {
+                "handler_id": DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID,
+                "schema_version": 1,
+                "event": "characteristics.evaluate",
+                "fragment": ability_fragment_to_dict(fragment),
+            }
+            for fragment in source_fragments
+        ),
+    )
     return (
         "continuous-attached-characteristics-declaration-grant-v1",
-        handler,
+        handlers if len(handlers) > 1 else handler,
         tuple(
             sorted(
                 {
@@ -482,6 +628,12 @@ def _direct_declaration_grant(
     if target is None:
         return None
     relation, subject, fragments = target
+    if any(
+        isinstance(fragment, DeclarationRestrictionTemplate)
+        and fragment.option_relation == "source_controller"
+        for fragment in fragments
+    ):
+        return None
     fragment_values = [
         ability_fragment_to_dict(fragment) for fragment in fragments
     ]
@@ -578,6 +730,35 @@ def _attached_characteristic_declaration_grant(
     return None
 
 
+def _attached_reverse_declaration_grant(
+    text: str,
+    *,
+    source_name: str,
+) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
+    match = re.fullmatch(
+        r"(?P<subject>Enchanted creature) "
+        r"(?P<rule>can't be blocked) and has (?P<keyword>[A-Za-z -]+)\.?",
+        text,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    fragments = _declaration_grant_fragments(
+        _self_declaration_rule(match.group("rule")),
+        source_name=source_name,
+    )
+    characteristics = attached_fixed_characteristics_handler(
+        f"{match.group('subject')} has {match.group('keyword')}.",
+        source_name=source_name,
+    )
+    if not fragments or characteristics is None:
+        return None
+    return _append_attached_declaration_fragments(
+        characteristics,
+        fragments,
+    )
+
+
 def _query_keyword_declaration_grant(
     text: str,
     *,
@@ -649,7 +830,12 @@ def fixed_static_declaration_grant_handler(
 
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     return (
-        _direct_declaration_grant(text, source_name=source_name)
+        _attached_restraint_composition(text, source_name=source_name)
+        or _direct_declaration_grant(text, source_name=source_name)
+        or _attached_reverse_declaration_grant(
+            text,
+            source_name=source_name,
+        )
         or _attached_characteristic_declaration_grant(
             text,
             source_name=source_name,

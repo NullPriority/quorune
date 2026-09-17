@@ -91,6 +91,9 @@ DECLARATION_REQUIREMENT_FRAGMENT_HANDLER_ID = (
 DECLARATION_RESTRICTION_FRAGMENT_HANDLER_ID = (
     "ability.static.declaration-restriction.v1"
 )
+DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID = (
+    "ability.static.declaration-restriction-component.v1"
+)
 
 
 def _fragment(
@@ -318,6 +321,38 @@ class DeclarationRestrictionAbilityFragmentHandler:
     family: str = "ability.static.declaration_restriction"
     event: str = "combat.declaration"
     rule_references: tuple[str, ...] = ("508.1c", "509.1b")
+    capability_dependencies: tuple[str, ...] = (
+        DECLARATION_COMPONENT_CAPABILITY_ID,
+    )
+
+    def validate(
+        self, descriptor: Mapping[str, Any]
+    ) -> DeclarationRestrictionTemplate:
+        return _fragment(
+            descriptor,
+            handler_id=self.handler_id,
+            event=self.event,
+            expected_type=DeclarationRestrictionTemplate,
+        )
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class DeclarationRestrictionComponentHandler:
+    """Carry a source-anchored restriction beside a layer-6 component."""
+
+    handler_id: str = DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "ability.static.declaration_restriction_component"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("508.1c", "509.1b", "613.1f")
     capability_dependencies: tuple[str, ...] = (
         DECLARATION_COMPONENT_CAPABILITY_ID,
     )
@@ -1185,6 +1220,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DeclarationCostAbilityFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
+            DeclarationRestrictionComponentHandler(),
             ConditionalKeywordAbilityFragmentHandler(),
             ColorlessCharacteristicDefinitionAbilityFragmentHandler(),
             DethroneAbilityFragmentHandler(),
@@ -1241,6 +1277,7 @@ __all__ = [
     "DECLARATION_COST_FRAGMENT_HANDLER_ID",
     "DECLARATION_REQUIREMENT_FRAGMENT_HANDLER_ID",
     "DECLARATION_RESTRICTION_FRAGMENT_HANDLER_ID",
+    "DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID",
     "EXALTED_FRAGMENT_HANDLER_ID",
     "DYNAMIC_POWER_TOUGHNESS_FRAGMENT_HANDLER_ID",
     "QUERY_CHARACTERISTIC_MODIFIER_FRAGMENT_HANDLER_ID",
@@ -1268,6 +1305,7 @@ __all__ = [
     "DeclarationCostAbilityFragmentHandler",
     "DeclarationRequirementAbilityFragmentHandler",
     "DeclarationRestrictionAbilityFragmentHandler",
+    "DeclarationRestrictionComponentHandler",
     "ConditionalKeywordAbilityFragmentHandler",
     "AllCreatureTypesCharacteristicDefinitionAbilityFragmentHandler",
     "ColorlessCharacteristicDefinitionAbilityFragmentHandler",
