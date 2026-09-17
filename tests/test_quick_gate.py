@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+import sys
 import unittest
 
 from scripts.quick_gate import build_plan
@@ -110,6 +112,23 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertNotIn("affected-tests", names)
         self.assertEqual((), plan["test_modules"])
         self.assertTrue(plan["deferred_test_modules"])
+
+    def test_pre_corpus_plan_runs_affected_manual_performance_contract(self):
+        plan = build_plan(
+            ("quorune/card_programs/runtime.py",),
+            phase="pre-corpus",
+            base_ref="origin/main",
+        )
+        steps = {step.name: step.command for step in plan["steps"]}
+
+        self.assertEqual(
+            (
+                str(Path(sys.executable).resolve()),
+                "scripts/benchmark_continuous_effects.py",
+                "--check",
+            ),
+            steps["continuous-effect-performance"],
+        )
 
     def test_reusable_piece_change_checks_inventory(self):
         plan = build_plan(("quorune/reusable_pieces/generation.py",))

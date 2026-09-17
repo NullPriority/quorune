@@ -2,7 +2,7 @@
 title: "CardProgram runtime components"
 status: "current"
 authoritative_source: "quorune/semantic_runtime component registries and schemas/card-program-v2.schema.json"
-verified: "2026-09-16"
+verified: "2026-09-17"
 audience: "rules, compiler, runtime, replay, and extension contributors"
 maintenance: "hand-maintained"
 ---
@@ -62,16 +62,18 @@ equivalent rules text, and dynamically granted or removed Affinity fail closed;
 runtime code does not inspect Oracle text or keyword metadata as substitute
 authority.
 
-`modification.cast-cost.self-public.v1` represents fixed reductions printed on
-the spell carrying the descriptor. Selected-face discovery evaluates only
-public controller/opponent object queries, fixed public thresholds, total mana
-value, devotion, Domain, and canonical spell, death, or active-turn facts. The
-typed query distinguishes existential `an opponent` thresholds, evaluated per
-opponent, from aggregate `your opponents` quantities. The result is a generic
-or colored reduction vector applied by the same total-cost query used for
-offers and accepted commands. Target-relative prices,
-unrecorded history, dynamic power/toughness, chosen or hidden facts, and open
-arithmetic fail closed rather than becoming a runtime prose query.
+`modification.cast-cost.self-public.v1` and
+`modification.cast-cost.fixed-query.v1` represent the bounded self and
+battlefield-source cost families. Selected-face or current-component discovery
+evaluates only public controller/opponent queries, public thresholds, source
+counters, party, color and effective-name counts, total mana value, devotion,
+Domain, life, and sealed turn-history facts. The typed query distinguishes
+existential `an opponent` thresholds, evaluated per opponent, from aggregate
+`your opponents` quantities. The result is a signed generic or colored vector
+applied by the same total-cost query used for offers and accepted commands.
+Target-relative prices, unrecorded history, dynamic power/toughness, chosen or
+hidden facts, caps, floors, and open arithmetic fail closed rather than
+becoming a runtime prose query.
 
 `ability.activated.mana.color-set.v1` binds a compiler-pinned relative object
 query to the activating seat and reads only matching public battlefield

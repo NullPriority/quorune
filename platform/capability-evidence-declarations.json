@@ -3444,6 +3444,22 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose colored and source-counter reductions through the same offer and commit total while current source control and party characteristics change."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_tax_uses_caster_turn_and_current_source",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Apply an all-player tax outside each caster's own turn and remove it when the current static source phases out."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduction_applies_to_kicker_total_before_payment",
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -3479,7 +3495,7 @@
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_public_static_modifier_near_misses_remain_residual",
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Reject variable, colored, next-spell, chosen, dynamic-count, and target-relative adjustments."
+      "applicability_note": "Reject open variable, next-spell, chosen, target-relative, capped, and unsupported dynamic adjustments."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -3487,7 +3503,7 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Keep dynamic, historical, chosen, zone-relative, keyword-qualified, opponent-relative, colored, and composite reductions material and nonauthoritative."
+      "applicability_note": "Keep target-relative, power-derived, chosen, capped, open-arithmetic, and unsupported composite reductions material and nonauthoritative."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -3512,6 +3528,14 @@
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed type, color, colorless, supertype, subtype, and exclusion subjects into one source-spanned typed predicate descriptor."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_cast_cost_closure_compiles_selected_grammar",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed generic, colored, spell-characteristic, origin, source-counter, public-count, and sealed-history modifier descriptors without runtime Oracle parsing."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -3548,10 +3572,26 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the public mana-vector reductions, payment, stack transition, resolution, and final authoritative hash."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the reduced cost offer, mana payment, stack transition, draw resolution, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject an offered total after its reducer changes controller without spending mana or moving the spell."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
@@ -3560,6 +3600,22 @@
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply one fixed existential reduction when several opponents independently satisfy the same public threshold."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Derive discard, sacrifice, and life-gain quantities only from committed typed producers in the authoritative turn journal."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_quantities_use_current_characteristic_boundary",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Evaluate party, color, modified, effective-name, life-difference, and colorless-producing-land quantities from the current authoritative characteristic boundary."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
@@ -3615,7 +3671,7 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Keep target-relative, unjournaled draw history, power totals, Adventure predicates, and unrelated reducer grammar material."
+      "applicability_note": "Keep target-relative, power totals, distinct card-type or mana-value sets, Adventure predicates, and unrelated reducer grammar material."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
@@ -3672,6 +3728,14 @@
       "official_rule_ids": ["601.2f", "601.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use only public count inputs while withholding the carrying spell and its cast action from every other pilot."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
+      "official_rule_ids": ["601.2f", "601.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Checkpoint and replay committed typed history facts and the resulting self-reduced cast exactly."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",

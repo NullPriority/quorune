@@ -1173,6 +1173,30 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0050",
+      "adr": "docs/adr/0100-public-cast-cost-modifier-closure.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "fd75c131c98b286d684cc06a8595c205983e96760b50e609bc18b7d20829aa79",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed public cast-cost modifier schema and quantity vocabulary serialized for the v200 harvest.",
+      "rationale": "The measured broad harvest extends the existing total-cost owner with one closed signed mana-vector schema and public quantity vocabulary. CommanderEngine, direct and unowned GameState writes, Oracle-ID literals, runtime Oracle prose, prohibited identity dispatch, and registered effect operations remain flat. Three cohesive parser, schema-validation, and read-only evaluation dispatchers cross the function-size threshold and are bound here to this exact family instead of creating a second cost engine.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact structural baseline plus PublicCastCostModifierV2Spec, CastReductionMetric schema v2, typed committed discard, sacrifice, and life history, current effective public quantities, current source counters, signed colored and generic adjustments, caster/origin/turn/ordinal relations, shared layer-6 applicability, and the existing total-cost owner described by ADR 0100; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine-local writes, arbitrary callbacks, family-specific ability-presence checks, cycle-unsafe dynamic characteristics, target-relative or private prices, arbitrary payment ordering, direct total setters, or unrelated grammar remain forbidden.",
+      "removal_condition": "Remove the exception when the registered architecture baseline no longer requires reviewed size growth; before adding an unrelated cost family, extract the reviewed object-count grammar, metric-shape validation, and multiplier dispatchers into smaller typed helpers without duplicating their schema or evaluation owner.",
+      "target_milestone": "capability-closed broad cast-cost harvest through the canonical total-cost and public-state owners",
+      "replay_implications": "CardPrograms record only closed typed mana adjustments, spell predicates, public multiplier descriptors, and source relations. Historical v1 and v2 descriptors remain readable, while Game Record v3 preserves current characteristics, committed turn history, stale-offer rejection, payment, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "Every admitted multiplier consumes public battlefield, graveyard, exile, life, counter, turn-history, or hand-count facts and never hidden card identities. Cost offers remain principal-scoped, and internal physical identities and component keys stay absent from pilot projections.",
+      "security_implications": "Only capability-closed source-spanned programs may carry the extended cost descriptor; unknown fields, malformed mana vectors, unsupported predicates or quantities, removed current components, stale offers, insufficient payment, private or chosen facts, and unreviewed grammar fail before authoritative mutation.",
+      "tests": [
+        "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_cast_cost_closure_compiles_selected_grammar",
+        "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_cast_cost_closure_excludes_open_metrics",
+        "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
+        "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
+        "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_quantities_use_current_characteristic_boundary",
+        "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_tax_uses_caster_turn_and_current_source",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

@@ -184,6 +184,11 @@ def build_plan(
         )
     check_commands = {
         "architecture": (python, "scripts/validate_architecture.py", "--check"),
+        "continuous-effect-performance": (
+            python,
+            "scripts/benchmark_continuous_effects.py",
+            "--check",
+        ),
         "generated-finalization": (
             python,
             "scripts/finalize_generated.py",
@@ -236,7 +241,9 @@ def build_plan(
     }
     finalizer_selected = "generated-finalization" in impact.checks
     for check in impact.checks:
-        if phase == "pre-corpus":
+        if phase == "pre-corpus" and check not in {
+            "continuous-effect-performance"
+        }:
             continue
         if check == "compact-ci-dependencies":
             continue

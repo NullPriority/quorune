@@ -7,6 +7,8 @@ from enum import Enum
 import re
 from typing import Any, Mapping, Protocol
 
+from .counter_names import CounterStateError, normalized_counter_name
+from .drawing import drawn_this_turn
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .object_query import object_matches_query, object_query_result
 
@@ -32,6 +34,16 @@ class CastReductionMetricKind(str, Enum):
     DEVOTION = "devotion"
     DOMAIN = "domain"
     TURN_FACT = "turn_fact"
+    TURN_VALUE = "turn_value"
+    SOURCE_COUNTER_COUNT = "source_counter_count"
+    PARTY_SIZE = "party_size"
+    PERMANENT_COLOR_COUNT = "permanent_color_count"
+    DISTINCT_NAME_COUNT = "distinct_name_count"
+    LIFE_DIFFERENCE = "life_difference"
+    CONTROLLER_DRAW_COUNT = "controller_draw_count"
+    OPPONENT_COLORLESS_LAND_COUNT = "opponent_colorless_land_count"
+    OPPONENT_COUNT_DIFFERENCE = "opponent_count_difference"
+    OPPONENT_HAND_COUNT = "opponent_hand_count"
 
 
 class CastReductionTurnFact(str, Enum):
@@ -39,6 +51,20 @@ class CastReductionTurnFact(str, Enum):
     CONTROLLER_CAST_ANOTHER_SPELL = "controller_cast_another_spell"
     OPPONENT_CAST_TWO_SPELLS = "opponent_cast_two_spells"
     CONTROLLER_TURN = "controller_turn"
+    CONTROLLER_ATTACKED = "controller_attacked"
+    CONTROLLER_SACRIFICED_PERMANENT = "controller_sacrificed_permanent"
+    CONTROLLER_CAST_INSTANT_OR_SORCERY = (
+        "controller_cast_instant_or_sorcery"
+    )
+    CONTROLLER_DISCARDED_COUNT = "controller_discarded_count"
+    CONTROLLER_LIFE_GAINED_AMOUNT = "controller_life_gained_amount"
+    CONTROLLER_ATTACKED_CREATURE_COUNT = "controller_attacked_creature_count"
+    CONTROLLER_SACRIFICED_PERMANENT_COUNT = (
+        "controller_sacrificed_permanent_count"
+    )
+    CONTROLLER_OTHER_SPELL_CAST_COUNT = "controller_other_spell_cast_count"
+    CONTROLLER_COMMANDER_CAST_COUNT = "controller_commander_cast_count"
+    OPPONENT_LIFE_LOST_AMOUNT = "opponent_life_lost_amount"
 
 
 _MANA_KEYS = frozenset({"W", "U", "B", "R", "G", "C", "GENERIC"})
@@ -131,10 +157,11 @@ class CastReductionMetric:
     require_all: bool = False
     color: str | None = None
     turn_fact: CastReductionTurnFact | None = None
+    counter_name: str | None = None
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise SelfCastReductionError("Unsupported cast-reduction metric version")
         if not isinstance(self.kind, CastReductionMetricKind):
             raise SelfCastReductionError("Unsupported cast-reduction metric kind")
@@ -157,10 +184,17 @@ class CastReductionMetric:
             query.scope is CastReductionQueryScope.ANY_OPPONENT
             for query in self.queries
         )
-        if any_opponent and (
-            self.kind is not CastReductionMetricKind.FIXED_PUBLIC_THRESHOLD
-            or len(self.queries) != 1
-            or self.require_all
+        if any_opponent and self.kind not in {
+            CastReductionMetricKind.FIXED_PUBLIC_THRESHOLD,
+            CastReductionMetricKind.OPPONENT_COUNT_DIFFERENCE,
+        }:
+            raise SelfCastReductionError(
+                "Any-opponent reductions require one independent threshold"
+            )
+        if (
+            any_opponent
+            and self.kind is CastReductionMetricKind.FIXED_PUBLIC_THRESHOLD
+            and (len(self.queries) != 1 or self.require_all)
         ):
             raise SelfCastReductionError(
                 "Any-opponent reductions require one independent threshold"
@@ -171,7 +205,10 @@ class CastReductionMetric:
                 raise SelfCastReductionError(
                     "Fixed public reductions require queries and a bound"
                 )
-            if self.color is not None or self.turn_fact is not None:
+            if any(
+                value is not None
+                for value in (self.color, self.turn_fact, self.counter_name)
+            ):
                 raise SelfCastReductionError("Fixed public reductions carry only queries")
             return
         if self.kind in {
@@ -180,7 +217,13 @@ class CastReductionMetric:
         }:
             if not self.queries or any(
                 value is not None
-                for value in (self.minimum, self.maximum, self.color, self.turn_fact)
+                for value in (
+                    self.minimum,
+                    self.maximum,
+                    self.color,
+                    self.turn_fact,
+                    self.counter_name,
+                )
             ) or self.require_all:
                 raise SelfCastReductionError(
                     "Counted cast reductions carry only additive public queries"
@@ -193,6 +236,7 @@ class CastReductionMetric:
                 or self.maximum is not None
                 or self.require_all
                 or self.turn_fact is not None
+                or self.counter_name is not None
                 or self.color not in set("WUBRG")
             ):
                 raise SelfCastReductionError("Devotion reductions require one color")
@@ -206,23 +250,130 @@ class CastReductionMetric:
                     self.require_all,
                     self.color is not None,
                     self.turn_fact is not None,
+                    self.counter_name is not None,
                 )
             ):
                 raise SelfCastReductionError("Domain reductions carry no open fields")
             return
-        if (
-            self.kind is not CastReductionMetricKind.TURN_FACT
-            or not isinstance(self.turn_fact, CastReductionTurnFact)
-            or self.queries
-            or self.minimum is not None
-            or self.maximum is not None
-            or self.require_all
-            or self.color is not None
-        ):
-            raise SelfCastReductionError("Turn-fact reductions require one closed fact")
+        if self.kind in {
+            CastReductionMetricKind.TURN_FACT,
+            CastReductionMetricKind.TURN_VALUE,
+        }:
+            if (
+                not isinstance(self.turn_fact, CastReductionTurnFact)
+                or self.queries
+                or self.minimum is not None
+                or self.maximum is not None
+                or self.require_all
+                or self.color is not None
+                or self.counter_name is not None
+            ):
+                raise SelfCastReductionError(
+                    "Turn reductions require one closed public fact"
+                )
+            return
+        if self.kind is CastReductionMetricKind.SOURCE_COUNTER_COUNT:
+            if (
+                self.schema_version != 2
+                or type(self.counter_name) is not str
+                or self.queries
+                or self.minimum is not None
+                or self.maximum is not None
+                or self.require_all
+                or self.color is not None
+                or self.turn_fact is not None
+            ):
+                raise SelfCastReductionError(
+                    "Source-counter reductions require one counter name"
+                )
+            try:
+                canonical = normalized_counter_name(self.counter_name)
+            except CounterStateError as exc:
+                raise SelfCastReductionError(str(exc)) from exc
+            object.__setattr__(self, "counter_name", canonical)
+            return
+        if self.kind in {
+            CastReductionMetricKind.PARTY_SIZE,
+            CastReductionMetricKind.PERMANENT_COLOR_COUNT,
+            CastReductionMetricKind.LIFE_DIFFERENCE,
+            CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
+        }:
+            if any(
+                (
+                    self.queries,
+                    self.minimum is not None,
+                    self.maximum is not None,
+                    self.require_all,
+                    self.color is not None,
+                    self.turn_fact is not None,
+                    self.counter_name is not None,
+                )
+            ):
+                raise SelfCastReductionError(
+                    "Closed public-value reductions carry no open fields"
+                )
+            return
+        if self.kind is CastReductionMetricKind.CONTROLLER_DRAW_COUNT:
+            if (
+                self.queries
+                or (self.minimum is None and self.maximum is None)
+                or self.require_all
+                or self.color is not None
+                or self.turn_fact is not None
+                or self.counter_name is not None
+            ):
+                raise SelfCastReductionError(
+                    "Controller-draw reductions require only a public bound"
+                )
+            return
+        if self.kind is CastReductionMetricKind.DISTINCT_NAME_COUNT:
+            if (
+                len(self.queries) != 1
+                or self.minimum is not None
+                or self.maximum is not None
+                or self.require_all
+                or self.color is not None
+                or self.turn_fact is not None
+                or self.counter_name is not None
+            ):
+                raise SelfCastReductionError(
+                    "Distinct-name reductions require one public query"
+                )
+            return
+        if self.kind is CastReductionMetricKind.OPPONENT_COUNT_DIFFERENCE:
+            if (
+                len(self.queries) != 2
+                or self.minimum is None
+                or self.maximum is not None
+                or self.require_all
+                or self.color is not None
+                or self.turn_fact is not None
+                or self.counter_name is not None
+                or self.queries[0].scope is not CastReductionQueryScope.ANY_OPPONENT
+                or self.queries[1].scope
+                is not CastReductionQueryScope.CONTROLLER_ZONE
+            ):
+                raise SelfCastReductionError(
+                    "Opponent-difference reductions require two ordered queries"
+                )
+            return
+        if self.kind is CastReductionMetricKind.OPPONENT_HAND_COUNT:
+            if (
+                self.queries
+                or (self.minimum is None and self.maximum is None)
+                or self.require_all
+                or self.color is not None
+                or self.turn_fact is not None
+                or self.counter_name is not None
+            ):
+                raise SelfCastReductionError(
+                    "Opponent-hand reductions require only a public bound"
+                )
+            return
+        raise SelfCastReductionError("Unsupported cast-reduction metric shape")
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "schema_version": self.schema_version,
             "kind": self.kind.value,
             "queries": [value.to_dict() for value in self.queries],
@@ -232,6 +383,9 @@ class CastReductionMetric:
             "color": self.color,
             "turn_fact": self.turn_fact.value if self.turn_fact is not None else None,
         }
+        if self.schema_version >= 2:
+            result["counter_name"] = self.counter_name
+        return result
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "CastReductionMetric":
@@ -245,7 +399,8 @@ class CastReductionMetric:
             "color",
             "turn_fact",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        extended = {*expected, "counter_name"}
+        if not isinstance(value, Mapping) or set(value) not in (expected, extended):
             raise SelfCastReductionError("Cast-reduction metrics have a closed schema")
         if not isinstance(value["queries"], list):
             raise SelfCastReductionError("Cast-reduction queries must be an array")
@@ -266,6 +421,7 @@ class CastReductionMetric:
                     if value["turn_fact"] is not None
                     else None
                 ),
+                counter_name=value.get("counter_name"),
             )
         except (TypeError, ValueError) as exc:
             raise SelfCastReductionError(
@@ -433,6 +589,22 @@ def _turn_fact_holds(host: SelfCastReductionHost, seat: str, fact: CastReduction
         return host.state.active_player == seat
     if fact is CastReductionTurnFact.CREATURE_DIED:
         return bool(host._current_turn_history("creature_died"))
+    if fact is CastReductionTurnFact.CONTROLLER_ATTACKED:
+        return any(
+            event.actor == seat
+            for event in host._current_turn_history("creature_attacked")
+        )
+    if fact is CastReductionTurnFact.CONTROLLER_SACRIFICED_PERMANENT:
+        return any(
+            event.actor == seat
+            for event in host._current_turn_history("permanent_sacrificed")
+        )
+    if fact is CastReductionTurnFact.CONTROLLER_CAST_INSTANT_OR_SORCERY:
+        return any(
+            event.actor == seat
+            and bool({"instant", "sorcery"}.intersection(event.types))
+            for event in host._current_turn_history("spell_cast")
+        )
     casts = host._current_turn_history("spell_cast")
     if fact is CastReductionTurnFact.CONTROLLER_CAST_ANOTHER_SPELL:
         return any(event.actor == seat for event in casts)
@@ -442,6 +614,46 @@ def _turn_fact_holds(host: SelfCastReductionHost, seat: str, fact: CastReduction
             continue
         counts[event.actor] = counts.get(event.actor, 0) + 1
     return any(value >= 2 for value in counts.values())
+
+
+def _turn_value(
+    host: SelfCastReductionHost,
+    seat: str,
+    fact: CastReductionTurnFact,
+) -> int:
+    if fact is CastReductionTurnFact.CONTROLLER_DISCARDED_COUNT:
+        return sum(
+            event.actor == seat for event in host._current_turn_history("card_discarded")
+        )
+    if fact is CastReductionTurnFact.CONTROLLER_LIFE_GAINED_AMOUNT:
+        return sum(
+            int(event.amount)
+            for event in host._current_turn_history("player_gained_life")
+            if event.target == seat
+        )
+    if fact is CastReductionTurnFact.CONTROLLER_ATTACKED_CREATURE_COUNT:
+        return sum(
+            event.actor == seat
+            for event in host._current_turn_history("creature_attacked")
+        )
+    if fact is CastReductionTurnFact.CONTROLLER_SACRIFICED_PERMANENT_COUNT:
+        return sum(
+            event.actor == seat
+            for event in host._current_turn_history("permanent_sacrificed")
+        )
+    if fact is CastReductionTurnFact.CONTROLLER_OTHER_SPELL_CAST_COUNT:
+        return sum(
+            event.actor == seat for event in host._current_turn_history("spell_cast")
+        )
+    if fact is CastReductionTurnFact.CONTROLLER_COMMANDER_CAST_COUNT:
+        return sum(int(value) for value in host.state.players[seat].commander_casts.values())
+    if fact is CastReductionTurnFact.OPPONENT_LIFE_LOST_AMOUNT:
+        return sum(
+            int(event.amount)
+            for event in host._current_turn_history("player_lost_life")
+            if event.target != seat
+        )
+    raise SelfCastReductionError("Unsupported cast-reduction turn value")
 
 
 def _devotion(host: SelfCastReductionHost, seat: str, color: str) -> int:
@@ -472,7 +684,13 @@ def _domain(host: SelfCastReductionHost, seat: str) -> int:
     return len(present)
 
 
-def cast_reduction_multiplier(host: SelfCastReductionHost, seat: str, metric: CastReductionMetric) -> int:
+def cast_reduction_multiplier(
+    host: SelfCastReductionHost,
+    seat: str,
+    metric: CastReductionMetric,
+    *,
+    source: Any | None = None,
+) -> int:
     """Return the deterministic nonnegative multiplier for one reduction term."""
 
     if metric.kind is CastReductionMetricKind.OBJECT_COUNT:
@@ -496,6 +714,106 @@ def cast_reduction_multiplier(host: SelfCastReductionHost, seat: str, metric: Ca
     if metric.kind is CastReductionMetricKind.TURN_FACT:
         assert metric.turn_fact is not None
         return int(_turn_fact_holds(host, seat, metric.turn_fact))
+    if metric.kind is CastReductionMetricKind.TURN_VALUE:
+        assert metric.turn_fact is not None
+        return _turn_value(host, seat, metric.turn_fact)
+    if metric.kind is CastReductionMetricKind.SOURCE_COUNTER_COUNT:
+        if source is None or metric.counter_name is None:
+            raise SelfCastReductionError(
+                "Source-counter reduction lacks its current source"
+            )
+        return max(0, int(source.counters.get(metric.counter_name, 0)))
+    if metric.kind is CastReductionMetricKind.PARTY_SIZE:
+        roles: set[str] = set()
+        party = {"cleric", "rogue", "warrior", "wizard"}
+        for object_id in host.state.players[seat].zones["battlefield"]:
+            card = host.state.cards.get(object_id)
+            if card is None or card.controller != seat or card.phased_out:
+                continue
+            effective = host._effective_card_data(card)
+            types, subtypes, _supertypes = host._type_parts(
+                str(effective.get("type_line") or "")
+            )
+            if "creature" in types:
+                roles.update(party.intersection(subtypes))
+        return len(roles)
+    if metric.kind is CastReductionMetricKind.PERMANENT_COLOR_COUNT:
+        colors: set[str] = set()
+        for object_id in host.state.players[seat].zones["battlefield"]:
+            card = host.state.cards.get(object_id)
+            if card is None or card.controller != seat or card.phased_out:
+                continue
+            colors.update(
+                str(value).upper()
+                for value in host._effective_card_data(card).get("colors", ())
+                if str(value).upper() in set("WUBRG")
+            )
+        return len(colors)
+    if metric.kind is CastReductionMetricKind.DISTINCT_NAME_COUNT:
+        query = metric.queries[0]
+        return len(
+            {
+                str(effective.get("name") or card.printed_name)
+                for card, effective in _matching_cards(host, seat, query)
+            }
+        )
+    if metric.kind is CastReductionMetricKind.LIFE_DIFFERENCE:
+        return max(
+            0,
+            int(host.state.config.starting_life)
+            - int(host.state.players[seat].life),
+        )
+    if metric.kind is CastReductionMetricKind.CONTROLLER_DRAW_COUNT:
+        value = drawn_this_turn(host, seat)
+        return int(
+            (metric.minimum is None or value >= metric.minimum)
+            and (metric.maximum is None or value <= metric.maximum)
+        )
+    if metric.kind is CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT:
+        count = 0
+        for other, player in host.state.players.items():
+            if other == seat or not player.in_game:
+                continue
+            for object_id in player.zones["battlefield"]:
+                card = host.state.cards.get(object_id)
+                if card is None or card.phased_out:
+                    continue
+                effective = host._effective_card_data(card)
+                types, _subtypes, _supertypes = host._type_parts(
+                    str(effective.get("type_line") or "")
+                )
+                if "land" in types and "C" in {
+                    str(value).upper()
+                    for value in effective.get("produced_mana", ())
+                }:
+                    count += 1
+        return count
+    if metric.kind is CastReductionMetricKind.OPPONENT_COUNT_DIFFERENCE:
+        opponent_query, controller_query = metric.queries
+        controller_count = len(_matching_cards(host, seat, controller_query))
+        return int(
+            any(
+                count - controller_count >= int(metric.minimum or 0)
+                for count in _any_opponent_query_counts(
+                    host,
+                    seat,
+                    opponent_query,
+                )
+            )
+        )
+    if metric.kind is CastReductionMetricKind.OPPONENT_HAND_COUNT:
+        counts = tuple(
+            len(player.zones["hand"])
+            for other, player in host.state.players.items()
+            if other != seat and player.in_game
+        )
+        return int(
+            any(
+                (metric.minimum is None or value >= metric.minimum)
+                and (metric.maximum is None or value <= metric.maximum)
+                for value in counts
+            )
+        )
 
     def within_bounds(value: int) -> bool:
         return (
@@ -523,10 +841,21 @@ def cast_reduction_multiplier(host: SelfCastReductionHost, seat: str, metric: Ca
     return int(all(within_bounds(value) for value in values))
 
 
-def evaluated_self_reduction(host: SelfCastReductionHost, seat: str, specification: SelfSpellCostReductionSpec) -> dict[str, int]:
+def evaluated_self_reduction(
+    host: SelfCastReductionHost,
+    seat: str,
+    specification: SelfSpellCostReductionSpec,
+    *,
+    source: Any | None = None,
+) -> dict[str, int]:
     result: dict[str, int] = {}
     for term in specification.terms:
-        multiplier = cast_reduction_multiplier(host, seat, term.metric)
+        multiplier = cast_reduction_multiplier(
+            host,
+            seat,
+            term.metric,
+            source=source,
+        )
         for key, amount in term.reduction:
             result[key] = result.get(key, 0) + amount * multiplier
     return result

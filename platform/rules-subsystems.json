@@ -3605,6 +3605,49 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-public-declaration-condition-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-cast-cost-modifier-closure",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.cost.modifier.fixed_query",
+            "capability:casting.cost.self_public_reduction",
+            "component:quorune.cast_cost_modifiers.PublicCastCostModifierV2Spec",
+            "component:quorune.compiler.cast_cost_modifier_templates.self_spell_cost_reduction_handler",
+            "component:quorune.compiler.public_cast_cost_modifiers.public_cast_cost_modifier_v2_template",
+            "component:quorune.self_cast_reductions.CastReductionMetric"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "colored-mana-vector",
+            "fixed-public-threshold",
+            "public-count-multiplier",
+            "sealed-history-multiplier",
+            "spell-characteristic-predicate"
+          ],
+          "shared_dependencies": [
+            "casting.cost.modifier.fixed_query",
+            "casting.cost.self_public_reduction"
+          ],
+          "shared_grammar": "one source-spanned fixed generic or colored cast-cost adjustment multiplied by a closed spell predicate, cycle-safe public object or source-counter quantity, public threshold, or sealed authoritative history fact through the existing total-cost query used by offers and commits",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era cast-cost cohort while sharing selected-face spell characteristics, current layer-6 source applicability, the canonical public characteristic boundary, typed discard, sacrifice, life and cast histories, total-cost ordering, rollback, projection, and replay owners.",
+          "explicit_exclusions": [
+            "arbitrary payment-method changes, alternative costs, and optional additional-cost substitutions",
+            "caps, floors, minimum total costs, direct total-cost setters, and open arithmetic",
+            "chosen, named, private, random, and unsupported historical facts",
+            "copied, granted, removed, or text-changing modifiers outside the shared layer-6 component query",
+            "distinct card-type and mana-value sets, target-relative prices, and independently unsupported sibling abilities",
+            "power, toughness, greatest-value, and other cycle-sensitive characteristic amounts"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-cast-cost-modifier-closure-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3616,23 +3659,19 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v199-fixed-public-declaration-conditions",
-      "compiler_version": "oracle-ir-v199",
-      "bundle_id": "bundle:fixed-public-declaration-conditions",
-      "candidate_ids": ["compiler:fixed-public-declaration-conditions"],
+      "transition_id": "oracle-ir-v200-public-cast-cost-modifier-closure",
+      "compiler_version": "oracle-ir-v200",
+      "bundle_id": "bundle:public-cast-cost-modifier-closure",
+      "candidate_ids": ["compiler:public-cast-cost-modifier-closure"],
       "family_ids": [
-        "static_clause:broader-evasion-and-group-constraints",
-        "static_clause:conditional-declaration-predicates",
-        "static_clause:temporary-declaration-restrictions"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "activation.restriction.attached",
-        "combat.declaration.public_state_conditions",
-        "combat.declaration.typed_components",
-        "continuous.characteristics.fixed_public_state"
+        "casting.cost.modifier.fixed_query",
+        "casting.cost.self_public_reduction"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-public-declaration-conditions"
+      "measurement_id": "measurement:public-cast-cost-modifier-closure"
     },
     "forecast_corrections": [
       {
@@ -4237,6 +4276,11 @@
         "candidate_id": "compiler:fixed-owner-zone-moves",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The current selector has no eligible carried candidate, while the raw unparsed effect and activation leaders fragment into hundreds of distinct families and the dependency-ready counter queue lacks measured broad gain. The generated integrated owner-destination probe instead establishes a threshold-clearing complete-card lower bound through existing target revalidation, source-incarnation, attachment-reference, APNAP public choice, owner-relative destination, Commander replacement, zone-transition, projection, and replay owners. It admits only fixed public target, source, enchanted-creature, controller-choice, and each-player-choice moves to owner hand, graveyard, fixed library position, or shuffle across spell, triggered, activated, and modal contexts; heterogeneous targets, hidden selection, alternative costs, mass, delayed, linked, variable, arbitrary-position, copied, text-changed, and independently unsupported forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:public-cast-cost-modifier-closure",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-declaration selector has no implementation-eligible candidate while the raw continuous-layer leader remains heterogeneous and the dependency-ready counter queue still lacks measured broad gain. A bounded integrated compiler probe isolates one 50-card lower bound across fixed generic and colored vectors, public spell predicates and thresholds, cycle-safe battlefield and graveyard quantities, current source counters, party, modified, color and effective-name counts, and sealed discard, sacrifice, life, attack, spell, and Commander-cast facts. Every form reuses the current layer-6 component applicability query and authoritative offer/commit total-cost owner. Target-relative prices, power or toughness amounts, distinct card-type or mana-value sets, chosen or private facts, caps, floors, substitutions, minimum costs, direct total setters, unsupported payment methods, and independently incomplete siblings remain fail-closed; current identities and measurements are generated from the frontier."
       }
     ]
   },

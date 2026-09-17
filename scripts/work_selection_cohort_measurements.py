@@ -27,6 +27,7 @@ from quorune.compiler.activation_mana_costs import (
 )
 from quorune.compiler.cast_cost_modifier_templates import (
     self_spell_cost_reduction_handler,
+    static_fixed_spell_cost_reduction_handler,
 )
 from quorune.compiler.exile_templates import targeted_exile_effect_template
 from quorune.compiler.damage_templates import source_pronoun_damage_effect_template
@@ -48,6 +49,7 @@ from quorune.compiler.public_zone_move_templates import (
 )
 from quorune.compiler.public_cast_cost_modifiers import (
     public_cast_cost_modifier_template,
+    public_cast_cost_modifier_v2_template,
 )
 from quorune.compiler.regeneration_templates import (
     fixed_regeneration_effect_template,
@@ -129,6 +131,7 @@ from quorune.rules.library_search_capability_shapes import (
 )
 from quorune.targets import TargetGroup
 from quorune.semantic_runtime.cast_costs import (
+    FIXED_SPELL_COST_REDUCTION_HANDLER_ID,
     SELF_SPELL_COST_REDUCTION_HANDLER_ID,
 )
 from quorune.work_selection_evidence import (
@@ -247,6 +250,9 @@ _PROBE_SOURCE_COMBAT_GROWTH_TRIGGER = (
 )
 _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER = (
     "public-static-cast-cost-modifier-existing-owner-v1"
+)
+_PROBE_PUBLIC_CAST_COST_MODIFIER_CLOSURE = (
+    "public-cast-cost-modifier-closure-existing-owner-v1"
 )
 _PROBE_FIXED_CAST_LIFECYCLES = "fixed-cast-lifecycle-existing-owner-v1"
 _PROBE_FIXED_CASTING_SURFACE = "fixed-casting-surface-existing-owner-v2"
@@ -453,6 +459,7 @@ _PROBE_IDS = {
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
+    _PROBE_PUBLIC_CAST_COST_MODIFIER_CLOSURE,
     _PROBE_PUBLIC_ACTIVATION_CONDITIONS,
     _PROBE_COMPLEX_ACTIVATION_MANA,
     _PROBE_SHARED_PUBLIC_BATTLEFIELD_QUERY,
@@ -1037,6 +1044,12 @@ def _matches_probe(
         return self_spell_cost_reduction_handler(source) is not None
     if probe_id == _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER:
         return public_cast_cost_modifier_template(source) is not None
+    if probe_id == _PROBE_PUBLIC_CAST_COST_MODIFIER_CLOSURE:
+        return bool(
+            self_spell_cost_reduction_handler(source) is not None
+            or static_fixed_spell_cost_reduction_handler(source) is not None
+            or public_cast_cost_modifier_v2_template(source) is not None
+        )
     if probe_id == _PROBE_FIXED_CAST_LIFECYCLES:
         return fixed_cast_lifecycle_spec(source) is not None
     if probe_id == _PROBE_FIXED_CASTING_SURFACE:
@@ -2254,6 +2267,130 @@ def _self_spell_cost_reduction_measurement(
             else "retired_below_harvest_floor"
         ),
         "grants_gameplay_trust": False,
+    }
+
+
+def _public_cast_cost_modifier_closure_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure the integrated public total-cost modifier closure."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    matched_abilities = 0
+    complete_cards = 0
+    exact_siblings = 0
+    residual_siblings = 0
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        unresolved = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+        ]
+        potential = [
+            ability
+            for ability in unresolved
+            if _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not potential:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented_lines = {
+            node.span.line
+            for face in compiled.faces
+            for node in face.nodes
+            if node.exact
+            and node.event == "cast.cost.modify"
+            and any(
+                handler.get("handler_id")
+                in {
+                    FIXED_SPELL_COST_REDUCTION_HANDLER_ID,
+                    SELF_SPELL_COST_REDUCTION_HANDLER_ID,
+                }
+                for handler in node.handlers
+            )
+        }
+        represented = [
+            ability
+            for ability in potential
+            if int(ability.get("source_line") or 0) in represented_lines
+        ]
+        if not represented:
+            continue
+        matched_cards[oracle_id] = len(unresolved) - len(represented)
+        matched_abilities += len(represented)
+        exact_siblings += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        residual_siblings += sum(
+            1
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        )
+        if compiled.status == "exact":
+            complete_cards += 1
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_abilities
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable" if reaches_floor else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": matched_abilities,
+            "existing_exact_sibling_nodes": exact_siblings,
+            "remaining_residual_sibling_nodes": residual_siblings,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": len(matched_cards) - complete_cards,
+            "expected_oracle_residual_reduction": matched_abilities,
+            "expected_card_program_residual_reduction": matched_abilities,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                len(matched_cards) - complete_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": 0,
+        },
     }
 
 
@@ -4264,6 +4401,15 @@ def _measurement(
         )
     if probe_id == _PROBE_FIXED_MANA_MADNESS:
         return _fixed_mana_madness_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_PUBLIC_CAST_COST_MODIFIER_CLOSURE:
+        return _public_cast_cost_modifier_closure_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,

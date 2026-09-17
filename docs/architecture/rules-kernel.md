@@ -2,7 +2,7 @@
 title: "Rules kernel"
 status: "current"
 authoritative_source: "quorune engine and rules modules, including quorune/control_history.py, quorune/day_night.py, quorune/permanent_transform.py, quorune/turn_history.py, quorune/echo.py, quorune/saga_progression.py, quorune/mentor.py, quorune/relative_power_target.py, and quorune/target_predicates.py"
-verified: "2026-09-16"
+verified: "2026-09-17"
 audience: "rules and engine contributors"
 maintenance: "hand-maintained"
 ---
@@ -239,16 +239,19 @@ and phasing before the canonical mana and tap owners mutate state. Hybrid,
 Phyrexian, snow, broader cost ordering or restriction, payment replacement,
 granted or removed Convoke, and rules-text equivalents fail closed.
 
-Source-pinned self spell-cost reductions enter that same total-cost stage. The
-selected face supplies one strict typed metric over public effective objects,
-mana value, devotion, Domain, or the bounded current-turn journal, and the
+Source-pinned self and battlefield static spell-cost modifiers enter that same
+total-cost stage. The selected face or current layer-6 source supplies one
+strict typed metric over public effective objects, source counters, party,
+color and effective-name counts, mana value, devotion, Domain, life, or the
+bounded discard, sacrifice, attack, spell, and Commander-cast histories. The
 metric preserves whether opponent thresholds are existential per opponent or
-aggregate across all opponents. The casting owner applies its generic or
-colored vector before payment mechanics.
+aggregate across all opponents. The casting owner applies increases before its
+generic or colored reductions and before payment mechanics.
 Offer construction and accepted-command validation call the identical query;
 a control, object, or turn-fact change therefore reprices or rejects the stale
-action before mutation. Target-dependent prices and unjournaled history remain
-unsupported.
+action before mutation. Target-dependent prices, open characteristic amounts,
+and unjournaled history remain unsupported. This bounded pipeline does not
+claim complete CR 601.2f or CR 601.2h payment ordering.
 
 ## Extension and event participation
 

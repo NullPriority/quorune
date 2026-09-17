@@ -2,7 +2,7 @@
 title: "Typed Oracle IR"
 status: "current"
 authoritative_source: "Oracle compiler implementation, CardProgram schema, and pinned corpus reports"
-verified: "2026-09-16"
+verified: "2026-09-17"
 audience: "compiler, rules, and CardProgram contributors"
 maintenance: "hand-maintained"
 concern: "oracle-ir"
@@ -95,6 +95,12 @@ development-only arbitration boundary.
 
 No running game parses Oracle prose. The runtime consumes only validated,
 fingerprinted CardPrograms, registered descriptors, and typed rules owners.
+Fixed and public-value cast-cost text lowers to closed signed mana vectors and
+public quantity descriptors. The descriptor names spell predicates, source or
+caster relation, current origin/turn context, and only the represented public
+metric; it never retains Oracle prose as runtime authority. Unsupported target-
+relative, private, characteristic-cycle-sensitive, capped, or open-arithmetic
+forms remain source-spanned residuals.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

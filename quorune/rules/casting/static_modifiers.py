@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from ...compiled_cast_costs import compiled_self_spell_cost_reduction_specs
+from ...cast_cost_modifiers import PublicCastCostModifierV2Spec
 from ...semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
 from ...self_cast_reductions import evaluated_self_reduction
 
@@ -65,6 +66,12 @@ def apply_static_reductions(
     fixed_reduction: int,
     cast_type_line: str | None = None,
 ) -> None:
+    public_modifiers = active_fixed_spell_cost_reductions(
+        host,
+        seat,
+        card,
+        cast_type_line=cast_type_line,
+    )
     apply_fixed_generic_increases(
         host,
         seat,
@@ -72,6 +79,26 @@ def apply_static_reductions(
         option,
         cast_type_line=cast_type_line,
     )
+    colored_increases: dict[str, int] = {}
+    colored_reductions: dict[str, int] = {}
+    for modifier in public_modifiers:
+        if not isinstance(modifier, PublicCastCostModifierV2Spec):
+            continue
+        for key, amount in modifier.mana_adjustment:
+            if key == "GENERIC":
+                continue
+            target = colored_increases if amount > 0 else colored_reductions
+            target[key] = target.get(key, 0) + abs(amount)
+    applied_increases: dict[str, int] = {}
+    for key, amount in sorted(colored_increases.items()):
+        option["requirements"][key] = int(
+            option["requirements"].get(key, 0)
+        ) + amount
+        applied_increases[key] = amount
+    if applied_increases:
+        option.setdefault("cost_increases", []).append(
+            {"kind": "fixed_query", "increase": applied_increases}
+        )
     if fixed_reduction:
         applied = min(
             int(option["requirements"]["GENERIC"]),
@@ -80,6 +107,17 @@ def apply_static_reductions(
         option["requirements"]["GENERIC"] -= applied
         option.setdefault("cost_reductions", []).append(
             {"kind": "fixed_query", "count": applied}
+        )
+    applied_colored: dict[str, int] = {}
+    for key, amount in sorted(colored_reductions.items()):
+        applied = min(int(option["requirements"].get(key, 0)), amount)
+        if not applied:
+            continue
+        option["requirements"][key] -= applied
+        applied_colored[key] = applied
+    if applied_colored:
+        option.setdefault("cost_reductions", []).append(
+            {"kind": "fixed_query", "reduction": applied_colored}
         )
     self_reduction: dict[str, int] = {}
     for specification in compiled_self_spell_cost_reduction_specs(

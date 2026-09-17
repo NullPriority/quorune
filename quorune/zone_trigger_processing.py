@@ -10,6 +10,7 @@ from .saga_progression import dispatch_saga_entry_chapters
 from .trigger_processing import enqueue_trigger_batch
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
+    ZoneTransitionKind,
     normalized_zone_trigger_events,
 )
 
@@ -160,6 +161,19 @@ def dispatch_zone_change_occurrence(
     ):
         host._record_turn_history(
             "creature_died",
+            actor=occurrence.previous_controller,
+            object_incarnation=occurrence.previous_logical_object_id,
+            types=previous_types,
+        )
+    if occurrence.transition_kind is ZoneTransitionKind.DISCARD:
+        host._record_turn_history(
+            "card_discarded",
+            actor=occurrence.previous_controller,
+            object_incarnation=occurrence.previous_logical_object_id,
+        )
+    if occurrence.transition_kind is ZoneTransitionKind.SACRIFICE:
+        host._record_turn_history(
+            "permanent_sacrificed",
             actor=occurrence.previous_controller,
             object_incarnation=occurrence.previous_logical_object_id,
             types=previous_types,

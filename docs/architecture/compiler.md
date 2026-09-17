@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-16"
+verified: "2026-09-17"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -924,16 +924,18 @@ reduces the generic total only once. Unsupported qualities, granted or removed
 Affinity, and equivalent rules text remain residual instead of becoming runtime
 Oracle interpretation.
 
-The same selected-face cast-cost registry separately owns fixed reductions on
-the carrying spell. One immutable descriptor can read a closed public object
-count or threshold, total mana value, devotion, Domain, or the canonical
-current-turn spell, death, or active-player facts and reduce a fixed generic or
-colored component in the ordinary total-cost stage. Battlefield predicates use
-current effective type, subtype, color, keyword, and named-counter state;
-graveyard and exile predicates remain actor-relative public queries. Target-
-relative prices, facts absent from the turn journal, power/toughness sums,
-chosen or secret qualities, caps, floors, increases, and open arithmetic remain
-source-spanned residuals.
+The same selected-face cast-cost registry separately owns fixed and public-
+value modifiers. One immutable descriptor can read a closed spell predicate,
+public object count or threshold, current source counter, party size, permanent
+color cardinality, effective-name count, total mana value, devotion, Domain,
+life difference, or the canonical discard, sacrifice, life, attack, spell, and
+Commander-cast facts. The result is a fixed generic or colored vector applied
+in the ordinary total-cost stage. Battlefield predicates use current effective
+type, subtype, color, keyword, name, and named-counter state; graveyard and
+exile predicates remain actor-relative public queries. Target-relative prices,
+power/toughness amounts, distinct type or mana-value sets, chosen or secret
+qualities, caps, floors, minimum totals, direct total setters, substitutions,
+and open arithmetic remain source-spanned residuals.
 
 Ordinary printed `Improvise` and `Delve` lower through the same selected-face
 casting-payment component family. Improvise advertises current controlled
