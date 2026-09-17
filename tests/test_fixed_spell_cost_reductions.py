@@ -200,6 +200,12 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                 "object_count",
                 {"G": 1},
             ),
+            (
+                "Domain — This spell costs {1} less to cast for each basic "
+                "land type among lands you control.",
+                "domain",
+                {"GENERIC": 1},
+            ),
         )
         for index, (text, metric, reduction) in enumerate(cases, 1):
             with self.subTest(text=text):

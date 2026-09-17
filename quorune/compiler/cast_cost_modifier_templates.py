@@ -121,10 +121,13 @@ def _reduction_pairs(token: str) -> tuple[tuple[str, int], ...] | None:
 
 
 def _without_ability_word(text: str) -> str:
+    normalized = " ".join(text.strip().split())
+    if _DOMAIN_REDUCTION.fullmatch(normalized) is not None:
+        return normalized
     return re.sub(
         r"^[A-Za-z][A-Za-z ]+ (?:—|�) ",
         "",
-        " ".join(text.strip().split()),
+        normalized,
     )
 
 
