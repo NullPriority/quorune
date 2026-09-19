@@ -4433,6 +4433,10 @@ class RulesSchedulerTests(unittest.TestCase):
             span=SimpleNamespace(line=1),
             template_id="fixed-typed-effect-public-attack-trigger-v1",
             runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            capability_dependencies=(
+                "attachment.reference.current_or_lki",
+                "trigger.effect.fixed_event",
+            ),
         )
         compiled = SimpleNamespace(
             faces=(SimpleNamespace(face_id="front", nodes=(node,)),),

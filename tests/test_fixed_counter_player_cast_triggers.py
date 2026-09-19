@@ -2046,6 +2046,86 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
 
+    def test_equipped_attack_mill_composes_with_attachment_and_zone_owner(self):
+        session = self.session(121080, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        attacker = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="attachment-mill-attacker",
+            zone="battlefield",
+        )
+        equipment = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Equipped Attack Mill Trigger Fixture",
+            ref="attachment-mill-equipment",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, equipment)
+        attach_objects(
+            engine.state.cards,
+            equipment,
+            attacker,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        top_objects = [
+            engine.state.cards[object_id]
+            for object_id in engine.state.players["A"].zones["library"][-2:]
+        ]
+        engine._issue_attackers()
+
+        declared = session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {attacker.ref: "B"}},
+        )
+
+        self.assertTrue(declared.ok, declared.summary)
+        item = next(
+            item
+            for item in engine.state.stack
+            if item.semantic_key == program.key
+        )
+        self.assertEqual(attacker.ref, item.context["card"])
+        self.resolve_top(engine)
+        self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        projector = StateProjector(self.db, engine.state)
+        self.assertIsNotNone(projector._decision("pilot:A"))
+        for seat in ("B", "C", "D"):
+            self.assertIsNone(projector._decision(f"pilot:{seat}"))
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        applied = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choice": "apply",
+                "reason": "Apply the represented attached attack Mill effect.",
+            },
+        )
+
+        self.assertTrue(applied.ok, applied.summary)
+        self.assertEqual(
+            ["graveyard", "graveyard"],
+            [card.zone for card in top_objects],
+        )
+        self.assertEqual(attacker.object_id, equipment.attached_to)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "attachment-attack-mill"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
     def test_attachment_damage_and_death_bindings_use_current_and_lki_relations(
         self,
     ):

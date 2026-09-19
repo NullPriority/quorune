@@ -1508,6 +1508,25 @@
       "layout": "normal",
       "released_at": "2026-09-19",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "12100000-0000-4000-8000-000000000079",
+      "name": "Generic Equipped Attack Mill Trigger Fixture",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Whenever equipped creature attacks, you may mill two cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-19",
+      "legalities": {"commander": "legal"}
     }
   ]
 }

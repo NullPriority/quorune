@@ -412,6 +412,26 @@ _ATTACHED_GRANT_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
         ),
     }
 )
+_PUBLIC_EVENT_BINDING_HIGH_RISK_CAPABILITY_PAIRS = frozenset(
+    {
+        tuple(
+            sorted(
+                (
+                    "attachment.action.fixed_source",
+                    "zone.change.destination_replacement",
+                )
+            )
+        ),
+        tuple(
+            sorted(
+                (
+                    "attachment.reference.current_or_lki",
+                    "zone.mill.fixed",
+                )
+            )
+        ),
+    }
+)
 _PROBE_IDS = {
     _PROBE_ATTACHED_QUOTED_ABILITY_GRANT,
     _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER,
@@ -2479,6 +2499,7 @@ def _public_event_binding_closure_measurement(
     remaining_residual_siblings = 0
     unsupported_sibling_cards = 0
     unsupported_grammar_cards: set[str] = set()
+    newly_applicable_high_risk_pairs: set[tuple[str, str]] = set()
     for card in frontier.get("cards", []):
         oracle_id = str(card.get("oracle_id") or "")
         record = cards_by_oracle_id.get(oracle_id)
@@ -2527,6 +2548,18 @@ def _public_event_binding_closure_measurement(
             continue
         if len(represented) != len(potential):
             unsupported_grammar_cards.add(oracle_id)
+        capabilities = {
+            capability
+            for face in compiled.faces
+            for node in face.nodes
+            if node.exact
+            for capability in node.capability_dependencies
+        }
+        newly_applicable_high_risk_pairs.update(
+            pair
+            for pair in _PUBLIC_EVENT_BINDING_HIGH_RISK_CAPABILITY_PAIRS
+            if set(pair).issubset(capabilities)
+        )
         exact_ability_gain += len(represented)
         matched_cards[oracle_id] = len(represented)
         remaining = [
@@ -2588,7 +2621,9 @@ def _public_event_binding_closure_measurement(
             ),
             "expected_oracle_residual_reduction": residual_reduction,
             "expected_card_program_residual_reduction": residual_reduction,
-            "newly_applicable_high_risk_pairs": 0,
+            "newly_applicable_high_risk_pairs": len(
+                newly_applicable_high_risk_pairs
+            ),
             "cards_excluded_by_unsupported_sibling": (
                 unsupported_sibling_cards
             ),

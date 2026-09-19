@@ -211,6 +211,25 @@
       "layout": "normal",
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000070230001",
+      "name": "Destination Harness Fixture",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "When this Equipment enters, attach it to target creature you control.\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-19",
+      "legalities": {"commander": "legal"}
     }
   ],
   "rulings": []
