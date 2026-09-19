@@ -4365,6 +4365,20 @@ class RulesSchedulerTests(unittest.TestCase):
                 ability=ability,
             )
         )
+        creature = SimpleNamespace(
+            name="Creature Fixture",
+            type_line="Creature — Dragon",
+            faces=(),
+        )
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "At the beginning of the end step, return this creature "
+                "to its owner's hand.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
         self.assertFalse(
             _matches_probe(
                 probe_id,

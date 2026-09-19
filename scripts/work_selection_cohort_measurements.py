@@ -751,7 +751,7 @@ def _matches_integrated_spell_cast_probe(
     ability: Mapping[str, Any],
     extended_only: bool,
 ) -> bool:
-    card_name, source_is_permanent, attachment_relation = (
+    card_name, _source_is_permanent, _attachment_relation = (
         _source_face_context(card_record, ability)
     )
     binding = fixed_counter_trigger_binding(source, card_name=card_name)
@@ -862,6 +862,26 @@ def _matches_typed_public_event_effect_trigger_probe(
         )
     ):
         return False
+    return _typed_event_effect_node_is_exact(
+        source,
+        material=material,
+        card_record=card_record,
+        ability=ability,
+    )
+
+
+def _typed_event_effect_node_is_exact(
+    source: str,
+    *,
+    material: str,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    """Require the selected carrier and one integrated exact typed body."""
+
+    card_name, source_is_permanent, attachment_relation = (
+        _source_face_context(card_record, ability)
+    )
     face_id = str(ability.get("face_id") or "front")
     face = next(
         (
@@ -916,8 +936,9 @@ def _matches_public_event_binding_closure_probe(
         or binding.variant not in PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
     ):
         return False
-    return _matches_typed_public_event_effect_trigger_probe(
+    return _typed_event_effect_node_is_exact(
         source,
+        material=material,
         card_record=card_record,
         ability=ability,
     )
