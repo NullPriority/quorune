@@ -751,7 +751,7 @@ def _matches_integrated_spell_cast_probe(
     ability: Mapping[str, Any],
     extended_only: bool,
 ) -> bool:
-    card_name, _source_is_permanent, _attachment_relation = (
+    card_name, source_is_permanent, attachment_relation = (
         _source_face_context(card_record, ability)
     )
     binding = fixed_counter_trigger_binding(source, card_name=card_name)

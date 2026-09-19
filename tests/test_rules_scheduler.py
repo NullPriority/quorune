@@ -4396,6 +4396,14 @@ class RulesSchedulerTests(unittest.TestCase):
                 ability=ability,
             )
         )
+        self.assertTrue(
+            _matches_probe(
+                "fixed-spell-cast-characteristic-trigger-existing-owner-v2",
+                "Whenever you cast a white spell, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
 
         record = SimpleNamespace(
             oracle_id="public-event-closure",
