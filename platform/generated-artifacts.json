@@ -576,6 +576,8 @@
         "web-source"
       ],
       "input_paths": [
+        "*",
+        "**/*",
         "web/tests/**/*.ts"
       ],
       "implementation_inputs": [

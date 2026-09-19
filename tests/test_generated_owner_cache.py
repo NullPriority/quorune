@@ -245,6 +245,18 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         self.assertIn("tests/**/*.json", groups.patterns("tests-source"))
         self.assertIn("tests-source", compact_dependencies.input_groups)
         self.assertIn("web/tests/**/*.ts", architecture.input_paths)
+        architecture_inputs = set(
+            resolved_worktree_inputs(
+                architecture,
+                specs=specs,
+                input_groups=groups,
+                root=ROOT,
+            )
+        )
+        self.assertIn(
+            "scripts/work_selection_cohort_measurements.py",
+            architecture_inputs,
+        )
         self.assertIn("web-source", architecture.input_groups)
         self.assertIn("web/src/**/*.tsx", groups.patterns("web-source"))
         self.assertIn(
