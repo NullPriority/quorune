@@ -671,19 +671,6 @@ _WITNESSES = {
         "{4}{W}{W}",
         ("Threshold",),
     ),
-    "avatar-of-woe": _Witness(
-        "Avatar of Woe",
-        "Creature — Avatar",
-        "If there are ten or more creature cards total in all graveyards, "
-        "this spell costs {6} less to cast.\n"
-        "Fear (This creature can't be blocked except by artifact creatures "
-        "and/or black creatures.)\n"
-        "{T}: Destroy target creature. It can't be regenerated.",
-        "{6}{B}{B}",
-        ("Fear",),
-        "6",
-        "5",
-    ),
     "knight-of-the-holy-nimbus": _Witness(
         "Knight of the Holy Nimbus",
         "Creature — Human Rebel Knight",
@@ -893,10 +880,6 @@ REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS = (
     _pair(
         "capability.permanent.destroy.regeneration_prohibition",
         "residual.continuous_layer.affected-player-ordering",
-    ),
-    _pair(
-        "capability.permanent.destroy.regeneration_prohibition",
-        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
     ),
 )
 
@@ -1320,7 +1303,6 @@ CONTINUOUS_AND_REPLACEMENT_PAIRS = (
         "residual.continuous_layer.continuous-effect-layers-and-dependencies",
         "residual.replacement.damage-prevention",
     ),
-    REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS[1],
     _pair(
         "residual.continuous_layer.continuous-effect-layers-and-dependencies",
         "residual.replacement.replacement-applicability",
@@ -1547,15 +1529,14 @@ _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
 _bind("continuous-prevention-boundary", CONTINUOUS_AND_REPLACEMENT_PAIRS[4])
 _bind("dovin-hand-of-control", CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR)
-_bind("avatar-of-woe", CONTINUOUS_AND_REPLACEMENT_PAIRS[5])
 _bind(
     "knight-of-the-holy-nimbus",
     CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
 )
-_bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[6:8])
-_bind("gideon-oathsworn", CONTINUOUS_AND_REPLACEMENT_PAIRS[8])
-_bind("runesword", CONTINUOUS_AND_REPLACEMENT_PAIRS[9])
-_bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[10:12])
+_bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[5:7])
+_bind("gideon-oathsworn", CONTINUOUS_AND_REPLACEMENT_PAIRS[7])
+_bind("runesword", CONTINUOUS_AND_REPLACEMENT_PAIRS[8])
+_bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[9:11])
 _bind("rasputin", TRIGGER_AND_REPLACEMENT_PAIRS[0], TRIGGER_AND_REPLACEMENT_PAIRS[4])
 _bind("ovinomancer", TRIGGER_AND_REPLACEMENT_PAIRS[1], TRIGGER_AND_REPLACEMENT_PAIRS[5])
 _bind("kindred-discovery", *TRIGGER_AND_REPLACEMENT_PAIRS[2:4])

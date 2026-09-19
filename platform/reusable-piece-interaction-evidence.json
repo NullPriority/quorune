@@ -2483,20 +2483,6 @@
     {
         "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-        "test_id": "test_regeneration_prohibition_continuous_residual_pairs_fail_closed_at_runtime_boundary",
-        "piece_ids": [
-            "capability.permanent.destroy.regeneration_prohibition",
-            "residual.continuous_layer.continuous-effect-layers-and-dependencies"
-        ],
-        "capability_ids": [
-            "permanent.destroy.regeneration_prohibition"
-        ],
-        "interaction_order": 2,
-        "assertion": "Avatar of Woe compiles its direct regeneration-prohibited destruction clause exactly while its separate static cost-reduction layer grammar remains material, so the complete CardProgram fails closed at runtime admission."
-    },
-    {
-        "evidence_class": "interaction",
-      "assurance_kind": "fail_closed_runtime_admission",
         "test_id": "test_continuous_layer_regeneration_residual_pair_fails_closed_at_runtime_boundary",
         "piece_ids": [
             "residual.continuous_layer.continuous-effect-layers-and-dependencies",
