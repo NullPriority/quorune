@@ -245,6 +245,8 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         self.assertIn("tests/**/*.json", groups.patterns("tests-source"))
         self.assertIn("tests-source", compact_dependencies.input_groups)
         self.assertIn("web/tests/**/*.ts", architecture.input_paths)
+        self.assertIn("web-source", architecture.input_groups)
+        self.assertIn("web/src/**/*.tsx", groups.patterns("web-source"))
         self.assertIn(
             "platform/ci-escape-source.json",
             ci_escape.input_paths,
