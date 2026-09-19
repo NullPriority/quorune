@@ -867,18 +867,22 @@ def _matches_typed_public_event_effect_trigger_probe(
     """Require both the selected event carrier and its integrated typed body."""
 
     material = _without_parenthetical_reminder(source)
-    card_name, source_is_permanent, attachment_relation = (
+    card_name, _source_is_permanent, _attachment_relation = (
         _source_face_context(card_record, ability)
     )
     binding = fixed_counter_trigger_binding(material, card_name=card_name)
-    if binding is None or not (
-        binding.public_template_id is not None
-        or re.fullmatch(
-            r"Whenever (?:an opponent casts a (?:white|blue|black|red|green) "
-            r"spell during your turn|you cast an instant spell during your "
-            r"main phase), .+",
-            material,
-            re.IGNORECASE,
+    if (
+        binding is None
+        or binding.variant in PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+        or not (
+            binding.public_template_id is not None
+            or re.fullmatch(
+                r"Whenever (?:an opponent casts a (?:white|blue|black|red|green) "
+                r"spell during your turn|you cast an instant spell during your "
+                r"main phase), .+",
+                material,
+                re.IGNORECASE,
+            )
         )
     ):
         return False
@@ -1274,7 +1278,10 @@ def _matches_probe(
             _without_parenthetical_reminder(source),
             card_name=card_name,
         )
-        if binding is None:
+        if (
+            binding is None
+            or binding.variant in PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+        ):
             return False
         compile_effect = partial(
             _reviewed_atomic_effect_template,
