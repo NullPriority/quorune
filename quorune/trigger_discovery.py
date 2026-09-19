@@ -388,6 +388,9 @@ def _semantic_condition_actual(
         if record is not None and record.faces:
             return str(record.faces[0].get("name") or "")
         return host._effective_card_data(source).get("name")
+    if field == "source_attachment_target_ref":
+        attached = host.state.cards.get(source.attached_to or "")
+        return attached.ref if attached is not None else None
     return context.get(field)
 
 

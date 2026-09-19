@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-17"
+verified: "2026-09-19"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -1135,19 +1135,24 @@ open-arithmetic forms remain source-spanned residuals.
 
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
-owner. Zone events consume transaction-sealed controller, type, subtype, color,
-token, and integer-power facts; damage and draw use committed result events;
-spell-cast schema v5 adds committed public target references while retaining
-historical schemas. Completed attack, block, Cycling, face-up, and spell-copy
-actions share one public-action occurrence capability and the ordinary APNAP
-batch. Ordinary and Storm copies dispatch through one normalized spell-copy
-adapter. Strict Heroic, Magecraft, Constellation, and Battalion carriers reuse
-these events, the shared current layer-6 ability query, and independently exact
-effect bodies. Block declarations emit one blocks occurrence per assignment but
-only one becomes-blocked occurrence per attacker. Attachment-relative,
-aggregate outside exact Battalion, combined outside exact Magecraft, chosen,
-history-relative, other targeted-event, tapped-event, counter-placement-event,
-secret, dynamic-comparison, and declaration-replacement grammar remains
+owner. Zone events consume transaction-sealed owner, prior controller, type,
+subtype, color, token, attachment, and integer-power facts; damage and draw use
+committed result events; spell-cast schema v5 adds committed public target
+references while retaining historical schemas. Completed attack, block,
+Cycling, face-up, and spell-copy actions share one public-action occurrence
+capability and the ordinary APNAP batch. Ordinary and Storm copies dispatch
+through one normalized spell-copy adapter. Strict Heroic, Magecraft,
+Constellation, Battalion, current equipped-attacker, exact enchanted- or
+equipped-damage, attached-creature death, bounded public entry/departure,
+controller-another Cycling, fixed step, and one-or-more creature-card graveyard
+departure carriers reuse these events, the shared current layer-6 ability
+query, and independently exact noncounter effect bodies. The one-or-more form
+deduplicates only inside the canonical simultaneous trigger batch. Block
+declarations emit one blocks occurrence per assignment but only one
+becomes-blocked occurrence per attacker. Counter bodies, source-tapped
+producers, broader attachment relations, aggregate attack or damage, Room,
+dice, chosen, history-relative, other targeted-event, declaration-replacement,
+ambiguous disjunction, linked-event, and dynamic-comparison grammar remains
 residual. Discard and sacrifice bindings outside their typed cause owners also
 remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).

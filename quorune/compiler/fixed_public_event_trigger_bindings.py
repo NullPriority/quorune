@@ -33,11 +33,13 @@ _PUBLIC_ATTACK_TRIGGER = re.compile(
 _PUBLIC_BLOCK_TRIGGER = re.compile(
     r"^Whenever (?P<subject>this creature|a creature you control with defender) "
     r"(?P<event>blocks|becomes blocked)"
-    r"(?P<blocked> a creature with flying)?, (?P<body>.+)$",
+    r"(?P<blocked> a creature with flying| by a creature)?, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _PUBLIC_CYCLE_TRIGGER = re.compile(
-    r"^(?:When you cycle this card|Whenever a player cycles a card), "
+    r"^(?:(?P<source>When you cycle this card)|"
+    r"(?P<another>Whenever you cycle another card)|"
+    r"Whenever a player cycles a card), "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -78,6 +80,44 @@ _CLASS_LEVEL_TRIGGER = re.compile(
     r"^When this Class becomes level (?P<level>[23]), (?P<body>.+)$",
     re.IGNORECASE,
 )
+_ATTACHMENT_ATTACK_TRIGGER = re.compile(
+    r"^Whenever equipped creature attacks, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_ATTACHMENT_DAMAGE_TRIGGER = re.compile(
+    r"^Whenever (?P<relation>enchanted|equipped) creature deals "
+    r"(?P<combat>combat )?damage to (?P<recipient>a player|an opponent), "
+    r"(?P<body>.+)$",
+    re.IGNORECASE,
+)
+_ATTACHMENT_DEATH_TRIGGER = re.compile(
+    r"^(?:When enchanted|Whenever equipped) creature dies, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_CONTROLLED_ENCHANTMENT_GRAVEYARD_TRIGGER = re.compile(
+    r"^Whenever an enchantment you control is put into a graveyard from the "
+    r"battlefield, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_SMALL_CREATURE_ENTRY_TRIGGER = re.compile(
+    r"^Whenever another creature you control with power (?P<power>[1-9][0-9]*) "
+    r"or less enters, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_COLORLESS_CREATURE_ENTRY_TRIGGER = re.compile(
+    r"^Whenever another colorless creature you control enters, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_SOURCE_OR_CONTROLLED_DEATH_TRIGGER = re.compile(
+    r"^Whenever this creature or another creature or artifact you control "
+    r"dies, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_CREATURE_CARD_LEAVES_GRAVEYARD_TRIGGER = re.compile(
+    r"^Whenever one or more creature cards leave your graveyard, "
+    r"(?P<body>.+)$",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,6 +130,7 @@ class FixedPublicEventBindingSpec:
     template_id: str
     mechanic: str
     condition: Mapping[str, Any] | None = None
+    capabilities: tuple[str, ...] = ()
     active_zone: str = "battlefield"
 
     def __post_init__(self) -> None:
@@ -100,6 +141,15 @@ class FixedPublicEventBindingSpec:
                 raise ValueError("Public event binding identities must be nonempty")
         if self.active_zone not in {"battlefield", "hand"}:
             raise ValueError("Public event bindings require a closed active zone")
+        if not isinstance(self.capabilities, tuple) or any(
+            type(value) is not str or not value
+            for value in self.capabilities
+        ):
+            raise ValueError(
+                "Public event binding capabilities must be nonempty strings"
+            )
+        if len(set(self.capabilities)) != len(self.capabilities):
+            raise ValueError("Public event binding capabilities must be unique")
 
 
 def _all_conditions(
@@ -187,6 +237,7 @@ def _spec(
     mechanic: str,
     *,
     condition: Mapping[str, Any] | None = None,
+    capabilities: tuple[str, ...] = (),
     active_zone: str = "battlefield",
 ) -> FixedPublicEventBindingSpec:
     return FixedPublicEventBindingSpec(
@@ -196,6 +247,7 @@ def _spec(
         template_id=template_id,
         mechanic=mechanic,
         condition=condition,
+        capabilities=capabilities,
         active_zone=active_zone,
     )
 
@@ -523,6 +575,209 @@ def _named_source_graveyard_spec(
     )
 
 
+def _attachment_attack_or_damage_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    attack = _ATTACHMENT_ATTACK_TRIGGER.fullmatch(material_line)
+    if attack is not None:
+        return _spec(
+            "creature.attacks",
+            "equipped_creature_attacks",
+            attack.group("body"),
+            "fixed-counter-public-attack-trigger-v1",
+            "trigger-event-normalized-public-action",
+            condition={
+                "field": "source_attachment_target_ref",
+                "op": "eq",
+                "value": "$context.card",
+            },
+            capabilities=("attachment.reference.current_or_lki",),
+        )
+    damage = _ATTACHMENT_DAMAGE_TRIGGER.fullmatch(material_line)
+    if damage is not None:
+        recipient = damage.group("recipient").casefold()
+        relation = damage.group("relation").casefold()
+        combat = damage.group("combat") is not None
+        if (relation, combat, recipient) not in {
+            ("enchanted", False, "an opponent"),
+            ("equipped", True, "a player"),
+        }:
+            return None
+        return _spec(
+            "damage.dealt",
+            f"{relation}_creature_{'combat_' if combat else ''}"
+            f"damage_{recipient.replace(' ', '_')}",
+            damage.group("body"),
+            "fixed-counter-public-damage-trigger-v1",
+            "trigger-event-normalized-damage",
+            condition=_all_conditions(
+                {
+                    "field": "source_attachment_target_ref",
+                    "op": "eq",
+                    "value": "$context.source",
+                },
+                {"field": "target_kind", "op": "eq", "value": "player"},
+                {"field": "combat", "op": "truthy", "value": True}
+                if combat
+                else None,
+                {
+                    "field": "target",
+                    "op": "ne",
+                    "value": "$source.controller",
+                }
+                if recipient == "an opponent"
+                else None,
+            ),
+            capabilities=("attachment.reference.current_or_lki",),
+        )
+    return None
+
+
+def _attachment_death_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    death = _ATTACHMENT_DEATH_TRIGGER.fullmatch(material_line)
+    if death is None:
+        return None
+    relation = (
+        "enchanted"
+        if material_line.casefold().startswith("when enchanted")
+        else "equipped"
+    )
+    return _spec(
+        "creature.dies",
+        f"{relation}_creature_dies",
+        death.group("body"),
+        "fixed-counter-public-zone-trigger-v1",
+        "trigger-event-normalized-zone-change",
+        condition={
+            "field": "attachments",
+            "op": "contains_any",
+            "value": ["$source.ref"],
+        },
+        capabilities=("attachment.reference.current_or_lki",),
+    )
+
+
+def _controlled_zone_departure_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    controlled_enchantment = _CONTROLLED_ENCHANTMENT_GRAVEYARD_TRIGGER.fullmatch(
+        material_line
+    )
+    if controlled_enchantment is not None:
+        return _spec(
+            "permanent.graveyard",
+            "controlled_enchantment_graveyard",
+            controlled_enchantment.group("body"),
+            "fixed-counter-public-zone-trigger-v1",
+            "trigger-event-normalized-zone-change",
+            condition=_all_conditions(
+                {"field": "types", "op": "contains_any", "value": ["enchantment"]},
+                {
+                    "field": "previous_controller",
+                    "op": "eq",
+                    "value": "$source.controller",
+                },
+            ),
+        )
+    source_or_other = _SOURCE_OR_CONTROLLED_DEATH_TRIGGER.fullmatch(material_line)
+    if source_or_other is None:
+        return None
+    return _spec(
+        "permanent.graveyard",
+        "source_or_controlled_creature_or_artifact_dies",
+        source_or_other.group("body"),
+        "fixed-counter-public-zone-trigger-v1",
+        "trigger-event-normalized-zone-change",
+        condition=_all_conditions(
+            {
+                "field": "previous_controller",
+                "op": "eq",
+                "value": "$source.controller",
+            },
+            {
+                "field": "types",
+                "op": "contains_any",
+                "value": ["creature", "artifact"],
+            },
+        ),
+    )
+
+
+def _controlled_entry_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    small = _SMALL_CREATURE_ENTRY_TRIGGER.fullmatch(material_line)
+    if small is not None:
+        return _spec(
+            "creature.enter",
+            "another_controlled_creature_power_at_most",
+            small.group("body"),
+            "fixed-counter-public-zone-trigger-v1",
+            "trigger-event-normalized-zone-change",
+            condition=_all_conditions(
+                {"field": "controller", "op": "eq", "value": "$source.controller"},
+                {"field": "card", "op": "ne", "value": "$source.ref"},
+                {"field": "power", "op": "lte", "value": int(small.group("power"))},
+            ),
+        )
+    colorless = _COLORLESS_CREATURE_ENTRY_TRIGGER.fullmatch(material_line)
+    if colorless is not None:
+        return _spec(
+            "creature.enter",
+            "another_controlled_colorless_creature_enters",
+            colorless.group("body"),
+            "fixed-counter-public-zone-trigger-v1",
+            "trigger-event-normalized-zone-change",
+            condition=_all_conditions(
+                {"field": "controller", "op": "eq", "value": "$source.controller"},
+                {"field": "card", "op": "ne", "value": "$source.ref"},
+                {"field": "colors", "op": "eq", "value": []},
+            ),
+        )
+    return None
+
+
+def _graveyard_departure_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    graveyard_leave = _CREATURE_CARD_LEAVES_GRAVEYARD_TRIGGER.fullmatch(
+        material_line
+    )
+    if graveyard_leave is None:
+        return None
+    return _spec(
+        "card.leave_graveyard",
+        "one_or_more_controller_creature_cards_leave_graveyard",
+        graveyard_leave.group("body"),
+        "fixed-counter-public-zone-trigger-v1",
+        "trigger-event-normalized-zone-change",
+        condition=_all_conditions(
+            {"field": "owner", "op": "eq", "value": "$source.controller"},
+            {"field": "types", "op": "contains_any", "value": ["creature"]},
+        ),
+    )
+
+
+def _attachment_event_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    return _attachment_attack_or_damage_spec(
+        material_line
+    ) or _attachment_death_spec(material_line)
+
+
+def _closed_public_zone_event_spec(
+    material_line: str,
+) -> FixedPublicEventBindingSpec | None:
+    return (
+        _controlled_zone_departure_spec(material_line)
+        or _controlled_entry_spec(material_line)
+        or _graveyard_departure_spec(material_line)
+    )
+
+
 def _public_zone_spec(
     material_line: str,
     *,
@@ -531,6 +786,9 @@ def _public_zone_spec(
     entry_return = _entry_return_spec(material_line)
     if entry_return is not None:
         return entry_return
+    closed = _closed_public_zone_event_spec(material_line)
+    if closed is not None:
+        return closed
     parsers: tuple[Callable[[str], FixedPublicEventBindingSpec | None], ...] = (
         _artifact_graveyard_spec,
         _land_entry_spec,
@@ -659,14 +917,22 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
         return None
     subject = " ".join(match.group("subject").casefold().split())
     event = match.group("event").casefold()
-    blocked_flying = match.group("blocked") is not None
+    blocked_text = str(match.group("blocked") or "").casefold()
+    blocked_flying = blocked_text == " a creature with flying"
+    blocked_by_creature = blocked_text == " by a creature"
     if blocked_flying and (subject != "this creature" or event != "blocks"):
+        return None
+    if blocked_by_creature and (
+        subject != "this creature" or event != "becomes blocked"
+    ):
         return None
     return _spec(
         "creature.blocks" if event == "blocks" else "creature.becomes_blocked",
         (
             "this_creature_blocks_flying"
             if blocked_flying
+            else "this_creature_becomes_blocked_by_creature"
+            if blocked_by_creature
             else f"{subject.replace(' ', '_')}_{event.replace(' ', '_')}"
         ),
         match.group("body"),
@@ -696,13 +962,38 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
 def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     cycle = _PUBLIC_CYCLE_TRIGGER.fullmatch(material_line)
     if cycle is not None:
-        source_self = material_line.casefold().startswith("when you cycle this")
+        source_self = cycle.group("source") is not None
+        another = cycle.group("another") is not None
         return _spec(
             "card.cycled.self" if source_self else "card.cycled",
-            "source_cycles" if source_self else "player_cycles",
+            (
+                "source_cycles"
+                if source_self
+                else "controller_cycles_another"
+                if another
+                else "player_cycles"
+            ),
             cycle.group("body"),
             "fixed-counter-public-cycle-trigger-v1",
             "trigger-event-normalized-public-action",
+            condition=(
+                {
+                    "all": [
+                        {
+                            "field": "player",
+                            "op": "eq",
+                            "value": "$source.controller",
+                        },
+                        {
+                            "field": "card",
+                            "op": "ne",
+                            "value": "$source.ref",
+                        },
+                    ]
+                }
+                if another
+                else None
+            ),
             active_zone="hand" if source_self else "battlefield",
         )
     source_face_up = _SOURCE_FACE_UP_TRIGGER.fullmatch(material_line)
@@ -755,6 +1046,7 @@ def fixed_public_event_binding_spec(
     return (
         _class_level_spec(material_line)
         or _public_spell_action_spec(material_line, card_name=card_name)
+        or _attachment_event_spec(material_line)
         or _constellation_spec(material_line, card_name=card_name)
         or _battalion_spec(material_line, card_name=card_name)
         or _public_zone_spec(material_line, card_name=card_name)

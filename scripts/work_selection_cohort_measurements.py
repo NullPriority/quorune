@@ -58,6 +58,8 @@ from quorune.compiler.reanimation_templates import (
     FIXED_TARGET_REANIMATION_MECHANIC,
 )
 from quorune.compiler.fixed_counter_trigger_nodes import (
+    FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
+    PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
     FixedSpellCastCharacteristicQuery,
     fixed_counter_trigger_binding,
     fixed_typed_event_effect_trigger_node,
@@ -147,6 +149,9 @@ _PROBE_EXILE = "fixed-exile-existing-owner-v1"
 _PROBE_OPTIONAL_EFFECT = "fixed-optional-effect-choice-existing-owner-v1"
 _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER = (
     "typed-public-event-effect-trigger-existing-owner-v1"
+)
+_PROBE_PUBLIC_EVENT_BINDING_CLOSURE = (
+    "public-event-binding-closure-existing-owner-v1"
 )
 _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER = (
     "ability-word-public-event-trigger-existing-owner-v1"
@@ -447,6 +452,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_SOURCE_PRONOUN_DAMAGE_TRIGGER,
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER,
+    _PROBE_PUBLIC_EVENT_BINDING_CLOSURE,
     _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
     _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     _PROBE_ATTACHED_CHARACTERISTIC_CLOSURE,
@@ -892,6 +898,31 @@ def _matches_typed_public_event_effect_trigger_probe(
     return bool(node is not None and node.exact and not residuals)
 
 
+def _matches_public_event_binding_closure_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    """Match only the bounded post-v200 normalized-event grammar."""
+
+    material = _without_parenthetical_reminder(source)
+    card_name, _source_is_permanent, _attachment_relation = (
+        _source_face_context(card_record, ability)
+    )
+    binding = fixed_counter_trigger_binding(material, card_name=card_name)
+    if (
+        binding is None
+        or binding.variant not in PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+    ):
+        return False
+    return _matches_typed_public_event_effect_trigger_probe(
+        source,
+        card_record=card_record,
+        ability=ability,
+    )
+
+
 def _matches_ability_word_public_event_trigger_probe(
     source: str,
     *,
@@ -1223,6 +1254,17 @@ def _matches_probe(
                 "Typed public-event measurement requires card context"
             )
         return _matches_typed_public_event_effect_trigger_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
+        )
+    if probe_id == _PROBE_PUBLIC_EVENT_BINDING_CLOSURE:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Public event-binding closure measurement requires card "
+                "context"
+            )
+        return _matches_public_event_binding_closure_probe(
             source,
             card_record=card_record,
             ability=ability,
@@ -2390,6 +2432,148 @@ def _public_cast_cost_modifier_closure_measurement(
                 len(matched_cards) - complete_cards
             ),
             "cards_excluded_by_unsupported_grammar": 0,
+        },
+    }
+
+
+def _public_event_binding_closure_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure only newly exact bindings in the bounded public-event closure."""
+
+    registry = load_default_capability_registry()
+    matched_cards: dict[str, int] = {}
+    exact_ability_gain = 0
+    complete_cards = 0
+    one_additional = 0
+    two_additional = 0
+    residual_reduction = 0
+    existing_exact_siblings = 0
+    remaining_residual_siblings = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        potential = [
+            ability
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+            and _matches_public_event_binding_closure_probe(
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not potential:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented_keys = {
+            (face.face_id, node.span.line)
+            for face in compiled.faces
+            for node in face.nodes
+            if node.exact
+            and node.template_id
+            in FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS
+            and node.runtime_coverage
+            and CURRENT_ABILITY_FRAGMENT_COVERAGE in node.runtime_coverage
+        }
+        represented = [
+            ability
+            for ability in potential
+            if (
+                str(ability.get("face_id") or "front"),
+                int(ability.get("source_line") or 0),
+            )
+            in represented_keys
+        ]
+        if not represented:
+            unsupported_grammar_cards.add(oracle_id)
+            continue
+        if len(represented) != len(potential):
+            unsupported_grammar_cards.add(oracle_id)
+        exact_ability_gain += len(represented)
+        matched_cards[oracle_id] = len(represented)
+        remaining = [
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if not node.exact
+        ]
+        existing_exact_siblings += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        remaining_residual_siblings += len(remaining)
+        one_additional += len(remaining) == 1
+        two_additional += len(remaining) == 2
+        if compiled.status == "exact":
+            complete_cards += 1
+        else:
+            unsupported_sibling_cards += 1
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        residual_reduction += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": exact_ability_gain,
+            "existing_exact_sibling_nodes": existing_exact_siblings,
+            "remaining_residual_sibling_nodes": remaining_residual_siblings,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": (
+                len(matched_cards) - complete_cards
+            ),
+            "expected_oracle_residual_reduction": residual_reduction,
+            "expected_card_program_residual_reduction": residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                unsupported_sibling_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                unsupported_grammar_cards
+            ),
         },
     }
 
@@ -4410,6 +4594,15 @@ def _measurement(
         )
     if probe_id == _PROBE_PUBLIC_CAST_COST_MODIFIER_CLOSURE:
         return _public_cast_cost_modifier_closure_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_PUBLIC_EVENT_BINDING_CLOSURE:
+        return _public_event_binding_closure_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
