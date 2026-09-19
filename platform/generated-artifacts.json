@@ -572,7 +572,8 @@
         "platform-source",
         "python-product",
         "rules-source",
-        "tests-source"
+        "tests-source",
+        "web-source"
       ],
       "input_paths": [
         "web/tests/**/*.ts"

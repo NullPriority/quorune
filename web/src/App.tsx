@@ -294,21 +294,21 @@ function RoomView({
         }
         if (result.room.status === "closed") {
           continuePolling = false;
-          onLeave();
-        } else {
+          if (!stopped) onLeave();
+        } else if (!stopped) {
           setRoom(result.room);
           if (result.room.game_id) onGame(result.room.game_id);
         }
       } catch (caught) {
         if (caught instanceof ApiError && (caught.status === 403 || caught.status === 404)) {
           continuePolling = false;
-          onLeave();
-        } else if (caught instanceof ApiError && caught.status === 503) {
+          if (!stopped) onLeave();
+        } else if (!stopped && caught instanceof ApiError && caught.status === 503) {
           startupWaiting = true;
           delay = Math.min(delay * 2, 5000);
           setMessageKind("warning");
           setMessage("The server is finishing its card-data startup check. Room updates will resume automatically.");
-        } else {
+        } else if (!stopped) {
           delay = Math.min(delay * 2, 5000);
           setMessageKind("error");
           setMessage(caught instanceof Error ? caught.message : String(caught));
