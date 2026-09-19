@@ -11923,13 +11923,13 @@
       ]
     },
     "interaction_assurance_baseline": {
-      "applicable_high_risk_pairs": 317,
-      "applicable_piece_pairs": 81132,
+      "applicable_high_risk_pairs": 319,
+      "applicable_piece_pairs": 81414,
       "available": true,
-      "covered_high_risk_pairs": 317,
-      "covered_piece_pairs": 985,
+      "covered_high_risk_pairs": 319,
+      "covered_piece_pairs": 987,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "710682562545b6bafecdee34f2e579ebe3eccc70a6c69159dcb2a619776fd31b",
+      "source_fingerprint": "50586f3521c0df4d2ab542ab252c1ad5723df826550f1eb13fe318d6d50e8ef6",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -27778,6 +27778,7 @@
           "activation.unearth.fixed_mana",
           "attachment.action.fixed_source",
           "attachment.equip.fixed_restricted",
+          "attachment.reference.current_or_lki",
           "card.exile.public_graveyard",
           "card.return.own_graveyard_to_owner_hand",
           "card_form.day_night",
@@ -27861,10 +27862,9 @@
           "damage.prevention.persistent_amount",
           "damage.prevention.static_fixed",
           "damage.redirection.static_to_source",
-          "damage.replacement.static_quantity",
-          "effect.choice.optional_fixed"
+          "damage.replacement.static_quantity"
         ],
-        "capability_count": 179,
+        "capability_count": 180,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -28169,7 +28169,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Oracle compiler.",
-        "reusable_piece_count": 186,
+        "reusable_piece_count": 187,
         "reusable_pieces": [
           "capability.activation.condition.phase_window",
           "capability.activation.counter_keyword.fixed",
@@ -28186,6 +28186,7 @@
           "capability.activation.unearth.fixed_mana",
           "capability.attachment.action.fixed_source",
           "capability.attachment.equip.fixed_restricted",
+          "capability.attachment.reference.current_or_lki",
           "capability.card.exile.public_graveyard",
           "capability.card.return.own_graveyard_to_owner_hand",
           "capability.card_form.day_night",
@@ -28269,8 +28270,7 @@
           "capability.damage.prevention.persistent_amount",
           "capability.damage.prevention.static_fixed",
           "capability.damage.redirection.static_to_source",
-          "capability.damage.replacement.static_quantity",
-          "capability.effect.choice.optional_fixed"
+          "capability.damage.replacement.static_quantity"
         ],
         "runtime_oracle_text_accesses": 18,
         "state_authority": {
@@ -30803,13 +30803,13 @@
     "card_program_v2_present": true,
     "commander_legal_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.331657,
-      "material_residuals": 29297,
+      "exact_fraction": 0.333523,
+      "material_residuals": 29231,
       "residual_kinds": {
         "cost": 867,
         "declaration_cost": 10,
         "declaration_restriction": 65,
-        "dependency_contract": 644,
+        "dependency_contract": 645,
         "effect": 3993,
         "keyword_grammar": 71,
         "keyword_lifecycle": 48,
@@ -30818,8 +30818,8 @@
         "saga_chapter": 384,
         "spell_additional_cost": 120,
         "spell_effect": 6154,
-        "static_ability": 4683,
-        "trigger": 10556,
+        "static_ability": 4682,
+        "trigger": 10490,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 20,
         "unsupported_cycling_cost": 11,
@@ -30837,9 +30837,9 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 10488,
-        "partial": 10868,
-        "unresolved": 10267
+        "exact": 10547,
+        "partial": 10826,
+        "unresolved": 10250
       },
       "template_count": 1433,
       "total_faces": 32431,
@@ -30848,17 +30848,17 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1498,
     "compiler_module_physical_lines": 1559,
-    "compiler_version": "oracle-ir-v200",
+    "compiler_version": "oracle-ir-v201",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.355876,
-      "material_residuals": 35979,
+      "exact_fraction": 0.357533,
+      "material_residuals": 35906,
       "residual_kinds": {
         "cost": 1053,
         "declaration_cost": 11,
         "declaration_restriction": 79,
-        "dependency_contract": 751,
+        "dependency_contract": 752,
         "effect": 4593,
         "keyword_grammar": 79,
         "keyword_lifecycle": 50,
@@ -30867,8 +30867,8 @@
         "saga_chapter": 429,
         "spell_additional_cost": 126,
         "spell_effect": 8192,
-        "static_ability": 5828,
-        "trigger": 12774,
+        "static_ability": 5827,
+        "trigger": 12701,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 21,
         "unsupported_cycling_cost": 11,
@@ -30887,9 +30887,9 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 13745,
-        "partial": 12092,
-        "unresolved": 12786
+        "exact": 13809,
+        "partial": 12046,
+        "unresolved": 12768
       },
       "template_count": 1462,
       "total_faces": 41840,
@@ -31463,27 +31463,27 @@
     "target_effect_corpus_assurance": {
       "commander": {
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
-        "exact_cards_with_template": 512,
-        "exact_nodes": 666,
-        "fingerprint": "411a2a603ecd08dac1baf9268f4141e0c6a3574caa1f8ca07c7d0e2c4ff69dc5",
+        "exact_cards_with_template": 514,
+        "exact_nodes": 667,
+        "fingerprint": "f767f24868f4c2340b66fb1a10ab3015183e13386cbb208add6d5a29262238dc",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
-        "identity_fingerprint": "bd170a749814ae2854491a8860f65ae9f5fc36815eb611dc6f3d4e994ebc0dd8",
+        "identity_fingerprint": "210422afd48e960b3630795ec8572a9026dff0e806ea14ec922d27c81259e7ef",
         "present": true,
         "shape_count": 131,
-        "total_cards": 655,
-        "total_nodes": 681
+        "total_cards": 656,
+        "total_nodes": 682
       },
       "full": {
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
-        "exact_cards_with_template": 530,
-        "exact_nodes": 692,
-        "fingerprint": "bfdd62b6e660ca2fd432f9ae7587b9de7f196252a730c4e8d6a13fc499f70c13",
+        "exact_cards_with_template": 532,
+        "exact_nodes": 693,
+        "fingerprint": "464630482be552f779bd188c24694dae9b5450c329f64ce60fadf6e0d6a95be7",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
-        "identity_fingerprint": "a632b0dbc13786a04836d50b5bfe5cb43048039745a2e57f789b14df2f8e1da0",
+        "identity_fingerprint": "a22a236d66a94a235ef4b99bbba73cc4e6513f4601b786546005391eaf7fbbbd",
         "present": true,
         "shape_count": 134,
-        "total_cards": 681,
-        "total_nodes": 707
+        "total_cards": 682,
+        "total_nodes": 708
       },
       "source": "coverage/oracle-coverage-commander.json"
     }
