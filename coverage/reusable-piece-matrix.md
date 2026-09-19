@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "b332eb5ed75359139a8e1002a658611dfb1f2483e0190eb82ce8451a7c52ad24"
+verified: "1b53fb9339a0fd4ea9a0fe499e6ee795576e9ae9e9c1212e72098213312e6469"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -22,7 +22,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 - Material abilities classified: 59,461
 - Unclassified material spans: 0
 - Mapped pinned rules: 1,036 / 3,309
-- Applicable piece pairs: 80,985
+- Applicable piece pairs: 81,133
 - Covered piece pairs: 986
 
 ## Ontology classes
@@ -67,15 +67,15 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,749 | 2,096 | 2,096 | `absent` | `untested` |
-| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,078 | 176 | 176 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,683 | 2,045 | 2,045 | `absent` | `untested` |
+| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 2,068 | 176 | 176 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,643 | 131 | 131 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
 | `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 106 | 18 | 18 | `absent` | `untested` |
 | `residual.activated_effect.put-onto-battlefield` | `one_shot_effects` | 209 | 17 | 17 | `absent` | `untested` |
 | `residual.effect_clause.life-change` | `one_shot_effects` | 468 | 16 | 16 | `absent` | `untested` |
 | `residual.replacement.damage-prevention` | `replacement_prevention` | 140 | 15 | 15 | `absent` | `untested` |
-| `residual.keyword_dependency.start-your-engines` | `keyword_mechanics` | 40 | 14 | 14 | `absent` | `untested` |
+| `residual.keyword_dependency.start-your-engines` | `keyword_mechanics` | 40 | 15 | 15 | `absent` | `untested` |
 | `residual.effect_clause.create-token` | `one_shot_effects` | 538 | 13 | 13 | `absent` | `untested` |
 | `residual.activated_effect.create-token` | `one_shot_effects` | 283 | 13 | 13 | `absent` | `untested` |
 | `residual.keyword_dependency.myriad` | `keyword_mechanics` | 23 | 11 | 11 | `absent` | `untested` |
