@@ -78,6 +78,21 @@ _DOUBLE_PUBLIC_REDUCTION = re.compile(
     r"you control an enchantment\.?$",
     re.IGNORECASE,
 )
+_LEADING_SELF_THRESHOLD = re.compile(
+    r"^If (?P<condition>.+?), this spell costs "
+    r"(?P<amount>\{[1-9][0-9]*\}) less to cast\.?$",
+    re.IGNORECASE,
+)
+_LIFE_DIFFERENCE_REDUCTION = re.compile(
+    r"^If your life total is less than your starting life total, this spell "
+    r"costs \{X\} less to cast, where X is the difference\.?$",
+    re.IGNORECASE,
+)
+_DISTINCT_LAND_NAME_REDUCTION = re.compile(
+    r"^This spell costs \{X\} less to cast, where X is the number of "
+    r"differently named lands you control\.?$",
+    re.IGNORECASE,
+)
 _COUNT_WORDS = {
     "one": 1,
     "two": 2,
@@ -103,6 +118,17 @@ def _reduction_pairs(token: str) -> tuple[tuple[str, int], ...] | None:
         return None
     value = match.group("value")
     return (("GENERIC", int(value)),) if value.isdigit() else ((value, 1),)
+
+
+def _without_ability_word(text: str) -> str:
+    normalized = " ".join(text.strip().split())
+    if _DOMAIN_REDUCTION.fullmatch(normalized) is not None:
+        return normalized
+    return re.sub(
+        r"^[A-Za-z][A-Za-z ]+ (?:—|�) ",
+        "",
+        normalized,
+    )
 
 
 def _singular_quality(value: str) -> str:
@@ -232,6 +258,11 @@ def _public_condition_metric(condition: str) -> CastReductionMetric | None:
             1,
         ),
         (
+            rf"an opponent controls (?P<count>{_COUNT_PATTERN}) or more (?P<quality>.+)",
+            CastReductionQueryScope.ANY_OPPONENT,
+            None,
+        ),
+        (
             r"an opponent controls (?P<quality>.+)",
             CastReductionQueryScope.ANY_OPPONENT,
             1,
@@ -264,6 +295,46 @@ def _public_condition_metric(condition: str) -> CastReductionMetric | None:
                 maximum=0,
             )
             if query is not None
+            else None
+        )
+    if normalized == "an opponent has no cards in hand":
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.OPPONENT_HAND_COUNT,
+            maximum=0,
+            schema_version=2,
+        )
+    if normalized == "there are ten or more creature cards total in all graveyards":
+        query = _relative_query(
+            CastReductionQueryScope.ALL_ZONES,
+            _quality_query("creature cards", zone="graveyard"),
+        )
+        return (
+            CastReductionMetric(
+                kind=CastReductionMetricKind.FIXED_PUBLIC_THRESHOLD,
+                queries=(query,),
+                minimum=10,
+                schema_version=2,
+            )
+            if query is not None
+            else None
+        )
+    if normalized == "an opponent controls at least four more creatures than you":
+        opponent = _relative_query(
+            CastReductionQueryScope.ANY_OPPONENT,
+            _quality_query("creatures", zone="battlefield"),
+        )
+        controller = _relative_query(
+            CastReductionQueryScope.CONTROLLER_ZONE,
+            _quality_query("creatures", zone="battlefield"),
+        )
+        return (
+            CastReductionMetric(
+                kind=CastReductionMetricKind.OPPONENT_COUNT_DIFFERENCE,
+                queries=(opponent, controller),
+                minimum=4,
+                schema_version=2,
+            )
+            if opponent is not None and controller is not None
             else None
         )
     if normalized == "you control a human creature and a non-human creature":
@@ -309,6 +380,12 @@ def _public_condition_metric(condition: str) -> CastReductionMetric | None:
 
 def _turn_fact_metric(condition: str) -> CastReductionMetric | None:
     normalized = " ".join(condition.casefold().split())
+    if normalized == "as long as you've drawn two or more cards this turn":
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.CONTROLLER_DRAW_COUNT,
+            minimum=2,
+            schema_version=2,
+        )
     fact = {
         "if a creature died this turn": CastReductionTurnFact.CREATURE_DIED,
         "if you've cast another spell this turn": (
@@ -318,6 +395,13 @@ def _turn_fact_metric(condition: str) -> CastReductionMetric | None:
             CastReductionTurnFact.OPPONENT_CAST_TWO_SPELLS
         ),
         "during your turn": CastReductionTurnFact.CONTROLLER_TURN,
+        "if you attacked this turn": CastReductionTurnFact.CONTROLLER_ATTACKED,
+        "if you've sacrificed a permanent this turn": (
+            CastReductionTurnFact.CONTROLLER_SACRIFICED_PERMANENT
+        ),
+        "if you've cast an instant or sorcery spell this turn": (
+            CastReductionTurnFact.CONTROLLER_CAST_INSTANT_OR_SORCERY
+        ),
     }.get(normalized)
     return (
         CastReductionMetric(
@@ -332,7 +416,116 @@ def _turn_fact_metric(condition: str) -> CastReductionMetric | None:
 def _object_count_metric(value: str) -> CastReductionMetric | None:
     normalized = " ".join(value.casefold().split())
     queries: list[CastReductionObjectQuery] = []
-    if normalized == "cave you control and each cave card in your graveyard":
+    turn_value = {
+        "card you've cycled or discarded this turn": (
+            CastReductionTurnFact.CONTROLLER_DISCARDED_COUNT
+        ),
+        "1 life you gained this turn": (
+            CastReductionTurnFact.CONTROLLER_LIFE_GAINED_AMOUNT
+        ),
+        "creature you attacked with this turn": (
+            CastReductionTurnFact.CONTROLLER_ATTACKED_CREATURE_COUNT
+        ),
+        "creature that attacked this turn": (
+            CastReductionTurnFact.CONTROLLER_ATTACKED_CREATURE_COUNT
+        ),
+        "permanent sacrificed this turn": (
+            CastReductionTurnFact.CONTROLLER_SACRIFICED_PERMANENT_COUNT
+        ),
+        "other spell cast this turn": (
+            CastReductionTurnFact.CONTROLLER_OTHER_SPELL_CAST_COUNT
+        ),
+        "1 life your opponents have lost this turn": (
+            CastReductionTurnFact.OPPONENT_LIFE_LOST_AMOUNT
+        ),
+    }.get(normalized)
+    if turn_value is not None:
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.TURN_VALUE,
+            turn_fact=turn_value,
+            schema_version=2,
+        )
+    if normalized == "creature in your party":
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.PARTY_SIZE,
+            schema_version=2,
+        )
+    if normalized == "color among permanents you control":
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.PERMANENT_COLOR_COUNT,
+            schema_version=2,
+        )
+    if normalized in {
+        "land your opponents control that could produce {c}",
+        "lands your opponents control that could produce {c}",
+    }:
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
+            schema_version=2,
+        )
+    if normalized in {"attacking creature", "attacking creatures"}:
+        parts = (
+            (
+                CastReductionQueryScope.ALL_ZONES,
+                "creature",
+                "battlefield",
+            ),
+        )
+    elif normalized in {
+        "attacking creature you control",
+        "attacking creatures you control",
+    }:
+        query = ObjectQuerySpec(
+            zones=("battlefield",),
+            types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(attacking=True),
+        )
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.OBJECT_COUNT,
+            queries=(
+                CastReductionObjectQuery(
+                    CastReductionQueryScope.CONTROLLER_ZONE,
+                    query,
+                ),
+            ),
+            schema_version=2,
+        )
+    elif normalized == "modified creature you control":
+        query = ObjectQuerySpec(
+            zones=("battlefield",),
+            types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(modified=True),
+        )
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.OBJECT_COUNT,
+            queries=(
+                CastReductionObjectQuery(
+                    CastReductionQueryScope.CONTROLLER_ZONE,
+                    query,
+                ),
+            ),
+            schema_version=2,
+        )
+    elif normalized == "creature you control with a +1/+1 counter on it":
+        query = ObjectQuerySpec(
+            zones=("battlefield",),
+            types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(
+                counter_name="+1/+1",
+                minimum_counter_count=1,
+            ),
+        )
+        return CastReductionMetric(
+            kind=CastReductionMetricKind.OBJECT_COUNT,
+            queries=(
+                CastReductionObjectQuery(
+                    CastReductionQueryScope.CONTROLLER_ZONE,
+                    query,
+                ),
+            ),
+            schema_version=2,
+        )
+    elif normalized == "cave you control and each cave card in your graveyard":
         parts = (
             (CastReductionQueryScope.CONTROLLER_ZONE, "Cave", "battlefield"),
             (CastReductionQueryScope.CONTROLLER_ZONE, "Cave card", "graveyard"),
@@ -361,6 +554,15 @@ def _object_count_metric(value: str) -> CastReductionMetric | None:
         query = _relative_query(scope, _quality_query(quality, zone=zone))
         if query is None:
             return None
+        if normalized in {"attacking creature", "attacking creatures"}:
+            query = CastReductionObjectQuery(
+                scope,
+                ObjectQuerySpec(
+                    zones=("battlefield",),
+                    types_all=("creature",),
+                    state_predicate=PermanentStatePredicateSpec(attacking=True),
+                ),
+            )
         queries.append(query)
     return CastReductionMetric(
         kind=CastReductionMetricKind.OBJECT_COUNT,
@@ -373,78 +575,117 @@ def self_spell_cost_reduction_handler(
 ) -> CastCostModifierTemplate | None:
     """Lower one source-pinned reduction for the spell carrying this line."""
 
-    normalized = " ".join(text.strip().split())
-    double = _DOUBLE_PUBLIC_REDUCTION.fullmatch(normalized)
-    if double is not None:
-        terms: list[SelfSpellCostReductionTerm] = []
-        for token, quality in (
-            (double.group("first"), "artifact"),
-            (double.group("second"), "enchantment"),
-        ):
-            reduction = _reduction_pairs(token)
-            metric = _public_condition_metric(f"you control an {quality}")
-            if reduction is None or metric is None:
-                return None
-            terms.append(_term(reduction, metric))
-        specification = SelfSpellCostReductionSpec(tuple(terms))
-    elif domain := _DOMAIN_REDUCTION.fullmatch(normalized):
-        reduction = _reduction_pairs(domain.group("amount"))
-        if reduction is None:
+    normalized = _without_ability_word(text)
+    leading = _LEADING_SELF_THRESHOLD.fullmatch(normalized)
+    if _LIFE_DIFFERENCE_REDUCTION.fullmatch(normalized):
+        specification = SelfSpellCostReductionSpec(
+            (
+                _term(
+                    (("GENERIC", 1),),
+                    CastReductionMetric(
+                        kind=CastReductionMetricKind.LIFE_DIFFERENCE,
+                        schema_version=2,
+                    ),
+                ),
+            )
+        )
+    elif _DISTINCT_LAND_NAME_REDUCTION.fullmatch(normalized):
+        query = _relative_query(
+            CastReductionQueryScope.CONTROLLER_ZONE,
+            _quality_query("lands", zone="battlefield"),
+        )
+        if query is None:
             return None
         specification = SelfSpellCostReductionSpec(
-            (_term(reduction, CastReductionMetric(kind=CastReductionMetricKind.DOMAIN)),)
-        )
-    elif variable := _SELF_VARIABLE_REDUCTION.fullmatch(normalized):
-        metric_text = variable.group("metric")
-        devotion = re.fullmatch(
-            r"your devotion to (?P<color>white|blue|black|red|green)(?:\. \(.+\))?",
-            metric_text,
-            re.IGNORECASE,
-        )
-        total = re.fullmatch(
-            r"the total mana value of (?P<quality>.+?) you control",
-            metric_text,
-            re.IGNORECASE,
-        )
-        if devotion is not None:
-            color = _COLORS[devotion.group("color").casefold()]
-            metric = CastReductionMetric(
-                kind=CastReductionMetricKind.DEVOTION,
-                color=color,
+            (
+                _term(
+                    (("GENERIC", 1),),
+                    CastReductionMetric(
+                        kind=CastReductionMetricKind.DISTINCT_NAME_COUNT,
+                        queries=(query,),
+                        schema_version=2,
+                    ),
+                ),
             )
-        elif total is not None:
-            query = _relative_query(
-                CastReductionQueryScope.CONTROLLER_ZONE,
-                _quality_query(total.group("quality"), zone="battlefield"),
-            )
-            if query is None:
-                return None
-            metric = CastReductionMetric(
-                kind=CastReductionMetricKind.TOTAL_MANA_VALUE,
-                queries=(query,),
-            )
-        else:
-            return None
-        specification = SelfSpellCostReductionSpec(
-            (_term((("GENERIC", 1),), metric),)
         )
-    else:
-        match = _SELF_REDUCTION.fullmatch(normalized)
-        if match is None:
-            return None
-        reduction = _reduction_pairs(match.group("amount"))
-        if reduction is None:
-            return None
-        metric_text = match.group("metric")
-        if metric_text.casefold().startswith("for each "):
-            metric = _object_count_metric(metric_text[9:])
-        else:
-            metric = _public_condition_metric(metric_text) or _turn_fact_metric(
-                metric_text
-            )
-        if metric is None:
+    elif leading is not None:
+        reduction = _reduction_pairs(leading.group("amount"))
+        metric = _public_condition_metric(leading.group("condition"))
+        if reduction is None or metric is None:
             return None
         specification = SelfSpellCostReductionSpec((_term(reduction, metric),))
+    else:
+        double = _DOUBLE_PUBLIC_REDUCTION.fullmatch(normalized)
+        if double is not None:
+            terms: list[SelfSpellCostReductionTerm] = []
+            for token, quality in (
+                (double.group("first"), "artifact"),
+                (double.group("second"), "enchantment"),
+            ):
+                reduction = _reduction_pairs(token)
+                metric = _public_condition_metric(f"you control an {quality}")
+                if reduction is None or metric is None:
+                    return None
+                terms.append(_term(reduction, metric))
+            specification = SelfSpellCostReductionSpec(tuple(terms))
+        elif domain := _DOMAIN_REDUCTION.fullmatch(normalized):
+            reduction = _reduction_pairs(domain.group("amount"))
+            if reduction is None:
+                return None
+            specification = SelfSpellCostReductionSpec(
+                (_term(reduction, CastReductionMetric(kind=CastReductionMetricKind.DOMAIN)),)
+            )
+        elif variable := _SELF_VARIABLE_REDUCTION.fullmatch(normalized):
+            metric_text = variable.group("metric")
+            devotion = re.fullmatch(
+                r"your devotion to (?P<color>white|blue|black|red|green)(?:\. \(.+\))?",
+                metric_text,
+                re.IGNORECASE,
+            )
+            total = re.fullmatch(
+                r"the total mana value of (?P<quality>.+?) you control",
+                metric_text,
+                re.IGNORECASE,
+            )
+            if devotion is not None:
+                color = _COLORS[devotion.group("color").casefold()]
+                metric = CastReductionMetric(
+                    kind=CastReductionMetricKind.DEVOTION,
+                    color=color,
+                )
+            elif total is not None:
+                query = _relative_query(
+                    CastReductionQueryScope.CONTROLLER_ZONE,
+                    _quality_query(total.group("quality"), zone="battlefield"),
+                )
+                if query is None:
+                    return None
+                metric = CastReductionMetric(
+                    kind=CastReductionMetricKind.TOTAL_MANA_VALUE,
+                    queries=(query,),
+                )
+            else:
+                return None
+            specification = SelfSpellCostReductionSpec(
+                (_term((("GENERIC", 1),), metric),)
+            )
+        else:
+            match = _SELF_REDUCTION.fullmatch(normalized)
+            if match is None:
+                return None
+            reduction = _reduction_pairs(match.group("amount"))
+            if reduction is None:
+                return None
+            metric_text = match.group("metric")
+            if metric_text.casefold().startswith("for each "):
+                metric = _object_count_metric(metric_text[9:])
+            else:
+                metric = _public_condition_metric(metric_text) or _turn_fact_metric(
+                    metric_text
+                )
+            if metric is None:
+                return None
+            specification = SelfSpellCostReductionSpec((_term(reduction, metric),))
     return (
         "self-spell-cost-public-reduction-v1",
         {
@@ -473,6 +714,10 @@ def _single_spell_quality(
             return "supertype", {"supertypes_all": (word,)}
         if word == "noncreature":
             return "excluded_type", {"excluded_types": ("creature",)}
+        if word == "nonartifact":
+            return "excluded_type", {"excluded_types": ("artifact",)}
+        if word == "multicolored":
+            return "color_count", {"minimum_color_count": 2}
         subtype = (
             word
             if word in _NONCREATURE_SUBTYPES
@@ -485,6 +730,10 @@ def _single_spell_quality(
         return None
     qualifier, subject = words
     if subject in _CARD_TYPES:
+        if qualifier in _CARD_TYPES:
+            return "type_conjunction", {
+                "types_all": tuple(sorted({qualifier, subject}))
+            }
         if qualifier in _COLORS:
             return "conjunction", {
                 "types_all": (subject,),
@@ -561,16 +810,24 @@ def static_fixed_spell_cost_reduction_handler(
     """Lower one public fixed-generic modifier through the shared schema."""
 
     # Import lazily because the public grammar reuses fixed_spell_predicate.
-    from .public_cast_cost_modifiers import public_cast_cost_modifier_template
+    from .public_cast_cost_modifiers import (
+        public_cast_cost_modifier_template,
+        public_cast_cost_modifier_v2_template,
+    )
 
     modifier = public_cast_cost_modifier_template(text)
-    if modifier is None:
-        return None
+    if modifier is not None:
+        descriptor_version = 2
+    else:
+        modifier = public_cast_cost_modifier_v2_template(text)
+        descriptor_version = 3
+        if modifier is None:
+            return None
     return (
         "public-fixed-spell-cost-modifier-v1",
         {
             "handler_id": FIXED_SPELL_COST_REDUCTION_HANDLER_ID,
-            "schema_version": 2,
+            "schema_version": descriptor_version,
             "event": FIXED_SPELL_COST_REDUCTION_EVENT,
             "modifier": modifier.to_dict(),
         },

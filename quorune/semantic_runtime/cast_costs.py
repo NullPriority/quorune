@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -10,6 +10,7 @@ from ..cast_cost_modifiers import (
     CastCostOrdinal,
     CastCostTurnRelation,
     PublicCastCostModifierSpec,
+    PublicCastCostModifierV2Spec,
 )
 from ..card_program_faces import program_matches_face
 from ..casting_payment_keywords import (
@@ -29,6 +30,8 @@ from ..evoke import (
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..self_cast_reductions import (
+    CastReductionMetric,
+    cast_reduction_multiplier,
     SelfCastReductionError,
     SelfSpellCostReductionSpec,
 )
@@ -59,7 +62,9 @@ SELF_SPELL_COST_REDUCTION_HANDLER_ID = (
 )
 
 
-FixedSpellCostReductionSpec = PublicCastCostModifierSpec
+FixedSpellCostReductionSpec = (
+    PublicCastCostModifierSpec | PublicCastCostModifierV2Spec
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -357,7 +362,7 @@ class EvokeCostHandler:
 @dataclass(frozen=True, slots=True)
 class FixedSpellCostReductionHandler:
     handler_id: str = FIXED_SPELL_COST_REDUCTION_HANDLER_ID
-    schema_version: int = 2
+    schema_version: int = 3
     family: str = "casting.cost.modifier.fixed_query"
     event: str = FIXED_SPELL_COST_REDUCTION_EVENT
     rule_references: tuple[str, ...] = ("601.2f", "601.2h")
@@ -373,21 +378,25 @@ class FixedSpellCostReductionHandler:
         if (
             descriptor.get("handler_id") != self.handler_id
             or type(version) is not int
-            or version not in {1, self.schema_version}
+            or version not in {1, 2, self.schema_version}
             or descriptor.get("event") != self.event
         ):
             raise SemanticNodeError(
                 "Spell-cost reduction identity, version, or event changed"
             )
-        if version == self.schema_version:
+        if version in {2, self.schema_version}:
             exact_fields(
                 descriptor,
                 {"handler_id", "schema_version", "event", "modifier"},
                 field="public fixed spell-cost modifier handler",
             )
             try:
-                return PublicCastCostModifierSpec.from_dict(
-                    descriptor["modifier"]
+                return (
+                    PublicCastCostModifierV2Spec.from_dict(descriptor["modifier"])
+                    if version == self.schema_version
+                    else PublicCastCostModifierSpec.from_dict(
+                        descriptor["modifier"]
+                    )
                 )
             except (CastCostModifierError, TypeError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
@@ -602,7 +611,7 @@ class FixedSpellCostReductionHost(Protocol):
 
 
 def _modifier_controller_applies(
-    spec: PublicCastCostModifierSpec,
+    spec: FixedSpellCostReductionSpec,
     *,
     source_controller: str,
     caster: str,
@@ -616,7 +625,7 @@ def _modifier_controller_applies(
 
 def _modifier_context_applies(
     host: FixedSpellCostReductionHost,
-    spec: PublicCastCostModifierSpec,
+    spec: FixedSpellCostReductionSpec,
     *,
     source_controller: str,
     caster: str,
@@ -636,6 +645,9 @@ def _modifier_context_applies(
         spec.turn_relation
         is CastCostTurnRelation.NOT_SOURCE_CONTROLLER_TURN
         and active_player == source_controller
+    ) or (
+        spec.turn_relation is CastCostTurnRelation.NOT_CASTER_TURN
+        and active_player == caster
     ):
         return False
     if spec.cast_origin_zones and origin not in spec.cast_origin_zones:
@@ -746,6 +758,37 @@ def active_fixed_spell_cost_reductions(
                         for predicate in spec.predicates_any
                     )
                 ):
+                    if isinstance(spec, PublicCastCostModifierV2Spec) and (
+                        (
+                            spec.minimum_mana_value is not None
+                            and row.mana_value < spec.minimum_mana_value
+                        )
+                        or (
+                            spec.maximum_mana_value is not None
+                            and row.mana_value > spec.maximum_mana_value
+                        )
+                    ):
+                        continue
+                    if (
+                        isinstance(spec, PublicCastCostModifierV2Spec)
+                        and spec.multiplier is not None
+                    ):
+                        multiplier = cast_reduction_multiplier(
+                            host,
+                            seat,
+                            CastReductionMetric.from_dict(spec.multiplier),
+                            source=source,
+                        )
+                        if not multiplier:
+                            continue
+                        spec = replace(
+                            spec,
+                            mana_adjustment=tuple(
+                                (key, amount * multiplier)
+                                for key, amount in spec.mana_adjustment
+                            ),
+                            multiplier=None,
+                        )
                     reductions.append(spec)
     return tuple(reductions)
 

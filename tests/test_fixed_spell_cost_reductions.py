@@ -13,7 +13,13 @@ from quorune.compiler.cast_cost_modifier_templates import (
     static_fixed_spell_cost_reduction_handler,
 )
 from quorune.deck import DeckLoader
+from quorune.life_state import (
+    LifeChange,
+    commit_life_changes,
+    plan_life_changes,
+)
 from quorune.model import CardInstance
+from quorune.object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import (
     authoritative_state_hash,
@@ -21,7 +27,13 @@ from quorune.record import (
     replay_record,
 )
 from quorune.rules.capabilities import load_default_capability_registry
-from quorune.self_cast_reductions import CastReductionQueryScope
+from quorune.self_cast_reductions import (
+    CastReductionMetric,
+    CastReductionMetricKind,
+    CastReductionObjectQuery,
+    CastReductionQueryScope,
+    cast_reduction_multiplier,
+)
 from quorune.semantic_runtime.cast_costs import (
     FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,
     FIXED_SPELL_COST_REDUCTION_EVENT,
@@ -31,6 +43,7 @@ from quorune.semantic_runtime.cast_costs import (
     SelfSpellCostReductionHandler,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from quorune.zone_trigger_events import ZoneTransitionKind
 from scripts.build_test_database import build_fixture_database
 
 
@@ -142,7 +155,6 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
             "This spell costs {X} less to cast, where X is the total power of creatures you control.",
             "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
             "Spells you cast of the chosen type cost {1} less to cast.",
-            "Spells you cast cost {W} less to cast.",
         )
         for index, text in enumerate(unsupported, 1):
             with self.subTest(text=text):
@@ -188,6 +200,12 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                 "object_count",
                 {"G": 1},
             ),
+            (
+                "Domain — This spell costs {1} less to cast for each basic "
+                "land type among lands you control.",
+                "domain",
+                {"GENERIC": 1},
+            ),
         )
         for index, (text, metric, reduction) in enumerate(cases, 1):
             with self.subTest(text=text):
@@ -202,6 +220,79 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                 term = descriptor["reduction"]["terms"][0]
                 self.assertEqual(metric, term["metric"]["kind"])
                 self.assertEqual(reduction, term["reduction"])
+
+    def test_public_cast_cost_closure_compiles_selected_grammar(self):
+        cases = (
+            "Spells your opponents cast cost {2} more to cast.",
+            "White spells you cast cost {W} more to cast.",
+            (
+                "Colorless spells you cast with mana value 7 or greater cost "
+                "{1} less to cast."
+            ),
+            (
+                "Spells you cast from anywhere other than your hand cost {2} "
+                "less to cast."
+            ),
+            "This spell costs {1} less to cast for each attacking creature.",
+            (
+                "If an opponent controls seven or more lands, this spell costs "
+                "{6} less to cast."
+            ),
+            (
+                "This spell costs {3} less to cast if you've sacrificed a "
+                "permanent this turn."
+            ),
+            (
+                "Instant and sorcery spells you cast cost {1} less to cast for "
+                "each oil counter on this artifact."
+            ),
+            (
+                "This spell costs {1} less to cast for each creature in your "
+                "party."
+            ),
+            (
+                "Vivid — This spell costs {1} less to cast for each color among "
+                "permanents you control."
+            ),
+            (
+                "If your life total is less than your starting life total, "
+                "this spell costs {X} less to cast, where X is the difference."
+            ),
+            (
+                "This spell costs {X} less to cast, where X is the number of "
+                "differently named lands you control."
+            ),
+        )
+        for index, text in enumerate(cases, 1):
+            with self.subTest(text=text):
+                ir = self.compile(text, 601_502_100 + index)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertTrue(
+                    any(
+                        node.event == FIXED_SPELL_COST_REDUCTION_EVENT
+                        for node in ir.faces[0].nodes
+                    )
+                )
+
+    def test_public_cast_cost_closure_excludes_open_metrics(self):
+        excluded = (
+            (
+                "This spell costs {X} less to cast, where X is the total power "
+                "of creatures you control."
+            ),
+            "Spells you cast cost {1} less to cast for each target.",
+            "Spells you cast of the chosen type cost {1} less to cast.",
+            (
+                "This spell costs {1} less to cast for each creature type among "
+                "creatures you control. This effect can't reduce the amount of "
+                "mana this spell costs by more than {5}."
+            ),
+        )
+        for index, text in enumerate(excluded, 1):
+            with self.subTest(text=text):
+                ir = self.compile(text, 601_502_200 + index)
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
 
     def test_self_reduction_compiler_preserves_opponent_quantification(self):
         cases = (
@@ -552,6 +643,120 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         self.assertEqual("stack", spell.zone)
         self.assertEqual("graveyard", counted.zone)
 
+    def test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner(self):
+        session = self.session(601_520_011)
+        engine = session.engine
+        colored_source = self.add_card(
+            session,
+            name="Public Colored Cost Source Fixture",
+            ref="COLORED-COST-SOURCE",
+            zone="battlefield",
+        )
+        oil_source = self.add_card(
+            session,
+            name="Public Oil Cost Source Fixture",
+            ref="OIL-COST-SOURCE",
+            zone="battlefield",
+        )
+        oil_source.counters["oil"] = 2
+        spell = self.add_card(
+            session,
+            name="Public White Spell Fixture",
+            ref="PUBLIC-WHITE-SPELL",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.prepare_main(session)
+
+        stale_action = self.cast_action(engine, spell)
+        option = next(
+            value
+            for value in stale_action["cost_options"]
+            if value["id"] == "normal"
+        )
+        self.assertEqual(1, option["requirements"]["GENERIC"])
+        self.assertEqual(1, option["requirements"]["W"])
+
+        engine.change_control(
+            colored_source.object_id,
+            "A",
+            reason="public colored cost applicability witness",
+        )
+        engine.state.players["B"].mana_pool["W"] = 2
+        before_stale = authoritative_state_hash(engine.state)
+        stale = session.act("pilot:B", {"action_id": stale_action["id"]})
+        self.assertFalse(stale.ok)
+        self.assertEqual(before_stale, authoritative_state_hash(engine.state))
+        self.assertEqual("hand", spell.zone)
+        self.assertEqual(2, self.cost_option(engine, spell)["requirements"]["W"])
+        engine.change_control(
+            colored_source.object_id,
+            "B",
+            reason="restore public colored cost applicability",
+        )
+        engine.state.players["B"].mana_pool["W"] = 1
+        action = self.cast_action(engine, spell)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act("pilot:B", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        committed_spell = engine._resolve_object(
+            "B",
+            spell.ref,
+            zones={"stack"},
+        )
+        self.assertEqual(
+            "stack",
+            committed_spell.zone,
+            (result.summary, engine.state.pending_decision),
+        )
+        self.resolve_stack_with_passes(session)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "public-cast-cost-vector-replay"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+        party_session = self.session(601_520_012)
+        party_engine = party_session.engine
+        party_spell = self.add_card(
+            party_session,
+            name="Public Party Cost Spell Fixture",
+            ref="PUBLIC-PARTY-SPELL",
+        )
+        members = []
+        for index, subtype in enumerate(
+            ("Cleric", "Rogue", "Warrior", "Wizard")
+        ):
+            member = self.add_card(
+                party_session,
+                name="Birds of Paradise",
+                ref=f"PARTY-{index}",
+                zone="battlefield",
+            )
+            member.annotations["copy_overrides"] = {
+                "type_line": f"Creature — {subtype}"
+            }
+            members.append(member)
+        party_engine.state.players["B"].mana_pool.update({"C": 2, "U": 1})
+        self.prepare_main(party_session)
+        self.assertEqual(
+            1,
+            self.cost_option(party_engine, party_spell)["requirements"][
+                "GENERIC"
+            ],
+        )
+        members[-1].phased_out = True
+        party_engine.permissions.invalidate_current()
+        self.assertEqual(
+            2,
+            self.cost_option(party_engine, party_spell)["requirements"][
+                "GENERIC"
+            ],
+        )
+
     def test_any_opponent_graveyard_threshold_is_not_combined_across_opponents(
         self,
     ):
@@ -583,6 +788,227 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("stack", spell.zone)
         self.assertEqual(0, engine.state.players["B"].mana_pool.get("C", 0))
+
+    def test_public_cost_history_uses_committed_discard_sacrifice_and_life(self):
+        session = self.session(601_520_013)
+        engine = session.engine
+        discarded = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="HISTORY-DISCARD",
+        )
+        sacrificed = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="HISTORY-SACRIFICE",
+            zone="battlefield",
+        )
+        discard_spell = self.add_card(
+            session,
+            name="Public Discard History Cost Spell Fixture",
+            ref="DISCARD-HISTORY-SPELL",
+        )
+        sacrifice_spell = self.add_card(
+            session,
+            name="Public Sacrifice History Cost Spell Fixture",
+            ref="SACRIFICE-HISTORY-SPELL",
+        )
+        life_spell = self.add_card(
+            session,
+            name="Public Life Gain Cost Spell Fixture",
+            ref="LIFE-HISTORY-SPELL",
+        )
+        engine.move_card(
+            discarded.object_id,
+            "graveyard",
+            transition_kind=ZoneTransitionKind.DISCARD,
+            semantic_events=True,
+            log=False,
+        )
+        engine.move_card(
+            sacrificed.object_id,
+            "graveyard",
+            transition_kind=ZoneTransitionKind.SACRIFICE,
+            semantic_events=True,
+            log=False,
+        )
+        commit_life_changes(
+            engine,
+            plan_life_changes(engine, (LifeChange("B", 2),)),
+        )
+        engine.state.players["B"].mana_pool.update({"C": 20, "U": 3})
+        self.prepare_main(session)
+
+        self.assertEqual(
+            3,
+            self.cost_option(engine, discard_spell)["requirements"]["GENERIC"],
+        )
+        self.assertEqual(
+            2,
+            self.cost_option(engine, sacrifice_spell)["requirements"]["GENERIC"],
+        )
+        self.assertEqual(
+            3,
+            self.cost_option(engine, life_spell)["requirements"]["GENERIC"],
+        )
+        self.assertEqual(1, len(engine._current_turn_history("card_discarded")))
+        self.assertEqual(
+            1,
+            len(engine._current_turn_history("permanent_sacrificed")),
+        )
+        self.assertEqual(2, engine._current_turn_history("player_gained_life")[0].amount)
+
+        action = self.cast_action(engine, discard_spell)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act("pilot:B", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_stack_with_passes(session)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "public-cost-history-replay"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_public_cost_quantities_use_current_characteristic_boundary(self):
+        session = self.session(601_520_014, players=4)
+        engine = session.engine
+        first_land = self.add_card(
+            session,
+            name="Forest",
+            ref="DISTINCT-LAND-ONE",
+            zone="battlefield",
+        )
+        second_land = self.add_card(
+            session,
+            name="Forest",
+            ref="DISTINCT-LAND-TWO",
+            zone="battlefield",
+        )
+        first_land.annotations["copy_overrides"] = {"name": "First Land"}
+        second_land.annotations["copy_overrides"] = {"name": "Second Land"}
+        colored = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="COLOR-COUNT",
+            zone="battlefield",
+        )
+        colored.annotations["copy_overrides"] = {"colors": ["G", "R"]}
+        modified = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="MODIFIED-COUNT",
+            zone="battlefield",
+        )
+        modified.counters["+1/+1"] = 1
+        colorless_land = self.add_card(
+            session,
+            name="Public Colorless Land Fixture",
+            ref="COLORLESS-LAND",
+            seat="A",
+            zone="battlefield",
+        )
+        engine.state.players["B"].life = 35
+
+        land_query = CastReductionObjectQuery(
+            CastReductionQueryScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+        )
+        modified_query = CastReductionObjectQuery(
+            CastReductionQueryScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(
+                zones=("battlefield",),
+                types_all=("creature",),
+                state_predicate=PermanentStatePredicateSpec(modified=True),
+            ),
+        )
+        cases = (
+            (
+                CastReductionMetric(
+                    CastReductionMetricKind.DISTINCT_NAME_COUNT,
+                    queries=(land_query,),
+                    schema_version=2,
+                ),
+                2,
+            ),
+            (
+                CastReductionMetric(
+                    CastReductionMetricKind.PERMANENT_COLOR_COUNT,
+                    schema_version=2,
+                ),
+                2,
+            ),
+            (
+                CastReductionMetric(
+                    CastReductionMetricKind.OBJECT_COUNT,
+                    queries=(modified_query,),
+                    schema_version=2,
+                ),
+                1,
+            ),
+            (
+                CastReductionMetric(
+                    CastReductionMetricKind.LIFE_DIFFERENCE,
+                    schema_version=2,
+                ),
+                5,
+            ),
+            (
+                CastReductionMetric(
+                    CastReductionMetricKind.OPPONENT_COLORLESS_LAND_COUNT,
+                    schema_version=2,
+                ),
+                1,
+            ),
+        )
+        for metric, expected in cases:
+            with self.subTest(metric=metric.kind.value):
+                self.assertEqual(
+                    expected,
+                    cast_reduction_multiplier(engine, "B", metric),
+                )
+
+    def test_public_cast_tax_uses_caster_turn_and_current_source(self):
+        session = self.session(601_520_015)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            name="Public Caster Turn Tax Source Fixture",
+            ref="CASTER-TURN-TAX",
+            zone="battlefield",
+        )
+        spell = self.add_card(
+            session,
+            name="Public Instant Spell Fixture",
+            ref="CASTER-TURN-INSTANT",
+        )
+        engine.state.players["B"].mana_pool.update({"C": 5, "U": 1})
+        self.prepare_main(session)
+        self.assertEqual(
+            2,
+            self.cost_option(engine, spell)["requirements"]["GENERIC"],
+        )
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.active_player = "A"
+        engine._grant_priority("B")
+        engine.pump()
+        self.assertEqual(
+            5,
+            self.cost_option(engine, spell)["requirements"]["GENERIC"],
+        )
+        source.phased_out = True
+        engine.permissions.invalidate_current()
+        self.assertEqual(
+            2,
+            self.cost_option(engine, spell)["requirements"]["GENERIC"],
+        )
 
     def test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent(
         self,

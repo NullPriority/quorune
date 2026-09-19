@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "024dbda3682b00dbbfcf37ff972f3c11dae4a34e",
+  "baseline_commit": "6295a7a8d0e61b89df79f8598473c5c9bb29c881",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -1581,9 +1581,9 @@
     "physical_lines": 7487
   },
   "exception_binding": {
-    "adr": "docs/adr/0099-typed-public-declaration-conditions.md",
-    "allowance_fingerprint": "c1154785c13092672dd0d4a1ddc2cc4da3c81fad8242602c12373c550c7d41dd",
-    "exception_id": "ARCH-EXC-0049"
+    "adr": "docs/adr/0100-public-cast-cost-modifier-closure.md",
+    "allowance_fingerprint": "fd75c131c98b286d684cc06a8595c205983e96760b50e609bc18b7d20829aa79",
+    "exception_id": "ARCH-EXC-0050"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1671,6 +1671,11 @@
       "symbol": "CodexCliArenaRunner.run"
     },
     {
+      "file": "quorune/compiler/cast_cost_modifier_templates.py",
+      "logical_lines": 155,
+      "symbol": "_object_count_metric"
+    },
+    {
       "file": "quorune/compiler/resolution_effect_templates.py",
       "logical_lines": 159,
       "symbol": "typed_resolution_effect_template"
@@ -1754,6 +1759,16 @@
       "file": "quorune/rules_corpus.py",
       "logical_lines": 169,
       "symbol": "verify_rules_corpus"
+    },
+    {
+      "file": "quorune/self_cast_reductions.py",
+      "logical_lines": 209,
+      "symbol": "CastReductionMetric.__post_init__"
+    },
+    {
+      "file": "quorune/self_cast_reductions.py",
+      "logical_lines": 151,
+      "symbol": "cast_reduction_multiplier"
     },
     {
       "file": "quorune/service.py",

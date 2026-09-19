@@ -172,7 +172,6 @@ class FixedCastingSurfaceCompilerTests(unittest.TestCase):
     def test_public_static_modifier_near_misses_remain_residual(self):
         cases = (
             "Creature spells you cast cost {X} less to cast.",
-            "Spells you cast cost {W} less to cast.",
             "The next spell you cast this turn costs {1} less to cast.",
             "The first historic spell you cast each turn costs {1} less to cast.",
             "Spells of the chosen type cost {1} more to cast.",

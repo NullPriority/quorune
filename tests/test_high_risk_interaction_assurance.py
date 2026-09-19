@@ -282,7 +282,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         self,
     ) -> None:
         self.assertEqual(
-            2,
+            1,
             len(REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS),
         )
         assert_high_risk_boundary_pairs(

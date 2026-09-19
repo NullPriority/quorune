@@ -48,9 +48,12 @@ PLAYER_COUNTERS_FIELD = "counters"
 
 TurnHistoryEventKind = Literal[
     "spell_cast",
+    "card_discarded",
     "creature_attacked",
     "creature_died",
+    "permanent_sacrificed",
     "player_damaged",
+    "player_gained_life",
     "player_lost_life",
     "permanent_damaged",
 ]

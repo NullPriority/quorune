@@ -29,7 +29,7 @@ class LifeStateHost(Protocol):
     state: LifeStateView
 
 
-def _record_life_loss(
+def _record_life_change(
     host: LifeStateHost,
     transitions: Sequence["LifeTransition"],
 ) -> None:
@@ -37,13 +37,21 @@ def _record_life_loss(
     if not callable(recorder):
         return
     for transition in transitions:
-        amount = transition.before - transition.after
-        if amount > 0:
+        lost = transition.before - transition.after
+        gained = transition.after - transition.before
+        if lost > 0:
             recorder(
                 "player_lost_life",
                 target=transition.player,
                 target_kind="player",
-                amount=amount,
+                amount=lost,
+            )
+        elif gained > 0:
+            recorder(
+                "player_gained_life",
+                target=transition.player,
+                target_kind="player",
+                amount=gained,
             )
 
 
@@ -198,7 +206,7 @@ def apply_life_changes(
     """Apply a life plan after the caller completed precommit validation."""
 
     transitions = apply_state_plan(host, plan.transitions, _LIFE_ADAPTER)
-    _record_life_loss(host, transitions)
+    _record_life_change(host, transitions)
     return transitions
 
 
@@ -212,7 +220,7 @@ def commit_life_changes(
         raise LifeStateError("Life commits require a typed plan")
     try:
         transitions = commit_state_plan(host, plan.transitions, _LIFE_ADAPTER)
-        _record_life_loss(host, transitions)
+        _record_life_change(host, transitions)
         return transitions
     except ValueError as exc:
         if isinstance(exc, LifeStateError):

@@ -114,3 +114,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0097 — typed fixed creature-power damage](0097-typed-fixed-creature-power-damage.md)
 - [ADR 0098 — typed ordinary Class lifecycle](0098-typed-ordinary-class-lifecycle.md)
 - [ADR 0099 — typed public declaration conditions](0099-typed-public-declaration-conditions.md)
+- [ADR 0100 — public cast-cost modifier closure](0100-public-cast-cost-modifier-closure.md)
