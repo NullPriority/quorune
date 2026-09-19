@@ -987,7 +987,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "draw a card.",
             "Whenever this creature deals damage to a creature, draw a card.",
             "Whenever this creature deals damage, draw a card.",
-            "Whenever equipped creature deals combat damage to a player, draw "
+            "Whenever equipped creature deals combat damage to an opponent, draw "
             "a card.",
             "Whenever one or more creatures deal combat damage to a player, "
             "draw a card.",
