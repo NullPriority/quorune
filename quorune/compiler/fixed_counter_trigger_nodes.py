@@ -107,10 +107,32 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
         "battalion_source_and_two_others_attack",
     }
 )
+PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
+    {
+        "another_controlled_colorless_creature_enters",
+        "another_controlled_creature_power_at_most",
+        "controlled_enchantment_graveyard",
+        "controller_cycles_another",
+        "enchanted_creature_damage_an_opponent",
+        "enchanted_creature_dies",
+        "equipped_creature_attacks",
+        "equipped_creature_combat_damage_a_player",
+        "equipped_creature_dies",
+        "one_or_more_controller_creature_cards_leave_graveyard",
+        "source_or_controlled_creature_or_artifact_dies",
+        "this_creature_becomes_blocked_by_creature",
+        "the end step",
+        "each combat",
+    }
+)
+_NONCOUNTER_PUBLIC_EVENT_VARIANTS = PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+_ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
+    {"one_or_more_controller_creature_cards_leave_graveyard"}
+)
 _SCHEDULED_TRIGGER = re.compile(
     r"^At the beginning of "
     r"(?P<schedule>your upkeep|each upkeep|your end step|each end step|"
-    r"combat on your turn), (?P<body>.+)$",
+    r"the end step|combat on your turn|each combat), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _CONTROLLED_LAND_ENTRY_TRIGGER = re.compile(
@@ -198,6 +220,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CREATURE_BECOMES_BLOCKED = "creature.becomes_blocked"
     CARD_CYCLED = "card.cycled"
     SOURCE_CYCLED = "card.cycled.self"
+    CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
     PERMANENT_TURNED_FACE_UP = "permanent.turned_face_up"
     OPPONENT_CARD_DRAW = "card.drawn"
     SPELL_CAST_OR_COPY = "spell.cast_or_copy"
@@ -356,6 +379,7 @@ class FixedCounterTriggerBinding:
     public_active_zone: str | None = None
     public_mechanic: str | None = None
     public_template_id: str | None = None
+    public_capabilities: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -411,6 +435,23 @@ class FixedCounterTriggerBinding:
         ):
             raise ValueError(
                 "Only public event triggers accept public predicate metadata"
+            )
+        if not isinstance(self.public_capabilities, tuple) or any(
+            type(value) is not str or not value
+            for value in self.public_capabilities
+        ):
+            raise ValueError(
+                "Public event trigger capabilities must be nonempty strings"
+            )
+        if len(set(self.public_capabilities)) != len(
+            self.public_capabilities
+        ):
+            raise ValueError(
+                "Public event trigger capabilities must be unique"
+            )
+        if self.public_mechanic is None and self.public_capabilities:
+            raise ValueError(
+                "Only public event triggers accept explicit capabilities"
             )
 
     @property
@@ -643,7 +684,9 @@ class FixedCounterTriggerBinding:
             "each upkeep": ("upkeep", False),
             "your end step": ("end_step", True),
             "each end step": ("end_step", False),
+            "the end step": ("end_step", False),
             "combat on your turn": ("beginning_combat", True),
+            "each combat": ("beginning_combat", False),
         }[self.variant]
         conditions: list[Mapping[str, Any]] = [
             {"field": "step", "op": "eq", "value": step}
@@ -834,6 +877,7 @@ def _public_trigger_binding(
         public_active_zone=spec.active_zone,
         public_mechanic=spec.mechanic,
         public_template_id=spec.template_id,
+        public_capabilities=spec.capabilities,
     )
 
 
@@ -921,6 +965,23 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
+def _event_runtime_coverage(
+    binding: FixedCounterTriggerBinding,
+    *,
+    current_ability: bool,
+) -> tuple[str, ...]:
+    values: list[str] = []
+    if current_ability or binding.variant in {
+        *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
+        *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+        "class_level_changed",
+    }:
+        values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)
+    if binding.variant in _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS:
+        values.append("one_or_more_event_batch")
+    return tuple(values)
+
+
 def _binding_effect_template(
     binding: FixedCounterTriggerBinding,
     body: str,
@@ -981,6 +1042,8 @@ def fixed_counter_event_trigger_node(
     )
     if binding is None:
         return None
+    if binding.variant in _NONCOUNTER_PUBLIC_EVENT_VARIANTS:
+        return None
     optional_match = re.fullmatch(
         r"you may (?P<body>.+)",
         binding.body,
@@ -1040,6 +1103,7 @@ def fixed_counter_event_trigger_node(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        explicit_capabilities=binding.public_capabilities,
     )
     residual_ids = (
         (
@@ -1072,12 +1136,9 @@ def fixed_counter_event_trigger_node(
         template_id=template_id,
         effects=effects,
         target_schema=target_schema,
-        runtime_coverage=(
-            (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if requires_current_ability
-            or binding.variant in _ABILITY_WORD_PUBLIC_EVENT_VARIANTS
-            or binding.variant == "class_level_changed"
-            else ()
+        runtime_coverage=_event_runtime_coverage(
+            binding,
+            current_ability=requires_current_ability,
         ),
         mechanics=mechanics,
         residual_ids=residual_ids,
@@ -1164,6 +1225,7 @@ def fixed_typed_event_effect_trigger_node(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        explicit_capabilities=binding.public_capabilities,
     )
     residual_ids = (
         (
@@ -1196,17 +1258,15 @@ def fixed_typed_event_effect_trigger_node(
         template_id=binding.typed_effect_template_id,
         effects=effects,
         target_schema=target_schema,
-        runtime_coverage=(
-            (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if (
+        runtime_coverage=_event_runtime_coverage(
+            binding,
+            current_ability=(
                 requires_current_ability
                 and (
                     template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
                     or binding.variant == "fixed_entry_return_requirement"
                 )
-            )
-            or binding.variant in _ABILITY_WORD_PUBLIC_EVENT_VARIANTS
-            else ()
+            ),
         ),
         mechanics=mechanics,
         residual_ids=residual_ids,

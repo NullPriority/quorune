@@ -11,6 +11,7 @@ from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session, pass_current
 from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from quorune.attachments import attach_objects
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.continuous_effect_state import commit_continuous_effect
 from quorune.continuous_effects import (
@@ -55,6 +56,7 @@ from quorune.compiler.target_effect_corpus_assurance import (
     TargetEffectCorpusCollector,
 )
 from quorune.deck import DeckLoader
+from quorune.engine import TURN_STEPS
 from quorune.kicker import KICKER_CAST_OPTION_ID
 from quorune.model import CardInstance, CombatState
 from quorune.object_predicate import ObjectQuerySpec
@@ -1927,6 +1929,623 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_attachment_attack_binding_uses_current_relation_and_ability(self):
+        session = self.session(121070, players=4)
+        engine = session.engine
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        attacker = self.add_card(
+            engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="attachment-attack-witness",
+            zone="battlefield",
+        )
+        sources = []
+        programs = []
+        for seat, suffix in (("A", "active"), ("C", "nonactive")):
+            source = self.add_card(
+                engine,
+                seat=seat,
+                name="Generic Equipped Attack Draw Trigger Fixture",
+                ref=f"attachment-attack-{suffix}",
+                zone="battlefield",
+            )
+            sources.append(source)
+            programs.append(self.register_typed_event_trigger(engine, source))
+            attach_objects(
+                engine.state.cards,
+                source,
+                attacker,
+                source_timestamp=engine._next_zone_timestamp(),
+            )
+        muted = self.add_card(
+            engine,
+            seat="D",
+            name="Generic Equipped Attack Draw Trigger Fixture",
+            ref="attachment-attack-muted",
+            zone="battlefield",
+        )
+        muted_program = self.register_typed_event_trigger(engine, muted)
+        attach_objects(
+            engine.state.cards,
+            muted,
+            attacker,
+            source_timestamp=engine._next_zone_timestamp(),
+        )
+        commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id="fixture:remove-attachment-trigger",
+                source_id="fixture:remove-attachment-trigger-owner",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("remove_all_abilities"),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                applies=ObjectQuerySpec(zones=("battlefield",)),
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        object_id=muted.object_id,
+                        logical_object_id=muted.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+        self.assertEqual(
+            [],
+            engine._effective_card_data(muted)["ability_fragments"],
+        )
+        engine._issue_attackers()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        declared = session.act(
+            "pilot:A",
+            {"a": "attack", "atk": {attacker.ref: "B"}},
+        )
+
+        self.assertTrue(declared.ok, declared.summary)
+        items = [
+            item
+            for item in engine.state.stack
+            if item.semantic_key in {
+                programs[0].key,
+                programs[1].key,
+                muted_program.key,
+            }
+        ]
+        self.assertEqual(["A", "C"], [item.controller for item in items])
+        self.assertEqual(
+            {source.object_id for source in sources},
+            {item.source_object_id for item in items},
+        )
+        self.assertTrue(
+            all(item.context["card"] == attacker.ref for item in items)
+        )
+        for seat in engine.active_seats:
+            packet_text = json.dumps(
+                session.packet(f"pilot:{seat}", full=True),
+                sort_keys=True,
+            )
+            for source in (*sources, muted):
+                self.assertNotIn(source.object_id, packet_text)
+                self.assertNotIn(source.logical_object_id, packet_text)
+
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "attachment-attack-trigger"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_attachment_damage_and_death_bindings_use_current_and_lki_relations(
+        self,
+    ):
+        damage_session = self.session(121071, players=4)
+        damage_engine = damage_session.engine
+        damage_source = self.add_card(
+            damage_engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="attachment-damage-witness",
+            zone="battlefield",
+        )
+        aura = self.add_card(
+            damage_engine,
+            seat="A",
+            name="Generic Enchanted Damage Draw Trigger Fixture",
+            ref="attachment-damage-aura",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(damage_engine, aura)
+        attach_objects(
+            damage_engine.state.cards,
+            aura,
+            damage_source,
+            source_timestamp=damage_engine._next_zone_timestamp(),
+        )
+        for target in ("A", "B"):
+            resolve_damage_batch(
+                damage_engine,
+                (
+                    damage_proposal(
+                        damage_engine,
+                        proposal_id=f"attachment-damage:{target}",
+                        actor="A",
+                        source_ref=damage_source.ref,
+                        target=target,
+                        amount=1,
+                        combat=False,
+                        reason="attachment event predicate witness",
+                    ),
+                ),
+            )
+            damage_engine._stabilize()
+        damage_items = [
+            item
+            for item in damage_engine.state.stack
+            if item.semantic_key == program.key
+        ]
+        self.assertEqual(1, len(damage_items))
+        self.assertEqual("B", damage_items[0].context["target"])
+        self.assertEqual(damage_source.ref, damage_items[0].context["source"])
+
+        death_session = self.session(121072)
+        death_engine = death_session.engine
+        first = self.add_card(
+            death_engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="attachment-death-first",
+            zone="battlefield",
+        )
+        second = self.add_card(
+            death_engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="attachment-death-second",
+            zone="battlefield",
+        )
+        death_aura = self.add_card(
+            death_engine,
+            seat="A",
+            name="Generic Enchanted Death Life Trigger Fixture",
+            ref="attachment-death-aura",
+            zone="battlefield",
+        )
+        death_program = self.register_typed_event_trigger(
+            death_engine,
+            death_aura,
+        )
+        attach_objects(
+            death_engine.state.cards,
+            death_aura,
+            first,
+            source_timestamp=death_engine._next_zone_timestamp(),
+        )
+        attach_objects(
+            death_engine.state.cards,
+            death_aura,
+            second,
+            source_timestamp=death_engine._next_zone_timestamp(),
+        )
+
+        death_engine.move_card(
+            first.object_id,
+            "graveyard",
+            reason="detached death negative witness",
+            semantic_events=True,
+        )
+        self.assertFalse(
+            any(
+                item.semantic_key == death_program.key
+                for item in death_engine.state.stack
+            )
+        )
+        self.assertFalse(
+            any(
+                item.semantic_key == death_program.key
+                for batch in death_engine.state.pending_trigger_batches
+                for item in batch.items
+            )
+        )
+        death_engine.move_card(
+            second.object_id,
+            "graveyard",
+            reason="attachment LKI death witness",
+            semantic_events=True,
+        )
+        death_engine._stabilize()
+        matching_items = [
+            item
+            for item in death_engine.state.stack
+            if item.semantic_key == death_program.key
+        ] + [
+            item
+            for batch in death_engine.state.pending_trigger_batches
+            for item in batch.items
+            if item.semantic_key == death_program.key
+        ]
+        self.assertEqual(1, len(matching_items))
+        item = matching_items[0]
+        self.assertEqual(second.ref, item.context["card"])
+        self.assertIn(death_aura.ref, item.context["attachments"])
+        self.assertNotIn(death_aura.object_id, item.context["attachments"])
+
+    def test_closed_zone_event_predicates_use_lki_and_batching(self):
+        enchantment_session = self.session(121073)
+        enchantment_engine = enchantment_session.engine
+        enchantment_observer = self.add_card(
+            enchantment_engine,
+            seat="A",
+            name="Generic Enchantment Graveyard Draw Trigger Fixture",
+            ref="controlled-enchantment-observer",
+            zone="battlefield",
+        )
+        enchantment_program = self.register_typed_event_trigger(
+            enchantment_engine,
+            enchantment_observer,
+        )
+        opponent_controlled = self.add_card(
+            enchantment_engine,
+            seat="A",
+            controller="B",
+            name="Generic Enchanted Death Life Trigger Fixture",
+            ref="opponent-controlled-enchantment",
+            zone="battlefield",
+        )
+        controlled = self.add_card(
+            enchantment_engine,
+            seat="B",
+            controller="A",
+            name="Generic Enchanted Death Life Trigger Fixture",
+            ref="controlled-enchantment",
+            zone="battlefield",
+        )
+        enchantment_engine.move_card(
+            opponent_controlled.object_id,
+            "graveyard",
+            reason="previous-controller negative witness",
+            semantic_events=True,
+        )
+        self.assertFalse(enchantment_engine.state.pending_trigger_batches)
+        enchantment_engine.move_card(
+            controlled.object_id,
+            "graveyard",
+            reason="previous-controller positive witness",
+            semantic_events=True,
+        )
+        enchantment_items = [
+            item
+            for batch in enchantment_engine.state.pending_trigger_batches
+            for item in batch.items
+            if item.source_ability_id == enchantment_program.key
+        ]
+        self.assertEqual(1, len(enchantment_items))
+        self.assertEqual(
+            "A",
+            enchantment_items[0].event_facts["previous_controller"],
+        )
+        self.assertIn(
+            "enchantment",
+            enchantment_items[0].event_facts["types"],
+        )
+
+        death_session = self.session(121074)
+        death_engine = death_session.engine
+        death_observer = self.add_card(
+            death_engine,
+            seat="A",
+            name="Generic Creature Or Artifact Death Drain Trigger Fixture",
+            ref="creature-artifact-death-observer",
+            zone="battlefield",
+        )
+        death_program = self.register_typed_event_trigger(
+            death_engine,
+            death_observer,
+        )
+        nonqualifying = self.add_card(
+            death_engine,
+            seat="A",
+            name="Generic Enchanted Death Life Trigger Fixture",
+            ref="nonartifact-death-witness",
+            zone="battlefield",
+        )
+        artifact = self.add_card(
+            death_engine,
+            seat="A",
+            name="Generic Equipped Attack Draw Trigger Fixture",
+            ref="noncreature-artifact-death-witness",
+            zone="battlefield",
+        )
+        death_engine.move_card(
+            nonqualifying.object_id,
+            "graveyard",
+            reason="noncreature nonartifact negative witness",
+            semantic_events=True,
+        )
+        self.assertFalse(death_engine.state.pending_trigger_batches)
+        death_engine.move_card(
+            artifact.object_id,
+            "graveyard",
+            reason="noncreature artifact positive witness",
+            semantic_events=True,
+        )
+        artifact_items = [
+            item
+            for batch in death_engine.state.pending_trigger_batches
+            for item in batch.items
+            if item.source_ability_id == death_program.key
+        ]
+        self.assertEqual(1, len(artifact_items))
+        self.assertEqual(
+            "permanent.graveyard",
+            artifact_items[0].normalized_event_id,
+        )
+        self.assertIn("artifact", artifact_items[0].event_facts["types"])
+
+        batch_session = self.session(121075)
+        batch_engine = batch_session.engine
+        batch_observer = self.add_card(
+            batch_engine,
+            seat="A",
+            name="Generic Graveyard Departure Spirit Trigger Fixture",
+            ref="graveyard-departure-observer",
+            zone="battlefield",
+        )
+        batch_program = self.register_typed_event_trigger(
+            batch_engine,
+            batch_observer,
+        )
+        creatures = [
+            self.add_card(
+                batch_engine,
+                seat="A",
+                name="Typed Self Attack Life Trigger Fixture",
+                ref=f"graveyard-departure-{index}",
+                zone="graveyard",
+            )
+            for index in (1, 2)
+        ]
+        noncreature = self.add_card(
+            batch_engine,
+            seat="A",
+            name="Generic Equipped Attack Draw Trigger Fixture",
+            ref="graveyard-departure-noncreature",
+            zone="graveyard",
+        )
+
+        batch_engine._move_cards_simultaneously(
+            tuple(
+                (card.object_id, "exile")
+                for card in (*creatures, noncreature)
+            ),
+            reason="one-or-more graveyard departure witness",
+        )
+        batch_engine._stabilize()
+
+        batch_items = [
+            item
+            for item in batch_engine.state.stack
+            if item.semantic_key == batch_program.key
+        ]
+        self.assertEqual(1, len(batch_items))
+        self.assertEqual("card.leave_graveyard", batch_items[0].context["event"])
+        self.assertIn(
+            "one_or_more_aggregation_id",
+            batch_items[0].context,
+        )
+        before_tokens = {
+            card.object_id
+            for card in batch_engine.state.cards.values()
+            if card.is_token and card.zone == "battlefield"
+        }
+        self.resolve_top(batch_engine)
+        created = [
+            card
+            for card in batch_engine.state.cards.values()
+            if card.is_token
+            and card.zone == "battlefield"
+            and card.object_id not in before_tokens
+        ]
+        self.assertEqual(1, len(created))
+        self.assertEqual("Spirit", created[0].printed_name)
+
+    def test_cycle_entry_schedule_and_block_bindings_execute(self):
+        cycle_session = self.session(121076, players=4)
+        cycle_engine = cycle_session.engine
+        observers = []
+        programs = []
+        for seat in ("A", "B"):
+            observer = self.add_card(
+                cycle_engine,
+                seat=seat,
+                name="Generic Cycle Another Life Trigger Fixture",
+                ref=f"cycle-another-observer-{seat}",
+                zone="battlefield",
+            )
+            observers.append(observer)
+            programs.append(
+                self.register_typed_event_trigger(cycle_engine, observer)
+            )
+        cycled = self.deck_card(cycle_engine, "A", "Xander's Lounge")
+        cycle_engine.move_card(cycled.object_id, "hand", log=False)
+        register_generated_programs(
+            self.db,
+            cycle_engine.semantics,
+            (self.db.lookup(cycled.printed_name),),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+        )
+        cycle_engine.state.players["A"].mana_pool["C"] = 3
+        cycle_engine.state.active_player = "A"
+        cycle_engine.state.started = True
+        cycle_engine.state.phase = "precombat_main"
+        cycle_engine.state.step = "main"
+        cycle_engine.state.priority_player = None
+        cycle_engine.state.priority_passes = []
+        cycle_engine.state.pending_decision = None
+        cycle_engine.permissions.invalidate_current()
+        cycle_engine._grant_priority("A")
+        cycle_engine.pump()
+
+        cycle_result = cycle_session.act(
+            "pilot:A",
+            {"action_id": f"activate:{cycled.ref}:ab3"},
+        )
+
+        self.assertTrue(cycle_result.ok, cycle_result.summary)
+        cycle_engine._stabilize()
+        cycle_items = [
+            item
+            for item in cycle_engine.state.stack
+            if item.semantic_key in {program.key for program in programs}
+        ]
+        self.assertEqual(1, len(cycle_items))
+        self.assertEqual("A", cycle_items[0].controller)
+        self.assertEqual(cycled.ref, cycle_items[0].context["card"])
+        self.assertEqual("A", cycle_items[0].context["player"])
+
+        entry_session = self.session(121077)
+        entry_engine = entry_session.engine
+        entry_observer = self.add_card(
+            entry_engine,
+            seat="A",
+            name="Generic Small Creature Entry Flying Trigger Fixture",
+            ref="small-entry-observer",
+            zone="battlefield",
+        )
+        entry_program = self.register_typed_event_trigger(
+            entry_engine,
+            entry_observer,
+        )
+        entry_engine.create_token(
+            "A",
+            name="Large entry negative witness",
+            characteristics={
+                "type_line": "Token Creature — Beast",
+                "power": "3",
+                "toughness": "3",
+            },
+        )
+        entry_engine._stabilize()
+        self.assertFalse(
+            any(
+                item.semantic_key == entry_program.key
+                for item in entry_engine.state.stack
+            )
+        )
+        entry_engine.permissions.invalidate_current()
+        entry_engine.state.pending_decision = None
+        entry_engine.state.priority_player = None
+        entry_engine.create_token(
+            "A",
+            name="Small entry positive witness",
+            characteristics={
+                "type_line": "Token Creature — Beast",
+                "power": "2",
+                "toughness": "2",
+            },
+        )
+        entry_engine._stabilize()
+        self.assertTrue(
+            any(
+                item.semantic_key == entry_program.key
+                for item in entry_engine.state.stack
+            )
+        )
+        self.resolve_top(entry_engine)
+        self.assertIn(
+            "Flying",
+            entry_engine._effective_card_data(entry_observer)["keywords"],
+        )
+
+        schedule_session = self.session(121078)
+        schedule_engine = schedule_session.engine
+        scheduled = self.add_card(
+            schedule_engine,
+            seat="A",
+            name="Generic End Step Self Return Trigger Fixture",
+            ref="end-step-return-source",
+            zone="battlefield",
+        )
+        schedule_program = self.register_typed_event_trigger(
+            schedule_engine,
+            scheduled,
+        )
+        schedule_engine.state.phase_index = TURN_STEPS.index(
+            ("ending", "end_step")
+        )
+        schedule_engine._enter_step()
+        scheduled_item = next(
+            item
+            for item in schedule_engine.state.stack
+            if item.semantic_key == schedule_program.key
+        )
+        self.assertEqual("end_step", scheduled_item.context["step"])
+        self.resolve_top(schedule_engine)
+        self.assertEqual("hand", scheduled.zone)
+
+        block_session = self.session(121079)
+        block_engine = block_session.engine
+        block_engine.state.active_player = "A"
+        block_engine.state.phase_index = 6
+        block_engine.state.phase = "combat"
+        block_engine.state.step = "declare_blockers"
+        blocked = self.add_card(
+            block_engine,
+            seat="A",
+            name="Generic Becomes Blocked By Creature Growth Trigger Fixture",
+            ref="blocked-by-creature-source",
+            zone="battlefield",
+        )
+        block_program = self.register_typed_event_trigger(
+            block_engine,
+            blocked,
+        )
+        blocker_ref = block_engine.create_token(
+            "B",
+            name="Creature blocker witness",
+            characteristics={
+                "type_line": "Token Creature — Soldier",
+                "power": "1",
+                "toughness": "3",
+            },
+        )[0]
+        blocker = block_engine._resolve_object("B", blocker_ref)
+        blocked.attacking = "B"
+        block_engine.state.combat = CombatState(
+            attackers_declared=True,
+            had_attacking_creature=True,
+            attackers={blocked.object_id: "B"},
+            defending_players=["B"],
+        )
+        block_engine._begin_blocker_decisions()
+        block_result = block_session.act(
+            "pilot:B",
+            {"a": "block", "blk": {blocker.ref: blocked.ref}},
+        )
+        self.assertTrue(block_result.ok, block_result.summary)
+        blocked_item = next(
+            item
+            for item in block_engine.state.stack
+            if item.semantic_key == block_program.key
+        )
+        self.assertEqual(
+            "creature.becomes_blocked",
+            blocked_item.context["event"],
+        )
+        self.resolve_top(block_engine)
+        self.assertEqual(3, block_engine._numeric_stat(blocked.object_id, "power"))
 
     def test_source_attack_counter_trigger_uses_replacement_owner(self):
         session = self.session(121006)

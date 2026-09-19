@@ -38,13 +38,21 @@ def dependency_gate(
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
     cost_schema: Mapping[str, Any] | None = None,
+    explicit_capabilities: Iterable[str] = (),
 ) -> DependencyGate:
     mechanic_ids = tuple(str(value).casefold() for value in mechanics)
-    capabilities = capability_dependencies_for_node(
-        effects=effects,
-        target_schema=target_schema,
-        mechanic_ids=mechanic_ids,
-        cost_schema=cost_schema,
+    capabilities = tuple(
+        sorted(
+            {
+                *capability_dependencies_for_node(
+                    effects=effects,
+                    target_schema=target_schema,
+                    mechanic_ids=mechanic_ids,
+                    cost_schema=cost_schema,
+                ),
+                *(str(value) for value in explicit_capabilities),
+            }
+        )
     )
     if capability_registry is not None and capabilities:
         closure = capability_registry.closure(

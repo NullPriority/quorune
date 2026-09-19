@@ -2,7 +2,7 @@
 title: "Typed Oracle IR"
 status: "current"
 authoritative_source: "Oracle compiler implementation, CardProgram schema, and pinned corpus reports"
-verified: "2026-09-17"
+verified: "2026-09-19"
 audience: "compiler, rules, and CardProgram contributors"
 maintenance: "hand-maintained"
 concern: "oracle-ir"
@@ -101,6 +101,13 @@ caster relation, current origin/turn context, and only the represented public
 metric; it never retains Oracle prose as runtime authority. Unsupported target-
 relative, private, characteristic-cycle-sensitive, capped, or open-arithmetic
 forms remain source-spanned residuals.
+Closed public trigger bindings serialize only a normalized event identity and
+typed predicates over sealed public facts. Current equipped relations,
+last-known attached-object death, prior controller, owner-relative graveyard
+departure, fixed entry characteristics, controller-another Cycling, and exact
+one-or-more batching remain data in the CardProgram; the runtime never reparses
+their Oracle wording. Unsupported attachment, aggregate, ambiguous, linked, or
+dynamic event forms remain residual.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;
