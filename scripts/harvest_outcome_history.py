@@ -120,9 +120,9 @@ def _durable_main_tip(root: Path) -> str:
     """Resolve the landed main line used by immutable harvest provenance."""
 
     for reference in (
-        "refs/remotes/origin/HEAD",
         "refs/remotes/origin/main",
         "refs/heads/main",
+        "refs/remotes/origin/HEAD",
     ):
         completed = subprocess.run(
             ["git", "rev-parse", "--verify", f"{reference}^{{commit}}"],
@@ -153,8 +153,9 @@ def _require_landed_harvest_head(root: Path, head_commit: str) -> None:
     )
     if landed.returncode != 0:
         raise HarvestOutcomeHistoryError(
-            "Harvest head must be landed on the durable main line; keep the "
-            "semantic transition declaration pending until squash merge"
+            f"Harvest head {head_commit} must be landed on durable main "
+            f"{durable_tip}; keep the semantic transition declaration pending "
+            "until squash merge"
         )
 
 

@@ -51,6 +51,7 @@ from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
     _content_public_receipt,
     _content_entry,
+    _durable_main_tip,
     _latest_semantic_receipt,
     _non_harvest_content_entry,
     _refresh_content_entry,
@@ -1282,6 +1283,28 @@ class RulesSchedulerTests(unittest.TestCase):
                 [same_probe],
             )
 
+    def test_durable_main_prefers_explicit_main_over_remote_head(self):
+        main = "a" * 40
+        misleading = "b" * 40
+        calls = []
+
+        def resolve(arguments, **_kwargs):
+            calls.append(arguments)
+            reference = arguments[-1]
+            value = main if "origin/main" in reference else misleading
+            return SimpleNamespace(returncode=0, stdout=(value + "\n").encode())
+
+        with mock.patch(
+            "scripts.harvest_outcome_history.subprocess.run",
+            side_effect=resolve,
+        ):
+            self.assertEqual(main, _durable_main_tip(ROOT))
+
+        self.assertIn("refs/remotes/origin/main", calls[0][-1])
+        self.assertFalse(
+            any("origin/HEAD" in call[-1] for call in calls)
+        )
+
     def test_harvest_provenance_rejects_squash_discardable_feature_heads(self):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary)
@@ -1315,7 +1338,7 @@ class RulesSchedulerTests(unittest.TestCase):
             _require_landed_harvest_head(repository, landed)
             with self.assertRaisesRegex(
                 HarvestOutcomeHistoryError,
-                "must be landed on the durable main line",
+                "must be landed on durable main",
             ):
                 _require_landed_harvest_head(repository, feature)
 
