@@ -3703,35 +3703,38 @@
         {
           "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
-            "continuous_layer:continuous-effect-layers-and-dependencies"
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "effect_clause:unparsed-spell-effect-has-no-exact-generic-template"
           ],
           "canonical_owner_ids": [
             "capability:compiler.oracle.nonexecuting_reminder_line",
-            "component:quorune.compiler.oracle_source_text.is_standalone_parenthetical_reminder",
+            "component:quorune.compiler.oracle_source_text.is_nonexecuting_standalone_reminder",
             "component:quorune.oracle_ir._compile_face"
           ],
           "source_contexts": [
+            "spell",
             "static"
           ],
           "normalized_literal_parameters": [
+            "authoritative-mana-layout-or-type-structure",
             "balanced-parenthetical-groups",
-            "no-material-outside-groups",
-            "typed-reminder-owner-first-refusal"
+            "exact-closed-reminder-wording"
           ],
           "shared_dependencies": [
             "compiler.oracle.nonexecuting_reminder_line"
           ],
-          "shared_grammar": "one complete balanced source line containing only parenthetical reminder prose, omitted after intrinsic mana and structured lifecycle reminder owners have had first refusal",
+          "shared_grammar": "one exact standalone hybrid, Phyrexian, two-brid, colorless, or snow mana-symbol explanation; transform-back-face label on a transform layout; or Dryad Arbor reminder on its exact printed type line, whose authority already comes from structured card data and typed owners",
           "estimated_implementation_hours": 2,
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
-          "expected_downstream_closure": "Removes a policy-floor cohort of false material residuals while promoting every carrier whose independently executable sibling abilities already have capability closure.",
+          "expected_downstream_closure": "Removes a policy-floor cohort of false mana, paired-face label, and type-derived residuals while promoting carriers whose independently executable sibling abilities already have capability closure and retaining every unsupported structural card-form boundary.",
           "explicit_exclusions": [
             "independently unsupported sibling abilities",
-            "intrinsic basic-land mana and structured Class or Saga reminders before their typed owners run",
+            "intrinsic basic-land mana and Class reminders claimed by their typed owners",
             "mixed reminder and executable text on one source line",
+            "room, Siege, Saga lore, meld, legendary-spell legality, and other structural reminders without a complete typed card-form owner",
             "runtime interpretation of reminder prose",
-            "unbalanced delimiters and material characters outside parenthetical groups"
+            "unbalanced delimiters, mismatched mana symbols, and material characters outside parenthetical groups"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "standalone-reminder-line-existing-owner-v1"
@@ -3751,7 +3754,8 @@
       "bundle_id": "bundle:standalone-reminder-line-closure",
       "candidate_ids": ["compiler:standalone-reminder-line-closure"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "effect_clause:unparsed-spell-effect-has-no-exact-generic-template"
       ],
       "capability_ids": [
         "compiler.oracle.nonexecuting_reminder_line"
@@ -4376,7 +4380,7 @@
       {
         "candidate_id": "compiler:standalone-reminder-line-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
-        "reason": "The post-event selector has no implementation-eligible carried candidate, the raw continuous-layer leader remains heterogeneous, and bounded probes retire typed spell additional costs, token production, combat-keyword unions, characteristic-query extensions, untap policies, and top-library access below the normal complete-card floor or outside a safe existing owner. The remaining source-line probe isolates 140 false material residuals on 112 Commander cards, with 23 conservative complete-card transitions. CR 207.2d makes balanced standalone parenthetical lines nonexecuting reminder text; the compiler omits them only after intrinsic mana and structured lifecycle reminder owners have first refusal, while mixed, unbalanced, runtime, and independently unsupported forms remain fail-closed."
+        "reason": "The post-event selector has no implementation-eligible carried candidate, the raw continuous-layer leader remains heterogeneous, and bounded probes retire typed spell additional costs, token production, combat-keyword unions, characteristic-query extensions, untap policies, and top-library access below the normal complete-card floor or outside a safe existing owner. The corrected source-line probe isolates 100 false material residuals on 100 Commander cards, with 28 conservative complete-card transitions and zero claimed exact abilities. CR 207.2d makes the closed mana-symbol explanations, transform-back-face labels, and Dryad Arbor reminder nonexecuting when their mana cost, layout, or printed type already carries authority, while Room, Siege, Saga lore, meld, legendary-spell legality, mixed, malformed, runtime, and independently unsupported forms remain fail-closed."
       }
     ]
   },

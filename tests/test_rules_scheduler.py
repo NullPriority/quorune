@@ -92,6 +92,7 @@ from scripts.work_selection_cohort_measurements import (
     _public_event_binding_closure_measurement,
     _fixed_token_production_measurement,
     _typed_quoted_ability_grant_measurement,
+    build_work_selection_cohort_measurements,
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
@@ -4353,19 +4354,103 @@ class RulesSchedulerTests(unittest.TestCase):
         probe_id = "standalone-reminder-line-existing-owner-v1"
         for source in (
             "({U/P} can be paid with either {U} or 2 life.)",
-            "(Outer reminder (with a nested aside).)",
-            "(First reminder.) (Second reminder.)",
+            "({C} represents colorless mana.)",
+            "({2/U} can be paid with any two mana or with {U}. This card's "
+            "mana value is 6.)",
         ):
             with self.subTest(source=source):
                 self.assertTrue(_matches_probe(probe_id, source))
+        transform = SimpleNamespace(
+            name="Fixture Front // Fixture Back",
+            type_line="Artifact // Land",
+            layout="transform",
+            faces=(),
+        )
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "(Transforms from Fixture Front.)",
+                card_record=transform,
+                ability={"face_id": "front", "source_line": 1},
+            )
+        )
+        dryad = SimpleNamespace(
+            name="Dryad Fixture",
+            type_line="Land Creature — Forest Dryad",
+            layout="normal",
+            faces=(),
+        )
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "(This land isn't a spell, it's affected by summoning "
+                'sickness, and it has "{T}: Add {G}.")',
+                card_record=dryad,
+                ability={"face_id": "front", "source_line": 1},
+            )
+        )
         for source in (
             "(Reminder text.) Destroy target creature.",
             "(Unbalanced reminder text.",
             "Reminder text.)",
+            "({W/U} can be paid with either {W} or {B}.)",
+            "(Transforms from Fixture Front.)",
+            "(Melds with Fixture Half.)",
+            "(You may cast either half. That door unlocks on the battlefield. "
+            "As a sorcery, you may pay the mana cost of a locked door to "
+            "unlock it.)",
             "",
         ):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
+
+        family = "effect_clause:unparsed-spell-effect-has-no-exact-generic-template"
+        record = SimpleNamespace(
+            oracle_id="reminder-fixture",
+            name="Reminder Fixture",
+            oracle_text="({C} represents colorless mana.)",
+            type_line="Instant",
+            faces=(),
+        )
+        measured = build_work_selection_cohort_measurements(
+            frontier={
+                "cards": [
+                    {
+                        "oracle_id": record.oracle_id,
+                        "minimum_known_blocker_set": [family],
+                        "abilities": [
+                            {
+                                "ability_id": "front:n1",
+                                "face_id": "front",
+                                "source_line": 1,
+                                "status": "unresolved",
+                                "blockers": {
+                                    "canonical_family_ids": [family]
+                                },
+                            }
+                        ],
+                    }
+                ]
+            },
+            bundle_policies=[
+                {
+                    "bundle_id": "bundle:standalone-reminder-line-closure",
+                    "member_family_ids": [family],
+                    "measurement_probe_id": probe_id,
+                }
+            ],
+            cards_by_oracle_id={record.oracle_id: record},
+            coverage={
+                "minimum_complete_card_gain": 1,
+                "minimum_exact_ability_gain": 1,
+                "minimum_material_residual_reduction": 1,
+            },
+            cohort_fingerprints={
+                "bundle:standalone-reminder-line-closure": "0" * 64
+            },
+        )["measurements"][0]
+        self.assertEqual(0, measured["exact_ability_gain"])
+        self.assertEqual(1, measured["material_residual_reduction"])
 
     def test_public_event_binding_closure_probe_and_measurement_are_closed(self):
         probe_id = "public-event-binding-closure-existing-owner-v1"

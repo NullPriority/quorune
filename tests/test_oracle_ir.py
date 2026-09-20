@@ -30,6 +30,7 @@ from quorune.damage import (
     damage_proposal,
     prepare_damage_batch,
 )
+from quorune.compiler.oracle_source_text import material_source_lines
 from quorune.mechanic_contracts import (
     MechanicContractError,
     apply_contracts_to_registry,
@@ -2324,11 +2325,58 @@ class OracleIRTests(unittest.TestCase):
             "(Reminder text.) Destroy target creature.",
             "(Unbalanced reminder text.",
             "Reminder text.)",
+            "({W/U} can be paid with either {W} or {B}.)",
         ):
             with self.subTest(text=text):
                 ir = compile_oracle_card(replace(base, oracle_text=text))
                 self.assertTrue(ir.material_residuals)
                 self.assertNotEqual("exact", ir.status)
+
+    def test_structural_standalone_reminders_remain_fail_closed(self):
+        base = self.db.lookup("Flying Men")
+        for text in (
+            "(As a Siege enters, choose an opponent to protect it. You and "
+            "others can attack it. When it's defeated, exile it, then cast "
+            "it transformed.)",
+            "(Transforms from Fixture Front.)",
+            "(Melds with Fixture Half.)",
+            "(You may cast either half. That door unlocks on the battlefield. "
+            "As a sorcery, you may pay the mana cost of a locked door to "
+            "unlock it.)",
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(replace(base, oracle_text=text))
+                self.assertTrue(ir.material_residuals)
+                self.assertNotEqual("exact", ir.status)
+
+    def test_structured_transform_and_dryad_reminders_use_card_form_authority(self):
+        transform = "(Transforms from Fixture Front.)"
+        dryad = (
+            "(This land isn't a spell, it's affected by summoning sickness, "
+            'and it has "{T}: Add {G}.")'
+        )
+
+        self.assertEqual(
+            (),
+            tuple(
+                material_source_lines(
+                    transform,
+                    layout="transform",
+                    type_line="Artifact // Land",
+                )
+            ),
+        )
+        self.assertEqual(
+            (),
+            tuple(
+                material_source_lines(
+                    dryad,
+                    type_line="Land Creature — Forest Dryad",
+                )
+            ),
+        )
+        self.assertTrue(tuple(material_source_lines(transform)))
+        self.assertTrue(tuple(material_source_lines(dryad)))
 
     def test_standalone_reminder_classifier_mutation_is_killed(self):
         base = self.db.lookup("Flying Men")
@@ -2340,7 +2388,7 @@ class OracleIRTests(unittest.TestCase):
 
         with mock.patch(
             "quorune.compiler.oracle_source_text."
-            "is_standalone_parenthetical_reminder",
+            "is_nonexecuting_standalone_reminder",
             return_value=False,
         ):
             mutated = compile_oracle_card(

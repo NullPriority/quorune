@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "6e5343c44d7f07251d014e3c5b468aeb96ac770449897f526b0695451010b540",
-  "declaration_source_fingerprint": "22fe30f9bb62b546cc36105c90915f4b044c36bc663040ace79fd9027275d17f",
+  "registry_fingerprint": "4dc39e04a53e1797c116ae31e2fc95d71a020f73adf7b96c44d3c98e35154c1c",
+  "declaration_source_fingerprint": "b0d2b17a7f37680fcdb0ea87c591815877bf8f9281ecbd11409de524f793d3c1",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -19185,6 +19185,21 @@
     {
       "capability_id": "compiler.oracle.nonexecuting_reminder_line",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_closed_event_bindings_compile_exact_counter_effect_bodies",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the unsupported Siege card-form reminder material while independently exact event-trigger bodies continue to compile through their existing owner."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "interaction",
       "test_id": "tests.test_intrinsic_basic_land_mana.IntrinsicBasicLandManaTests.test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder",
       "official_rule_ids": [
         "207.2",
@@ -19211,6 +19226,21 @@
         "commander_review"
       ],
       "applicability_note": "Preserve the ordinary Saga lifecycle owner while excluding its nonexecuting reminder from independent ability compilation."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_transforming_query_characteristics_keep_replacement_siblings_fail_closed",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve a transforming Saga's lore reminder as a material lifecycle boundary while its independently typed back-face characteristic query remains represented."
     },
     {
       "capability_id": "compiler.oracle.nonexecuting_reminder_line",
@@ -19244,6 +19274,21 @@
     },
     {
       "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "negative",
+      "test_id": "tests.test_oracle_ir.OracleIRTests.test_structural_standalone_reminders_remain_fail_closed",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retain Room, Siege, Saga lore, meld, and transform reminders without a transform layout as explicit residual boundaries until their structural card-form owners are complete."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
       "evidence_class": "positive",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_standalone_parenthetical_reminders_are_not_abilities",
       "official_rule_ids": [
@@ -19255,7 +19300,22 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Omit one balanced standalone reminder line while retaining the independently exact executable sibling ability."
+      "applicability_note": "Omit one exact standalone mana-symbol reminder while retaining the independently exact executable sibling ability."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "positive",
+      "test_id": "tests.test_oracle_ir.OracleIRTests.test_structured_transform_and_dryad_reminders_use_card_form_authority",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omit exact transform-back-face and Dryad Arbor reminders only when the paired layout or printed type line provides their structural authority."
     },
     {
       "capability_id": "compiler.oracle.nonexecuting_reminder_line",
@@ -64688,5 +64748,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "4b26d1ea44d1ec6f35ec953a3934de22804f0d55312d12f54be8fb00c3fdf151"
+  "fingerprint": "fa45297d2cc31c2acd8b8782eb99ab4e224f28159925f8d4c26a5570e3a9e1fa"
 }

@@ -3,13 +3,41 @@ from __future__ import annotations
 import re
 from typing import Iterable
 
-from ..class_levels import CLASS_REMINDER_TEXT
 from .ir_model import SourceSpan
 
 
 _ORDINARY_SAGA_RULES_REMINDER = re.compile(
     r"\(As this Saga enters and after your draw step, add a lore counter\. "
     r"Sacrifice after [IVXLCDM]+\.\)",
+    re.IGNORECASE,
+)
+_TRANSFORM_REMINDER = re.compile(
+    r"\(Transforms from [^)]+\.\)", re.IGNORECASE
+)
+_DRYAD_ARBOR_REMINDER = (
+    "(This land isn't a spell, it's affected by summoning sickness, and it "
+    'has "{T}: Add {G}.")'
+)
+_HYBRID_MANA_REMINDER = re.compile(
+    r"\(\{(?P<first>[WUBRGC])/(?P<second>[WUBRGC])\} can be paid with "
+    r"either \{(?P=first)\} or \{(?P=second)\}\.\)",
+    re.IGNORECASE,
+)
+_PHYREXIAN_MANA_REMINDER = re.compile(
+    r"\(\{(?P<color>[WUBRG])/P\} can be paid with either "
+    r"\{(?P=color)\} or 2 life\.\)",
+    re.IGNORECASE,
+)
+_TWO_BRID_MANA_REMINDER = re.compile(
+    r"\(\{2/(?P<color>[WUBRG])\} can be paid with any two mana or with "
+    r"\{(?P=color)\}\. This card['’]s mana value is \d+\.\)",
+    re.IGNORECASE,
+)
+_COLORLESS_MANA_REMINDER = re.compile(
+    r"\(\{C\} represents colorless mana\.\)", re.IGNORECASE
+)
+_SNOW_MANA_REMINDER = re.compile(
+    r"\(\{S\} can be paid with one mana from a snow source\.\)",
     re.IGNORECASE,
 )
 
@@ -73,10 +101,34 @@ def is_standalone_parenthetical_reminder(text: str) -> bool:
     return saw_group and depth == 0
 
 
+def is_nonexecuting_standalone_reminder(
+    text: str,
+    *,
+    transform: bool = False,
+    dryad_arbor: bool = False,
+) -> bool:
+    """Recognize reminders whose authority is already carried structurally."""
+
+    stripped = text.strip()
+    if not is_standalone_parenthetical_reminder(stripped):
+        return False
+    return bool(
+        _HYBRID_MANA_REMINDER.fullmatch(stripped)
+        or _PHYREXIAN_MANA_REMINDER.fullmatch(stripped)
+        or _TWO_BRID_MANA_REMINDER.fullmatch(stripped)
+        or _COLORLESS_MANA_REMINDER.fullmatch(stripped)
+        or _SNOW_MANA_REMINDER.fullmatch(stripped)
+        or (transform and _TRANSFORM_REMINDER.fullmatch(stripped))
+        or (dryad_arbor and stripped == _DRYAD_ARBOR_REMINDER)
+    )
+
+
 def material_source_lines(
     text: str,
     *,
     ordinary_saga: bool = False,
+    layout: str = "",
+    type_line: str = "",
 ) -> Iterable[tuple[str, str, SourceSpan]]:
     """Yield material Oracle rows while omitting the ordinary Saga reminder."""
 
@@ -84,9 +136,14 @@ def material_source_lines(
         material_line = without_parenthetical_reminder(line)
         if (
             not material_line
-            and is_standalone_parenthetical_reminder(line)
-            and line != CLASS_REMINDER_TEXT
-            and not line.casefold().startswith("({t}: add ")
+            and is_nonexecuting_standalone_reminder(
+                line,
+                transform=layout == "transform",
+                dryad_arbor=(
+                    "land creature" in type_line.replace("—", " ").casefold()
+                    and "forest dryad" in type_line.casefold()
+                ),
+            )
         ):
             continue
         if (
@@ -99,6 +156,7 @@ def material_source_lines(
 
 
 __all__ = [
+    "is_nonexecuting_standalone_reminder",
     "is_standalone_parenthetical_reminder",
     "material_source_lines",
     "source_lines",

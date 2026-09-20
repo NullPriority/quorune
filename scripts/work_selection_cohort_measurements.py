@@ -113,7 +113,7 @@ from quorune.compiler.query_characteristic_templates import (
 )
 from quorune.compiler.ir_model import SourceSpan
 from quorune.compiler.oracle_source_text import (
-    is_standalone_parenthetical_reminder,
+    is_nonexecuting_standalone_reminder,
 )
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.oracle_ir import (
@@ -1037,7 +1037,21 @@ def _matches_probe(
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
     if probe_id == _PROBE_STANDALONE_REMINDER_LINES:
-        return is_standalone_parenthetical_reminder(source)
+        transform = False
+        dryad_arbor = False
+        if card_record is not None and ability is not None:
+            face_type_line = _source_face_type_line(card_record, ability)
+            transform = str(getattr(card_record, "layout", "")) == "transform"
+            normalized_type = face_type_line.replace("—", " ").casefold()
+            dryad_arbor = (
+                "land creature" in normalized_type
+                and "forest dryad" in normalized_type
+            )
+        return is_nonexecuting_standalone_reminder(
+            source,
+            transform=transform,
+            dryad_arbor=dryad_arbor,
+        )
     if probe_id == _PROBE_FIXED_ATTACHMENT_ACTIONS:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(
@@ -2470,7 +2484,7 @@ def _public_cast_cost_modifier_closure_measurement(
         "two_additional_blocker_cards": sum(
             count == 2 for count in matched_cards.values()
         ),
-        "exact_ability_gain": matched_abilities,
+        "exact_ability_gain": exact_ability_gain,
         "material_residual_reduction": matched_abilities,
         "decision": (
             "bounded_executable" if reaches_floor else "retired_below_harvest_floor"
@@ -2730,7 +2744,7 @@ def _trigger_ability_word_carrier_measurement(
         "two_additional_blocker_cards": sum(
             count == 2 for count in matched_cards.values()
         ),
-        "exact_ability_gain": matched_abilities,
+        "exact_ability_gain": exact_ability_gain,
         "material_residual_reduction": matched_abilities,
         "decision": (
             "bounded_executable"
@@ -4953,6 +4967,11 @@ def _measurement(
         count == 0 and oracle_id not in cards_with_unmatched_member_ability
         for oracle_id, count in matched_cards.items()
     )
+    exact_ability_gain = (
+        0
+        if probe_id == _PROBE_STANDALONE_REMINDER_LINES
+        else matched_abilities
+    )
     reaches_floor = (
         complete_cards >= int(coverage["minimum_complete_card_gain"])
         or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
@@ -4972,7 +4991,7 @@ def _measurement(
         "two_additional_blocker_cards": sum(
             count == 2 for count in matched_cards.values()
         ),
-        "exact_ability_gain": matched_abilities,
+        "exact_ability_gain": exact_ability_gain,
         "material_residual_reduction": matched_abilities,
         "decision": (
             "bounded_executable" if reaches_floor else "retired_below_harvest_floor"

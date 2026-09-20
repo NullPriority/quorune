@@ -174,7 +174,12 @@ def leveler_source_context(
     """Build material rows and their optional Leveler grouping once."""
 
     rows = tuple(
-        material_source_lines(oracle_text, ordinary_saga=ordinary_saga)
+        material_source_lines(
+            oracle_text,
+            ordinary_saga=ordinary_saga,
+            layout=layout,
+            type_line=type_line,
+        )
     )
     return rows, parse_leveler_context(
         layout=layout,
