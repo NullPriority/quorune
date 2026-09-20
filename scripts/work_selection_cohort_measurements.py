@@ -885,7 +885,10 @@ def _matches_typed_public_event_effect_trigger_probe(
     binding = fixed_counter_trigger_binding(material, card_name=card_name)
     if (
         binding is None
-        or binding.variant in PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+        or binding.variant in {
+            *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+            *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+        }
         or not (
             binding.public_template_id is not None
             or re.fullmatch(
@@ -1341,7 +1344,10 @@ def _matches_probe(
         )
         if (
             binding is None
-            or binding.variant in PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+            or binding.variant in {
+                *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+                *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+            }
         ):
             return False
         compile_effect = partial(
