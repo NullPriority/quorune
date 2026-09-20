@@ -1468,6 +1468,26 @@ def _declaration_matches_content_entry(
     )
 
 
+def _declaration_revises_unlanded_content_entry(
+    declaration: Mapping[str, Any], entry: Mapping[str, Any]
+) -> bool:
+    """Match the immutable identity of one still-unlanded correction."""
+
+    return (
+        declaration.get("outcome_kind") == "harvest"
+        and declaration.get("compiler_version")
+        == entry.get("head_receipt", {}).get("compiler_version")
+        and all(
+            declaration.get(field) == entry.get(field)
+            for field in (
+                "transition_id",
+                "bundle_id",
+                "candidate_ids",
+            )
+        )
+    )
+
+
 def _replace_unlanded_content_entry(
     entry: Mapping[str, Any],
     *,
@@ -1482,7 +1502,10 @@ def _replace_unlanded_content_entry(
     validated = _validate_content_entry(entry)
     if (
         validated.get("receipt_identity_kind") != "semantic_content"
-        or not _declaration_matches_content_entry(declaration, validated)
+        or not _declaration_revises_unlanded_content_entry(
+            declaration,
+            validated,
+        )
     ):
         return None
     if not _semantic_receipts_match(
@@ -1765,7 +1788,7 @@ def build_harvest_outcome_history(
         and validated_declaration["outcome_kind"] == "harvest"
         and entries
         and entries[-1].get("receipt_identity_kind") == "semantic_content"
-        and _declaration_matches_content_entry(
+        and _declaration_revises_unlanded_content_entry(
             validated_declaration,
             entries[-1],
         )

@@ -1802,6 +1802,10 @@ class RulesSchedulerTests(unittest.TestCase):
             "outcome_kind": "harvest",
         }
         superseded = _content_entry(declaration, base=base, head=head)
+        corrected_declaration = deepcopy(declaration)
+        corrected_declaration["family_ids"] = [
+            "effect_clause:fixture-corrected-unlanded-transition-v2"
+        ]
         corrected_head = deepcopy(head)
         corrected_head["blobs"][
             "coverage/card-program-coverage-commander.json"
@@ -1810,7 +1814,7 @@ class RulesSchedulerTests(unittest.TestCase):
 
         corrected = _replace_unlanded_content_entry(
             superseded,
-            declaration=declaration,
+            declaration=corrected_declaration,
             base=base,
             head=corrected_head,
         )
@@ -1825,7 +1829,11 @@ class RulesSchedulerTests(unittest.TestCase):
             corrected["head_receipt"]["content_fingerprint"],
         )
         self.assertEqual(
-            declaration["transition_id"], corrected["transition_id"]
+            corrected_declaration["transition_id"],
+            corrected["transition_id"],
+        )
+        self.assertEqual(
+            corrected_declaration["family_ids"], corrected["family_ids"]
         )
 
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
