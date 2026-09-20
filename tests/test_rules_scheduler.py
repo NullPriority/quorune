@@ -1236,6 +1236,24 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             build_harvest_outcome_history(ROOT, malformed)
 
+    def test_cached_legacy_receipts_do_not_depend_on_old_graph_ancestry(self):
+        work_selection = self.catalog["work_selection"]
+        with mock.patch(
+            "scripts.harvest_outcome_history._require_landed_harvest_head",
+            side_effect=AssertionError("cached receipt must avoid ancestry"),
+        ):
+            derived = build_harvest_outcome_history(
+                ROOT,
+                work_selection["harvest_provenance"],
+                work_selection.get("semantic_transition_declaration"),
+                work_selection.get("forecast_corrections"),
+            )
+
+        self.assertEqual(
+            self.work_inputs["harvest_outcome_history"],
+            derived,
+        )
+
     def test_forecast_correction_can_preserve_the_complete_card_bound(self):
         entry = {
             "transition_id": "oracle-ir-v999-secondary-metric-correction",

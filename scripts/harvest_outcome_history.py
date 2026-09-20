@@ -1703,6 +1703,14 @@ def build_harvest_outcome_history(
                 "Harvest provenance identity and prediction fields are invalid"
             )
         seen_bundles.add(bundle_id)
+        if cached_legacy_entries:
+            for field in ("base_commit", "head_commit"):
+                if _COMMIT.fullmatch(str(row.get(field) or "")) is None:
+                    raise HarvestOutcomeHistoryError(
+                        f"{field} must be a full Git commit"
+                    )
+            entries.append(cached_legacy_entries[index])
+            continue
         base_commit = _canonical_commit(
             repository, row.get("base_commit"), "base_commit"
         )
@@ -1720,9 +1728,6 @@ def build_harvest_outcome_history(
             raise HarvestOutcomeHistoryError(
                 "Harvest base must be a strict ancestor of its head"
             )
-        if cached_legacy_entries:
-            entries.append(cached_legacy_entries[index])
-            continue
         base = receipt(base_commit)
         head = receipt(head_commit)
         if (
