@@ -2,7 +2,7 @@
 title: "Rules kernel"
 status: "current"
 authoritative_source: "quorune engine and rules modules, including quorune/control_history.py, quorune/day_night.py, quorune/permanent_transform.py, quorune/turn_history.py, quorune/echo.py, quorune/saga_progression.py, quorune/mentor.py, quorune/relative_power_target.py, and quorune/target_predicates.py"
-verified: "2026-09-17"
+verified: "2026-09-19"
 audience: "rules and engine contributors"
 maintenance: "hand-maintained"
 ---
@@ -283,6 +283,17 @@ intrinsic alternate destinations, broader prohibitions, and universal draw,
 damage, prevention, and entry participation remain blocked. New rules work must
 identify event/replacement participation and use capability IDs from the
 versioned registry.
+
+The normalized trigger vocabulary also carries a bounded public binding
+closure without adding producer-specific engines. Attack, block, damage,
+Cycling, step, and zone-transition owners emit immutable occurrences; trigger
+predicates compare those facts with the source's current reciprocal attachment
+or the departing object's sealed attachment, owner, prior-controller, type,
+color, and power facts. The exact one-or-more creature-card graveyard departure
+form deduplicates within one simultaneous trigger batch. All of these programs
+use the same current layer-6 ability-component query and ordinary APNAP
+placement; unsupported aggregate, linked, ambiguous, or dynamic forms remain
+untrusted before mutation.
 
 `turn_history.py` retains current-turn events plus one bounded per-player
 spell-count summary for the immediately previous turn. `day_night.py` consumes

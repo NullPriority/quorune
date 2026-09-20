@@ -987,7 +987,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "draw a card.",
             "Whenever this creature deals damage to a creature, draw a card.",
             "Whenever this creature deals damage, draw a card.",
-            "Whenever equipped creature deals combat damage to a player, draw "
+            "Whenever equipped creature deals combat damage to an opponent, draw "
             "a card.",
             "Whenever one or more creatures deal combat damage to a player, "
             "draw a card.",
@@ -2271,6 +2271,127 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                         node.event_condition,
                     )
 
+    def test_public_event_binding_closure_compiles_exact_bodies(self):
+        event_capabilities = {
+            "card.cycled": "trigger.event.normalized_public_action",
+            "card.leave_graveyard": "trigger.event.normalized_zone_change",
+            "creature.attacks": "trigger.event.normalized_public_action",
+            "creature.becomes_blocked": (
+                "trigger.event.normalized_public_action"
+            ),
+            "creature.dies": "trigger.event.normalized_zone_change",
+            "creature.enter": "trigger.event.normalized_zone_change",
+            "damage.dealt": "trigger.event.normalized_damage",
+            "permanent.graveyard": "trigger.event.normalized_zone_change",
+            "step.begin": "trigger.placement.apnap",
+        }
+        cases = (
+            (
+                "Whenever equipped creature attacks, draw a card.",
+                "Artifact — Equipment",
+                "creature.attacks",
+            ),
+            (
+                "When enchanted creature dies, you gain 2 life.",
+                "Enchantment — Aura",
+                "creature.dies",
+            ),
+            (
+                "Whenever enchanted creature deals damage to an opponent, "
+                "you may draw a card.",
+                "Enchantment — Aura",
+                "damage.dealt",
+            ),
+            (
+                "Whenever equipped creature deals combat damage to a player, "
+                "draw a card, then discard a card.",
+                "Artifact — Equipment",
+                "damage.dealt",
+            ),
+            (
+                "Whenever equipped creature dies, each opponent loses 1 life.",
+                "Artifact — Equipment",
+                "creature.dies",
+            ),
+            (
+                "At the beginning of the end step, return this creature to "
+                "its owner's hand.",
+                "Creature — Dragon",
+                "step.begin",
+            ),
+            (
+                "Whenever this creature becomes blocked by a creature, this "
+                "creature gets +1/+1 until end of turn.",
+                "Creature — Cat",
+                "creature.becomes_blocked",
+            ),
+            (
+                "Whenever an enchantment you control is put into a graveyard "
+                "from the battlefield, draw a card.",
+                "Creature — Warlock",
+                "permanent.graveyard",
+            ),
+            (
+                "Whenever another creature you control with power 2 or less "
+                "enters, this creature gains flying until end of turn.",
+                "Creature — Spirit",
+                "creature.enter",
+            ),
+            (
+                "Whenever you cycle another card, you gain 1 life.",
+                "Creature — Cleric",
+                "card.cycled",
+            ),
+            (
+                "Whenever this creature or another creature or artifact you "
+                "control dies, target opponent loses 1 life and you gain 1 "
+                "life.",
+                "Creature — Human Artificer",
+                "permanent.graveyard",
+            ),
+            (
+                "At the beginning of each combat, tap up to one target creature.",
+                "Creature — Spirit",
+                "step.begin",
+            ),
+            (
+                "Whenever another colorless creature you control enters, "
+                "target opponent loses 1 life.",
+                "Creature — Eldrazi Drone",
+                "creature.enter",
+            ),
+            (
+                "Whenever one or more creature cards leave your graveyard, "
+                "create a 2/2 red and white Spirit creature token.",
+                "Creature — Spirit",
+                "card.leave_graveyard",
+            ),
+        )
+        for text, type_line, event in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(event, node.event)
+                self.assertIn(
+                    event_capabilities[event],
+                    node.capability_dependencies,
+                )
+                if text.startswith(("When enchanted", "Whenever enchanted", "Whenever equipped")):
+                    self.assertIn(
+                        "attachment.reference.current_or_lki",
+                        node.capability_dependencies,
+                    )
+                self.assertIn(
+                    CURRENT_ABILITY_FRAGMENT_COVERAGE,
+                    node.runtime_coverage,
+                )
+                if event == "card.leave_graveyard":
+                    self.assertIn(
+                        "one_or_more_event_batch",
+                        node.runtime_coverage,
+                    )
+
     def test_public_zone_damage_and_cast_predicates_compile_exactly(self):
         cases = (
             (
@@ -2411,7 +2532,17 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         cases = (
             "Whenever an opponent discards a card, you may draw a card.",
             "Whenever you sacrifice a green creature, you may gain 2 life.",
-            "Whenever equipped creature attacks, you may draw a card.",
+            "Whenever equipped creature attacks alone, you may draw a card.",
+            "Whenever enchanted permanent dies, you may gain 2 life.",
+            "Whenever equipped creature deals damage to an opponent, you "
+            "may draw a card.",
+            "Whenever enchanted creature deals combat damage to a player, "
+            "you may draw a card.",
+            "Whenever one or more cards leave your graveyard, create a 2/2 "
+            "red and white Spirit creature token.",
+            "Whenever another creature you control with power X or less "
+            "enters, you may draw a card.",
+            "Whenever you cycle one or more cards, you may gain 1 life.",
             "Whenever one or more creatures you control attack, you may draw a card.",
             "Whenever a creature you control becomes the target of a spell, you "
             "may draw a card.",
@@ -2460,6 +2591,70 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         )
         self.assertFalse(node.exact)
         self.assertNotEqual("exact", ir.status)
+
+    def test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed(
+        self,
+    ):
+        cases = (
+            (
+                "attachment.reference.current_or_lki",
+                "Whenever equipped creature attacks, draw a card.",
+                "Artifact — Equipment",
+            ),
+            (
+                "trigger.event.normalized_damage",
+                "Whenever enchanted creature deals damage to an opponent, "
+                "you may draw a card.",
+                "Enchantment — Aura",
+            ),
+            (
+                "trigger.event.normalized_zone_change",
+                "Whenever one or more creature cards leave your graveyard, "
+                "create a 2/2 red and white Spirit creature token.",
+                "Creature — Spirit",
+            ),
+            (
+                "trigger.event.normalized_public_action",
+                "Whenever you cycle another card, you gain 1 life.",
+                "Creature — Cleric",
+            ),
+        )
+        for capability_id, text, type_line in cases:
+            with self.subTest(capability_id=capability_id):
+                registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+                dependency = next(
+                    row
+                    for row in registry["capabilities"]
+                    if row["id"] == capability_id
+                )
+                dependency["status"] = "blocked"
+                dependency["blockers"] = ["focused closure dependency"]
+                ir = compile_oracle_card(
+                    replace(
+                        self.db.lookup("Scheduled Counter Trigger Fixture"),
+                        name="Compiler Fixture",
+                        oracle_text=text,
+                        type_line=type_line,
+                        keywords=(),
+                        faces=(),
+                    ),
+                    capability_registry=CapabilityRegistry(registry),
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+        with patch(
+            "quorune.compiler.fixed_counter_trigger_nodes."
+            "fixed_public_event_binding_spec",
+            return_value=None,
+        ):
+            mutated = self.compile(
+                "Whenever equipped creature attacks, draw a card.",
+                type_line="Artifact — Equipment",
+            )
+        self.assertNotEqual("exact", mutated.status)
+        self.assertTrue(mutated.material_residuals)
 
     def test_source_combat_growth_triggers_compile_exactly_and_fail_closed(self):
         cases = (

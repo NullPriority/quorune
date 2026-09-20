@@ -518,6 +518,52 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         self.resolve_top(stale_engine)
         self.assertIsNone(stale_source.attached_to)
 
+    def test_entry_attachment_composes_with_destination_replacement(self):
+        session = self.session(7013023, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Destination Harness Fixture",
+            ref="destination-harness",
+            zone="hand",
+        )
+        target = self._battlefield_creature(
+            engine,
+            "A",
+            "Mishra, Eminent One",
+        )
+        victim = self.deck_card(engine, "B", "Sol Ring")
+        engine.move_card(victim.object_id, "hand", log=False)
+
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            controller="A",
+            reason="attachment and destination replacement witness",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        selected = session.act(
+            "pilot:A",
+            {"action_id": "choose", "targets": [target.ref]},
+        )
+        self.assertTrue(selected.ok, selected.summary)
+        self.resolve_top(engine)
+        self.assertEqual(target.object_id, source.attached_to)
+
+        engine.move_card(
+            victim.object_id,
+            "graveyard",
+            reason="destination replacement while attached",
+            semantic_events=True,
+        )
+
+        self.assertEqual("exile", victim.zone)
+        self.assertEqual(1, victim.counters.get("void"))
+        self.assertEqual(target.object_id, source.attached_to)
+        self.assertIn(source.object_id, target.attachments)
+
     def test_entry_attachment_and_turn_gated_characteristics_compose(self):
         session = self.session(7013021)
         engine = session.engine

@@ -3648,6 +3648,57 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-cast-cost-modifier-closure-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-normalized-event-binding-closure",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:attachment.reference.current_or_lki",
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_damage",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.event.normalized_zone_change",
+            "capability:trigger.placement.apnap",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+            "component:quorune.trigger_discovery.dispatch_semantic_event",
+            "component:quorune.zone_trigger_events.normalized_zone_trigger_events"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "current-or-last-known-attachment-relation",
+            "fixed-public-entry-or-departure-predicate",
+            "normalized-cycle-combat-or-step-occurrence",
+            "one-independently-exact-noncounter-effect",
+            "one-or-more-graveyard-departure-batch"
+          ],
+          "shared_dependencies": [
+            "attachment.reference.current_or_lki",
+            "trigger.effect.fixed_event",
+            "trigger.event.normalized_damage",
+            "trigger.event.normalized_public_action",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one bounded attachment-relative, public entry or departure, Cycling, combat, or beginning-of-step event predicate composed with one independently exact noncounter typed effect through the existing normalized occurrence, current-ability, APNAP, and resolution owners",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era trigger cohort while sharing current and last-known attachment identity, sealed public characteristics, prior controller and owner facts, one-or-more batching, current layer-6 ability applicability, target selection, projection, and replay owners.",
+          "explicit_exclusions": [
+            "aggregate attack or damage, Room, dice, target-event, and declaration-replacement events",
+            "ambiguous disjunction, duplicate-event, intervening-if, reflexive, delayed, and linked-event grammar",
+            "attachment creation, movement, legality, player attachment, and noncreature attached-object predicates",
+            "counter-placement bodies and source-tapped producers",
+            "dynamic or unsealed characteristic comparisons and bodies without independent capability closure"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-event-binding-closure-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3659,19 +3710,24 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v200-public-cast-cost-modifier-closure",
-      "compiler_version": "oracle-ir-v200",
-      "bundle_id": "bundle:public-cast-cost-modifier-closure",
-      "candidate_ids": ["compiler:public-cast-cost-modifier-closure"],
+      "transition_id": "oracle-ir-v201-public-normalized-event-binding-closure",
+      "compiler_version": "oracle-ir-v201",
+      "bundle_id": "bundle:public-normalized-event-binding-closure",
+      "candidate_ids": ["compiler:public-normalized-event-binding-closure"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "casting.cost.modifier.fixed_query",
-        "casting.cost.self_public_reduction"
+        "attachment.reference.current_or_lki",
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_damage",
+        "trigger.event.normalized_public_action",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-cast-cost-modifier-closure"
+      "measurement_id": "measurement:public-normalized-event-binding-closure"
     },
     "forecast_corrections": [
       {
@@ -4281,6 +4337,11 @@
         "candidate_id": "compiler:public-cast-cost-modifier-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-declaration selector has no implementation-eligible candidate while the raw continuous-layer leader remains heterogeneous and the dependency-ready counter queue still lacks measured broad gain. A bounded integrated compiler probe isolates one 50-card lower bound across fixed generic and colored vectors, public spell predicates and thresholds, cycle-safe battlefield and graveyard quantities, current source counters, party, modified, color and effective-name counts, and sealed discard, sacrifice, life, attack, spell, and Commander-cast facts. Every form reuses the current layer-6 component applicability query and authoritative offer/commit total-cost owner. Target-relative prices, power or toughness amounts, distinct card-type or mana-value sets, chosen or private facts, caps, floors, substitutions, minimum costs, direct total setters, unsupported payment methods, and independently incomplete siblings remain fail-closed; current identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:public-normalized-event-binding-closure",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-cost-modifier selector has no implementation-eligible carried candidate while its raw continuous-layer leader remains heterogeneous and individual named residual families remain below the normal complete-card floor. A bounded integrated event probe instead establishes a policy-floor lower bound across attachment-relative attack, damage, and death; fixed public entry and departure predicates; Cycling, block, and step occurrences; and one-or-more graveyard-departure batching. Every carrier composes one independently exact noncounter body through existing normalized producers, sealed current or last-known facts, current layer-6 ability applicability, APNAP placement, target selection, projection, and replay. Counter bodies, source-tapped producers, aggregate attack or damage, Room, dice, target-event, declaration-replacement, ambiguous disjunction, linked, dynamic, and independently incomplete forms remain fail-closed; current identities and measurements are generated from the frontier."
       }
     ]
   },

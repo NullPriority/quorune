@@ -11,6 +11,7 @@ from types import SimpleNamespace
 import unittest
 from unittest import mock
 
+from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from quorune.rules_corpus import (
     CORPUS_OPERATIONS,
     execute_rules_corpus_operation,
@@ -88,6 +89,7 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_targeted_return_closure_measurement,
     _is_fixed_owner_zone_move_candidate,
     _partner_with_measurement,
+    _public_event_binding_closure_measurement,
     _fixed_token_production_measurement,
     _typed_quoted_ability_grant_measurement,
     _matches_probe,
@@ -4346,6 +4348,135 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
+
+    def test_public_event_binding_closure_probe_and_measurement_are_closed(self):
+        probe_id = "public-event-binding-closure-existing-owner-v1"
+        equipment = SimpleNamespace(
+            name="Equipment Fixture",
+            type_line="Artifact — Equipment",
+            faces=(),
+        )
+        ability = {"face_id": "front", "source_line": 1}
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "Whenever equipped creature attacks, draw a card.",
+                card_record=equipment,
+                ability=ability,
+            )
+        )
+        creature = SimpleNamespace(
+            name="Creature Fixture",
+            type_line="Creature — Dragon",
+            faces=(),
+        )
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "At the beginning of the end step, return this creature "
+                "to its owner's hand.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                probe_id,
+                "Whenever equipped creature attacks alone, draw a card.",
+                card_record=equipment,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                probe_id,
+                "Whenever equipped creature attacks, put a +1/+1 counter "
+                "on it.",
+                card_record=equipment,
+                ability=ability,
+            )
+        )
+        self.assertTrue(
+            _matches_probe(
+                "fixed-spell-cast-characteristic-trigger-existing-owner-v2",
+                "Whenever you cast a white spell, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+
+        record = SimpleNamespace(
+            oracle_id="public-event-closure",
+            name="Public event closure",
+            oracle_text="Whenever equipped creature attacks, draw a card.",
+            type_line="Artifact — Equipment",
+            faces=(),
+        )
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "face_id": "front",
+                            "source_line": 1,
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                }
+            ]
+        }
+        node = SimpleNamespace(
+            exact=True,
+            span=SimpleNamespace(line=1),
+            template_id="fixed-typed-effect-public-attack-trigger-v1",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            capability_dependencies=(
+                "attachment.reference.current_or_lki",
+                "trigger.effect.fixed_event",
+            ),
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(node,)),),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "_matches_public_event_binding_closure_probe",
+                return_value=True,
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _public_event_binding_closure_measurement(
+                frontier=frontier,
+                bundle_id="bundle:public-normalized-event-binding-closure",
+                probe_id=probe_id,
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
 
     def test_current_transition_measurement_is_generated_not_policy_counted(self):
         work_selection = self.catalog["work_selection"]
