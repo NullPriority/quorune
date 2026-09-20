@@ -1150,11 +1150,19 @@ query, and independently exact noncounter effect bodies. The one-or-more form
 deduplicates only inside the canonical simultaneous trigger batch. Block
 declarations emit one blocks occurrence per assignment but only one
 becomes-blocked occurrence per attacker. Counter bodies, source-tapped
-producers, broader attachment relations, aggregate attack or damage, Room,
-dice, chosen, history-relative, other targeted-event, declaration-replacement,
-ambiguous disjunction, linked-event, and dynamic-comparison grammar remains
-residual. Discard and sacrifice bindings outside their typed cause owners also
-remain residual. See
+producers, broader attachment relations, Room, dice, chosen,
+history-relative, other targeted-event, declaration-replacement, ambiguous
+disjunction, linked-event, and dynamic-comparison grammar remains residual.
+The same owner now accepts a second bounded public-action closure: controller
+attack declarations with zero, two, or three minimum attackers; typed
+discard and sacrifice subjects; fixed token, land, creature, artifact, and
+graveyard entry or departure predicates; controller Cycling; source damage to
+a player or a planeswalker or battle; opponent noncombat damage; and exact
+one-or-more attack, combat-damage, token-entry, and graveyard-departure
+batches. These predicates consume only the existing attack, damage, Cycling,
+and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
+sacrifice, tap-state, source-token damage, chosen, legendary, modified, and
+counter-bearing forms remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
 
 `compiler/fixed_source_combat_growth.py` owns the narrower source-self combat

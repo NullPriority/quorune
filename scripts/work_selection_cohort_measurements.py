@@ -59,6 +59,7 @@ from quorune.compiler.reanimation_templates import (
 )
 from quorune.compiler.fixed_counter_trigger_nodes import (
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
+    PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
     PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
     FixedSpellCastCharacteristicQuery,
     fixed_counter_trigger_binding,
@@ -155,6 +156,9 @@ _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER = (
 )
 _PROBE_PUBLIC_EVENT_BINDING_CLOSURE = (
     "public-event-binding-closure-existing-owner-v1"
+)
+_PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE = (
+    "public-action-event-binding-closure-existing-owner-v1"
 )
 _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER = (
     "ability-word-public-event-trigger-existing-owner-v1"
@@ -479,6 +483,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_QUERY_SELF_CHARACTERISTIC,
     _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER,
     _PROBE_PUBLIC_EVENT_BINDING_CLOSURE,
+    _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE,
     _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
     _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     _PROBE_ATTACHED_CHARACTERISTIC_CLOSURE,
@@ -949,13 +954,14 @@ def _typed_event_effect_node_is_exact(
     return bool(node is not None and node.exact and not residuals)
 
 
-def _matches_public_event_binding_closure_probe(
+def _matches_event_binding_variant_probe(
     source: str,
     *,
     card_record: Any,
     ability: Mapping[str, Any],
+    variants: frozenset[str],
 ) -> bool:
-    """Match only the bounded post-v200 normalized-event grammar."""
+    """Match one source-controlled normalized-event grammar cohort."""
 
     material = _without_parenthetical_reminder(source)
     card_name, _source_is_permanent, _attachment_relation = (
@@ -964,7 +970,7 @@ def _matches_public_event_binding_closure_probe(
     binding = fixed_counter_trigger_binding(material, card_name=card_name)
     if (
         binding is None
-        or binding.variant not in PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+        or binding.variant not in variants
     ):
         return False
     return _typed_event_effect_node_is_exact(
@@ -972,6 +978,38 @@ def _matches_public_event_binding_closure_probe(
         material=material,
         card_record=card_record,
         ability=ability,
+    )
+
+
+def _matches_public_event_binding_closure_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    """Match only the bounded post-v200 normalized-event grammar."""
+
+    return _matches_event_binding_variant_probe(
+        source,
+        card_record=card_record,
+        ability=ability,
+        variants=PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+    )
+
+
+def _matches_public_action_event_binding_closure_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    """Match only the bounded post-v202 public-action event grammar."""
+
+    return _matches_event_binding_variant_probe(
+        source,
+        card_record=card_record,
+        ability=ability,
+        variants=PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
     )
 
 
@@ -1336,6 +1374,17 @@ def _matches_probe(
                 "context"
             )
         return _matches_public_event_binding_closure_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
+        )
+    if probe_id == _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Public-action event-binding closure measurement requires "
+                "card context"
+            )
+        return _matches_public_action_event_binding_closure_probe(
             source,
             card_record=card_record,
             ability=ability,
@@ -2530,6 +2579,11 @@ def _public_event_binding_closure_measurement(
     unsupported_sibling_cards = 0
     unsupported_grammar_cards: set[str] = set()
     newly_applicable_high_risk_pairs: set[tuple[str, str]] = set()
+    matcher = (
+        _matches_public_action_event_binding_closure_probe
+        if probe_id == _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE
+        else _matches_public_event_binding_closure_probe
+    )
     for card in frontier.get("cards", []):
         oracle_id = str(card.get("oracle_id") or "")
         record = cards_by_oracle_id.get(oracle_id)
@@ -2541,7 +2595,7 @@ def _public_event_binding_closure_measurement(
             ability
             for ability in card.get("abilities", ())
             if ability.get("status") != "exact"
-            and _matches_public_event_binding_closure_probe(
+            and matcher(
                 _source_line(record, ability),
                 card_record=record,
                 ability=ability,
@@ -4687,7 +4741,10 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
-    if probe_id == _PROBE_PUBLIC_EVENT_BINDING_CLOSURE:
+    if probe_id in {
+        _PROBE_PUBLIC_EVENT_BINDING_CLOSURE,
+        _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE,
+    }:
         return _public_event_binding_closure_measurement(
             frontier=frontier,
             bundle_id=bundle_id,

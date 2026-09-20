@@ -4705,6 +4705,39 @@ class RulesSchedulerTests(unittest.TestCase):
                 ability=ability,
             )
         )
+        action_probe = "public-action-event-binding-closure-existing-owner-v1"
+        self.assertFalse(
+            _matches_probe(
+                probe_id,
+                "Whenever you attack with two or more creatures, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+        self.assertTrue(
+            _matches_probe(
+                action_probe,
+                "Whenever you attack with two or more creatures, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                action_probe,
+                "Whenever equipped creature attacks, draw a card.",
+                card_record=equipment,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                action_probe,
+                "Whenever this creature becomes tapped, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
 
         record = SimpleNamespace(
             oracle_id="public-event-closure",

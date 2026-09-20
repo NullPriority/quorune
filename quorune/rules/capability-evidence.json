@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "4dc39e04a53e1797c116ae31e2fc95d71a020f73adf7b96c44d3c98e35154c1c",
-  "declaration_source_fingerprint": "b0d2b17a7f37680fcdb0ea87c591815877bf8f9281ecbd11409de524f793d3c1",
+  "registry_fingerprint": "3b8df1f3038da2f4f881ae346a70f8757a49958e80e10f06663fcea39589f1e6",
+  "declaration_source_fingerprint": "bb537f99995f1abb352d89461c7bc29f977395048f1bac5cc2bf9287f9357ff5",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -56767,12 +56767,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56788,12 +56792,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56809,12 +56817,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56826,16 +56838,70 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_normalized_batch_predicates_share_damage_zone_and_token_owners",
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Deduplicate exact combat-damage, token-entry, and graveyard-departure subscriptions only within their canonical simultaneous trigger batches."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose typed sacrifice and discard causes with sealed previous-controller, subtype, and card-type facts before resolving their exact bodies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56851,12 +56917,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56872,12 +56942,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56893,12 +56967,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56914,12 +56992,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56935,12 +57017,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56956,12 +57042,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56973,16 +57063,45 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Place two controllers' player-sacrifice triggers in ordinary four-player APNAP order."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -56998,12 +57117,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57019,12 +57142,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57040,12 +57167,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57061,12 +57192,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57082,12 +57217,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57103,12 +57242,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57124,12 +57267,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57145,12 +57292,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57166,12 +57317,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57187,12 +57342,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57208,12 +57367,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57224,17 +57387,46 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
-      "evidence_class": "positive",
-      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_four_strict_ability_word_bindings_compile_through_shared_owner",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_event_dependencies_and_parser_mutant_fail_closed",
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Withhold exact CardProgram authority when a normalized event dependency or the shared public-action parser is unavailable."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_four_strict_ability_word_bindings_compile_through_shared_owner",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57250,12 +57442,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57271,12 +57467,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57292,12 +57492,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57309,16 +57513,45 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_static_spell_cast_characteristic_bindings_compile_exactly",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_event_contract_matrix_compiles_exactly",
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile the bounded public attack, damage, discard, sacrifice, Cycling, entry, and departure matrix through one typed event-effect owner."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_static_spell_cast_characteristic_bindings_compile_exactly",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57334,12 +57567,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57355,12 +57592,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57372,16 +57613,70 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the aggregate attack trigger to all four seats without exposing observer or attacker physical and logical object identities."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project public discard trigger facts without exposing the discarded card's physical or logical object identity."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57397,12 +57692,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57418,12 +57717,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57439,12 +57742,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57460,12 +57767,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57477,16 +57788,45 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay one controller attack batch from the pre-declaration checkpoint to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57502,12 +57842,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57523,12 +57867,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57544,12 +57892,16 @@
       "official_rule_ids": [
         "115.1",
         "120.4",
+        "508.3c",
+        "508.3d",
         "603.2",
         "603.3",
         "603.3b",
         "603.6",
         "608.2b",
-        "608.2c"
+        "608.2c",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -57683,6 +58035,23 @@
         "commander_review"
       ],
       "applicability_note": "Share the player-result trigger envelope and replay-stable counter continuation used by normalized draw consumers."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Consume two committed combat-damage results as one exact one-or-more trigger occurrence before token creation."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
@@ -57978,6 +58347,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58004,6 +58375,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58030,6 +58403,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58056,6 +58431,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58082,6 +58459,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58108,6 +58487,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58134,6 +58515,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58160,6 +58543,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58181,11 +58566,41 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_event_dependencies_and_parser_mutant_fail_closed",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.3",
+        "701.8a",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retain a material residual when the normalized public-action capability or the typed predicate parser is absent."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_near_misses_remain_material",
       "official_rule_ids": [
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58212,6 +58627,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58238,6 +58655,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58264,6 +58683,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58285,11 +58706,41 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_event_contract_matrix_compiles_exactly",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.3",
+        "701.8a",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile controller attack batches and controller Cycling against the existing immutable public-action occurrence schema."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_action_trigger_bindings_compile_exactly",
       "official_rule_ids": [
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58316,6 +58767,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58342,6 +58795,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58363,11 +58818,41 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.3",
+        "701.8a",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only public attack-declaration and trigger references to each seat, not internal object identities."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cycling_trigger_uses_public_hand_snapshot",
       "official_rule_ids": [
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58394,6 +58879,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58415,11 +58902,41 @@
     {
       "capability_id": "trigger.event.normalized_public_action",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_attack_batch_trigger_is_once_per_declaration_and_replays",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.3",
+        "701.8a",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the sealed attacker count and once-per-declaration aggregate trigger exactly."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_public_action_occurrences_replay_exactly",
       "official_rule_ids": [
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58446,6 +58963,8 @@
         "116.2b",
         "508.1",
         "508.1m",
+        "508.3c",
+        "508.3d",
         "509.1",
         "509.1h",
         "602.2",
@@ -58938,6 +59457,28 @@
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Match typed sacrifice and discard causes against immutable subtype, type, owner, and previous-controller facts."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
       "official_rule_ids": [
         "603.2",
@@ -58946,7 +59487,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -58966,7 +59509,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -58986,7 +59531,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59006,7 +59553,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59014,6 +59563,28 @@
         "commander_review"
       ],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use one four-player sacrifice occurrence to place active- and nonactive-controller triggers in APNAP order."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -59026,7 +59597,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59046,7 +59619,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59066,7 +59641,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59086,7 +59663,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59106,7 +59685,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59114,6 +59695,28 @@
         "commander_review"
       ],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_land_entry_predicate_uses_committed_tapped_state",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Match a self-entry trigger only from the committed untapped entry fact and reject the tapped contrast."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -59126,7 +59729,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59146,7 +59751,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59166,7 +59773,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59174,6 +59783,28 @@
         "commander_review"
       ],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose committed public graveyard and trigger facts while stripping the discarded card's internal incarnation identities."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -59186,7 +59817,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59206,7 +59839,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -59226,7 +59861,9 @@
         "603.6c",
         "603.10",
         "603.10a",
-        "603.10e"
+        "603.10e",
+        "701.9",
+        "701.21"
       ],
       "supported_profiles": [
         "traditional",
@@ -64748,5 +65385,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "fa45297d2cc31c2acd8b8782eb99ab4e224f28159925f8d4c26a5570e3a9e1fa"
+  "fingerprint": "c684458f08c7f901f205393b78d5a2510603516cf342097de64c21b044c0de9f"
 }

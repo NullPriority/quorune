@@ -115,8 +115,12 @@ typed predicates over sealed public facts. Current equipped relations,
 last-known attached-object death, prior controller, owner-relative graveyard
 departure, fixed entry characteristics, controller-another Cycling, and exact
 one-or-more batching remain data in the CardProgram; the runtime never reparses
-their Oracle wording. Unsupported attachment, aggregate, ambiguous, linked, or
-dynamic event forms remain residual.
+their Oracle wording. Controller attack thresholds, typed discard and
+sacrifice subjects, fixed public zone predicates, and bounded aggregate attack,
+damage, token-entry, and graveyard-departure subscriptions use the same event
+and condition fields. Unsupported attachment, tap-state, first-time,
+once-per-turn, ambiguous, linked, chosen, or dynamic event forms remain
+residual.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

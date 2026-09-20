@@ -11,6 +11,9 @@ from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
+from .fixed_public_action_event_bindings import (
+    fixed_public_action_event_binding_spec,
+)
 from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
     fixed_source_combat_growth_effect_template,
@@ -107,6 +110,64 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
         "battalion_source_and_two_others_attack",
     }
 )
+PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
+    {
+        "controller_attack_batch",
+        "controller_attack_batch_at_least_2",
+        "controller_attack_batch_at_least_3",
+        "controller_cycles",
+        "one_or_more_controlled_tokens_enter",
+        "controlled_token_leaves",
+        "another_controlled_creature_leaves",
+        "another_controlled_creature_or_artifact_graveyard",
+        "nontoken_creature_enters_controller_graveyard",
+        "controlled_nontoken_artifact_graveyard",
+        "another_controlled_nontoken_dragon_enters",
+        "land_enters_during_controller_turn",
+        "source_land_enters_untapped",
+        "one_or_more_controlled_creatures_combat_damage_player",
+        "one_or_more_controlled_artifact_creatures_combat_damage_player",
+        "source_combat_damage_player_or_planeswalker",
+        "source_combat_damage_player_or_battle",
+        "opponent_dealt_noncombat_damage",
+        *{
+            f"{actor}_sacrifices_{subject}"
+            for actor in ("controller", "opponent", "player")
+            for subject in (
+                "clue",
+                "food",
+                "blood_token",
+                "token",
+                "land",
+                "creature",
+                "artifact",
+                "enchantment",
+                "permanent",
+                "artifact_or_creature",
+            )
+        },
+        *{
+            f"source_{subject}_sacrificed"
+            for subject in ("aura", "artifact", "creature")
+        },
+        *{
+            f"{actor}_discards_{subject}"
+            for actor in ("controller", "opponent", "player")
+            for subject in ("card", "land", "creature", "nonland")
+        },
+        *{
+            "one_or_more_controller_"
+            f"{subject}_leave_graveyard{turn}"
+            for subject in (
+                "cards",
+                "creature_cards",
+                "artifact_cards",
+                "artifact_or_creature_cards",
+            )
+            for turn in ("", "_during_turn")
+        },
+    }
+)
 PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         "another_controlled_colorless_creature_enters",
@@ -125,9 +186,28 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "each combat",
     }
 )
-_NONCOUNTER_PUBLIC_EVENT_VARIANTS = PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
+    {
+        *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+        *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+    }
+)
+_NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
-    {"one_or_more_controller_creature_cards_leave_graveyard"}
+    {
+        "controller_attack_batch",
+        "controller_attack_batch_at_least_2",
+        "controller_attack_batch_at_least_3",
+        "one_or_more_controlled_tokens_enter",
+        "one_or_more_controlled_creatures_combat_damage_player",
+        "one_or_more_controlled_artifact_creatures_combat_damage_player",
+        *{
+            variant
+            for variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS
+            if variant.startswith("one_or_more_controller_")
+            and "leave_graveyard" in variant
+        },
+    }
 )
 _SCHEDULED_TRIGGER = re.compile(
     r"^At the beginning of "
@@ -221,6 +301,10 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_CYCLED = "card.cycled"
     SOURCE_CYCLED = "card.cycled.self"
     CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
+    CARD_DISCARDED = "card.discarded"
+    PERMANENT_LEAVE = "permanent.leave"
+    PERMANENT_SACRIFICED = "permanent.sacrificed"
+    SOURCE_SACRIFICED = "permanent.sacrificed.self"
     PERMANENT_TURNED_FACE_UP = "permanent.turned_face_up"
     OPPONENT_CARD_DRAW = "card.drawn"
     SPELL_CAST_OR_COPY = "spell.cast_or_copy"
@@ -866,7 +950,13 @@ def _public_trigger_binding(
     *,
     card_name: str | None,
 ) -> FixedCounterTriggerBinding | None:
-    spec = fixed_public_event_binding_spec(material_line, card_name=card_name)
+    spec = fixed_public_event_binding_spec(
+        material_line,
+        card_name=card_name,
+    ) or fixed_public_action_event_binding_spec(
+        material_line,
+        card_name=card_name,
+    )
     if spec is None:
         return None
     return FixedCounterTriggerBinding(
@@ -974,6 +1064,7 @@ def _event_runtime_coverage(
     if current_ability or binding.variant in {
         *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+        *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
         "class_level_changed",
     }:
         values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)
@@ -1289,6 +1380,7 @@ __all__ = [
     "FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC",
     "OPTIONAL_COUNTER_PLACEMENT_OPERATION",
     "OPTIONAL_FIXED_COUNTER_EVENT_TRIGGER_MECHANIC",
+    "PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS",
     "FixedCounterTriggerBinding",
     "FixedCounterTriggerEvent",
     "FixedCounterZoneController",

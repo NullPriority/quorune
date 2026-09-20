@@ -1340,6 +1340,7 @@
         "quorune/block_transition_engine_adapter.py",
         "quorune/block_transitions.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/fixed_public_action_event_bindings.py",
         "quorune/compiler/fixed_public_event_trigger_bindings.py",
         "quorune/compiler/spell_cast_predicates.py",
         "quorune/engine.py",

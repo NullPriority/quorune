@@ -293,7 +293,12 @@ color, and power facts. The exact one-or-more creature-card graveyard departure
 form deduplicates within one simultaneous trigger batch. All of these programs
 use the same current layer-6 ability-component query and ordinary APNAP
 placement; unsupported aggregate, linked, ambiguous, or dynamic forms remain
-untrusted before mutation.
+untrusted before mutation. Bounded controller-attack, discard, sacrifice,
+combat-damage, token-entry, and owner-relative graveyard-departure predicates
+also consume those same occurrences. Their one-or-more variants deduplicate
+only inside the producer's canonical simultaneous batch, and public damage or
+zone predicates read sealed committed or last-known facts rather than live
+Oracle text.
 
 `turn_history.py` retains current-turn events plus one bounded per-player
 spell-count summary for the immediately previous turn. `day_night.py` consumes
