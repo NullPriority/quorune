@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 153,
+  "registry_version": 154,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7577,6 +7577,33 @@
       "dependency_fail_closed_rationale": "The trigger node requires both its dedicated previous-turn capability and the exact source-transform shape; blocked history, APNAP, or transform closure leaves the Oracle line material.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The focused mutation changes the condition or removes its transform snapshot and proves exact compiler admission fails.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "compiler.oracle.nonexecuting_reminder_line",
+      "version": 1,
+      "official_rules": ["207.2", "207.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Classify one balanced standalone parenthetical Oracle source line as nonexecuting reminder text after every typed reminder owner has had the opportunity to claim it.",
+        "inputs": ["one complete source line", "balanced parenthetical groups", "no non-whitespace material outside those groups", "the existing ordered typed reminder compilers"],
+        "outputs": ["no executable Oracle node", "no material residual", "unchanged source spans and semantic programs for every executable sibling line", "deterministic CardProgram serialization"],
+        "exclusions": ["mixed reminder and executable text on one line", "unbalanced delimiters", "parenthetical text embedded in an executable ability", "intrinsic basic-land mana reminders and structured Class or Saga lifecycle reminders claimed by their typed owners", "runtime interpretation of reminder prose"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.oracle_source_text.is_standalone_parenthetical_reminder", "quorune.oracle_ir._compile_face"],
+      "positive_tests": ["test_standalone_parenthetical_reminders_are_not_abilities"],
+      "negative_tests": ["test_mixed_or_unbalanced_parenthetical_text_still_fails_closed"],
+      "interaction_tests": ["test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder", "test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children", "test_ordinary_saga_chapter_programs_compile_exact"],
+      "multiplayer_tests": [],
+      "privacy_tests": [],
+      "replay_tests": ["test_standalone_reminder_program_round_trips_without_a_node"],
+      "required_evidence": ["positive", "negative", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The classification has no runtime dependency; typed reminder owners run before the nonexecuting fallback and mixed or malformed source remains fail-closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused mutation disables the classifier and proves the reminder returns as a material residual rather than silently retaining exact admission.",
       "blockers": [],
       "status": "trusted"
     },

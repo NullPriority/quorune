@@ -3699,6 +3699,42 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-event-binding-closure-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:standalone-reminder-line-closure",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:compiler.oracle.nonexecuting_reminder_line",
+            "component:quorune.compiler.oracle_source_text.is_standalone_parenthetical_reminder",
+            "component:quorune.oracle_ir._compile_face"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "balanced-parenthetical-groups",
+            "no-material-outside-groups",
+            "typed-reminder-owner-first-refusal"
+          ],
+          "shared_dependencies": [
+            "compiler.oracle.nonexecuting_reminder_line"
+          ],
+          "shared_grammar": "one complete balanced source line containing only parenthetical reminder prose, omitted after intrinsic mana and structured lifecycle reminder owners have had first refusal",
+          "estimated_implementation_hours": 2,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Removes a policy-floor cohort of false material residuals while promoting every carrier whose independently executable sibling abilities already have capability closure.",
+          "explicit_exclusions": [
+            "independently unsupported sibling abilities",
+            "intrinsic basic-land mana and structured Class or Saga reminders before their typed owners run",
+            "mixed reminder and executable text on one source line",
+            "runtime interpretation of reminder prose",
+            "unbalanced delimiters and material characters outside parenthetical groups"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "standalone-reminder-line-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -3710,24 +3746,18 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v201-public-normalized-event-binding-closure",
-      "compiler_version": "oracle-ir-v201",
-      "bundle_id": "bundle:public-normalized-event-binding-closure",
-      "candidate_ids": ["compiler:public-normalized-event-binding-closure"],
+      "transition_id": "oracle-ir-v202-standalone-reminder-line-closure",
+      "compiler_version": "oracle-ir-v202",
+      "bundle_id": "bundle:standalone-reminder-line-closure",
+      "candidate_ids": ["compiler:standalone-reminder-line-closure"],
       "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "attachment.reference.current_or_lki",
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_damage",
-        "trigger.event.normalized_public_action",
-        "trigger.event.normalized_zone_change",
-        "trigger.placement.apnap"
+        "compiler.oracle.nonexecuting_reminder_line"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-normalized-event-binding-closure"
+      "measurement_id": "measurement:standalone-reminder-line-closure"
     },
     "forecast_corrections": [
       {
@@ -4342,6 +4372,11 @@
         "candidate_id": "compiler:public-normalized-event-binding-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-cost-modifier selector has no implementation-eligible carried candidate while its raw continuous-layer leader remains heterogeneous and individual named residual families remain below the normal complete-card floor. A bounded integrated event probe instead establishes a policy-floor lower bound across attachment-relative attack, damage, and death; fixed public entry and departure predicates; Cycling, block, and step occurrences; and one-or-more graveyard-departure batching. Every carrier composes one independently exact noncounter body through existing normalized producers, sealed current or last-known facts, current layer-6 ability applicability, APNAP placement, target selection, projection, and replay. Counter bodies, source-tapped producers, aggregate attack or damage, Room, dice, target-event, declaration-replacement, ambiguous disjunction, linked, dynamic, and independently incomplete forms remain fail-closed; current identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:standalone-reminder-line-closure",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-event selector has no implementation-eligible carried candidate, the raw continuous-layer leader remains heterogeneous, and bounded probes retire typed spell additional costs, token production, combat-keyword unions, characteristic-query extensions, untap policies, and top-library access below the normal complete-card floor or outside a safe existing owner. The remaining source-line probe isolates 140 false material residuals on 112 Commander cards, with 23 conservative complete-card transitions. CR 207.2d makes balanced standalone parenthetical lines nonexecuting reminder text; the compiler omits them only after intrinsic mana and structured lifecycle reminder owners have first refusal, while mixed, unbalanced, runtime, and independently unsupported forms remain fail-closed."
       }
     ]
   },

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "381ce85338686c63817fc784311ec5680d2d3da739be3e70914e8f1b64f118de",
-  "declaration_source_fingerprint": "380aba01580e3949b1d1d5011d8c84fc3cedb71d47980869735c3bca112f4897",
+  "registry_fingerprint": "6e5343c44d7f07251d014e3c5b468aeb96ac770449897f526b0695451010b540",
+  "declaration_source_fingerprint": "22fe30f9bb62b546cc36105c90915f4b044c36bc663040ace79fd9027275d17f",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -19166,6 +19166,111 @@
         "commander_review"
       ],
       "applicability_note": "Replay the distinct-opponent amount and source identity exactly."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_class_lifecycle.ClassLifecycleCompilerTests.test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Let the structured Class owner consume its lifecycle reminder before the generic nonexecuting reminder fallback."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_intrinsic_basic_land_mana.IntrinsicBasicLandManaTests.test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Give the intrinsic basic-land-type mana owner first refusal over its exact parenthetical source line."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_saga_counter_progression.SagaCounterProgressionTests.test_ordinary_saga_chapter_programs_compile_exact",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the ordinary Saga lifecycle owner while excluding its nonexecuting reminder from independent ability compilation."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_oracle_ir.OracleIRTests.test_standalone_reminder_classifier_mutation_is_killed",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Disable the reminder classifier and prove that exact admission fails because the source line becomes a material residual again."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "negative",
+      "test_id": "tests.test_oracle_ir.OracleIRTests.test_mixed_or_unbalanced_parenthetical_text_still_fails_closed",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep mixed executable text and unbalanced delimiter forms material instead of discarding them as reminder prose."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "positive",
+      "test_id": "tests.test_oracle_ir.OracleIRTests.test_standalone_parenthetical_reminders_are_not_abilities",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omit one balanced standalone reminder line while retaining the independently exact executable sibling ability."
+    },
+    {
+      "capability_id": "compiler.oracle.nonexecuting_reminder_line",
+      "evidence_class": "replay",
+      "test_id": "tests.test_oracle_ir.OracleIRTests.test_standalone_reminder_program_round_trips_without_a_node",
+      "official_rule_ids": [
+        "207.2",
+        "207.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Round-trip the trusted generated CardProgram and prove the reminder contributes no executable node or residual."
     },
     {
       "capability_id": "continuous.ability.fixed_query_grant",
@@ -64583,5 +64688,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "5bae4c6d2f62d432271ded23cb082d6e173528a417a9f4871aa68a3b63e8a0fa"
+  "fingerprint": "4b26d1ea44d1ec6f35ec953a3934de22804f0d55312d12f54be8fb00c3fdf151"
 }

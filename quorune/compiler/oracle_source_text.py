@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import Iterable
 
+from ..class_levels import CLASS_REMINDER_TEXT
 from .ir_model import SourceSpan
 
 
@@ -45,6 +46,33 @@ def without_parenthetical_reminder(text: str) -> str:
     return "".join(result).strip()
 
 
+def is_standalone_parenthetical_reminder(text: str) -> bool:
+    """Return whether one complete source line contains reminder text only.
+
+    Parenthetical text can be nested, and a source line may contain more than
+    one parenthetical group.  Reject unbalanced delimiters and any material
+    character outside a group so malformed or mixed Oracle text still reaches
+    the fail-closed compiler boundary.
+    """
+
+    stripped = text.strip()
+    if not stripped or stripped[0] != "(" or stripped[-1] != ")":
+        return False
+    depth = 0
+    saw_group = False
+    for character in stripped:
+        if character == "(":
+            depth += 1
+            saw_group = True
+        elif character == ")":
+            if depth == 0:
+                return False
+            depth -= 1
+        elif depth == 0 and not character.isspace():
+            return False
+    return saw_group and depth == 0
+
+
 def material_source_lines(
     text: str,
     *,
@@ -55,6 +83,13 @@ def material_source_lines(
     for line, span in source_lines(text):
         material_line = without_parenthetical_reminder(line)
         if (
+            not material_line
+            and is_standalone_parenthetical_reminder(line)
+            and line != CLASS_REMINDER_TEXT
+            and not line.casefold().startswith("({t}: add ")
+        ):
+            continue
+        if (
             ordinary_saga
             and not material_line
             and _ORDINARY_SAGA_RULES_REMINDER.fullmatch(line) is not None
@@ -64,6 +99,7 @@ def material_source_lines(
 
 
 __all__ = [
+    "is_standalone_parenthetical_reminder",
     "material_source_lines",
     "source_lines",
     "without_parenthetical_reminder",

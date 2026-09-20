@@ -4349,6 +4349,24 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_standalone_reminder_line_probe_is_closed(self):
+        probe_id = "standalone-reminder-line-existing-owner-v1"
+        for source in (
+            "({U/P} can be paid with either {U} or 2 life.)",
+            "(Outer reminder (with a nested aside).)",
+            "(First reminder.) (Second reminder.)",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "(Reminder text.) Destroy target creature.",
+            "(Unbalanced reminder text.",
+            "Reminder text.)",
+            "",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
     def test_public_event_binding_closure_probe_and_measurement_are_closed(self):
         probe_id = "public-event-binding-closure-existing-owner-v1"
         equipment = SimpleNamespace(

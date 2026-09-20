@@ -112,6 +112,9 @@ from quorune.compiler.query_characteristic_templates import (
     query_self_characteristics_handler,
 )
 from quorune.compiler.ir_model import SourceSpan
+from quorune.compiler.oracle_source_text import (
+    is_standalone_parenthetical_reminder,
+)
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.oracle_ir import (
     _face_type_context,
@@ -316,6 +319,9 @@ _PROBE_DYNAMIC_SELF_ENTRY_COUNTER = (
 _PROBE_FIXED_PUBLIC_DECLARATION_CONDITION = (
     "fixed-public-declaration-condition-existing-owner-v1"
 )
+_PROBE_STANDALONE_REMINDER_LINES = (
+    "standalone-reminder-line-existing-owner-v1"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -497,6 +503,7 @@ _PROBE_IDS = {
     _PROBE_TOKEN,
     _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE,
     _PROBE_TRIGGER_ABILITY_WORD_CARRIER,
+    _PROBE_STANDALONE_REMINDER_LINES,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -1029,6 +1036,8 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_STANDALONE_REMINDER_LINES:
+        return is_standalone_parenthetical_reminder(source)
     if probe_id == _PROBE_FIXED_ATTACHMENT_ACTIONS:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(

@@ -9,6 +9,7 @@ import shutil
 import sqlite3
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from common import DB_PATH, keep_all
@@ -19,6 +20,10 @@ from quorune import (
 )
 from quorune.cli import main
 from quorune.carddb import CardRecord
+from quorune.card_programs.adapters import (
+    compile_best_available_card_program,
+)
+from quorune.card_programs.model import CardProgram
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.damage import (
     commit_prepared_damage_batch,
@@ -2287,6 +2292,87 @@ class OracleIRTests(unittest.TestCase):
             )
             self.assertTrue(ir.material_residuals, text)
             self.assertNotEqual("exact", ir.status)
+
+    def test_standalone_parenthetical_reminders_are_not_abilities(self):
+        base = self.db.lookup("Flying Men")
+        record = replace(
+            base,
+            oracle_text=(
+                "({U/P} can be paid with either {U} or 2 life.)\n"
+                "Flying"
+            ),
+            keywords=("Flying",),
+        )
+
+        ir = compile_oracle_card(
+            record,
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+        )
+
+        self.assertEqual("exact", ir.status)
+        self.assertFalse(ir.material_residuals)
+        self.assertEqual(1, len(ir.faces[0].nodes))
+        self.assertEqual(
+            "printed-keyword-list-v1",
+            ir.faces[0].nodes[0].template_id,
+        )
+
+    def test_mixed_or_unbalanced_parenthetical_text_still_fails_closed(self):
+        base = self.db.lookup("Flying Men")
+        for text in (
+            "(Reminder text.) Destroy target creature.",
+            "(Unbalanced reminder text.",
+            "Reminder text.)",
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(replace(base, oracle_text=text))
+                self.assertTrue(ir.material_residuals)
+                self.assertNotEqual("exact", ir.status)
+
+    def test_standalone_reminder_classifier_mutation_is_killed(self):
+        base = self.db.lookup("Flying Men")
+        record = replace(
+            base,
+            oracle_text="({U/P} can be paid with either {U} or 2 life.)\nFlying",
+            keywords=("Flying",),
+        )
+
+        with mock.patch(
+            "quorune.compiler.oracle_source_text."
+            "is_standalone_parenthetical_reminder",
+            return_value=False,
+        ):
+            mutated = compile_oracle_card(
+                record,
+                capability_registry=load_default_capability_registry(),
+                capability_profile="commander_review",
+            )
+
+        self.assertTrue(mutated.material_residuals)
+        self.assertNotEqual("exact", mutated.status)
+
+    def test_standalone_reminder_program_round_trips_without_a_node(self):
+        base = self.db.lookup("Flying Men")
+        record = replace(
+            base,
+            oracle_text="({U/P} can be paid with either {U} or 2 life.)\nFlying",
+            keywords=("Flying",),
+        )
+        program = compile_best_available_card_program(
+            self.db,
+            record,
+            semantic_registry=SemanticRegistry(),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+        )
+
+        self.assertTrue(program.trust_closure["trusted"])
+        self.assertEqual(1, len(program.abilities))
+        self.assertEqual(
+            program.to_dict(),
+            CardProgram.from_dict(program.to_dict()).to_dict(),
+        )
 
     def test_semantic_hash_is_stable_and_source_sensitive(self):
         record = self.db.lookup("Divination")
