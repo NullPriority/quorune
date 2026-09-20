@@ -51,9 +51,11 @@ from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
     _content_public_receipt,
     _content_entry,
+    _durable_main_tip,
     _latest_semantic_receipt,
     _non_harvest_content_entry,
     _refresh_content_entry,
+    _replace_unlanded_content_entry,
     _receipt,
     _receipt_content_fingerprint,
     _require_landed_harvest_head,
@@ -70,6 +72,7 @@ from scripts.harvest_outcome_history import (
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.update_work_selection_cohort_measurements import (
     _completed_transition_measurement_is_current,
+    _durable_main_frontier,
     _preserved_transition_is_current,
     _source_checkpoint_frontier,
     _transition_measurements,
@@ -89,9 +92,12 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_targeted_return_closure_measurement,
     _is_fixed_owner_zone_move_candidate,
     _partner_with_measurement,
+    _public_cast_cost_modifier_closure_measurement,
     _public_event_binding_closure_measurement,
     _fixed_token_production_measurement,
     _typed_quoted_ability_grant_measurement,
+    _trigger_ability_word_carrier_measurement,
+    build_work_selection_cohort_measurements,
     _matches_probe,
     _matches_query_self_characteristic_probe,
     _matches_typed_public_state_characteristic_query,
@@ -1230,6 +1236,24 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             build_harvest_outcome_history(ROOT, malformed)
 
+    def test_cached_legacy_receipts_do_not_depend_on_old_graph_ancestry(self):
+        work_selection = self.catalog["work_selection"]
+        with mock.patch(
+            "scripts.harvest_outcome_history._require_landed_harvest_head",
+            side_effect=AssertionError("cached receipt must avoid ancestry"),
+        ):
+            derived = build_harvest_outcome_history(
+                ROOT,
+                work_selection["harvest_provenance"],
+                work_selection.get("semantic_transition_declaration"),
+                work_selection.get("forecast_corrections"),
+            )
+
+        self.assertEqual(
+            self.work_inputs["harvest_outcome_history"],
+            derived,
+        )
+
     def test_forecast_correction_can_preserve_the_complete_card_bound(self):
         entry = {
             "transition_id": "oracle-ir-v999-secondary-metric-correction",
@@ -1277,6 +1301,28 @@ class RulesSchedulerTests(unittest.TestCase):
                 [same_probe],
             )
 
+    def test_durable_main_prefers_explicit_main_over_remote_head(self):
+        main = "a" * 40
+        misleading = "b" * 40
+        calls = []
+
+        def resolve(arguments, **_kwargs):
+            calls.append(arguments)
+            reference = arguments[-1]
+            value = main if "origin/main" in reference else misleading
+            return SimpleNamespace(returncode=0, stdout=(value + "\n").encode())
+
+        with mock.patch(
+            "scripts.harvest_outcome_history.subprocess.run",
+            side_effect=resolve,
+        ):
+            self.assertEqual(main, _durable_main_tip(ROOT))
+
+        self.assertIn("refs/remotes/origin/main", calls[0][-1])
+        self.assertFalse(
+            any("origin/HEAD" in call[-1] for call in calls)
+        )
+
     def test_harvest_provenance_rejects_squash_discardable_feature_heads(self):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary)
@@ -1310,7 +1356,7 @@ class RulesSchedulerTests(unittest.TestCase):
             _require_landed_harvest_head(repository, landed)
             with self.assertRaisesRegex(
                 HarvestOutcomeHistoryError,
-                "must be landed on the durable main line",
+                "must be landed on durable main",
             ):
                 _require_landed_harvest_head(repository, feature)
 
@@ -1773,6 +1819,63 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         self.assertNotEqual(
             entry["entry_fingerprint"], refreshed["entry_fingerprint"]
+        )
+
+    def test_corrected_unlanded_transition_replaces_superseded_receipt(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        latest = provenance[-1]
+        base = _receipt(ROOT, latest["base_commit"])
+        head = _receipt(ROOT, latest["head_commit"])
+        declaration = {
+            "transition_id": "fixture-corrected-unlanded-transition",
+            "compiler_version": head["compiler_version"],
+            "bundle_id": "bundle:fixture-corrected-unlanded-transition",
+            "candidate_ids": [
+                "compiler:fixture-corrected-unlanded-transition"
+            ],
+            "family_ids": [
+                "effect_clause:fixture-corrected-unlanded-transition"
+            ],
+            "capability_ids": [
+                "effect.fixture_corrected_unlanded_transition"
+            ],
+            "expected_complete_card_gain": 1,
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+        }
+        superseded = _content_entry(declaration, base=base, head=head)
+        corrected_declaration = deepcopy(declaration)
+        corrected_declaration["family_ids"] = [
+            "effect_clause:fixture-corrected-unlanded-transition-v2"
+        ]
+        corrected_head = deepcopy(head)
+        corrected_head["blobs"][
+            "coverage/card-program-coverage-commander.json"
+        ]["semantic_sha256"] = "f" * 64
+        corrected_head["card_program_material_residuals"] -= 1
+
+        corrected = _replace_unlanded_content_entry(
+            superseded,
+            declaration=corrected_declaration,
+            base=base,
+            head=corrected_head,
+        )
+
+        self.assertIsNotNone(corrected)
+        self.assertEqual(corrected, _validate_content_entry(corrected))
+        self.assertEqual(
+            superseded["base_receipt"], corrected["base_receipt"]
+        )
+        self.assertNotEqual(
+            superseded["head_receipt"]["content_fingerprint"],
+            corrected["head_receipt"]["content_fingerprint"],
+        )
+        self.assertEqual(
+            corrected_declaration["transition_id"],
+            corrected["transition_id"],
+        )
+        self.assertEqual(
+            corrected_declaration["family_ids"], corrected["family_ids"]
         )
 
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
@@ -3253,6 +3356,16 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         landed = deepcopy(receipt)
         landed["frontier_fingerprint"] = "source-frontier"
+        self.assertFalse(
+            _preserved_transition_is_current(
+                landed,
+                frontier_fingerprint="generated-frontier",
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="generated-cohort",
+                completed_receipt_fingerprints=frozenset({"receipt"}),
+            )
+        )
+        landed["measurement"]["cohort_fingerprint"] = "generated-cohort"
         self.assertTrue(
             _preserved_transition_is_current(
                 landed,
@@ -3286,23 +3399,29 @@ class RulesSchedulerTests(unittest.TestCase):
         receipt = {
             "receipt_fingerprint": "receipt-v2",
             "oracle_source_sha256": "oracle",
-            "measurement": {"probe_id": "probe-v2"},
+            "measurement": {
+                "cohort_fingerprint": "cohort-v2",
+                "probe_id": "probe-v2",
+            },
         }
         self.assertTrue(
             _completed_transition_measurement_is_current(
                 receipt,
                 oracle_source_sha256="oracle",
+                cohort_fingerprint="cohort-v2",
                 probe_id="probe-v2",
                 completed_receipt_fingerprints=frozenset({"receipt-v2"}),
             )
         )
         for field, value in (
             ("oracle_source_sha256", "changed-oracle"),
+            ("cohort_fingerprint", "cohort-v3"),
             ("probe_id", "probe-v3"),
             ("completed_receipt_fingerprints", frozenset()),
         ):
             arguments = {
                 "oracle_source_sha256": "oracle",
+                "cohort_fingerprint": "cohort-v2",
                 "probe_id": "probe-v2",
                 "completed_receipt_fingerprints": frozenset({"receipt-v2"}),
             }
@@ -3315,33 +3434,23 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
-    def test_completed_corrected_measurement_skips_base_blob_lookup(self):
-        coverage = self.catalog["work_selection"]["coverage_family"]
-        transition = self.catalog["work_selection"][
-            "semantic_transition_declaration"
-        ]
-        with mock.patch(
-            "scripts.update_work_selection_cohort_measurements."
-            "_source_checkpoint_frontier",
-            side_effect=AssertionError("base frontier should not be read"),
-        ):
-            rows = _transition_measurements(
-                records={},
-                coverage=coverage,
-                bundles=coverage["candidate_bundles"],
+    def test_completed_corrected_measurement_rejects_stale_cohort(self):
+        receipt = {
+            "receipt_fingerprint": "receipt-v2",
+            "oracle_source_sha256": "oracle",
+            "measurement": {
+                "cohort_fingerprint": "old-cohort",
+                "probe_id": "probe-v2",
+            },
+        }
+        self.assertFalse(
+            _completed_transition_measurement_is_current(
+                receipt,
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="current-cohort",
+                probe_id="probe-v2",
+                completed_receipt_fingerprints=frozenset({"receipt-v2"}),
             )
-        if transition.get("measurement_id") is None:
-            self.assertEqual([], rows)
-            return
-        active_bundle = next(
-            bundle
-            for bundle in coverage["candidate_bundles"]
-            if bundle["bundle_id"] == transition["bundle_id"]
-        )
-        self.assertEqual(1, len(rows))
-        self.assertEqual(
-            active_bundle["measurement_probe_id"],
-            rows[0]["measurement"]["probe_id"],
         )
 
     def test_transition_probe_recovers_immutable_source_frontier(self):
@@ -3367,6 +3476,71 @@ class RulesSchedulerTests(unittest.TestCase):
             expected,
             _source_checkpoint_frontier(transition_id)["fingerprint"],
         )
+
+    def test_transition_probe_recovers_exact_durable_main_frontier(self):
+        raw = subprocess.run(
+            [
+                "git",
+                "show",
+                "origin/main:coverage/card-unlock-frontier.json.gz",
+            ],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+        ).stdout
+        expected = json.loads(gzip.decompress(raw))["fingerprint"]
+
+        self.assertEqual(
+            expected,
+            _durable_main_frontier(
+                expected_fingerprint=expected,
+            )["fingerprint"],
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "immutable durable-main frontier",
+        ):
+            _durable_main_frontier(expected_fingerprint="f" * 64)
+
+        base_sha = subprocess.run(
+            ["git", "rev-parse", "origin/main"],
+            cwd=ROOT,
+            check=True,
+            text=True,
+            encoding="utf-8",
+            stdout=subprocess.PIPE,
+        ).stdout.strip()
+        with tempfile.TemporaryDirectory() as temporary:
+            event_path = Path(temporary) / "event.json"
+            event_path.write_text(
+                json.dumps({"pull_request": {"base": {"sha": base_sha}}}),
+                encoding="utf-8",
+            )
+
+            def shallow_run(arguments, **_kwargs):
+                if arguments[1] == "fetch":
+                    return SimpleNamespace(returncode=0, stdout=b"", stderr=b"")
+                if arguments[1] == "show" and arguments[2].startswith(base_sha):
+                    return SimpleNamespace(returncode=0, stdout=raw, stderr=b"")
+                return SimpleNamespace(returncode=1, stdout=b"", stderr=b"")
+
+            with (
+                mock.patch(
+                    "scripts.update_work_selection_cohort_measurements."
+                    "subprocess.run",
+                    side_effect=shallow_run,
+                ),
+                mock.patch.dict(
+                    "scripts.update_work_selection_cohort_measurements."
+                    "os.environ",
+                    {"GITHUB_EVENT_PATH": str(event_path)},
+                    clear=True,
+                ),
+            ):
+                recovered = _durable_main_frontier(
+                    expected_fingerprint=expected,
+                )
+        self.assertEqual(expected, recovered["fingerprint"])
 
     def test_materialized_forecast_correction_is_idempotent(self):
         correction = {
@@ -4349,6 +4523,133 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertFalse(_matches_probe(probe_id, source))
 
+    def test_standalone_reminder_line_probe_is_closed(self):
+        probe_id = "standalone-reminder-line-existing-owner-v1"
+        for source in (
+            "({U/P} can be paid with either {U} or 2 life.)",
+            "({C} represents colorless mana.)",
+            "({2/U} can be paid with any two mana or with {U}. This card's "
+            "mana value is 6.)",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        transform = SimpleNamespace(
+            name="Fixture Front // Fixture Back",
+            type_line="Artifact // Land",
+            layout="transform",
+            faces=(),
+        )
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "(Transforms from Fixture Front.)",
+                card_record=transform,
+                ability={"face_id": "front", "source_line": 1},
+            )
+        )
+        dryad = SimpleNamespace(
+            name="Dryad Fixture",
+            type_line="Land Creature — Forest Dryad",
+            layout="normal",
+            faces=(),
+        )
+        self.assertTrue(
+            _matches_probe(
+                probe_id,
+                "(This land isn't a spell, it's affected by summoning "
+                'sickness, and it has "{T}: Add {G}.")',
+                card_record=dryad,
+                ability={"face_id": "front", "source_line": 1},
+            )
+        )
+        for source in (
+            "(Reminder text.) Destroy target creature.",
+            "(Unbalanced reminder text.",
+            "Reminder text.)",
+            "({W/U} can be paid with either {W} or {B}.)",
+            "(Transforms from Fixture Front.)",
+            "(Melds with Fixture Half.)",
+            "(You may cast either half. That door unlocks on the battlefield. "
+            "As a sorcery, you may pay the mana cost of a locked door to "
+            "unlock it.)",
+            "",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
+        family = "effect_clause:unparsed-spell-effect-has-no-exact-generic-template"
+        record = SimpleNamespace(
+            oracle_id="reminder-fixture",
+            name="Reminder Fixture",
+            oracle_text="({C} represents colorless mana.)",
+            type_line="Instant",
+            faces=(),
+        )
+        measured = build_work_selection_cohort_measurements(
+            frontier={
+                "cards": [
+                    {
+                        "oracle_id": record.oracle_id,
+                        "minimum_known_blocker_set": [family],
+                        "abilities": [
+                            {
+                                "ability_id": "front:n1",
+                                "face_id": "front",
+                                "source_line": 1,
+                                "status": "unresolved",
+                                "blockers": {
+                                    "canonical_family_ids": [family]
+                                },
+                            }
+                        ],
+                    }
+                ]
+            },
+            bundle_policies=[
+                {
+                    "bundle_id": "bundle:standalone-reminder-line-closure",
+                    "member_family_ids": [family],
+                    "measurement_probe_id": probe_id,
+                }
+            ],
+            cards_by_oracle_id={record.oracle_id: record},
+            coverage={
+                "minimum_complete_card_gain": 1,
+                "minimum_exact_ability_gain": 1,
+                "minimum_material_residual_reduction": 1,
+            },
+            cohort_fingerprints={
+                "bundle:standalone-reminder-line-closure": "0" * 64
+            },
+        )["measurements"][0]
+        self.assertEqual(0, measured["exact_ability_gain"])
+        self.assertEqual(1, measured["material_residual_reduction"])
+
+    def test_standalone_probe_preserves_existing_measurement_builders(self):
+        common = {
+            "frontier": {"cards": []},
+            "cards_by_oracle_id": {},
+            "coverage": {
+                "minimum_complete_card_gain": 1,
+                "minimum_exact_ability_gain": 1,
+                "minimum_material_residual_reduction": 1,
+            },
+            "cohort_fingerprint": "0" * 64,
+        }
+        cast_cost = _public_cast_cost_modifier_closure_measurement(
+            bundle_id="bundle:public-cast-cost-modifier-closure",
+            probe_id="public-cast-cost-modifier-closure-existing-owner-v1",
+            **common,
+        )
+        trigger_carrier = _trigger_ability_word_carrier_measurement(
+            bundle_id="bundle:trigger-ability-word-carriers",
+            probe_id="trigger-ability-word-carrier-existing-owner-v1",
+            member_ids={"event_binding:normalized-event-binding"},
+            **common,
+        )
+        self.assertEqual(0, cast_cost["exact_ability_gain"])
+        self.assertEqual(0, trigger_carrier["exact_ability_gain"])
+
     def test_public_event_binding_closure_probe_and_measurement_are_closed(self):
         probe_id = "public-event-binding-closure-existing-owner-v1"
         equipment = SimpleNamespace(
@@ -4558,7 +4859,14 @@ class RulesSchedulerTests(unittest.TestCase):
                 coverage=coverage,
             )
         )
-        self.assertGreater(measurement["exact_ability_gain"], 0)
+        self.assertTrue(
+            measurement["complete_card_gain"]
+            >= coverage["minimum_complete_card_gain"]
+            or measurement["exact_ability_gain"]
+            >= coverage["minimum_exact_ability_gain"]
+            or measurement["material_residual_reduction"]
+            >= coverage["minimum_material_residual_reduction"]
+        )
 
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)

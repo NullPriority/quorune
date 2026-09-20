@@ -112,6 +112,9 @@ from quorune.compiler.query_characteristic_templates import (
     query_self_characteristics_handler,
 )
 from quorune.compiler.ir_model import SourceSpan
+from quorune.compiler.oracle_source_text import (
+    is_nonexecuting_standalone_reminder,
+)
 from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.oracle_ir import (
     _face_type_context,
@@ -316,6 +319,9 @@ _PROBE_DYNAMIC_SELF_ENTRY_COUNTER = (
 _PROBE_FIXED_PUBLIC_DECLARATION_CONDITION = (
     "fixed-public-declaration-condition-existing-owner-v1"
 )
+_PROBE_STANDALONE_REMINDER_LINES = (
+    "standalone-reminder-line-existing-owner-v1"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -497,6 +503,7 @@ _PROBE_IDS = {
     _PROBE_TOKEN,
     _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE,
     _PROBE_TRIGGER_ABILITY_WORD_CARRIER,
+    _PROBE_STANDALONE_REMINDER_LINES,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -1029,6 +1036,22 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_STANDALONE_REMINDER_LINES:
+        transform = False
+        dryad_arbor = False
+        if card_record is not None and ability is not None:
+            face_type_line = _source_face_type_line(card_record, ability)
+            transform = str(getattr(card_record, "layout", "")) == "transform"
+            normalized_type = face_type_line.replace("—", " ").casefold()
+            dryad_arbor = (
+                "land creature" in normalized_type
+                and "forest dryad" in normalized_type
+            )
+        return is_nonexecuting_standalone_reminder(
+            source,
+            transform=transform,
+            dryad_arbor=dryad_arbor,
+        )
     if probe_id == _PROBE_FIXED_ATTACHMENT_ACTIONS:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(
@@ -4944,6 +4967,11 @@ def _measurement(
         count == 0 and oracle_id not in cards_with_unmatched_member_ability
         for oracle_id, count in matched_cards.items()
     )
+    exact_ability_gain = (
+        0
+        if probe_id == _PROBE_STANDALONE_REMINDER_LINES
+        else matched_abilities
+    )
     reaches_floor = (
         complete_cards >= int(coverage["minimum_complete_card_gain"])
         or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
@@ -4963,7 +4991,7 @@ def _measurement(
         "two_additional_blocker_cards": sum(
             count == 2 for count in matched_cards.values()
         ),
-        "exact_ability_gain": matched_abilities,
+        "exact_ability_gain": exact_ability_gain,
         "material_residual_reduction": matched_abilities,
         "decision": (
             "bounded_executable" if reaches_floor else "retired_below_harvest_floor"

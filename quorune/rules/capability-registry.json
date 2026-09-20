@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 153,
+  "registry_version": 154,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7577,6 +7577,33 @@
       "dependency_fail_closed_rationale": "The trigger node requires both its dedicated previous-turn capability and the exact source-transform shape; blocked history, APNAP, or transform closure leaves the Oracle line material.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The focused mutation changes the condition or removes its transform snapshot and proves exact compiler admission fails.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "compiler.oracle.nonexecuting_reminder_line",
+      "version": 1,
+      "official_rules": ["207.2", "207.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Classify one closed standalone mana-symbol, transform-back-face, or Dryad Arbor explanation as nonexecuting text when its authority is already carried by structured card data and typed owners.",
+        "inputs": ["one complete balanced parenthetical source line", "one exact hybrid, Phyrexian, two-brid, colorless, or snow mana-symbol explanation; one Transforms from line on a transform layout; or the exact Dryad Arbor reminder on its printed type line", "authoritative mana cost, paired-face layout, or land-creature type structure"],
+        "outputs": ["no executable Oracle node", "no material residual", "unchanged source spans and semantic programs for every executable sibling line", "deterministic CardProgram serialization"],
+        "exclusions": ["mixed reminder and executable text on one line", "unbalanced delimiters or mismatched mana symbols", "parenthetical text embedded in an executable ability", "Room, Siege, Saga lore, meld, legendary-spell legality, and other structural reminders without a complete typed card-form owner", "intrinsic basic-land mana and Class reminders claimed by their typed owners", "runtime interpretation of reminder prose"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.oracle_source_text.is_standalone_parenthetical_reminder", "quorune.oracle_ir._compile_face"],
+      "positive_tests": ["test_standalone_parenthetical_reminders_are_not_abilities", "test_structured_transform_and_dryad_reminders_use_card_form_authority"],
+      "negative_tests": ["test_mixed_or_unbalanced_parenthetical_text_still_fails_closed", "test_structural_standalone_reminders_remain_fail_closed"],
+      "interaction_tests": ["test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder", "test_class_structure_compiles_three_lifecycle_nodes_and_scoped_children", "test_ordinary_saga_chapter_programs_compile_exact", "test_closed_event_bindings_compile_exact_counter_effect_bodies", "test_transforming_query_characteristics_keep_replacement_siblings_fail_closed"],
+      "multiplayer_tests": [],
+      "privacy_tests": [],
+      "replay_tests": ["test_standalone_reminder_program_round_trips_without_a_node"],
+      "required_evidence": ["positive", "negative", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The classification has no runtime dependency; only exact mana-symbol, transform-layout, or Dryad type-derived reminders are omitted, while mixed, malformed, and unsupported structural reminders remain fail-closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused mutation disables the classifier and proves the reminder returns as a material residual rather than silently retaining exact admission.",
       "blockers": [],
       "status": "trusted"
     },

@@ -56,6 +56,15 @@ recognizes closed grammar and retains exact spans. Lowering produces versioned
 typed constructs. Trust validation checks the complete materially reachable
 program; it never treats a syntactic match as implemented behavior.
 
+Closed standalone mana-symbol explanations, exact transform-back-face labels,
+and Dryad Arbor's exact type-derived reminder are nonexecuting and do not
+become abilities or material residuals; their authority comes from structured
+mana costs, paired-face layouts, and printed card types. Intrinsic basic-land
+mana and Class reminders retain their typed owners. Room, Siege, transforming-
+Saga, meld, and other structural reminders remain source-spanned residuals
+until their complete card-form owners exist. Mixed or unbalanced text also
+fails closed, and the runtime never interprets reminder prose.
+
 ## Status meanings
 
 - `exact`: every material span is represented by validated typed constructs for

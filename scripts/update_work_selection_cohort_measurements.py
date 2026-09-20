@@ -3,7 +3,9 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -91,6 +93,69 @@ def _decode_frontier(raw: bytes, *, label: str) -> dict:
     return value
 
 
+def _durable_main_frontier(*, expected_fingerprint: str) -> dict:
+    """Recover the current durable-main frontier in shallow CI clones."""
+
+    for reference in ("origin/main", "main"):
+        completed = subprocess.run(
+            ["git", "show", f"{reference}:coverage/card-unlock-frontier.json.gz"],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if completed.returncode:
+            continue
+        value = _decode_frontier(
+            completed.stdout,
+            label="Durable-main transition base",
+        )
+        if value.get("fingerprint") == expected_fingerprint:
+            return value
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    try:
+        event = (
+            json.loads(Path(event_path).read_text(encoding="utf-8"))
+            if event_path
+            else {}
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        event = {}
+    pull_request = event.get("pull_request")
+    base = pull_request.get("base") if isinstance(pull_request, dict) else None
+    base_sha = base.get("sha") if isinstance(base, dict) else None
+    if isinstance(base_sha, str) and re.fullmatch(r"[0-9a-f]{40}", base_sha):
+        fetched = subprocess.run(
+            ["git", "fetch", "--no-tags", "--depth=1", "origin", base_sha],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+        )
+        if fetched.returncode == 0:
+            completed = subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{base_sha}:coverage/card-unlock-frontier.json.gz",
+                ],
+                cwd=ROOT,
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            if completed.returncode == 0:
+                value = _decode_frontier(
+                    completed.stdout,
+                    label="Pull-request durable-main transition base",
+                )
+                if value.get("fingerprint") == expected_fingerprint:
+                    return value
+    raise ValueError(
+        "Cannot recover the transition's immutable durable-main frontier"
+    )
+
+
 def _source_checkpoint_frontier(transition_id: str) -> dict:
     try:
         history = json.loads(HARVEST_HISTORY.read_text(encoding="utf-8"))
@@ -128,8 +193,8 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
             stderr=subprocess.PIPE,
         )
         if completed.returncode:
-            raise ValueError(
-                "Cannot read the landed transition's base-frontier blob"
+            return _durable_main_frontier(
+                expected_fingerprint=expected,
             )
         value = _decode_frontier(
             completed.stdout,
@@ -194,14 +259,13 @@ def _preserved_transition_is_current(
     ):
         return False
     return bool(
-        (
+        measurement.get("cohort_fingerprint") == cohort_fingerprint
+        and (
             preserved.get("frontier_fingerprint")
             == frontier_fingerprint
-            and measurement.get("cohort_fingerprint")
-            == cohort_fingerprint
+            or preserved.get("receipt_fingerprint")
+            in completed_receipt_fingerprints
         )
-        or preserved.get("receipt_fingerprint")
-        in completed_receipt_fingerprints
     )
 
 
@@ -209,6 +273,7 @@ def _completed_transition_measurement_is_current(
     preserved: dict | None,
     *,
     oracle_source_sha256: str,
+    cohort_fingerprint: str,
     probe_id: str,
     completed_receipt_fingerprints: frozenset[str],
 ) -> bool:
@@ -220,6 +285,7 @@ def _completed_transition_measurement_is_current(
     return bool(
         isinstance(measurement, dict)
         and preserved.get("oracle_source_sha256") == oracle_source_sha256
+        and measurement.get("cohort_fingerprint") == cohort_fingerprint
         and measurement.get("probe_id") == probe_id
         and preserved.get("receipt_fingerprint")
         in completed_receipt_fingerprints
@@ -334,24 +400,7 @@ def _transition_measurements(
     completed_receipts = _completed_transition_measurement_receipts(
         transition_id
     )
-    current_frontier = _decode_frontier(
-        FRONTIER.read_bytes(),
-        label="Current",
-    )
-    current_snapshot = current_frontier.get("card_data_snapshot")
-    current_oracle_source = (
-        str(current_snapshot.get("oracle_source_sha256") or "")
-        if isinstance(current_snapshot, dict)
-        else ""
-    )
     probe_id = str(bundle.get("measurement_probe_id") or "")
-    if _completed_transition_measurement_is_current(
-        preserved,
-        oracle_source_sha256=current_oracle_source,
-        probe_id=probe_id,
-        completed_receipt_fingerprints=completed_receipts,
-    ):
-        return [preserved]
     frontier = _source_checkpoint_frontier(transition_id)
     fingerprints = {
         bundle_id: bundle_measurement_fingerprint(frontier, bundle)
@@ -362,6 +411,14 @@ def _transition_measurements(
         if isinstance(snapshot, dict)
         else ""
     )
+    if _completed_transition_measurement_is_current(
+        preserved,
+        oracle_source_sha256=oracle_source_sha256,
+        cohort_fingerprint=fingerprints[bundle_id],
+        probe_id=probe_id,
+        completed_receipt_fingerprints=completed_receipts,
+    ):
+        return [preserved]
     if _preserved_transition_is_current(
         preserved,
         frontier_fingerprint=str(frontier.get("fingerprint") or ""),
