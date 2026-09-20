@@ -14,6 +14,9 @@ from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
 from .fixed_public_action_event_bindings import (
     fixed_public_action_event_binding_spec,
 )
+from .fixed_public_multi_event_bindings import (
+    fixed_public_multi_event_binding_spec,
+)
 from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
     fixed_source_combat_growth_effect_template,
@@ -71,6 +74,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-public-block-trigger-v1",
         "fixed-counter-public-cycle-trigger-v1",
         "fixed-counter-public-face-up-trigger-v1",
+        "fixed-counter-public-multi-event-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
         "fixed-counter-entry-return-public-zone-trigger-v1",
         "fixed-counter-heroic-spell-cast-trigger-v1",
@@ -168,6 +172,21 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         },
     }
 )
+MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
+    {
+        "source_enters_or_attacks",
+        "source_enters_or_dies",
+        "source_attacks_or_blocks",
+        "source_enters_or_leaves_the_battlefield",
+        "source_enters_or_is_put_into_a_graveyard_from_the_battlefield",
+        "source_enters_or_is_turned_face_up",
+        "source_enters_or_deals_combat_damage_to_a_player",
+        "source_enters_or_becomes_monstrous",
+        "source_artifact_enters_and_is_sacrificed",
+        "enchanted_creature_attacks_or_blocks",
+        "source_attacks_or_blocks_with_controlled_dinosaur",
+    }
+)
 PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         "another_controlled_colorless_creature_enters",
@@ -190,6 +209,7 @@ _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
         *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+        *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
     }
 )
 _NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
@@ -956,6 +976,9 @@ def _public_trigger_binding(
     ) or fixed_public_action_event_binding_spec(
         material_line,
         card_name=card_name,
+    ) or fixed_public_multi_event_binding_spec(
+        material_line,
+        card_name=card_name,
     )
     if spec is None:
         return None
@@ -1065,11 +1088,14 @@ def _event_runtime_coverage(
         *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
         *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+        *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
         "class_level_changed",
     }:
         values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)
     if binding.variant in _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS:
         values.append("one_or_more_event_batch")
+    if binding.variant in MULTI_EVENT_BINDING_CLOSURE_VARIANTS:
+        values.append("fixed_multi_event_subscription")
     return tuple(values)
 
 
@@ -1380,6 +1406,7 @@ __all__ = [
     "FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC",
     "OPTIONAL_COUNTER_PLACEMENT_OPERATION",
     "OPTIONAL_FIXED_COUNTER_EVENT_TRIGGER_MECHANIC",
+    "MULTI_EVENT_BINDING_CLOSURE_VARIANTS",
     "PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS",
     "FixedCounterTriggerBinding",
     "FixedCounterTriggerEvent",

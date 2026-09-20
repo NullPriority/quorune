@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping
 
 from .creature_power_damage_model import CREATURE_POWER_DAMAGE_OPERATION
+from .rules.event_subscriptions import FixedEventSubscriptionSet
 from .semantic_runtime import (
     is_structural_activated_ability_catalog_program,
     validate_runtime_handler_descriptors,
@@ -196,6 +197,21 @@ def _is_supported_effect_operation(operation: str) -> bool:
     )
 
 
+def _validate_program_event_subscriptions(
+    event: str,
+    condition: Mapping[str, Any] | None,
+) -> None:
+    subscriptions = FixedEventSubscriptionSet.from_condition(condition)
+    if (
+        subscriptions is not None
+        and event != subscriptions.subscriptions[0].event
+    ):
+        raise ValueError(
+            "A multi-event program's primary event must match its first "
+            "subscription"
+        )
+
+
 @dataclass(slots=True)
 class SemanticProgram:
     key: str
@@ -238,6 +254,10 @@ class SemanticProgram:
         ):
             raise ValueError("Capability dependencies must be unique")
         validate_runtime_handler_descriptors(self.handlers)
+        _validate_program_event_subscriptions(
+            self.event,
+            self.event_condition,
+        )
         for handler in self.handlers:
             if handler.get("event") != self.event:
                 raise ValueError(

@@ -31,6 +31,12 @@ from quorune.damage_modifier_state import (
     PreventionMode,
 )
 from quorune.effect_runtime import dispatch_effect
+from quorune.rules.event_subscriptions import (
+    EventSubscriptionError,
+    FixedEventSubscription,
+    FixedEventSubscriptionSet,
+    fixed_event_subscription_condition,
+)
 from quorune.compiler.fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_MECHANIC,
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
@@ -2581,6 +2587,195 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "Whenever you attack with two or more creatures, draw a card.",
                 type_line="Creature — Advisor",
             )
+        self.assertNotEqual("exact", mutated.status)
+        self.assertTrue(mutated.material_residuals)
+
+    def test_fixed_multi_event_trigger_contract_matrix(self):
+        cases = (
+            (
+                "Whenever this creature enters or attacks, draw a card.",
+                "Creature — Scout",
+                ("permanent.enter", "creature.attacks"),
+            ),
+            (
+                "When this creature enters or dies, create a Treasure token.",
+                "Creature — Citizen",
+                ("permanent.enter", "creature.dies"),
+            ),
+            (
+                "Whenever this creature attacks or blocks, scry 1.",
+                "Creature — Soldier",
+                ("creature.attacks", "creature.blocks"),
+            ),
+            (
+                "When this artifact enters or leaves the battlefield, draw a card.",
+                "Artifact",
+                ("permanent.enter", "permanent.leave"),
+            ),
+            (
+                "When this artifact enters or is put into a graveyard from the "
+                "battlefield, draw a card.",
+                "Artifact",
+                ("permanent.enter", "permanent.graveyard"),
+            ),
+            (
+                "When this creature enters or is turned face up, create a 1/1 "
+                "colorless Thopter artifact creature token with flying.",
+                "Creature — Artificer",
+                ("permanent.enter", "permanent.turned_face_up"),
+            ),
+            (
+                "Whenever this creature enters or deals combat damage to a "
+                "player, draw a card.",
+                "Creature — Rogue",
+                ("permanent.enter", "damage.dealt"),
+            ),
+            (
+                "When this artifact enters and when you sacrifice it, draw a card.",
+                "Artifact",
+                ("permanent.enter", "permanent.sacrificed"),
+            ),
+            (
+                "Whenever Compiler Fixture enters or attacks, you gain 1 life.",
+                "Creature — Knight",
+                ("permanent.enter", "creature.attacks"),
+            ),
+            (
+                "When this creature enters or becomes monstrous, draw a card.",
+                "Creature — Kraken",
+                ("permanent.enter", "permanent.becomes_monstrous"),
+            ),
+            (
+                "Whenever enchanted creature attacks or blocks, you gain 1 life.",
+                "Enchantment — Aura",
+                ("creature.attacks", "creature.blocks"),
+            ),
+            (
+                "Whenever this creature attacks or blocks while you control a "
+                "Dinosaur, draw a card.",
+                "Creature — Human",
+                ("creature.attacks", "creature.blocks"),
+            ),
+        )
+        for text, type_line, expected_events in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(
+                    text,
+                    card_name="Compiler Fixture",
+                )
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                subscriptions = FixedEventSubscriptionSet.from_condition(
+                    binding.event_condition
+                )
+                self.assertIsNotNone(subscriptions)
+                assert subscriptions is not None
+                self.assertEqual(
+                    expected_events,
+                    tuple(
+                        subscription.event
+                        for subscription in subscriptions.subscriptions
+                    ),
+                )
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(expected_events[0], node.event)
+                self.assertIn(
+                    "trigger.subscription.fixed_multi_event",
+                    node.capability_dependencies,
+                )
+                self.assertIn(
+                    CURRENT_ABILITY_FRAGMENT_COVERAGE,
+                    node.runtime_coverage,
+                )
+                self.assertIn(
+                    "fixed_multi_event_subscription",
+                    node.runtime_coverage,
+                )
+
+    def test_fixed_multi_event_trigger_near_misses_remain_material(self):
+        cases = (
+            "Whenever your commander enters or attacks, draw a card.",
+            "When you cycle this card and when this creature dies, draw a card.",
+            "Whenever an enchantment you control enters and whenever you fully "
+            "unlock a Room, draw a card.",
+            "When this creature enters or the creature it haunts dies, draw a card.",
+            "Whenever another creature you control enters or dies, draw a card.",
+            "Whenever this creature enters or becomes renowned, draw a card.",
+            "Whenever this creature enters, attacks, or blocks, draw a card.",
+            "Whenever a creature you control of the chosen type enters or "
+            "attacks, draw a card.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature — Fixture")
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_fixed_multi_event_subscription_model_rejects_malformed(self):
+        condition = fixed_event_subscription_condition(
+            (
+                FixedEventSubscription("permanent.enter", None),
+                FixedEventSubscription("creature.attacks", None),
+            )
+        )
+        self.assertEqual(
+            ("permanent.enter", "creature.attacks"),
+            tuple(
+                subscription.event
+                for subscription in (
+                    FixedEventSubscriptionSet.from_condition(condition)
+                    or self.fail("subscription set missing")
+                ).subscriptions
+            ),
+        )
+        with self.assertRaisesRegex(EventSubscriptionError, "at least two"):
+            fixed_event_subscription_condition(
+                (FixedEventSubscription("permanent.enter", None),)
+            )
+        with self.assertRaisesRegex(EventSubscriptionError, "unique"):
+            fixed_event_subscription_condition(
+                (
+                    FixedEventSubscription("permanent.enter", None),
+                    FixedEventSubscription("permanent.enter", None),
+                )
+            )
+        with self.assertRaisesRegex(EventSubscriptionError, "only"):
+            FixedEventSubscriptionSet.from_condition(
+                {"event_subscriptions": [], "field": "card"}
+            )
+
+    def test_fixed_multi_event_dependency_and_parser_mutant_fail_closed(self):
+        text = "Whenever this creature enters or attacks, draw a card."
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        dependency = next(
+            row
+            for row in registry["capabilities"]
+            if row["id"] == "trigger.subscription.fixed_multi_event"
+        )
+        dependency["status"] = "blocked"
+        dependency["blockers"] = ["focused multi-event dependency"]
+        ir = compile_oracle_card(
+            replace(
+                self.db.lookup("Scheduled Counter Trigger Fixture"),
+                name="Compiler Fixture",
+                oracle_text=text,
+                type_line="Creature — Scout",
+                keywords=(),
+                faces=(),
+            ),
+            capability_registry=CapabilityRegistry(registry),
+            capability_profile="commander_review",
+        )
+        self.assertNotEqual("exact", ir.status)
+        self.assertTrue(ir.material_residuals)
+        with patch(
+            "quorune.compiler.fixed_counter_trigger_nodes."
+            "fixed_public_multi_event_binding_spec",
+            return_value=None,
+        ):
+            mutated = self.compile(text, type_line="Creature — Scout")
         self.assertNotEqual("exact", mutated.status)
         self.assertTrue(mutated.material_residuals)
 

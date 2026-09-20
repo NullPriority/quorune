@@ -121,6 +121,11 @@ damage, token-entry, and graveyard-departure subscriptions use the same event
 and condition fields. Unsupported attachment, tap-state, first-time,
 once-per-turn, ambiguous, linked, chosen, or dynamic event forms remain
 residual.
+An exact same-zone two-event clause serializes its ordered subscriptions inside
+the typed event condition. CardProgram V2 projects both trigger entries while
+retaining one semantic ability identity and one shared effect list. The runtime
+matches only the selected committed event and never splits or reparses the
+Oracle source line.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

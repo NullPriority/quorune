@@ -24418,6 +24418,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
+      "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Execute one shared life or draw body only after the selected entry, attack, or committed combat-damage subscription matches."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_normalized_batch_predicates_share_damage_zone_and_token_owners",
       "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -24490,6 +24498,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_departure_uses_lki_and_apnap",
+      "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose simultaneous entry subscriptions with ordinary four-player APNAP placement before their shared token bodies resolve."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
       "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -24550,6 +24566,14 @@
       "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep chosen-value, targeted-spell, cast-or-copy, conditional, dynamic-counter, and mixed land-or-cast variants outside the closed fact grammar."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
+      "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Withhold exact typed effect execution when the multi-event subscription capability or parser is unavailable."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -24618,6 +24642,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_trigger_contract_matrix",
+      "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose each exact same-zone two-event subscription with one independently exact shared typed effect body."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_zone_and_damage_bindings_compile_exactly",
       "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -24674,6 +24706,14 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
+      "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project the selected public occurrence and trigger without exposing internal source incarnation identities."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
       "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -24726,6 +24766,14 @@
       "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay one controller attack batch from the pre-declaration checkpoint to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
+      "official_rule_ids": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the selected second event and shared typed body to the identical authoritative hash."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -26466,6 +26514,62 @@
       "official_rule_ids": ["101.4", "603.3", "603.3b", "603.3d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay a waiting untap trigger that is put on the stack before upkeep priority."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
+      "official_rule_ids": ["603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Route entry, attack, and committed combat-damage occurrences through distinct conditions on one shared typed trigger body."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_departure_uses_lki_and_apnap",
+      "official_rule_ids": ["603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Place simultaneous source-entry subscriptions for active and nonactive controllers through ordinary four-player APNAP ordering."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
+      "official_rule_ids": ["603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the shared multi-event parser and prove the admitted source clause can no longer become an exact CardProgram trigger."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
+      "official_rule_ids": ["603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Retain a material residual when the typed multi-event capability or its shared parser is unavailable."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_trigger_contract_matrix",
+      "official_rule_ids": ["603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile each admitted two-event source clause to one ordered typed subscription set and one independently exact shared body."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
+      "official_rule_ids": ["603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project public entry and attack trigger facts to every seat without exposing source physical or logical identities."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
+      "official_rule_ids": ["603.2", "603.3", "603.6"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the second subscribed event and shared body from a pre-attack checkpoint to the identical authoritative hash."
     },
     {
       "capability_id": "trigger.upkeep.previous_turn_transform",

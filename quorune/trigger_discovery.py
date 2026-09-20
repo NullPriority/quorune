@@ -25,6 +25,7 @@ from .creature_power_damage import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
 )
 from .errors import GameRuleError
+from .rules.event_subscriptions import FixedEventSubscriptionSet
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
     EvolveCharacteristics,
@@ -547,6 +548,41 @@ def semantic_event_condition_matches(
     )
 
 
+def _selected_event_subscription(
+    program: SemanticProgram,
+    event: str,
+) -> tuple[bool, bool, Mapping[str, Any] | None]:
+    """Return match, self-event, and condition for one occurrence."""
+
+    subscriptions = FixedEventSubscriptionSet.from_condition(
+        program.event_condition
+    )
+    if subscriptions is None:
+        self_event = program.event.endswith(".self")
+        program_event = (
+            program.event.removesuffix(".self")
+            if self_event
+            else program.event
+        )
+        return program_event == event, self_event, program.event_condition
+    for subscription in subscriptions.subscriptions:
+        self_event = subscription.event.endswith(".self")
+        subscribed_event = (
+            subscription.event.removesuffix(".self")
+            if self_event
+            else subscription.event
+        )
+        if subscribed_event == event:
+            return (
+                True,
+                self_event,
+                dict(subscription.condition)
+                if subscription.condition is not None
+                else None,
+            )
+    return False, False, None
+
+
 def semantic_event_matches(
     host: TriggerDiscoveryHost,
     program: SemanticProgram,
@@ -556,11 +592,11 @@ def semantic_event_matches(
     *,
     source_zone: str | None = None,
 ) -> bool:
-    self_event = program.event.endswith(".self")
-    program_event = (
-        program.event.removesuffix(".self") if self_event else program.event
+    event_matches, self_event, event_condition = _selected_event_subscription(
+        program,
+        event,
     )
-    if program_event != event or program.active_zone != (
+    if not event_matches or program.active_zone != (
         source_zone or source.zone
     ):
         return False
@@ -577,10 +613,10 @@ def semantic_event_matches(
     )
     if trigger_controller not in host.active_seats:
         return False
-    if program.event_condition is not None:
+    if event_condition is not None:
         return semantic_event_condition_matches(
             host,
-            program.event_condition,
+            event_condition,
             source=source,
             context=context,
         )
@@ -840,14 +876,18 @@ def _semantic_trigger_context(
     active_zone: str,
     source_characteristics: Mapping[str, Any],
 ) -> dict[str, Any]:
+    _matches, _self_event, selected_condition = _selected_event_subscription(
+        program,
+        event,
+    )
     stack_context = {
         "event": event,
         **copy.deepcopy(dict(context)),
         **_trigger_attachment_context(host, source, program),
         "source_zone": active_zone,
         "intervening_condition": (
-            copy.deepcopy(dict(program.event_condition))
-            if isinstance(program.event_condition, Mapping)
+            copy.deepcopy(dict(selected_condition))
+            if isinstance(selected_condition, Mapping)
             else {}
         ),
         **_echo_control_context(source, program.event_condition),

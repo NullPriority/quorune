@@ -59,6 +59,7 @@ from quorune.compiler.reanimation_templates import (
 )
 from quorune.compiler.fixed_counter_trigger_nodes import (
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
+    MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
     PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
     PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
     FixedSpellCastCharacteristicQuery,
@@ -159,6 +160,9 @@ _PROBE_PUBLIC_EVENT_BINDING_CLOSURE = (
 )
 _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE = (
     "public-action-event-binding-closure-existing-owner-v1"
+)
+_PROBE_FIXED_MULTI_EVENT_TRIGGER = (
+    "fixed-multi-event-trigger-existing-owner-v1"
 )
 _PROBE_ABILITY_WORD_PUBLIC_EVENT_TRIGGER = (
     "ability-word-public-event-trigger-existing-owner-v1"
@@ -484,6 +488,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_PUBLIC_EVENT_EFFECT_TRIGGER,
     _PROBE_PUBLIC_EVENT_BINDING_CLOSURE,
     _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE,
+    _PROBE_FIXED_MULTI_EVENT_TRIGGER,
     _PROBE_QUERY_GATED_SELF_CHARACTERISTIC,
     _PROBE_QUERY_POWER_TOUGHNESS_DEFINITION,
     _PROBE_ATTACHED_CHARACTERISTIC_CLOSURE,
@@ -888,6 +893,7 @@ def _matches_typed_public_event_effect_trigger_probe(
         or binding.variant in {
             *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
             *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+            *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
         }
         or not (
             binding.public_template_id is not None
@@ -1013,6 +1019,22 @@ def _matches_public_action_event_binding_closure_probe(
         card_record=card_record,
         ability=ability,
         variants=PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+    )
+
+
+def _matches_fixed_multi_event_trigger_probe(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    """Match only the bounded same-zone fixed multi-event grammar."""
+
+    return _matches_event_binding_variant_probe(
+        source,
+        card_record=card_record,
+        ability=ability,
+        variants=MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
     )
 
 
@@ -1347,6 +1369,7 @@ def _matches_probe(
             or binding.variant in {
                 *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
                 *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
+                *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
             }
         ):
             return False
@@ -1391,6 +1414,16 @@ def _matches_probe(
                 "card context"
             )
         return _matches_public_action_event_binding_closure_probe(
+            source,
+            card_record=card_record,
+            ability=ability,
+        )
+    if probe_id == _PROBE_FIXED_MULTI_EVENT_TRIGGER:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Fixed multi-event trigger measurement requires card context"
+            )
+        return _matches_fixed_multi_event_trigger_probe(
             source,
             card_record=card_record,
             ability=ability,
@@ -2585,11 +2618,14 @@ def _public_event_binding_closure_measurement(
     unsupported_sibling_cards = 0
     unsupported_grammar_cards: set[str] = set()
     newly_applicable_high_risk_pairs: set[tuple[str, str]] = set()
-    matcher = (
-        _matches_public_action_event_binding_closure_probe
-        if probe_id == _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE
-        else _matches_public_event_binding_closure_probe
-    )
+    matcher = {
+        _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE: (
+            _matches_public_action_event_binding_closure_probe
+        ),
+        _PROBE_FIXED_MULTI_EVENT_TRIGGER: (
+            _matches_fixed_multi_event_trigger_probe
+        ),
+    }.get(probe_id, _matches_public_event_binding_closure_probe)
     for card in frontier.get("cards", []):
         oracle_id = str(card.get("oracle_id") or "")
         record = cards_by_oracle_id.get(oracle_id)
@@ -4750,6 +4786,7 @@ def _measurement(
     if probe_id in {
         _PROBE_PUBLIC_EVENT_BINDING_CLOSURE,
         _PROBE_PUBLIC_ACTION_EVENT_BINDING_CLOSURE,
+        _PROBE_FIXED_MULTI_EVENT_TRIGGER,
     }:
         return _public_event_binding_closure_measurement(
             frontier=frontier,
