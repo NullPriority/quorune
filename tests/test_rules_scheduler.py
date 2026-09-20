@@ -89,9 +89,11 @@ from scripts.work_selection_cohort_measurements import (
     _fixed_targeted_return_closure_measurement,
     _is_fixed_owner_zone_move_candidate,
     _partner_with_measurement,
+    _public_cast_cost_modifier_closure_measurement,
     _public_event_binding_closure_measurement,
     _fixed_token_production_measurement,
     _typed_quoted_ability_grant_measurement,
+    _trigger_ability_word_carrier_measurement,
     build_work_selection_cohort_measurements,
     _matches_probe,
     _matches_query_self_characteristic_probe,
@@ -4451,6 +4453,31 @@ class RulesSchedulerTests(unittest.TestCase):
         )["measurements"][0]
         self.assertEqual(0, measured["exact_ability_gain"])
         self.assertEqual(1, measured["material_residual_reduction"])
+
+    def test_standalone_probe_preserves_existing_measurement_builders(self):
+        common = {
+            "frontier": {"cards": []},
+            "cards_by_oracle_id": {},
+            "coverage": {
+                "minimum_complete_card_gain": 1,
+                "minimum_exact_ability_gain": 1,
+                "minimum_material_residual_reduction": 1,
+            },
+            "cohort_fingerprint": "0" * 64,
+        }
+        cast_cost = _public_cast_cost_modifier_closure_measurement(
+            bundle_id="bundle:public-cast-cost-modifier-closure",
+            probe_id="public-cast-cost-modifier-closure-existing-owner-v1",
+            **common,
+        )
+        trigger_carrier = _trigger_ability_word_carrier_measurement(
+            bundle_id="bundle:trigger-ability-word-carriers",
+            probe_id="trigger-ability-word-carrier-existing-owner-v1",
+            member_ids={"event_binding:normalized-event-binding"},
+            **common,
+        )
+        self.assertEqual(0, cast_cost["exact_ability_gain"])
+        self.assertEqual(0, trigger_carrier["exact_ability_gain"])
 
     def test_public_event_binding_closure_probe_and_measurement_are_closed(self):
         probe_id = "public-event-binding-closure-existing-owner-v1"

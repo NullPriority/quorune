@@ -2484,7 +2484,7 @@ def _public_cast_cost_modifier_closure_measurement(
         "two_additional_blocker_cards": sum(
             count == 2 for count in matched_cards.values()
         ),
-        "exact_ability_gain": exact_ability_gain,
+        "exact_ability_gain": matched_abilities,
         "material_residual_reduction": matched_abilities,
         "decision": (
             "bounded_executable" if reaches_floor else "retired_below_harvest_floor"
@@ -2744,7 +2744,7 @@ def _trigger_ability_word_carrier_measurement(
         "two_additional_blocker_cards": sum(
             count == 2 for count in matched_cards.values()
         ),
-        "exact_ability_gain": exact_ability_gain,
+        "exact_ability_gain": matched_abilities,
         "material_residual_reduction": matched_abilities,
         "decision": (
             "bounded_executable"
