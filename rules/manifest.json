@@ -19,7 +19,7 @@
     }
   },
   "derived_hashes": {
-    "conformance-cases.json": "353b83e7df5f094a874831801b26b053b795356c8610d41599f183b90acaa5ff",
+    "conformance-cases.json": "c8ad40d7e7e3c2fe729fbfc3adba5272581e00688464aa6de288222401b48db3",
     "dependency-graph.json": "08ea3e62913cc3bb3b360c105cb16fa1025f748af58fcf6aa82e1925204a9125",
     "glossary-index.json": "b87b5c802a2dacbeb13905694a97b0a92510f85fdb31cd81dabb5c814adfded5",
     "mechanic-index.json": "3b2cdabfdb3aa76e14bde9bd1702c8a661ca31b21f3e3fa61c00474154f9ee0f",

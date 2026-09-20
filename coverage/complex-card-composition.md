@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "cd7eb8ac4c05215e42597bd519ac665a32bebd316ef86c573f421db6ac67788f"
+verified: "70cd551a431e257613177c559971cf34b0a8e66fce2c93178c597a94fe626e3e"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -29,6 +29,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Rowan Kenrith | 209 | 28 | 5 | 6 | 5 | 21 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
+| Invasion of Kaldheim // Pyre of the World Tree | 205 | 25 | 7 | 4 | 5 | 22 | `blocked` |
 | Crystal Fragments // Summon: Alexander | 204 | 26 | 7 | 7 | 7 | 8 | `blocked` |
 | Esper Origins // Summon: Esper Maduin | 204 | 21 | 7 | 5 | 6 | 20 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
@@ -50,6 +51,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Restoration of Eiganjo // Architect of Restoration | 186 | 21 | 7 | 6 | 8 | 7 | `blocked` |
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
+| Ticket Booth // Tunnel of Hate | 184 | 19 | 5 | 4 | 3 | 32 | `blocked` |
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
@@ -61,6 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Invasion of Tolvada // The Broken Sky | 178 | 21 | 6 | 4 | 5 | 17 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
-| Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
-| Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
