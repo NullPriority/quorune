@@ -194,14 +194,13 @@ def _preserved_transition_is_current(
     ):
         return False
     return bool(
-        (
+        measurement.get("cohort_fingerprint") == cohort_fingerprint
+        and (
             preserved.get("frontier_fingerprint")
             == frontier_fingerprint
-            and measurement.get("cohort_fingerprint")
-            == cohort_fingerprint
+            or preserved.get("receipt_fingerprint")
+            in completed_receipt_fingerprints
         )
-        or preserved.get("receipt_fingerprint")
-        in completed_receipt_fingerprints
     )
 
 
@@ -209,6 +208,7 @@ def _completed_transition_measurement_is_current(
     preserved: dict | None,
     *,
     oracle_source_sha256: str,
+    cohort_fingerprint: str,
     probe_id: str,
     completed_receipt_fingerprints: frozenset[str],
 ) -> bool:
@@ -220,6 +220,7 @@ def _completed_transition_measurement_is_current(
     return bool(
         isinstance(measurement, dict)
         and preserved.get("oracle_source_sha256") == oracle_source_sha256
+        and measurement.get("cohort_fingerprint") == cohort_fingerprint
         and measurement.get("probe_id") == probe_id
         and preserved.get("receipt_fingerprint")
         in completed_receipt_fingerprints
@@ -334,24 +335,7 @@ def _transition_measurements(
     completed_receipts = _completed_transition_measurement_receipts(
         transition_id
     )
-    current_frontier = _decode_frontier(
-        FRONTIER.read_bytes(),
-        label="Current",
-    )
-    current_snapshot = current_frontier.get("card_data_snapshot")
-    current_oracle_source = (
-        str(current_snapshot.get("oracle_source_sha256") or "")
-        if isinstance(current_snapshot, dict)
-        else ""
-    )
     probe_id = str(bundle.get("measurement_probe_id") or "")
-    if _completed_transition_measurement_is_current(
-        preserved,
-        oracle_source_sha256=current_oracle_source,
-        probe_id=probe_id,
-        completed_receipt_fingerprints=completed_receipts,
-    ):
-        return [preserved]
     frontier = _source_checkpoint_frontier(transition_id)
     fingerprints = {
         bundle_id: bundle_measurement_fingerprint(frontier, bundle)
@@ -362,6 +346,14 @@ def _transition_measurements(
         if isinstance(snapshot, dict)
         else ""
     )
+    if _completed_transition_measurement_is_current(
+        preserved,
+        oracle_source_sha256=oracle_source_sha256,
+        cohort_fingerprint=fingerprints[bundle_id],
+        probe_id=probe_id,
+        completed_receipt_fingerprints=completed_receipts,
+    ):
+        return [preserved]
     if _preserved_transition_is_current(
         preserved,
         frontier_fingerprint=str(frontier.get("fingerprint") or ""),

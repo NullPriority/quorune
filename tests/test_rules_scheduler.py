@@ -3314,6 +3314,16 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         landed = deepcopy(receipt)
         landed["frontier_fingerprint"] = "source-frontier"
+        self.assertFalse(
+            _preserved_transition_is_current(
+                landed,
+                frontier_fingerprint="generated-frontier",
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="generated-cohort",
+                completed_receipt_fingerprints=frozenset({"receipt"}),
+            )
+        )
+        landed["measurement"]["cohort_fingerprint"] = "generated-cohort"
         self.assertTrue(
             _preserved_transition_is_current(
                 landed,
@@ -3347,23 +3357,29 @@ class RulesSchedulerTests(unittest.TestCase):
         receipt = {
             "receipt_fingerprint": "receipt-v2",
             "oracle_source_sha256": "oracle",
-            "measurement": {"probe_id": "probe-v2"},
+            "measurement": {
+                "cohort_fingerprint": "cohort-v2",
+                "probe_id": "probe-v2",
+            },
         }
         self.assertTrue(
             _completed_transition_measurement_is_current(
                 receipt,
                 oracle_source_sha256="oracle",
+                cohort_fingerprint="cohort-v2",
                 probe_id="probe-v2",
                 completed_receipt_fingerprints=frozenset({"receipt-v2"}),
             )
         )
         for field, value in (
             ("oracle_source_sha256", "changed-oracle"),
+            ("cohort_fingerprint", "cohort-v3"),
             ("probe_id", "probe-v3"),
             ("completed_receipt_fingerprints", frozenset()),
         ):
             arguments = {
                 "oracle_source_sha256": "oracle",
+                "cohort_fingerprint": "cohort-v2",
                 "probe_id": "probe-v2",
                 "completed_receipt_fingerprints": frozenset({"receipt-v2"}),
             }
@@ -3376,33 +3392,23 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
 
-    def test_completed_corrected_measurement_skips_base_blob_lookup(self):
-        coverage = self.catalog["work_selection"]["coverage_family"]
-        transition = self.catalog["work_selection"][
-            "semantic_transition_declaration"
-        ]
-        with mock.patch(
-            "scripts.update_work_selection_cohort_measurements."
-            "_source_checkpoint_frontier",
-            side_effect=AssertionError("base frontier should not be read"),
-        ):
-            rows = _transition_measurements(
-                records={},
-                coverage=coverage,
-                bundles=coverage["candidate_bundles"],
+    def test_completed_corrected_measurement_rejects_stale_cohort(self):
+        receipt = {
+            "receipt_fingerprint": "receipt-v2",
+            "oracle_source_sha256": "oracle",
+            "measurement": {
+                "cohort_fingerprint": "old-cohort",
+                "probe_id": "probe-v2",
+            },
+        }
+        self.assertFalse(
+            _completed_transition_measurement_is_current(
+                receipt,
+                oracle_source_sha256="oracle",
+                cohort_fingerprint="current-cohort",
+                probe_id="probe-v2",
+                completed_receipt_fingerprints=frozenset({"receipt-v2"}),
             )
-        if transition.get("measurement_id") is None:
-            self.assertEqual([], rows)
-            return
-        active_bundle = next(
-            bundle
-            for bundle in coverage["candidate_bundles"]
-            if bundle["bundle_id"] == transition["bundle_id"]
-        )
-        self.assertEqual(1, len(rows))
-        self.assertEqual(
-            active_bundle["measurement_probe_id"],
-            rows[0]["measurement"]["probe_id"],
         )
 
     def test_transition_probe_recovers_immutable_source_frontier(self):
