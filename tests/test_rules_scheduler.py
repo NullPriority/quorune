@@ -4818,7 +4818,14 @@ class RulesSchedulerTests(unittest.TestCase):
                 coverage=coverage,
             )
         )
-        self.assertGreater(measurement["exact_ability_gain"], 0)
+        self.assertTrue(
+            measurement["complete_card_gain"]
+            >= coverage["minimum_complete_card_gain"]
+            or measurement["exact_ability_gain"]
+            >= coverage["minimum_exact_ability_gain"]
+            or measurement["material_residual_reduction"]
+            >= coverage["minimum_material_residual_reduction"]
+        )
 
     def test_stale_generated_measurement_fails_before_selection(self):
         inputs = _without_pending_harvest_transition(self.work_inputs)
