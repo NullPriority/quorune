@@ -32659,7 +32659,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "player_attacks_with_trigger_provenance_not_implemented"
+        "complete_player_attacks_with_characteristic_and_recipient_grammar_not_implemented"
       ],
       "case_id": "cr-508.3c",
       "case_version": 1,
@@ -32672,7 +32672,7 @@
       "executable_test_ids": [],
       "implementation_components": [],
       "notes": [
-        "The general player-attacks-with trigger grammar is absent."
+        "Controller attack triggers with fixed two- or three-creature minimums consume the sealed attacker count once per declaration; characteristic-qualified, recipient-relative, and broader player relations remain unsupported."
       ],
       "required_scenarios": [
         "positive",
@@ -32693,7 +32693,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "player_attacks_trigger_grouping_not_implemented"
+        "noncontroller_player_attacks_trigger_relations_not_implemented"
       ],
       "case_id": "cr-508.3d",
       "case_version": 1,
@@ -32706,7 +32706,7 @@
       "executable_test_ids": [],
       "implementation_components": [],
       "notes": [
-        "The once-per-declaration player-attacks trigger event is absent."
+        "The exact controller 'Whenever you attack' form aggregates per-attacker occurrences into one trigger per declaration; arbitrary player and opponent relations remain unsupported."
       ],
       "required_scenarios": [
         "positive",

@@ -6959,6 +6959,21 @@
       ],
       "interaction_order": 2,
       "assertion": "The exact current equipped-creature attack predicate places one optional trigger, then the accepted choice delegates two private library cards to the canonical Mill zone transaction and replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_public_any_target_activation_cost_triggers_impulse_access",
+      "piece_ids": [
+        "capability.target.public.player_or_damageable_permanent",
+        "capability.zone.impulse_access.fixed"
+      ],
+      "capability_ids": [
+        "target.public.player_or_damageable_permanent",
+        "zone.impulse_access.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "The controller discards one exact land card through the selected activation-cost owner, places the resulting impulse-access trigger above the independently targeted public any-target activation, grants only the committed top-card permission, then resolves the original player damage with public projection and exact replay."
     }
   ]
 }

@@ -391,6 +391,8 @@ def _semantic_condition_actual(
     if field == "source_attachment_target_ref":
         attached = host.state.cards.get(source.attached_to or "")
         return attached.ref if attached is not None else None
+    if field == "source_controller_is_active_player":
+        return source.controller == host.state.active_player
     return context.get(field)
 
 

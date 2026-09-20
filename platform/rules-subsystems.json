@@ -3701,6 +3701,57 @@
           "measurement_probe_id": "public-event-binding-closure-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:public-action-event-binding-closure",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_damage",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.event.normalized_zone_change",
+            "capability:trigger.placement.apnap",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.compiler.fixed_public_action_event_bindings.fixed_public_action_event_binding_spec",
+            "component:quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+            "component:quorune.trigger_discovery.dispatch_semantic_event",
+            "component:quorune.zone_trigger_events.normalized_zone_trigger_events"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "controller-attack-declaration-batch",
+            "fixed-public-discard-or-sacrifice-subject",
+            "fixed-public-zone-entry-or-departure-subject",
+            "one-or-more-damage-or-zone-batch",
+            "source-player-or-battle-damage-recipient"
+          ],
+          "shared_dependencies": [
+            "trigger.effect.fixed_event",
+            "trigger.event.normalized_damage",
+            "trigger.event.normalized_public_action",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one bounded controller attack declaration, public discard or sacrifice, public zone entry or departure, or combat-damage event predicate composed with one independently exact noncounter typed effect through the existing normalized occurrence, current-ability, one-or-more batching, APNAP, and resolution owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era trigger cohort while sharing sealed attack counts, damage results, zone-change current or last-known facts, owner and previous-controller relations, current layer-6 ability applicability, target selection, projection, and exact replay.",
+          "explicit_exclusions": [
+            "aggregate sacrifices outside the canonical simultaneous zone-transition batch",
+            "ambiguous event disjunctions, intervening-if, reflexive, delayed, linked, first-time, and once-each-turn grammar",
+            "chosen, legendary, modified, counter-bearing, damage-history, and other unavailable characteristic predicates",
+            "counter-placement bodies and independently unsupported effect siblings",
+            "source-token damage predicates absent from the sealed damage occurrence",
+            "tap or untap occurrences without a canonical post-commit trigger checkpoint"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-action-event-binding-closure-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -3749,19 +3800,23 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v202-standalone-reminder-line-closure",
-      "compiler_version": "oracle-ir-v202",
-      "bundle_id": "bundle:standalone-reminder-line-closure",
-      "candidate_ids": ["compiler:standalone-reminder-line-closure"],
+      "transition_id": "oracle-ir-v203-public-action-event-binding-closure",
+      "compiler_version": "oracle-ir-v203",
+      "bundle_id": "bundle:public-action-event-binding-closure",
+      "candidate_ids": ["compiler:public-action-event-binding-closure"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:unparsed-spell-effect-has-no-exact-generic-template"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "compiler.oracle.nonexecuting_reminder_line"
+        "trigger.effect.fixed_event",
+        "trigger.event.normalized_damage",
+        "trigger.event.normalized_public_action",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:standalone-reminder-line-closure"
+      "measurement_id": "measurement:public-action-event-binding-closure"
     },
     "forecast_corrections": [
       {

@@ -2392,6 +2392,198 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                         node.runtime_coverage,
                     )
 
+    def test_public_action_event_contract_matrix_compiles_exactly(self):
+        cases = (
+            (
+                "Whenever you attack, draw a card.",
+                "Creature — Advisor",
+                "creature.attacks",
+                "controller_attack_batch",
+                True,
+            ),
+            (
+                "Whenever you attack with three or more creatures, draw a card.",
+                "Creature — Advisor",
+                "creature.attacks",
+                "controller_attack_batch_at_least_3",
+                True,
+            ),
+            (
+                "Whenever you sacrifice a Clue, you gain 1 life.",
+                "Creature — Detective",
+                "permanent.sacrificed",
+                "controller_sacrifices_clue",
+                False,
+            ),
+            (
+                "Whenever an opponent sacrifices a creature, draw a card.",
+                "Creature — Advisor",
+                "permanent.sacrificed",
+                "opponent_sacrifices_creature",
+                False,
+            ),
+            (
+                "Whenever you discard a land card, create a Treasure token.",
+                "Creature — Shaman",
+                "card.discarded",
+                "controller_discards_land",
+                False,
+            ),
+            (
+                "Whenever a player discards a card, you gain 1 life.",
+                "Creature — Cleric",
+                "card.discarded",
+                "player_discards_card",
+                False,
+            ),
+            (
+                "Whenever you cycle a card, you gain 1 life.",
+                "Creature — Cleric",
+                "card.cycled",
+                "controller_cycles",
+                False,
+            ),
+            (
+                "Whenever one or more cards leave your graveyard during your "
+                "turn, you gain 1 life.",
+                "Creature — Spirit",
+                "card.leave_graveyard",
+                "one_or_more_controller_cards_leave_graveyard_during_turn",
+                True,
+            ),
+            (
+                "Whenever one or more creatures you control deal combat "
+                "damage to a player, create a Treasure token.",
+                "Creature — Rogue",
+                "damage.dealt",
+                "one_or_more_controlled_creatures_combat_damage_player",
+                True,
+            ),
+            (
+                "Whenever this creature deals combat damage to a player or "
+                "battle, draw a card.",
+                "Creature — Scout",
+                "damage.dealt",
+                "source_combat_damage_player_or_battle",
+                False,
+            ),
+            (
+                "Whenever one or more tokens you control enter, each opponent "
+                "loses 1 life and you gain 1 life.",
+                "Creature — Advisor",
+                "permanent.enter",
+                "one_or_more_controlled_tokens_enter",
+                True,
+            ),
+            (
+                "Whenever another creature or artifact you control is put into "
+                "a graveyard from the battlefield, draw a card.",
+                "Creature — Artificer",
+                "permanent.graveyard",
+                "another_controlled_creature_or_artifact_graveyard",
+                False,
+            ),
+            (
+                "When this land enters untapped, draw a card.",
+                "Land",
+                "permanent.enter.self",
+                "source_land_enters_untapped",
+                False,
+            ),
+        )
+        for text, type_line, event, variant, one_or_more in cases:
+            with self.subTest(text=text):
+                binding = fixed_counter_trigger_binding(
+                    text,
+                    card_name="Compiler Fixture",
+                )
+                self.assertIsNotNone(binding)
+                assert binding is not None
+                self.assertEqual(event, binding.event.value)
+                self.assertEqual(variant, binding.variant)
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(event, node.event)
+                self.assertIn(
+                    CURRENT_ABILITY_FRAGMENT_COVERAGE,
+                    node.runtime_coverage,
+                )
+                self.assertEqual(
+                    one_or_more,
+                    "one_or_more_event_batch" in node.runtime_coverage,
+                )
+
+    def test_public_action_event_suffixes_remain_fail_closed(self):
+        cases = (
+            "Whenever this creature becomes tapped, draw a card.",
+            "Whenever you cycle or discard a card, draw a card.",
+            "Whenever you discard a card for the first time each turn, draw a card.",
+            "Whenever you sacrifice one or more Foods, draw a card.",
+            "Whenever one or more creature tokens you control deal combat "
+            "damage to a player, draw a card.",
+            "Whenever another legendary creature you control enters, draw a card.",
+            "Whenever you attack a player, draw a card.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature — Advisor")
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_public_action_event_dependencies_and_parser_mutant_fail_closed(self):
+        cases = (
+            (
+                "trigger.event.normalized_public_action",
+                "Whenever you attack, draw a card.",
+            ),
+            (
+                "trigger.event.normalized_damage",
+                "Whenever one or more creatures you control deal combat damage "
+                "to a player, draw a card.",
+            ),
+            (
+                "trigger.event.normalized_zone_change",
+                "Whenever you sacrifice a Clue, you gain 1 life.",
+            ),
+        )
+        for capability_id, text in cases:
+            with self.subTest(capability_id=capability_id):
+                registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+                dependency = next(
+                    row
+                    for row in registry["capabilities"]
+                    if row["id"] == capability_id
+                )
+                dependency["status"] = "blocked"
+                dependency["blockers"] = ["focused public-action dependency"]
+                ir = compile_oracle_card(
+                    replace(
+                        self.db.lookup("Scheduled Counter Trigger Fixture"),
+                        name="Compiler Fixture",
+                        oracle_text=text,
+                        type_line="Creature — Advisor",
+                        keywords=(),
+                        faces=(),
+                    ),
+                    capability_registry=CapabilityRegistry(registry),
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+        with patch(
+            "quorune.compiler.fixed_counter_trigger_nodes."
+            "fixed_public_action_event_binding_spec",
+            return_value=None,
+        ):
+            mutated = self.compile(
+                "Whenever you attack with two or more creatures, draw a card.",
+                type_line="Creature — Advisor",
+            )
+        self.assertNotEqual("exact", mutated.status)
+        self.assertTrue(mutated.material_residuals)
+
     def test_public_zone_damage_and_cast_predicates_compile_exactly(self):
         cases = (
             (
@@ -2530,7 +2722,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def test_public_event_near_misses_remain_material(self):
         cases = (
-            "Whenever an opponent discards a card, you may draw a card.",
+            "Whenever an opponent discards one or more cards, you may draw a card.",
             "Whenever you sacrifice a green creature, you may gain 2 life.",
             "Whenever equipped creature attacks alone, you may draw a card.",
             "Whenever enchanted permanent dies, you may gain 2 life.",
@@ -2538,7 +2730,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "may draw a card.",
             "Whenever enchanted creature deals combat damage to a player, "
             "you may draw a card.",
-            "Whenever one or more cards leave your graveyard, create a 2/2 "
+            "Whenever one or more cards leave an opponent's graveyard, create a 2/2 "
             "red and white Spirit creature token.",
             "Whenever another creature you control with power X or less "
             "enters, you may draw a card.",
