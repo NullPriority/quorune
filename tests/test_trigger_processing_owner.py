@@ -490,9 +490,18 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
         occurrences = [
             item
             for item in batch.items
-            if item.label == "Ichor Wellspring enters"
+            if item.source_object_id == source.object_id
+            and item.source_ability_id is not None
         ]
         self.assertEqual(3, len(occurrences))
+        self.assertEqual(
+            1,
+            len({item.source_ability_id for item in occurrences}),
+        )
+        program = engine.semantics.get(occurrences[0].source_ability_id)
+        self.assertIsNotNone(program)
+        assert program is not None
+        self.assertIn("fixed_multi_event_subscription", program.coverage)
         copy_sources = {
             item.copy_provenance["source_object_id"]
             for item in occurrences

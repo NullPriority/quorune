@@ -99,13 +99,6 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             reason="Bastion enters scenario",
         )
         self.assertFalse(engine._stabilize())
-        self.assertEqual(1, len(engine.state.stack))
-        program = engine.semantics.get(
-            engine.state.stack[0].semantic_key or ""
-        )
-        self.assertIsNotNone(program)
-        assert program is not None
-        self.assertIn("fixed_multi_event_subscription", program.coverage)
         self.resolve_top(engine)
         soldier = next(
             card
@@ -239,6 +232,13 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             reason="Cryogen enters scenario",
         )
         self.assertFalse(engine._stabilize())
+        self.assertEqual(1, len(engine.state.stack))
+        program = engine.semantics.get(
+            engine.state.stack[0].semantic_key or ""
+        )
+        self.assertIsNotNone(program)
+        assert program is not None
+        self.assertIn("fixed_multi_event_subscription", program.coverage)
         self.resolve_top(engine)
         self.assertEqual(
             before + 1,
