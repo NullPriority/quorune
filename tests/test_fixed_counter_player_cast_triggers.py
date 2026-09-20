@@ -58,6 +58,7 @@ from quorune.compiler.target_effect_corpus_assurance import (
 from quorune.deck import DeckLoader
 from quorune.engine import TURN_STEPS
 from quorune.kicker import KICKER_CAST_OPTION_ID
+from quorune.impulse_access import temporary_play_permission_is_current
 from quorune.model import CardInstance, CombatState
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.oracle_ir import (
@@ -2835,6 +2836,132 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(1, len(items))
         self.assertEqual("card.leave_graveyard", items[0].context["event"])
         self.assertEqual("A", items[0].context["owner"])
+
+    def test_public_any_target_activation_cost_triggers_impulse_access(self):
+        session = self.session(121090, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Discard Damage Impulse Trigger Fixture",
+            ref="discard-damage-impulse-source",
+            zone="battlefield",
+        )
+        record = self.db.by_oracle_id(source.oracle_id)
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="trusted",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+            promote_exact_effect_programs=True,
+        )
+        trigger_program = next(
+            program
+            for program in engine.semantics.programs_for_oracle(
+                source.oracle_id,
+                active_zone="battlefield",
+            )
+            if program.event == "card.discarded"
+        )
+        land = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Untapped Land Entry Draw Trigger Fixture",
+            ref="discard-damage-impulse-land",
+            zone="hand",
+        )
+        top_id = engine.state.players["A"].zones["library"][-1]
+        top_card = engine.state.cards[top_id]
+        life_before = engine.state.players["B"].life
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.pending_decision = None
+        engine.permissions.invalidate_current()
+        engine._grant_priority("A")
+        engine.pump()
+        ability = next(
+            item
+            for item in engine._activated_abilities(source)
+            if item.choices and item.choices[0].zone == "hand"
+        )
+        action_id = f"activate:{source.ref}:{ability.ability_id}"
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        result = session.act(
+            "pilot:A",
+            {
+                "action_id": action_id,
+                "cost_cards": [land.ref],
+                "targets": ["B"],
+            },
+        )
+
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", land.zone)
+        trigger = next(
+            item
+            for item in engine.state.stack
+            if item.semantic_key == trigger_program.key
+        )
+        activated = next(
+            item
+            for item in engine.state.stack
+            if item.kind == "activated_ability"
+            and item.source_object_id == source.object_id
+        )
+        self.assertLess(
+            engine.state.stack.index(activated),
+            engine.state.stack.index(trigger),
+        )
+        self.assertEqual("card.discarded", trigger.context["event"])
+        self.assertIn("land", trigger.context["types"])
+        for _ in range(24):
+            if not any(
+                item.semantic_key == trigger_program.key
+                for item in engine.state.stack
+            ):
+                break
+            pass_current(session)
+        self.assertEqual("exile", top_card.zone)
+        permission = top_card.annotations["temporary_play_permission"]
+        self.assertTrue(
+            temporary_play_permission_is_current(
+                engine.state,
+                "A",
+                top_card,
+                permission,
+            )
+        )
+        for _ in range(24):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertFalse(engine.state.stack)
+        self.assertEqual(life_before - 2, engine.state.players["B"].life)
+        for seat in engine.active_seats:
+            packet_text = json.dumps(
+                session.packet(f"pilot:{seat}", full=True),
+                sort_keys=True,
+            )
+            for card in (source, land, top_card):
+                self.assertNotIn(card.object_id, packet_text)
+                self.assertNotIn(card.logical_object_id, packet_text)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "discard-damage-impulse-trigger"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_source_land_entry_predicate_uses_committed_tapped_state(self):
         negative_session = self.session(121088)

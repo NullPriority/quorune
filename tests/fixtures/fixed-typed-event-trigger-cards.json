@@ -1679,6 +1679,25 @@
       "layout": "normal",
       "released_at": "2026-09-20",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "12100000-0000-4000-8000-000000000088",
+      "name": "Generic Discard Damage Impulse Trigger Fixture",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Discard a land card: This enchantment deals 2 damage to any target.\nWhenever you discard a land card, exile the top card of your library. You may play that card this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-20",
+      "legalities": {"commander": "legal"}
     }
   ]
 }
