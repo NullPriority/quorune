@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "fa7949f53fb964cd9e3ff46f7ebd712380d99bf344b66d0e43b7a9d3e437cdd2"
+verified: "cd7eb8ac4c05215e42597bd519ac665a32bebd316ef86c573f421db6ac67788f"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,53 +14,53 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Card | Score | Pieces | Systems | Abilities | Blockers | Rulings | Status |
 |---|---:|---:|---:|---:|---:|---:|---|
 | Valki, God of Lies // Tibalt, Cosmic Impostor | 240 | 27 | 6 | 6 | 14 | 22 | `blocked` |
+| Elesh Norn // The Argent Etchings | 232 | 30 | 8 | 7 | 14 | 2 | `blocked` |
+| Dion, Bahamut's Dominant // Bahamut, Warden of Light | 230 | 26 | 8 | 7 | 11 | 10 | `blocked` |
+| Urabrask // The Great Work | 228 | 28 | 8 | 7 | 13 | 4 | `blocked` |
+| Terra, Magical Adept // Esper Terra | 224 | 22 | 8 | 6 | 12 | 14 | `blocked` |
+| Jin-Gitaxias // The Great Synthesis | 223 | 28 | 7 | 7 | 11 | 6 | `blocked` |
+| Jugan Defends the Temple // Remnant of the Rising Star | 223 | 29 | 8 | 7 | 8 | 9 | `blocked` |
+| Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 222 | 24 | 8 | 6 | 12 | 10 | `blocked` |
+| Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 217 | 18 | 7 | 5 | 12 | 21 | `blocked` |
+| The Kami War // O-Kagachi Made Manifest | 216 | 28 | 8 | 7 | 9 | 6 | `blocked` |
+| Vorinclex // The Grand Evolution | 214 | 24 | 8 | 7 | 12 | 4 | `blocked` |
+| Sheoldred // The True Scriptures | 213 | 23 | 8 | 7 | 13 | 4 | `blocked` |
+| Teachings of the Kirin // Kirin-Touched Orochi | 211 | 28 | 7 | 7 | 9 | 6 | `blocked` |
 | Rowan Kenrith | 209 | 28 | 5 | 6 | 5 | 21 | `blocked` |
+| Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
+| Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
 | Crystal Fragments // Summon: Alexander | 204 | 26 | 7 | 7 | 7 | 8 | `blocked` |
 | Esper Origins // Summon: Esper Maduin | 204 | 21 | 7 | 5 | 6 | 20 | `blocked` |
+| Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
+| The Legend of Kuruk // Avatar Kuruk | 204 | 28 | 6 | 6 | 11 | 5 | `blocked` |
+| The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
+| Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
 | Ugin, Eye of the Storms | 199 | 39 | 5 | 5 | 11 | 3 | `blocked` |
-| Elesh Norn // The Argent Etchings | 196 | 26 | 7 | 6 | 11 | 2 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
-| Dion, Bahamut's Dominant // Bahamut, Warden of Light | 194 | 22 | 7 | 6 | 8 | 10 | `blocked` |
+| Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
+| The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
 | Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
+| The Modern Age // Vector Glider | 191 | 26 | 7 | 5 | 6 | 6 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 190 | 23 | 4 | 7 | 10 | 19 | `blocked` |
-| Jugan Defends the Temple // Remnant of the Rising Star | 187 | 25 | 7 | 6 | 5 | 9 | `blocked` |
+| Invasion of Segovia // Caetus, Sea Tyrant of Segovia | 189 | 20 | 6 | 4 | 6 | 23 | `blocked` |
+| Okiba Reckoner Raid // Nezumi Road Captain | 189 | 24 | 7 | 6 | 6 | 6 | `blocked` |
+| Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
+| The Restoration of Eiganjo // Architect of Restoration | 186 | 21 | 7 | 6 | 8 | 7 | `blocked` |
+| Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
+| Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
+| Tribute to Horobi // Echo of Death's Wail | 181 | 20 | 7 | 6 | 8 | 6 | `blocked` |
 | Huatli, Poet of Unity // Roar of the Fifth People | 180 | 29 | 6 | 6 | 6 | 1 | `blocked` |
 | Ral, Monsoon Mage // Ral, Leyline Prodigy | 180 | 19 | 5 | 6 | 12 | 17 | `blocked` |
-| The Kami War // O-Kagachi Made Manifest | 180 | 24 | 7 | 6 | 6 | 6 | `blocked` |
-| Urabrask // The Great Work | 178 | 24 | 6 | 6 | 10 | 4 | `blocked` |
+| Era of Enlightenment // Hand of Enlightenment | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
+| Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
+| The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
+| Invasion of Tolvada // The Broken Sky | 178 | 21 | 6 | 4 | 5 | 17 | `blocked` |
+| Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
 | Blaster, Combat DJ // Blaster, Morale Booster | 176 | 19 | 5 | 6 | 11 | 16 | `blocked` |
-| Teachings of the Kirin // Kirin-Touched Orochi | 175 | 24 | 6 | 6 | 6 | 6 | `blocked` |
-| Nicol Bolas, the Ravager // Nicol Bolas, the Arisen | 174 | 31 | 5 | 7 | 3 | 11 | `blocked` |
-| Terra, Magical Adept // Esper Terra | 174 | 18 | 6 | 5 | 9 | 14 | `blocked` |
-| Jin-Gitaxias // The Great Synthesis | 173 | 24 | 5 | 6 | 8 | 6 | `blocked` |
-| Pippin, Warden of Isengard | 173 | 27 | 6 | 4 | 2 | 13 | `blocked` |
-| Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 172 | 20 | 6 | 5 | 9 | 10 | `blocked` |
-| Miles Morales // Ultimate Spider-Man | 172 | 24 | 6 | 5 | 6 | 11 | `blocked` |
-| Overwhelmed Archivist // Archive Haunt | 172 | 29 | 5 | 5 | 4 | 7 | `blocked` |
-| Kytheon, Hero of Akros // Gideon, Battle-Forged | 171 | 14 | 5 | 5 | 11 | 18 | `blocked` |
-| Ojer Axonil, Deepest Might // Temple of Power | 171 | 21 | 7 | 5 | 8 | 6 | `blocked` |
-| Innkeeper's Talent | 170 | 23 | 5 | 8 | 4 | 9 | `blocked` |
-| Shabraz, the Skyshark | 170 | 32 | 6 | 5 | 2 | 2 | `blocked` |
-| Monk Class | 169 | 24 | 5 | 8 | 3 | 9 | `blocked` |
-| Paleontologist's Pick-Axe // Dinosaur Headdress | 169 | 29 | 4 | 7 | 1 | 7 | `blocked` |
-| Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 169 | 19 | 6 | 6 | 11 | 10 | `blocked` |
-| Optimus Prime, Hero // Optimus Prime, Autobot Leader | 168 | 21 | 5 | 6 | 4 | 16 | `blocked` |
-| Summon: Bahamut | 168 | 24 | 6 | 5 | 3 | 12 | `blocked` |
-| Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 167 | 14 | 5 | 4 | 9 | 21 | `blocked` |
-| Lunarch Veteran // Luminous Phantom | 167 | 22 | 6 | 5 | 6 | 7 | `blocked` |
-| Norman Osborn // Green Goblin | 167 | 20 | 5 | 6 | 5 | 16 | `blocked` |
-| Ajani, Nacatl Pariah // Ajani, Nacatl Avenger | 166 | 23 | 4 | 5 | 10 | 15 | `blocked` |
-| Artist's Talent | 166 | 18 | 5 | 8 | 5 | 10 | `blocked` |
-| Chandra, Fire of Kaladesh // Chandra, Roaring Flame | 166 | 21 | 4 | 5 | 9 | 15 | `blocked` |
-| Dr. Madison Li | 166 | 29 | 6 | 4 | 2 | 10 | `blocked` |
-| Jace, Mirror Mage | 166 | 23 | 4 | 4 | 10 | 13 | `blocked` |
-| Titania, Gaea Incarnate | 166 | 24 | 6 | 4 | 5 | 11 | `blocked` |
-| Athreos, Shroud-Veiled | 165 | 18 | 5 | 4 | 3 | 24 | `blocked` |
-| Rory Williams | 165 | 21 | 6 | 4 | 2 | 19 | `blocked` |
-| Starscream, Power Hungry // Starscream, Seeker Leader | 165 | 17 | 4 | 8 | 4 | 19 | `blocked` |
+| Invasion of Kaldheim // Pyre of the World Tree | 176 | 17 | 6 | 4 | 5 | 22 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
