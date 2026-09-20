@@ -30,6 +30,7 @@ from quorune.oracle_ir import ORACLE_COMPILER_VERSION, register_generated_progra
 from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
+from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
 from quorune.card_programs.validation import (
     canonical_program_fingerprint,
 )
@@ -102,6 +103,23 @@ def _prevention_life_card() -> CardRecord:
     )
 
 
+def _multi_event_artifact() -> CardRecord:
+    return replace(
+        _bolt(),
+        oracle_id="00000000-0000-4000-8000-000000204001",
+        name="Generic Multi-Event Artifact",
+        mana_cost="{2}",
+        mana_value=2.0,
+        type_line="Artifact",
+        oracle_text=(
+            "When this artifact enters or is put into a graveyard from the "
+            "battlefield, draw a card."
+        ),
+        colors=(),
+        color_identity=(),
+    )
+
+
 class CardProgramV2Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -150,6 +168,95 @@ class CardProgramV2Tests(unittest.TestCase):
         jsonschema.Draft202012Validator(self.schema).validate(first.to_dict())
         restored = CardProgram.from_dict(first.to_dict())
         self.assertEqual(first.to_dict(), restored.to_dict())
+
+    def test_typed_multi_event_program_supersedes_complete_reviewed_split(self):
+        record = _multi_event_artifact()
+        generated = compile_card_program(
+            self.db,
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+        typed = next(
+            ability
+            for ability in generated.abilities
+            if FixedEventSubscriptionSet.from_condition(
+                ability.event_condition
+            )
+            is not None
+        )
+        registry = SemanticRegistry(include_builtin_packs=False)
+        split = (
+            ("reviewed:enter", "permanent.enter.self"),
+            ("reviewed:graveyard", "artifact.graveyard.self"),
+        )
+        for key, event in split:
+            registry.put(
+                SemanticProgram(
+                    key=key,
+                    label=key,
+                    effects=[dict(effect) for effect in typed.effects],
+                    oracle_id=record.oracle_id,
+                    ability_id=f"trigger:{key.rpartition(':')[2]}",
+                    active_zone="battlefield",
+                    event=event,
+                    trust_level="trusted",
+                    provenance=dict(typed.provenance),
+                    tests=[
+                        "test_typed_multi_event_program_supersedes_complete_reviewed_split"
+                    ],
+                )
+            )
+
+        current = compile_card_program(
+            self.db,
+            record,
+            semantic_registry=registry,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+        keys = {ability.key for ability in current.abilities}
+        self.assertIn(typed.key, keys)
+        self.assertTrue(keys.isdisjoint(key for key, _event in split))
+        self.assertEqual(
+            sorted(key for key, _event in split),
+            current.provenance["superseded_reviewed_semantic_keys"],
+        )
+        self.assertEqual(
+            "capability_closed",
+            current.trust_closure["trust_basis"],
+        )
+
+        registry.put(
+            SemanticProgram(
+                key="reviewed:distinct",
+                label="Distinct reviewed trigger",
+                effects=[{"op": "draw", "player": "you", "amount": 2}],
+                oracle_id=record.oracle_id,
+                ability_id="trigger:distinct",
+                active_zone="battlefield",
+                event="permanent.enter.self",
+                trust_level="trusted",
+                provenance=dict(typed.provenance),
+                tests=[
+                    "test_typed_multi_event_program_supersedes_complete_reviewed_split"
+                ],
+            )
+        )
+        with_distinct = compile_card_program(
+            self.db,
+            record,
+            semantic_registry=registry,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level="trusted",
+        )
+        self.assertIn(
+            "reviewed:distinct",
+            {ability.key for ability in with_distinct.abilities},
+        )
 
     def test_strike_keywords_lower_with_precise_capability_closed_spans(self):
         for keyword, suffix in (("first strike", 510401), ("double strike", 510402)):

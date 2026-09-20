@@ -888,7 +888,9 @@ compound or conditional instructions remain source-spanned residuals.
   explicit in the typed result.
 - Parsing success is separate from runtime and rules closure.
 - A reviewed ability can supersede generated output only at the same stable
-  semantic key; conflicts fail closed.
+  semantic key. The one bounded inverse case is a trusted typed multi-event
+  program replacing a complete, body-identical reviewed split of those same
+  source-self subscriptions; incomplete or ambiguous splits fail closed.
 - Compiler output cannot claim trust beyond all declared capabilities and
   runtime dependencies.
 - Card names and Oracle IDs are evidence and lookup keys, not generic runtime
@@ -1177,6 +1179,11 @@ damage, monstrous, block, and sacrifice pairs plus the exact current enchanted
 creature attack/block relation. Cross-zone Cycling/death pairs, commander and
 Room subjects, linked Haunt, chosen or another-object predicates, unavailable
 event producers, and more than two events remain residual.
+`card_programs/reviewed_overlay.py` owns the single precedence query shared by
+CardProgram compilation and live generated-program registration. It removes a
+reviewed split only when every subscription has one trusted, body-identical
+source-self counterpart, preventing duplicate triggers without card identity
+dispatch.
 
 `compiler/fixed_source_combat_growth.py` owns the narrower source-self combat
 growth body grammar. It accepts only mandatory fixed integer power/toughness

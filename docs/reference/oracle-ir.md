@@ -96,11 +96,14 @@ it does not rewrite an old record.
 ## Runtime boundary
 
 `CommanderSession` registers validated generated and reviewed abilities under
-stable identities. A reviewed compatibility ability may supersede only the same
-key; conflicting face or source identity fails loading. Exact executable nodes
-enter registered typed semantic handlers or runtime components. Unsupported or
-untrusted nodes remain unavailable in strict play or reach an explicit
-development-only arbitration boundary.
+stable identities. A reviewed compatibility ability normally supersedes only
+the same key. A trusted typed multi-event program instead replaces a complete,
+body-identical reviewed split of its source-self subscriptions so one printed
+ability cannot trigger twice; incomplete or ambiguous overlap remains
+uncombined. Conflicting face or source identity fails loading. Exact executable
+nodes enter registered typed semantic handlers or runtime components.
+Unsupported or untrusted nodes remain unavailable in strict play or reach an
+explicit development-only arbitration boundary.
 
 No running game parses Oracle prose. The runtime consumes only validated,
 fingerprinted CardPrograms, registered descriptors, and typed rules owners.

@@ -6,6 +6,9 @@ import hashlib
 from typing import Any, Iterable, Mapping
 
 from ..carddb import CardDatabase, CardRecord
+from ..card_programs.reviewed_overlay import (
+    shadowed_reviewed_multi_event_keys,
+)
 from ..object_predicate import ObjectQuerySpec
 from ..rules.capabilities import (
     CapabilityRegistry,
@@ -1554,8 +1557,22 @@ def register_generated_programs(
                 promote_exact_capability_declarations
             ),
         )
-        for provisional in provisional_programs:
-            program = trusted_programs.get(provisional.key, provisional)
+        runtime_programs = tuple(
+            trusted_programs.get(provisional.key, provisional)
+            for provisional in provisional_programs
+        )
+        shadowed_reviewed_keys = shadowed_reviewed_multi_event_keys(
+            record,
+            runtime_programs,
+            registry.programs_for_oracle(record.oracle_id),
+        )
+        for key in sorted(shadowed_reviewed_keys):
+            registry.remove(key)
+        for provisional, program in zip(
+            provisional_programs,
+            runtime_programs,
+            strict=True,
+        ):
             if registry.get(program.key) is not None:
                 skipped_existing += 1
                 continue
