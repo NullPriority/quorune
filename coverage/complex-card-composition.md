@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "70cd551a431e257613177c559971cf34b0a8e66fce2c93178c597a94fe626e3e"
+verified: "f3d5d5ad3cd2d4c1df6e7ebe1a06c94ec2df9a5bcbe83cc1e9f12e163ba9c121"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -29,6 +29,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Rowan Kenrith | 209 | 28 | 5 | 6 | 5 | 21 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
+| Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 205 | 25 | 7 | 4 | 5 | 22 | `blocked` |
 | Crystal Fragments // Summon: Alexander | 204 | 26 | 7 | 7 | 7 | 8 | `blocked` |
 | Esper Origins // Summon: Esper Maduin | 204 | 21 | 7 | 5 | 6 | 20 | `blocked` |
@@ -36,6 +37,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Legend of Kuruk // Avatar Kuruk | 204 | 28 | 6 | 6 | 11 | 5 | `blocked` |
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
+| The Restoration of Eiganjo // Architect of Restoration | 200 | 27 | 7 | 6 | 6 | 7 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
 | Ugin, Eye of the Storms | 199 | 39 | 5 | 5 | 11 | 3 | `blocked` |
@@ -48,7 +50,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Segovia // Caetus, Sea Tyrant of Segovia | 189 | 20 | 6 | 4 | 6 | 23 | `blocked` |
 | Okiba Reckoner Raid // Nezumi Road Captain | 189 | 24 | 7 | 6 | 6 | 6 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
-| The Restoration of Eiganjo // Architect of Restoration | 186 | 21 | 7 | 6 | 8 | 7 | `blocked` |
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Ticket Booth // Tunnel of Hate | 184 | 19 | 5 | 4 | 3 | 32 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Invasion of Tolvada // The Broken Sky | 178 | 21 | 6 | 4 | 5 | 17 | `blocked` |
-| Invasion of Zendikar // Awakened Skyclave | 178 | 20 | 5 | 5 | 6 | 18 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
