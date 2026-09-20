@@ -3461,6 +3461,46 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             _durable_main_frontier(expected_fingerprint="f" * 64)
 
+        base_sha = subprocess.run(
+            ["git", "rev-parse", "origin/main"],
+            cwd=ROOT,
+            check=True,
+            text=True,
+            encoding="utf-8",
+            stdout=subprocess.PIPE,
+        ).stdout.strip()
+        with tempfile.TemporaryDirectory() as temporary:
+            event_path = Path(temporary) / "event.json"
+            event_path.write_text(
+                json.dumps({"pull_request": {"base": {"sha": base_sha}}}),
+                encoding="utf-8",
+            )
+
+            def shallow_run(arguments, **_kwargs):
+                if arguments[1] == "fetch":
+                    return SimpleNamespace(returncode=0, stdout=b"", stderr=b"")
+                if arguments[1] == "show" and arguments[2].startswith(base_sha):
+                    return SimpleNamespace(returncode=0, stdout=raw, stderr=b"")
+                return SimpleNamespace(returncode=1, stdout=b"", stderr=b"")
+
+            with (
+                mock.patch(
+                    "scripts.update_work_selection_cohort_measurements."
+                    "subprocess.run",
+                    side_effect=shallow_run,
+                ),
+                mock.patch.dict(
+                    "scripts.update_work_selection_cohort_measurements."
+                    "os.environ",
+                    {"GITHUB_EVENT_PATH": str(event_path)},
+                    clear=True,
+                ),
+            ):
+                recovered = _durable_main_frontier(
+                    expected_fingerprint=expected,
+                )
+        self.assertEqual(expected, recovered["fingerprint"])
+
     def test_materialized_forecast_correction_is_idempotent(self):
         correction = {
             "transition_id": "oracle-ir-v999-fixture",

@@ -3,7 +3,9 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -110,6 +112,45 @@ def _durable_main_frontier(*, expected_fingerprint: str) -> dict:
         )
         if value.get("fingerprint") == expected_fingerprint:
             return value
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    try:
+        event = (
+            json.loads(Path(event_path).read_text(encoding="utf-8"))
+            if event_path
+            else {}
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        event = {}
+    pull_request = event.get("pull_request")
+    base = pull_request.get("base") if isinstance(pull_request, dict) else None
+    base_sha = base.get("sha") if isinstance(base, dict) else None
+    if isinstance(base_sha, str) and re.fullmatch(r"[0-9a-f]{40}", base_sha):
+        fetched = subprocess.run(
+            ["git", "fetch", "--no-tags", "--depth=1", "origin", base_sha],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+        )
+        if fetched.returncode == 0:
+            completed = subprocess.run(
+                [
+                    "git",
+                    "show",
+                    f"{base_sha}:coverage/card-unlock-frontier.json.gz",
+                ],
+                cwd=ROOT,
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            if completed.returncode == 0:
+                value = _decode_frontier(
+                    completed.stdout,
+                    label="Pull-request durable-main transition base",
+                )
+                if value.get("fingerprint") == expected_fingerprint:
+                    return value
     raise ValueError(
         "Cannot recover the transition's immutable durable-main frontier"
     )
