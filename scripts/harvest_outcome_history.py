@@ -1468,6 +1468,39 @@ def _declaration_matches_content_entry(
     )
 
 
+def _replace_unlanded_content_entry(
+    entry: Mapping[str, Any],
+    *,
+    declaration: Mapping[str, Any],
+    base: Mapping[str, Any],
+    head: Mapping[str, Any],
+    repository: Path | None = None,
+    measurement_receipt: Mapping[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    """Replace one corrected, still-unlanded semantic transition."""
+
+    validated = _validate_content_entry(entry)
+    if (
+        validated.get("receipt_identity_kind") != "semantic_content"
+        or not _declaration_matches_content_entry(declaration, validated)
+    ):
+        return None
+    if not _semantic_receipts_match(
+        validated["base_receipt"],
+        base,
+        repository=repository,
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Corrected harvest transition no longer starts from durable main"
+        )
+    return _content_entry(
+        declaration,
+        base=base,
+        head=head,
+        measurement_receipt=measurement_receipt,
+    )
+
+
 def _refresh_content_entry(
     entry: Mapping[str, Any],
     *,
@@ -1726,7 +1759,47 @@ def build_harvest_outcome_history(
         if transition_declaration is not None
         else None
     )
-    if _semantic_receipts_match(
+    replacement = None
+    if (
+        validated_declaration is not None
+        and validated_declaration["outcome_kind"] == "harvest"
+        and entries
+        and entries[-1].get("receipt_identity_kind") == "semantic_content"
+        and _declaration_matches_content_entry(
+            validated_declaration,
+            entries[-1],
+        )
+        and not _content_transition_is_landed(
+            repository,
+            validated_declaration["transition_id"],
+        )
+        and not _semantic_receipts_match(
+            latest,
+            current_receipt,
+            repository=repository,
+        )
+    ):
+        if validated_declaration["compiler_version"] != current_receipt[
+            "compiler_version"
+        ]:
+            raise HarvestOutcomeHistoryError(
+                "Semantic transition compiler version does not match its receipt"
+            )
+        replacement = _replace_unlanded_content_entry(
+            entries[-1],
+            declaration=validated_declaration,
+            base=receipt(_durable_main_tip(repository)),
+            head=current_receipt,
+            repository=repository,
+            measurement_receipt=_transition_measurement_receipt(
+                repository,
+                validated_declaration,
+            ),
+        )
+    if replacement is not None:
+        entries[-1] = replacement
+        latest = entries[-1]["head_receipt"]
+    elif _semantic_receipts_match(
         latest,
         current_receipt,
         repository=repository,

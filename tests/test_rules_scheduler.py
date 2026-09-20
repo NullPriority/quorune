@@ -54,6 +54,7 @@ from scripts.harvest_outcome_history import (
     _latest_semantic_receipt,
     _non_harvest_content_entry,
     _refresh_content_entry,
+    _replace_unlanded_content_entry,
     _receipt,
     _receipt_content_fingerprint,
     _require_landed_harvest_head,
@@ -1776,6 +1777,55 @@ class RulesSchedulerTests(unittest.TestCase):
         )
         self.assertNotEqual(
             entry["entry_fingerprint"], refreshed["entry_fingerprint"]
+        )
+
+    def test_corrected_unlanded_transition_replaces_superseded_receipt(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        latest = provenance[-1]
+        base = _receipt(ROOT, latest["base_commit"])
+        head = _receipt(ROOT, latest["head_commit"])
+        declaration = {
+            "transition_id": "fixture-corrected-unlanded-transition",
+            "compiler_version": head["compiler_version"],
+            "bundle_id": "bundle:fixture-corrected-unlanded-transition",
+            "candidate_ids": [
+                "compiler:fixture-corrected-unlanded-transition"
+            ],
+            "family_ids": [
+                "effect_clause:fixture-corrected-unlanded-transition"
+            ],
+            "capability_ids": [
+                "effect.fixture_corrected_unlanded_transition"
+            ],
+            "expected_complete_card_gain": 1,
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+        }
+        superseded = _content_entry(declaration, base=base, head=head)
+        corrected_head = deepcopy(head)
+        corrected_head["blobs"][
+            "coverage/card-program-coverage-commander.json"
+        ]["semantic_sha256"] = "f" * 64
+        corrected_head["card_program_material_residuals"] -= 1
+
+        corrected = _replace_unlanded_content_entry(
+            superseded,
+            declaration=declaration,
+            base=base,
+            head=corrected_head,
+        )
+
+        self.assertIsNotNone(corrected)
+        self.assertEqual(corrected, _validate_content_entry(corrected))
+        self.assertEqual(
+            superseded["base_receipt"], corrected["base_receipt"]
+        )
+        self.assertNotEqual(
+            superseded["head_receipt"]["content_fingerprint"],
+            corrected["head_receipt"]["content_fingerprint"],
+        )
+        self.assertEqual(
+            declaration["transition_id"], corrected["transition_id"]
         )
 
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
