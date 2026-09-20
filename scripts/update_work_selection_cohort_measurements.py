@@ -91,6 +91,30 @@ def _decode_frontier(raw: bytes, *, label: str) -> dict:
     return value
 
 
+def _durable_main_frontier(*, expected_fingerprint: str) -> dict:
+    """Recover the current durable-main frontier in shallow CI clones."""
+
+    for reference in ("origin/main", "main"):
+        completed = subprocess.run(
+            ["git", "show", f"{reference}:coverage/card-unlock-frontier.json.gz"],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if completed.returncode:
+            continue
+        value = _decode_frontier(
+            completed.stdout,
+            label="Durable-main transition base",
+        )
+        if value.get("fingerprint") == expected_fingerprint:
+            return value
+    raise ValueError(
+        "Cannot recover the transition's immutable durable-main frontier"
+    )
+
+
 def _source_checkpoint_frontier(transition_id: str) -> dict:
     try:
         history = json.loads(HARVEST_HISTORY.read_text(encoding="utf-8"))
@@ -128,8 +152,8 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
             stderr=subprocess.PIPE,
         )
         if completed.returncode:
-            raise ValueError(
-                "Cannot read the landed transition's base-frontier blob"
+            return _durable_main_frontier(
+                expected_fingerprint=expected,
             )
         value = _decode_frontier(
             completed.stdout,

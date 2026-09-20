@@ -71,6 +71,7 @@ from scripts.harvest_outcome_history import (
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.update_work_selection_cohort_measurements import (
     _completed_transition_measurement_is_current,
+    _durable_main_frontier,
     _preserved_transition_is_current,
     _source_checkpoint_frontier,
     _transition_measurements,
@@ -3434,6 +3435,31 @@ class RulesSchedulerTests(unittest.TestCase):
             expected,
             _source_checkpoint_frontier(transition_id)["fingerprint"],
         )
+
+    def test_transition_probe_recovers_exact_durable_main_frontier(self):
+        raw = subprocess.run(
+            [
+                "git",
+                "show",
+                "origin/main:coverage/card-unlock-frontier.json.gz",
+            ],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+        ).stdout
+        expected = json.loads(gzip.decompress(raw))["fingerprint"]
+
+        self.assertEqual(
+            expected,
+            _durable_main_frontier(
+                expected_fingerprint=expected,
+            )["fingerprint"],
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "immutable durable-main frontier",
+        ):
+            _durable_main_frontier(expected_fingerprint="f" * 64)
 
     def test_materialized_forecast_correction_is_idempotent(self):
         correction = {
