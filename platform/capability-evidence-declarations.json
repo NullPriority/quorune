@@ -24919,32 +24919,32 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_normalized_batch_predicates_share_damage_zone_and_token_owners",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Consume two committed combat-damage results as one exact one-or-more trigger occurrence before token creation."
+      "applicability_note": "Preserve same-recipient coalescing, per-player splits, separate occurrences and damage steps, full prevention, trigger multiplication, and APNAP placement."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Use one committed damage occurrence to distinguish source-self combat, source-opponent, and recipient-self predicates."
+      "applicability_note": "Create and resolve one represented trigger for each simultaneously damaged player without merging downstream token-entry consequences."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Evaluate source-controller and opponent player relations from immutable public damage facts in a four-player table."
+      "applicability_note": "Place independent observers and multiplied occurrences in deterministic four-player APNAP order."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_event_dispatch_mutant_is_killed",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suppress the canonical semantic dispatch after committed damage and prove no alternate runtime path creates the represented trigger."
     },
@@ -24952,7 +24952,7 @@
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_event_capabilities_fail_closed",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Withhold exact source-damage CardProgram authority when the normalized damage occurrence capability is blocked."
     },
@@ -24960,7 +24960,7 @@
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_event_near_misses_remain_material",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject creature-recipient, unrestricted, attachment-relative, aggregate, and optional damage trigger grammar."
     },
@@ -24968,7 +24968,7 @@
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_zone_and_damage_bindings_compile_exactly",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile closed combat-player, combat-opponent, opponent-damage, and source-recipient predicates over damage.dealt occurrences."
     },
@@ -24976,7 +24976,7 @@
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Emit represented damage triggers only for positive committed post-replacement and post-prevention results."
     },
@@ -24984,17 +24984,17 @@
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose public damage and trigger facts while stripping source physical and logical identities from every principal packet."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
-      "official_rule_ids": ["120.4", "603.2", "603.3", "603.6"],
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
+      "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Replay the source-combat-damage trigger continuation to the identical authoritative state hash."
+      "applicability_note": "Checkpoint and replay per-player aggregation, trigger ordering, multiplier copies, consequence resolution, and the final authoritative state hash."
     },
     {
       "capability_id": "trigger.event.normalized_life_gain",

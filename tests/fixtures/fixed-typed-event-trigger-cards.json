@@ -1793,6 +1793,25 @@
       "layout": "normal",
       "released_at": "2026-09-21",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "12100000-0000-4000-8000-000000000094",
+      "name": "Generic Chosen Rogue Trigger Multiplier Fixture",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "If a triggered ability of another creature you control of the chosen type triggers, it triggers an additional time.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-21",
+      "legalities": {"commander": "legal"}
     }
   ]
 }

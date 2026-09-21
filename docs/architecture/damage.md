@@ -82,6 +82,15 @@ zero and fully prevented damage append nothing. Current target predicates may
 query these public facts, while a zone change invalidates the old incarnation
 without deleting replay history.
 
+Each committed damage transaction also carries one stable batch identity
+derived from its replacement-event identities. Represented “one or more”
+combat-damage triggers aggregate by that simultaneous batch and damaged player:
+several qualifying creatures damaging one player create one occurrence, while
+damage to different players creates one occurrence per player. Separate damage
+transactions and combat-damage steps remain separate, fully prevented results
+create none, and the ordinary trigger owner retains APNAP placement and trigger
+multiplier behavior.
+
 ## Replay, privacy, and extension
 
 Event IDs derive from stable damage-step, source-incarnation, recipient, and
