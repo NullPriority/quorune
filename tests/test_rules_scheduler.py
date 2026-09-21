@@ -12,6 +12,7 @@ import unittest
 from unittest import mock
 
 from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from quorune.carddb import CardRecord
 from quorune.rules_corpus import (
     CORPUS_OPERATIONS,
     execute_rules_corpus_operation,
@@ -4718,6 +4719,96 @@ class RulesSchedulerTests(unittest.TestCase):
             },
             cohort_fingerprints={
                 "bundle:public-library-action-permissions": "0" * 64
+            },
+        )["measurements"][0]
+        self.assertEqual("bounded_executable", measured["decision"])
+        self.assertEqual(1, measured["affected_commander_cards"])
+        self.assertEqual(1, measured["complete_card_gain"])
+        self.assertEqual(1, measured["exact_ability_gain"])
+        self.assertEqual(1, measured["material_residual_reduction"])
+
+    def test_public_static_action_legality_probe_is_closed(self):
+        probe_id = "public-static-action-legality-existing-owner-v1"
+        for source in (
+            "You may cast creature spells as though they had flash.",
+            "Your opponents can't cast spells during your turn.",
+            "Each player can't cast more than one spell each turn.",
+            "Creature spells you control can't be countered.",
+            "Activated abilities of artifacts can't be activated.",
+            "Enchanted player can't cast more than one spell each turn.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "You may cast the first creature spell you cast each turn as "
+            "though it had flash.",
+            "Each player can't cast more than one non-Phyrexian spell each "
+            "turn.",
+            "Spells you cast with mana value 5 or greater cost {1} less to "
+            "cast and can't be countered.",
+            "Split second",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
+        family = "continuous_layer:continuous-effect-layers-and-dependencies"
+        record = CardRecord(
+            oracle_id="static-action-legality-fixture",
+            name="Static Action Legality Fixture",
+            mana_cost="{3}",
+            mana_value=3.0,
+            type_line="Enchantment",
+            oracle_text="Each player can't cast more than one spell each turn.",
+            power=None,
+            toughness=None,
+            loyalty=None,
+            defense=None,
+            colors=(),
+            color_identity=(),
+            keywords=(),
+            produced_mana=(),
+            layout="normal",
+            released_at="2026-01-01",
+            legalities={"commander": "legal"},
+            faces=(),
+            raw={},
+        )
+        measured = build_work_selection_cohort_measurements(
+            frontier={
+                "cards": [
+                    {
+                        "oracle_id": record.oracle_id,
+                        "minimum_known_blocker_set": [family],
+                        "abilities": [
+                            {
+                                "ability_id": "front:n1",
+                                "face_id": "front",
+                                "source_line": 1,
+                                "status": "unresolved",
+                                "residuals": [{"family_ids": [family]}],
+                                "blockers": {
+                                    "canonical_family_ids": [family]
+                                },
+                            }
+                        ],
+                    }
+                ]
+            },
+            bundle_policies=[
+                {
+                    "bundle_id": "bundle:public-static-action-legality",
+                    "member_family_ids": [family],
+                    "measurement_probe_id": probe_id,
+                }
+            ],
+            cards_by_oracle_id={record.oracle_id: record},
+            coverage={
+                "minimum_complete_card_gain": 1,
+                "minimum_exact_ability_gain": 1,
+                "minimum_material_residual_reduction": 1,
+            },
+            cohort_fingerprints={
+                "bundle:public-static-action-legality": "0" * 64
             },
         )["measurements"][0]
         self.assertEqual("bounded_executable", measured["decision"])

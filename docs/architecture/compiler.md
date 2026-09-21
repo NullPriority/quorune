@@ -1192,6 +1192,20 @@ reviewed split only when every subscription has one trusted, body-identical
 source-self counterpart, preventing duplicate triggers without card identity
 dispatch.
 
+`compiler/static_cast_rule_templates.py` and
+`compiler/activation_restriction_templates.py` own the closed battlefield-
+static action-legality grammar. They lower fixed public spell queries into
+instant-timing permissions, cast prohibitions, one-spell-per-turn limits, and
+spell or ability counter prohibitions; the same family lowers fixed public,
+chosen-name, enchanted-object, and enchanted-player activation prohibitions.
+The exact enchanted-permanent untap/prohibition compound composes the existing
+untap participation capability with the activation restriction instead of
+inventing a second untap rule. Every emitted node requires the shared current
+layer-6 static-component fragment. Temporary and targeted rules, cost changes,
+free casts, dynamic quantities or comparisons, linked objects, spell-self
+riders, Split second, Epic, grants, copies, text changes, and unsupported
+compound siblings remain source-spanned residuals.
+
 `compiler/fixed_source_combat_growth.py` owns the narrower source-self combat
 growth body grammar. It accepts only mandatory fixed integer power/toughness
 changes until end of turn or exactly one +1/+1 counter after the source

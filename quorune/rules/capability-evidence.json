@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "aac6526097b2acc249d10b48c700cc11c856ebc3a0b6d4557fa84c861f6266a6",
-  "declaration_source_fingerprint": "2e5055501679fb921ae78ffe5dfbcb66bb219f1a2374ac7b359613d0eb117bd0",
+  "registry_fingerprint": "29ff818ceb487cb9f402289060ff4e6b49ce84165124ad9b8a954269e03d980d",
+  "declaration_source_fingerprint": "8e39a80153b0b323d23925971d217087f1219937571429d72ac84525e3ea3a82",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -2567,6 +2567,125 @@
         "commander_review"
       ],
       "applicability_note": "Replay the source-pinned chosen-name designation to the exact authoritative state used by typed activation availability."
+    },
+    {
+      "capability_id": "activation.restriction.fixed_public_query",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_fixed_activation_prohibitions_share_offer_commit_legality",
+      "official_rule_ids": [
+        "101.2",
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Share current public predicate and typed ability classification between activation offer and commit."
+    },
+    {
+      "capability_id": "activation.restriction.fixed_public_query",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep source-relative prohibitions and offers seat-correct in a four-player game."
+    },
+    {
+      "capability_id": "activation.restriction.fixed_public_query",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "101.2",
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the shared static action-rule compiler production."
+    },
+    {
+      "capability_id": "activation.restriction.fixed_public_query",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject dynamic, temporary, cost-changing, granted-ability, and malformed restriction forms."
+    },
+    {
+      "capability_id": "activation.restriction.fixed_public_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_contract_matrix",
+      "official_rule_ids": [
+        "101.2",
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed battlefield, chosen-name, and attachment activation prohibitions to one typed owner."
+    },
+    {
+      "capability_id": "activation.restriction.fixed_public_query",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only ordinary seat-scoped activation availability without private implementation data."
+    },
+    {
+      "capability_id": "activation.restriction.fixed_public_query",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "602.1",
+        "602.5",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay static action availability and the resulting authoritative command exactly."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -11408,6 +11527,102 @@
       "applicability_note": "Replay the identity-pinned delayed choice, free cast, ordinary resolution, and final authoritative hash."
     },
     {
+      "capability_id": "casting.limit.once_per_turn_static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_cast_timing_prohibition_limits_and_revalidation",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Count the canonical current-turn cast journal before both offer and commit."
+    },
+    {
+      "capability_id": "casting.limit.once_per_turn_static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply each-player and source-relative cast limits independently in four-player state."
+    },
+    {
+      "capability_id": "casting.limit.once_per_turn_static",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the shared static action-rule compiler production."
+    },
+    {
+      "capability_id": "casting.limit.once_per_turn_static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject wider counts, this-way limits, dynamic limits, and malformed descriptors."
+    },
+    {
+      "capability_id": "casting.limit.once_per_turn_static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_contract_matrix",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower exact one-spell-per-turn public query limits through one typed cast rule."
+    },
+    {
+      "capability_id": "casting.limit.once_per_turn_static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the cast journal, limit verdict, and accepted cast exactly."
+    },
+    {
       "capability_id": "casting.madness.fixed_mana",
       "evidence_class": "interaction",
       "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_madness_stale_payment_counter_and_current_ability_boundaries",
@@ -13120,6 +13335,265 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact exile identities, offered options, cast-or-decline response, random cleanup, and final authoritative hash."
+    },
+    {
+      "capability_id": "casting.prohibition.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_cast_timing_prohibition_limits_and_revalidation",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Revalidate source face, controller, turn, phase, zone, and chosen name at cast offer and commit."
+    },
+    {
+      "capability_id": "casting.prohibition.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply all-player and source-opponent casting prohibitions seat-correctly."
+    },
+    {
+      "capability_id": "casting.prohibition.fixed_public",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the shared static action-rule compiler production."
+    },
+    {
+      "capability_id": "casting.prohibition.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject linked names, last-spell predicates, temporary rules, and malformed descriptors."
+    },
+    {
+      "capability_id": "casting.prohibition.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_contract_matrix",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed player, spell-query, period, zone, and chosen-name cast prohibitions."
+    },
+    {
+      "capability_id": "casting.prohibition.fixed_public",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose only the ordinary legal cast catalog to each authorized principal."
+    },
+    {
+      "capability_id": "casting.prohibition.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "601.2e",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the current restriction source and accepted cast result exactly."
+    },
+    {
+      "capability_id": "casting.timing.fixed_query_static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_cast_timing_prohibition_limits_and_revalidation",
+      "official_rule_ids": [
+        "117.1a",
+        "304.5",
+        "307.5",
+        "601.2",
+        "702.8",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute current source conditions and selected-face spell queries for offer and commit."
+    },
+    {
+      "capability_id": "casting.timing.fixed_query_static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "117.1a",
+        "304.5",
+        "307.5",
+        "601.2",
+        "702.8",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Separate controller-scoped and all-player instant-timing permissions in four-player state."
+    },
+    {
+      "capability_id": "casting.timing.fixed_query_static",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "117.1a",
+        "304.5",
+        "307.5",
+        "601.2",
+        "702.8",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the shared static action-rule compiler production."
+    },
+    {
+      "capability_id": "casting.timing.fixed_query_static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "117.1a",
+        "304.5",
+        "307.5",
+        "601.2",
+        "702.8",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject self riders, costs, ordinals, linked access, dynamic conditions, and malformed rules."
+    },
+    {
+      "capability_id": "casting.timing.fixed_query_static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_contract_matrix",
+      "official_rule_ids": [
+        "117.1a",
+        "304.5",
+        "307.5",
+        "601.2",
+        "702.8",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed spell-query Flash-as-though permissions through canonical cast timing."
+    },
+    {
+      "capability_id": "casting.timing.fixed_query_static",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "117.1a",
+        "304.5",
+        "307.5",
+        "601.2",
+        "702.8",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Do not reveal another seat's hand while projecting source-relative cast offers."
+    },
+    {
+      "capability_id": "casting.timing.fixed_query_static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "117.1a",
+        "304.5",
+        "307.5",
+        "601.2",
+        "702.8",
+        "702.8a",
+        "702.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay off-turn cast availability and the committed stack object exactly."
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
@@ -52828,6 +53302,102 @@
       "applicability_note": "Reject a missing stack identity before any stack, zone, telemetry, or event mutation."
     },
     {
+      "capability_id": "stack.counter.prohibition.fixed_query_static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_uncounterable_tracks_current_source_and_spell_copies",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "701.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute current static sources when a spell or represented ability is countered."
+    },
+    {
+      "capability_id": "stack.counter.prohibition.fixed_query_static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "701.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply controller and table-wide counter prohibitions seat-correctly."
+    },
+    {
+      "capability_id": "stack.counter.prohibition.fixed_query_static",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "701.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the shared static action-rule compiler production."
+    },
+    {
+      "capability_id": "stack.counter.prohibition.fixed_query_static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "701.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject temporary, target-specific, payment, dynamic, and malformed counter rules."
+    },
+    {
+      "capability_id": "stack.counter.prohibition.fixed_query_static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_contract_matrix",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "701.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed spell-query and table-wide spell-and-ability counter prohibitions."
+    },
+    {
+      "capability_id": "stack.counter.prohibition.fixed_query_static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "official_rule_ids": [
+        "101.2",
+        "601.2",
+        "701.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay current source applicability and stack-counter result exactly."
+    },
+    {
       "capability_id": "stack.counter.prohibition.intrinsic",
       "evidence_class": "interaction",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_intrinsic_uncounterable_spell_survives_typed_counter",
@@ -65981,5 +66551,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "52991c6eaa9601635e4da9ecd4250a8e6d7209fa519b07ae1bf0b8530da33824"
+  "fingerprint": "edeec0128e49a31ff814aba6201fe1c09ef1ecb4226a3eba100f79806e736d13"
 }

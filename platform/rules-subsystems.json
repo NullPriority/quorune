@@ -3848,6 +3848,56 @@
           "measurement_probe_id": "public-library-action-permissions-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:public-static-action-legality",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.restriction.fixed_public_query",
+            "capability:casting.limit.once_per_turn_static",
+            "capability:casting.prohibition.fixed_public",
+            "capability:casting.timing.fixed_query_static",
+            "capability:stack.counter.prohibition.fixed_query_static",
+            "component:quorune.compiler.activation_restriction_templates.static_activation_restriction_handler",
+            "component:quorune.compiler.static_cast_rule_templates.static_cast_rule_handler",
+            "component:quorune.rules.casting.proposal.build_cast_offer",
+            "component:quorune.semantic_runtime.activation_restrictions.activation_prohibitions",
+            "component:quorune.semantic_runtime.static_cast_rules.active_static_cast_rules",
+            "component:quorune.semantic_runtime.current_ability_components.program_has_current_ability_fragments"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-public-spell-or-permanent-query",
+            "source-controller-opponent-table-or-attached-player-scope",
+            "always-combat-turn-tapped-cast-history-or-end-step-condition",
+            "all-nonmana-loyalty-or-nonmana-nonloyalty-activation-scope"
+          ],
+          "shared_dependencies": [
+            "activation.restriction.fixed_public_query",
+            "casting.limit.once_per_turn_static",
+            "casting.prohibition.fixed_public",
+            "casting.timing.fixed_query_static",
+            "stack.counter.prohibition.fixed_query_static"
+          ],
+          "shared_grammar": "one exact battlefield-static public spell timing, cast prohibition, once-per-turn cast limit, uncounterability, or activated-ability prohibition through the existing cast offer and commit, stack-counter, attachment, untap, current layer-6 ability-applicability, rollback, and replay owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era static action-legality cohort while one typed public query and current-component boundary governs spell timing, cast legality, counterability, activation legality, attached-player limits, compound attached untap participation, source departure, and stale offers.",
+          "explicit_exclusions": [
+            "temporary, targeted, granted, copied, text-changed, spell-self, and next-spell rules",
+            "cost increases, reductions, free casts, alternative payments, and linked consequences",
+            "dynamic mana-value, parity, source-power, count, chosen-type, linked-exile, and historical predicates",
+            "dynamic target restrictions, activation cost changes, chosen permanents, and ability grants",
+            "split second, Epic, conditional self timing, and independently unsupported compound siblings",
+            "subtype-qualified cast limits without authoritative subtype cast history"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-static-action-legality-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -3896,20 +3946,22 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v205-public-library-action-permissions",
-      "compiler_version": "oracle-ir-v205",
-      "bundle_id": "bundle:public-library-action-permissions",
-      "candidate_ids": ["compiler:public-library-action-permissions"],
+      "transition_id": "oracle-ir-v206-public-static-action-legality",
+      "compiler_version": "oracle-ir-v206",
+      "bundle_id": "bundle:public-static-action-legality",
+      "candidate_ids": ["compiler:public-static-action-legality"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "land.play.additional.static",
-        "library.action.top.static",
-        "library.visibility.top.static"
+        "activation.restriction.fixed_public_query",
+        "casting.limit.once_per_turn_static",
+        "casting.prohibition.fixed_public",
+        "casting.timing.fixed_query_static",
+        "stack.counter.prohibition.fixed_query_static"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-library-action-permissions"
+      "measurement_id": "measurement:public-static-action-legality"
     },
     "forecast_corrections": [
       {
@@ -4534,6 +4586,11 @@
         "candidate_id": "compiler:public-library-action-permissions",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-multi-event selector has no implementation-eligible carried candidate while the raw continuous-layer leader remains a heterogeneous aggregate. A bounded integrated probe instead isolates a threshold-clearing cross-era static action-permission cohort through one existing typed component family. Exact private or public current-top visibility, fixed public current-top land or nonland spell queries, and one or two additional land plays reuse the canonical projection, cast, land-play, cycle-safe characteristic, source-incarnation, current layer-6 ability-applicability, turn, rollback, and replay owners. Cards below the top, another player's library, chosen, dynamic, secret, conditional, once-per-turn, linked-cost or linked-result, free-cast, timing-change, plot, copied, granted, text-changed, attached-source, wider-count, and independently unsupported forms remain fail-closed; current identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:public-static-action-legality",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-library-permission selector has no implementation-eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate and the dependency-ready counter queue is not the authorized foreground. Bounded comparisons retire fixed control change at 11 complete cards and strict static casting subsets at 24; their coherent shared action-legality union instead reaches the normal exact-ability floor with 100 abilities across 97 cards and 46 conservative complete-card transitions. Fixed public spell timing, cast prohibitions and one-per-turn limits, uncounterability, fixed public activation prohibitions, and the exact attached untap/prohibition compound reuse the canonical cast offer and commit, turn history, stack counter, attachment, untap, current layer-6 ability-applicability, rollback, and replay owners. Temporary, targeted, cost-changing, free-cast, dynamic, subtype-history, spell-self, split-second, Epic, linked, granted, copied, text-changed, and independently unsupported forms remain fail-closed; current identities and measurements are generated from the frontier."
       }
     ]
   },

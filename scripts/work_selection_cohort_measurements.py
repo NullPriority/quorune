@@ -25,6 +25,9 @@ from quorune.compiler.activated_zone_change_costs import (
 from quorune.compiler.action_permission_templates import (
     static_action_permission_handler,
 )
+from quorune.compiler.activation_restriction_templates import (
+    static_activation_restriction_handler,
+)
 from quorune.compiler.activation_mana_costs import (
     fixed_complex_activation_mana_cost,
 )
@@ -54,6 +57,7 @@ from quorune.compiler.public_cast_cost_modifiers import (
     public_cast_cost_modifier_template,
     public_cast_cost_modifier_v2_template,
 )
+from quorune.compiler.static_cast_rule_templates import static_cast_rule_handler
 from quorune.compiler.regeneration_templates import (
     fixed_regeneration_effect_template,
 )
@@ -336,6 +340,9 @@ _PROBE_STANDALONE_REMINDER_LINES = (
 _PROBE_PUBLIC_LIBRARY_ACTION_PERMISSIONS = (
     "public-library-action-permissions-existing-owner-v1"
 )
+_PROBE_PUBLIC_STATIC_ACTION_LEGALITY = (
+    "public-static-action-legality-existing-owner-v1"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -521,6 +528,7 @@ _PROBE_IDS = {
     _PROBE_TRIGGER_ABILITY_WORD_CARRIER,
     _PROBE_STANDALONE_REMINDER_LINES,
     _PROBE_PUBLIC_LIBRARY_ACTION_PERMISSIONS,
+    _PROBE_PUBLIC_STATIC_ACTION_LEGALITY,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -1106,6 +1114,25 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_PUBLIC_STATIC_ACTION_LEGALITY:
+        source_name = (
+            _source_face_context(card_record, ability)[0]
+            if card_record is not None and ability is not None
+            else "Static Action Rule Fixture"
+        )
+        cast_rule = static_cast_rule_handler(
+            source,
+            source_name=source_name,
+        )
+        activation_rule = static_activation_restriction_handler(source)
+        return bool(
+            cast_rule is not None
+            or (
+                activation_rule is not None
+                and activation_rule[1].get("handler_id")
+                == "restriction.activation.fixed-public.v1"
+            )
+        )
     if probe_id == _PROBE_PUBLIC_LIBRARY_ACTION_PERMISSIONS:
         lowered = static_action_permission_handler(source)
         return bool(
@@ -1628,6 +1655,117 @@ def _matches_probe(
     raise WorkSelectionCohortMeasurementError(
         f"Unknown cohort measurement probe: {probe_id}"
     )
+
+
+def _public_static_action_legality_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact nodes through the shared static action-legality owners."""
+
+    handler_ids = {
+        "restriction.activation.fixed-public.v1",
+        "rule.cast.limit.once-per-turn.v1",
+        "rule.cast.prohibition.fixed-public.v1",
+        "rule.cast.timing.fixed-query.v1",
+        "rule.stack.uncounterable.fixed-query.v1",
+    }
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards = 0
+    residual_reduction = 0
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = [
+            ability
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            node.node_id: node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        represented = [
+            ability
+            for ability in candidates
+            if (
+                (node := nodes.get(str(ability.get("ability_id") or "")))
+                is not None
+                and node.exact
+                and any(
+                    descriptor.get("handler_id") in handler_ids
+                    for descriptor in node.handlers
+                )
+            )
+        ]
+        if not represented:
+            continue
+        matched_abilities += len(represented)
+        residual_reduction += sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in represented
+        )
+        remaining = sum(
+            not node.exact
+            for face in compiled.faces
+            for node in face.nodes
+        )
+        matched_cards[oracle_id] = remaining
+        complete_cards += compiled.status == "exact"
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
 
 
 _FIXED_ALL_DAMAGE_PREVENTION_FAMILIES = frozenset(
@@ -4797,6 +4935,16 @@ def _measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_PUBLIC_STATIC_ACTION_LEGALITY:
+        return _public_static_action_legality_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids={str(value) for value in bundle["member_family_ids"]},
             cards_by_oracle_id=cards_by_oracle_id,
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,

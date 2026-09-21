@@ -116,6 +116,7 @@
       "test_semantic_choice_characterization",
       "test_state_based_actions",
       "test_static_action_permissions",
+      "test_static_action_rules",
       "test_sunburst_rules",
       "test_suspend_rules"
     ],
@@ -441,6 +442,7 @@
       "test_stack_rules",
       "test_static_abilities",
       "test_static_action_permissions",
+      "test_static_action_rules",
       "test_suspend_rules",
       "test_typecycling",
       "test_typed_activated_ability_catalog",
@@ -519,6 +521,7 @@
       "test_rule_capabilities",
       "test_self_counter_keyword_actions",
       "test_source_references",
+      "test_static_action_rules",
       "test_storm_rules",
       "test_suspend_rules",
       "test_targeted_counter_effect_clauses",

@@ -1401,6 +1401,28 @@
       ]
     },
     {
+      "id": "public-static-action-legality-contract",
+      "patterns": [
+        "quorune/compiler/activation_restriction_templates.py",
+        "quorune/compiler/static_cast_rule_templates.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/semantic_runtime/activation_restrictions.py",
+        "quorune/semantic_runtime/static_cast_rules.py",
+        "quorune/semantic_runtime/untap_steps.py",
+        "quorune/stack_counter.py",
+        "tests/fixtures/public-static-action-rule-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_restrictions",
+        "test_card_program_trust",
+        "test_flash_cast_timing",
+        "test_rules_scheduler",
+        "test_stack_counter_rules",
+        "test_static_action_rules",
+        "test_typed_untap_step_participation"
+      ]
+    },
+    {
       "id": "source-combat-growth-trigger-contract",
       "patterns": [
         "quorune/compiler/fixed_source_combat_growth.py"
