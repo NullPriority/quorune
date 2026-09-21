@@ -181,18 +181,8 @@ def _land_offers(
             "card": card.ref,
             "from": card.zone,
         }
-        if len(permission_options) == 1:
+        if permission_options:
             payload["land_play_permission"] = permission_options[0]
-        elif permission_options:
-            payload["land_play_permission"] = permission_options[0]
-            payload["choice_schema"] = {
-                "land_play_permission": {
-                    "type": "enum",
-                    "label": "Choose a land-play permission",
-                    "options": list(permission_options),
-                    "default": permission_options[0],
-                }
-            }
         if face_name:
             payload["face"] = face_name
         life_amount = host._land_entry_life_amount(record, face) if record else 0

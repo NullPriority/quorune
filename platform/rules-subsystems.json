@@ -3946,22 +3946,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v206-public-static-action-legality",
-      "compiler_version": "oracle-ir-v206",
-      "bundle_id": "bundle:public-static-action-legality",
-      "candidate_ids": ["compiler:public-static-action-legality"],
-      "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
-      ],
-      "capability_ids": [
-        "activation.restriction.fixed_public_query",
-        "casting.limit.once_per_turn_static",
-        "casting.prohibition.fixed_public",
-        "casting.timing.fixed_query_static",
-        "stack.counter.prohibition.fixed_query_static"
-      ],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:public-static-action-legality"
+      "transition_id": "oracle-ir-v207-additional-land-play-quota",
+      "compiler_version": "oracle-ir-v207",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Replace source-specific additional-land slot consumption with the CR 305.2 current-total-versus-total-played quota while preserving explicit historical record adaptation."
     },
     "forecast_corrections": [
       {

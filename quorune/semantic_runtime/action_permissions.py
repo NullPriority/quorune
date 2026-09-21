@@ -586,9 +586,11 @@ def additional_land_play_permission_slots(
 
 
 USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT = "used_additional_land_play_slots"
+LAND_PLAY_ACCOUNTING_STAT = "land_play_accounting_v2"
+LAND_PLAY_ACCOUNTING_VERSION = 2
 
 
-def available_additional_land_play_slots(
+def _legacy_used_additional_land_play_slots(
     host: ActionPermissionHost,
     player: str,
 ) -> tuple[str, ...]:
@@ -602,23 +604,83 @@ def available_additional_land_play_slots(
         raise SemanticNodeError(
             "Used additional land-play slots must be an array of identities"
         )
-    return tuple(
-        slot
-        for slot in additional_land_play_permission_slots(host, player)
-        if slot not in set(used)
+    return tuple(dict.fromkeys(used))
+
+
+def land_play_accounting(
+    host: ActionPermissionHost,
+    player: str,
+) -> tuple[int, int]:
+    """Return the turn's fixed base allowance and total completed plays.
+
+    The versioned record is authoritative once written. Older Game Record v3
+    checkpoints stored only the unused base allowance plus source-specific
+    additional slots. Their state is adapted explicitly: a missing base unit
+    means one base play occurred, while every recorded legacy slot represents
+    another completed play. This preserves historical replay without treating
+    a newly incarnated source as a new quota.
+    """
+
+    state = host.state.players[player]
+    raw = state.stats.get(LAND_PLAY_ACCOUNTING_STAT)
+    if raw is not None:
+        if not isinstance(raw, Mapping) or set(raw) != {
+            "version",
+            "base_allowance",
+            "played",
+        }:
+            raise SemanticNodeError(
+                "Land-play accounting must be a closed versioned object"
+            )
+        version = raw["version"]
+        base_allowance = raw["base_allowance"]
+        played = raw["played"]
+        if (
+            type(version) is not int
+            or version != LAND_PLAY_ACCOUNTING_VERSION
+            or type(base_allowance) is not int
+            or base_allowance < 0
+            or type(played) is not int
+            or played < 0
+        ):
+            raise SemanticNodeError(
+                "Land-play accounting values are malformed"
+            )
+        return base_allowance, played
+
+    remaining = state.land_plays_remaining
+    if type(remaining) is not int or remaining < 0:
+        raise SemanticNodeError(
+            "Legacy land plays remaining must be a nonnegative integer"
+        )
+    base_played = 0 if remaining else 1
+    base_allowance = remaining + base_played
+    played = base_played + len(
+        _legacy_used_additional_land_play_slots(host, player)
     )
+    return base_allowance, played
+
+
+def land_play_quota(
+    host: ActionPermissionHost,
+    player: str,
+) -> tuple[int, int, int]:
+    base_allowance, played = land_play_accounting(host, player)
+    additional_allowance = len(
+        additional_land_play_permission_slots(host, player)
+    )
+    total_allowance = base_allowance + additional_allowance
+    return total_allowance, played, max(0, total_allowance - played)
 
 
 def land_play_permission_options(
     host: ActionPermissionHost,
     player: str,
 ) -> tuple[str, ...]:
-    base = (
-        ("base",)
-        if host.state.players[player].land_plays_remaining > 0
-        else ()
+    _allowed, _played, remaining = land_play_quota(host, player)
+    return tuple(
+        f"land-play-quota:{index}" for index in range(remaining)
     )
-    return (*base, *available_additional_land_play_slots(host, player))
 
 
 def library_top_visibility(
@@ -646,6 +708,8 @@ __all__ = [
     "ACTION_PERMISSION_EVENT",
     "ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID",
     "ADDITIONAL_LAND_PLAY_HANDLER_ID",
+    "LAND_PLAY_ACCOUNTING_STAT",
+    "LAND_PLAY_ACCOUNTING_VERSION",
     "LIBRARY_TOP_ACTION_HANDLER_ID",
     "LIBRARY_TOP_VISIBILITY_HANDLER_ID",
     "ActionPermissionScope",
@@ -657,7 +721,6 @@ __all__ = [
     "StaticActionPermission",
     "StaticActionPermissionHandler",
     "USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT",
-    "available_additional_land_play_slots",
     "additional_land_play_permission_slots",
     "controller_action_permissions",
     "controller_has_action_permission",
@@ -666,4 +729,6 @@ __all__ = [
     "default_action_permission_registry",
     "library_top_visibility",
     "land_play_permission_options",
+    "land_play_accounting",
+    "land_play_quota",
 ]
