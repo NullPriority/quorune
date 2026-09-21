@@ -4940,36 +4940,36 @@
           "classification": "rules_value",
           "file": "quorune/semantic_runtime/activation_restrictions.py",
           "flow_id": "card-identity-flow:707e6337f7c581fe6682",
-          "line": 394,
+          "line": 398,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 394,
+          "source_line": 398,
           "symbol": "current_activation_prohibitions"
         },
         {
           "classification": "rules_value",
           "file": "quorune/semantic_runtime/activation_restrictions.py",
           "flow_id": "card-identity-flow:623cc25a23810d09aa51",
-          "line": 423,
+          "line": 426,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 423,
+          "source_line": 426,
           "symbol": "current_activation_prohibitions"
         },
         {
           "classification": "rules_value",
           "file": "quorune/semantic_runtime/activation_restrictions.py",
           "flow_id": "card-identity-flow:9733d71e5d67ebcaf0f1",
-          "line": 503,
+          "line": 514,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 503,
+          "source_line": 514,
           "symbol": "attached_activation_untap_participations"
         },
         {
@@ -12435,7 +12435,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 225458,
+      "logical_lines": 225472,
       "methods": {
         "dunder": 574,
         "private": 923,
@@ -13347,6 +13347,13 @@
           "physical_lines": 591
         },
         {
+          "file": "quorune/semantic_runtime/activation_restrictions.py",
+          "functions_and_methods": 16,
+          "language": "python",
+          "logical_lines": 535,
+          "physical_lines": 579
+        },
+        {
           "file": "quorune/rules/graveyard_card_targets.py",
           "functions_and_methods": 14,
           "language": "python",
@@ -13380,13 +13387,6 @@
           "language": "python",
           "logical_lines": 524,
           "physical_lines": 576
-        },
-        {
-          "file": "quorune/semantic_runtime/activation_restrictions.py",
-          "functions_and_methods": 16,
-          "language": "python",
-          "logical_lines": 524,
-          "physical_lines": 568
         },
         {
           "file": "quorune/effect_runtime/damage_modifiers.py",
@@ -13704,6 +13704,13 @@
           "physical_lines": 446
         },
         {
+          "file": "quorune/compiler/static_cast_rule_templates.py",
+          "functions_and_methods": 9,
+          "language": "python",
+          "logical_lines": 401,
+          "physical_lines": 436
+        },
+        {
           "file": "quorune/public_alternative_costs.py",
           "functions_and_methods": 14,
           "language": "python",
@@ -13723,13 +13730,6 @@
           "language": "python",
           "logical_lines": 399,
           "physical_lines": 432
-        },
-        {
-          "file": "quorune/compiler/static_cast_rule_templates.py",
-          "functions_and_methods": 9,
-          "language": "python",
-          "logical_lines": 398,
-          "physical_lines": 433
         },
         {
           "file": "quorune/semantic_choices/counter_coordination.py",
@@ -17627,7 +17627,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 246455,
+      "physical_lines": 246469,
       "python_file_count": 672,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -31840,7 +31840,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "825df6fc33f01799b35be64043d9922e72b515eac181b063ce2fc1ca871f1ff9",
+      "fingerprint": "a20cf058d13836fa9fda1b0d34081d57b311d4733bdae56c1675d7975d1a9f07",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
