@@ -27,13 +27,8 @@ from .attachments import (
 )
 from .carddb import CardDatabase, CardRecord
 from .casting_cost_host import CastingCostHostMixin
-from .compiled_flashback import (
-    compiled_fixed_mana_flashback_spec,
-    compiled_ordinary_zone_cast_permission,
-)
 from .compiled_cast_lifecycles import (
     compiled_fixed_cast_lifecycle_spec,
-    compiled_fixed_zone_cast_permission,
 )
 from .cast_lifecycles import (
     fixed_cast_lifecycle_resolution_destination,
@@ -276,6 +271,14 @@ from .rules.activation import (
     is_builtin_activation_semantic,
 )
 from .rules.action_catalog import build_priority_action_catalog
+from .rules.land_play_permissions import (
+    consume_land_play_permission,
+    selected_land_play_permission,
+)
+from .rules.zone_action_permissions import (
+    compiled_land_play_permission,
+    compiled_zone_cast_permission,
+)
 from .semantics import SemanticProgram, SemanticRegistry
 from .semantic_runtime.action_permissions import (
     ActionPermissionKind,
@@ -2538,23 +2541,7 @@ class CommanderEngine(
         seat: str,
         card: CardInstance,
     ) -> bool:
-        permission = self._temporary_play_permission(seat, card)
-        if permission is not None and bool(
-            permission.get("allow_land", True)
-        ):
-            return True
-        if card.owner != seat:
-            return False
-        if card.zone == "hand":
-            return True
-        return bool(
-            card.zone == "graveyard"
-            and controller_has_action_permission(
-                self,
-                seat,
-                ActionPermissionKind.LAND_PLAY_FROM_OWN_GRAVEYARD,
-            )
-        )
+        return compiled_land_play_permission(self, seat, card)
 
     @staticmethod
     def _land_play_faces(record: CardRecord) -> list[dict[str, Any] | None]:
@@ -2593,8 +2580,9 @@ class CommanderEngine(
         self._check_priority(seat)
         self._sorcery_timing(seat)
         player = self.state.players[seat]
-        if player.land_plays_remaining <= 0:
-            raise GameRuleError("No land plays remain")
+        selected_permission = selected_land_play_permission(
+            self, seat, response
+        )
         raw_from = str(response.get("from") or "hand")
         card = self._resolve_object(
             seat,
@@ -2661,7 +2649,7 @@ class CommanderEngine(
         )
         tapped = card.tapped
         life_paid = life_before - player.life
-        player.land_plays_remaining -= 1
+        consume_land_play_permission(self, seat, selected_permission)
         self._log(
             seat,
             "land.play",
@@ -2723,17 +2711,7 @@ class CommanderEngine(
         card: CardInstance,
     ) -> bool:
         """Return whether a trusted static permission allows this zone cast."""
-
-        if compiled_ordinary_zone_cast_permission(self, seat, card):
-            return True
-        return bool(
-            (
-                card.owner == seat
-                and card.zone == "graveyard"
-                and compiled_fixed_mana_flashback_spec(self, card) is not None
-            )
-            or compiled_fixed_zone_cast_permission(self, seat, card)
-        )
+        return compiled_zone_cast_permission(self, seat, card)
 
     def _cast(
         self,

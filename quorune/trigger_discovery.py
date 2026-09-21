@@ -7,12 +7,13 @@ from typing import Any, Protocol
 
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
-    StaticComponentSpec,
-    static_component_keys,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
     canonical_ability_fragments,
     granted_triggered_specs,
+)
+from .semantic_runtime.current_ability_components import (
+    program_has_current_ability_fragments,
 )
 from .attachment_references import (
     SourceAttachmentSnapshot,
@@ -767,31 +768,6 @@ def additional_trigger_count(
             context=context,
         )
     )
-
-
-def program_has_current_ability_fragments(
-    program: SemanticProgram,
-    characteristics: Mapping[str, Any],
-) -> bool:
-    """Require every typed fragment declared by one current-ability program."""
-
-    required = (
-        StaticComponentSpec(program.key),
-        *fragments_from_descriptors(program.handlers),
-    )
-    available = list(
-        canonical_ability_fragments(
-            characteristics.get("ability_fragments", ())
-        )
-    )
-    if program.key not in static_component_keys(available):
-        return False
-    for fragment in required:
-        try:
-            available.remove(fragment)
-        except ValueError:
-            return False
-    return True
 
 
 def _uses_specialized_stack_spell_cast_owner(program: SemanticProgram) -> bool:

@@ -10,6 +10,9 @@ from .errors import GameRuleError, StateInvariantError
 from .continuous_effect_state import expire_end_of_turn_continuous_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
 from .impulse_access import expire_temporary_play_permissions
+from .rules.land_play_permissions import (
+    reset_additional_land_play_permissions,
+)
 from .model import (
     CombatState,
     GameState,
@@ -242,6 +245,7 @@ class TurnStepOwner:
         player.turns_begun += 1
         self._host._expire_goad_designations(entry.player)
         player.land_plays_remaining = 1
+        reset_additional_land_play_permissions(self._host, player.seat)
         if player.yield_policy.mode != "none":
             self._host._increment_optimization(
                 entry.player,

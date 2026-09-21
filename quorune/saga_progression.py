@@ -20,7 +20,9 @@ from .counter_placement import (
 from .model import StackItem
 from .saga_lifecycle import SagaFinalChapterSnapshot
 from .trigger_processing import enqueue_trigger_batch
-from .trigger_discovery import program_has_current_ability_fragments
+from .semantic_runtime.current_ability_components import (
+    program_has_current_ability_fragments,
+)
 
 
 _CHAPTER_EVENT = re.compile(r"saga\.chapter\.(?P<number>[1-9]\d*)")

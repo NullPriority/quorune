@@ -20,6 +20,10 @@ from .profiles import (
 )
 from .rules.action_explanations import projected_action_explanations
 from .rules.capabilities import load_default_capability_registry
+from .semantic_runtime.action_permissions import (
+    land_play_permission_options,
+    library_top_visibility,
+)
 from .record import (
     authoritative_state_hash,
     capability_id,
@@ -62,6 +66,26 @@ FIELD_ALIASES = {
     "sem": "semantic_key",
     "n": "note",
 }
+
+
+def _state_projector(
+    card_db: CardDatabase,
+    engine: CommanderEngine,
+) -> StateProjector:
+    return StateProjector(
+        card_db,
+        engine.state,
+        characteristic_resolver=engine._effective_card_data,
+        action_explanation_resolver=lambda seat: (
+            projected_action_explanations(engine, seat)
+        ),
+        library_top_visibility_resolver=lambda owner, viewer: (
+            library_top_visibility(engine, owner, viewer or "") is not None
+        ),
+        land_play_count_resolver=lambda seat: len(
+            land_play_permission_options(engine, seat)
+        ),
+    )
 
 
 @dataclass(slots=True)
@@ -164,14 +188,7 @@ class CommanderSession:
         return cls(
             card_db=card_db,
             engine=engine,
-            projector=StateProjector(
-                card_db,
-                engine.state,
-                characteristic_resolver=engine._effective_card_data,
-                action_explanation_resolver=lambda seat: (
-                    projected_action_explanations(engine, seat)
-                ),
-            ),
+            projector=_state_projector(card_db, engine),
             initial_checkpoint=checkpoint_envelope(engine.state),
             pilot_profiles=pilot_profiles,
             deck_provenance=provenance,
@@ -1170,14 +1187,7 @@ class CommanderSession:
         return cls(
             card_db=card_db,
             engine=engine,
-            projector=StateProjector(
-                card_db,
-                engine.state,
-                characteristic_resolver=engine._effective_card_data,
-                action_explanation_resolver=lambda seat: (
-                    projected_action_explanations(engine, seat)
-                ),
-            ),
+            projector=_state_projector(card_db, engine),
             cursors=cursors,
             initial_checkpoint=initial_checkpoint,
             commands=commands,

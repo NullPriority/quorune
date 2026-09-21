@@ -225,6 +225,7 @@ def _source_permanent_participation_template(
                 "generic controller action permission requires its closed "
                 "typed runtime capability"
             ),
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
     untap_step = (
         static_untap_step_handler(text, source_name=source_name)

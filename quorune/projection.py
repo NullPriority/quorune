@@ -88,11 +88,19 @@ class StateProjector:
         action_explanation_resolver: (
             Callable[[str], Mapping[str, Mapping[str, Any]]] | None
         ) = None,
+        library_top_visibility_resolver: (
+            Callable[[str, str | None], bool] | None
+        ) = None,
+        land_play_count_resolver: Callable[[str], int] | None = None,
     ):
         self.card_db = card_db
         self.state = state
         self.characteristic_resolver = characteristic_resolver
         self.action_explanation_resolver = action_explanation_resolver
+        self.library_top_visibility_resolver = (
+            library_top_visibility_resolver
+        )
+        self.land_play_count_resolver = land_play_count_resolver
 
     @staticmethod
     def seat_for(principal: str) -> str | None:
@@ -501,6 +509,43 @@ class StateProjector:
             stack.append(row)
         return stack
 
+    def _known_library_top(
+        self,
+        *,
+        player: Any,
+        player_seat: str,
+        view_seats: set[str],
+    ) -> list[Any]:
+        permission_visible = bool(
+            self.library_top_visibility_resolver is not None
+            and (
+                self.library_top_visibility_resolver(player_seat, None)
+                or any(
+                    self.library_top_visibility_resolver(player_seat, seat)
+                    for seat in view_seats
+                )
+            )
+        )
+        known = (
+            [self.state.cards[player.zones["library"][-1]]]
+            if permission_visible and player.zones["library"]
+            else []
+        )
+        if view_seats:
+            for object_id in reversed(
+                player.zones["library"][
+                    : -1 if permission_visible else None
+                ]
+            ):
+                card = self.state.cards[object_id]
+                if not any(
+                    seat in card.known_to or seat in card.revealed_to
+                    for seat in view_seats
+                ):
+                    break
+                known.append(card)
+        return known
+
     def _snapshot(self, principal: str) -> dict[str, Any]:
         view_seats = self._view_seats_for(principal)
         players: dict[str, Any] = {}
@@ -514,7 +559,11 @@ class StateProjector:
                 "hand_n": len(p.zones["hand"]),
                 "lib_n": len(p.zones["library"]),
                 "mana": {k: v for k, v in p.mana_pool.items() if v},
-                "lands": p.land_plays_remaining,
+                "lands": (
+                    self.land_play_count_resolver(player_seat)
+                    if self.land_play_count_resolver is not None
+                    else p.land_plays_remaining
+                ),
                 "bf": self._zone(p.zones["battlefield"], principal),
                 "gy": self._zone(p.zones["graveyard"], principal),
                 "ex": self._zone(
@@ -566,17 +615,11 @@ class StateProjector:
                 ]
                 if known:
                     summary["known_hand"] = [self._obj(card, principal) for card in known]
-            known_top = []
-            if view_seats:
-                for object_id in reversed(p.zones["library"]):
-                    card = self.state.cards[object_id]
-                    if not any(
-                        seat in card.known_to
-                        or seat in card.revealed_to
-                        for seat in view_seats
-                    ):
-                        break
-                    known_top.append(card)
+            known_top = self._known_library_top(
+                player=p,
+                player_seat=player_seat,
+                view_seats=view_seats,
+            )
             if known_top:
                 summary["known_top"] = [
                     self._obj(card, principal) for card in known_top[:5]

@@ -1041,13 +1041,20 @@ fail closed without a self-entry-specific ability query.
 Choice, repeated-kicker, unavailable-history, later-layer dynamic, external-
 entrant, and compound forms remain source-spanned residuals.
 
-Two exact controller-wide static permissions lower to selected-face
-`action.permission` descriptors: playing lands from the controller's own
-graveyard and activating abilities of controlled creatures as though they had
-haste. Runtime action and activation queries consume only those trusted typed
-descriptors. Additional-land, any-graveyard, opponent-relative, conditional,
-temporary, targeted, and ordinary haste wording remains source-spanned
-residual material.
+Closed controller-wide static permissions lower to selected-face
+`action.permission` descriptors. The grammar includes playing lands from the
+controller's own graveyard, activating abilities of controlled creatures as
+though they had haste, private or public current-library-top visibility,
+fixed public land or spell predicates for the controller's current library
+top, and one or two additional land plays on each controller turn. Library
+spell predicates always exclude lands, while historic, Snow, type, subtype,
+colorless, and bounded public keyword forms use the shared object-query model.
+Runtime action, activation, projection, and land-quota queries consume only
+those trusted typed descriptors and the shared current layer-6 component
+boundary. Chosen or dynamic predicates, linked costs or results, non-top or
+opponent-library access, conditional or temporary permissions, targeted
+forms, wider land-play counts, and ordinary haste wording remain
+source-spanned residual material.
 
 Printed Exhaust prefixes lower to a typed `ActivationLimit` on each distinct
 ability. The exact reminder sentence is stripped once by the ability parser;

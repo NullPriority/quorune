@@ -83,14 +83,23 @@ mode set, and treats an empty qualifying set as a legal activation that adds no
 mana. Runtime code does not parse Oracle prose. Wider dynamic or conditional
 mana wording remains residual.
 
-`permission.action.static` owns immutable controller-scoped action
+`permission.action.static` owns immutable controller- or table-scoped action
 permissions discovered from current-face, trusted descriptors on phased-in
-battlefield sources. Its closed handlers authorize either an owned graveyard
-land through the ordinary land-play owner or controlled-creature activation
-through the existing as-though-haste availability owner. Discovery itself is
-read-only; ordinary timing, quota, cost, control, zone-transition, and commit
-rules remain authoritative in their existing owners. Unrepresented wording
-fails closed rather than falling back to current Oracle text.
+battlefield sources. Its closed handlers authorize an owned graveyard land,
+controlled-creature activation through the existing as-though-haste owner,
+current-library-top visibility and fixed land or spell access, or a fixed
+number of additional land plays. Library access revalidates the exact current
+top identity and cycle-safe effective public characteristics for both offers
+and commands. Projection distinguishes a controller-private look from a
+public reveal and exposes no deeper library object. Each additional land play
+uses a source-incarnation and semantic-component slot, is consumed only by a
+successful ordinary land play, and is reset by the existing turn owner.
+Every represented permission uses the shared current layer-6 component query,
+so ability removal suppresses it without a family-specific presence check.
+Discovery itself is read-only; ordinary timing, cost, control,
+zone-transition, cast, land-play, and commit rules remain authoritative in
+their existing owners. Unrepresented wording fails closed rather than falling
+back to current Oracle text.
 
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed

@@ -22,6 +22,9 @@ from quorune.commander_pairing import (
 from quorune.compiler.activated_zone_change_costs import (
     fixed_activated_zone_change_cost,
 )
+from quorune.compiler.action_permission_templates import (
+    static_action_permission_handler,
+)
 from quorune.compiler.activation_mana_costs import (
     fixed_complex_activation_mana_cost,
 )
@@ -330,6 +333,9 @@ _PROBE_FIXED_PUBLIC_DECLARATION_CONDITION = (
 _PROBE_STANDALONE_REMINDER_LINES = (
     "standalone-reminder-line-existing-owner-v1"
 )
+_PROBE_PUBLIC_LIBRARY_ACTION_PERMISSIONS = (
+    "public-library-action-permissions-existing-owner-v1"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -514,6 +520,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_SPELL_CAST_FACT_PREDICATE,
     _PROBE_TRIGGER_ABILITY_WORD_CARRIER,
     _PROBE_STANDALONE_REMINDER_LINES,
+    _PROBE_PUBLIC_LIBRARY_ACTION_PERMISSIONS,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -1099,6 +1106,17 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_PUBLIC_LIBRARY_ACTION_PERMISSIONS:
+        lowered = static_action_permission_handler(source)
+        return bool(
+            lowered is not None
+            and lowered[1].get("handler_id")
+            in {
+                "permission.action.library-top-visibility.v1",
+                "permission.action.library-top-action.v1",
+                "permission.action.additional-land-play.v1",
+            }
+        )
     if probe_id == _PROBE_STANDALONE_REMINDER_LINES:
         transform = False
         dryad_arbor = False
