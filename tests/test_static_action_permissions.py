@@ -251,9 +251,19 @@ class StaticActionPermissionCompilerTests(unittest.TestCase):
                 assert_compiler_boundary()
 
 
-class PublicLibraryActionPermissionCompilerTests(
-    StaticActionPermissionCompilerTests
-):
+class PublicLibraryActionPermissionCompilerTests(unittest.TestCase):
+    def setUp(self):
+        self.capabilities = load_default_capability_registry()
+
+    def compile(self, record: CardRecord, *, trust_level: str = "trusted"):
+        return compile_card_program(
+            _NoRulingsDatabase(),
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            trust_level=trust_level,
+        )
+
     def test_public_library_permission_contract_matrix(self):
         cases = (
             (

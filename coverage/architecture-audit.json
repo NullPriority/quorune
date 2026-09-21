@@ -31666,7 +31666,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "1027242040da9f9e18c7e06308021f27e8e51b7761d9e9a5beadc3101069d6c2",
+      "fingerprint": "2485844468760b88aa21e176938896e801450b7c3be12b651a0631eae6ae57b8",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -32525,7 +32525,7 @@
     },
     "python": {
       "conventional_ast_cases": 4237,
-      "discovered_total": 7549,
+      "discovered_total": 7546,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 234,
@@ -32534,7 +32534,7 @@
         "replay_named": 334,
         "server_named": 32
       },
-      "reconciles": false,
+      "reconciles": true,
       "test_files": 345
     }
   }
