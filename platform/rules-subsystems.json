@@ -3946,14 +3946,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v208-qualified-aura-timing",
-      "compiler_version": "oracle-ir-v208",
+      "transition_id": "oracle-ir-v209-distinct-party-assignment",
+      "compiler_version": "oracle-ir-v209",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Preserve the exact Aura with enchant creature qualification through the existing typed Enchant and static cast-timing owners without widening grammar or claiming a card-support harvest."
+      "non_harvest_reason": "Compute Party size through the CR 700.8 maximum distinct-creature role assignment in the existing self-reduction owner without widening grammar or claiming a card-support harvest."
     },
     "forecast_corrections": [
       {

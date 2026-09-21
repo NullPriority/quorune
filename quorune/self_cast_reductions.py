@@ -684,6 +684,32 @@ def _domain(host: SelfCastReductionHost, seat: str) -> int:
     return len(present)
 
 
+def _party_size(host: SelfCastReductionHost, seat: str) -> int:
+    party_roles = ("cleric", "rogue", "warrior", "wizard")
+    eligible_roles: list[frozenset[str]] = []
+    for object_id in host.state.players[seat].zones["battlefield"]:
+        card = host.state.cards.get(object_id)
+        if card is None or card.controller != seat or card.phased_out:
+            continue
+        effective = host._effective_card_data(card)
+        types, subtypes, _supertypes = host._type_parts(
+            str(effective.get("type_line") or "")
+        )
+        if "creature" in types:
+            eligible = frozenset(subtypes).intersection(party_roles)
+            if eligible:
+                eligible_roles.append(frozenset(eligible))
+    assignments = {0}
+    for eligible in eligible_roles:
+        assignments.update(
+            mask | (1 << index)
+            for mask in tuple(assignments)
+            for index, role in enumerate(party_roles)
+            if role in eligible and not mask & (1 << index)
+        )
+    return max(mask.bit_count() for mask in assignments)
+
+
 def cast_reduction_multiplier(
     host: SelfCastReductionHost,
     seat: str,
@@ -724,19 +750,7 @@ def cast_reduction_multiplier(
             )
         return max(0, int(source.counters.get(metric.counter_name, 0)))
     if metric.kind is CastReductionMetricKind.PARTY_SIZE:
-        roles: set[str] = set()
-        party = {"cleric", "rogue", "warrior", "wizard"}
-        for object_id in host.state.players[seat].zones["battlefield"]:
-            card = host.state.cards.get(object_id)
-            if card is None or card.controller != seat or card.phased_out:
-                continue
-            effective = host._effective_card_data(card)
-            types, subtypes, _supertypes = host._type_parts(
-                str(effective.get("type_line") or "")
-            )
-            if "creature" in types:
-                roles.update(party.intersection(subtypes))
-        return len(roles)
+        return _party_size(host, seat)
     if metric.kind is CastReductionMetricKind.PERMANENT_COLOR_COUNT:
         colors: set[str] = set()
         for object_id in host.state.players[seat].zones["battlefield"]:

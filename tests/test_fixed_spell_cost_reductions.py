@@ -13,6 +13,7 @@ from quorune.compiler.cast_cost_modifier_templates import (
     static_fixed_spell_cost_reduction_handler,
 )
 from quorune.deck import DeckLoader
+from quorune.errors import GameRuleError
 from quorune.life_state import (
     LifeChange,
     commit_life_changes,
@@ -756,6 +757,205 @@ class FixedSpellCostReductionRuntimeTests(unittest.TestCase):
                 "GENERIC"
             ],
         )
+
+    def test_party_size_uses_maximum_distinct_creature_assignment(self):
+        session = self.session(601_520_016)
+        engine = session.engine
+        spell = self.add_card(
+            session,
+            name="Public Party Cost Spell Fixture",
+            ref="PARTY-MATCHING-SPELL",
+        )
+        members = [
+            self.add_card(
+                session,
+                name="Birds of Paradise",
+                ref=f"PARTY-MATCHING-{index}",
+                zone="battlefield",
+            )
+            for index in range(4)
+        ]
+        member_ids = {member.object_id for member in members}
+        engine.state.players["B"].mana_pool.update({"C": 5, "U": 1})
+        self.prepare_main(session)
+
+        def configure(*type_lines: str) -> None:
+            for index, member in enumerate(members):
+                member.phased_out = index >= len(type_lines)
+                if index < len(type_lines):
+                    member.annotations["copy_overrides"] = {
+                        "type_line": type_lines[index]
+                    }
+            engine.permissions.invalidate_current()
+
+        def generic_requirement() -> int:
+            return self.cost_option(engine, spell)["requirements"]["GENERIC"]
+
+        configure("Creature — Cleric Wizard")
+        self.assertEqual(4, generic_requirement())
+        configure("Creature — Cleric Rogue Warrior Wizard")
+        self.assertEqual(4, generic_requirement())
+        configure(
+            "Creature — Warrior",
+            "Creature — Warrior",
+            "Creature — Cleric Rogue Wizard",
+        )
+        self.assertEqual(3, generic_requirement())
+        configure("Creature — Cleric", "Creature — Cleric Wizard")
+        self.assertEqual(3, generic_requirement())
+        battlefield = engine.state.players["B"].zones["battlefield"]
+        other_ids = [object_id for object_id in battlefield if object_id not in member_ids]
+        battlefield[:] = [
+            *other_ids,
+            members[1].object_id,
+            members[0].object_id,
+            members[2].object_id,
+            members[3].object_id,
+        ]
+        engine.permissions.invalidate_current()
+        self.assertEqual(3, generic_requirement())
+        configure(
+            "Creature — Cleric",
+            "Creature — Rogue",
+            "Creature — Warrior",
+            "Creature — Wizard",
+        )
+        self.assertEqual(1, generic_requirement())
+
+    def test_party_assignment_shares_offer_commit_control_and_replay(self):
+        session = self.session(601_520_017)
+        engine = session.engine
+        spell = self.add_card(
+            session,
+            name="Public Party Cost Spell Fixture",
+            ref="PARTY-LIFECYCLE-SPELL",
+        )
+        flexible = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="PARTY-LIFECYCLE-FLEXIBLE",
+            zone="battlefield",
+        )
+        cleric = self.add_card(
+            session,
+            name="Birds of Paradise",
+            ref="PARTY-LIFECYCLE-CLERIC",
+            zone="battlefield",
+        )
+        flexible.annotations["copy_overrides"] = {
+            "type_line": "Creature — Cleric Rogue Warrior Wizard"
+        }
+        cleric.annotations["copy_overrides"] = {
+            "type_line": "Creature — Cleric"
+        }
+        cleric.phased_out = True
+        engine.state.players["B"].mana_pool.update({"C": 5, "U": 1})
+        self.prepare_main(session)
+        self.assertEqual(
+            4,
+            self.cost_option(engine, spell)["requirements"]["GENERIC"],
+        )
+
+        spell_id = spell.object_id
+        flexible_id = flexible.object_id
+        cleric_id = cleric.object_id
+        engine.state.players["B"].mana_pool["C"] = 3
+        underpayment_before = authoritative_state_hash(engine.state)
+        with self.assertRaisesRegex(GameRuleError, "payment|pay"):
+            with engine.transaction():
+                engine._cast(
+                    "B",
+                    {
+                        "card": spell.ref,
+                        "pay": "manual",
+                        "payment": {"C": 3, "U": 1},
+                    },
+                )
+        self.assertEqual(
+            underpayment_before,
+            authoritative_state_hash(engine.state),
+        )
+        self.assertEqual("hand", engine.state.cards[spell_id].zone)
+
+        cleric = engine.state.cards[cleric_id]
+        cleric.phased_out = False
+        engine.state.players["B"].mana_pool["C"] = 5
+        engine.permissions.invalidate_current()
+        self.assertEqual(
+            3,
+            self.cost_option(engine, engine.state.cards[spell_id])[
+                "requirements"
+            ]["GENERIC"],
+        )
+        stale_action = self.cast_action(engine, engine.state.cards[spell_id])
+        engine.change_control(
+            cleric_id,
+            "A",
+            reason="Party assignment stale-offer witness",
+        )
+        stale_before = authoritative_state_hash(engine.state)
+        stale = session.act(
+            "pilot:B",
+            {"action_id": stale_action["id"], "pay": "auto"},
+        )
+        self.assertFalse(stale.ok)
+        self.assertEqual(stale_before, authoritative_state_hash(engine.state))
+        self.assertEqual("hand", engine.state.cards[spell_id].zone)
+
+        engine.change_control(
+            cleric_id,
+            "B",
+            reason="Restore Party assignment witness",
+        )
+        flexible = engine.state.cards[flexible_id]
+        flexible.phased_out = True
+        engine.permissions.invalidate_current()
+        self.assertEqual(
+            4,
+            self.cost_option(engine, engine.state.cards[spell_id])[
+                "requirements"
+            ]["GENERIC"],
+        )
+        flexible.phased_out = False
+        engine.permissions.invalidate_current()
+        self.assertEqual(
+            3,
+            self.cost_option(engine, engine.state.cards[spell_id])[
+                "requirements"
+            ]["GENERIC"],
+        )
+
+        engine.state.players["B"].mana_pool["C"] = 3
+        session.state.pending_decision = None
+        engine.permissions.invalidate_current()
+        session.state.priority_player = "B"
+        engine._grant_priority("B")
+        engine.pump()
+        action = next(
+            action
+            for action in session.packet("pilot:B", full=True)["decision"][
+                "ctx"
+            ]["legal"]["actions"]
+            if action.get("kind") == "cast"
+            and action.get("card") == engine.state.cards[spell_id].ref
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:B",
+            {"action_id": action["id"], "pay": "auto"},
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("stack", engine.state.cards[spell_id].zone)
+        self.resolve_stack_with_passes(session)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "party-assignment-replay"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_any_opponent_graveyard_threshold_is_not_combined_across_opponents(
         self,

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "598cc504ef87ebd7b95d220f38d96b7bfdba64649f18a607b6037a360c1c391e",
-  "declaration_source_fingerprint": "29b6b579b3b1cfc412c20fac37e81b0791b3bc6bb05d369dd7a845073a6f17b8",
+  "registry_fingerprint": "813b613c8b531f0a91d78f279a898f38c5fe303206faf37a7eeb885f388fadb3",
+  "declaration_source_fingerprint": "549befe2323449247af060fc434a689c6d4ad648ea888bc08ad87d8ecf61da75",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -9156,7 +9156,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_multiple_qualifying_opponents_apply_one_fixed_reduction",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9168,10 +9171,31 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_assignment_shares_offer_commit_control_and_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Share the maximum distinct-creature Party assignment across offers, accepted commands, control changes, phasing, payment rollback, and resolution."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9183,25 +9207,13 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_quantities_use_current_characteristic_boundary",
-      "official_rule_ids": [
-        "601.2f",
-        "601.2h"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Evaluate party, color, modified, effective-name, life-difference, and colorless-producing-land quantities from the current authoritative characteristic boundary."
-    },
-    {
-      "capability_id": "casting.cost.self_public_reduction",
-      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_and_source_reductions_share_total_cost_pipeline",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9216,7 +9228,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_recomputes_current_control_and_rejects_stale_offer",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9231,7 +9246,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9246,7 +9264,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9261,7 +9282,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_compiler_and_runtime_mutants_are_killed",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9276,7 +9300,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_descriptor_fails_closed",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9291,7 +9318,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9306,7 +9336,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_graveyard_threshold_is_not_combined_across_opponents",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9321,7 +9354,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9336,7 +9372,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reducers_compile_closed_public_metrics",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9351,7 +9390,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_compiler_preserves_opponent_quantification",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9366,7 +9408,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_combined_opponents_threshold_still_aggregates_when_oracle_wording_requires_it",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9378,17 +9423,20 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_offer_and_commit_share_public_query",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_size_uses_maximum_distinct_creature_assignment",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Advertise and accept one graveyard-counted reduction through the same immutable selected-face cost query."
+      "applicability_note": "Compute the greatest legal Party size for overlapping roles with one distinct controlled creature per assigned role, independent of iteration order."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
@@ -9396,7 +9444,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9408,17 +9459,20 @@
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_assignment_shares_offer_commit_control_and_replay",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Checkpoint and replay committed typed history facts and the resulting self-reduced cast exactly."
+      "applicability_note": "Checkpoint and replay the distinct-creature Party assignment, reduced payment, stack transition, resolution, and final state exactly."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
@@ -9426,7 +9480,10 @@
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
       "official_rule_ids": [
         "601.2f",
-        "601.2h"
+        "601.2h",
+        "700.8",
+        "700.8a",
+        "700.8b"
       ],
       "supported_profiles": [
         "traditional",
@@ -66565,5 +66622,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "6e87710d96ac8c14cfadcaa82f0201c6331f1b303e392b04b7006cb95e23c3e7"
+  "fingerprint": "6a1363e76198cb1877655f4af4a326eece0144fe5c483cbe493551e34916637d"
 }

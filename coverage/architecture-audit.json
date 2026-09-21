@@ -4700,12 +4700,12 @@
           "classification": "rules_value",
           "file": "quorune/self_cast_reductions.py",
           "flow_id": "card-identity-flow:c917a0c11d7d9480b55b",
-          "line": 756,
+          "line": 770,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 756,
+          "source_line": 770,
           "symbol": "cast_reduction_multiplier"
         },
         {
@@ -5883,8 +5883,8 @@
         },
         "oversized_functions_and_methods": {
           "baseline": 29,
-          "current": 29,
-          "delta": 0
+          "current": 28,
+          "delta": -1
         },
         "oversized_modules": {
           "baseline": 6,
@@ -12046,7 +12046,7 @@
       "covered_high_risk_pairs": 320,
       "covered_piece_pairs": 988,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "a4f606285b0adc69279cf4fa51103bb6ea68c3b5b375a73e5ae2390f61e2dcd7",
+      "source_fingerprint": "999ac1896fdcee5c423e1215127d7b0790ee217438d60c79b94986913092da42",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12413,17 +12413,6 @@
           "visibility": "public"
         },
         {
-          "end_line": 841,
-          "file": "quorune/self_cast_reductions.py",
-          "kind": "function",
-          "line": 687,
-          "logical_lines": 151,
-          "name": "cast_reduction_multiplier",
-          "physical_lines": 155,
-          "symbol": "cast_reduction_multiplier",
-          "visibility": "public"
-        },
-        {
           "end_line": 452,
           "file": "quorune/compiler/activated_mana_nodes.py",
           "kind": "function",
@@ -12433,9 +12422,20 @@
           "physical_lines": 150,
           "symbol": "_activated_effect_dependency_gate",
           "visibility": "private"
+        },
+        {
+          "end_line": 460,
+          "file": "quorune/compiler/direct_target.py",
+          "kind": "function",
+          "line": 301,
+          "logical_lines": 150,
+          "name": "_closed_direct_characteristic_fields",
+          "physical_lines": 160,
+          "symbol": "_closed_direct_characteristic_fields",
+          "visibility": "private"
         }
       ],
-      "logical_lines": 225588,
+      "logical_lines": 225600,
       "methods": {
         "dunder": 574,
         "private": 924,
@@ -12899,18 +12899,18 @@
           "physical_lines": 877
         },
         {
+          "file": "quorune/self_cast_reductions.py",
+          "functions_and_methods": 29,
+          "language": "python",
+          "logical_lines": 815,
+          "physical_lines": 889
+        },
+        {
           "file": "quorune/replacement/model.py",
           "functions_and_methods": 37,
           "language": "python",
           "logical_lines": 804,
           "physical_lines": 876
-        },
-        {
-          "file": "quorune/self_cast_reductions.py",
-          "functions_and_methods": 28,
-          "language": "python",
-          "logical_lines": 803,
-          "physical_lines": 875
         },
         {
           "file": "quorune/compiler/declaration_nodes.py",
@@ -17260,7 +17260,7 @@
           "physical_lines": 1
         }
       ],
-      "oversized_function_and_method_count": 29,
+      "oversized_function_and_method_count": 28,
       "oversized_functions_and_methods": [
         {
           "end_line": 1912,
@@ -17569,17 +17569,6 @@
           "physical_lines": 154,
           "symbol": "build_program_trust_closure",
           "visibility": "public"
-        },
-        {
-          "end_line": 841,
-          "file": "quorune/self_cast_reductions.py",
-          "kind": "function",
-          "line": 687,
-          "logical_lines": 151,
-          "name": "cast_reduction_multiplier",
-          "physical_lines": 155,
-          "symbol": "cast_reduction_multiplier",
-          "visibility": "public"
         }
       ],
       "oversized_module_count": 6,
@@ -17627,7 +17616,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 246600,
+      "physical_lines": 246614,
       "python_file_count": 672,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -17645,7 +17634,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 3337,
+      "top_level_functions": 3338,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -27053,7 +27042,7 @@
           "quorune/rules/casting/static_modifiers.py",
           "quorune/self_cast_reductions.py"
         ],
-        "oversized_symbol_count": 3,
+        "oversized_symbol_count": 2,
         "oversized_symbols": [
           {
             "end_line": 373,
@@ -27075,17 +27064,6 @@
             "name": "extract_mana_modes",
             "physical_lines": 188,
             "symbol": "extract_mana_modes",
-            "visibility": "public"
-          },
-          {
-            "end_line": 841,
-            "file": "quorune/self_cast_reductions.py",
-            "kind": "function",
-            "line": 687,
-            "logical_lines": 151,
-            "name": "cast_reduction_multiplier",
-            "physical_lines": 155,
-            "symbol": "cast_reduction_multiplier",
             "visibility": "public"
           }
         ],
@@ -31192,7 +31170,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1498,
     "compiler_module_physical_lines": 1559,
-    "compiler_version": "oracle-ir-v208",
+    "compiler_version": "oracle-ir-v209",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -31477,11 +31455,11 @@
           "rollback": 77
         },
         "declaration_count": 3262,
-        "declaration_source_fingerprint": "29b6b579b3b1cfc412c20fac37e81b0791b3bc6bb05d369dd7a845073a6f17b8",
-        "fingerprint": "6e87710d96ac8c14cfadcaa82f0201c6331f1b303e392b04b7006cb95e23c3e7",
-        "registry_fingerprint": "598cc504ef87ebd7b95d220f38d96b7bfdba64649f18a607b6037a360c1c391e"
+        "declaration_source_fingerprint": "549befe2323449247af060fc434a689c6d4ad648ea888bc08ad87d8ecf61da75",
+        "fingerprint": "6a1363e76198cb1877655f4af4a326eece0144fe5c483cbe493551e34916637d",
+        "registry_fingerprint": "813b613c8b531f0a91d78f279a898f38c5fe303206faf37a7eeb885f388fadb3"
       },
-      "fingerprint": "598cc504ef87ebd7b95d220f38d96b7bfdba64649f18a607b6037a360c1c391e",
+      "fingerprint": "813b613c8b531f0a91d78f279a898f38c5fe303206faf37a7eeb885f388fadb3",
       "implementation_mutation_status_counts": {
         "killed": 280,
         "not_run": 4
@@ -31809,7 +31787,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 522,
         "exact_nodes": 674,
-        "fingerprint": "f3c1729ef7dc466e1e2bd076319e707bb60a586d3ab339481d2948717fe35384",
+        "fingerprint": "5405898c7186aa2bca3268ccd161dad3172cde21d653347d97ebc16a4ebd7b23",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
         "identity_fingerprint": "8ef2279a983c815db7fc3e91485c9de2db69e89dfef42e28c62f1a683ceaaba6",
         "present": true,
@@ -31821,7 +31799,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 540,
         "exact_nodes": 700,
-        "fingerprint": "c924d6f71a6d432189f595421c636976137144d6cf2c337c530300d9a7ecae57",
+        "fingerprint": "0e6c3a417891b8d55de9217aebe1cd322a36a1ca526904d1c31bf53f4637c5d5",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
         "identity_fingerprint": "ed57ad0e5869399cdbccb5a4961bd30f6fff92c0b23a193cd58885b68cc9e538",
         "present": true,
@@ -31840,7 +31818,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "722be288a4a2f5af4a42d8a7447f4772e3aefd763716781a8e4a53e4554d9958",
+      "fingerprint": "2df836f517c8ea417333ba1445fcd1adfb7d25008ef70661e56d8cc36631abdb",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -32698,14 +32676,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4251,
-      "discovered_total": 7560,
+      "conventional_ast_cases": 4253,
+      "discovered_total": 7562,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 235,
         "fuzz_named": 1,
         "privacy_or_projection_named": 73,
-        "replay_named": 336,
+        "replay_named": 337,
         "server_named": 32
       },
       "reconciles": true,

@@ -3604,31 +3604,31 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_multiple_qualifying_opponents_apply_one_fixed_reduction",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply one fixed existential reduction when several opponents independently satisfy the same public threshold."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_assignment_shares_offer_commit_control_and_replay",
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Share the maximum distinct-creature Party assignment across offers, accepted commands, control changes, phasing, payment rollback, and resolution."
+    },
+    {
+      "capability_id": "casting.cost.self_public_reduction",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive discard, sacrifice, and life-gain quantities only from committed typed producers in the authoritative turn journal."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_quantities_use_current_characteristic_boundary",
-      "official_rule_ids": ["601.2f", "601.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Evaluate party, color, modified, effective-name, life-difference, and colorless-producing-land quantities from the current authoritative characteristic boundary."
-    },
-    {
-      "capability_id": "casting.cost.self_public_reduction",
-      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_and_source_reductions_share_total_cost_pipeline",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose the carrying spell's public reduction with an independently active source reducer in one deterministic total-cost stage."
     },
@@ -3636,7 +3636,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_recomputes_current_control_and_rejects_stale_offer",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute a public controller-relative threshold through the same offer and command query, rejecting a stale controller change before payment or stack mutation."
     },
@@ -3644,7 +3644,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_uses_mana_value_devotion_history_and_colored_floor",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose cycle-safe public mana-value, devotion, current-turn, generic, and colored reductions in the canonical total-cost stage."
     },
@@ -3652,7 +3652,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Price and cast the carrying spell in four-player state without granting another seat access to the hidden hand action."
     },
@@ -3660,7 +3660,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_compiler_and_runtime_mutants_are_killed",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Remove source-spanned lowering and evaluated runtime reduction independently so exact compilation and cost assertions reject both mutants."
     },
@@ -3668,7 +3668,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_descriptor_fails_closed",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject unknown fields, changed identity, empty terms, negative mana, and malformed public metrics before a cost option exists."
     },
@@ -3676,7 +3676,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep target-relative, power totals, distinct card-type or mana-value sets, Adventure predicates, and unrelated reducer grammar material."
     },
@@ -3684,7 +3684,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_graveyard_threshold_is_not_combined_across_opponents",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject an existential graveyard threshold when no individual opponent qualifies even though the combined opponent count reaches the threshold."
     },
@@ -3692,7 +3692,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_any_opponent_zero_basic_land_condition_is_evaluated_per_opponent",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Evaluate a singular opponent's zero-basic-land condition independently instead of requiring every opponent's combined battlefield to contain no basic land."
     },
@@ -3700,7 +3700,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reducers_compile_closed_public_metrics",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed public thresholds, public object counts, total mana value, devotion, turn facts, and colored reductions into selected-face typed descriptors."
     },
@@ -3708,7 +3708,7 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_self_reduction_compiler_preserves_opponent_quantification",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower singular and plural opponent wording to distinct typed existential and combined scopes while retaining legacy scope decoding."
     },
@@ -3716,39 +3716,39 @@
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_combined_opponents_threshold_still_aggregates_when_oracle_wording_requires_it",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Aggregate objects across all opponents only for plural Oracle wording that explicitly names the combined opponents set."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "positive",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_offer_and_commit_share_public_query",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_size_uses_maximum_distinct_creature_assignment",
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Advertise and accept one graveyard-counted reduction through the same immutable selected-face cost query."
+      "applicability_note": "Compute the greatest legal Party size for overlapping roles with one distinct controlled creature per assigned role, independent of iteration order."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use only public count inputs while withholding the carrying spell and its cast action from every other pilot."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cost_history_uses_committed_discard_sacrifice_and_life",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_party_assignment_shares_offer_commit_control_and_replay",
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Checkpoint and replay committed typed history facts and the resulting self-reduced cast exactly."
+      "applicability_note": "Checkpoint and replay the distinct-creature Party assignment, reduced payment, stack transition, resolution, and final state exactly."
     },
     {
       "capability_id": "casting.cost.self_public_reduction",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_self_reduction_is_private_multiplayer_and_replays",
-      "official_rule_ids": ["601.2f", "601.2h"],
+      "official_rule_ids": ["601.2f", "601.2h", "700.8", "700.8a", "700.8b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the public count, reduced mana payment, stack transition, resolution, and final authoritative hash exactly."
     },
