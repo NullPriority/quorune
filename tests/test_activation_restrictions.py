@@ -17,6 +17,7 @@ from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.activation_restrictions import (
     ACTIVATION_PERMISSION_EVENT,
     CHOSEN_NAME_NONMANA_PROHIBITION_HANDLER_ID,
+    FIXED_PUBLIC_ACTIVATION_PROHIBITION_HANDLER_ID,
     current_activation_prohibitions,
     default_activation_restriction_registry,
 )
@@ -137,12 +138,27 @@ class StaticActivationRestrictionCompilerTests(unittest.TestCase):
             restriction.provenance["face_id"],
         )
 
+        all_abilities = self.compile(
+            _permanent(
+                "Activated abilities of sources with the chosen name can't "
+                "be activated.",
+                suffix=116_400_003,
+            )
+        )
+        self.assertEqual((), all_abilities.residuals)
+        self.assertTrue(
+            any(
+                descriptor.get("handler_id")
+                == FIXED_PUBLIC_ACTIVATION_PROHIBITION_HANDLER_ID
+                for ability in all_abilities.abilities
+                for descriptor in ability.handlers
+            )
+        )
+
     def test_unsupported_restriction_wording_and_malformed_descriptors_fail_closed(
         self,
     ):
         unsupported = (
-            "Activated abilities of sources with the chosen name can't be "
-            "activated.",
             "Triggered abilities of sources with the chosen name can't "
             "trigger.",
             "Activated abilities of artifacts with the chosen name can't be "

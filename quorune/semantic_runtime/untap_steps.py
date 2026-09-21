@@ -19,6 +19,7 @@ from ..untap_step import (
 )
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .activation_restrictions import attached_activation_untap_participations
 
 
 UNTAP_STEP_HANDLER_ID = "participation.untap-step.static.v1"
@@ -357,6 +358,7 @@ def collect_untap_step_participations(
                         ),
                     )
                 )
+    participations.extend(attached_activation_untap_participations(host))
     return tuple(
         sorted(
             participations,

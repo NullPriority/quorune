@@ -12,6 +12,7 @@ from .action_permissions import default_action_permission_registry
 from .ability_fragments import default_ability_fragment_registry
 from .block_restrictions import default_block_restriction_registry
 from .cast_permissions import default_cast_permission_registry
+from .static_cast_rules import default_static_cast_rule_registry
 from .casting_activation_metadata import (
     default_loyalty_cost_modifier_registry,
     default_self_zone_cast_permission_registry,
@@ -69,6 +70,7 @@ def runtime_component_registries() -> tuple[Any, ...]:
         default_ability_fragment_registry(),
         default_block_restriction_registry(),
         default_cast_permission_registry(),
+        default_static_cast_rule_registry(),
         default_goad_prohibition_registry(),
         default_loyalty_cost_modifier_registry(),
         default_self_zone_cast_permission_registry(),

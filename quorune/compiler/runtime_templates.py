@@ -16,6 +16,7 @@ from .cast_cost_modifier_templates import (
     self_spell_cost_reduction_handler,
     static_fixed_spell_cost_reduction_handler,
 )
+from .static_cast_rule_templates import static_cast_rule_handler
 from .combat_metadata_templates import static_goad_prohibition_handler
 from .continuous_templates import (
     attached_fixed_characteristics_handler,
@@ -184,6 +185,10 @@ def _source_permanent_participation_template(
                 "typed runtime capability"
             ),
         )
+    static_cast_rule = static_cast_rule_handler(
+        text,
+        source_name=source_name or "",
+    )
     spell_cost_reduction = static_fixed_spell_cost_reduction_handler(text)
     if spell_cost_reduction is not None:
         template_id = spell_cost_reduction[0]
@@ -204,6 +209,17 @@ def _source_permanent_participation_template(
                 ),
             ),
         )
+    if static_cast_rule is not None:
+        return StaticRuntimeTemplate(
+            compiled=static_cast_rule,
+            kind="static_ability",
+            event="cast.static.rule",
+            dependency_reason=(
+                "fixed public casting rules require their typed legality "
+                "capability"
+            ),
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+        )
     activation_restriction = static_activation_restriction_handler(text)
     if activation_restriction is not None:
         return StaticRuntimeTemplate(
@@ -214,6 +230,7 @@ def _source_permanent_participation_template(
                 "generic activation restriction requires its closed typed "
                 "runtime capability"
             ),
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
     action_permission = static_action_permission_handler(text)
     if action_permission is not None:

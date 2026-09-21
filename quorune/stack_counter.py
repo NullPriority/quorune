@@ -5,6 +5,7 @@ from typing import Any, Protocol
 
 from .errors import GameRuleError
 from .model import StackItem
+from .semantic_runtime.static_cast_rules import static_stack_item_uncounterable
 from .zone_trigger_events import ZoneTransitionKind
 
 
@@ -54,6 +55,8 @@ def stack_item_can_be_countered(
     item: StackItem,
 ) -> bool:
     if item.context.get("cant_be_countered"):
+        return False
+    if static_stack_item_uncounterable(host, item):
         return False
     if item.kind in {"spell", "spell_copy"} and host.state.players[
         item.controller

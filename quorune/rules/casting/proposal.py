@@ -15,6 +15,10 @@ from ...compiled_cast_timing import compiled_cast_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
 from ...morph import FACE_DOWN_CAST_METHODS, MORPH_CAST_METHOD
+from ...semantic_runtime.static_cast_rules import (
+    static_cast_prohibition_reason,
+    static_cast_timing_permissions,
+)
 from ...targets import available_modes
 from ..action_proposals import (
     ActionOffer,
@@ -339,6 +343,91 @@ def _rules_authorized_cost_base(
     )
 
 
+def _static_rule_face(
+    face: Mapping[str, Any] | None,
+    *,
+    face_down: bool,
+) -> Mapping[str, Any] | None:
+    if not face_down:
+        return face
+    return {
+        "name": "",
+        "type_line": "Creature",
+        "colors": (),
+        "keywords": (),
+        "mana_value": 0,
+    }
+
+
+def _combined_cast_timing_permissions(
+    host: CastProposalHost,
+    actor: str,
+    card: Any,
+    *,
+    face: Mapping[str, Any] | None,
+    face_name: str | None,
+    face_down: bool,
+) -> tuple[Any, ...]:
+    printed = (
+        ()
+        if face_down
+        else compiled_cast_timing_permissions(
+            host,
+            card,
+            face_name=face_name,
+        )
+    )
+    return (
+        *printed,
+        *static_cast_timing_permissions(host, actor, card, face=face),
+    )
+
+
+def _static_cast_rule_state(
+    host: CastProposalHost,
+    actor: str,
+    card: Any,
+    *,
+    face: Mapping[str, Any] | None,
+    face_name: str | None,
+    face_down: bool,
+) -> tuple[str | None, tuple[Any, ...]]:
+    rule_face = _static_rule_face(face, face_down=face_down)
+    return (
+        static_cast_prohibition_reason(host, actor, card, face=rule_face),
+        _combined_cast_timing_permissions(
+            host,
+            actor,
+            card,
+            face=rule_face,
+            face_name=face_name,
+            face_down=face_down,
+        ),
+    )
+
+
+def _offered_face_down_method_spec(
+    host: CastProposalHost,
+    card: Any,
+    cast_method: str | None,
+) -> tuple[Any | None, str | None]:
+    if cast_method not in FACE_DOWN_CAST_METHODS:
+        return None, None
+    specification = compiled_fixed_mana_face_down_method_spec(
+        host,
+        card,
+        method=cast_method,
+    )
+    if specification is not None:
+        return specification, None
+    return (
+        None,
+        "morph_contract_unavailable"
+        if cast_method == MORPH_CAST_METHOD
+        else "face_down_method_contract_unavailable",
+    )
+
+
 def _cast_program_and_cost(
     host: CastProposalHost,
     request: CastProposalRequest,
@@ -363,6 +452,14 @@ def _cast_program_and_cost(
         else str(face.get("mana_cost") or "") if face else record.mana_cost
     )
     face_name = str(face.get("name") or "") if face else None
+    static_prohibition, timing_permissions = _static_cast_rule_state(
+        host,
+        request.actor,
+        card,
+        face=face,
+        face_name=face_name,
+        face_down=method_spec is not None,
+    )
     if response.get("protector") is not None:
         raise CastProposalError(
             "A Battle protector is chosen as the Battle enters, not while its spell is cast",
@@ -372,6 +469,11 @@ def _cast_program_and_cost(
         raise CastProposalError(
             "A land card cannot be cast as a spell",
             reason="land_not_spell",
+        )
+    if static_prohibition is not None:
+        raise CastProposalError(
+            "A current static rule prohibits casting this spell",
+            reason=static_prohibition,
         )
     if (
         not request.ignore_timing
@@ -387,13 +489,7 @@ def _cast_program_and_cost(
         host.state,
         request.actor,
         type_line,
-        ()
-        if method_spec is not None
-        else compiled_cast_timing_permissions(
-            host,
-            card,
-            face_name=face_name,
-        ),
+        timing_permissions,
     ):
         host._sorcery_timing(request.actor)
         raise CastProposalError("Illegal cast timing", reason="timing")
@@ -768,24 +864,13 @@ def build_cast_offer(
     record = host.card_record(card)
     if not record:
         return CastProposalResult("unavailable", "custom_token")
-    method_spec = (
-        compiled_fixed_mana_face_down_method_spec(
-            host,
-            card,
-            method=cast_method,
-        )
-        if cast_method in FACE_DOWN_CAST_METHODS
-        else None
+    method_spec, method_error = _offered_face_down_method_spec(
+        host,
+        card,
+        cast_method,
     )
-    if cast_method is not None and method_spec is None:
-        return CastProposalResult(
-            "unavailable",
-            (
-                "morph_contract_unavailable"
-                if cast_method == MORPH_CAST_METHOD
-                else "face_down_method_contract_unavailable"
-            ),
-        )
+    if method_error is not None:
+        return CastProposalResult("unavailable", method_error)
     front = record.faces[0] if record.faces else None
     type_line = (
         "Creature"
@@ -797,17 +882,21 @@ def build_cast_offer(
     if not _zone_lifecycle_cast_timing_is_legal(host, seat, card):
         return CastProposalResult("unavailable", "zone_lifecycle_timing")
     face_name = str(front.get("name") or "") if front else None
+    static_prohibition, timing_permissions = _static_cast_rule_state(
+        host,
+        seat,
+        card,
+        face=front,
+        face_name=face_name,
+        face_down=method_spec is not None,
+    )
+    if static_prohibition is not None:
+        return CastProposalResult("unavailable", static_prohibition)
     if not cast_timing_is_legal(
         host.state,
         seat,
         type_line,
-        ()
-        if method_spec is not None
-        else compiled_cast_timing_permissions(
-            host,
-            card,
-            face_name=face_name,
-        ),
+        timing_permissions,
     ):
         return CastProposalResult("unavailable", "timing")
     semantic_key = (

@@ -309,6 +309,27 @@ discard or exile, energy, loyalty, variable, dynamic, alternative-zone or
 usage-limited activation costs, external attachment-source references, and
 untrusted granted rules remain outside this owner.
 
+`rule.cast.*.v1` components discover only current trusted battlefield sources
+whose shared layer-6 static-component fragments still apply. One immutable
+descriptor carries the player scope, public spell query, fixed condition,
+origin-zone restriction, one-per-turn maximum, or chosen-name relation.
+`rules/casting/proposal.py` consumes timing and prohibition results during both
+offer and commit, using the canonical cast journal for supported all-spell and
+noncreature limits. Attached-player limits use the reciprocal player-
+attachment owner. `rule.stack.uncounterable.fixed-query.v1` is consulted by the
+canonical stack-counter operation at application time, so source departure,
+phasing, control, or ability removal changes the verdict without mutating the
+stack object.
+
+`restriction.activation.fixed-public.v1` uses that same current-component
+boundary and the existing activation availability path. It compares current
+public object predicates, typed mana and loyalty classifications, chosen names,
+or reciprocal attachment relations; it never creates a second activation
+catalog. The exact attached untap compound contributes an ordinary
+`UntapStepParticipation` to the existing untap planner. Dynamic, temporary,
+cost-changing, target-relative, granted, copied, and unrepresented compound
+forms remain unavailable rather than being inferred from Oracle prose.
+
 ## Ownership boundaries
 
 Components receive immutable source-authorized facts, never

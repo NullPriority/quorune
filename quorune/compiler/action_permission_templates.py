@@ -182,6 +182,13 @@ def _spell_queries(subject: str) -> list[dict[str, Any]] | None:
     return queries
 
 
+def public_spell_queries(subject: str) -> tuple[dict[str, Any], ...] | None:
+    """Return one closed public nonland spell-query union."""
+
+    queries = _spell_queries(subject)
+    return None if queries is None else tuple(queries)
+
+
 def _library_visibility_descriptor(
     visibility: LibraryTopVisibility,
     scope: ActionPermissionScope,
@@ -358,5 +365,6 @@ def static_action_permission_handler(
 
 __all__ = [
     "ActionPermissionHandlerTemplate",
+    "public_spell_queries",
     "static_action_permission_handler",
 ]
