@@ -4730,6 +4730,39 @@ class RulesSchedulerTests(unittest.TestCase):
                 ability=ability,
             )
         )
+        multi_probe = "fixed-multi-event-trigger-existing-owner-v1"
+        self.assertTrue(
+            _matches_probe(
+                multi_probe,
+                "Whenever this creature enters or attacks, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                probe_id,
+                "Whenever this creature enters or attacks, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                action_probe,
+                "Whenever this creature enters or attacks, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                multi_probe,
+                "When you cycle this card and when this creature dies, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
         self.assertFalse(
             _matches_probe(
                 action_probe,

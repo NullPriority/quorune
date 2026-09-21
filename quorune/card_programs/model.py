@@ -6,6 +6,8 @@ import json
 import re
 from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING
 
+from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..replacement.immutable import thaw_value
 from ..util import stable_json
 from .trust import build_program_trust_closure
 
@@ -232,6 +234,31 @@ def _classified_effects(
             for marker in ("cast_from", "play_from", "zone_permission")
         )
     ]
+    subscriptions = FixedEventSubscriptionSet.from_condition(
+        program.event_condition
+    )
+    trigger_nodes = (
+        [
+            {
+                "event": subscription.event,
+                "condition": (
+                    _clone(thaw_value(subscription.condition))
+                    if subscription.condition is not None
+                    else None
+                ),
+                "effect_nodes": list(range(len(effects))),
+            }
+            for subscription in subscriptions.subscriptions
+        ]
+        if subscriptions is not None
+        else [
+            {
+                "event": event,
+                "condition": _clone(program.event_condition),
+                "effect_nodes": list(range(len(effects))),
+            }
+        ]
+    )
     durations = []
     for index, effect in enumerate(effects):
         if "duration" in effect:
@@ -240,13 +267,7 @@ def _classified_effects(
             )
     return {
         "triggers": (
-            [
-                {
-                    "event": event,
-                    "condition": _clone(program.event_condition),
-                    "effect_nodes": list(range(len(effects))),
-                }
-            ]
+            trigger_nodes
             if trigger
             else []
         ),

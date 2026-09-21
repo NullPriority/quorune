@@ -3022,6 +3022,302 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         self.assertFalse(item.context["tapped"])
         self.assertEqual(untapped_land.ref, item.context["card"])
 
+    def test_fixed_multi_event_source_triggers_share_events_and_replay(self):
+        session = self.session(121091, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Enter Or Attack Life Trigger Fixture",
+            ref="multi-enter-attack-source",
+            zone="hand",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        life_before = engine.state.players["A"].life
+
+        engine.move_card(
+            source.object_id,
+            "battlefield",
+            reason="multi-event entry witness",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        entry_item = next(
+            item for item in engine.state.stack if item.semantic_key == program.key
+        )
+        self.assertEqual("permanent.enter", entry_item.context["event"])
+        self.resolve_top(engine)
+        self.assertEqual(life_before + 1, engine.state.players["A"].life)
+
+        attack_session = self.session(121096, players=4)
+        attack_engine = attack_session.engine
+        attacker = self.add_card(
+            attack_engine,
+            seat="A",
+            name="Generic Enter Or Attack Life Trigger Fixture",
+            ref="multi-event-attack-source",
+            zone="battlefield",
+        )
+        attack_program = self.register_typed_event_trigger(
+            attack_engine,
+            attacker,
+        )
+        muted = self.add_card(
+            attack_engine,
+            seat="A",
+            name="Generic Enter Or Attack Life Trigger Fixture",
+            ref="multi-event-muted-attacker",
+            zone="battlefield",
+        )
+        self.register_typed_event_trigger(attack_engine, muted)
+        commit_continuous_effect(
+            attack_engine.state,
+            ContinuousEffect(
+                effect_id="fixture:remove-multi-event-trigger",
+                source_id="fixture:remove-multi-event-trigger-owner",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=attack_engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("remove_all_abilities"),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                applies=ObjectQuerySpec(zones=("battlefield",)),
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        object_id=muted.object_id,
+                        logical_object_id=muted.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+        self.assertEqual(
+            [],
+            attack_engine._effective_card_data(muted)["ability_fragments"],
+        )
+        attack_life_before = attack_engine.state.players["A"].life
+        attack_engine.state.active_player = "A"
+        attack_engine.state.phase_index = 5
+        attack_engine.state.phase = "combat"
+        attack_engine.state.step = "declare_attackers"
+        attack_engine.state.combat = CombatState()
+        attack_engine.permissions.invalidate_current()
+        attack_engine.state.pending_decision = None
+        attack_engine.state.priority_player = None
+        attack_engine.state.priority_passes = []
+        attack_engine._issue_attackers()
+        attack_session.initial_checkpoint = checkpoint_envelope(
+            attack_engine.state
+        )
+        attack_session.commands.clear()
+        attack_session.decisions.clear()
+        declared = attack_session.act(
+            "pilot:A",
+            {
+                "a": "attack",
+                "atk": {attacker.ref: "B", muted.ref: "B"},
+            },
+        )
+        self.assertTrue(declared.ok, declared.summary)
+        attack_item = next(
+            item
+            for item in attack_engine.state.stack
+            if item.semantic_key == attack_program.key
+        )
+        self.assertEqual("creature.attacks", attack_item.context["event"])
+        self.assertFalse(
+            any(
+                item.source_object_id == muted.object_id
+                and item.semantic_key == attack_program.key
+                for item in attack_engine.state.stack
+            )
+        )
+        for seat in attack_engine.active_seats:
+            packet_text = json.dumps(
+                attack_session.packet(f"pilot:{seat}", full=True),
+                sort_keys=True,
+            )
+            for card in (attacker, muted):
+                self.assertNotIn(card.object_id, packet_text)
+                self.assertNotIn(card.logical_object_id, packet_text)
+        for _ in range(24):
+            if not attack_engine.state.stack:
+                break
+            pass_current(attack_session)
+        self.assertFalse(attack_engine.state.stack)
+        self.assertEqual(
+            attack_life_before + 1,
+            attack_engine.state.players["A"].life,
+        )
+        expected_hash = authoritative_state_hash(attack_engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "fixed-multi-event-attack"
+            attack_session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+        damage_session = self.session(121092)
+        damage_engine = damage_session.engine
+        damage_source = self.add_card(
+            damage_engine,
+            seat="A",
+            name="Generic Enter Or Combat Damage Draw Trigger Fixture",
+            ref="multi-enter-damage-source",
+            zone="battlefield",
+        )
+        damage_program = self.register_typed_event_trigger(
+            damage_engine,
+            damage_source,
+        )
+        resolve_damage_batch(
+            damage_engine,
+            (
+                damage_proposal(
+                    damage_engine,
+                    proposal_id="multi-event:noncombat",
+                    actor="A",
+                    source_ref=damage_source.ref,
+                    target="B",
+                    amount=1,
+                    combat=False,
+                    reason="multi-event negative damage witness",
+                ),
+            ),
+        )
+        damage_engine._stabilize()
+        self.assertFalse(
+            any(
+                item.semantic_key == damage_program.key
+                for item in damage_engine.state.stack
+            )
+        )
+        resolve_damage_batch(
+            damage_engine,
+            (
+                damage_proposal(
+                    damage_engine,
+                    proposal_id="multi-event:combat",
+                    actor="A",
+                    source_ref=damage_source.ref,
+                    target="B",
+                    amount=1,
+                    combat=True,
+                    reason="multi-event positive damage witness",
+                ),
+            ),
+        )
+        damage_engine._stabilize()
+        damage_item = next(
+            item
+            for item in damage_engine.state.stack
+            if item.semantic_key == damage_program.key
+        )
+        self.assertEqual("damage.dealt", damage_item.context["event"])
+
+    def test_fixed_multi_event_departure_uses_lki_and_apnap(self):
+        session = self.session(121093, players=4)
+        engine = session.engine
+        sources = [
+            self.add_card(
+                engine,
+                seat=seat,
+                name="Generic Enter Or Die Treasure Trigger Fixture",
+                ref=f"multi-enter-die-{seat}",
+                zone="hand",
+            )
+            for seat in ("A", "C")
+        ]
+        program = self.register_typed_event_trigger(engine, sources[0])
+        self.register_typed_event_trigger(engine, sources[1])
+        engine.state.active_player = "A"
+        engine._move_cards_simultaneously(
+            tuple((source.object_id, "battlefield") for source in sources),
+            reason="multi-event APNAP entry witness",
+        )
+        engine._stabilize()
+        entry_items = [
+            item
+            for item in engine.state.stack
+            if item.semantic_key == program.key
+        ]
+        self.assertEqual(["A", "C"], [item.controller for item in entry_items])
+        self.assertTrue(
+            all(item.context["event"] == "permanent.enter" for item in entry_items)
+        )
+
+        death_session = self.session(121094)
+        death_engine = death_session.engine
+        departed = self.add_card(
+            death_engine,
+            seat="B",
+            controller="B",
+            name="Generic Enter Or Die Treasure Trigger Fixture",
+            ref="multi-event-death-source",
+            zone="battlefield",
+        )
+        death_program = self.register_typed_event_trigger(death_engine, departed)
+        death_engine.move_card(
+            departed.object_id,
+            "graveyard",
+            reason="multi-event death LKI witness",
+            semantic_events=True,
+        )
+        death_engine._stabilize()
+        death_item = next(
+            item
+            for item in death_engine.state.stack
+            if item.semantic_key == death_program.key
+        )
+        self.assertEqual("creature.dies", death_item.context["event"])
+        self.assertEqual("B", death_item.controller)
+        self.assertEqual("B", death_item.context["previous_controller"])
+
+        artifact_session = self.session(121095)
+        artifact_engine = artifact_session.engine
+        artifact = self.add_card(
+            artifact_engine,
+            seat="A",
+            name="Generic Artifact Entry Sacrifice Draw Trigger Fixture",
+            ref="multi-event-artifact-source",
+            zone="hand",
+        )
+        artifact_program = self.register_typed_event_trigger(
+            artifact_engine,
+            artifact,
+        )
+        hand_before = len(artifact_engine.state.players["A"].zones["hand"])
+        artifact_engine.move_card(
+            artifact.object_id,
+            "battlefield",
+            reason="multi-event artifact entry witness",
+            semantic_events=True,
+        )
+        artifact_engine._stabilize()
+        self.resolve_top(artifact_engine)
+        self.assertEqual(
+            hand_before,
+            len(artifact_engine.state.players["A"].zones["hand"]),
+        )
+        artifact_engine.move_card(
+            artifact.object_id,
+            "graveyard",
+            reason="multi-event artifact sacrifice witness",
+            semantic_events=True,
+            transition_kind=ZoneTransitionKind.SACRIFICE,
+        )
+        artifact_engine._stabilize()
+        sacrifice_item = next(
+            item
+            for item in artifact_engine.state.stack
+            if item.semantic_key == artifact_program.key
+        )
+        self.assertEqual("permanent.sacrificed", sacrifice_item.context["event"])
+        self.resolve_top(artifact_engine)
+        self.assertEqual(
+            hand_before + 1,
+            len(artifact_engine.state.players["A"].zones["hand"]),
+        )
+
     def test_cycle_entry_schedule_and_block_bindings_execute(self):
         cycle_session = self.session(121076, players=4)
         cycle_engine = cycle_session.engine

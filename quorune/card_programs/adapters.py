@@ -25,6 +25,7 @@ from ..rules.capabilities import CapabilityRegistry
 from ..rules.capabilities import load_default_capability_registry
 from ..semantics import SemanticProgram, SemanticRegistry
 from .model import CardProgram, CardProgramError, CardProgramFace
+from .reviewed_overlay import shadowed_reviewed_multi_event_keys
 
 
 SEMANTIC_PACK_COMPATIBILITY_COMPILER = "semantic-pack-v3-card-program-v2"
@@ -263,13 +264,24 @@ def compile_card_program(
         )
     }
     reviewed_keys: list[str] = []
+    superseded_reviewed_keys: list[str] = []
     if semantic_registry is not None:
-        reviewed_programs = with_activated_ability_catalog(
+        reviewed_programs = tuple(
+            with_activated_ability_catalog(
+                record,
+                semantic_registry.programs_for_oracle(record.oracle_id),
+                reference_programs=tuple(programs.values()),
+            )
+        )
+        shadowed_reviewed_keys = shadowed_reviewed_multi_event_keys(
             record,
-            semantic_registry.programs_for_oracle(record.oracle_id),
-            reference_programs=tuple(programs.values()),
+            programs.values(),
+            reviewed_programs,
         )
         for program in reviewed_programs:
+            if program.key in shadowed_reviewed_keys:
+                superseded_reviewed_keys.append(program.key)
+                continue
             for key, generated in tuple(programs.items()):
                 if catalog_carrier_is_shadowed(
                     record,
@@ -317,6 +329,9 @@ def compile_card_program(
             "oracle_ir_schema_version": ir.schema_version,
             "oracle_ir_semantic_hash": ir.semantic_hash,
             "reviewed_semantic_keys": sorted(reviewed_keys),
+            "superseded_reviewed_semantic_keys": sorted(
+                superseded_reviewed_keys
+            ),
             "capability_profile": (
                 capability_profile if capability_registry is not None else None
             ),

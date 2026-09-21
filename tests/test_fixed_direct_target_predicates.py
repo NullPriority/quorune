@@ -527,7 +527,7 @@ class FixedDirectTargetRuntimeTests(unittest.TestCase):
         target = next(
             card
             for card in engine.state.cards.values()
-            if card.owner == "A" and card.printed_name == "Ichor Wellspring"
+            if card.owner == "A" and card.printed_name == "Arcane Signet"
         )
         source = next(
             card

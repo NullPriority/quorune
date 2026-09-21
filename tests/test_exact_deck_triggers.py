@@ -57,10 +57,12 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             reason="Ichor enters scenario",
         )
         self.assertFalse(engine._stabilize())
-        self.assertEqual(
-            ["Ichor Wellspring enters"],
-            [item.label for item in engine.state.stack],
-        )
+        self.assertEqual(1, len(engine.state.stack))
+        trigger_key = engine.state.stack[0].semantic_key
+        program = engine.semantics.get(trigger_key or "")
+        self.assertIsNotNone(program)
+        assert program is not None
+        self.assertIn("fixed_multi_event_subscription", program.coverage)
         self.resolve_top(engine)
         self.assertEqual(
             before + 1,
@@ -72,10 +74,8 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             actor="A",
         )
         self.assertFalse(engine._stabilize())
-        self.assertEqual(
-            ["Ichor Wellspring graveyard trigger"],
-            [item.label for item in engine.state.stack],
-        )
+        self.assertEqual(1, len(engine.state.stack))
+        self.assertEqual(trigger_key, engine.state.stack[0].semantic_key)
         self.resolve_top(engine)
         self.assertEqual(
             before + 2,
@@ -232,6 +232,13 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             reason="Cryogen enters scenario",
         )
         self.assertFalse(engine._stabilize())
+        self.assertEqual(1, len(engine.state.stack))
+        program = engine.semantics.get(
+            engine.state.stack[0].semantic_key or ""
+        )
+        self.assertIsNotNone(program)
+        assert program is not None
+        self.assertIn("fixed_multi_event_subscription", program.coverage)
         self.resolve_top(engine)
         self.assertEqual(
             before + 1,

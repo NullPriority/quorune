@@ -96,11 +96,14 @@ it does not rewrite an old record.
 ## Runtime boundary
 
 `CommanderSession` registers validated generated and reviewed abilities under
-stable identities. A reviewed compatibility ability may supersede only the same
-key; conflicting face or source identity fails loading. Exact executable nodes
-enter registered typed semantic handlers or runtime components. Unsupported or
-untrusted nodes remain unavailable in strict play or reach an explicit
-development-only arbitration boundary.
+stable identities. A reviewed compatibility ability normally supersedes only
+the same key. A trusted typed multi-event program instead replaces a complete,
+body-identical reviewed split of its source-self subscriptions so one printed
+ability cannot trigger twice; incomplete or ambiguous overlap remains
+uncombined. Conflicting face or source identity fails loading. Exact executable
+nodes enter registered typed semantic handlers or runtime components.
+Unsupported or untrusted nodes remain unavailable in strict play or reach an
+explicit development-only arbitration boundary.
 
 No running game parses Oracle prose. The runtime consumes only validated,
 fingerprinted CardPrograms, registered descriptors, and typed rules owners.
@@ -121,6 +124,11 @@ damage, token-entry, and graveyard-departure subscriptions use the same event
 and condition fields. Unsupported attachment, tap-state, first-time,
 once-per-turn, ambiguous, linked, chosen, or dynamic event forms remain
 residual.
+An exact same-zone two-event clause serializes its ordered subscriptions inside
+the typed event condition. CardProgram V2 projects both trigger entries while
+retaining one semantic ability identity and one shared effect list. The runtime
+matches only the selected committed event and never splits or reparses the
+Oracle source line.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

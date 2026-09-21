@@ -300,6 +300,13 @@ only inside the producer's canonical simultaneous batch, and public damage or
 zone predicates read sealed committed or last-known facts rather than live
 Oracle text.
 
+Two-event triggered abilities remain one CardProgram ability and one effect
+body. `rules/event_subscriptions.py` owns the immutable ordered subscription set;
+the existing dispatcher selects the matching normalized event and condition
+while CardProgram projection exposes both trigger entries. Every supported
+subscription shares one battlefield active zone, current-ability
+applicability, APNAP placement, projection, and replay boundary.
+
 `turn_history.py` retains current-turn events plus one bounded per-player
 spell-count summary for the immediately previous turn. `day_night.py` consumes
 the previous active player's count during the second untap-step action, before

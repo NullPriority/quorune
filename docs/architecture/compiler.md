@@ -888,7 +888,9 @@ compound or conditional instructions remain source-spanned residuals.
   explicit in the typed result.
 - Parsing success is separate from runtime and rules closure.
 - A reviewed ability can supersede generated output only at the same stable
-  semantic key; conflicts fail closed.
+  semantic key. The one bounded inverse case is a trusted typed multi-event
+  program replacing a complete, body-identical reviewed split of those same
+  source-self subscriptions; incomplete or ambiguous splits fail closed.
 - Compiler output cannot claim trust beyond all declared capabilities and
   runtime dependencies.
 - Card names and Oracle IDs are evidence and lookup keys, not generic runtime
@@ -1164,6 +1166,24 @@ and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
 sacrifice, tap-state, source-token damage, chosen, legendary, modified, and
 counter-bearing forms remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
+
+Fixed multi-event trigger subscriptions reuse that same owner without creating
+a synthetic event. One source-spanned ability may name exactly two represented
+events in the battlefield active zone; the compiler serializes an ordered
+`FixedEventSubscriptionSet` with one closed condition per event and one shared
+typed effect body. Trigger discovery selects the matching subscription from
+the committed occurrence, applies the shared current layer-6 ability query,
+and places the ordinary APNAP trigger. The closed grammar covers source or
+exact printed-name entry, attack, death, leave, graveyard, face-up, combat-
+damage, monstrous, block, and sacrifice pairs plus the exact current enchanted
+creature attack/block relation. Cross-zone Cycling/death pairs, commander and
+Room subjects, linked Haunt, chosen or another-object predicates, unavailable
+event producers, and more than two events remain residual.
+`card_programs/reviewed_overlay.py` owns the single precedence query shared by
+CardProgram compilation and live generated-program registration. It removes a
+reviewed split only when every subscription has one trusted, body-identical
+source-self counterpart, preventing duplicate triggers without card identity
+dispatch.
 
 `compiler/fixed_source_combat_growth.py` owns the narrower source-self combat
 growth body grammar. It accepts only mandatory fixed integer power/toughness

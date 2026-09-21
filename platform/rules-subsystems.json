@@ -3752,6 +3752,58 @@
           "measurement_probe_id": "public-action-event-binding-closure-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-multi-event-trigger-subscriptions",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.effect.fixed_event",
+            "capability:trigger.event.normalized_damage",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.event.normalized_zone_change",
+            "capability:trigger.placement.apnap",
+            "capability:trigger.subscription.fixed_multi_event",
+            "component:quorune.card_programs.model.ability_to_card_dict",
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+            "component:quorune.compiler.fixed_public_multi_event_bindings.fixed_public_multi_event_binding_spec",
+            "component:quorune.rules.event_subscriptions.FixedEventSubscriptionSet",
+            "component:quorune.trigger_discovery.semantic_event_matches"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "one-battlefield-active-zone",
+            "one-independently-exact-noncounter-effect",
+            "one-source-or-exact-printed-name-subject",
+            "two-fixed-normalized-event-subscriptions"
+          ],
+          "shared_dependencies": [
+            "trigger.effect.fixed_event",
+            "trigger.event.normalized_damage",
+            "trigger.event.normalized_public_action",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "trigger.subscription.fixed_multi_event"
+          ],
+          "shared_grammar": "one exact two-event source or printed-name trigger clause in the battlefield active zone, with one closed condition per existing normalized event and one independently exact noncounter typed effect body",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era cohort while sharing existing zone, attack, block, damage, face-up, sacrifice, current layer-6 ability-applicability, APNAP, effect, projection, and replay owners through one typed subscription descriptor.",
+          "explicit_exclusions": [
+            "commander-relative subjects without sealed designation facts",
+            "counter-placement bodies and independently unsupported effect siblings",
+            "cross-zone Cycling and death subscription pairs",
+            "intervening-if, reflexive, delayed, first-time, once-per-turn, and more-than-two-event grammar",
+            "linked Haunt, chosen, another-object, attachment-relative, and dynamic subjects",
+            "room, monstrous, target-event, transform-name, and other unavailable event producers"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-multi-event-trigger-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -3800,10 +3852,10 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v203-public-action-event-binding-closure",
-      "compiler_version": "oracle-ir-v203",
-      "bundle_id": "bundle:public-action-event-binding-closure",
-      "candidate_ids": ["compiler:public-action-event-binding-closure"],
+      "transition_id": "oracle-ir-v204-fixed-multi-event-trigger-subscriptions",
+      "compiler_version": "oracle-ir-v204",
+      "bundle_id": "bundle:fixed-multi-event-trigger-subscriptions",
+      "candidate_ids": ["compiler:fixed-multi-event-trigger-subscriptions"],
       "family_ids": [
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
         "event_binding:normalized-event-binding"
@@ -3813,10 +3865,11 @@
         "trigger.event.normalized_damage",
         "trigger.event.normalized_public_action",
         "trigger.event.normalized_zone_change",
-        "trigger.placement.apnap"
+        "trigger.placement.apnap",
+        "trigger.subscription.fixed_multi_event"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-action-event-binding-closure"
+      "measurement_id": "measurement:fixed-multi-event-trigger-subscriptions"
     },
     "forecast_corrections": [
       {

@@ -402,9 +402,15 @@ class ExactArtifactEngineTests(unittest.TestCase):
             for batch in engine.state.pending_trigger_batches
             for group in batch["groups"]
             for item in group["items"]
-            if item["label"] == "Ichor Wellspring enters"
+            if item.get("source_object_id") == wellspring.object_id
+            and item.get("semantic_key") is not None
         ]
         self.assertEqual(2, len(queued))
+        self.assertEqual(1, len({item["semantic_key"] for item in queued}))
+        program = engine.semantics.get(queued[0]["semantic_key"])
+        self.assertIsNotNone(program)
+        assert program is not None
+        self.assertIn("fixed_multi_event_subscription", program.coverage)
 
     def test_brudiclad_creates_myr_and_copies_other_tokens(self):
         session = self.make_session(908)

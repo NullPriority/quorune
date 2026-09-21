@@ -630,6 +630,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/card_programs/reviewed_overlay.py",
+      "layer": "semantics",
+      "owning_subsystem": "card_programs",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/card_programs/runtime.py",
       "layer": "semantics",
       "owning_subsystem": "card_programs",
@@ -2435,6 +2450,21 @@
     },
     {
       "file": "quorune/compiler/fixed_public_event_trigger_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/fixed_public_multi_event_bindings.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -6341,6 +6371,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/event_subscriptions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/evidence.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -9580,5 +9624,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a3b28586c328887c1f5cf4858e2bdfb320493914c52a53e83b1e651c003f6233"
+  "fingerprint": "b407709a69c8042ec2001adce6aacdc9b2b2f268f6649f82c0154c4cf17bb2c2"
 }
