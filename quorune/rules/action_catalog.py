@@ -4,6 +4,7 @@ import copy
 from collections.abc import Mapping
 from typing import Any, Protocol
 
+from ..semantic_runtime.action_permissions import land_play_permission_options
 from ..mana_undo import priority_actions_with_mana_undo
 from ..station import (
     StationAbilityError,
@@ -53,6 +54,15 @@ def _cast_candidates(host: ActionCatalogHost, seat: str) -> list[Any]:
         [
             *player.zones["hand"],
             *player.zones["command"],
+            *(
+                player.zones["library"][-1:]
+                if player.zones["library"]
+                and host._compiled_zone_cast_permission(
+                    seat,
+                    host.state.cards[player.zones["library"][-1]],
+                )
+                else []
+            ),
             *[
                 object_id
                 for zone in ("graveyard", "exile")
@@ -120,12 +130,13 @@ def _land_candidates(
         seat == host.state.active_player
         and not host.state.stack
         and host.state.phase in {"precombat_main", "postcombat_main"}
-        and player.land_plays_remaining
+        and land_play_permission_options(host, seat)
     ):
         return []
     result = []
     for object_id in [
         *player.zones["hand"],
+        *player.zones["library"][-1:],
         *[
             object_id
             for zone in ("graveyard", "exile")
@@ -151,6 +162,7 @@ def _land_offers(
         ref: sum(1 for card, _face in candidates if card.ref == ref)
         for ref in lands
     }
+    permission_options = land_play_permission_options(host, seat)
     offers = []
     for card, face in candidates:
         record = host.card_record(card)
@@ -169,18 +181,28 @@ def _land_offers(
             "card": card.ref,
             "from": card.zone,
         }
+        if len(permission_options) == 1:
+            payload["land_play_permission"] = permission_options[0]
+        elif permission_options:
+            payload["land_play_permission"] = permission_options[0]
+            payload["choice_schema"] = {
+                "land_play_permission": {
+                    "type": "enum",
+                    "label": "Choose a land-play permission",
+                    "options": list(permission_options),
+                    "default": permission_options[0],
+                }
+            }
         if face_name:
             payload["face"] = face_name
         life_amount = host._land_entry_life_amount(record, face) if record else 0
         if life_amount:
-            payload["choice_schema"] = {
-                "pay_life": {
-                    "type": "boolean",
-                    "label": f"Pay {life_amount} life to enter untapped",
-                    "default": False,
-                    "life": life_amount,
-                    "effect": "enters untapped",
-                }
+            payload.setdefault("choice_schema", {})["pay_life"] = {
+                "type": "boolean",
+                "label": f"Pay {life_amount} life to enter untapped",
+                "default": False,
+                "life": life_amount,
+                "effect": "enters untapped",
             }
         offers.append(
             ActionOffer(

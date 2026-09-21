@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "7abb16e7379328c046aa0efa52bf2825accb1480c57aea860f88025450696b19"
+verified: "bfa2737fdcf7d8318b65a9d4b4bf8302852523e22b7a1fe7d21467ad6623cbe9"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `82cb564ac49b7a2e8710e0e0402c8d8d7b9968559df7283f0ed561838d86c6ce`
+Source fingerprint: `d91c00f6b76cca2937f688048d11571f1fc6994688d8888bbd8426db029287d9`
 
 ## Current top-level state
 
@@ -64,12 +64,13 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 28 | blocked | implementation | false | `interaction-implementation:residual.target_or_choice.multiple-damage-recipients` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 29 | blocked | implementation | false | `interaction-implementation:residual.target_or_choice.random-outcome` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 30 | blocked | implementation | false | `rules:counter-producer-replacement-closure` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
-| 31 | blocked | implementation | false | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 18 | 106 | 0.857143 | 0 | 0 |
-| 32 | blocked | implementation | false | `bundle:fixed-exile-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
-| 33 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 18 | 0.0 | 0 | 0 |
-| 34 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 194 | 0.0 | 0 | 0 |
-| 35 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
-| 36 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 31 | blocked | implementation | false | `bundle:public-library-action-permissions` | `compiler_harvest` | 1 | 1 | 22 | 106 | 3.142857 | 0 | 0 |
+| 32 | blocked | implementation | false | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 18 | 106 | 0.857143 | 0 | 0 |
+| 33 | blocked | implementation | false | `bundle:fixed-exile-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
+| 34 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 18 | 0.0 | 0 | 0 |
+| 35 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 194 | 0.0 | 0 | 0 |
+| 36 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
+| 37 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 
 Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.
 

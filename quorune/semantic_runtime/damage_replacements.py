@@ -865,7 +865,7 @@ def collect_damage_replacement_effects(
     registry = default_damage_replacement_registry()
     effects: list[ReplacementEffect] = []
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-    from ..trigger_discovery import program_has_current_ability_fragments
+    from .current_ability_components import program_has_current_ability_fragments
 
     for source in candidates:
         active_zone = (

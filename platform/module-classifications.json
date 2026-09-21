@@ -6483,6 +6483,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/land_play_permissions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/library_partition.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -6848,6 +6862,20 @@
     },
     {
       "file": "quorune/rules/transform_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/zone_action_permissions.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -7974,6 +8002,21 @@
     },
     {
       "file": "quorune/semantic_runtime/crew_abilities.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/current_ability_components.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
       "allowed_dependency_layers": [
@@ -9624,5 +9667,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b407709a69c8042ec2001adce6aacdc9b2b2f268f6649f82c0154c4cf17bb2c2"
+  "fingerprint": "b5ad68fc875756ba1dc1d0b14a8b058c3ee03bea4848111da7933aaf11b65b38"
 }

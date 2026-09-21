@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b14dd91f21081af7c716b14fa2998a9aff25fac23ccbcaf75b811c8d5ed50bca",
-  "declaration_source_fingerprint": "11cde33eab1200fa9750515a7b5d77518db82aae2e499af94bb82337b39233c8",
+  "registry_fingerprint": "aac6526097b2acc249d10b48c700cc11c856ebc3a0b6d4557fa84c861f6266a6",
+  "declaration_source_fingerprint": "2e5055501679fb921ae78ffe5dfbcb66bb219f1a2374ac7b359613d0eb117bd0",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -42531,6 +42531,102 @@
       "applicability_note": "Persist, resume, and exactly replay the counter result, designation, and recorded Monstrosity value."
     },
     {
+      "capability_id": "land.play.additional.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_play_slots_revalidate_source_incarnations",
+      "official_rule_ids": [
+        "305.2",
+        "305.2a",
+        "305.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Revalidate source-incarnation slots before a successful land play consumes one."
+    },
+    {
+      "capability_id": "land.play.additional.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_play_slots_revalidate_source_incarnations",
+      "official_rule_ids": [
+        "305.2",
+        "305.2a",
+        "305.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep additional land-play slots controller-scoped in a four-player match."
+    },
+    {
+      "capability_id": "land.play.additional.static",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "305.2",
+        "305.2a",
+        "305.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the source-spanned permission lowering before runtime can infer prose."
+    },
+    {
+      "capability_id": "land.play.additional.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "305.2",
+        "305.2a",
+        "305.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject dynamic, conditional, malformed, and out-of-range land-play counts."
+    },
+    {
+      "capability_id": "land.play.additional.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_contract_matrix",
+      "official_rule_ids": [
+        "305.2",
+        "305.2a",
+        "305.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower exact one- and two-additional-land sentences into source-incarnation permission slots."
+    },
+    {
+      "capability_id": "land.play.additional.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_play_slots_revalidate_source_incarnations",
+      "official_rule_ids": [
+        "305.2",
+        "305.2a",
+        "305.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the selected source-incarnation slot and resulting final land zones exactly."
+    },
+    {
       "capability_id": "land.play.from_own_graveyard",
       "evidence_class": "interaction",
       "test_id": "tests.test_static_action_permissions.StaticActionPermissionRuntimeTests.test_land_play_permission_is_typed_active_and_seat_scoped",
@@ -42673,6 +42769,125 @@
         "commander_review"
       ],
       "applicability_note": "Replay the typed permission, land action, and resulting authoritative state exactly."
+    },
+    {
+      "capability_id": "library.action.top.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_offer_commit_and_stale_identity_rollback",
+      "official_rule_ids": [
+        "118.2",
+        "305.2",
+        "601.2",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Share the same current top identity and typed predicate between action offer and accepted command."
+    },
+    {
+      "capability_id": "library.action.top.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay",
+      "official_rule_ids": [
+        "118.2",
+        "305.2",
+        "601.2",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Advertise the top-card action only to the source controller in a four-player match."
+    },
+    {
+      "capability_id": "library.action.top.static",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "118.2",
+        "305.2",
+        "601.2",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the source-spanned permission lowering before runtime can infer prose."
+    },
+    {
+      "capability_id": "library.action.top.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "118.2",
+        "305.2",
+        "601.2",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject linked costs, consequences, chosen values, non-top cards, and malformed typed queries."
+    },
+    {
+      "capability_id": "library.action.top.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_contract_matrix",
+      "official_rule_ids": [
+        "118.2",
+        "305.2",
+        "601.2",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed public land and spell predicates into the existing action-permission component."
+    },
+    {
+      "capability_id": "library.action.top.static",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay",
+      "official_rule_ids": [
+        "118.2",
+        "305.2",
+        "601.2",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Do not reveal or advertise private top cards to unauthorized principals."
+    },
+    {
+      "capability_id": "library.action.top.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay",
+      "official_rule_ids": [
+        "118.2",
+        "305.2",
+        "601.2",
+        "601.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the top-card offer, cast or land play, projection, and resulting authoritative hash."
     },
     {
       "capability_id": "library.scry.fixed_controller",
@@ -43962,6 +44177,125 @@
         "commander_review"
       ],
       "applicability_note": "Replay the private partition, simultaneous public movement, retained top ordering, normalized event, and final authoritative state hash exactly."
+    },
+    {
+      "capability_id": "library.visibility.top.static",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_current_ability_removal_suppresses_library_permissions",
+      "official_rule_ids": [
+        "401.2",
+        "401.3",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the shared current layer-6 component query so removed abilities expose no library card."
+    },
+    {
+      "capability_id": "library.visibility.top.static",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay",
+      "official_rule_ids": [
+        "401.2",
+        "401.3",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Separate controller-private look permission from table-public reveal in a four-player projection."
+    },
+    {
+      "capability_id": "library.visibility.top.static",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "401.2",
+        "401.3",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill removal of the source-spanned permission lowering before runtime can infer prose."
+    },
+    {
+      "capability_id": "library.visibility.top.static",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_grammar_and_descriptors_fail_closed",
+      "official_rule_ids": [
+        "401.2",
+        "401.3",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject wider, conditional, targeted, malformed, or multi-card visibility permissions."
+    },
+    {
+      "capability_id": "library.visibility.top.static",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_contract_matrix",
+      "official_rule_ids": [
+        "401.2",
+        "401.3",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower private and public current-library-top visibility through one typed static action-permission owner."
+    },
+    {
+      "capability_id": "library.visibility.top.static",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay",
+      "official_rule_ids": [
+        "401.2",
+        "401.3",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose exactly the current top identity to authorized principals and no deeper library cards."
+    },
+    {
+      "capability_id": "library.visibility.top.static",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay",
+      "official_rule_ids": [
+        "401.2",
+        "401.3",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay top-card changes and permission applicability to the same principal-scoped projection."
     },
     {
       "capability_id": "life.change.effect",
@@ -65647,5 +65981,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "f6c88e3de10f68d3aaaac8d023ef89324838552e31987ce2f7363dcb7139d245"
+  "fingerprint": "52991c6eaa9601635e4da9ecd4250a8e6d7209fa519b07ae1bf0b8530da33824"
 }

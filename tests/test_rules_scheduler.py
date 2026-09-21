@@ -4650,6 +4650,82 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(0, cast_cost["exact_ability_gain"])
         self.assertEqual(0, trigger_carrier["exact_ability_gain"])
 
+    def test_public_library_action_permission_probe_is_closed(self):
+        probe_id = "public-library-action-permissions-existing-owner-v1"
+        for source in (
+            "You may look at the top card of your library any time.",
+            "Players play with the top card of their libraries revealed.",
+            "You may play lands and cast creature spells from the top of "
+            "your library.",
+            "You may play two additional lands on each of your turns.",
+        ):
+            with self.subTest(source=source):
+                self.assertTrue(_matches_probe(probe_id, source))
+        for source in (
+            "Once each turn, you may cast a creature spell from the top "
+            "of your library.",
+            "You may cast spells from the top of your library without "
+            "paying their mana costs.",
+            "You may play X additional lands on each of your turns.",
+            "You may cast the chosen type from the top of your library.",
+        ):
+            with self.subTest(source=source):
+                self.assertFalse(_matches_probe(probe_id, source))
+
+        family = "continuous_layer:continuous-effect-layers-and-dependencies"
+        record = SimpleNamespace(
+            oracle_id="library-permission-fixture",
+            name="Library permission fixture",
+            oracle_text=(
+                "You may play lands and cast creature spells from the top "
+                "of your library."
+            ),
+            type_line="Enchantment",
+            faces=(),
+        )
+        measured = build_work_selection_cohort_measurements(
+            frontier={
+                "cards": [
+                    {
+                        "oracle_id": record.oracle_id,
+                        "minimum_known_blocker_set": [family],
+                        "abilities": [
+                            {
+                                "ability_id": "front:n1",
+                                "face_id": "front",
+                                "source_line": 1,
+                                "status": "unresolved",
+                                "blockers": {
+                                    "canonical_family_ids": [family]
+                                },
+                            }
+                        ],
+                    }
+                ]
+            },
+            bundle_policies=[
+                {
+                    "bundle_id": "bundle:public-library-action-permissions",
+                    "member_family_ids": [family],
+                    "measurement_probe_id": probe_id,
+                }
+            ],
+            cards_by_oracle_id={record.oracle_id: record},
+            coverage={
+                "minimum_complete_card_gain": 1,
+                "minimum_exact_ability_gain": 1,
+                "minimum_material_residual_reduction": 1,
+            },
+            cohort_fingerprints={
+                "bundle:public-library-action-permissions": "0" * 64
+            },
+        )["measurements"][0]
+        self.assertEqual("bounded_executable", measured["decision"])
+        self.assertEqual(1, measured["affected_commander_cards"])
+        self.assertEqual(1, measured["complete_card_gain"])
+        self.assertEqual(1, measured["exact_ability_gain"])
+        self.assertEqual(1, measured["material_residual_reduction"])
+
     def test_public_event_binding_closure_probe_and_measurement_are_closed(self):
         probe_id = "public-event-binding-closure-existing-owner-v1"
         equipment = SimpleNamespace(

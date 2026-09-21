@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..semantic_runtime.action_permissions import land_play_permission_options
 from .action_catalog import ActionCatalogHost
 
 
@@ -46,8 +47,13 @@ def projected_action_explanations(
         return {}
     player = host.state.players[seat]
     result: dict[str, dict[str, Any]] = {}
-    for zone in ("hand", "graveyard", _EXILE_ZONE):
-        for object_id in player.zones[zone]:
+    for zone in ("hand", "graveyard", _EXILE_ZONE, "library"):
+        object_ids = (
+            player.zones[zone][-1:]
+            if zone == "library"
+            else player.zones[zone]
+        )
+        for object_id in object_ids:
             card = host.state.cards[object_id]
             if card.owner != seat:
                 continue
@@ -67,7 +73,7 @@ def projected_action_explanations(
                 reason = "not_main_phase"
             elif host.state.stack:
                 reason = "stack_not_empty"
-            elif not player.land_plays_remaining:
+            elif not land_play_permission_options(host, seat):
                 reason = "no_land_play_remaining"
             elif host.state.priority_player != seat:
                 reason = "not_priority_player"

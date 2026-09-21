@@ -116,7 +116,9 @@ def current_day_night_bound_mode(
     characteristics = host._effective_card_data(card)
     # Import lazily so the shared applicability query remains the sole
     # layer-6 parent/component boundary without creating an import cycle.
-    from .trigger_discovery import program_has_current_ability_fragments
+    from .semantic_runtime.current_ability_components import (
+        program_has_current_ability_fragments,
+    )
 
     found: list[DayNightBoundMode] = []
     for program in host.semantics.programs_for_oracle(

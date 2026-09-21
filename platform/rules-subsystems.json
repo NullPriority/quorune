@@ -3804,6 +3804,50 @@
           "measurement_probe_id": "fixed-multi-event-trigger-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:public-library-action-permissions",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:land.play.additional.static",
+            "capability:library.action.top.static",
+            "capability:library.visibility.top.static",
+            "component:quorune.compiler.action_permission_templates.static_action_permission_handler",
+            "component:quorune.rules.action_catalog.build_priority_action_catalog",
+            "component:quorune.semantic_runtime.action_permissions.controller_action_permissions",
+            "component:quorune.semantic_runtime.current_ability_components.program_has_current_ability_fragments"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "controller-private-or-table-public-library-top-visibility",
+            "current-owned-library-top-public-object-query",
+            "one-or-two-additional-land-play-slots",
+            "source-incarnation-and-semantic-component-identity"
+          ],
+          "shared_dependencies": [
+            "land.play.additional.static",
+            "library.action.top.static",
+            "library.visibility.top.static"
+          ],
+          "shared_grammar": "one exact current-library-top visibility sentence, one fixed public land or nonland spell query over the controller's current library top, or one or two additional land plays on each controller turn through the existing static action-permission, projection, cast, land-play, turn, current-ability, and replay owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era static-permission cohort while sharing cycle-safe public characteristics, principal-correct current-top projection, source-incarnation land-play slots, ordinary cast and land timing, current layer-6 ability applicability, rollback, and exact replay.",
+          "explicit_exclusions": [
+            "alternative or additional spell costs, linked cast consequences, free casts, timing changes, and plot",
+            "cards below the current library top and another player's library",
+            "chosen, dynamic, named, secret, power, toughness, mana-value, conditional, once-per-turn, and linked predicates",
+            "conditional, temporary, copied, granted, text-changed, attached-source, and ability-word-composed permissions",
+            "dynamic, shared-player, and wider additional-land counts",
+            "independently unsupported sibling abilities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-library-action-permissions-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -3852,24 +3896,20 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v204-fixed-multi-event-trigger-subscriptions",
-      "compiler_version": "oracle-ir-v204",
-      "bundle_id": "bundle:fixed-multi-event-trigger-subscriptions",
-      "candidate_ids": ["compiler:fixed-multi-event-trigger-subscriptions"],
+      "transition_id": "oracle-ir-v205-public-library-action-permissions",
+      "compiler_version": "oracle-ir-v205",
+      "bundle_id": "bundle:public-library-action-permissions",
+      "candidate_ids": ["compiler:public-library-action-permissions"],
       "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_damage",
-        "trigger.event.normalized_public_action",
-        "trigger.event.normalized_zone_change",
-        "trigger.placement.apnap",
-        "trigger.subscription.fixed_multi_event"
+        "land.play.additional.static",
+        "library.action.top.static",
+        "library.visibility.top.static"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-multi-event-trigger-subscriptions"
+      "measurement_id": "measurement:public-library-action-permissions"
     },
     "forecast_corrections": [
       {
@@ -4489,6 +4529,11 @@
         "candidate_id": "compiler:standalone-reminder-line-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-event selector has no implementation-eligible carried candidate, the raw continuous-layer leader remains heterogeneous, and bounded probes retire typed spell additional costs, token production, combat-keyword unions, characteristic-query extensions, untap policies, and top-library access below the normal complete-card floor or outside a safe existing owner. The corrected source-line probe isolates 100 false material residuals on 100 Commander cards, with 28 conservative complete-card transitions and zero claimed exact abilities. CR 207.2d makes the closed mana-symbol explanations, transform-back-face labels, and Dryad Arbor reminder nonexecuting when their mana cost, layout, or printed type already carries authority, while Room, Siege, Saga lore, meld, legendary-spell legality, mixed, malformed, runtime, and independently unsupported forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:public-library-action-permissions",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-multi-event selector has no implementation-eligible carried candidate while the raw continuous-layer leader remains a heterogeneous aggregate. A bounded integrated probe instead isolates a threshold-clearing cross-era static action-permission cohort through one existing typed component family. Exact private or public current-top visibility, fixed public current-top land or nonland spell queries, and one or two additional land plays reuse the canonical projection, cast, land-play, cycle-safe characteristic, source-incarnation, current layer-6 ability-applicability, turn, rollback, and replay owners. Cards below the top, another player's library, chosen, dynamic, secret, conditional, once-per-turn, linked-cost or linked-result, free-cast, timing-change, plot, copied, granted, text-changed, attached-source, wider-count, and independently unsupported forms remain fail-closed; current identities and measurements are generated from the frontier."
       }
     ]
   },

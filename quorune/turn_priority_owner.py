@@ -17,6 +17,7 @@ from .mana_undo import (
     undo_mana_activation,
 )
 from .model import DecisionGroup, GameState, YieldPolicy
+from .semantic_runtime.action_permissions import land_play_permission_options
 from .rules.action_catalog import action_offer_signature_facts
 from .trigger_processing import start_delayed_trigger_batch
 from .turn_priority_model import (
@@ -287,9 +288,9 @@ class TurnPriorityDecisionOwner:
             created_active_player=self.state.active_player,
             created_phase=self.state.phase,
             created_step=self.state.step,
-            created_land_plays_remaining=self.state.players[
-                seat
-            ].land_plays_remaining,
+            created_land_plays_remaining=len(
+                land_play_permission_options(self.host, seat)
+            ),
             action_signature=signature,
             stack_signature=self.stack_signature(),
             note="Pilot-issued priority yield",
@@ -436,7 +437,7 @@ class TurnPriorityDecisionOwner:
             return "public_change"
         if (
             policy.created_land_plays_remaining
-            != self.state.players[seat].land_plays_remaining
+            != len(land_play_permission_options(self.host, seat))
         ):
             return "action_change"
         current_signature = action_signature or self.meaningful_action_signature(
