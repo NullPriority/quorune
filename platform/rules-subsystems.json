@@ -3951,7 +3951,7 @@
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
-      "capability_ids": ["land.play.additional.static"],
+      "capability_ids": [],
       "expected_complete_card_gain": null,
       "non_harvest_reason": "Replace source-specific additional-land slot consumption with the CR 305.2 current-total-versus-total-played quota while preserving explicit historical record adaptation."
     },
