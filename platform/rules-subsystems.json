@@ -3861,18 +3861,18 @@
             "component:quorune.compiler.activation_restriction_templates.static_activation_restriction_handler",
             "component:quorune.compiler.static_cast_rule_templates.static_cast_rule_handler",
             "component:quorune.rules.casting.proposal.build_cast_offer",
-            "component:quorune.semantic_runtime.activation_restrictions.activation_prohibitions",
-            "component:quorune.semantic_runtime.static_cast_rules.active_static_cast_rules",
-            "component:quorune.semantic_runtime.current_ability_components.program_has_current_ability_fragments"
+            "component:quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions",
+            "component:quorune.semantic_runtime.current_ability_components.program_has_current_ability_fragments",
+            "component:quorune.semantic_runtime.static_cast_rules.active_static_cast_rules"
           ],
           "source_contexts": [
             "static"
           ],
           "normalized_literal_parameters": [
-            "fixed-public-spell-or-permanent-query",
-            "source-controller-opponent-table-or-attached-player-scope",
+            "all-nonmana-loyalty-or-nonmana-nonloyalty-activation-scope",
             "always-combat-turn-tapped-cast-history-or-end-step-condition",
-            "all-nonmana-loyalty-or-nonmana-nonloyalty-activation-scope"
+            "fixed-public-spell-or-permanent-query",
+            "source-controller-opponent-table-or-attached-player-scope"
           ],
           "shared_dependencies": [
             "activation.restriction.fixed_public_query",
@@ -3887,12 +3887,12 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Promotes a policy-floor cross-era static action-legality cohort while one typed public query and current-component boundary governs spell timing, cast legality, counterability, activation legality, attached-player limits, compound attached untap participation, source departure, and stale offers.",
           "explicit_exclusions": [
-            "temporary, targeted, granted, copied, text-changed, spell-self, and next-spell rules",
             "cost increases, reductions, free casts, alternative payments, and linked consequences",
             "dynamic mana-value, parity, source-power, count, chosen-type, linked-exile, and historical predicates",
             "dynamic target restrictions, activation cost changes, chosen permanents, and ability grants",
             "split second, Epic, conditional self timing, and independently unsupported compound siblings",
-            "subtype-qualified cast limits without authoritative subtype cast history"
+            "subtype-qualified cast limits without authoritative subtype cast history",
+            "temporary, targeted, granted, copied, text-changed, spell-self, and next-spell rules"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-static-action-legality-existing-owner-v1"
