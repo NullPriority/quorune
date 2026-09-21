@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "07e0a835ac462454d8741613f54bfeaed804a5e1f1fbacf162c9a134ec222523"
+verified: "a716f72b37a4a4d0130a6e6ece6c59d205f0dde9abe700164e27a5f75e69505e"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 47 |
-| Cards | 625 |
+| Fixture files | 48 |
+| Cards | 642 |
 | Rulings | 1097 |
-| Modules inspected | 345 |
-| Static requirements | 972 |
+| Modules inspected | 346 |
+| Static requirements | 1004 |
 | Declared dynamic requirements | 12 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -32,16 +32,16 @@ Overall closure: **closed**.
 
 | Shard | Modules | Status |
 | --- | ---: | --- |
-| casting-costs-mana | 55 | closed |
+| casting-costs-mana | 56 | closed |
 | combat-declarations | 21 | closed |
-| compiler-cardprogram | 58 | closed |
+| compiler-cardprogram | 59 | closed |
 | core-domain | 14 | closed |
 | counter-continuous-effects | 36 | closed |
 | deterministic-game-regressions | 6 | closed |
 | events-replacement-zone | 40 | closed |
 | functional-01 | 17 | closed |
 | functional-02 | 56 | closed |
-| functional-03 | 24 | closed |
+| functional-03 | 25 | closed |
 | functional-04 | 24 | closed |
 | functional-05 | 20 | closed |
 | functional-06 | 27 | closed |
