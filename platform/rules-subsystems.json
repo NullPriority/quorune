@@ -3946,14 +3946,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v207-additional-land-play-quota",
-      "compiler_version": "oracle-ir-v207",
+      "transition_id": "oracle-ir-v208-qualified-aura-timing",
+      "compiler_version": "oracle-ir-v208",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Replace source-specific additional-land slot consumption with the CR 305.2 current-total-versus-total-played quota while preserving explicit historical record adaptation."
+      "non_harvest_reason": "Preserve the exact Aura with enchant creature qualification through the existing typed Enchant and static cast-timing owners without widening grammar or claiming a card-support harvest."
     },
     "forecast_corrections": [
       {

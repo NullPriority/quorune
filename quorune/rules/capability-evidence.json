@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "35296947e56a54add7a44affc3e84048baaf2fe8c9d26722ab016ef92c0ad234",
-  "declaration_source_fingerprint": "7010f3a1b2e7e496a4734c1d48f24444a64390d4fc708ee006a29ad31b19fa9b",
+  "registry_fingerprint": "598cc504ef87ebd7b95d220f38d96b7bfdba64649f18a607b6037a360c1c391e",
+  "declaration_source_fingerprint": "29b6b579b3b1cfc412c20fac37e81b0791b3bc6bb05d369dd7a845073a6f17b8",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -13458,12 +13458,14 @@
     {
       "capability_id": "casting.timing.fixed_query_static",
       "evidence_class": "interaction",
-      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_cast_timing_prohibition_limits_and_revalidation",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_qualified_aura_timing_distinguishes_enchant_creature_from_land",
       "official_rule_ids": [
         "117.1a",
         "304.5",
         "307.5",
         "601.2",
+        "702.5",
+        "702.5a",
         "702.8",
         "702.8a",
         "702.8b"
@@ -13473,7 +13475,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Recompute current source conditions and selected-face spell queries for offer and commit."
+      "applicability_note": "Recompute current source conditions, selected-face spell queries, and the compiler-pinned Enchant restriction for offer and commit."
     },
     {
       "capability_id": "casting.timing.fixed_query_static",
@@ -13484,6 +13486,8 @@
         "304.5",
         "307.5",
         "601.2",
+        "702.5",
+        "702.5a",
         "702.8",
         "702.8a",
         "702.8b"
@@ -13504,6 +13508,8 @@
         "304.5",
         "307.5",
         "601.2",
+        "702.5",
+        "702.5a",
         "702.8",
         "702.8a",
         "702.8b"
@@ -13518,12 +13524,14 @@
     {
       "capability_id": "casting.timing.fixed_query_static",
       "evidence_class": "negative",
-      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_grammar_and_descriptors_fail_closed",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_qualified_aura_timing_preserves_typed_enchant_restriction",
       "official_rule_ids": [
         "117.1a",
         "304.5",
         "307.5",
         "601.2",
+        "702.5",
+        "702.5a",
         "702.8",
         "702.8a",
         "702.8b"
@@ -13533,17 +13541,19 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Reject self riders, costs, ordinals, linked access, dynamic conditions, and malformed rules."
+      "applicability_note": "Reject malformed or non-timing Enchant qualifications and keep unrepresented forms fail-closed."
     },
     {
       "capability_id": "casting.timing.fixed_query_static",
       "evidence_class": "positive",
-      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_contract_matrix",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleCompilerTests.test_qualified_aura_timing_preserves_typed_enchant_restriction",
       "official_rule_ids": [
         "117.1a",
         "304.5",
         "307.5",
         "601.2",
+        "702.5",
+        "702.5a",
         "702.8",
         "702.8a",
         "702.8b"
@@ -13553,7 +13563,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Lower fixed spell-query Flash-as-though permissions through canonical cast timing."
+      "applicability_note": "Lower fixed spell-query Flash-as-though permissions and preserve the exact Aura with enchant creature qualification."
     },
     {
       "capability_id": "casting.timing.fixed_query_static",
@@ -13564,6 +13574,8 @@
         "304.5",
         "307.5",
         "601.2",
+        "702.5",
+        "702.5a",
         "702.8",
         "702.8a",
         "702.8b"
@@ -13578,12 +13590,14 @@
     {
       "capability_id": "casting.timing.fixed_query_static",
       "evidence_class": "replay",
-      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection",
+      "test_id": "tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_qualified_aura_timing_distinguishes_enchant_creature_from_land",
       "official_rule_ids": [
         "117.1a",
         "304.5",
         "307.5",
         "601.2",
+        "702.5",
+        "702.5a",
         "702.8",
         "702.8a",
         "702.8b"
@@ -13593,7 +13607,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Replay off-turn cast availability and the committed stack object exactly."
+      "applicability_note": "Replay the qualified off-turn Aura cast, payment, target, resolution, and attachment exactly."
     },
     {
       "capability_id": "casting.zone.self_graveyard.controlled_subtype",
@@ -66551,5 +66565,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "cbfc5a9901cc6788907af9028c5eacbd432266300f18c52cfca9b0b2880276df"
+  "fingerprint": "6e87710d96ac8c14cfadcaa82f0201c6331f1b303e392b04b7006cb95e23c3e7"
 }
