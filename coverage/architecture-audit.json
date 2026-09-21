@@ -11971,12 +11971,12 @@
     },
     "interaction_assurance_baseline": {
       "applicable_high_risk_pairs": 320,
-      "applicable_piece_pairs": 82562,
+      "applicable_piece_pairs": 83153,
       "available": true,
       "covered_high_risk_pairs": 320,
       "covered_piece_pairs": 988,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "a12317f269fbae00dcd56565c699b2442c6492a22931cf99b45e66eaf539e337",
+      "source_fingerprint": "b2f6fd7b9f102910ee40d3dd42bf7d4e95343c69b3324dd4756e517982900e05",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -26816,7 +26816,9 @@
           "counter.producer.fixed_event_trigger",
           "counter.producer.station",
           "counter.producer.sunburst",
+          "land.play.additional.static",
           "land.play.from_own_graveyard",
+          "library.action.top.static",
           "mana.activated.color_set",
           "mana.activated.fixed_output",
           "mana.activated.restricted_fixed_output",
@@ -26830,7 +26832,7 @@
           "zone.draw.library_to_hand",
           "zone.self_move.activated"
         ],
-        "capability_count": 68,
+        "capability_count": 70,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -26966,7 +26968,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Casting activation and costs.",
-        "reusable_piece_count": 76,
+        "reusable_piece_count": 78,
         "reusable_pieces": [
           "capability.activation.condition.phase_window",
           "capability.activation.condition.public_query",
@@ -27023,7 +27025,9 @@
           "capability.counter.producer.fixed_event_trigger",
           "capability.counter.producer.station",
           "capability.counter.producer.sunburst",
+          "capability.land.play.additional.static",
           "capability.land.play.from_own_graveyard",
+          "capability.library.action.top.static",
           "capability.mana.activated.color_set",
           "capability.mana.activated.fixed_output",
           "capability.mana.activated.restricted_fixed_output",
@@ -28021,7 +28025,7 @@
           "damage.prevention.static_fixed",
           "damage.redirection.static_to_source"
         ],
-        "capability_count": 182,
+        "capability_count": 185,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -28328,7 +28332,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Oracle compiler.",
-        "reusable_piece_count": 189,
+        "reusable_piece_count": 192,
         "reusable_pieces": [
           "capability.activation.condition.phase_window",
           "capability.activation.counter_keyword.fixed",
@@ -28455,9 +28459,10 @@
         "capabilities": [
           "casting.lifecycle.fixed_zone_cast",
           "casting.morph.fixed_mana",
+          "library.visibility.top.static",
           "permanent.class.fixed_lifecycle"
         ],
-        "capability_count": 3,
+        "capability_count": 4,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -28586,10 +28591,11 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Projection and protocol.",
-        "reusable_piece_count": 3,
+        "reusable_piece_count": 4,
         "reusable_pieces": [
           "capability.casting.lifecycle.fixed_zone_cast",
           "capability.casting.morph.fixed_mana",
+          "capability.library.visibility.top.static",
           "capability.permanent.class.fixed_lifecycle"
         ],
         "runtime_oracle_text_accesses": 5,
@@ -29402,7 +29408,7 @@
           "damage.prevention.static_fixed",
           "damage.redirection.static_to_source"
         ],
-        "capability_count": 162,
+        "capability_count": 165,
         "compiler_cardprogram_representations": [],
         "continuations": [],
         "current_debt": "No missing-owner flag is set.",
@@ -29622,7 +29628,7 @@
         "removal_condition": "No missing-owner removal condition applies.",
         "replay_behavior": "not explicitly declared",
         "responsibility": "Semantic effect execution.",
-        "reusable_piece_count": 163,
+        "reusable_piece_count": 166,
         "reusable_pieces": [
           "capability.activation.counter_keyword.fixed",
           "capability.activation.crew.fixed_power",
@@ -30124,9 +30130,10 @@
         "architecture_exceptions": [],
         "capabilities": [
           "casting.morph.fixed_mana",
-          "hand.cleanup.no_maximum"
+          "hand.cleanup.no_maximum",
+          "land.play.additional.static"
         ],
-        "capability_count": 2,
+        "capability_count": 3,
         "compiler_cardprogram_representations": [],
         "continuations": [
           "mulligan, priority, cleanup, and yield decisions"
@@ -30217,10 +30224,11 @@
         "removal_condition": "No missing-owner condition remains. Compatibility facades may be removed only after historical callers and Game Record v3 replay use the typed ports directly; future work must not restore turn, phase, priority, yield, or decision-capability mutation to engine-local scheduler code.",
         "replay_behavior": "Turn, priority, yield, and decision transitions participate in the authoritative command journal and save/load state.",
         "responsibility": "Own turn selection, phase and step progression, turn-based actions, priority, yield policy, and player-decision lifecycle.",
-        "reusable_piece_count": 2,
+        "reusable_piece_count": 3,
         "reusable_pieces": [
           "capability.casting.morph.fixed_mana",
-          "capability.hand.cleanup.no_maximum"
+          "capability.hand.cleanup.no_maximum",
+          "capability.land.play.additional.static"
         ],
         "runtime_oracle_text_accesses": 0,
         "state_authority": {
@@ -30965,8 +30973,8 @@
     "card_program_v2_present": true,
     "commander_legal_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.33776,
-      "material_residuals": 28935,
+      "exact_fraction": 0.338456,
+      "material_residuals": 28829,
       "residual_kinds": {
         "cost": 867,
         "declaration_cost": 10,
@@ -30980,7 +30988,7 @@
         "saga_chapter": 384,
         "spell_additional_cost": 120,
         "spell_effect": 6131,
-        "static_ability": 4599,
+        "static_ability": 4493,
         "trigger": 10296,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 20,
@@ -30999,23 +31007,23 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 10681,
-        "partial": 10771,
-        "unresolved": 10171
+        "exact": 10703,
+        "partial": 10787,
+        "unresolved": 10133
       },
-      "template_count": 1434,
+      "template_count": 1445,
       "total_faces": 32431,
       "total_oracle_ids": 31623
     },
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1498,
     "compiler_module_physical_lines": 1559,
-    "compiler_version": "oracle-ir-v204",
+    "compiler_version": "oracle-ir-v205",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.361106,
-      "material_residuals": 35591,
+      "exact_fraction": 0.361702,
+      "material_residuals": 35475,
       "residual_kinds": {
         "cost": 1053,
         "declaration_cost": 11,
@@ -31029,7 +31037,7 @@
         "saga_chapter": 429,
         "spell_additional_cost": 126,
         "spell_effect": 8169,
-        "static_ability": 5739,
+        "static_ability": 5623,
         "trigger": 12493,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 21,
@@ -31049,11 +31057,11 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 13947,
-        "partial": 11996,
-        "unresolved": 12680
+        "exact": 13970,
+        "partial": 12014,
+        "unresolved": 12639
       },
-      "template_count": 1463,
+      "template_count": 1474,
       "total_faces": 41840,
       "total_oracle_ids": 38623
     },
@@ -31625,9 +31633,9 @@
     "target_effect_corpus_assurance": {
       "commander": {
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
-        "exact_cards_with_template": 521,
+        "exact_cards_with_template": 522,
         "exact_nodes": 674,
-        "fingerprint": "c4db740edffffc82212362b94d8591197d41b8c8905093b0ec2532571036fc65",
+        "fingerprint": "21bf5c41971ea8f648ec7d66c56e70900ef827327ca5b5822d0f70ae01d99713",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
         "identity_fingerprint": "8ef2279a983c815db7fc3e91485c9de2db69e89dfef42e28c62f1a683ceaaba6",
         "present": true,
@@ -31637,9 +31645,9 @@
       },
       "full": {
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
-        "exact_cards_with_template": 539,
+        "exact_cards_with_template": 540,
         "exact_nodes": 700,
-        "fingerprint": "05bf75f940ea665f51c7e454850e9f1c49e8d12d8508cd0d1e9e60cbf6088bc4",
+        "fingerprint": "9d347a05dfe1eae6253aa9a5bcce9ef52d4919eabbba926c79203ce1927233c7",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
         "identity_fingerprint": "ed57ad0e5869399cdbccb5a4961bd30f6fff92c0b23a193cd58885b68cc9e538",
         "present": true,
@@ -31658,7 +31666,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "67dff77537c71d2a9b4f05d15dfb776e89e178d7500c8ad477af97102c3abf39",
+      "fingerprint": "1027242040da9f9e18c7e06308021f27e8e51b7761d9e9a5beadc3101069d6c2",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
