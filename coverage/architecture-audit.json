@@ -12365,7 +12365,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 224103,
+      "logical_lines": 224109,
       "methods": {
         "dunder": 574,
         "private": 918,
@@ -13116,6 +13116,13 @@
           "physical_lines": 673
         },
         {
+          "file": "quorune/semantic_runtime/action_permissions.py",
+          "functions_and_methods": 23,
+          "language": "python",
+          "logical_lines": 604,
+          "physical_lines": 669
+        },
+        {
           "file": "quorune/carddb.py",
           "functions_and_methods": 29,
           "language": "python",
@@ -13142,13 +13149,6 @@
           "language": "python",
           "logical_lines": 598,
           "physical_lines": 652
-        },
-        {
-          "file": "quorune/semantic_runtime/action_permissions.py",
-          "functions_and_methods": 23,
-          "language": "python",
-          "logical_lines": 598,
-          "physical_lines": 663
         },
         {
           "file": "quorune/semantic_runtime/counter_placement_handlers.py",
@@ -17543,7 +17543,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 244993,
+      "physical_lines": 244999,
       "python_file_count": 670,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -31666,7 +31666,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "2485844468760b88aa21e176938896e801450b7c3be12b651a0631eae6ae57b8",
+      "fingerprint": "d414e637c8026608c28f19829179dfd4544dcc4b0195dce602d0796ba40133cd",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

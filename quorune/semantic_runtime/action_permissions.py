@@ -530,14 +530,17 @@ def controller_has_library_top_land_permission(
 ) -> bool:
     if not _is_owned_library_top(host, player, card):
         return False
+    queries = tuple(
+        query
+        for permission in controller_action_permissions(host, player)
+        if permission.kind is ActionPermissionKind.LIBRARY_TOP_ACTION
+        for query in permission.top_land_queries
+    )
+    if not queries:
+        return False
     row = host._public_object_query_result(card)
     return any(
-        permission.kind is ActionPermissionKind.LIBRARY_TOP_ACTION
-        and any(
-            object_matches_query(row, query)
-            for query in permission.top_land_queries
-        )
-        for permission in controller_action_permissions(host, player)
+        object_matches_query(row, query) for query in queries
     )
 
 
@@ -548,14 +551,17 @@ def controller_has_library_top_spell_permission(
 ) -> bool:
     if not _is_owned_library_top(host, player, card):
         return False
+    queries = tuple(
+        query
+        for permission in controller_action_permissions(host, player)
+        if permission.kind is ActionPermissionKind.LIBRARY_TOP_ACTION
+        for query in permission.top_spell_queries
+    )
+    if not queries:
+        return False
     row = host._public_object_query_result(card)
     return any(
-        permission.kind is ActionPermissionKind.LIBRARY_TOP_ACTION
-        and any(
-            object_matches_query(row, query)
-            for query in permission.top_spell_queries
-        )
-        for permission in controller_action_permissions(host, player)
+        object_matches_query(row, query) for query in queries
     )
 
 
