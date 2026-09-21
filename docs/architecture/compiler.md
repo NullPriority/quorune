@@ -939,6 +939,11 @@ power/toughness amounts, distinct type or mana-value sets, chosen or secret
 qualities, caps, floors, minimum totals, direct total setters, substitutions,
 and open arithmetic remain source-spanned residuals.
 
+Party size is the maximum deterministic assignment of distinct controlled
+creatures to the Cleric, Rogue, Warrior, and Wizard roles. One multitype
+creature can fill only one role, and battlefield iteration order cannot change
+the result.
+
 Ordinary printed `Improvise` and `Delve` lower through the same selected-face
 casting-payment component family. Improvise advertises current controlled
 untapped artifacts and commits their tap costs through the casting transaction;
