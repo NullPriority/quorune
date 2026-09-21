@@ -91,9 +91,12 @@ current-library-top visibility and fixed land or spell access, or a fixed
 number of additional land plays. Library access revalidates the exact current
 top identity and cycle-safe effective public characteristics for both offers
 and commands. Projection distinguishes a controller-private look from a
-public reveal and exposes no deeper library object. Each additional land play
-uses a source-incarnation and semantic-component slot, is consumed only by a
-successful ordinary land play, and is reset by the existing turn owner.
+public reveal and exposes no deeper library object. Additional-land components
+contribute to the current total allowance, while a versioned turn ledger counts
+successful ordinary land plays independently of source provenance. Removing,
+returning, phasing, or changing control of a source recomputes the allowance
+without replenishing prior plays. Historical slot records adapt explicitly to
+the ledger, and the existing turn owner resets both formats.
 Every represented permission uses the shared current layer-6 component query,
 so ability removal suppresses it without a family-specific presence check.
 Discovery itself is read-only; ordinary timing, cost, control,

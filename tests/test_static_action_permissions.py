@@ -24,6 +24,9 @@ from quorune.continuous_effects import (
 from quorune.model import CardInstance
 from quorune.oracle_ir import register_generated_programs
 from quorune.record import checkpoint_envelope, replay_record
+from quorune.rules.land_play_permissions import (
+    reset_additional_land_play_permissions,
+)
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.action_permissions import (
     ACTION_PERMISSION_EVENT,
@@ -32,9 +35,13 @@ from quorune.semantic_runtime.action_permissions import (
     LIBRARY_TOP_ACTION_HANDLER_ID,
     LIBRARY_TOP_VISIBILITY_HANDLER_ID,
     LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
+    LAND_PLAY_ACCOUNTING_STAT,
+    USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT,
     ActionPermissionKind,
+    additional_land_play_permission_slots,
     controller_action_permissions,
     default_action_permission_registry,
+    land_play_accounting,
     land_play_permission_options,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
@@ -909,7 +916,9 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
         self.assertEqual(stack_before, engine.state.stack)
         self.assertEqual("library", top.zone)
 
-    def test_additional_land_play_slots_revalidate_source_incarnations(self):
+    def test_additional_land_play_quota_revalidates_current_allowance_and_replays(
+        self,
+    ):
         session = self.session(116_313_003)
         engine = session.engine
         source = self.add_card(
@@ -946,28 +955,21 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
             if action.get("kind") == "play_land"
             and action.get("card") == lands[0].ref
         )
-        self.assertEqual("base", offered_land["land_play_permission"])
-        self.assertEqual(
-            list(options),
-            offered_land["choice_schema"]["land_play_permission"]["options"],
-        )
+        self.assertEqual("land-play-quota:0", offered_land["land_play_permission"])
+        self.assertNotIn("land_play_permission", offered_land.get("choice_schema", {}))
         engine._play_land(
             "B",
             {
                 "card": lands[0].ref,
                 "from": "hand",
-                "land_play_permission": "base",
+                "land_play_permission": options[0],
             },
         )
         extra = land_play_permission_options(engine, "B")
         self.assertEqual(1, len(extra))
         engine.move_card(source.object_id, "graveyard", log=False)
         self.assertEqual((), land_play_permission_options(engine, "B"))
-        engine.move_card(source.object_id, "battlefield", controller="B", log=False)
-        renewed = land_play_permission_options(engine, "B")
-        self.assertEqual(1, len(renewed))
-        self.assertNotEqual(extra, renewed)
-        with self.assertRaisesRegex(Exception, "stale"):
+        with self.assertRaisesRegex(Exception, "No land plays remain"):
             engine._play_land(
                 "B",
                 {
@@ -977,6 +979,9 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
                 },
             )
         self.assertEqual("hand", lands[1].zone)
+        engine.move_card(source.object_id, "battlefield", controller="B", log=False)
+        renewed = land_play_permission_options(engine, "B")
+        self.assertEqual(extra, renewed)
 
         session.state.pending_decision = None
         engine.permissions.invalidate_current()
@@ -1006,6 +1011,323 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
         )
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "additional-land-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_additional_land_quota_counts_plays_not_source_slots(self):
+        def fixture(seed: int, *, source_count: int = 1):
+            session = self.session(seed)
+            sources = [
+                self.add_card(
+                    session,
+                    seat="B",
+                    name="Generic Additional Land Permission",
+                    ref=f"B-quota-source-{index}",
+                    zone="battlefield",
+                )
+                for index in range(source_count)
+            ]
+            lands = [
+                self.add_card(
+                    session,
+                    seat="B",
+                    name="Generic Library-Top Land",
+                    ref=f"B-quota-land-{index}",
+                    zone="hand",
+                )
+                for index in range(4)
+            ]
+            self.prepare_main(session, "B")
+            return session, sources, lands
+
+        def offered_action(session, card):
+            return next(
+                action
+                for action in session.packet("pilot:B", full=True)[
+                    "decision"
+                ]["ctx"]["legal"]["actions"]
+                if action.get("kind") == "play_land"
+                and action.get("card") == card.ref
+            )
+
+        session, (source,), lands = fixture(116_313_007)
+        engine = session.engine
+        for land in lands[:2]:
+            action = offered_action(session, land)
+            result = session.act("pilot:B", {"action_id": action["id"]})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+        engine.move_card(source.object_id, "graveyard", log=False)
+        engine.move_card(source.object_id, "battlefield", controller="B", log=False)
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+        before = engine.state.to_dict()
+        with self.assertRaisesRegex(Exception, "No land plays remain"):
+            engine._play_land("B", {"card": lands[2].ref, "from": "hand"})
+        self.assertEqual(before, engine.state.to_dict())
+
+        session, (source,), lands = fixture(116_313_008)
+        engine = session.engine
+        _first, extra = land_play_permission_options(engine, "B")
+        engine._play_land(
+            "B",
+            {
+                "card": lands[0].ref,
+                "from": "hand",
+                "land_play_permission": extra,
+            },
+        )
+        engine.move_card(source.object_id, "graveyard", log=False)
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+
+        engine.move_card(source.object_id, "battlefield", controller="B", log=False)
+        self.assertEqual(1, len(land_play_permission_options(engine, "B")))
+        engine._play_land("B", {"card": lands[1].ref, "from": "hand"})
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+
+        session, sources, lands = fixture(116_313_009, source_count=2)
+        engine = session.engine
+        self.assertEqual(3, len(land_play_permission_options(engine, "B")))
+        for expected_remaining, land in zip((2, 1, 0), lands[:3]):
+            engine._play_land("B", {"card": land.ref, "from": "hand"})
+            self.assertEqual(
+                expected_remaining,
+                len(land_play_permission_options(engine, "B")),
+            )
+        self.assertEqual("battlefield", sources[0].zone)
+
+    def test_additional_land_quota_tracks_current_permission_state(self):
+        session = self.session(116_313_010)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            seat="B",
+            name="Generic Additional Land Permission",
+            ref="B-dynamic-quota-source",
+            zone="battlefield",
+        )
+        lands = [
+            self.add_card(
+                session,
+                seat="B",
+                name="Generic Library-Top Land",
+                ref=f"B-dynamic-quota-land-{index}",
+                zone="hand",
+            )
+            for index in range(4)
+        ]
+        self.prepare_main(session, "B")
+        self.assertEqual(2, len(land_play_permission_options(engine, "B")))
+
+        engine.move_card(
+            lands[0].object_id,
+            "battlefield",
+            controller="B",
+            reason="put by effect",
+            log=False,
+        )
+        self.assertEqual(2, len(land_play_permission_options(engine, "B")))
+        engine.move_card(lands[0].object_id, "hand", log=False)
+        engine._play_land("B", {"card": lands[0].ref, "from": "hand"})
+        self.assertEqual(1, len(land_play_permission_options(engine, "B")))
+        for principal in ("pilot:A", "pilot:B", "pilot:C", "pilot:D"):
+            self.assertEqual(
+                1,
+                session.packet(principal, full=True)["state"]["players"]["B"][
+                    "lands"
+                ],
+            )
+
+        stale_action = next(
+            action
+            for action in session.packet("pilot:B", full=True)["decision"][
+                "ctx"
+            ]["legal"]["actions"]
+            if action.get("kind") == "play_land"
+            and action.get("card") == lands[1].ref
+        )
+        source.phased_out = True
+        before = engine.state.to_dict()
+        rejected = session.act("pilot:B", {"action_id": stale_action["id"]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, engine.state.to_dict())
+        self.assertEqual("hand", lands[1].zone)
+        source = engine.state.cards[source.object_id]
+        source.phased_out = False
+        self.assertEqual(1, len(land_play_permission_options(engine, "B")))
+
+        programs = engine.semantics.runtime_handler_programs_for_oracle(
+            source.oracle_id,
+            active_zone="battlefield",
+            event=ACTION_PERMISSION_EVENT,
+        )
+        self.assertEqual(1, len(programs))
+        removal = commit_continuous_effect(
+            session.state,
+            ContinuousEffect(
+                effect_id="fixture:remove-additional-land-permission",
+                source_id="fixture:remove-additional-land-permission",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(
+                    ContinuousOperation(
+                        "remove_ability_fragment",
+                        {
+                            "kind": "static_component",
+                            "value": StaticComponentSpec(
+                                programs[0].key
+                            ).to_dict(),
+                        },
+                    ),
+                ),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        source.object_id,
+                        source.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+        session.state.continuous_effects.remove(removal)
+        self.assertEqual(1, len(land_play_permission_options(engine, "B")))
+
+        engine.change_control(
+            source.object_id,
+            "A",
+            reason="additional-land quota witness",
+        )
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+        self.assertEqual(2, len(land_play_permission_options(engine, "A")))
+        engine.change_control(
+            source.object_id,
+            "B",
+            reason="restore additional-land quota witness",
+        )
+        self.assertEqual(1, len(land_play_permission_options(engine, "B")))
+
+        self.add_card(
+            session,
+            seat="B",
+            name="Generic Two Additional Lands Permission",
+            ref="B-two-extra-land-source",
+            zone="battlefield",
+        )
+        self.assertEqual(3, len(land_play_permission_options(engine, "B")))
+        engine.state.players["B"].land_plays_remaining = 1
+        reset_additional_land_play_permissions(engine, "B")
+        self.assertEqual(4, len(land_play_permission_options(engine, "B")))
+
+    def test_additional_land_quota_adapts_legacy_slot_records_explicitly(self):
+        session = self.session(116_313_011)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            seat="B",
+            name="Generic Additional Land Permission",
+            ref="B-legacy-quota-source",
+            zone="battlefield",
+        )
+        land = self.add_card(
+            session,
+            seat="B",
+            name="Generic Library-Top Land",
+            ref="B-legacy-quota-land",
+            zone="hand",
+        )
+        self.prepare_main(session, "B")
+        legacy_slot = additional_land_play_permission_slots(engine, "B")[0]
+        player = engine.state.players["B"]
+        player.land_plays_remaining = 1
+        player.stats[USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT] = [legacy_slot]
+        self.assertEqual((1, 1), land_play_accounting(engine, "B"))
+        self.assertEqual(1, len(land_play_permission_options(engine, "B")))
+
+        engine.move_card(source.object_id, "graveyard", log=False)
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+        engine.move_card(source.object_id, "battlefield", controller="B", log=False)
+        current_legacy_slot = additional_land_play_permission_slots(engine, "B")[0]
+        engine._play_land(
+            "B",
+            {
+                "card": land.ref,
+                "from": "hand",
+                "land_play_permission": current_legacy_slot,
+            },
+        )
+        self.assertNotIn(USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT, player.stats)
+        self.assertEqual(
+            {"version": 2, "base_allowance": 1, "played": 2},
+            player.stats[LAND_PLAY_ACCOUNTING_STAT],
+        )
+
+    def test_additional_land_quota_counts_supported_land_play_origins(self):
+        session = self.session(116_313_012)
+        engine = session.engine
+        for name, ref in (
+            ("Generic Two Additional Lands Permission", "B-origin-quota"),
+            ("Generic Library Action Permission", "B-origin-library"),
+            ("Crucible of Worlds", "B-origin-graveyard"),
+        ):
+            self.add_card(
+                session,
+                seat="B",
+                name=name,
+                ref=ref,
+                zone="battlefield",
+            )
+        origins = ("hand", "library", "graveyard")
+        lands = [
+            self.add_card(
+                session,
+                seat="B",
+                name="Generic Library-Top Land",
+                ref=f"B-origin-land-{zone}",
+                zone=zone,
+            )
+            for zone in origins
+        ]
+        put_land = self.add_card(
+            session,
+            seat="B",
+            name="Generic Library-Top Land",
+            ref="B-origin-land-put",
+            zone="hand",
+        )
+        self.prepare_main(session, "B")
+        self.assertEqual(3, len(land_play_permission_options(engine, "B")))
+        engine.move_card(
+            put_land.object_id,
+            "battlefield",
+            controller="B",
+            reason="put by effect",
+            log=False,
+        )
+        self.assertEqual(3, len(land_play_permission_options(engine, "B")))
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        for expected_remaining, land in zip((2, 1, 0), lands):
+            action = next(
+                action
+                for action in session.packet("pilot:B", full=True)[
+                    "decision"
+                ]["ctx"]["legal"]["actions"]
+                if action.get("kind") == "play_land"
+                and action.get("card") == land.ref
+            )
+            result = session.act("pilot:B", {"action_id": action["id"]})
+            self.assertTrue(result.ok, result.summary)
+            self.assertEqual(
+                expected_remaining,
+                len(land_play_permission_options(engine, "B")),
+            )
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "additional-land-origins-replay"
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)

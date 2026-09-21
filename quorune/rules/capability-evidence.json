@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "29ff818ceb487cb9f402289060ff4e6b49ce84165124ad9b8a954269e03d980d",
-  "declaration_source_fingerprint": "8e39a80153b0b323d23925971d217087f1219937571429d72ac84525e3ea3a82",
+  "registry_fingerprint": "35296947e56a54add7a44affc3e84048baaf2fe8c9d26722ab016ef92c0ad234",
+  "declaration_source_fingerprint": "7010f3a1b2e7e496a4734c1d48f24444a64390d4fc708ee006a29ad31b19fa9b",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -43007,7 +43007,7 @@
     {
       "capability_id": "land.play.additional.static",
       "evidence_class": "interaction",
-      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_play_slots_revalidate_source_incarnations",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_quota_tracks_current_permission_state",
       "official_rule_ids": [
         "305.2",
         "305.2a",
@@ -43018,12 +43018,12 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Revalidate source-incarnation slots before a successful land play consumes one."
+      "applicability_note": "Recompute the current total allowance after phasing, layer-6 ability removal, control changes, and concurrent one- or two-land sources without replenishing prior plays."
     },
     {
       "capability_id": "land.play.additional.static",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_play_slots_revalidate_source_incarnations",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_quota_tracks_current_permission_state",
       "official_rule_ids": [
         "305.2",
         "305.2a",
@@ -43034,7 +43034,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Keep additional land-play slots controller-scoped in a four-player match."
+      "applicability_note": "Project the same authoritative remaining quota to every principal while keeping current source control seat-scoped."
     },
     {
       "capability_id": "land.play.additional.static",
@@ -43082,12 +43082,12 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Lower exact one- and two-additional-land sentences into source-incarnation permission slots."
+      "applicability_note": "Lower exact one- and two-additional-land sentences into current typed allowance components."
     },
     {
       "capability_id": "land.play.additional.static",
       "evidence_class": "replay",
-      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_play_slots_revalidate_source_incarnations",
+      "test_id": "tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_additional_land_play_quota_revalidates_current_allowance_and_replays",
       "official_rule_ids": [
         "305.2",
         "305.2a",
@@ -43098,7 +43098,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Replay the selected source-incarnation slot and resulting final land zones exactly."
+      "applicability_note": "Replay the versioned per-turn played count, current total allowance, and resulting land zones exactly."
     },
     {
       "capability_id": "land.play.from_own_graveyard",
@@ -66551,5 +66551,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "edeec0128e49a31ff814aba6201fe1c09ef1ecb4226a3eba100f79806e736d13"
+  "fingerprint": "cbfc5a9901cc6788907af9028c5eacbd432266300f18c52cfca9b0b2880276df"
 }
