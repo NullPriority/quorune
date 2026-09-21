@@ -11,6 +11,11 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..attachments import attached_player_seat
 from ..card_program_faces import program_matches_face
 from ..cast_timing import CastTimingPermission
+from ..enchant_spec import (
+    AuraRuleError,
+    EnchantSpec,
+    enchant_spec_from_dict,
+)
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import ObjectQueryResult, object_matches_query, object_query_result
 from ..rules.capabilities import load_default_capability_registry
@@ -69,6 +74,7 @@ class StaticCastRule:
     maximum_per_turn: int | None
     chosen_name: bool
     affects_abilities: bool
+    required_enchant_spec: EnchantSpec | None
     source_ref: str
     source_logical_object_id: str
     source_controller: str
@@ -108,6 +114,7 @@ class StaticCastRuleHandler:
                 "maximum_per_turn",
                 "chosen_name",
                 "affects_abilities",
+                "required_enchant_spec",
             },
             field="Static cast-rule handler",
         )
@@ -166,6 +173,18 @@ class StaticCastRuleHandler:
             raise SemanticNodeError("Only cast prohibitions use a chosen name")
         if descriptor["affects_abilities"] and kind is not StaticCastRuleKind.UNCOUNTERABLE:
             raise SemanticNodeError("Only uncounterable rules may affect abilities")
+        raw_enchant_spec = descriptor["required_enchant_spec"]
+        if raw_enchant_spec is None:
+            required_enchant_spec = None
+        else:
+            try:
+                required_enchant_spec = enchant_spec_from_dict(raw_enchant_spec)
+            except (AuraRuleError, TypeError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            if kind is not StaticCastRuleKind.TIMING_PERMISSION:
+                raise SemanticNodeError(
+                    "Only static timing permissions use an Enchant restriction"
+                )
         return {
             "kind": kind,
             "scope": scope,
@@ -175,6 +194,7 @@ class StaticCastRuleHandler:
             "maximum": maximum,
             "chosen_name": descriptor["chosen_name"],
             "affects_abilities": descriptor["affects_abilities"],
+            "required_enchant_spec": required_enchant_spec,
         }
 
     def lower(
@@ -193,6 +213,7 @@ class StaticCastRuleHandler:
                 maximum_per_turn=value["maximum"],
                 chosen_name=value["chosen_name"],
                 affects_abilities=value["affects_abilities"],
+                required_enchant_spec=value["required_enchant_spec"],
                 source_ref=context.source_ref,
                 source_logical_object_id=context.source_logical_object_id,
                 source_controller=context.source_controller,
@@ -257,6 +278,13 @@ class StaticCastRuleHost(Protocol):
     def card_record(self, card: Any) -> Any: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+    def _compiled_enchant_spec(
+        self,
+        card: Any,
+        *,
+        face_name: str | None = None,
+    ) -> EnchantSpec | None: ...
 
 
 def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, ...]:
@@ -364,10 +392,16 @@ def _rule_matches_spell(
     row: ObjectQueryResult,
     *,
     spell_name: str,
+    enchant_spec: EnchantSpec | None = None,
 ) -> bool:
     if rule.chosen_name and (
         not rule.source_chosen_name
         or " ".join(spell_name.casefold().split()) != rule.source_chosen_name
+    ):
+        return False
+    if (
+        rule.required_enchant_spec is not None
+        and enchant_spec != rule.required_enchant_spec
     ):
         return False
     return any(object_matches_query(row, query) for query in rule.spell_queries)
@@ -391,9 +425,25 @@ def static_cast_timing_permissions(
         return ()
     row = spell_query_result(host, card, face=face)
     name = str((face or {}).get("name") or row.printed_name)
+    enchant_spec = (
+        host._compiled_enchant_spec(
+            card,
+            face_name=(str(face.get("name") or "") if face else None),
+        )
+        if any(rule.required_enchant_spec is not None for rule in rules)
+        else None
+    )
     return (
         (CastTimingPermission(),)
-        if any(_rule_matches_spell(rule, row, spell_name=name) for rule in rules)
+        if any(
+            _rule_matches_spell(
+                rule,
+                row,
+                spell_name=name,
+                enchant_spec=enchant_spec,
+            )
+            for rule in rules
+        )
         else ()
     )
 

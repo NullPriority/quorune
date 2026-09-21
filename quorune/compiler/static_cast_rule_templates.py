@@ -6,6 +6,7 @@ import re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..enchant_spec import SimpleEnchantSpec, enchant_spec_to_dict
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.static_cast_rules import (
@@ -189,6 +190,7 @@ def _descriptor(
     maximum_per_turn: int | None = None,
     chosen_name: bool = False,
     affects_abilities: bool = False,
+    required_enchant_spec: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
         "handler_id": handler_id,
@@ -202,6 +204,11 @@ def _descriptor(
         "maximum_per_turn": maximum_per_turn,
         "chosen_name": chosen_name,
         "affects_abilities": affects_abilities,
+        "required_enchant_spec": (
+            dict(required_enchant_spec)
+            if required_enchant_spec is not None
+            else None
+        ),
     }
 
 
@@ -220,8 +227,15 @@ def _timing_rule(
 ) -> StaticCastRuleTemplate | None:
     timing = _TIMING.fullmatch(normalized)
     if timing is not None and timing.group("pronoun").casefold() == "they":
-        queries = _queries(timing.group("subject"))
+        subject = timing.group("subject")
+        queries = _queries(subject)
         if queries is not None:
+            required_enchant_spec = (
+                enchant_spec_to_dict(SimpleEnchantSpec("creature"))
+                if " ".join(subject.casefold().split())
+                == "aura spells with enchant creature"
+                else None
+            )
             return (
                 "static-cast-timing-fixed-query-v1",
                 _descriptor(
@@ -229,6 +243,7 @@ def _timing_rule(
                     kind=StaticCastRuleKind.TIMING_PERMISSION,
                     scope=_scope(timing.group("actor")),
                     queries=queries,
+                    required_enchant_spec=required_enchant_spec,
                 ),
                 "casting.timing.fixed_query_static",
             )

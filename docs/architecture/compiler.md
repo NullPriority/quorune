@@ -1056,6 +1056,14 @@ opponent-library access, conditional or temporary permissions, targeted
 forms, wider land-play counts, and ordinary haste wording remain
 source-spanned residual material.
 
+Static cast-timing descriptors preserve the exact “Aura spells with enchant
+creature” qualification as the existing typed Enchant spec. Offer and commit
+compare that spec with the candidate Aura's compiler-pinned Enchant fragment;
+the Aura subtype or its currently available target does not substitute for the
+ability restriction. Unrestricted Aura timing remains a separate query, while
+dynamic, multiple, compound, or unsupported Enchant qualifications fail
+closed.
+
 Printed Exhaust prefixes lower to a typed `ActivationLimit` on each distinct
 ability. The exact reminder sentence is stripped once by the ability parser;
 neither legality nor commit reparses it. Fixed-output and color-set mana

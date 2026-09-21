@@ -23,9 +23,14 @@ from quorune.continuous_effects import (
     ContinuousOperation,
     Layer,
 )
+from quorune.enchant_spec import SimpleEnchantSpec, enchant_spec_to_dict
 from quorune.model import CardInstance
 from quorune.oracle_ir import register_generated_programs
-from quorune.record import checkpoint_envelope, replay_record
+from quorune.record import (
+    authoritative_state_hash,
+    checkpoint_envelope,
+    replay_record,
+)
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.activation_restrictions import (
     default_activation_restriction_registry,
@@ -173,6 +178,48 @@ class StaticActionRuleCompilerTests(unittest.TestCase):
                 with self.subTest(value=value):
                     with self.assertRaises(SemanticNodeError):
                         registry.validate(value)
+
+    def test_qualified_aura_timing_preserves_typed_enchant_restriction(self):
+        qualified = static_cast_rule_handler(
+            "You may cast Aura spells with enchant creature as though they "
+            "had flash.",
+            source_name="Static Action Rule Fixture",
+        )
+        unrestricted = static_cast_rule_handler(
+            "You may cast Aura spells as though they had flash.",
+            source_name="Static Action Rule Fixture",
+        )
+        assert qualified is not None and unrestricted is not None
+        self.assertEqual(
+            enchant_spec_to_dict(SimpleEnchantSpec("creature")),
+            qualified[1]["required_enchant_spec"],
+        )
+        self.assertIsNone(unrestricted[1]["required_enchant_spec"])
+        registry = default_static_cast_rule_registry()
+        with self.assertRaises(SemanticNodeError):
+            registry.validate(
+                {
+                    **qualified[1],
+                    "required_enchant_spec": {
+                        "kind": "simple_object",
+                        "value": {},
+                    },
+                }
+            )
+        uncounterable = static_cast_rule_handler(
+            "Creature spells can't be countered.",
+            source_name="Static Action Rule Fixture",
+        )
+        assert uncounterable is not None
+        with self.assertRaisesRegex(SemanticNodeError, "timing permissions"):
+            registry.validate(
+                {
+                    **uncounterable[1],
+                    "required_enchant_spec": qualified[1][
+                        "required_enchant_spec"
+                    ],
+                }
+            )
 
     def test_static_action_rule_compiler_mutant_is_killed(self):
         text = "You may cast creature spells as though they had flash."
@@ -376,6 +423,7 @@ class StaticActionRuleRuntimeTests(unittest.TestCase):
                 ]["ctx"]["legal"]["actions"]
             )
         )
+
         conditional_source.tapped = True
         conditional.state.pending_decision = None
         conditional.engine.permissions.invalidate_current()
@@ -521,6 +569,273 @@ class StaticActionRuleRuntimeTests(unittest.TestCase):
                 "B",
                 {"card": second.ref, "pay": "auto"},
             )
+
+    def test_qualified_aura_timing_distinguishes_enchant_creature_from_land(
+        self,
+    ):
+        session = self.session(116_323_014)
+        engine = session.engine
+        source = self.add_card(
+            session,
+            seat="B",
+            name="Generic Creature Aura Timing Rule",
+            ref="B-creature-aura-timing",
+            zone="battlefield",
+        )
+        creature_aura = self.add_card(
+            session,
+            seat="B",
+            name="Generic Enchant Creature Aura",
+            ref="B-creature-aura",
+            zone="hand",
+        )
+        land_aura = self.add_card(
+            session,
+            seat="B",
+            name="Generic Enchant Land Aura",
+            ref="B-land-aura",
+            zone="hand",
+        )
+        creature_target = self.add_card(
+            session,
+            seat="B",
+            name="Generic Action Rule Creature",
+            ref="B-aura-creature-target",
+            zone="battlefield",
+        )
+        land_target = self.add_card(
+            session,
+            seat="B",
+            name="Island",
+            ref="B-aura-land-target",
+            zone="battlefield",
+        )
+        self.prepare_priority(session, "B", active="A")
+        offered = {
+            action.get("card")
+            for action in session.packet("pilot:B", full=True)["decision"][
+                "ctx"
+            ]["legal"]["actions"]
+            if action.get("kind") == "cast"
+        }
+        self.assertIn(creature_aura.ref, offered)
+        self.assertNotIn(land_aura.ref, offered)
+        self.assertEqual(
+            SimpleEnchantSpec("land"),
+            engine._compiled_enchant_spec(land_aura),
+        )
+        self.assertEqual("battlefield", land_target.zone)
+
+        offered_creature_aura = next(
+            action
+            for action in session.packet("pilot:B", full=True)["decision"][
+                "ctx"
+            ]["legal"]["actions"]
+            if action.get("kind") == "cast"
+            and action.get("card") == creature_aura.ref
+        )
+        source_id = source.object_id
+        creature_aura_id = creature_aura.object_id
+        creature_target_id = creature_target.object_id
+        engine.move_card(source_id, "graveyard", log=False)
+        stale_before = authoritative_state_hash(engine.state)
+        stale = session.act(
+            "pilot:B",
+            {
+                "action_id": offered_creature_aura["id"],
+                "targets": [creature_target.ref],
+                "pay": "auto",
+            },
+        )
+        self.assertFalse(stale.ok)
+        self.assertEqual(stale_before, authoritative_state_hash(engine.state))
+        self.assertEqual("hand", engine.state.cards[creature_aura_id].zone)
+
+        source = engine.state.cards[source_id]
+        engine.move_card(source_id, "battlefield", controller="B", log=False)
+        source = engine.state.cards[source_id]
+        program = engine.semantics.runtime_handler_programs_for_oracle(
+            source.oracle_id,
+            active_zone="battlefield",
+            event="cast.static.rule",
+        )[0]
+        removal = commit_continuous_effect(
+            session.state,
+            ContinuousEffect(
+                effect_id="fixture:remove-qualified-aura-timing",
+                source_id="fixture:remove-qualified-aura-timing",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(
+                    ContinuousOperation(
+                        "remove_ability_fragment",
+                        {
+                            "kind": "static_component",
+                            "value": StaticComponentSpec(program.key).to_dict(),
+                        },
+                    ),
+                ),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        source.object_id,
+                        source.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+
+        def refresh_priority() -> None:
+            session.state.pending_decision = None
+            engine.permissions.invalidate_current()
+            session.state.priority_player = "B"
+            engine._grant_priority("B")
+            engine.pump()
+
+        refresh_priority()
+        self.assertFalse(
+            any(
+                action.get("kind") == "cast"
+                and action.get("card") == creature_aura.ref
+                for action in session.packet("pilot:B", full=True)[
+                    "decision"
+                ]["ctx"]["legal"]["actions"]
+            )
+        )
+        session.state.continuous_effects.remove(removal)
+        refresh_priority()
+        payment_offer = next(
+            action
+            for action in session.packet("pilot:B", full=True)["decision"][
+                "ctx"
+            ]["legal"]["actions"]
+            if action.get("kind") == "cast"
+            and action.get("card") == creature_aura.ref
+        )
+        session.state.players["B"].mana_pool = {
+            symbol: 0
+            for symbol in session.state.players["B"].mana_pool
+        }
+        insufficient_before = authoritative_state_hash(engine.state)
+        insufficient = session.act(
+            "pilot:B",
+            {
+                "action_id": payment_offer["id"],
+                "targets": [creature_target.ref],
+                "pay": "manual",
+                "payment": {},
+            },
+        )
+        self.assertFalse(insufficient.ok)
+        self.assertEqual(
+            insufficient_before,
+            authoritative_state_hash(engine.state),
+        )
+        self.assertEqual("hand", engine.state.cards[creature_aura_id].zone)
+
+        creature_aura = engine.state.cards[creature_aura_id]
+        creature_target = engine.state.cards[creature_target_id]
+        engine.state.players["B"].mana_pool["U"] = 1
+        refresh_priority()
+        cast_offer = next(
+            action
+            for action in session.packet("pilot:B", full=True)["decision"][
+                "ctx"
+            ]["legal"]["actions"]
+            if action.get("kind") == "cast"
+            and action.get("card") == creature_aura.ref
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:B",
+            {
+                "action_id": cast_offer["id"],
+                "targets": [creature_target.ref],
+                "pay": "auto",
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            principal = session.pending_principals()[0]
+            passed = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertFalse(engine.state.stack)
+        self.assertEqual(
+            creature_target.object_id,
+            engine.state.cards[creature_aura_id].attached_to,
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "qualified-aura-timing-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+        unrestricted = self.session(116_323_015)
+        self.add_card(
+            unrestricted,
+            seat="B",
+            name="Generic Aura Timing Rule",
+            ref="B-unrestricted-aura-timing",
+            zone="battlefield",
+        )
+        unrestricted_creature_aura = self.add_card(
+            unrestricted,
+            seat="B",
+            name="Generic Enchant Creature Aura",
+            ref="B-unrestricted-creature-aura",
+            zone="hand",
+        )
+        unrestricted_land_aura = self.add_card(
+            unrestricted,
+            seat="B",
+            name="Generic Enchant Land Aura",
+            ref="B-unrestricted-land-aura",
+            zone="hand",
+        )
+        self.add_card(
+            unrestricted,
+            seat="B",
+            name="Generic Action Rule Creature",
+            ref="B-unrestricted-creature-target",
+            zone="battlefield",
+        )
+        unrestricted_land_target = self.add_card(
+            unrestricted,
+            seat="B",
+            name="Island",
+            ref="B-unrestricted-land-target",
+            zone="battlefield",
+        )
+        self.prepare_priority(unrestricted, "B", active="A")
+        unrestricted_offers = {
+            action.get("card")
+            for action in unrestricted.packet("pilot:B", full=True)[
+                "decision"
+            ]["ctx"]["legal"]["actions"]
+            if action.get("kind") == "cast"
+        }
+        self.assertIn(unrestricted_creature_aura.ref, unrestricted_offers)
+        self.assertIn(unrestricted_land_aura.ref, unrestricted_offers)
+        unrestricted_land_offer = next(
+            action
+            for action in unrestricted.packet("pilot:B", full=True)[
+                "decision"
+            ]["ctx"]["legal"]["actions"]
+            if action.get("kind") == "cast"
+            and action.get("card") == unrestricted_land_aura.ref
+        )
+        self.assertIn(
+            unrestricted_land_target.ref,
+            unrestricted_land_offer["target_schema"]["legal_refs"],
+        )
 
     def test_static_uncounterable_tracks_current_source_and_spell_copies(self):
         session = self.session(116_323_003)
