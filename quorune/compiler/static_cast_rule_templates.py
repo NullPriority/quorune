@@ -232,8 +232,7 @@ def _timing_rule(
                 ),
                 "casting.timing.fixed_query_static",
             )
-    source_pattern = SourceReferenceSpec(source_name).regex_pattern
-    conditional_timing = (
+    conditional_timing = [
         (
             re.fullmatch(
                 r"Cosmic Awareness — As long as an opponent has cast a spell "
@@ -245,15 +244,6 @@ def _timing_rule(
         ),
         (
             re.fullmatch(
-                rf"As long as {source_pattern} is tapped, you may cast spells "
-                r"as though they had flash\.?",
-                normalized,
-                re.IGNORECASE,
-            ),
-            StaticCastCondition.SOURCE_TAPPED,
-        ),
-        (
-            re.fullmatch(
                 r"During each opponent's end step, you may cast spells as "
                 r"though they had flash\.?",
                 normalized,
@@ -261,7 +251,20 @@ def _timing_rule(
             ),
             StaticCastCondition.OPPONENT_END_STEP,
         ),
-    )
+    ]
+    if source_name.strip():
+        source_pattern = SourceReferenceSpec(source_name).regex_pattern
+        conditional_timing.append(
+            (
+                re.fullmatch(
+                    rf"As long as {source_pattern} is tapped, you may cast "
+                    r"spells as though they had flash\.?",
+                    normalized,
+                    re.IGNORECASE,
+                ),
+                StaticCastCondition.SOURCE_TAPPED,
+            )
+        )
     for match, condition in conditional_timing:
         if match is not None:
             return (

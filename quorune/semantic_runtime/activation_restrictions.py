@@ -60,7 +60,7 @@ class ActivationRestrictionContext:
     restriction_source_controller: str
     restriction_attached_object_id: str | None
     restriction_attached_player: str | None
-    candidate_row: ObjectQueryResult
+    candidate_row: ObjectQueryResult | None
     candidate_is_loyalty_ability: bool
 
     def __post_init__(self) -> None:
@@ -281,6 +281,10 @@ class FixedPublicActivationProhibitionHandler:
         context: ActivationRestrictionContext,
     ) -> tuple[ActivationProhibition, ...]:
         node = self.validate(descriptor)
+        if context.candidate_row is None:
+            raise SemanticNodeError(
+                "Fixed activation prohibitions require public source data"
+            )
         if node["ability_scope"] == "nonmana" and context.candidate_is_mana_ability:
             return ()
         if node["ability_scope"] == "loyalty" and not context.candidate_is_loyalty_ability:
@@ -393,7 +397,6 @@ def current_activation_prohibitions(
         host._effective_card_data(source).get("name")
         or source.printed_name
     )
-    candidate_row = host._public_object_query_result(source)
     prohibitions: list[ActivationProhibition] = []
     for specification in activation_prohibition_specs(
         host._effective_ability_fragments(source, error_type=RuntimeError)
@@ -441,26 +444,34 @@ def current_activation_prohibitions(
                 )
             ):
                 continue
-            context = ActivationRestrictionContext(
-                restriction_source_ref=restriction_source.ref,
-                chosen_name=(
-                    restriction_source.annotations.get("chosen_name") or ""
-                ),
-                candidate_source_name=candidate_name,
-                candidate_is_mana_ability=ability.mana_ability,
-                restriction_source_controller=restriction_source.controller,
-                restriction_attached_object_id=restriction_source.attached_to,
-                restriction_attached_player=attached_player_seat(
-                    restriction_source
-                ),
-                candidate_row=candidate_row,
-                candidate_is_loyalty_ability=(ability.loyalty_delta is not None),
-            )
+            candidate_row: ObjectQueryResult | None = None
             for descriptor in program.handlers:
-                if registry.describe(
-                    str(descriptor.get("handler_id") or "")
-                ) is not None:
-                    prohibitions.extend(registry.lower(descriptor, context))
+                handler_id = str(descriptor.get("handler_id") or "")
+                if registry.describe(handler_id) is None:
+                    continue
+                if (
+                    handler_id == FIXED_PUBLIC_ACTIVATION_PROHIBITION_HANDLER_ID
+                    and candidate_row is None
+                ):
+                    candidate_row = host._public_object_query_result(source)
+                context = ActivationRestrictionContext(
+                    restriction_source_ref=restriction_source.ref,
+                    chosen_name=(
+                        restriction_source.annotations.get("chosen_name") or ""
+                    ),
+                    candidate_source_name=candidate_name,
+                    candidate_is_mana_ability=ability.mana_ability,
+                    restriction_source_controller=restriction_source.controller,
+                    restriction_attached_object_id=restriction_source.attached_to,
+                    restriction_attached_player=attached_player_seat(
+                        restriction_source
+                    ),
+                    candidate_row=candidate_row,
+                    candidate_is_loyalty_ability=(
+                        ability.loyalty_delta is not None
+                    ),
+                )
+                prohibitions.extend(registry.lower(descriptor, context))
     return tuple(
         sorted(
             prohibitions,
