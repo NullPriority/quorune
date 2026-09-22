@@ -306,12 +306,31 @@ def _apply_mana(
     reason: str,
 ) -> Any:
     op = operation
+    if set(effect) - {
+        "op",
+        "player",
+        "color",
+        "amount",
+        "source",
+        "retain_until",
+        "_runtime_source",
+    }:
+        raise GameRuleError("Semantic mana effect has unknown fields")
     seat = str(effect.get("player") or actor)
     color = str(effect.get("color") or "C").upper()
-    amount = int(effect.get("amount", 1))
-    if color not in "WUBRGC" or len(color) != 1 or amount < 0:
+    amount = effect.get("amount", 1)
+    if (
+        seat not in host.active_seats
+        or color not in "WUBRGC"
+        or len(color) != 1
+        or type(amount) is not int
+        or amount < 0
+    ):
         raise GameRuleError("Invalid semantic mana effect")
     source_ref = str(effect.get("source") or "")
+    retain_until = effect.get("retain_until")
+    if retain_until not in {None, "end_of_combat"}:
+        raise GameRuleError("Semantic mana retention is unsupported")
     host._add_mana_to_pool(
         seat,
         {color: amount},
@@ -319,6 +338,7 @@ def _apply_mana(
             bool(source_ref)
             and bool(host._mana_source_is_snow(source_ref))
         ),
+        retention=retain_until,
     )
     host._log(
         actor,

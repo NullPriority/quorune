@@ -192,7 +192,7 @@ from .mana_restrictions import (
     spell_mana_spend_context,
 )
 from .mana_provenance import (
-    clear_mana_provenance,
+    clear_step_mana,
     mana_provenance_lots,
     ManaProvenanceError,
     ManaProvenanceHostMixin,
@@ -1875,11 +1875,9 @@ class CommanderEngine(
     def _clear_mana(self, *, reason: str) -> None:
         for seat, player in self.state.players.items():
             clear_mana_undo_stack(player.stats)
-            if any(player.mana_pool.values()):
-                lost = dict(player.mana_pool)
-                player.mana_pool = normalize_mana_bundle(None)
+            lost = clear_step_mana(player, phase=self.state.phase, step=self.state.step)
+            if lost:
                 self._log(seat, "mana.empty", f"{seat}'s mana pool emptied.", {"lost": lost, "reason": reason}, importance=0, changed_players=[seat])
-            clear_mana_provenance(player.stats)
 
     def _enter_step(
         self,

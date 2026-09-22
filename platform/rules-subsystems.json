@@ -3898,6 +3898,50 @@
           "measurement_probe_id": "public-static-action-legality-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-keyword-event-effects",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "keyword_dependency:ingest"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.normalized_damage",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.event.normalized_zone_change",
+            "capability:trigger.placement.apnap",
+            "component:quorune.compiler.keyword_event_effect_nodes.fixed_keyword_event_effect_node",
+            "component:quorune.trigger_discovery.dispatch_semantic_event"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-positive-keyword-parameter-at-most-twenty",
+            "isolated-printed-keyword-line",
+            "normalized-attack-block-damage-or-zone-event"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_damage",
+            "trigger.event.normalized_public_action",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "one isolated printed fixed Afflict, Annihilator, Firebending, Ingest, Mobilize, or Soulshift keyword lowered to its normalized public event and existing typed effect, choice, zone, mana, token, target, APNAP, projection, and replay owners",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a threshold-clearing cross-era keyword cohort while sharing normalized attack, block, damage, and zone events plus canonical affected-player sacrifice, retained mana, library exile, attacking-token, graveyard-target, current-ability, APNAP, projection, and replay owners.",
+          "explicit_exclusions": [
+            "dynamic quantities and independently unsupported sibling abilities",
+            "keyword-bearing token creation and temporary keyword grants",
+            "noncombat Ingest damage and unavailable library-top cards",
+            "soulshift targets outside the fixed printed mana-value bound",
+            "team-specific defending-player assignment and unsupported team formats",
+            "variable, duplicated, combined, granted, copied, text-changed, and conditional keyword forms"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-keyword-event-effects-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -3946,14 +3990,24 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v210-per-player-combat-trigger-aggregation",
-      "compiler_version": "oracle-ir-v210",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Scope represented one-or-more combat-damage triggers by simultaneous damaged player in the existing normalized damage and trigger owners without widening grammar or claiming a card-support harvest."
+      "transition_id": "oracle-ir-v211-fixed-keyword-event-effects",
+      "compiler_version": "oracle-ir-v211",
+      "bundle_id": "bundle:fixed-keyword-event-effects",
+      "candidate_ids": ["compiler:fixed-keyword-event-effects"],
+      "family_ids": [
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "keyword_dependency:ingest"
+      ],
+      "capability_ids": [
+        "trigger.keyword.afflict.fixed",
+        "trigger.keyword.annihilator.fixed",
+        "trigger.keyword.firebending.fixed",
+        "trigger.keyword.ingest.fixed",
+        "trigger.keyword.mobilize.fixed",
+        "trigger.keyword.soulshift.fixed"
+      ],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:fixed-keyword-event-effects"
     },
     "forecast_corrections": [
       {

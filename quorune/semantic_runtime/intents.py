@@ -1326,6 +1326,8 @@ class CreateTokenIntent:
     characteristics: FrozenMap = field(default_factory=FrozenMap)
     copy_of: str | None = None
     temporary_keywords: tuple[str, ...] = ()
+    tapped: bool = False
+    attacking_assignments: tuple[str, ...] = ()
     sacrifice_at_end_step: bool = False
     sacrifice_on_controller_end_step: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
@@ -1363,9 +1365,18 @@ class CreateTokenIntent:
         if (
             type(self.sacrifice_at_end_step) is not bool
             or type(self.sacrifice_on_controller_end_step) is not bool
+            or type(self.tapped) is not bool
         ):
             raise ValueError("Token sacrifice flags must be booleans")
+        assignments = tuple(self.attacking_assignments)
+        if any(type(value) is not str or not value for value in assignments) or (
+            assignments and len(assignments) != self.quantity
+        ):
+            raise ValueError(
+                "Attacking token assignments must match the token quantity"
+            )
         object.__setattr__(self, "temporary_keywords", keywords)
+        object.__setattr__(self, "attacking_assignments", assignments)
         if not isinstance(self.characteristics, FrozenMap):
             object.__setattr__(
                 self,

@@ -1374,6 +1374,35 @@
       ]
     },
     {
+      "id": "fixed-keyword-event-effect-contract",
+      "patterns": [
+        "quorune/block_transition_engine_adapter.py",
+        "quorune/compiler/keyword_event_effect_nodes.py",
+        "quorune/effect_runtime/state_and_permissions.py",
+        "quorune/effect_runtime/zones_and_attachments.py",
+        "quorune/mana_provenance.py",
+        "quorune/object_query.py",
+        "quorune/oracle_ir.py",
+        "quorune/rules/graveyard_card_targets.py",
+        "quorune/semantic_choices/attacking_tokens.py",
+        "quorune/semantic_choices/intent_replacement.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/token_creation.py",
+        "tests/fixtures/fixed-keyword-event-effect-cards.json",
+        "tests/test_fixed_keyword_event_effects.py"
+      ],
+      "test_modules": [
+        "test_block_transitions",
+        "test_end_step_rules",
+        "test_fixed_keyword_event_effects",
+        "test_fixed_mana_abilities",
+        "test_object_query",
+        "test_targeted_graveyard_return_effect_clauses",
+        "test_token_creation_replacements",
+        "test_zone_trigger_events"
+      ]
+    },
+    {
       "id": "public-declaration-condition-contract",
       "patterns": [
         "quorune/ability_fragments.py",

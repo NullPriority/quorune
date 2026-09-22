@@ -124,7 +124,7 @@ _PROLIFERATE_SUBJECT_FIELDS = {
     "counter_names",
     "logical_object_id",
 }
-_CREATE_TOKEN_FIELDS = {
+_CREATE_TOKEN_FIELDS_V1 = {
     "actor",
     "controller",
     "name",
@@ -135,6 +135,10 @@ _CREATE_TOKEN_FIELDS = {
     "temporary_keywords",
     "sacrifice_at_end_step",
     "sacrifice_on_controller_end_step",
+}
+_CREATE_TOKEN_FIELDS = _CREATE_TOKEN_FIELDS_V1 | {
+    "tapped",
+    "attacking_assignments",
 }
 _LIFE_CHANGE_FIELDS = {
     "actor",
@@ -300,6 +304,27 @@ def _simultaneous_move_intent_identity(
     return "move_objects_simultaneously", identity
 
 
+def _create_token_intent_identity(
+    intent: CreateTokenIntent,
+) -> dict[str, Any]:
+    return {
+        "actor": intent.actor,
+        "controller": intent.controller,
+        "name": intent.name,
+        "quantity": intent.quantity,
+        _REASON_FIELD: intent.reason,
+        "characteristics": thaw_value(intent.characteristics),
+        "copy_of": intent.copy_of,
+        "temporary_keywords": list(intent.temporary_keywords),
+        "tapped": intent.tapped,
+        "attacking_assignments": list(intent.attacking_assignments),
+        "sacrifice_at_end_step": intent.sacrifice_at_end_step,
+        "sacrifice_on_controller_end_step": (
+            intent.sacrifice_on_controller_end_step
+        ),
+    }
+
+
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
 
@@ -390,23 +415,7 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
             },
         )
     if isinstance(intent, CreateTokenIntent):
-        return (
-            "create_token",
-            {
-                "actor": intent.actor,
-                "controller": intent.controller,
-                "name": intent.name,
-                "quantity": intent.quantity,
-                _REASON_FIELD: intent.reason,
-                "characteristics": thaw_value(intent.characteristics),
-                "copy_of": intent.copy_of,
-                "temporary_keywords": list(intent.temporary_keywords),
-                "sacrifice_at_end_step": intent.sacrifice_at_end_step,
-                "sacrifice_on_controller_end_step": (
-                    intent.sacrifice_on_controller_end_step
-                ),
-            },
-        )
+        return "create_token", _create_token_intent_identity(intent)
     if isinstance(intent, ZoneMoveIntent):
         identity = {
             "actor": intent.actor,
@@ -1031,15 +1040,19 @@ def _validate_proliferate_intent_identity(
 def _validate_create_token_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) != _CREATE_TOKEN_FIELDS:
+    if not isinstance(value, Mapping) or set(value) not in {
+        frozenset(_CREATE_TOKEN_FIELDS_V1),
+        frozenset(_CREATE_TOKEN_FIELDS),
+    }:
         raise SemanticChoiceError(
             "Token-creation intent identity fields are malformed"
         )
     characteristics = value["characteristics"]
     temporary_keywords = value["temporary_keywords"]
+    attacking_assignments = value.get("attacking_assignments", ())
     if not isinstance(characteristics, Mapping) or not isinstance(
         temporary_keywords, (list, tuple)
-    ):
+    ) or not isinstance(attacking_assignments, (list, tuple)):
         raise SemanticChoiceError(
             "Token-creation intent identity is malformed"
         )
@@ -1053,6 +1066,8 @@ def _validate_create_token_intent_identity(
             characteristics=FrozenMap(characteristics),
             copy_of=value["copy_of"],
             temporary_keywords=tuple(temporary_keywords),
+            tapped=value.get("tapped", False),
+            attacking_assignments=tuple(attacking_assignments),
             sacrifice_at_end_step=value["sacrifice_at_end_step"],
             sacrifice_on_controller_end_step=(
                 value["sacrifice_on_controller_end_step"]
@@ -1071,6 +1086,8 @@ def _validate_create_token_intent_identity(
         "characteristics": thaw_value(intent.characteristics),
         "copy_of": intent.copy_of,
         "temporary_keywords": list(intent.temporary_keywords),
+        "tapped": intent.tapped,
+        "attacking_assignments": list(intent.attacking_assignments),
         "sacrifice_at_end_step": intent.sacrifice_at_end_step,
         "sacrifice_on_controller_end_step": (
             intent.sacrifice_on_controller_end_step

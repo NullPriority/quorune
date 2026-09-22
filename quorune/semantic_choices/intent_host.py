@@ -1222,6 +1222,12 @@ class SemanticChoiceIntentHostMixin:
                 copy_of=intent.copy_of,
                 characteristics=thaw_value(intent.characteristics),
                 temporary_keywords=intent.temporary_keywords,
+                tapped=intent.tapped,
+                attacking=(
+                    intent.attacking_assignments
+                    if intent.attacking_assignments
+                    else None
+                ),
                 reason=intent.reason,
                 replacement_selections=intent.replacement_selections,
             )

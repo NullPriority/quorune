@@ -450,7 +450,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 6986,
+    "logical_lines": 6963,
     "methods": [
       {
         "kind": "method",
@@ -1578,12 +1578,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7487
+    "physical_lines": 7463
   },
   "exception_binding": {
-    "adr": "docs/adr/0100-public-cast-cost-modifier-closure.md",
-    "allowance_fingerprint": "fd75c131c98b286d684cc06a8595c205983e96760b50e609bc18b7d20829aa79",
-    "exception_id": "ARCH-EXC-0050"
+    "adr": "docs/adr/0101-typed-fixed-keyword-event-effects.md",
+    "allowance_fingerprint": "dcb3b843542d9027cd1013543437a823cd2470ceb45ed8e294e7a14bd78f9463",
+    "exception_id": "ARCH-EXC-0051"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1766,11 +1766,6 @@
       "symbol": "CastReductionMetric.__post_init__"
     },
     {
-      "file": "quorune/self_cast_reductions.py",
-      "logical_lines": 151,
-      "symbol": "cast_reduction_multiplier"
-    },
-    {
       "file": "quorune/service.py",
       "logical_lines": 169,
       "symbol": "GameService.command"
@@ -1793,7 +1788,7 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 6986
+      "logical_lines": 6963
     },
     {
       "file": "quorune/record.py",
@@ -1828,6 +1823,7 @@
     "bounce",
     "change_control",
     "change_control_until_end_of_turn",
+    "choose_attacking_token_destinations",
     "choose_card_name",
     "choose_cards_apnap",
     "choose_creature_type",
@@ -1893,6 +1889,7 @@
     "exile_permanent_targets",
     "exile_public_graveyard_card",
     "exile_public_graveyard_targets",
+    "exile_top_library_card",
     "explore",
     "extra_turn",
     "fabricate",

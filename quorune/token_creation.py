@@ -902,7 +902,7 @@ def create_tokens(
     name: str,
     quantity: int = 1,
     tapped: bool = False,
-    attacking: str | None = None,
+    attacking: str | Sequence[str] | None = None,
     battle_protector: str | None = None,
     copy_of: str | None = None,
     characteristics: Mapping[str, Any] | None = None,
@@ -931,10 +931,32 @@ def create_tokens(
         copy_of=copy_of,
         characteristics=characteristics,
     )
-    return _create_token_specs(
-        host,
-        controller,
-        token_specs=(
+    if isinstance(attacking, (list, tuple)):
+        assignments = tuple(attacking)
+        if len(assignments) != quantity or any(
+            type(value) is not str or not value for value in assignments
+        ):
+            raise TokenCreationError(
+                "Attacking token assignments must match the token quantity"
+            )
+        token_specs = tuple(
+            {
+                "name": name,
+                "quantity": 1,
+                "tapped": tapped,
+                _ATTACKING_FIELD: destination,
+                "battle_protector": battle_protector,
+                "copy_of": copy_of,
+                "characteristics": copy.deepcopy(
+                    dict(characteristics or {})
+                ),
+                "temporary_keywords": list(temporary_keywords),
+                "aura_target_ref": aura_target_ref,
+            }
+            for destination in assignments
+        )
+    else:
+        token_specs = (
             {
                 "name": name,
                 "quantity": quantity,
@@ -948,7 +970,11 @@ def create_tokens(
                 "temporary_keywords": list(temporary_keywords),
                 "aura_target_ref": aura_target_ref,
             },
-        ),
+        )
+    return _create_token_specs(
+        host,
+        controller,
+        token_specs=token_specs,
         created_types=created_types,
         created_subtypes=created_subtypes,
         replacement_sources=sources,

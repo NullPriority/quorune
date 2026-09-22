@@ -11,6 +11,7 @@ from .context import (
 from .model import (
     AutoContinue,
     DistributionChoice,
+    DecisionMapChoice,
     ObjectChoice,
     OrderingChoice,
     ScalarChoice,
@@ -34,6 +35,7 @@ __all__ = [
     "ChoiceStackView",
     "CostRulesQuery",
     "DistributionChoice",
+    "DecisionMapChoice",
     "ObjectChoice",
     "ObjectRulesQuery",
     "OptionalDrawHandler",

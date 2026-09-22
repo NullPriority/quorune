@@ -34,6 +34,7 @@ class ObjectQueryResult:
     phased_out: bool = False
     known_to_actor: bool = True
     attached_to_ref: str | None = None
+    battle_protector: str | None = None
     logical_object_id: str = ""
     monstrous_value: int | None = None
     renowned: bool = False
@@ -47,6 +48,13 @@ class ObjectQueryResult:
     def __post_init__(self) -> None:
         if not isinstance(self.counters, FrozenMap):
             object.__setattr__(self, "counters", FrozenMap(self.counters))
+        if self.battle_protector is not None and (
+            type(self.battle_protector) is not str
+            or not self.battle_protector
+        ):
+            raise ValueError(
+                "Object query battle protector must be a nonempty seat"
+            )
         if type(self.renowned) is not bool:
             raise ValueError("Object query renowned state must be a boolean")
         for field_name in (
@@ -151,6 +159,7 @@ def object_query_result(
         phased_out=bool(card.phased_out),
         known_to_actor=known_to_actor,
         attached_to_ref=attached_to_ref,
+        battle_protector=getattr(card, "battle_protector", None),
         monstrous_value=card.monstrous_value,
         renowned=card.renowned,
         entered_this_turn=entered_this_turn,

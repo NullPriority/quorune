@@ -1321,6 +1321,50 @@ def _apply_reveal_top_permanent(
     return card.ref
 
 
+def _apply_exile_top_library_card(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> Any:
+    del operation
+    if set(effect) not in (
+        {"op", "player"},
+        {"op", "player", "_runtime_source"},
+    ):
+        raise GameRuleError("Top-library exile effect is malformed")
+    seat = str(effect.get("player") or "")
+    if seat not in host.active_seats:
+        raise GameRuleError("Top-library exile player is unavailable")
+    library = host.state.players[seat].zones["library"]
+    if not library:
+        return None
+    card = host.state.cards[library[-1]]
+    moved = host.move_card(
+        card.object_id,
+        "exile",
+        reason=reason,
+        semantic_events=True,
+    )
+    host._log(
+        actor,
+        "library.ingest",
+        f"{seat} moved the top card of their library to {moved.zone}.",
+        {
+            "player": seat,
+            "object": moved.ref,
+            "destination": moved.zone,
+            "reason": reason,
+        },
+        importance=2,
+        changed_objects=[card.object_id],
+        changed_players=[seat],
+    )
+    return moved.ref
+
+
 HANDLERS = {
     'prepare_graveyard_creature_aura': _apply_prepare_graveyard_creature_aura,
     'reanimate_attached_creature_aura': _apply_reanimate_attached_creature_aura,
@@ -1335,6 +1379,7 @@ HANDLERS = {
     'exile_all': _apply_exile_all,
     'exile_graveyard': _apply_exile_graveyard,
     'exile_opponent_graveyards': _apply_exile_opponent_graveyards,
+    'exile_top_library_card': _apply_exile_top_library_card,
     'mill': _apply_mill,
     'move': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
     'move_if_in_zone': _apply_move_if_in_zone,

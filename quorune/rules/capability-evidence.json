@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "87afe0651126ce7a29587de1047d9954ad4ae573a20dded21abca7795164e39f",
-  "declaration_source_fingerprint": "b79c59e02e136d1f31b54757f815bab12a0200189ba3f5e80af265be370de8f0",
+  "registry_fingerprint": "ce02ed29338a3f8243d1a9d7784b892a75695aef092910d6ff8e396076823c4a",
+  "declaration_source_fingerprint": "95992fd45f9a693851e5d730955f90b35f69ffedada7ec6cc209f64531c99917",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -61018,6 +61018,111 @@
       "applicability_note": "Replay the countered-spell transition, normalized event ordering, trigger journal inputs, and final state hash exactly."
     },
     {
+      "capability_id": "trigger.keyword.afflict.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
+      "official_rule_ids": [
+        "702.130",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise afflict through its canonical event, choice, replacement, and effect owners."
+    },
+    {
+      "capability_id": "trigger.keyword.afflict.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.130",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve APNAP and seat-correct afflict behavior in four-player state."
+    },
+    {
+      "capability_id": "trigger.keyword.afflict.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.130",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the shared Afflict compiler owner restores the representative keyword line to a material residual."
+    },
+    {
+      "capability_id": "trigger.keyword.afflict.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.130",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep malformed, variable, copied, granted, and unsupported afflict variants residual."
+    },
+    {
+      "capability_id": "trigger.keyword.afflict.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.130",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed afflict keyword syntax into one source-spanned normalized trigger."
+    },
+    {
+      "capability_id": "trigger.keyword.afflict.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.130",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public afflict choices without hidden library or implementation identity."
+    },
+    {
+      "capability_id": "trigger.keyword.afflict.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.130",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay afflict triggers, choices, delayed work, and authoritative results exactly."
+    },
+    {
       "capability_id": "trigger.keyword.afterlife.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
@@ -61142,6 +61247,111 @@
         "commander_review"
       ],
       "applicability_note": "Persist and replay independent instance identity, APNAP placement, private same-controller ordering, and fixed Spirit creation."
+    },
+    {
+      "capability_id": "trigger.keyword.annihilator.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
+      "official_rule_ids": [
+        "702.86",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise annihilator through its canonical event, choice, replacement, and effect owners."
+    },
+    {
+      "capability_id": "trigger.keyword.annihilator.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.86",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve APNAP and seat-correct annihilator behavior in four-player state."
+    },
+    {
+      "capability_id": "trigger.keyword.annihilator.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.86",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the shared Annihilator compiler owner restores the representative keyword line to a material residual."
+    },
+    {
+      "capability_id": "trigger.keyword.annihilator.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.86",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep malformed, variable, copied, granted, and unsupported annihilator variants residual."
+    },
+    {
+      "capability_id": "trigger.keyword.annihilator.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.86",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed annihilator keyword syntax into one source-spanned normalized trigger."
+    },
+    {
+      "capability_id": "trigger.keyword.annihilator.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.86",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public annihilator choices without hidden library or implementation identity."
+    },
+    {
+      "capability_id": "trigger.keyword.annihilator.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.86",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay annihilator triggers, choices, delayed work, and authoritative results exactly."
     },
     {
       "capability_id": "trigger.keyword.cascade",
@@ -61497,6 +61707,111 @@
       "applicability_note": "Replay the seat-scoped refusal and typed sacrifice to the identical authoritative state hash."
     },
     {
+      "capability_id": "trigger.keyword.firebending.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
+      "official_rule_ids": [
+        "702.189",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise firebending through its canonical event, choice, replacement, and effect owners."
+    },
+    {
+      "capability_id": "trigger.keyword.firebending.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.189",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve APNAP and seat-correct firebending behavior in four-player state."
+    },
+    {
+      "capability_id": "trigger.keyword.firebending.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.189",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the shared Firebending compiler owner restores the representative keyword line to a material residual."
+    },
+    {
+      "capability_id": "trigger.keyword.firebending.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.189",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep malformed, variable, copied, granted, and unsupported firebending variants residual."
+    },
+    {
+      "capability_id": "trigger.keyword.firebending.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.189",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed firebending keyword syntax into one source-spanned normalized trigger."
+    },
+    {
+      "capability_id": "trigger.keyword.firebending.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.189",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public firebending choices without hidden library or implementation identity."
+    },
+    {
+      "capability_id": "trigger.keyword.firebending.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.189",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay firebending triggers, choices, delayed work, and authoritative results exactly."
+    },
+    {
       "capability_id": "trigger.keyword.for_mirrodin",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_attachment_actions.FixedAttachmentActionRuntimeTests.test_token_replacement_attaches_exactly_one_created_token",
@@ -61647,6 +61962,111 @@
         "commander_review"
       ],
       "applicability_note": "Reject a malformed composite descriptor before creating a Rebel token or changing any attachment relation."
+    },
+    {
+      "capability_id": "trigger.keyword.ingest.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
+      "official_rule_ids": [
+        "702.115",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise ingest through its canonical event, choice, replacement, and effect owners."
+    },
+    {
+      "capability_id": "trigger.keyword.ingest.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.115",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve APNAP and seat-correct ingest behavior in four-player state."
+    },
+    {
+      "capability_id": "trigger.keyword.ingest.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.115",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the shared Ingest compiler owner restores the representative keyword line to a material residual."
+    },
+    {
+      "capability_id": "trigger.keyword.ingest.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.115",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep malformed, variable, copied, granted, and unsupported ingest variants residual."
+    },
+    {
+      "capability_id": "trigger.keyword.ingest.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.115",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed ingest keyword syntax into one source-spanned normalized trigger."
+    },
+    {
+      "capability_id": "trigger.keyword.ingest.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.115",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public ingest choices without hidden library or implementation identity."
+    },
+    {
+      "capability_id": "trigger.keyword.ingest.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.115",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay ingest triggers, choices, delayed work, and authoritative results exactly."
     },
     {
       "capability_id": "trigger.keyword.living_weapon",
@@ -61807,6 +62227,111 @@
         "commander_review"
       ],
       "applicability_note": "Reject a malformed composite descriptor before creating a Phyrexian Germ token or changing any attachment relation."
+    },
+    {
+      "capability_id": "trigger.keyword.mobilize.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
+      "official_rule_ids": [
+        "702.181",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise mobilize through its canonical event, choice, replacement, and effect owners."
+    },
+    {
+      "capability_id": "trigger.keyword.mobilize.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.181",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve APNAP and seat-correct mobilize behavior in four-player state."
+    },
+    {
+      "capability_id": "trigger.keyword.mobilize.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.181",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the shared Mobilize compiler owner restores the representative keyword line to a material residual."
+    },
+    {
+      "capability_id": "trigger.keyword.mobilize.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.181",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep malformed, variable, copied, granted, and unsupported mobilize variants residual."
+    },
+    {
+      "capability_id": "trigger.keyword.mobilize.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.181",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed mobilize keyword syntax into one source-spanned normalized trigger."
+    },
+    {
+      "capability_id": "trigger.keyword.mobilize.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.181",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public mobilize choices without hidden library or implementation identity."
+    },
+    {
+      "capability_id": "trigger.keyword.mobilize.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.181",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay mobilize triggers, choices, delayed work, and authoritative results exactly."
     },
     {
       "capability_id": "trigger.keyword.prowess",
@@ -62035,6 +62560,111 @@
         "commander_review"
       ],
       "applicability_note": "Replay trigger placement and the identity-locked until-end-of-turn characteristic result to the same final hash."
+    },
+    {
+      "capability_id": "trigger.keyword.soulshift.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
+      "official_rule_ids": [
+        "702.46",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise soulshift through its canonical event, choice, replacement, and effect owners."
+    },
+    {
+      "capability_id": "trigger.keyword.soulshift.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.46",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve APNAP and seat-correct soulshift behavior in four-player state."
+    },
+    {
+      "capability_id": "trigger.keyword.soulshift.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.46",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the shared Soulshift compiler owner restores the representative keyword line to a material residual."
+    },
+    {
+      "capability_id": "trigger.keyword.soulshift.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.46",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep malformed, variable, copied, granted, and unsupported soulshift variants residual."
+    },
+    {
+      "capability_id": "trigger.keyword.soulshift.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+      "official_rule_ids": [
+        "702.46",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile fixed soulshift keyword syntax into one source-spanned normalized trigger."
+    },
+    {
+      "capability_id": "trigger.keyword.soulshift.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.46",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only public soulshift choices without hidden library or implementation identity."
+    },
+    {
+      "capability_id": "trigger.keyword.soulshift.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+      "official_rule_ids": [
+        "702.46",
+        "603"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay soulshift triggers, choices, delayed work, and authoritative results exactly."
     },
     {
       "capability_id": "trigger.keyword.storm",
@@ -66642,5 +67272,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "9735a8e2442c347669ed72fd8efc6cdfe66a023244c13c6e193a080a831a65eb"
+  "fingerprint": "86d5ca98b7937655d7d414d74865f6ffeac00bbf4f03c948000e943bac523017"
 }

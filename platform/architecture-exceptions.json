@@ -1197,6 +1197,31 @@
         "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_public_cast_tax_uses_caster_turn_and_current_source",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0051",
+      "adr": "docs/adr/0101-typed-fixed-keyword-event-effects.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "dcb3b843542d9027cd1013543437a823cd2470ceb45ed8e294e7a14bd78f9463",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed choose_attacking_token_destinations and exile_top_library_card operations serialized for the v211 fixed keyword event-effect harvest.",
+      "rationale": "The measured broad harvest adds two strict typed operations while reusing normalized attack, block, damage, and zone events plus existing life, sacrifice, mana-provenance, token, zone-transition, target, optional-choice, APNAP, projection, and replay owners. The attack-destination handler emits a typed token intent and the library-top handler delegates its sole mutation to ZoneTransitionOwner. CommanderEngine shrinks, while direct and unowned writes, runtime Oracle prose, card-identity dispatch, and oversized production symbols remain flat.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact structural baseline plus choose_attacking_token_destinations, exile_top_library_card, FixedKeywordEventEffectSpec, per-token public attack destinations, additive end-of-combat mana-provenance retention, graveyard mana-value target bounds, and the existing normalized event and effect owners described by ADR 0101; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine growth, arbitrary callbacks, family-specific ability-presence checks, variable or granted keyword grammar, cycle-unsafe characteristics, team formats, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the two operations only while strict field validation, canonical owner delegation, source spans, current layer-6 applicability, replacement ordering, rollback, privacy, save/load, and exact replay remain enforced.",
+      "target_milestone": "capability-closed broad fixed keyword harvest through canonical normalized-event, choice, zone, token, mana, and replay owners",
+      "replay_implications": "CardPrograms record only fixed keyword amounts, normalized event predicates, typed effects, and target schemas. Game Record v3 preserves additive mana-lot retention and token attack assignments, while historical token-intent and mana-provenance payloads default absent additive fields without consulting Oracle prose.",
+      "privacy_implications": "Attack destinations, battlefield characteristics, graveyard targets, and exiled results are public. Mobilize and Soulshift choices remain principal-scoped; hidden library identity is not exposed until the canonical zone move makes the card public, and physical or logical identities remain absent from pilot projections.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict operations; unknown fields, invalid quantities or destinations, stale choices, removed current components, unavailable players, malformed target bounds, unsupported keyword grammar, and replacement-continuation tampering fail before authoritative mutation.",
+      "tests": [
+        "tests.test_semantic_handlers.TypedSemanticHandlerTests.test_registry_is_deterministic_and_rejects_duplicate_ownership",
+        "tests.test_change_impact.ChangeImpactTests.test_effect_operation_sources_select_semantic_registry",
+        "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions",
+        "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
+        "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay",
+        "tests.test_token_creation_replacements.TokenCreationReplacementTests.test_resolution_suspends_for_seat_scoped_replacement_order",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }
