@@ -166,6 +166,21 @@ def enqueue_block_transition_triggers(engine: Any) -> None:
                 continue
             blocked_attackers.add(assignment.attacker_object_id)
             attacker = participants[assignment.attacker_object_id]
+            attack_target = engine.state.combat.attackers.get(
+                assignment.attacker_object_id
+            )
+            defending_player = (
+                engine._defending_player_for_attacker(
+                    assignment.attacker_object_id,
+                    attack_target,
+                )
+                if isinstance(attack_target, str)
+                else None
+            )
+            if defending_player not in engine.state.players:
+                raise BlockTransitionError(
+                    "A blocked attacker requires one sealed defending player"
+                )
             semantic_trigger_refs.extend(
                 engine._dispatch_semantic_event(
                     "creature.becomes_blocked",
@@ -173,6 +188,7 @@ def enqueue_block_transition_triggers(engine: Any) -> None:
                         "event_id": event.transition_id,
                         "card": attacker.reference,
                         "controller": attacker.controller,
+                        "defending_player": defending_player,
                         "types": ["creature"],
                         "keywords": list(attacker.keywords),
                         "block_transition": event.to_dict(),

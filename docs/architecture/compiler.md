@@ -1187,6 +1187,19 @@ sacrifice, tap-state, source-token damage, chosen, legendary, modified, and
 counter-bearing forms remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
 
+`compiler/keyword_event_effect_nodes.py` owns the isolated fixed printed
+Afflict, Annihilator, Firebending, Ingest, Mobilize, and Soulshift grammar.
+Each keyword becomes an ordinary source-spanned trigger over the existing
+block, attack, committed-damage, or zone-change event rather than a parallel
+keyword engine. Afflict and Annihilator consume the sealed defending player;
+Firebending records its surviving mana in the canonical provenance lot owner;
+Ingest moves the damaged player's current library top through the zone-
+replacement owner; Mobilize uses one private per-token public attack-
+destination choice and replacement-aware token creation; and Soulshift uses
+the existing graveyard target, optional effect, and last-known-controller
+owners. Variable, repeated, combined, granted, copied, conditional, and
+independently incomplete forms remain source-spanned residuals.
+
 Fixed multi-event trigger subscriptions reuse that same owner without creating
 a synthetic event. One source-spanned ability may name exactly two represented
 events in the battlefield active zone; the compiler serializes an ordered

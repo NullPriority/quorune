@@ -30,7 +30,6 @@ from .compiler.attached_granted_ability_nodes import (
 from .compiler.effect_template_composition import (
     reviewed_effect_template_composition,
 )
-from .cycling_abilities import CYCLING_MECHANIC_ID
 from .compiler.activated_mana_nodes import (
     activated_oracle_node,
 )
@@ -62,6 +61,10 @@ from .compiler.fixed_counter_trigger_nodes import (
     fixed_typed_event_effect_trigger_node,
 )
 from .compiler.fixed_keyword_entry_nodes import fixed_keyword_entry_nodes
+from .compiler.keyword_event_effect_nodes import (
+    fixed_keyword_event_effect_node,
+    fixed_keyword_event_effect_mechanics,
+)
 from .compiler.fixed_library_selection_templates import (
     fixed_library_selection_effect_template,
 )
@@ -133,7 +136,6 @@ from .compiler.oracle_source_text import (
 )
 from .compiler.scry_templates import fixed_scry_effect_template
 from .compiler.self_return_templates import fixed_self_return_effect_template
-from .compiler.storm_nodes import STORM_MECHANIC_ID
 from .compiler.surveil_templates import fixed_surveil_effect_template
 from .compiler.static_runtime_nodes import (
     runtime_handler_node,
@@ -157,7 +159,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v210"
+ORACLE_COMPILER_VERSION = "oracle-ir-v211"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -663,29 +665,6 @@ def _keyword_node_for_mechanics(
     )
 
 
-def _fallback_keyword_mechanics(
-    material_line: str,
-    keywords: Sequence[str],
-) -> tuple[str, ...] | None:
-    """Recover parameterized keyword families without trusting their grammar."""
-
-    if re.match(
-        r"^Cycling(?:\s+\{|[\-\u2013\u2014])",
-        material_line,
-        re.IGNORECASE,
-    ):
-        return (CYCLING_MECHANIC_ID,)
-    keyword_values = {str(keyword).casefold() for keyword in keywords}
-    for mechanic in ("cascade", STORM_MECHANIC_ID):
-        if mechanic in keyword_values and re.match(
-            rf"^{mechanic}\b",
-            material_line,
-            re.IGNORECASE,
-        ):
-            return (mechanic,)
-    return None
-
-
 def _keyword_nodes(
     *,
     record: CardRecord,
@@ -709,13 +688,16 @@ def _keyword_nodes(
     mechanics = keyword_mechanics(
         material_line,
         keywords,
-    ) or _fallback_keyword_mechanics(material_line, keywords)
+    ) or fixed_keyword_event_effect_mechanics(material_line, keywords)
     if mechanics is None:
         return ()
 
     multi_nodes = multi_keyword_nodes(**locals())
     if multi_nodes is not None: return multi_nodes
     if mechanics in {("madness",), ("partner with",)}: return ()
+
+    keyword_event_effect = fixed_keyword_event_effect_node(node_id=node_id, line=line, material_line=material_line, span=span, mechanics=mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if keyword_event_effect is not None: return (keyword_event_effect,)
 
     plans = keyword_node_plans(
         node_id=node_id,

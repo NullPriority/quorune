@@ -22,6 +22,7 @@ class ManaProvenanceLot:
     bundle: tuple[tuple[str, int], ...]
     snow: bool = False
     restriction: str | None = None
+    retention: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.bundle, tuple) or any(
@@ -54,7 +55,13 @@ class ManaProvenanceLot:
             raise ManaProvenanceError(
                 "mana provenance restriction is invalid"
             )
-        if not self.snow and self.restriction is None:
+        if self.retention not in {None, "end_of_combat"}:
+            raise ManaProvenanceError("mana provenance retention is invalid")
+        if (
+            not self.snow
+            and self.restriction is None
+            and self.retention is None
+        ):
             raise ManaProvenanceError(
                 "ordinary unrestricted mana does not need a provenance lot"
             )
@@ -66,6 +73,7 @@ class ManaProvenanceLot:
         *,
         snow: bool = False,
         restriction: str | None = None,
+        retention: str | None = None,
     ) -> "ManaProvenanceLot":
         normalized = normalize_mana_bundle(bundle)
         return cls(
@@ -76,14 +84,14 @@ class ManaProvenanceLot:
             ),
             snow=snow,
             restriction=restriction,
+            retention=retention,
         )
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ManaProvenanceLot":
-        if not isinstance(value, Mapping) or set(value) != {
-            "bundle",
-            "snow",
-            "restriction",
+        if not isinstance(value, Mapping) or set(value) not in {
+            frozenset({"bundle", "snow", "restriction"}),
+            frozenset({"bundle", "snow", "restriction", "retention"}),
         }:
             raise ManaProvenanceError("mana provenance lot fields are invalid")
         bundle = value["bundle"]
@@ -103,14 +111,18 @@ class ManaProvenanceLot:
             bundle,
             snow=value["snow"],
             restriction=value["restriction"],
+            retention=value.get("retention"),
         )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "bundle": dict(self.bundle),
             "snow": self.snow,
             "restriction": self.restriction,
         }
+        if self.retention is not None:
+            result["retention"] = self.retention
+        return result
 
 
 def _legacy_restricted_lots(stats: Mapping[str, Any]) -> tuple[ManaProvenanceLot, ...]:
@@ -211,6 +223,7 @@ def add_mana(
     *,
     snow: bool = False,
     restriction: str | None = None,
+    retention: str | None = None,
 ) -> None:
     normalized = normalize_mana_bundle(bundle)
     if not any(normalized.values()):
@@ -220,15 +233,17 @@ def add_mana(
     for color in _COLORS:
         pool[color] += normalized[color]
     player.mana_pool = pool
-    if snow or restriction is not None:
+    if snow or restriction is not None or retention is not None:
         lot = ManaProvenanceLot.create(
             normalized,
             snow=snow,
             restriction=restriction,
+            retention=retention,
         )
         if lots and (
             lots[-1].snow == lot.snow
             and lots[-1].restriction == lot.restriction
+            and lots[-1].retention == lot.retention
         ):
             merged = normalize_mana_bundle(dict(lots[-1].bundle))
             for color, amount in lot.bundle:
@@ -237,6 +252,7 @@ def add_mana(
                 merged,
                 snow=lot.snow,
                 restriction=lot.restriction,
+                retention=lot.retention,
             )
         else:
             lots.append(lot)
@@ -342,6 +358,7 @@ def spend_mana(
             "bundle": normalize_mana_bundle(dict(lot.bundle)),
             "snow": lot.snow,
             "restriction": lot.restriction,
+            "retention": lot.retention,
         }
         for lot in mana_provenance_lots(player)
     ]
@@ -362,12 +379,22 @@ def spend_mana(
             spend_context,
         )
 
-    def consume(color: str, amount: int, *, snow: bool) -> int:
+    def consume(
+        color: str,
+        amount: int,
+        *,
+        snow: bool,
+        retained: bool,
+    ) -> int:
         remaining = amount
         for lot in lots:
             if remaining <= 0:
                 break
-            if bool(lot["snow"]) is not snow or not eligible(lot):
+            if (
+                bool(lot["snow"]) is not snow
+                or (lot["retention"] is not None) is not retained
+                or not eligible(lot)
+            ):
                 continue
             bundle = lot["bundle"]
             use = min(remaining, bundle[color])
@@ -377,19 +404,57 @@ def spend_mana(
 
     for color in _COLORS:
         required_snow = snow_spent[color]
-        if consume(color, required_snow, snow=True) != required_snow:
+        paid_snow = consume(
+            color,
+            required_snow,
+            snow=True,
+            retained=False,
+        )
+        paid_snow += consume(
+            color,
+            required_snow - paid_snow,
+            snow=True,
+            retained=True,
+        )
+        if paid_snow != required_snow:
             raise ManaProvenanceError(
                 "selected snow payment is not available"
             )
         remaining = total_spent[color] - required_snow
-        used_nonsnow = consume(color, remaining, snow=False)
+        used_nonsnow = consume(
+            color,
+            remaining,
+            snow=False,
+            retained=False,
+        )
         remaining -= used_nonsnow
         use_untracked = min(remaining, untracked[color])
         untracked[color] -= use_untracked
         remaining -= use_untracked
         if remaining:
-            used_snow = consume(color, remaining, snow=True)
+            used_retained = consume(
+                color,
+                remaining,
+                snow=False,
+                retained=True,
+            )
+            remaining -= used_retained
+        if remaining:
+            used_snow = consume(
+                color,
+                remaining,
+                snow=True,
+                retained=False,
+            )
             remaining -= used_snow
+        if remaining:
+            used_retained_snow = consume(
+                color,
+                remaining,
+                snow=True,
+                retained=True,
+            )
+            remaining -= used_retained_snow
         if remaining:
             raise ManaProvenanceError(
                 "mana payment exceeds eligible provenance"
@@ -408,6 +473,7 @@ def spend_mana(
                 raw["bundle"],
                 snow=raw["snow"],
                 restriction=raw["restriction"],
+                retention=raw["retention"],
             )
         )
     player.mana_pool = pool
@@ -417,6 +483,39 @@ def spend_mana(
 def clear_mana_provenance(stats: MutableMapping[str, Any]) -> None:
     stats.pop(MANA_PROVENANCE_KEY, None)
     stats.pop(_RESTRICTED_MANA_KEY, None)
+
+
+def clear_step_mana(
+    player: Any,
+    *,
+    phase: str,
+    step: str,
+) -> dict[str, int]:
+    """Clear the pool while retaining only unspent end-of-combat lots."""
+
+    pool = normalize_mana_bundle(player.mana_pool)
+    preserve_combat = phase == "combat" and step != "end_combat"
+    kept_lots = tuple(
+        lot
+        for lot in mana_provenance_lots(player)
+        if preserve_combat and lot.retention == "end_of_combat"
+    )
+    kept = normalize_mana_bundle(None)
+    for lot in kept_lots:
+        for color, amount in lot.bundle:
+            kept[color] += amount
+    if any(kept[color] > pool[color] for color in _COLORS):
+        raise ManaProvenanceError(
+            "retained mana provenance exceeds the authoritative pool"
+        )
+    lost = {
+        color: pool[color] - kept[color]
+        for color in _COLORS
+        if pool[color] != kept[color]
+    }
+    player.mana_pool = kept
+    _store_lots(player, kept_lots)
+    return lost
 
 
 def _mark_uncounterable_spell_payment(player: Any) -> None:
@@ -450,12 +549,14 @@ class ManaProvenanceHostMixin:
         *,
         restriction: str | None = None,
         snow_source: bool = False,
+        retention: str | None = None,
     ) -> None:
         add_mana(
             self.state.players[seat],
             bundle,
             snow=snow_source,
             restriction=restriction,
+            retention=retention,
         )
 
     def _mana_source_is_snow(self, source_ref: str) -> bool:
@@ -545,6 +646,7 @@ __all__ = [
     "ManaProvenanceHostMixin",
     "ManaProvenanceLot",
     "add_mana",
+    "clear_step_mana",
     "clear_mana_provenance",
     "mana_provenance_lots",
     "mark_existing_mana_restricted",

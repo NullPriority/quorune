@@ -278,7 +278,7 @@ _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
 )
 MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
-    AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,),
+    AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,), **{keyword: (f"trigger.keyword.{keyword}.fixed",) for keyword in ("afflict", "annihilator", "firebending", "ingest", "mobilize", "soulshift")},
     INVESTIGATE_MECHANIC_ID: (INVESTIGATE_CAPABILITY_ID,),
     _DEVOID_MECHANIC: ("continuous.characteristics.devoid",),
     _CYCLING_MECHANIC: ("activation.cycling.hand",),

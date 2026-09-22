@@ -234,6 +234,7 @@ class OwnGraveyardCardTargetSpec:
     colors_none: tuple[str, ...] = ()
     color_count_min: int | None = None
     color_count_equal: int | None = None
+    mana_value_max: int | None = None
 
     def __post_init__(self) -> None:
         term_fields = (
@@ -273,6 +274,7 @@ class OwnGraveyardCardTargetSpec:
             self.colors_none,
             self.color_count_min,
             self.color_count_equal,
+            self.mana_value_max,
         )
         if self.kind is not None:
             if not isinstance(self.kind, GraveyardCardTargetKind):
@@ -363,6 +365,13 @@ class OwnGraveyardCardTargetSpec:
             raise GraveyardCardTargetError(
                 "Graveyard target color predicate is unsupported"
             )
+        if self.mana_value_max is not None and (
+            type(self.mana_value_max) is not int
+            or not 0 <= self.mana_value_max <= 20
+        ):
+            raise GraveyardCardTargetError(
+                "Graveyard target mana-value maximum is unsupported"
+            )
 
     @property
     def slug(self) -> str:
@@ -393,6 +402,8 @@ class OwnGraveyardCardTargetSpec:
             parts.append(f"at-least-{self.color_count_min}-colors")
         if self.color_count_equal is not None:
             parts.append(f"exactly-{self.color_count_equal}-colors")
+        if self.mana_value_max is not None:
+            parts.append(f"mana-value-{self.mana_value_max}-or-less")
         return "-".join(parts) + ("" if self.kind is not None else "-card")
 
     def to_target_schema(self) -> dict[str, Any]:
@@ -427,6 +438,8 @@ class OwnGraveyardCardTargetSpec:
             value = getattr(self, field)
             if value is not None:
                 schema[field] = value
+        if self.mana_value_max is not None:
+            schema["mana_value_max"] = self.mana_value_max
         return schema
 
     @classmethod
@@ -454,6 +467,7 @@ class OwnGraveyardCardTargetSpec:
             "colors_none",
             "color_count_min",
             "color_count_equal",
+            "mana_value_max",
         }
         if set(schema) - allowed:
             raise GraveyardCardTargetError(
@@ -503,6 +517,7 @@ class OwnGraveyardCardTargetSpec:
                 colors_none=tuple(schema.get("colors_none", ())),
                 color_count_min=schema.get("color_count_min"),
                 color_count_equal=schema.get("color_count_equal"),
+                mana_value_max=schema.get("mana_value_max"),
             )
             if permanent_domain
             else cls(
@@ -517,6 +532,7 @@ class OwnGraveyardCardTargetSpec:
                 colors_none=tuple(schema.get("colors_none", ())),
                 color_count_min=schema.get("color_count_min"),
                 color_count_equal=schema.get("color_count_equal"),
+                mana_value_max=schema.get("mana_value_max"),
             )
         )
         if spec.to_target_schema() != schema:
