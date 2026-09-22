@@ -61,6 +61,11 @@ from .echo_nodes import fixed_mana_echo_node
 from .crew_nodes import ordinary_crew_keyword_node
 from .station_nodes import ordinary_station_keyword_node
 from .unearth_nodes import ordinary_unearth_keyword_node
+from .combat_entry_activation_nodes import (
+    fixed_encore_keyword_node,
+    fixed_ninjutsu_keyword_node,
+)
+from .myriad_nodes import fixed_myriad_keyword_node
 from .kicker_nodes import fixed_mana_kicker_keyword_node
 from .cycling_nodes import (
     ordinary_cycling_keyword_node,
@@ -371,6 +376,15 @@ def closed_special_keyword_node(
     )
     if cast_lifecycle is not None:
         return cast_lifecycle
+    ninjutsu = fixed_ninjutsu_keyword_node(**values)
+    if ninjutsu is not None:
+        return ninjutsu
+    encore = fixed_encore_keyword_node(**values)
+    if encore is not None:
+        return encore
+    myriad = fixed_myriad_keyword_node(**values)
+    if myriad is not None:
+        return myriad
     alternative_cost = fixed_public_alternative_cost_keyword_node(**values)
     if alternative_cost is not None:
         return alternative_cost

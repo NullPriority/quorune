@@ -7392,6 +7392,33 @@
       "status": "trusted"
     },
     {
+      "id": "combat.entry.lifecycle.fixed_public",
+      "version": 1,
+      "official_rules": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile isolated fixed ordinary-mana Ninjutsu, Commander ninjutsu, Encore, Blitz, Sneak, and Web-slinging plus bare Myriad through the existing typed casting, activation, trigger, token, combat-recipient, and delayed-transition owners.",
+        "inputs": ["one physical complete-card-admitted source", "one isolated source-spanned supported keyword declaration", "fixed ordinary mana where the keyword has a cost", "current source zone and logical incarnation", "canonical public return-cost, cast, activation, attack, token, trigger, replacement, projection, and replay authority"],
+        "outputs": ["hand or command-zone Ninjutsu activation with public reveal and same-recipient tapped entry", "graveyard Encore activation with source exile and one Haste copy per current opponent", "Blitz Haste, last-known-controller death draw, and next-end-step sacrifice", "Sneak declare-blockers casting and same-recipient tapped entry", "Web-slinging tapped-creature return casting cost", "optional Myriad copy and public destination choice for each other opponent with end-combat exile", "identity-pinned cleanup, privacy-safe projection, and exact replay"],
+        "exclusions": ["variable, hybrid, Phyrexian, snow, nonmana, modified, conditional, repeated, copied, granted, or text-changed forms", "team-specific attack destinations and unsupported team formats", "alternative-cost combinations outside one selected fixed option", "copy modifications or token definitions outside the canonical copyable-characteristic snapshot", "cards whose complete CardProgram remains residual", "replacement or permission interactions outside the canonical typed owners"]
+      },
+      "dependencies": ["casting.additional_cost.zone_change.fixed_return_to_owner_hand", "casting.lifecycle.fixed_public", "combat.attack.haste", "continuous.resolution.fixed_keyword_zone_object", "token.creation.fixed_copy", "trigger.event.normalized_public_action", "trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.combat_entry_activations.FixedNinjutsuSpec", "quorune.combat_entry_activations.FixedEncoreSpec", "quorune.compiler.cast_lifecycle_nodes.fixed_cast_lifecycle_keyword_node", "quorune.compiler.combat_entry_activation_nodes.fixed_ninjutsu_keyword_node", "quorune.compiler.combat_entry_activation_nodes.fixed_encore_keyword_node", "quorune.compiler.myriad_nodes.fixed_myriad_keyword_node", "quorune.semantic_runtime.combat_entry_activations.FixedNinjutsuAbilityHandler", "quorune.semantic_runtime.combat_entry_activations.FixedEncoreAbilityHandler", "quorune.semantic_choices.attacking_tokens.MyriadTokenDestinationChoiceHandler", "quorune.compiled_cast_lifecycles.compiled_fixed_cast_lifecycle_specs", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.action_catalog.build_priority_action_catalog", "quorune.rules.casting.lifecycle_costs.with_fixed_cast_lifecycle_costs", "quorune.rules.casting.costs.build_cast_cost_options", "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost", "quorune.rules.casting.commit.commit_cast", "quorune.rules.activation.commit.commit_activation", "quorune.stack_resolution.complete_stack_resolution", "quorune.token_creation.create_tokens", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.trigger_processing.enqueue_trigger_batch", "quorune.trigger_processing.schedule_delayed_trigger", "quorune.effect_runtime.zones_and_attachments._apply_move_if_in_zone"],
+      "positive_tests": ["test_fixed_combat_entry_keyword_contract_matrix"],
+      "negative_tests": ["test_open_combat_entry_variants_remain_residual"],
+      "interaction_tests": ["test_ninjutsu_reveal_counter_commander_and_unblocked_boundaries"],
+      "multiplayer_tests": ["test_encore_exiles_source_and_creates_one_haste_copy_per_opponent"],
+      "privacy_tests": ["test_ninjutsu_four_player_projection_save_load_and_exact_replay"],
+      "replay_tests": ["test_ninjutsu_four_player_projection_save_load_and_exact_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking public return costs, the shared cast lifecycle, Haste, copy-token creation, normalized action or zone events, APNAP placement, or destination replacement removes exact admission instead of falling back to runtime Oracle prose.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler matrix and open-form boundary reject missing typed lowering, widened cost grammar, wrong trigger ownership, and stale public object identities.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "casting.lifecycle.fixed_zone_cast",
       "version": 1,
       "official_rules": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],

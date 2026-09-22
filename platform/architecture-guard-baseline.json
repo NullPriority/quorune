@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "6295a7a8d0e61b89df79f8598473c5c9bb29c881",
+  "baseline_commit": "fd215d663109b125f85a081e249e156528cccea5",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -450,7 +450,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 6963,
+    "logical_lines": 6951,
     "methods": [
       {
         "kind": "method",
@@ -1578,12 +1578,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7463
+    "physical_lines": 7451
   },
   "exception_binding": {
-    "adr": "docs/adr/0101-typed-fixed-keyword-event-effects.md",
-    "allowance_fingerprint": "dcb3b843542d9027cd1013543437a823cd2470ceb45ed8e294e7a14bd78f9463",
-    "exception_id": "ARCH-EXC-0051"
+    "adr": "docs/adr/0102-typed-fixed-combat-entry-lifecycles.md",
+    "allowance_fingerprint": "4b156217b684586bea297586a0639eb9ce852bb65cf94c5b98cb188eaedaf19c",
+    "exception_id": "ARCH-EXC-0052"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1788,7 +1788,7 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 6963
+      "logical_lines": 6951
     },
     {
       "file": "quorune/record.py",
@@ -1830,6 +1830,7 @@
     "choose_damage_source",
     "choose_mana",
     "choose_modified_token_copy",
+    "choose_myriad_token_destinations",
     "choose_objects",
     "choose_option",
     "control_next_turn",
@@ -1878,6 +1879,7 @@
     "draw_if_opponent_cast_colors_this_turn",
     "draw_optional_land",
     "draw_with_actions",
+    "encore_tokens",
     "end_turn",
     "energy",
     "exchange_artifact_zones",
@@ -1922,6 +1924,7 @@
     "move_public_zone_set",
     "next_spell_improvise",
     "next_spell_uncounterable",
+    "ninjutsu_entry",
     "note",
     "offer_draw",
     "pay_or_lose",

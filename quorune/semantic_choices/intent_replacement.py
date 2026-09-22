@@ -140,6 +140,10 @@ _CREATE_TOKEN_FIELDS = _CREATE_TOKEN_FIELDS_V1 | {
     "tapped",
     "attacking_assignments",
 }
+_CREATE_TOKEN_FIELDS_V3 = _CREATE_TOKEN_FIELDS | {
+    "exile_at_end_of_combat"
+}
+_CREATE_TOKEN_FIELDS_V4 = _CREATE_TOKEN_FIELDS_V3 | {"copy_snapshot"}
 _LIFE_CHANGE_FIELDS = {
     "actor",
     "player",
@@ -307,7 +311,7 @@ def _simultaneous_move_intent_identity(
 def _create_token_intent_identity(
     intent: CreateTokenIntent,
 ) -> dict[str, Any]:
-    return {
+    identity = {
         "actor": intent.actor,
         "controller": intent.controller,
         "name": intent.name,
@@ -323,6 +327,11 @@ def _create_token_intent_identity(
             intent.sacrifice_on_controller_end_step
         ),
     }
+    if intent.exile_at_end_of_combat:
+        identity["exile_at_end_of_combat"] = True
+    if intent.copy_snapshot is not None:
+        identity["copy_snapshot"] = thaw_value(intent.copy_snapshot)
+    return identity
 
 
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
@@ -513,7 +522,7 @@ def _validate_player_counter_intent_identity(
         raise SemanticChoiceError(
             "Player counter intent identity is malformed"
         )
-    return {
+    identity = {
         "actor": actor,
         "player_ids": list(players),
         "counter_name": counter_name,
@@ -1043,6 +1052,8 @@ def _validate_create_token_intent_identity(
     if not isinstance(value, Mapping) or set(value) not in {
         frozenset(_CREATE_TOKEN_FIELDS_V1),
         frozenset(_CREATE_TOKEN_FIELDS),
+        frozenset(_CREATE_TOKEN_FIELDS_V3),
+        frozenset(_CREATE_TOKEN_FIELDS_V4),
     }:
         raise SemanticChoiceError(
             "Token-creation intent identity fields are malformed"
@@ -1065,12 +1076,20 @@ def _validate_create_token_intent_identity(
             reason=value[_REASON_FIELD],
             characteristics=FrozenMap(characteristics),
             copy_of=value["copy_of"],
+            copy_snapshot=(
+                FrozenMap(value["copy_snapshot"])
+                if isinstance(value.get("copy_snapshot"), Mapping)
+                else None
+            ),
             temporary_keywords=tuple(temporary_keywords),
             tapped=value.get("tapped", False),
             attacking_assignments=tuple(attacking_assignments),
             sacrifice_at_end_step=value["sacrifice_at_end_step"],
             sacrifice_on_controller_end_step=(
                 value["sacrifice_on_controller_end_step"]
+            ),
+            exile_at_end_of_combat=value.get(
+                "exile_at_end_of_combat", False
             ),
         )
     except (TypeError, ValueError) as exc:
@@ -1093,6 +1112,11 @@ def _validate_create_token_intent_identity(
             intent.sacrifice_on_controller_end_step
         ),
     }
+    if intent.exile_at_end_of_combat:
+        identity["exile_at_end_of_combat"] = True
+    if intent.copy_snapshot is not None:
+        identity["copy_snapshot"] = thaw_value(intent.copy_snapshot)
+    return identity
 
 
 def with_replacement_selections(

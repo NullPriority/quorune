@@ -13,12 +13,14 @@ from .cast_lifecycles import (
     FixedCastLifecycleSpec,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
 )
+from .cast_timing import CastTimingPermission
 from .semantic_runtime.cast_lifecycles import (
     default_fixed_cast_lifecycle_registry,
 )
 
 
 class CompiledCastLifecycleHost(Protocol):
+    state: Any
     semantics: Any
 
     def card_record(self, card: Any) -> Any: ...
@@ -111,9 +113,32 @@ def compiled_fixed_zone_cast_permission(
     )
 
 
+def compiled_sneak_timing_permissions(
+    host: CompiledCastLifecycleHost,
+    card: Any,
+) -> tuple[CastTimingPermission, ...]:
+    """Grant Sneak's narrow declare-blockers casting window when current."""
+
+    combat = host.state.combat
+    if (
+        card.zone == "hand"
+        and host.state.phase == "combat"
+        and host.state.step == "declare_blockers"
+        and combat is not None
+        and combat.blockers_declared
+        and compiled_fixed_cast_lifecycle_spec(
+            host, card, FixedCastLifecycleKind.SNEAK
+        )
+        is not None
+    ):
+        return (CastTimingPermission(),)
+    return ()
+
+
 __all__ = [
     "CompiledCastLifecycleHost",
     "compiled_fixed_cast_lifecycle_spec",
     "compiled_fixed_cast_lifecycle_specs",
     "compiled_fixed_zone_cast_permission",
+    "compiled_sneak_timing_permissions",
 ]

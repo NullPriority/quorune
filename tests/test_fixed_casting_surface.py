@@ -245,7 +245,6 @@ class FixedCastingSurfaceCompilerTests(unittest.TestCase):
             ("Dash {X}{R}", "Dash"),
             ("Warp {W/U}", "Warp"),
             ("Buyback—Sacrifice a land.", "Buyback"),
-            ("Blitz {1}{R}", "Blitz"),
             ("Retrace—Discard two lands.", "Retrace"),
         )
         for index, (text, keyword) in enumerate(cases, start=1):

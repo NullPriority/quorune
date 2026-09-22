@@ -17,6 +17,12 @@ from ..regeneration import RegenerationHost
 from ..return_to_hand import ReturnToHandHost
 from ..tap_state import TapStateHost
 from ..unearth import resolve_unearth_intent, UnearthIntent
+from ..combat_entry_activations import (
+    EncoreTokensIntent,
+    NinjutsuEntryIntent,
+    resolve_encore_tokens,
+    resolve_ninjutsu_entry,
+)
 from ..self_zone_move import resolve_self_zone_move, SelfZoneMoveIntent
 from .context import SemanticNodeError
 from .intents import (
@@ -657,6 +663,14 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, UnearthIntent):
             result = resolve_unearth_intent(sink, intent)
             results.append((intent.card_ref, result))
+            continue
+        if isinstance(intent, NinjutsuEntryIntent):
+            result = resolve_ninjutsu_entry(sink, intent)
+            results.append((intent.source_ref, result))
+            continue
+        if isinstance(intent, EncoreTokensIntent):
+            result = resolve_encore_tokens(sink, intent)
+            results.append((intent.source_ref, result))
             continue
         if isinstance(intent, SelfZoneMoveIntent):
             result = resolve_self_zone_move(sink, intent)

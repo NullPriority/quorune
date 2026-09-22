@@ -185,6 +185,12 @@ def _apply_move_if_in_zone(
             changed_objects=[card.object_id],
         )
         return None
+    required_controller = effect.get("required_controller")
+    if (
+        required_controller is not None
+        and card.controller != str(required_controller)
+    ):
+        return None
     destination = str(effect.get("destination") or "graveyard")
     moved = host.move_card(
         card.object_id,
@@ -202,6 +208,11 @@ def _apply_move_if_in_zone(
         ),
         reason=reason,
         semantic_events=True,
+        transition_kind=(
+            ZoneTransitionKind.SACRIFICE
+            if effect.get("transition_kind") == "sacrifice"
+            else ZoneTransitionKind.ORDINARY
+        ),
         replacement_selections=tuple(
             effect.get("_replacement_selections") or ()
         ),

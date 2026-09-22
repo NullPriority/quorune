@@ -7,6 +7,54 @@ from typing import Any, Mapping, Sequence
 from .ability_fragments import declaration_requirement_specs
 from .combat_constraints import DeclarationRequirement
 from .model import CardInstance
+from .combat_entry_activations import encore_attack_requirement
+
+
+def typed_attacker_requirements(
+    host: Any,
+    attacker: CardInstance,
+    *,
+    active_seats: Sequence[str],
+    error_type: type[Exception],
+) -> list[DeclarationRequirement]:
+    """Return current intrinsic attack requirements for one legal attacker."""
+
+    result: list[DeclarationRequirement] = []
+    for index, requirement in enumerate(
+        declaration_requirement_specs(
+            host._effective_ability_fragments(attacker, error_type=error_type)
+        )
+    ):
+        if requirement.kind != "attack_each_combat":
+            continue
+        result.append(
+            DeclarationRequirement(
+                requirement_id=f"attack:{attacker.ref}:each-combat:{index}",
+                kind="choose",
+                variable=attacker.ref,
+                label=(
+                    f"{host.display_name(attacker.object_id)} attacks this "
+                    "combat if able."
+                ),
+            )
+        )
+    encore_opponent = encore_attack_requirement(attacker)
+    if encore_opponent in active_seats:
+        result.append(
+            DeclarationRequirement(
+                requirement_id=(
+                    f"attack:{attacker.ref}:encore:{encore_opponent}"
+                ),
+                kind="choose_option",
+                variable=attacker.ref,
+                option=encore_opponent,
+                label=(
+                    f"{host.display_name(attacker.object_id)} attacks "
+                    f"{encore_opponent} this combat if able."
+                ),
+            )
+        )
+    return result
 
 
 def typed_blocker_requirements(
@@ -94,6 +142,7 @@ def typed_attacker_block_requirements(
 
 
 __all__ = [
+    "typed_attacker_requirements",
     "typed_attacker_block_requirements",
     "typed_blocker_requirements",
 ]

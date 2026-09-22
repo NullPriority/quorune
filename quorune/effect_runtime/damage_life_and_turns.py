@@ -23,6 +23,7 @@ from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
 from ..semantic_runtime.intents import PlaceCountersIntent
 from ..trigger_processing import schedule_delayed_trigger
+from ..zone_trigger_events import ZoneTransitionKind
 
 
 OPERATIONS = effect_family_contract("damage-life-and-turns.v1").operations
@@ -517,6 +518,7 @@ def _apply_sacrifice_if_present(
         "graveyard",
         reason=reason,
         semantic_events=True,
+        transition_kind=ZoneTransitionKind.SACRIFICE,
     )
     return card.ref
 

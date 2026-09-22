@@ -48,6 +48,12 @@ from ...tap_state import set_permanent_tapped
 from ..activation_costs import (
     FixedTapActivationCostError,
     pay_fixed_tap_cost,
+    fixed_combat_return_cost_context,
+)
+from ...combat_entry_activations import (
+    begin_ninjutsu_reveal,
+    FIXED_COMBAT_RETURN_CONTEXT,
+    ENCORE_EFFECT_OPERATION,
 )
 from ...trigger_processing import collect_ward_occurrences
 from ...trigger_processing import enqueue_trigger_batch
@@ -422,10 +428,21 @@ def _pay_object_and_mana_costs(
             ) from exc
         special_cost_context = None
     else:
+        combat_return_context = fixed_combat_return_cost_context(
+            host,
+            actor=proposal.seat,
+            source=source,
+            ability=ability,
+            response=response,
+        )
         paid_objects = host._pay_ability_choice_costs(
             proposal.seat, source, ability, response
         )
-        special_cost_context = None
+        special_cost_context = (
+            (FIXED_COMBAT_RETURN_CONTEXT, combat_return_context)
+            if combat_return_context is not None
+            else None
+        )
     requirements = dict(thaw_json(proposal.requirements))
     details = thaw_json(proposal.details)
     raw_mana_option = details.get("mana_cost_option")
@@ -758,6 +775,11 @@ def commit_activation(
     except ActivationUsageError as exc:
         raise GameRuleError(str(exc)) from exc
     origin = _commit_source_cost(host, source, ability, response)
+    if program is not None and any(
+        effect.get("op") == ENCORE_EFFECT_OPERATION
+        for effect in program.effects
+    ):
+        source_logical_object_id = source.logical_object_id
     if ability.mana_ability:
         complete_mana_activation(
             host,
@@ -782,6 +804,7 @@ def commit_activation(
         attachment_snapshot,
         special_cost_context,
     )
+    begin_ninjutsu_reveal(host, source, item)
     host.state.stack.append(item)
     collect_ward_occurrences(host, item)
     host._log(

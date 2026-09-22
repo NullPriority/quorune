@@ -12,6 +12,7 @@ from ...cast_lifecycles import (
 )
 from ...cast_timing import cast_timing_is_legal, type_line_has_card_type
 from ...compiled_cast_timing import compiled_cast_timing_permissions
+from ...compiled_cast_lifecycles import compiled_sneak_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
 from ...morph import FACE_DOWN_CAST_METHODS, MORPH_CAST_METHOD
@@ -379,6 +380,11 @@ def _combined_cast_timing_permissions(
     )
     return (
         *printed,
+        *(
+            ()
+            if face_down
+            else compiled_sneak_timing_permissions(host, card)
+        ),
         *static_cast_timing_permissions(host, actor, card, face=face),
     )
 

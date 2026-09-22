@@ -1200,6 +1200,18 @@ the existing graveyard target, optional effect, and last-known-controller
 owners. Variable, repeated, combined, granted, copied, conditional, and
 independently incomplete forms remain source-spanned residuals.
 
+`compiler/combat_entry_activation_nodes.py`,
+`compiler/cast_lifecycle_nodes.py`, and `compiler/myriad_nodes.py` share the
+bounded fixed combat-entry lifecycle family. Isolated ordinary-mana Ninjutsu,
+Commander ninjutsu, Encore, Blitz, Sneak, and Web-slinging plus bare Myriad
+lower through the existing activation, casting, normalized attack-trigger,
+token, combat-recipient, and delayed-transition owners. Ninjutsu and Sneak
+freeze the returned unblocked attacker's recipient before paying the cost;
+Myriad freezes copyable last-known characteristics when it triggers; Encore
+uses its public exiled cost object. Variable, modified, repeated, granted,
+copied, team-specific, and independently incomplete forms remain residual. See
+[ADR 0102](../adr/0102-typed-fixed-combat-entry-lifecycles.md).
+
 Fixed multi-event trigger subscriptions reuse that same owner without creating
 a synthetic event. One source-spanned ability may name exactly two represented
 events in the battlefield active zone; the compiler serializes an ordered

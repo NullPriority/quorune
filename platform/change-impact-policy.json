@@ -1374,6 +1374,49 @@
       ]
     },
     {
+      "id": "fixed-combat-entry-keyword-lifecycle-contract",
+      "patterns": [
+        "quorune/combat_entry_activations.py",
+        "quorune/cast_lifecycles.py",
+        "quorune/compiled_cast_lifecycles.py",
+        "quorune/compiler/combat_entry_activation_nodes.py",
+        "quorune/compiler/cast_lifecycle_nodes.py",
+        "quorune/compiler/myriad_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/entry_counter_coordination.py",
+        "quorune/rules/action_catalog.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/activation_costs.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/semantic_choices/attacking_tokens.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_choices/intent_replacement.py",
+        "quorune/semantic_runtime/combat_entry_activations.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/stack_counter.py",
+        "quorune/stack_resolution.py",
+        "quorune/token_creation.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/fixed-combat-entry-keyword-lifecycle-cards.json",
+        "tests/test_fixed_combat_entry_keyword_lifecycles.py"
+      ],
+      "test_modules": [
+        "test_capability_evidence",
+        "test_card_program_trust",
+        "test_fixed_casting_surface",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_keyword_event_effects",
+        "test_fixed_zone_change_additional_costs",
+        "test_game_record_v3",
+        "test_semantic_handlers",
+        "test_token_creation_replacements",
+        "test_trigger_batches",
+        "test_zone_trigger_events"
+      ]
+    },
+    {
       "id": "fixed-keyword-event-effect-contract",
       "patterns": [
         "quorune/block_transition_engine_adapter.py",

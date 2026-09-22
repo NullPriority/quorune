@@ -123,6 +123,11 @@ def prepare_resolving_entry_replacement(
     else:
         frozen_amounts = dict(raw_amounts)
     try:
+        lifecycle = item.context.get("fixed_cast_lifecycle")
+        requested_tapped = bool(
+            isinstance(lifecycle, Mapping)
+            and lifecycle.get("kind") == "sneak"
+        )
         prepared = prepare_zone_change_replacement(
             host,
             entry_card,
@@ -133,6 +138,7 @@ def prepare_resolving_entry_replacement(
                 frozen_amounts if frozen_amounts else None
             ),
             mana_colors_spent=item.mana_colors_spent,
+            requested_tapped=requested_tapped,
             selections=tuple(selections),
             error_type=error_type,
         )

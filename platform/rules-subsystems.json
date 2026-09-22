@@ -4039,24 +4039,19 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v211-fixed-keyword-event-effects",
-      "compiler_version": "oracle-ir-v211",
-      "bundle_id": "bundle:fixed-keyword-event-effects",
-      "candidate_ids": ["compiler:fixed-keyword-event-effects"],
+      "transition_id": "oracle-ir-v212-fixed-combat-entry-keyword-lifecycles",
+      "compiler_version": "oracle-ir-v212",
+      "bundle_id": "bundle:fixed-combat-entry-keyword-lifecycles",
+      "candidate_ids": ["compiler:fixed-combat-entry-keyword-lifecycles"],
       "family_ids": [
         "continuous_layer:continuous-effect-layers-and-dependencies",
-        "keyword_dependency:ingest"
+        "keyword_dependency:myriad"
       ],
       "capability_ids": [
-        "trigger.keyword.afflict.fixed",
-        "trigger.keyword.annihilator.fixed",
-        "trigger.keyword.firebending.fixed",
-        "trigger.keyword.ingest.fixed",
-        "trigger.keyword.mobilize.fixed",
-        "trigger.keyword.soulshift.fixed"
+        "combat.entry.lifecycle.fixed_public"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-keyword-event-effects"
+      "measurement_id": "measurement:fixed-combat-entry-keyword-lifecycles"
     },
     "forecast_corrections": [
       {
