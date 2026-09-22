@@ -282,7 +282,10 @@ def fixed_query_keyword_grant_handler(
     abilities_text = match.group("abilities")
 
     granted = _attached_granted_abilities(abilities_text)
-    if granted is None or "Protection" in granted[0]:
+    if granted is None or any(
+        ability == "Protection" or ability.startswith("Toxic ")
+        for ability in granted[0]
+    ):
         return None
     abilities, fragments = granted
     capabilities = {
@@ -1267,6 +1270,8 @@ def _conditional_target(
         descriptor = compiled[1]
         condition = descriptor["condition"]
         modifier = descriptor["modifier"]
+        if modifier.get("add_ability_fragments"):
+            continue
         return (
             {
                 "kind": "fixed_query",

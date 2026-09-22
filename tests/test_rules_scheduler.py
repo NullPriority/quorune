@@ -5234,8 +5234,29 @@ class RulesSchedulerTests(unittest.TestCase):
             == "bundle:typed-ward-cost-and-composition-closure"
         )
 
-        self.assertEqual(102, ward["expected_exact_ability_gain"])
-        self.assertEqual(102, ward["expected_material_residual_reduction"])
+        measurement = next(
+            row
+            for row in self.work_inputs["cohort_measurements"]["measurements"]
+            if row["bundle_id"]
+            == "bundle:typed-ward-cost-and-composition-closure"
+        )
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        self.assertEqual(
+            measurement["exact_ability_gain"],
+            ward["expected_exact_ability_gain"],
+        )
+        self.assertEqual(
+            measurement["material_residual_reduction"],
+            ward["expected_material_residual_reduction"],
+        )
+        self.assertGreaterEqual(
+            ward["expected_exact_ability_gain"],
+            coverage["minimum_exact_ability_gain"],
+        )
+        self.assertGreaterEqual(
+            ward["expected_material_residual_reduction"],
+            coverage["minimum_material_residual_reduction"],
+        )
         self.assertTrue(ward["eligible"])
         self.assertEqual(
             "major_exact_ability_harvest",

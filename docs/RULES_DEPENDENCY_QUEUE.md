@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "31ba79b64cc234a040ad227357153a0a511958ce000fc5b555bc51a6eeb55440"
+verified: "6575b1414b6c7fb674f847341473f440cfc941db98a6b4113cc1dca6c9958d1a"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `ae337ecf84f41da804666518664a3c3cc0fd77d7fd7c79de574381bfdf40cd9b`
+Source fingerprint: `1b8c0840c26b16275190197de59e5d177b6bca5f1c77b89459402d19224c72d9`
 
 ## Current top-level state
 
@@ -34,7 +34,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 
 | Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |
 |---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | selected | implementation | true | `bundle:typed-ward-cost-and-composition-closure` | `compiler_harvest` | 2 | 1 | 16 | 102 | 2.285714 | 0 | 0 |
+| 1 | selected | implementation | true | `bundle:typed-ward-cost-and-composition-closure` | `compiler_harvest` | 2 | 1 | 16 | 101 | 2.285714 | 0 | 0 |
 | 2 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 3 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 4 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |

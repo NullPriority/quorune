@@ -867,6 +867,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
             "Attacking creatures you control with a +1/+1 counter on them "
             "have trample.",
             "Creatures you control have protection from red.",
+            "Other Rats you control have toxic 1.",
             "Artifact permanents you control have flying.",
             "Creatures you control get +1/+1 and have protection from red.",
             "Creatures you control have haste until end of turn.",
