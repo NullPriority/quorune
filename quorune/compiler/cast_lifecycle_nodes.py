@@ -14,6 +14,9 @@ from ..cast_lifecycles import (
     FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
 )
+from ..combat_entry_activations import (
+    FIXED_COMBAT_ENTRY_LIFECYCLE_CAPABILITY_ID,
+)
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import explicit_capabilities_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
@@ -120,6 +123,12 @@ def _lifecycle_runtime_coverage(spec: Any) -> tuple[str, ...]:
             "fixed_mana_optional_additional_cost",
             "replacement_aware_resolution_destination",
         ),
+        FixedCastLifecycleKind.BLITZ: (
+            "fixed_mana_alternate_cost",
+            "zone_object_haste",
+            "identity_pinned_death_draw",
+            "identity_pinned_delayed_sacrifice",
+        ),
         FixedCastLifecycleKind.DASH: (
             "fixed_mana_alternate_cost",
             "zone_object_haste",
@@ -166,6 +175,15 @@ def _lifecycle_runtime_coverage(spec: Any) -> tuple[str, ...]:
             "owner_upkeep_counter_removal",
             "last_counter_optional_free_cast",
             "identity_pinned_control_duration_haste",
+        ),
+        FixedCastLifecycleKind.SNEAK: (
+            "fixed_mana_alternate_cost",
+            "typed_unblocked_attacker_return_cost",
+            "same_recipient_tapped_attacking_entry",
+        ),
+        FixedCastLifecycleKind.WEB_SLINGING: (
+            "fixed_mana_alternate_cost",
+            "typed_tapped_creature_return_cost",
         ),
     }[spec.kind]
 
@@ -228,7 +246,14 @@ def fixed_cast_lifecycle_keyword_node(
     }
     dependencies = (
         (
-            FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID
+            FIXED_COMBAT_ENTRY_LIFECYCLE_CAPABILITY_ID
+            if spec.kind
+            in {
+                FixedCastLifecycleKind.BLITZ,
+                FixedCastLifecycleKind.SNEAK,
+                FixedCastLifecycleKind.WEB_SLINGING,
+            }
+            else FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID
             if spec.kind in zone_cast_kinds
             else FIXED_CAST_LIFECYCLE_CAPABILITY_ID
         ),
@@ -276,7 +301,13 @@ def fixed_cast_lifecycle_keyword_node(
         event=FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
         lowerable=True,
         exact=not residual_ids,
-        template_id=FIXED_CAST_LIFECYCLE_TEMPLATE_ID,
+        template_id={
+            FixedCastLifecycleKind.BLITZ: "fixed-blitz-cast-lifecycle-v1",
+            FixedCastLifecycleKind.SNEAK: "fixed-sneak-cast-lifecycle-v1",
+            FixedCastLifecycleKind.WEB_SLINGING: (
+                "fixed-web-slinging-cast-lifecycle-v1"
+            ),
+        }.get(spec.kind, FIXED_CAST_LIFECYCLE_TEMPLATE_ID),
         handlers=(fixed_cast_lifecycle_handler_descriptor(spec),),
         runtime_coverage=coverage,
         mechanics=mechanics,

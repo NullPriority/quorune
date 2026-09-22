@@ -271,7 +271,7 @@ def _ability_offers(
     offers: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
     player = host.state.players[seat]
-    for zone in ("battlefield", "hand", "graveyard", "exile"):
+    for zone in ("battlefield", "hand", "graveyard", "exile", "command"):
         for object_id in player.zones[zone]:
             card = host.state.cards[object_id]
             if zone == "battlefield":

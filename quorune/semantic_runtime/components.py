@@ -51,6 +51,10 @@ from .public_alternative_costs import (
 from .madness import default_madness_trigger_registry
 from .kicker import default_fixed_mana_kicker_registry
 from .unearth import default_ordinary_unearth_ability_registry
+from .combat_entry_activations import (
+    default_fixed_encore_ability_registry,
+    default_fixed_ninjutsu_ability_registry,
+)
 from .self_zone_move import default_self_zone_move_ability_registry
 from .continuous_components import (
     default_continuous_effect_component_registry,
@@ -99,6 +103,8 @@ def runtime_component_registries() -> tuple[Any, ...]:
         default_madness_trigger_registry(),
         default_fixed_mana_kicker_registry(),
         default_ordinary_unearth_ability_registry(),
+        default_fixed_ninjutsu_ability_registry(),
+        default_fixed_encore_ability_registry(),
         default_self_zone_move_ability_registry(),
         default_token_creation_replacement_registry(),
         default_untap_step_component_registry(),

@@ -2738,6 +2738,9 @@ class RulesSchedulerTests(unittest.TestCase):
             "Dash {1}{R}",
             "Warp {2}{U}",
             "Retrace",
+            "Blitz {1}{R}",
+            "Sneak {1}{R}",
+            "Web-slinging {1}{G}",
             "Creature spells with flying you cast cost {1} less to cast.",
             "Artifact spells your opponents cast cost {2} more to cast.",
             "The first creature spell you cast each turn costs {1} less to cast.",
@@ -2745,7 +2748,6 @@ class RulesSchedulerTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertTrue(_matches_probe(probe_id, source))
         for source in (
-            "Blitz {1}{R}",
             "Buyback—Discard a card.",
             "Dash {X}{R}",
             "Warp {W/U}",

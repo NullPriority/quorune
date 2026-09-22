@@ -155,25 +155,41 @@ class CostChoice:
             return None
         from .additional_cost_vocabulary import (
             FIXED_ZONE_CHANGE_COST_CONTRACTS,
+            RETURN_ONE_TO_OWNER_HAND_COST,
             ZONE_CHANGE_COST_KIND,
         )
         from .rules.casting_additional_costs import (
             FixedZoneChangeAdditionalCost,
         )
 
-        contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(self.kind)
+        from .combat_entry_activations import (
+            FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND,
+        )
+
+        operation = (
+            RETURN_ONE_TO_OWNER_HAND_COST
+            if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
+            else self.kind
+        )
+        contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(operation)
         if contract is None:
             return None
-        return FixedZoneChangeAdditionalCost.from_descriptor(
-            {
-                "schema_version": 1,
+        descriptor = {
+                "schema_version": (
+                    2
+                    if self.kind
+                    == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
+                    else 1
+                ),
                 "kind": ZONE_CHANGE_COST_KIND,
-                "operation": self.kind,
+                "operation": operation,
                 "count": 1,
                 "choice_field": contract[2],
                 "predicate": thaw_value(self.predicate),
             }
-        )
+        if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND:
+            descriptor["unblocked_attacker"] = True
+        return FixedZoneChangeAdditionalCost.from_descriptor(descriptor)
 
     def fixed_tap_cost(self) -> Any | None:
         """Return the shared closed selected-permanent tap cost, if present."""

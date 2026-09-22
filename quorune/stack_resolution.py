@@ -14,6 +14,7 @@ from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
 from .semantic_runtime.zone_replacements import PreparedZoneChange
 from .stack_counter import oracle_has_intrinsic_counter_prohibition
+from .combat_entry_activations import cleanup_ninjutsu_reveal
 
 
 _COPY_TERM = "copy"
@@ -90,6 +91,7 @@ def complete_stack_resolution(
 
     item.context.pop("currently_resolving", None)
     host.state.stack.remove(item)
+    cleanup_ninjutsu_reveal(host, item)
     if item.context.get("copy_permanent_spell"):
         if not item.card_object_id:
             raise StateInvariantError(
@@ -145,6 +147,15 @@ def complete_stack_resolution(
         fixed_cast_lifecycle_resolution_destination(item, destination)
         or "graveyard",
         controller=item.controller,
+        tapped=(
+            True
+            if isinstance(
+                item.context.get("fixed_cast_lifecycle"), dict
+            )
+            and item.context["fixed_cast_lifecycle"].get("kind")
+            == "sneak"
+            else None
+        ),
         **aura_resolution_move_kwargs(item),
         prepared_replacement=prepared_replacement,
         reason="spell resolved",

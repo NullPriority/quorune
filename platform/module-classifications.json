@@ -1073,6 +1073,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/combat_entry_activations.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/combat_evasion.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -1730,6 +1744,21 @@
     },
     {
       "file": "quorune/compiler/closed_static_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/combat_entry_activation_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -2855,6 +2884,21 @@
     },
     {
       "file": "quorune/compiler/multi_keyword_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/myriad_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -7881,6 +7925,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/combat_entry_activations.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/combat_metadata.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -9727,5 +9786,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "419f01343d2a54c782e7008364d65528572bc808f1b15d38e8a1fadb0b21d467"
+  "fingerprint": "42232816e55ff5e8e57697bda0897cefac48fbe48030f6141ab90880b5740e14"
 }

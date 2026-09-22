@@ -12,6 +12,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from .additional_cost_vocabulary import (
     DISCARD_ONE_COST,
     EXILE_ONE_FROM_GRAVEYARD_COST,
+    RETURN_ONE_TO_OWNER_HAND_COST,
 )
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .continuous_effect_state import ResolutionEffectSource
@@ -21,7 +22,7 @@ from .impulse_access_model import (
     TemporaryCastPermissionGrant,
 )
 from .model import CardInstance, StackItem
-from .object_predicate import ObjectQuerySpec
+from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .replacement.immutable import FrozenMap, thaw_value
 from .replacement.model import ReplacementClass, ReplacementEffect
 from .replacement.operations import SetField
@@ -46,6 +47,7 @@ REBOUND_EXILE_CAST_PRODUCER = "rebound"
 
 
 class FixedCastLifecycleKind(str, Enum):
+    BLITZ = "blitz"
     BUYBACK = "buyback"
     DASH = "dash"
     ESCAPE = "escape"
@@ -57,13 +59,16 @@ class FixedCastLifecycleKind(str, Enum):
     WARP = "warp"
     RETRACE = "retrace"
     SUSPEND = "suspend"
+    SNEAK = "sneak"
+    WEB_SLINGING = "web-slinging"
 
 
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
 _MANA_FIELDS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 _ORDINARY_COST = r"(?:\{(?:0|[1-9][0-9]*|[WUBRGC])\})+"
 _FIXED_LIFECYCLE = re.compile(
-    rf"^(?P<mechanic>Buyback|Dash|Madness|Warp) (?P<cost>{_ORDINARY_COST})"
+    rf"^(?P<mechanic>Blitz|Buyback|Dash|Madness|Sneak|Web-slinging|Warp) "
+    rf"(?P<cost>{_ORDINARY_COST})"
     r"(?:\s+\(.*\))?\.?$",
     re.IGNORECASE,
 )
@@ -410,13 +415,24 @@ class FixedCastLifecycleSpec:
             option["_additional_option_costs"] = [
                 escape_other_card_cost_descriptor(self.exile_count or 0)
             ]
+        if self.kind is FixedCastLifecycleKind.SNEAK:
+            option["_additional_option_costs"] = [
+                combat_return_cost_descriptor(unblocked_attacker=True)
+            ]
+        if self.kind is FixedCastLifecycleKind.WEB_SLINGING:
+            option["_additional_option_costs"] = [
+                combat_return_cost_descriptor(tapped=True)
+            ]
         if self.kind in {
+            FixedCastLifecycleKind.BLITZ,
             FixedCastLifecycleKind.DASH,
             FixedCastLifecycleKind.ESCAPE,
             FixedCastLifecycleKind.FORETELL,
             FixedCastLifecycleKind.MADNESS,
             FixedCastLifecycleKind.PLOT,
             FixedCastLifecycleKind.WARP,
+            FixedCastLifecycleKind.SNEAK,
+            FixedCastLifecycleKind.WEB_SLINGING,
         }:
             option["x_value_policy"] = "zero"
         if self.kind is FixedCastLifecycleKind.MADNESS:
@@ -616,6 +632,33 @@ def escape_other_card_cost_descriptor(count: int) -> dict[str, Any]:
             known_to_actor=True,
         ),
         count=count,
+    ).to_descriptor()
+
+
+def combat_return_cost_descriptor(
+    *,
+    tapped: bool | None = None,
+    unblocked_attacker: bool = False,
+) -> dict[str, Any]:
+    """Return the closed public creature-return cost for Sneak/Web-slinging."""
+
+    return FixedZoneChangeAdditionalCost(
+        operation=RETURN_ONE_TO_OWNER_HAND_COST,
+        choice_field="return_cards",
+        predicate=ObjectQuerySpec(
+            zones=("battlefield",),
+            controller="$actor",
+            types_all=("creature",),
+            tapped=tapped,
+            state_predicate=(
+                PermanentStatePredicateSpec(attacking=True)
+                if unblocked_attacker
+                else None
+            ),
+            known_to_actor=True,
+        ),
+        unblocked_attacker=unblocked_attacker,
+        schema_version=2,
     ).to_descriptor()
 
 
@@ -905,105 +948,169 @@ def fixed_cast_lifecycle_subject_replacements(
     )
 
 
-def complete_fixed_cast_lifecycle_resolution(
+def _grant_lifecycle_haste(
     host: FixedCastLifecycleHost,
     *,
     item: StackItem,
     card: CardInstance,
-    resolved_logical_object_id: str | None = None,
-    applied_replacement_effect_ids: Sequence[str] = (),
+    duration: ContinuousEffectDuration | None = None,
 ) -> None:
-    """Apply the chosen lifecycle only after a stack object resolves."""
+    normalized_zone_object_keyword("Haste")
+    commit_zone_object_keyword_grant(
+        host,
+        card=card,
+        source=ResolutionEffectSource(
+            stack_ref=item.ref,
+            object_id=card.object_id,
+            logical_object_id=card.logical_object_id,
+            card_ref=card.ref,
+        ),
+        keyword="Haste",
+        **({"duration": duration} if duration is not None else {}),
+    )
 
-    suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
-    if isinstance(suspended, Mapping):
-        spec = FixedCastLifecycleSpec.from_dict(suspended)
-        if spec.kind is not FixedCastLifecycleKind.SUSPEND:
-            raise FixedCastLifecycleError(
-                "Suspend Haste context has the wrong lifecycle"
-            )
-        if card.zone == "battlefield" and card.object_kind == "card":
-            normalized_zone_object_keyword("Haste")
-            commit_zone_object_keyword_grant(
-                host,
-                card=card,
-                source=ResolutionEffectSource(
-                    stack_ref=item.ref,
-                    object_id=card.object_id,
-                    logical_object_id=card.logical_object_id,
-                    card_ref=card.ref,
-                ),
-                keyword="Haste",
-                duration=(
-                    ContinuousEffectDuration.UNTIL_CONTROL_CHANGE
-                ),
-            )
-        return
-    raw = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
-    if not isinstance(raw, Mapping):
-        return
-    spec = FixedCastLifecycleSpec.from_dict(raw)
-    if spec.kind is FixedCastLifecycleKind.REBOUND:
-        applied_rebound = bool(
-            resolved_logical_object_id
-            and fixed_cast_lifecycle_replacement_effect_id(
-                spec.kind,
-                resolved_logical_object_id,
-            )
-            in applied_replacement_effect_ids
+
+def _complete_rebound_resolution(
+    host: FixedCastLifecycleHost,
+    *,
+    item: StackItem,
+    card: CardInstance,
+    spec: FixedCastLifecycleSpec,
+    resolved_logical_object_id: str | None,
+    applied_replacement_effect_ids: Sequence[str],
+) -> None:
+    applied = bool(
+        resolved_logical_object_id
+        and fixed_cast_lifecycle_replacement_effect_id(
+            spec.kind, resolved_logical_object_id
         )
-        if (
-            item.context.get("rebound_from_hand") is True
-            and applied_rebound
-            and card.zone == "exile"
-            and card.object_kind == "card"
-        ):
-            schedule_delayed_trigger(
-                host,
-                controller=item.controller,
-                label=f"{card.printed_name} — cast from Rebound",
-                event_kind="step.begin",
-                condition={
-                    "phase": "beginning",
-                    "step": "upkeep",
-                    "player": item.controller,
-                },
-                stack_template={
-                    "label": f"{card.printed_name} — cast from Rebound",
-                    "semantic_key": REBOUND_CAST_SEMANTIC_KEY,
-                    "context": {
-                        "source_logical_object_id": card.logical_object_id,
-                        "rebound_spec": spec.to_dict(),
-                    },
-                },
-                source_object_id=card.object_id,
-                referred_object_ids=(card.object_id,),
-                once=True,
-            )
+        in applied_replacement_effect_ids
+    )
+    if not (
+        item.context.get("rebound_from_hand") is True
+        and applied
+        and card.zone == "exile"
+        and card.object_kind == "card"
+    ):
         return
-    if spec.kind not in {
-        FixedCastLifecycleKind.DASH,
-        FixedCastLifecycleKind.WARP,
-    }:
-        return
+    schedule_delayed_trigger(
+        host,
+        controller=item.controller,
+        label=f"{card.printed_name} — cast from Rebound",
+        event_kind="step.begin",
+        condition={
+            "phase": "beginning",
+            "step": "upkeep",
+            "player": item.controller,
+        },
+        stack_template={
+            "label": f"{card.printed_name} — cast from Rebound",
+            "semantic_key": REBOUND_CAST_SEMANTIC_KEY,
+            "context": {
+                "source_logical_object_id": card.logical_object_id,
+                "rebound_spec": spec.to_dict(),
+            },
+        },
+        source_object_id=card.object_id,
+        referred_object_ids=(card.object_id,),
+        once=True,
+    )
+
+
+def _complete_sneak_resolution(
+    host: FixedCastLifecycleHost,
+    *,
+    item: StackItem,
+    card: CardInstance,
+) -> None:
     if card.zone != "battlefield" or card.object_kind != "card":
         return
-    if spec.kind is FixedCastLifecycleKind.DASH:
-        normalized_zone_object_keyword("Haste")
-        commit_zone_object_keyword_grant(
-            host,
-            card=card,
-            source=ResolutionEffectSource(
-                stack_ref=item.ref,
-                object_id=card.object_id,
-                logical_object_id=card.logical_object_id,
-                card_ref=card.ref,
-            ),
-            keyword="Haste",
-        )
-    destination = (
-        "hand" if spec.kind is FixedCastLifecycleKind.DASH else "exile"
+    raw_contexts = item.context.get("fixed_cast_lifecycle_cost_objects")
+    contexts = raw_contexts if isinstance(raw_contexts, list) else []
+    context = contexts[0] if len(contexts) == 1 else None
+    target = (
+        context.get("attack_target_context")
+        if isinstance(context, Mapping)
+        else None
     )
+    if not isinstance(target, Mapping) or host.state.combat is None:
+        raise FixedCastLifecycleError(
+            "Sneak resolution requires its paid attack recipient"
+        )
+    from .combat_relationship_state import (
+        AttackDeclarationAssignment,
+        commit_attack_declaration,
+    )
+
+    commit_attack_declaration(
+        host.state.combat,
+        host.state.cards,
+        controller=item.controller,
+        assignments=(
+            AttackDeclarationAssignment(
+                attacker_object_id=card.object_id,
+                target=str(target.get("target") or ""),
+                target_kind=str(target.get("kind") or ""),
+                defending_player=str(target.get("defending_player") or ""),
+                target_logical_object_id=(
+                    str(target["logical_object_id"])
+                    if target.get("logical_object_id") is not None
+                    else None
+                ),
+            ),
+        ),
+    )
+
+
+def _complete_blitz_resolution(
+    host: FixedCastLifecycleHost,
+    *,
+    item: StackItem,
+    card: CardInstance,
+) -> None:
+    _grant_lifecycle_haste(host, item=item, card=card)
+    card.annotations["fixed_blitz_designation"] = {
+        "logical_object_id": card.logical_object_id,
+        "controller": item.controller,
+    }
+    schedule_delayed_trigger(
+        host,
+        controller=item.controller,
+        label=f"Sacrifice {card.ref} at the next end step",
+        event_kind="step.begin",
+        condition={"phase": "ending", "step": "end_step"},
+        stack_template={
+            "label": f"Blitz — sacrifice {card.ref}",
+            "context": {
+                "dynamic_effects": [
+                    {
+                        "op": "move_if_in_zone",
+                        "card": card.ref,
+                        "from": "battlefield",
+                        "destination": "graveyard",
+                        "transition_kind": "sacrifice",
+                        "expected_zone_change_counter": card.zone_change_counter,
+                        "expected_object_identity": card.logical_object_id,
+                    }
+                ]
+            },
+        },
+        source_object_id=card.object_id,
+        referred_object_ids=(card.object_id,),
+        once=True,
+    )
+
+
+def _complete_dash_or_warp_resolution(
+    host: FixedCastLifecycleHost,
+    *,
+    item: StackItem,
+    card: CardInstance,
+    spec: FixedCastLifecycleSpec,
+) -> None:
+    if spec.kind is FixedCastLifecycleKind.DASH:
+        _grant_lifecycle_haste(host, item=item, card=card)
+    destination = "hand" if spec.kind is FixedCastLifecycleKind.DASH else "exile"
     move_effect = {
         "op": "move_if_in_zone",
         "card": card.ref,
@@ -1031,9 +1138,7 @@ def complete_fixed_cast_lifecycle_resolution(
         event_kind="step.begin",
         condition={"phase": "ending", "step": "end_step"},
         stack_template={
-            "label": (
-                f"{spec.kind.value.title()} — move {card.ref} to {destination}"
-            ),
+            "label": f"{spec.kind.value.title()} — move {card.ref} to {destination}",
             "context": {"dynamic_effects": [move_effect]},
         },
         source_object_id=card.object_id,
@@ -1042,7 +1147,64 @@ def complete_fixed_cast_lifecycle_resolution(
     )
 
 
+def complete_fixed_cast_lifecycle_resolution(
+    host: FixedCastLifecycleHost,
+    *,
+    item: StackItem,
+    card: CardInstance,
+    resolved_logical_object_id: str | None = None,
+    applied_replacement_effect_ids: Sequence[str] = (),
+) -> None:
+    """Apply the chosen lifecycle only after a stack object resolves."""
+
+    suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
+    if isinstance(suspended, Mapping):
+        spec = FixedCastLifecycleSpec.from_dict(suspended)
+        if spec.kind is not FixedCastLifecycleKind.SUSPEND:
+            raise FixedCastLifecycleError(
+                "Suspend Haste context has the wrong lifecycle"
+            )
+        if card.zone == "battlefield" and card.object_kind == "card":
+            _grant_lifecycle_haste(
+                host,
+                item=item,
+                card=card,
+                duration=ContinuousEffectDuration.UNTIL_CONTROL_CHANGE,
+            )
+        return
+    raw = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
+    if not isinstance(raw, Mapping):
+        return
+    spec = FixedCastLifecycleSpec.from_dict(raw)
+    if spec.kind is FixedCastLifecycleKind.REBOUND:
+        _complete_rebound_resolution(
+            host,
+            item=item,
+            card=card,
+            spec=spec,
+            resolved_logical_object_id=resolved_logical_object_id,
+            applied_replacement_effect_ids=applied_replacement_effect_ids,
+        )
+        return
+    if spec.kind is FixedCastLifecycleKind.SNEAK:
+        _complete_sneak_resolution(host, item=item, card=card)
+        return
+    if spec.kind not in {
+        FixedCastLifecycleKind.BLITZ,
+        FixedCastLifecycleKind.DASH,
+        FixedCastLifecycleKind.WARP,
+    }:
+        return
+    if card.zone != "battlefield" or card.object_kind != "card":
+        return
+    if spec.kind is FixedCastLifecycleKind.BLITZ:
+        _complete_blitz_resolution(host, item=item, card=card)
+        return
+    _complete_dash_or_warp_resolution(host, item=item, card=card, spec=spec)
+
+
 __all__ = [
+    "combat_return_cost_descriptor",
     "compile_fixed_cast_lifecycle",
     "complete_fixed_cast_lifecycle_resolution",
     "FixedCastLifecycleError",

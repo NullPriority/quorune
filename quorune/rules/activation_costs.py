@@ -7,8 +7,13 @@ from typing import Any, Mapping, Protocol
 
 from ..object_predicate import ObjectQuerySpec
 from ..object_query import object_query_result, query_objects
+from ..replacement.immutable import FrozenMap
 from ..tap_state import set_permanent_tapped
 from .casting_additional_costs import fixed_zone_change_cost_candidates
+from ..combat_entry_activations import (
+    FIXED_COMBAT_RETURN_CONTEXT,
+    FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND,
+)
 
 
 FIXED_TAP_ACTIVATION_COST_KIND = "tap"
@@ -432,6 +437,60 @@ def activation_choice_candidates(
     return tuple(candidates)
 
 
+def fixed_combat_return_cost_context(
+    host: ActivationCostHost,
+    *,
+    actor: str,
+    source: Any,
+    ability: Any,
+    response: Mapping[str, Any],
+) -> FrozenMap | None:
+    """Freeze the paid attack recipient before the attacker changes zones."""
+
+    choices = tuple(
+        choice
+        for choice in ability.choices
+        if choice.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
+    )
+    if not choices:
+        return None
+    if len(choices) != 1 or len(ability.choices) != 1:
+        raise FixedTapActivationCostError(
+            "A combat-return activation requires one isolated object cost"
+        )
+    raw = response.get("cost_cards") or response.get("cost_objects") or ()
+    if not isinstance(raw, (list, tuple)) or len(raw) != 1:
+        raise FixedTapActivationCostError(
+            "A combat-return activation requires one selected attacker"
+        )
+    ref = raw[0]
+    candidates = activation_choice_candidates(
+        host, actor, source, choices[0]
+    )
+    if type(ref) is not str or ref not in candidates:
+        raise FixedTapActivationCostError(
+            "The selected unblocked attacker is no longer legal"
+        )
+    card = next(
+        (
+            host.state.cards[object_id]
+            for object_id in host.state.players[actor].zones["battlefield"]
+            if host.state.cards[object_id].ref == ref
+        ),
+        None,
+    )
+    target = (
+        host.state.combat.attack_target_context.get(card.object_id)
+        if card is not None and host.state.combat is not None
+        else None
+    )
+    if not isinstance(target, Mapping):
+        raise FixedTapActivationCostError(
+            "The selected attacker has no current attack recipient"
+        )
+    return FrozenMap(dict(target))
+
+
 __all__ = [
     "FIXED_TAP_ACTIVATION_COST_KIND",
     "FixedTapActivationCost",
@@ -441,6 +500,7 @@ __all__ = [
     "activation_choice_candidates",
     "commit_fixed_tap_cost",
     "fixed_tap_cost_candidates",
+    "fixed_combat_return_cost_context",
     "pay_fixed_tap_cost",
     "prepare_fixed_tap_cost",
 ]

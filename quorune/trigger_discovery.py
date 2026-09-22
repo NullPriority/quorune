@@ -145,6 +145,8 @@ class TriggerDiscoveryHost(Protocol):
         self, card: str | CardInstance
     ) -> Mapping[str, Any]: ...
 
+    def _copyable_characteristics(self, card: CardInstance) -> Mapping[str, Any]: ...
+
     def _type_parts(
         self, type_line: str
     ) -> tuple[set[str], set[str], set[str]]: ...
@@ -890,6 +892,20 @@ def _semantic_trigger_context(
                 }
             ).encode("utf-8")
         ).hexdigest()
+    if any(
+        effect.get("op") == "choose_myriad_token_destinations"
+        for effect in program.effects
+    ):
+        copyable = copy.deepcopy(dict(host._copyable_characteristics(source)))
+        stack_context["myriad_copy_snapshot"] = {
+            "oracle_id": source.oracle_id,
+            "printed_name": source.printed_name,
+            "annotations": {
+                "copied_from": source.object_id,
+                "copy_overrides": copyable,
+            },
+            "characteristics": copyable,
+        }
     if (
         isinstance(program.event_condition, Mapping)
         and program.event_condition.get("field")
@@ -997,6 +1013,44 @@ def _shared_evoke_trigger_item(
     )
 
 
+def _shared_blitz_trigger_item(
+    host: TriggerDiscoveryHost,
+    source: CardInstance,
+    event: str,
+    context: Mapping[str, Any],
+) -> StackItem | None:
+    """Materialize Blitz's incarnation-pinned dies trigger from its marker."""
+
+    marker = source.annotations.get("fixed_blitz_designation")
+    if (
+        event != "creature.dies"
+        or str(context.get("card") or "") != source.ref
+        or not isinstance(marker, Mapping)
+        or marker.get("logical_object_id") != source.logical_object_id
+        or type(marker.get("controller")) is not str
+    ):
+        return None
+    ref = host._next_ref("S")
+    return StackItem(
+        stack_id=host._stable_runtime_id("stack", ref),
+        ref=ref,
+        kind="triggered_ability",
+        controller=source.controller,
+        label=f"{source.printed_name} Blitz draw",
+        source_object_id=source.object_id,
+        visibility=list(host.seats),
+        context={
+            "event": event,
+            "event_context": copy.deepcopy(dict(context)),
+            "source_logical_object_id": source.logical_object_id,
+            "dynamic_effects": [
+                {"op": "draw", "player": source.controller, "count": 1}
+            ],
+            "blitz": True,
+        },
+    )
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1023,6 +1077,18 @@ def dispatch_semantic_event(
                 _trigger_multiplier_copies(
                     host,
                     item=evoke_item,
+                    source=source,
+                    event=event,
+                    context=context,
+                )
+            )
+        blitz_item = _shared_blitz_trigger_item(host, source, event, context)
+        if blitz_item is not None:
+            triggered.append(blitz_item)
+            triggered.extend(
+                _trigger_multiplier_copies(
+                    host,
+                    item=blitz_item,
                     source=source,
                     event=event,
                     context=context,

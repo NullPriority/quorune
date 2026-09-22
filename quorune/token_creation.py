@@ -168,18 +168,26 @@ def _creation_subject(
     quantity: int,
     copy_of: str | None,
     characteristics: Mapping[str, Any] | None,
+    copy_source_zone: str = "battlefield",
+    copy_snapshot: Mapping[str, Any] | None = None,
 ) -> tuple[set[str], set[str], list[Any]]:
     if copy_of:
-        copied_source = host._resolve_object(
-            controller,
-            str(copy_of),
-            zones={"battlefield"},
+        copied_source = (
+            None
+            if copy_snapshot is not None
+            else host._resolve_object(
+                controller,
+                str(copy_of),
+                zones={copy_source_zone},
+            )
+        )
+        copied_data = (
+            dict(copy_snapshot.get("characteristics") or {})
+            if copy_snapshot is not None
+            else host._effective_card_data(copied_source)
         )
         created_types, created_subtypes, _ = host._type_parts(
-            str(
-                host._effective_card_data(copied_source).get("type_line")
-                or ""
-            )
+            str(copied_data.get("type_line") or "")
         )
     else:
         type_line = str(
@@ -302,11 +310,33 @@ def _copied_token_identity(
     name: str,
     characteristics: Mapping[str, Any],
     ref: str,
+    copy_source_zone: str = "battlefield",
+    copy_snapshot: Mapping[str, Any] | None = None,
 ) -> tuple[str, str, str, dict[str, Any]]:
+    if copy_snapshot is not None:
+        if set(copy_snapshot) != {
+            "oracle_id",
+            "printed_name",
+            "annotations",
+            "characteristics",
+        }:
+            raise TokenCreationError("Token copy snapshot fields are closed")
+        annotations = copy.deepcopy(dict(copy_snapshot["annotations"]))
+        overrides = dict(copy_snapshot["characteristics"])
+        if name:
+            overrides["name"] = name
+        overrides.update(characteristics)
+        annotations["copy_overrides"] = overrides
+        return (
+            ref,
+            str(copy_snapshot["oracle_id"]),
+            name or str(copy_snapshot["printed_name"]),
+            annotations,
+        )
     original = host._resolve_object(
         controller,
         str(copy_of),
-        zones={"battlefield"},
+        zones={copy_source_zone},
     )
     annotations = copy.deepcopy(original.annotations)
     annotations["copied_from"] = original.object_id
@@ -368,14 +398,31 @@ def _preview_token_object(
     raw_name = spec.get("name")
     name = str(raw_name) if raw_name is not None else ""
     if copy_of:
-        original = host._resolve_object(
-            controller,
-            str(copy_of),
-            zones={"battlefield"},
+        snapshot = spec.get("copy_snapshot")
+        original = (
+            None
+            if isinstance(snapshot, Mapping)
+            else host._resolve_object(
+                controller,
+                str(copy_of),
+                zones={str(spec.get("copy_source_zone") or "battlefield")},
+            )
         )
-        oracle_id = original.oracle_id
-        printed_name = name or host.display_name(original.object_id)
-        annotations = copy.deepcopy(original.annotations)
+        oracle_id = (
+            str(snapshot["oracle_id"])
+            if isinstance(snapshot, Mapping)
+            else original.oracle_id
+        )
+        printed_name = name or (
+            str(snapshot["printed_name"])
+            if isinstance(snapshot, Mapping)
+            else host.display_name(original.object_id)
+        )
+        annotations = (
+            copy.deepcopy(dict(snapshot["annotations"]))
+            if isinstance(snapshot, Mapping)
+            else copy.deepcopy(original.annotations)
+        )
         overrides = dict(annotations.get("copy_overrides") or {})
         if name:
             overrides["name"] = name
@@ -579,6 +626,14 @@ def _prepare_token_objects(
                     name=name,
                     characteristics=characteristics,
                     ref=ref,
+                    copy_source_zone=str(
+                        spec.get("copy_source_zone") or "battlefield"
+                    ),
+                    copy_snapshot=(
+                        spec.get("copy_snapshot")
+                        if isinstance(spec.get("copy_snapshot"), Mapping)
+                        else None
+                    ),
                 )
             else:
                 identity = _new_token_identity(
@@ -905,6 +960,8 @@ def create_tokens(
     attacking: str | Sequence[str] | None = None,
     battle_protector: str | None = None,
     copy_of: str | None = None,
+    copy_source_zone: str = "battlefield",
+    copy_snapshot: Mapping[str, Any] | None = None,
     characteristics: Mapping[str, Any] | None = None,
     temporary_keywords: Sequence[str] = (),
     aura_target_ref: str | None = None,
@@ -916,6 +973,14 @@ def create_tokens(
     """Resolve creation replacements, commit tokens, and emit enter events."""
 
     host._require_seat(controller, in_game=True)
+    if copy_source_zone not in {"battlefield", "exile"}:
+        raise TokenCreationError("Token-copy source zone is unsupported")
+    if copy_source_zone != "battlefield" and not copy_of:
+        raise TokenCreationError(
+            "A nonbattlefield token-copy zone requires a copy source"
+        )
+    if copy_snapshot is not None and not isinstance(copy_snapshot, Mapping):
+        raise TokenCreationError("Token copy snapshot must be an object")
     if quantity < 0:
         raise TokenCreationError("Token quantity cannot be negative")
     if not copy_of:
@@ -930,6 +995,8 @@ def create_tokens(
         quantity=quantity,
         copy_of=copy_of,
         characteristics=characteristics,
+        copy_source_zone=copy_source_zone,
+        copy_snapshot=copy_snapshot,
     )
     if isinstance(attacking, (list, tuple)):
         assignments = tuple(attacking)
@@ -947,6 +1014,12 @@ def create_tokens(
                 _ATTACKING_FIELD: destination,
                 "battle_protector": battle_protector,
                 "copy_of": copy_of,
+                "copy_source_zone": copy_source_zone,
+                **(
+                    {"copy_snapshot": copy.deepcopy(dict(copy_snapshot))}
+                    if copy_snapshot is not None
+                    else {}
+                ),
                 "characteristics": copy.deepcopy(
                     dict(characteristics or {})
                 ),
@@ -964,6 +1037,12 @@ def create_tokens(
                 _ATTACKING_FIELD: attacking,
                 "battle_protector": battle_protector,
                 "copy_of": copy_of,
+                "copy_source_zone": copy_source_zone,
+                **(
+                    {"copy_snapshot": copy.deepcopy(dict(copy_snapshot))}
+                    if copy_snapshot is not None
+                    else {}
+                ),
                 "characteristics": copy.deepcopy(
                     dict(characteristics or {})
                 ),

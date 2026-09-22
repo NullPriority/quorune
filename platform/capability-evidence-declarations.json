@@ -7285,6 +7285,62 @@
       "applicability_note": "Round-trip and exactly replay a resolved declaration rule through the shared static-plus-resolved query."
     },
     {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_ninjutsu_reveal_counter_commander_and_unblocked_boundaries",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Restore a countered hand source's visibility, expose Commander ninjutsu from the command zone, and fail closed for a blocked attacker."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_exiles_source_and_creates_one_haste_copy_per_opponent",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Create one Encore copy for each current opponent and retain a distinct opponent-specific attack designation."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_combat_entry_compiler_mutation_is_killed",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the shared Myriad compiler production and prove the supported source returns to a material residual."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_open_combat_entry_variants_remain_residual",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep variable, hybrid, Phyrexian, nonmana, modified, parameterized-Myriad, and otherwise noncanonical forms material."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_fixed_combat_entry_keyword_contract_matrix",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile isolated ordinary-mana Ninjutsu, Commander ninjutsu, Encore, Blitz, Sneak, Web-slinging, and bare Myriad into exact typed programs."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_ninjutsu_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reveal the Ninjutsu source publicly only while its ability is on the stack without exposing unrelated private hand cards."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_ninjutsu_four_player_projection_save_load_and_exact_replay",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "602.1", "602.2", "702.49", "702.49a", "702.49b", "702.49c", "702.49d", "702.116", "702.116a", "702.116b", "702.141a", "702.152a", "702.152b", "702.188a", "702.190a", "702.190b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the return cost, public reveal, stack resolution, tapped entry, and attack-recipient relationship to the same authoritative hash."
+    },
+    {
       "capability_id": "combat.goad.prohibition.controller_creatures",
       "evidence_class": "interaction",
       "test_id": "tests.test_goad_rules.GoadRuleTests.test_typed_goad_prohibition_is_controller_scoped_and_replays",

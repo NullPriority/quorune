@@ -65,6 +65,9 @@ _FIXED_ZONE_CHANGE_FIELDS = frozenset(
         "predicate",
     }
 )
+_FIXED_COMBAT_RETURN_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {
+    "unblocked_attacker"
+}
 _PERMANENT_CARD_TYPES = frozenset(
     {
         "artifact",
@@ -287,9 +290,13 @@ class FixedZoneChangeAdditionalCost:
     schema_version: int = 1
     kind: str = ZONE_CHANGE_COST_KIND
     count: int = 1
+    unblocked_attacker: bool = False
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if (
+            type(self.schema_version) is not int
+            or self.schema_version not in {1, 2}
+        ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
             )
@@ -318,6 +325,41 @@ class FixedZoneChangeAdditionalCost:
             )
         expected_owner = "$actor" if origin != "battlefield" else None
         expected_controller = "$actor" if origin == "battlefield" else None
+        state_predicate = self.predicate.state_predicate
+        typed_return_state = bool(
+            self.operation == RETURN_ONE_TO_OWNER_HAND_COST
+            and origin == "battlefield"
+            and self.predicate.types_all == ("creature",)
+            and (
+                self.predicate.tapped is True
+                or (
+                    self.unblocked_attacker
+                    and state_predicate is not None
+                    and state_predicate.attacking is True
+                    and all(
+                        value is None or value is False
+                        for value in (
+                            state_predicate.tapped,
+                            state_predicate.blocking,
+                            state_predicate.enchanted,
+                            state_predicate.equipped,
+                            state_predicate.modified,
+                            state_predicate.monstrous,
+                        )
+                    )
+                    and not state_predicate.entered_this_turn
+                    and state_predicate.counter_name is None
+                )
+            )
+        )
+        if type(self.unblocked_attacker) is not bool:
+            raise AdditionalCostError(
+                "Zone-change unblocked-attacker state must be boolean"
+            )
+        if self.schema_version == 1 and self.unblocked_attacker:
+            raise AdditionalCostError(
+                "Combat return costs require schema version 2"
+            )
         if (
             self.predicate.zones != (origin,)
             or self.predicate.owner != expected_owner
@@ -329,12 +371,18 @@ class FixedZoneChangeAdditionalCost:
             or self.predicate.excluded_subtypes
             or self.predicate.colorless is not None
             or self.predicate.minimum_color_count is not None
-            or self.predicate.state_predicate is not None
+            or (
+                self.predicate.state_predicate is not None
+                and not typed_return_state
+            )
             or (
                 self.predicate.token is not None
                 and origin != "battlefield"
             )
-            or self.predicate.tapped is not None
+            or (
+                self.predicate.tapped is not None
+                and not typed_return_state
+            )
             or self.predicate.exclude_ref is not None
         ):
             raise AdditionalCostError(
@@ -381,7 +429,14 @@ class FixedZoneChangeAdditionalCost:
     def from_descriptor(
         cls, value: Mapping[str, Any]
     ) -> "FixedZoneChangeAdditionalCost":
-        if not isinstance(value, Mapping) or set(value) != _FIXED_ZONE_CHANGE_FIELDS:
+        if (
+            not isinstance(value, Mapping)
+            or frozenset(value)
+            not in {
+                _FIXED_ZONE_CHANGE_FIELDS,
+                _FIXED_COMBAT_RETURN_FIELDS,
+            }
+        ):
             raise AdditionalCostError(
                 "Zone-change additional-cost descriptor fields are closed"
             )
@@ -398,6 +453,7 @@ class FixedZoneChangeAdditionalCost:
             count=value["count"],
             choice_field=value["choice_field"],
             predicate=predicate,
+            unblocked_attacker=value.get("unblocked_attacker", False),
         )
 
     @classmethod
@@ -430,7 +486,7 @@ class FixedZoneChangeAdditionalCost:
         }[self.operation]
 
     def to_descriptor(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "kind": self.kind,
             "operation": self.operation,
@@ -438,6 +494,9 @@ class FixedZoneChangeAdditionalCost:
             "choice_field": self.choice_field,
             "predicate": self.predicate.to_dict(),
         }
+        if self.schema_version == 2:
+            value["unblocked_attacker"] = self.unblocked_attacker
+        return value
 
     def bound_predicate(self, actor: str) -> ObjectQuerySpec:
         if type(actor) is not str or not actor:
@@ -557,10 +616,22 @@ def fixed_zone_change_cost_candidates(
                 attached_to_ref=None,
             )
         )
-    return tuple(
-        row.ref
-        for row in query_objects(rows, cost.bound_predicate(actor))
-    )
+    matched = tuple(query_objects(rows, cost.bound_predicate(actor)))
+    if cost.unblocked_attacker:
+        blockers = (
+            host.state.combat.blockers
+            if host.state.combat is not None
+            else {}
+        )
+        matched = tuple(
+            row for row in matched if not blockers.get(row.object_id)
+        )
+        if (
+            host.state.combat is None
+            or not host.state.combat.blockers_declared
+        ):
+            matched = ()
+    return tuple(row.ref for row in matched)
 
 
 def legacy_additional_cost_candidates(

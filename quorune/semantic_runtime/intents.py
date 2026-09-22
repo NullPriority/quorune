@@ -1325,11 +1325,13 @@ class CreateTokenIntent:
     reason: str
     characteristics: FrozenMap = field(default_factory=FrozenMap)
     copy_of: str | None = None
+    copy_snapshot: FrozenMap | None = None
     temporary_keywords: tuple[str, ...] = ()
     tapped: bool = False
     attacking_assignments: tuple[str, ...] = ()
     sacrifice_at_end_step: bool = False
     sacrifice_on_controller_end_step: bool = False
+    exile_at_end_of_combat: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
@@ -1348,6 +1350,15 @@ class CreateTokenIntent:
             type(self.copy_of) is not str or not self.copy_of
         ):
             raise ValueError("Token-copy source must be nonempty or null")
+        if self.copy_snapshot is not None:
+            if self.copy_of is None:
+                raise ValueError("A token copy snapshot requires a copy source")
+            if not isinstance(self.copy_snapshot, FrozenMap):
+                if not isinstance(self.copy_snapshot, Mapping):
+                    raise ValueError("Token copy snapshot must be an object")
+                object.__setattr__(
+                    self, "copy_snapshot", FrozenMap(self.copy_snapshot)
+                )
         if type(self.name) is not str or (
             not self.name and self.copy_of is None
         ):
@@ -1365,6 +1376,7 @@ class CreateTokenIntent:
         if (
             type(self.sacrifice_at_end_step) is not bool
             or type(self.sacrifice_on_controller_end_step) is not bool
+            or type(self.exile_at_end_of_combat) is not bool
             or type(self.tapped) is not bool
         ):
             raise ValueError("Token sacrifice flags must be booleans")

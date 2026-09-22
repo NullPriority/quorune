@@ -57,6 +57,19 @@ from .unearth import (
     UNEARTH_EFFECT_HANDLERS,
     UnearthEffectHandler,
 )
+from .combat_entry_activations import (
+    default_fixed_encore_ability_registry,
+    default_fixed_ninjutsu_ability_registry,
+    fixed_ninjutsu_specs_from_descriptors,
+    fixed_encore_specs_from_descriptors,
+    FixedNinjutsuAbilityHandler,
+    FixedNinjutsuAbilityRegistry,
+    FixedEncoreAbilityHandler,
+    FixedEncoreAbilityRegistry,
+    NINJUTSU_EFFECT_HANDLERS,
+    NinjutsuEntryEffectHandler,
+    EncoreTokensEffectHandler,
+)
 from .self_zone_move import SELF_ZONE_MOVE_EFFECT_HANDLERS
 from .cast_permissions import (
     CastPermissionRegistry,
@@ -387,6 +400,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             *STATION_HANDLERS,
             *ZONE_OBJECT_KEYWORD_HANDLERS,
             *UNEARTH_EFFECT_HANDLERS,
+            *NINJUTSU_EFFECT_HANDLERS,
             *SELF_ZONE_MOVE_EFFECT_HANDLERS,
             *DOMAIN_EFFECT_HANDLERS,
         )

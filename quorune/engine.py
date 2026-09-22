@@ -20,7 +20,6 @@ from .ability_fragment_host import AbilityFragmentHostMixin
 from .ability_fragments import (
     counter_maximum_values,
     declaration_cost_specs,
-    declaration_requirement_specs,
 )
 from .attachments import (
     detach_object,
@@ -98,6 +97,7 @@ from .declaration_costs import (
 )
 from .declaration_condition_runtime import fixed_declaration_condition_verdict
 from .declaration_requirement_runtime import (
+    typed_attacker_requirements,
     typed_attacker_block_requirements,
     typed_blocker_requirements,
 )
@@ -5275,30 +5275,14 @@ class CommanderEngine(
             if self._attack_declaration_error(card, active) is not None:
                 continue
             domains[card.ref] = tuple(defenders)
-            for requirement_index, requirement in enumerate(
-                declaration_requirement_specs(
-                    self._effective_ability_fragments(
-                        card,
-                        error_type=GameRuleError,
-                    )
+            requirements.extend(
+                typed_attacker_requirements(
+                    self,
+                    card,
+                    active_seats=self.active_seats,
+                    error_type=GameRuleError,
                 )
-            ):
-                if requirement.kind != "attack_each_combat":
-                    continue
-                requirements.append(
-                    DeclarationRequirement(
-                        requirement_id=(
-                            f"attack:{card.ref}:each-combat:"
-                            f"{requirement_index}"
-                        ),
-                        kind="choose",
-                        variable=card.ref,
-                        label=(
-                            f"{self.display_name(card.object_id)} attacks "
-                            "this combat if able."
-                        ),
-                    )
-                )
+            )
             for designation in self._active_goad_designations(card):
                 requirements.extend(
                     (
@@ -7394,6 +7378,8 @@ class CommanderEngine(
         attacking: str | None = None,
         battle_protector: str | None = None,
         copy_of: str | None = None,
+        copy_source_zone: str = "battlefield",
+        copy_snapshot: Mapping[str, Any] | None = None,
         characteristics: Mapping[str, Any] | None = None,
         temporary_keywords: Sequence[str] = (),
         aura_target_ref: str | None = None,
@@ -7410,6 +7396,8 @@ class CommanderEngine(
                 attacking=attacking,
                 battle_protector=battle_protector,
                 copy_of=copy_of,
+                copy_source_zone=copy_source_zone,
+                copy_snapshot=copy_snapshot,
                 characteristics=characteristics,
                 temporary_keywords=temporary_keywords,
                 aura_target_ref=aura_target_ref,

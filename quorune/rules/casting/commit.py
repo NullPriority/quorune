@@ -149,6 +149,7 @@ class _AdditionalCostCommit:
     source_zones: dict[str, str]
     source_characteristics: dict[str, dict[str, Any]]
     paid_refs: list[str]
+    paid_contexts: list[dict[str, Any]]
 
 
 def _revalidate_source(host: CastCommitHost, proposal: CastProposal) -> tuple[Any, Any, Any]:
@@ -588,6 +589,28 @@ def _ordinary_card_cost_commit_entries(
     return entries
 
 
+def _fixed_cast_cost_object_context(
+    host: CastCommitHost,
+    paid: Any,
+) -> dict[str, Any]:
+    attack_context = (
+        copy.deepcopy(
+            host.state.combat.attack_target_context.get(paid.object_id)
+        )
+        if host.state.combat is not None
+        else None
+    )
+    return {
+        "card_ref": paid.ref,
+        "logical_object_id": paid.logical_object_id,
+        **(
+            {"attack_target_context": attack_context}
+            if attack_context is not None
+            else {}
+        ),
+    }
+
+
 def _commit_additional_costs(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -595,7 +618,7 @@ def _commit_additional_costs(
     card: Any,
     selected_option: Mapping[str, Any],
 ) -> _AdditionalCostCommit:
-    result = _AdditionalCostCommit([], [], {}, {}, [])
+    result = _AdditionalCostCommit([], [], {}, {}, [], [])
     selected_exile = selected_option.get("selected_exile_card")
     if selected_exile:
         exiled = host._resolve_object(
@@ -682,6 +705,9 @@ def _commit_additional_costs(
         destination,
         replacement_selections,
     ) in changes:
+        result.paid_contexts.append(
+            _fixed_cast_cost_object_context(host, paid)
+        )
         transition_kind = (
             ZoneTransitionKind.DISCARD
             if kind == "discard"
@@ -803,6 +829,35 @@ def _cast_provenance_context(
     }
 
 
+def _fixed_cast_lifecycle_cost_context(
+    costs: _AdditionalCostCommit,
+) -> dict[str, Any]:
+    return (
+        {
+            "fixed_cast_lifecycle_cost_objects": copy.deepcopy(
+                costs.paid_contexts
+            )
+        }
+        if costs.paid_contexts
+        else {}
+    )
+
+
+def _default_spell_destination(type_line: str) -> str:
+    permanent_types = {
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "planeswalker",
+    }
+    return (
+        "battlefield"
+        if permanent_types.intersection(type_line.casefold().split())
+        else "graveyard"
+    )
+
+
 def _create_spell_item(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -812,6 +867,7 @@ def _create_spell_item(
     selected_option: Mapping[str, Any],
     details: Mapping[str, Any],
     spent: Mapping[str, int],
+    costs: _AdditionalCostCommit,
 ) -> StackItem:
     lifecycle_spec, rebound = _cast_lifecycle_stack_specs(
         host, proposal, card, selected_option
@@ -834,20 +890,7 @@ def _create_spell_item(
             controller=proposal.seat,
             spec=method_spec,
         )
-    destination = (
-        "battlefield"
-        if any(
-            word in proposal.type_line.casefold()
-            for word in (
-                "artifact",
-                "battle",
-                "creature",
-                "enchantment",
-                "planeswalker",
-            )
-        )
-        else "graveyard"
-    )
+    destination = _default_spell_destination(proposal.type_line)
     destination, lifecycle_context = fixed_cast_lifecycle_stack_fields(
         selected_option,
         destination,
@@ -913,6 +956,7 @@ def _create_spell_item(
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
             **lifecycle_context,
+            **_fixed_cast_lifecycle_cost_context(costs),
             **(
                 {
                     EVOKE_PAYMENT_FIELD: copy.deepcopy(
@@ -1333,6 +1377,7 @@ def commit_cast(
         selected_option,
         details,
         spent,
+        costs,
     )
     item.x_value = response.get("x")
     item.notes = str(response.get("note") or "")

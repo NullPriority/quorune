@@ -1220,6 +1220,11 @@ class SemanticChoiceIntentHostMixin:
                 name=intent.name,
                 quantity=intent.quantity,
                 copy_of=intent.copy_of,
+                copy_snapshot=(
+                    thaw_value(intent.copy_snapshot)
+                    if intent.copy_snapshot is not None
+                    else None
+                ),
                 characteristics=thaw_value(intent.characteristics),
                 temporary_keywords=intent.temporary_keywords,
                 tapped=intent.tapped,
@@ -1235,6 +1240,7 @@ class SemanticChoiceIntentHostMixin:
         if not (
             intent.sacrifice_at_end_step
             or intent.sacrifice_on_controller_end_step
+            or intent.exile_at_end_of_combat
         ):
             return created_refs
         for created_ref in created_refs:
@@ -1244,23 +1250,54 @@ class SemanticChoiceIntentHostMixin:
                 zones={"battlefield"},
                 controlled_only=True,
             )
-            condition: dict[str, Any] = {
-                "phase": "ending",
-                "step": "end_step",
-            }
+            condition: dict[str, Any] = (
+                {"phase": "combat", "step": "end_combat"}
+                if intent.exile_at_end_of_combat
+                else {"phase": "ending", "step": "end_step"}
+            )
             if intent.sacrifice_on_controller_end_step:
                 condition["player"] = "controller"
             schedule_delayed_trigger(
                 self,
                 controller=intent.controller,
-                label=f"Sacrifice {created.ref}",
+                label=(
+                    f"Exile {created.ref}"
+                    if intent.exile_at_end_of_combat
+                    else f"Sacrifice {created.ref}"
+                ),
                 event_kind="step.begin",
                 condition=condition,
                 stack_template={
-                    "label": f"Sacrifice {created.ref}",
-                    "semantic_key": "builtin:sacrifice-source",
+                    "label": (
+                        f"Myriad — exile {created.ref}"
+                        if intent.exile_at_end_of_combat
+                        else f"Sacrifice {created.ref}"
+                    ),
+                    **(
+                        {
+                            "context": {
+                                "dynamic_effects": [
+                                    {
+                                        "op": "move_if_in_zone",
+                                        "card": created.ref,
+                                        "from": "battlefield",
+                                        "destination": "exile",
+                                        "expected_zone_change_counter": (
+                                            created.zone_change_counter
+                                        ),
+                                        "expected_object_identity": (
+                                            created.logical_object_id
+                                        ),
+                                    }
+                                ]
+                            }
+                        }
+                        if intent.exile_at_end_of_combat
+                        else {"semantic_key": "builtin:sacrifice-source"}
+                    ),
                 },
                 source_object_id=created.object_id,
+                referred_object_ids=(created.object_id,),
                 once=True,
             )
         return created_refs

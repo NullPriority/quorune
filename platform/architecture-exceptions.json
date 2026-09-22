@@ -1222,6 +1222,29 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0052",
+      "adr": "docs/adr/0102-typed-fixed-combat-entry-lifecycles.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "4b156217b684586bea297586a0639eb9ce852bb65cf94c5b98cb188eaedaf19c",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, reduced engine size, existing size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed choose_myriad_token_destinations, encore_tokens, and ninjutsu_entry operations serialized for the v212 fixed combat-entry lifecycle harvest.",
+      "rationale": "The measured broad harvest adds three strict typed operations while reusing the existing cast, activation, normalized attack, token, combat-recipient, delayed-trigger, zone-transition, projection, and replay owners. CommanderEngine shrinks, while direct and unowned writes, runtime Oracle prose, card-identity dispatch, and oversized production symbols remain flat or decrease.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact structural baseline plus fixed ordinary-mana Ninjutsu, Commander ninjutsu, Encore, Blitz, Sneak, Web-slinging, bare Myriad, public attacker-return costs, frozen attack recipients, copyable last-known snapshots, opponent-specific Encore requirements, and identity-pinned cleanup described by ADR 0102; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine growth, arbitrary callbacks, family-specific ability-presence checks, cycle-unsafe characteristics, team formats, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain the three operations only while strict descriptor validation, canonical owner delegation, source spans, current layer-6 applicability, replacement ordering, rollback, privacy, save/load, and exact replay remain enforced.",
+      "target_milestone": "capability-closed fixed combat-entry harvest through canonical casting, activation, token, combat, trigger, zone, and replay owners",
+      "replay_implications": "CardPrograms record only fixed lifecycle descriptors, normalized events, typed costs and effects, and public attack-recipient or copy snapshots. Game Record v3 preserves additive token-intent fields and logical identities while historical payloads default absent fields without consulting Oracle prose.",
+      "privacy_implications": "Attack recipients, battlefield copy characteristics, command-zone sources, exiled Encore sources, and created tokens are public. Ninjutsu exposes its hand source only while required by the stack ability; unrelated hand cards and physical or logical identities remain absent from pilot projections.",
+      "security_implications": "Only capability-closed source-spanned programs can emit the strict operations; unknown fields, invalid costs or destinations, stale identities, removed current components, blocked attackers, unavailable players, unsupported grammar, and continuation tampering fail before authoritative mutation.",
+      "tests": [
+        "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_fixed_combat_entry_keyword_contract_matrix",
+        "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_open_combat_entry_variants_remain_residual",
+        "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_ninjutsu_reveal_counter_commander_and_unblocked_boundaries",
+        "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_myriad_uses_per_opponent_optional_destinations_and_delayed_exile",
+        "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_ninjutsu_four_player_projection_save_load_and_exact_replay",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

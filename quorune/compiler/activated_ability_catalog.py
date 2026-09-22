@@ -34,6 +34,10 @@ from ..semantic_runtime.cycling_abilities import (
     cycling_specs_from_descriptors,
 )
 from ..semantic_runtime.unearth import ordinary_unearth_specs_from_descriptors
+from ..semantic_runtime.combat_entry_activations import (
+    fixed_encore_specs_from_descriptors,
+    fixed_ninjutsu_specs_from_descriptors,
+)
 from ..semantic_runtime.self_zone_move import self_zone_move_specs_from_descriptors
 from ..semantic_runtime.counter_keyword_abilities import (
     fixed_counter_keyword_specs_from_descriptors,
@@ -198,6 +202,8 @@ def _specialized_ability(
             color_set_mana_specs_from_descriptors(handlers),
             cycling_specs_from_descriptors(handlers),
             ordinary_unearth_specs_from_descriptors(handlers),
+            fixed_ninjutsu_specs_from_descriptors(handlers),
+            fixed_encore_specs_from_descriptors(handlers),
             self_zone_move_specs_from_descriptors(handlers),
             fixed_counter_keyword_specs_from_descriptors(handlers),
             class_level_specs_from_descriptors(handlers),
@@ -276,7 +282,11 @@ def _catalog_ability_for_program(
     )
     return replace(
         ability,
-        zones=(program.active_zone,),
+        zones=(
+            ability.zones
+            if program.active_zone in ability.zones
+            else (program.active_zone,)
+        ),
         target_schema=target_schema,
         builtin_semantic_key=(
             ability.builtin_semantic_key or program.key

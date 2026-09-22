@@ -176,6 +176,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/combat_damage_trample.py",
         "quorune/combat_damage_values.py",
         "quorune/combat_relationship_state.py",
+        "quorune/combat_entry_activations.py",
         "quorune/combat_constraints.py",
         "quorune/combat_evasion.py",
         "quorune/combat_evasion_engine_adapter.py",
@@ -338,6 +339,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/casting_cost_host.py",
         "quorune/cast_cost_modifiers.py",
         "quorune/cast_lifecycles.py",
+        "quorune/combat_entry_activations.py",
         "quorune/compiled_cast_lifecycles.py",
         "quorune/self_cast_reductions.py",
     }:
@@ -747,6 +749,7 @@ def build_classifications() -> dict[str, Any]:
                             "commander.py",
                             "combat_damage_",
                             "combat_relationship_state.py",
+                            "combat_entry_activations.py",
                             "damage.py",
                             "damage_modifier_state.py",
                             "damage_prevention",

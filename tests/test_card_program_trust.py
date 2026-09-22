@@ -190,6 +190,8 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.activated.fixed-counter-keyword",
                 "ability.activated.cycling",
                 "ability.activated.crew",
+                "ability.activated.encore",
+                "ability.activated.ninjutsu",
                 "ability.activated.station",
                 "ability.activated.self_zone_move",
                 "ability.activated.unearth",

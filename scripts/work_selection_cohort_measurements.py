@@ -346,6 +346,9 @@ _PROBE_PUBLIC_STATIC_ACTION_LEGALITY = (
 _PROBE_FIXED_KEYWORD_EVENT_EFFECTS = (
     "fixed-keyword-event-effects-existing-owner-v1"
 )
+_PROBE_FIXED_COMBAT_ENTRY_KEYWORD_LIFECYCLES = (
+    "fixed-combat-entry-keyword-lifecycles-existing-owner-v1"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -533,6 +536,7 @@ _PROBE_IDS = {
     _PROBE_PUBLIC_LIBRARY_ACTION_PERMISSIONS,
     _PROBE_PUBLIC_STATIC_ACTION_LEGALITY,
     _PROBE_FIXED_KEYWORD_EVENT_EFFECTS,
+    _PROBE_FIXED_COMBAT_ENTRY_KEYWORD_LIFECYCLES,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -1118,6 +1122,18 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_FIXED_COMBAT_ENTRY_KEYWORD_LIFECYCLES:
+        material = _without_parenthetical_reminder(source).strip()
+        fixed_cost = r"(?:\{(?:\d+|[WUBRGC])\})+"
+        return bool(
+            re.fullmatch(r"Myriad\.?", material, re.IGNORECASE)
+            or re.fullmatch(
+                rf"(?:(?:Commander )?Ninjutsu|Sneak|Web-slinging|Encore|Blitz) "
+                rf"{fixed_cost}\.?",
+                material,
+                re.IGNORECASE,
+            )
+        )
     if probe_id == _PROBE_FIXED_KEYWORD_EVENT_EFFECTS:
         material = _without_parenthetical_reminder(source).strip()
         return bool(
