@@ -2408,12 +2408,12 @@
           "classification": "rules_value",
           "file": "quorune/damage.py",
           "flow_id": "card-identity-flow:32eeb6d3575db3d302d1",
-          "line": 482,
+          "line": 485,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 482,
+          "source_line": 485,
           "symbol": "source_snapshot"
         },
         {
@@ -5636,12 +5636,12 @@
           "classification": "rules_value",
           "file": "quorune/trigger_discovery.py",
           "flow_id": "card-identity-flow:1e063dc8f43167146a04",
-          "line": 981,
+          "line": 987,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 981,
+          "source_line": 987,
           "symbol": "_shared_evoke_trigger_item"
         },
         {
@@ -8523,7 +8523,7 @@
     "imports": {
       "highest_fan_in": [
         {
-          "fan_in": 105,
+          "fan_in": 106,
           "fan_out": 0,
           "module": "quorune.util"
         },
@@ -8675,7 +8675,7 @@
           "module": "quorune.compiler.runtime_templates"
         }
       ],
-      "internal_edges": 3099,
+      "internal_edges": 3100,
       "modules": [
         {
           "fan_in": 2,
@@ -9964,7 +9964,7 @@
         },
         {
           "fan_in": 9,
-          "fan_out": 20,
+          "fan_out": 21,
           "module": "quorune.damage"
         },
         {
@@ -11928,7 +11928,7 @@
           "module": "quorune.untap_step_coordination"
         },
         {
-          "fan_in": 105,
+          "fan_in": 106,
           "fan_out": 0,
           "module": "quorune.util"
         },
@@ -12046,7 +12046,7 @@
       "covered_high_risk_pairs": 320,
       "covered_piece_pairs": 988,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "999ac1896fdcee5c423e1215127d7b0790ee217438d60c79b94986913092da42",
+      "source_fingerprint": "d259e92af2d7646c60872f0515359f4bcfedea110a8492b4fdd65400aded73ee",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12435,7 +12435,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 225600,
+      "logical_lines": 225617,
       "methods": {
         "dunder": 574,
         "private": 924,
@@ -12517,8 +12517,8 @@
           "file": "quorune/damage.py",
           "functions_and_methods": 44,
           "language": "python",
-          "logical_lines": 1480,
-          "physical_lines": 1601
+          "logical_lines": 1490,
+          "physical_lines": 1611
         },
         {
           "file": "quorune/semantic_runtime/intents.py",
@@ -12734,8 +12734,8 @@
           "file": "quorune/trigger_discovery.py",
           "functions_and_methods": 31,
           "language": "python",
-          "logical_lines": 1056,
-          "physical_lines": 1124
+          "logical_lines": 1063,
+          "physical_lines": 1131
         },
         {
           "file": "quorune/arena.py",
@@ -17616,7 +17616,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 246614,
+      "physical_lines": 246631,
       "python_file_count": 672,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -26193,7 +26193,7 @@
         {
           "condition": "any( effect.get(\"op\") == \"offer_modular_counter_transfer\" for effect in program.effects )",
           "file": "quorune/trigger_discovery.py",
-          "line": 898,
+          "line": 904,
           "string_literals": [
             "offer_modular_counter_transfer",
             "op"
@@ -31170,7 +31170,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1498,
     "compiler_module_physical_lines": 1559,
-    "compiler_version": "oracle-ir-v209",
+    "compiler_version": "oracle-ir-v210",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -31455,11 +31455,11 @@
           "rollback": 77
         },
         "declaration_count": 3262,
-        "declaration_source_fingerprint": "549befe2323449247af060fc434a689c6d4ad648ea888bc08ad87d8ecf61da75",
-        "fingerprint": "6a1363e76198cb1877655f4af4a326eece0144fe5c483cbe493551e34916637d",
-        "registry_fingerprint": "813b613c8b531f0a91d78f279a898f38c5fe303206faf37a7eeb885f388fadb3"
+        "declaration_source_fingerprint": "b79c59e02e136d1f31b54757f815bab12a0200189ba3f5e80af265be370de8f0",
+        "fingerprint": "9735a8e2442c347669ed72fd8efc6cdfe66a023244c13c6e193a080a831a65eb",
+        "registry_fingerprint": "87afe0651126ce7a29587de1047d9954ad4ae573a20dded21abca7795164e39f"
       },
-      "fingerprint": "813b613c8b531f0a91d78f279a898f38c5fe303206faf37a7eeb885f388fadb3",
+      "fingerprint": "87afe0651126ce7a29587de1047d9954ad4ae573a20dded21abca7795164e39f",
       "implementation_mutation_status_counts": {
         "killed": 280,
         "not_run": 4
@@ -31787,7 +31787,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 522,
         "exact_nodes": 674,
-        "fingerprint": "5405898c7186aa2bca3268ccd161dad3172cde21d653347d97ebc16a4ebd7b23",
+        "fingerprint": "82dc6ed9df22ca5d384d8aea5c34f16f96aa044c09ea6e8f69e3a8bc0a860f2c",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
         "identity_fingerprint": "8ef2279a983c815db7fc3e91485c9de2db69e89dfef42e28c62f1a683ceaaba6",
         "present": true,
@@ -31799,7 +31799,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 540,
         "exact_nodes": 700,
-        "fingerprint": "0e6c3a417891b8d55de9217aebe1cd322a36a1ca526904d1c31bf53f4637c5d5",
+        "fingerprint": "0b9358a50abd23e5d98785e5ccef2eb05039b27ae547ebca578ba44e6df6b8f5",
         "grammar_source_fingerprint": "9fba1cfc657c8e5f94d8d394657a54a3b93226379c25d83aecb82e817b0178de",
         "identity_fingerprint": "ed57ad0e5869399cdbccb5a4961bd30f6fff92c0b23a193cd58885b68cc9e538",
         "present": true,
@@ -31818,7 +31818,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "2df836f517c8ea417333ba1445fcd1adfb7d25008ef70661e56d8cc36631abdb",
+      "fingerprint": "e21bc57da0ef63ec064aada03571e27b88dfe516e48066aa777a2401098586a0",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -32676,14 +32676,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4253,
-      "discovered_total": 7562,
+      "conventional_ast_cases": 4254,
+      "discovered_total": 7563,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 235,
         "fuzz_named": 1,
         "privacy_or_projection_named": 73,
-        "replay_named": 337,
+        "replay_named": 338,
         "server_named": 32
       },
       "reconciles": true,
