@@ -263,7 +263,11 @@ class TriggerProcessingOwner:
                             "source_zone": "battlefield",
                             "target_stack": targeted_item.ref,
                             "payer": targeted_item.controller,
-                            "cost": {"GENERIC": ward_spec.generic_cost},
+                            "cost": (
+                                {"GENERIC": ward_spec.generic_cost}
+                                if ward_spec.generic_cost is not None
+                                else {}
+                            ),
                             "targeted_permanent": permanent.ref,
                             "ward_spec": ward_spec.to_dict(),
                         },

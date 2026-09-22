@@ -108,6 +108,12 @@ def keyword_mechanics(
             part,
             flags=re.IGNORECASE,
         )
+        keyword_part = re.sub(
+            r"^(Ward)[—–-]\s*",
+            r"\1 ",
+            keyword_part,
+            flags=re.IGNORECASE,
+        )
         match = _KEYWORD_WITH_VALUE.fullmatch(keyword_part)
         if match and match.group("name").casefold() in known:
             mechanic = match.group("name").casefold()

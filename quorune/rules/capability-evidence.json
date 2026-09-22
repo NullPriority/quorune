@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "cf0aca91217b96cbc453e0691dc2c58c61336a5e6f9512896990484db120ba0f",
-  "declaration_source_fingerprint": "81865e589184cf85338f090e19896a2ec00291e1f8fc32e62fa05527407bf006",
+  "registry_fingerprint": "1b64fd5c7fb00236ccde014b417c4201fa005c433e14366a0c4e3c6301eb98e5",
+  "declaration_source_fingerprint": "3d8ea71a43aaf28344c92f252015d05acd133aef6696ddc706613ce9838e7119",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -63058,7 +63058,7 @@
     {
       "capability_id": "trigger.keyword.ward.fixed_generic",
       "evidence_class": "mutation",
-      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_unsupported_costs_remain_residual_and_removed_ability_does_not_trigger",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger",
       "official_rule_ids": [
         "603.3",
         "702.21",
@@ -63074,7 +63074,7 @@
     {
       "capability_id": "trigger.keyword.ward.fixed_generic",
       "evidence_class": "negative",
-      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_unsupported_costs_remain_residual_and_removed_ability_does_not_trigger",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger",
       "official_rule_ids": [
         "603.3",
         "702.21",
@@ -63134,6 +63134,146 @@
         "commander_review"
       ],
       "applicability_note": "Replay fixed-generic Ward placement, priority passes, and declined payment to the same state hash."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_fixed_life_and_discard_ward_payments_use_typed_intents",
+      "official_rule_ids": [
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+        "702.21b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve fixed-life payment and unaffordable decline through one ordinary Ward trigger without mutating the targeting stack item before the choice commits."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly",
+      "official_rule_ids": [
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+        "702.21b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Place discard-one Ward through the ordinary four-player APNAP batch and issue its payment only to the targeting controller."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_rejects_a_stale_card_incarnation",
+      "official_rule_ids": [
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+        "702.21b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a discard selection whose offered hand-card incarnation left and returned before the Ward choice committed."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger",
+      "official_rule_ids": [
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+        "702.21b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep random, sacrifice, composite, and characteristic-relative Ward costs residual and suppress any represented Ward removed from current layer-6 characteristics."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_fixed_life_and_discard_ward_payments_use_typed_intents",
+      "official_rule_ids": [
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+        "702.21b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pay fixed life for Ward through a typed payment intent and preserve the targeting stack item; decline an unaffordable payment and counter it."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly",
+      "official_rule_ids": [
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+        "702.21b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose discard-one Ward hand candidates only to the payer while preserving every other seat's private hand projection."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly",
+      "official_rule_ids": [
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+        "702.21b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the actor-private discard selection, typed discard transition, Ward resolution, and surviving target stack item to the exact authoritative state hash."
     },
     {
       "capability_id": "trigger.multiplier.another_creature_of_chosen_type",
@@ -67496,5 +67636,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "bce70011cd47251102d005e123a3d2ab4dea8f464960e4d1c31b49f6a44261f5"
+  "fingerprint": "8c8d641556b2002a47d01d96fcbbde488d6782382380bed930bed1232536fab2"
 }

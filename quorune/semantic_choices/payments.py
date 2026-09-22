@@ -10,14 +10,21 @@ from ..replacement.immutable import FrozenMap, freeze_value
 from ..semantic_runtime.intents import (
     CounterStackIntent,
     EliminatePlayersIntent,
+    MoveObjectsSimultaneouslyIntent,
     PayLifeIntent,
     PayManaCostIntent,
     PlaceCountersIntent,
     ZoneMoveIntent,
 )
+from ..trigger_participation import (
+    TriggerParticipationError,
+    WardSpec,
+)
+from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
+    ObjectChoice,
     ScalarChoice,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
@@ -789,7 +796,309 @@ class OptionalPaymentHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class WardPaymentChoiceHandler:
+    """Resolve one typed Ward payment or counter its targeting stack item."""
+
+    operation: str = "ward_counter_unless_pay"
+    handler_id: str = "choice.payment.ward-fixed-public.v1"
+    schema_version: int = 1
+    rule_references: tuple[str, ...] = (
+        "CR 118.4",
+        "CR 118.5",
+        "CR 702.21a",
+        "CR 702.21b",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        "trigger.keyword.ward.fixed_generic",
+        "trigger.keyword.ward.fixed_nonmana",
+    )
+    continuation_fields: tuple[str, ...] = (
+        "player",
+        "stack",
+        "ward_spec",
+        "_choice_actor",
+        "_requirements",
+        "_life_payment",
+        "_legal_objects",
+        "_stack_label",
+    )
+    private_data: tuple[str, ...] = (
+        "payer hand identities for discard-one Ward",
+    )
+    projected_fields: tuple[str, ...] = (
+        "prompt",
+        "payment_kind",
+        "payable",
+        "legal_actions.choice_schema",
+    )
+    mutation_path: tuple[str, ...] = (
+        "PayManaCostIntent",
+        "PayLifeIntent",
+        "MoveObjectsSimultaneouslyIntent",
+        "CounterStackIntent",
+    )
+    replay_fixture: str = "semantic-choice-ward-payment"
+    test_modules: tuple[str, ...] = (
+        "tests.test_trigger_processing_owner",
+    )
+
+    @staticmethod
+    def _spec(effect: Mapping[str, Any]) -> WardSpec:
+        try:
+            return WardSpec.from_dict(effect.get("ward_spec"))
+        except (TriggerParticipationError, TypeError) as exc:
+            raise SemanticChoiceError("Ward payment spec is malformed") from exc
+
+    @staticmethod
+    def _validate_effect(
+        effect: Mapping[str, Any], context: SemanticChoiceContext
+    ) -> WardSpec:
+        expected = {"op", "player", "stack", "ward_spec"}
+        if set(effect) != expected or effect.get("op") != (
+            "ward_counter_unless_pay"
+        ):
+            raise SemanticChoiceError("Ward payment effect is malformed")
+        if effect.get("player") != context.actor:
+            raise SemanticChoiceError("Ward payer is malformed")
+        target = effect.get("stack")
+        if type(target) is not str or not target:
+            raise SemanticChoiceError("Ward target stack reference is malformed")
+        return WardPaymentChoiceHandler._spec(effect)
+
+    def prepare(
+        self,
+        effect: Mapping[str, Any],
+        context: SemanticChoiceContext,
+    ) -> SemanticChoicePreparation:
+        spec = self._validate_effect(effect, context)
+        target = str(effect["stack"])
+        if context.query.stack_object(target) is None:
+            return SemanticChoicePreparation(
+                request=None,
+                continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(
+                    reason="Ward target is no longer on the stack"
+                ),
+            )
+        public: dict[str, Any] = {
+            "stack": context.stack_ref,
+            "operation": self.operation,
+            "target_stack": target,
+            "payment_kind": spec.payment_kind,
+        }
+        continuation: dict[str, Any] = {
+            **dict(effect),
+            "_choice_actor": context.actor,
+            "_stack_label": context.stack_label,
+        }
+        if spec.generic_cost is not None:
+            requirements = {"GENERIC": spec.generic_cost}
+            payable = context.query.cost_is_affordable(
+                context.actor, requirements
+            )
+            choice: ScalarChoice | ObjectChoice = ScalarChoice(
+                field_name="pay",
+                legal_values=(True, False) if payable else (False,),
+            )
+            continuation["_requirements"] = requirements
+            public.update({"cost": requirements, "payable": payable})
+            prompt = "Pay the Ward mana cost to prevent the stack item from being countered."
+        elif spec.life_payment is not None:
+            payable = (
+                context.query.player_life(context.actor)
+                >= spec.life_payment
+            )
+            choice = ScalarChoice(
+                field_name="pay",
+                legal_values=(True, False) if payable else (False,),
+            )
+            continuation["_life_payment"] = spec.life_payment
+            public.update(
+                {"life_payment": spec.life_payment, "payable": payable}
+            )
+            prompt = (
+                f"Pay {spec.life_payment} life to prevent the stack item "
+                "from being countered."
+            )
+        else:
+            rows = context.query.objects(
+                zones=("hand",), owner=context.actor
+            )
+            legal_objects = tuple(
+                FrozenMap(
+                    {
+                        "ref": row.ref,
+                        "logical_object_id": row.logical_object_id,
+                    }
+                )
+                for row in rows
+            )
+            continuation["_legal_objects"] = legal_objects
+            payable = bool(rows)
+            public["payable"] = payable
+            if payable:
+                choice = ObjectChoice(
+                    field_name="cards",
+                    legal_refs=tuple(row.ref for row in rows),
+                    zones=("hand",),
+                    minimum=0,
+                    maximum=1,
+                    optional=True,
+                    visibility="actor_private",
+                    owner_relation="actor",
+                    schema_extras=FrozenMap(
+                        {
+                            "cards": [
+                                {"id": row.ref, "name": row.printed_name}
+                                for row in rows
+                            ]
+                        }
+                    ),
+                )
+                prompt = (
+                    "Discard one card to prevent the stack item from being "
+                    "countered, or choose none to decline."
+                )
+            else:
+                choice = ScalarChoice(
+                    field_name="pay", legal_values=(False,)
+                )
+                prompt = "The discard-one Ward cost cannot be paid."
+        return SemanticChoicePreparation(
+            request=SemanticChoiceRequest(
+                prompt=prompt,
+                choice=choice,
+                public_context=FrozenMap(public),
+            ),
+            continuation_effect=FrozenMap(continuation),
+        )
+
+    @staticmethod
+    def _counter_completion(
+        effect: Mapping[str, Any],
+        *,
+        actor: str,
+        query: SemanticChoiceQuery,
+        label: str,
+    ) -> SemanticChoiceCompletion:
+        target = str(effect.get("stack") or "")
+        if query.stack_object(target) is None:
+            return SemanticChoiceCompletion()
+        return SemanticChoiceCompletion(
+            intents=(
+                CounterStackIntent(
+                    actor=actor,
+                    stack_ref=target,
+                    reason=label,
+                    countered_by=actor,
+                ),
+            )
+        )
+
+    def complete(
+        self,
+        continuation: SemanticChoiceContinuation,
+        response: Mapping[str, Any],
+        query: SemanticChoiceQuery,
+    ) -> SemanticChoiceCompletion:
+        effect = continuation.effect
+        actor = str(effect.get("_choice_actor") or "")
+        if not actor or actor not in query.active_seats:
+            raise SemanticChoiceError("Ward continuation actor is malformed")
+        spec = self._spec(effect)
+        label = str(effect.get("_stack_label") or "Ward payment")
+        target = str(effect.get("stack") or "")
+        if query.stack_object(target) is None:
+            return SemanticChoiceCompletion()
+        if spec.generic_cost is not None:
+            requirements = _strict_fixed_mana_requirements(
+                effect.get("_requirements"),
+                label="Ward",
+                require_positive=False,
+            )
+            pay = _payment_choice(response)
+            if pay and not query.cost_is_affordable(actor, requirements):
+                raise SemanticChoiceError("The Ward mana cost is no longer payable")
+            if pay:
+                return SemanticChoiceCompletion(
+                    intents=(
+                        PayManaCostIntent(
+                            actor=actor,
+                            player=actor,
+                            requirements=FrozenMap(requirements),
+                            reason=label,
+                            event_code="ward.paid",
+                            message=f"{actor} paid Ward for {target}.",
+                            details=FrozenMap(
+                                {"cost": requirements, "stack": target}
+                            ),
+                        ),
+                    )
+                )
+            return self._counter_completion(
+                effect, actor=actor, query=query, label=label
+            )
+        if spec.life_payment is not None:
+            amount = effect.get("_life_payment")
+            if type(amount) is not int or amount != spec.life_payment:
+                raise SemanticChoiceError("Ward life payment is malformed")
+            pay = _payment_choice(response)
+            if pay and query.player_life(actor) < amount:
+                raise SemanticChoiceError("The Ward life cost is no longer payable")
+            if pay:
+                return SemanticChoiceCompletion(
+                    intents=(
+                        PayLifeIntent(
+                            actor=actor,
+                            player=actor,
+                            amount=amount,
+                            reason=label,
+                        ),
+                    )
+                )
+            return self._counter_completion(
+                effect, actor=actor, query=query, label=label
+            )
+        selected = tuple(str(value) for value in response.get("cards", ()))
+        if len(selected) > 1 or len(selected) != len(set(selected)):
+            raise SemanticChoiceError("Ward discard selection is malformed")
+        legal = {
+            str(value["ref"]): str(value["logical_object_id"])
+            for value in effect.get("_legal_objects", ())
+        }
+        if any(ref not in legal for ref in selected):
+            raise SemanticChoiceError("Ward discard selection is not authoritative")
+        if not selected:
+            if "pay" in response and _payment_choice(response):
+                raise SemanticChoiceError("Ward discard payment requires one card")
+            return self._counter_completion(
+                effect, actor=actor, query=query, label=label
+            )
+        card = query.object(selected[0], zones=("hand",))
+        if (
+            card is None
+            or card.owner != actor
+            or card.logical_object_id != legal[selected[0]]
+        ):
+            raise SemanticChoiceError("The Ward discard card is no longer payable")
+        return SemanticChoiceCompletion(
+            intents=(
+                MoveObjectsSimultaneouslyIntent(
+                    actor=actor,
+                    object_refs=selected,
+                    expected_zones=("hand",),
+                    destination="graveyard",
+                    reason=label,
+                    transition_kind=ZoneTransitionKind.DISCARD,
+                    owned_only=True,
+                ),
+            )
+        )
+
+
 PAYMENT_CHOICE_HANDLERS = (
+    WardPaymentChoiceHandler(),
     OptionalPaymentHandler(
         operation=OPTIONAL_MANA_PAYMENT_OPERATION,
         handler_id="choice.payment.optional-fixed-effect.v1",

@@ -26421,7 +26421,7 @@
     {
       "capability_id": "trigger.keyword.ward.fixed_generic",
       "evidence_class": "mutation",
-      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_unsupported_costs_remain_residual_and_removed_ability_does_not_trigger",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger",
       "official_rule_ids": ["603.3", "702.21", "702.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a mutant that restores Ward after the current layer-6 fragment was removed."
@@ -26429,7 +26429,7 @@
     {
       "capability_id": "trigger.keyword.ward.fixed_generic",
       "evidence_class": "negative",
-      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_unsupported_costs_remain_residual_and_removed_ability_does_not_trigger",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger",
       "official_rule_ids": ["603.3", "702.21", "702.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Leave nonmana Ward residual and suppress an instance removed from current effective abilities."
@@ -26457,6 +26457,62 @@
       "official_rule_ids": ["603.3", "702.21", "702.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay fixed-generic Ward placement, priority passes, and declined payment to the same state hash."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_fixed_life_and_discard_ward_payments_use_typed_intents",
+      "official_rule_ids": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve fixed-life payment and unaffordable decline through one ordinary Ward trigger without mutating the targeting stack item before the choice commits."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly",
+      "official_rule_ids": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Place discard-one Ward through the ordinary four-player APNAP batch and issue its payment only to the targeting controller."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_rejects_a_stale_card_incarnation",
+      "official_rule_ids": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject a discard selection whose offered hand-card incarnation left and returned before the Ward choice committed."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger",
+      "official_rule_ids": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep random, sacrifice, composite, and characteristic-relative Ward costs residual and suppress any represented Ward removed from current layer-6 characteristics."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_fixed_life_and_discard_ward_payments_use_typed_intents",
+      "official_rule_ids": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Pay fixed life for Ward through a typed payment intent and preserve the targeting stack item; decline an unaffordable payment and counter it."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly",
+      "official_rule_ids": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose discard-one Ward hand candidates only to the payer while preserving every other seat's private hand projection."
+    },
+    {
+      "capability_id": "trigger.keyword.ward.fixed_nonmana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly",
+      "official_rule_ids": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the actor-private discard selection, typed discard transition, Ward resolution, and surviving target stack item to the exact authoritative state hash."
     },
     {
       "capability_id": "trigger.multiplier.another_creature_of_chosen_type",

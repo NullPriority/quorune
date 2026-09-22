@@ -6,6 +6,10 @@ import tempfile
 import unittest
 
 from common import keep_all, load_assets, make_session
+from quorune.ability_fragments import ability_fragment_from_dict
+from quorune.compiler.continuous_templates import (
+    fixed_query_keyword_grant_handler,
+)
 from quorune.continuous_effects import (
     CharacteristicState,
     ContinuousEffect,
@@ -22,7 +26,11 @@ from quorune.semantic_runtime import (
     SemanticNodeError,
     default_continuous_effect_component_registry,
 )
+from quorune.semantic_runtime.continuous_components import (
+    FixedQueryKeywordGrantHandler,
+)
 from quorune.semantics import SemanticProgram, SemanticRegistry
+from quorune.trigger_participation import WardSpec
 
 
 def anthem_descriptor() -> dict:
@@ -260,6 +268,38 @@ class ContinuousEffectComponentTests(unittest.TestCase):
         self.assertEqual(
             "declaration_requirement",
             combined_effect.operations[1].value["kind"],
+        )
+
+    def test_fixed_query_ward_grant_uses_typed_layer_six_fragment(self):
+        compiled = fixed_query_keyword_grant_handler(
+            "Other creatures you control have ward {2}."
+        )
+        self.assertIsNotNone(compiled)
+        assert compiled is not None
+        _template_id, descriptor, capabilities = compiled
+        self.assertIn("trigger.keyword.ward.fixed_generic", capabilities)
+        effect = FixedQueryKeywordGrantHandler().lower(
+            descriptor,
+            ContinuousEffectSourceContext(
+                source_object_id="source",
+                source_ref="S1",
+                source_controller="A",
+                source_timestamp=4,
+                component_id="test:ward-grant:0",
+            ),
+        )[0]
+        self.assertEqual(
+            ["add_ability", "add_ability_fragment"],
+            [operation.op for operation in effect.operations],
+        )
+        self.assertEqual(
+            WardSpec(generic_cost=2),
+            ability_fragment_from_dict(effect.operations[1].value),
+        )
+        self.assertIsNone(
+            fixed_query_keyword_grant_handler(
+                'Other creatures you control have "Ward—Pay 2 life."'
+            )
         )
 
     def test_fixed_query_ability_grant_rejects_malformed_descriptors(self):

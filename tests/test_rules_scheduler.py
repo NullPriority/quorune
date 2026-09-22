@@ -5221,6 +5221,27 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual("upper_bound_only", status)
         self.assertIn("only an upper bound", reason)
 
+    def test_implementation_backed_bundle_uses_measured_exact_ability_floor(self):
+        work = build_work_selection(
+            selected_batch=self.queue["selected_batch"],
+            policy=self.catalog["work_selection"],
+            inputs=self.work_inputs,
+        )
+        ward = next(
+            candidate
+            for candidate in work["candidates"]
+            if candidate["candidate_id"]
+            == "bundle:typed-ward-cost-and-composition-closure"
+        )
+
+        self.assertEqual(102, ward["expected_exact_ability_gain"])
+        self.assertEqual(102, ward["expected_material_residual_reduction"])
+        self.assertTrue(ward["eligible"])
+        self.assertEqual(
+            "major_exact_ability_harvest",
+            ward["runtime_readiness"]["status"],
+        )
+
     def test_bounded_bundle_fails_closed_when_lowerable_census_drifts(self):
         frontier, policies, weights = _bounded_candidate_bundle_fixture()
         measurement = candidate_frontier_measurements(

@@ -155,7 +155,7 @@ def _scripted_choice(
         elif context.get("operation") == "choose_card_name":
             choices["card_name"] = "Sensei's Divining Top"
         elif context.get("operation") in {
-            "counter_unless_pay",
+            "counter_unless_pay", "ward_counter_unless_pay",
             "pay_or_lose",
         }:
             choices["pay"] = False
