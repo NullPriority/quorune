@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 from typing import Any, Mapping, Protocol, Sequence
 
 from .counter_state import (
@@ -31,6 +32,7 @@ from .damage_values import (
 )
 from .damage_source import represented_toxic_value
 from .damage_turn_history import record_damage_turn_history
+from .util import stable_json
 from .deathtouch import DeathtouchError, deathtouch_damage_result_applies
 from .commander import CommanderIdentityError, commander_damage_key
 from .combat_damage_events import (
@@ -357,6 +359,7 @@ class DamageBatchResult:
     changed_objects: tuple[str, ...]
     changed_players: tuple[str, ...]
     lifelink_gains: tuple[DamageLifeGain, ...]
+    event_batch_id: str
     result_events: tuple[DamageResultRecord, ...] = ()
     prevention_events: tuple[PreventionAppliedEvent, ...] = ()
     aftermath_events: tuple[PreventionAftermathEvent, ...] = ()
@@ -1424,6 +1427,11 @@ def commit_prepared_damage_batch(
         changed_objects=tuple(dict.fromkeys(changed_objects)),
         changed_players=tuple(dict.fromkeys(changed_players)),
         lifelink_gains=tuple(gains),
+        event_batch_id=hashlib.sha256(
+            stable_json(
+                sorted(event.event_id for event in prepared.events)
+            ).encode("utf-8")
+        ).hexdigest(),
         result_events=committed.records,
         prevention_events=prevention_events,
         aftermath_events=aftermath.events,
@@ -1509,9 +1517,11 @@ def _collect_damage_result_triggers(
                         },
                     )
                 )
+            event_context = event.semantic_context()
+            event_context["event_id"] = result.event_batch_id
             host._dispatch_semantic_event(
                 "damage.dealt",
-                event.semantic_context(),
+                event_context,
                 sources=trigger_sources,
                 source_zones=trigger_source_zones,
                 trigger_batch=trigger_batch,

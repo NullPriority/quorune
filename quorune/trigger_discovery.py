@@ -874,11 +874,17 @@ def _semantic_trigger_context(
         ),
     }
     if "one_or_more_event_batch" in program.coverage:
+        aggregation_scope = (
+            {"damaged_player": context.get("player")}
+            if event == "damage.dealt"
+            else {}
+        )
         stack_context["one_or_more_aggregation_id"] = hashlib.sha256(
             stable_json(
                 {
                     "event": event,
                     "event_id": context.get("event_id"),
+                    **aggregation_scope,
                     "source_logical_object_id": source.logical_object_id,
                     "source_ability_id": program.key,
                 }
@@ -1088,7 +1094,8 @@ def dispatch_semantic_event(
                 and any(
                     existing.semantic_key == item.semantic_key
                     and existing.source_object_id == item.source_object_id
-                    and existing.context.get("event") == event
+                    and existing.context.get("one_or_more_aggregation_id")
+                    == item.context.get("one_or_more_aggregation_id")
                     for existing in trigger_batch
                 )
             ):

@@ -3946,14 +3946,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v209-distinct-party-assignment",
-      "compiler_version": "oracle-ir-v209",
+      "transition_id": "oracle-ir-v210-per-player-combat-trigger-aggregation",
+      "compiler_version": "oracle-ir-v210",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Compute Party size through the CR 700.8 maximum distinct-creature role assignment in the existing self-reduction owner without widening grammar or claiming a card-support harvest."
+      "non_harvest_reason": "Scope represented one-or-more combat-damage triggers by simultaneous damaged player in the existing normalized damage and trigger owners without widening grammar or claiming a card-support harvest."
     },
     "forecast_corrections": [
       {

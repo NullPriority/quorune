@@ -2772,33 +2772,64 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
             ),
         )
         engine._stabilize()
+        self.assertEqual("trigger.order", engine.state.pending_decision.kind)
+        trigger_refs = [
+            item["id"]
+            for item in engine.state.pending_decision.payload_by_actor["A"][
+                "triggers"
+            ]
+        ]
+        ordered = session.act(
+            "pilot:A",
+            {"action_id": "order", "triggers": trigger_refs},
+        )
+        self.assertTrue(ordered.ok, ordered.summary)
         damage_items = [
             item
             for item in engine.state.stack
             if item.semantic_key == damage_program.key
         ]
-        self.assertEqual(1, len(damage_items))
-        self.assertIn(
-            "one_or_more_aggregation_id",
-            damage_items[0].context,
+        self.assertEqual(2, len(damage_items))
+        self.assertEqual(
+            {"B", "C"},
+            {item.context["player"] for item in damage_items},
+        )
+        self.assertEqual(
+            2,
+            len(
+                {
+                    item.context["one_or_more_aggregation_id"]
+                    for item in damage_items
+                }
+            ),
         )
         life_before = {
             seat: engine.state.players[seat].life for seat in engine.active_seats
         }
-        self.resolve_top(engine)
-        token_items = [
-            item
-            for item in engine.state.stack
-            if item.semantic_key == token_program.key
-        ]
-        self.assertEqual(1, len(token_items))
-        self.assertTrue(token_items[0].context["token"])
-        self.assertIn("one_or_more_aggregation_id", token_items[0].context)
-        self.resolve_top(engine)
-        self.assertEqual(life_before["A"] + 1, engine.state.players["A"].life)
+        for _index in range(2):
+            self.resolve_top(engine)
+            token_items = [
+                item
+                for item in engine.state.stack
+                if item.semantic_key == token_program.key
+            ]
+            self.assertEqual(1, len(token_items))
+            self.assertTrue(token_items[0].context["token"])
+            self.assertIn(
+                "one_or_more_aggregation_id",
+                token_items[0].context,
+            )
+            self.resolve_top(engine)
+        self.assertFalse(
+            any(
+                item.semantic_key in {damage_program.key, token_program.key}
+                for item in engine.state.stack
+            )
+        )
+        self.assertEqual(life_before["A"] + 2, engine.state.players["A"].life)
         for seat in ("B", "C", "D"):
             self.assertEqual(
-                life_before[seat] - 1,
+                life_before[seat] - 2,
                 engine.state.players[seat].life,
             )
 
@@ -2836,6 +2867,345 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(1, len(items))
         self.assertEqual("card.leave_graveyard", items[0].context["event"])
         self.assertEqual("A", items[0].context["owner"])
+
+    def test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay(self):
+        same_session = self.session(121_094, players=4)
+        same_engine = same_session.engine
+        observer = self.add_card(
+            same_engine,
+            seat="A",
+            name="Generic Combat Damage Batch Treasure Trigger Fixture",
+            ref="same-player-observer",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(same_engine, observer)
+        same_sources = [
+            self.add_card(
+                same_engine,
+                seat="A",
+                name="Typed Self Attack Life Trigger Fixture",
+                ref=f"same-player-source-{index}",
+                zone="battlefield",
+            )
+            for index in (1, 2)
+        ]
+        resolve_damage_batch(
+            same_engine,
+            tuple(
+                damage_proposal(
+                    same_engine,
+                    proposal_id=f"same-player:{index}",
+                    actor="A",
+                    source_ref=source.ref,
+                    target="B",
+                    amount=1,
+                    combat=True,
+                    reason="same damaged player batch witness",
+                )
+                for index, source in enumerate(same_sources, start=1)
+            ),
+        )
+        same_engine._stabilize()
+        same_items = [
+            item
+            for item in same_engine.state.stack
+            if item.semantic_key == program.key
+        ]
+        self.assertEqual(1, len(same_items))
+        first_aggregation = same_items[0].context[
+            "one_or_more_aggregation_id"
+        ]
+        resolve_damage_batch(
+            same_engine,
+            (
+                damage_proposal(
+                    same_engine,
+                    proposal_id="separate-occurrence",
+                    actor="A",
+                    source_ref=same_sources[0].ref,
+                    target="B",
+                    amount=1,
+                    combat=True,
+                    reason="separate damage occurrence witness",
+                ),
+            ),
+        )
+        same_engine._stabilize()
+        same_items = [
+            item
+            for item in same_engine.state.stack
+            if item.semantic_key == program.key
+        ]
+        self.assertEqual(2, len(same_items))
+        aggregation_ids = {
+            item.context["one_or_more_aggregation_id"]
+            for item in same_items
+        }
+        self.assertEqual(2, len(aggregation_ids))
+        self.assertIn(first_aggregation, aggregation_ids)
+
+        prevented_session = self.session(121_095, players=4)
+        prevented_engine = prevented_session.engine
+        prevented_observer = self.add_card(
+            prevented_engine,
+            seat="A",
+            name="Generic Combat Damage Batch Treasure Trigger Fixture",
+            ref="prevented-observer",
+            zone="battlefield",
+        )
+        prevented_program = self.register_typed_event_trigger(
+            prevented_engine,
+            prevented_observer,
+        )
+        prevented_sources = [
+            self.add_card(
+                prevented_engine,
+                seat="A",
+                name="Typed Self Attack Life Trigger Fixture",
+                ref=f"prevented-source-{index}",
+                zone="battlefield",
+            )
+            for index in (1, 2)
+        ]
+        prevented_engine.state.damage_prevention_shields.append(
+            DamagePreventionShield(
+                shield_id="prevent-player-b",
+                source_id="fixture:prevent-player-b",
+                controller="B",
+                subject=DamageSubject(ref="B", kind="player", controller="B"),
+                mode=PreventionMode.AMOUNT,
+                remaining=1,
+                duration=DamageModifierDuration.UNTIL_END_OF_TURN,
+                created_turn_sequence=prevented_engine.state.turn_sequence,
+            )
+        )
+        resolve_damage_batch(
+            prevented_engine,
+            tuple(
+                damage_proposal(
+                    prevented_engine,
+                    proposal_id=f"prevented-recipient:{target}",
+                    actor="A",
+                    source_ref=source.ref,
+                    target=target,
+                    amount=1,
+                    combat=True,
+                    reason="fully prevented recipient witness",
+                )
+                for source, target in zip(
+                    prevented_sources,
+                    ("B", "C"),
+                    strict=True,
+                )
+            ),
+        )
+        prevented_engine._stabilize()
+        prevented_items = [
+            item
+            for item in prevented_engine.state.stack
+            if item.semantic_key == prevented_program.key
+        ]
+        self.assertEqual(1, len(prevented_items))
+        self.assertEqual("C", prevented_items[0].context["player"])
+
+        step_session = self.session(121_096, players=4)
+        step_engine = step_session.engine
+        step_observer = self.add_card(
+            step_engine,
+            seat="A",
+            name="Generic Combat Damage Batch Treasure Trigger Fixture",
+            ref="damage-step-observer",
+            zone="battlefield",
+        )
+        step_program = self.register_typed_event_trigger(
+            step_engine,
+            step_observer,
+        )
+        step_source = self.add_card(
+            step_engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="damage-step-source",
+            zone="battlefield",
+        )
+        for damage_step, first_strike in ((1, True), (2, False)):
+            resolve_damage_batch(
+                step_engine,
+                (
+                    damage_proposal(
+                        step_engine,
+                        proposal_id=f"combat-step:{damage_step}",
+                        actor="A",
+                        source_ref=step_source.ref,
+                        target="B",
+                        amount=1,
+                        combat=True,
+                        damage_step=damage_step,
+                        first_strike_step=first_strike,
+                        reason="separate combat damage step witness",
+                    ),
+                ),
+            )
+            step_engine._stabilize()
+        step_items = [
+            item
+            for item in step_engine.state.stack
+            if item.semantic_key == step_program.key
+        ]
+        self.assertEqual(2, len(step_items))
+        self.assertEqual(
+            {True, False},
+            {item.context["first_strike_step"] for item in step_items},
+        )
+        self.assertEqual(
+            2,
+            len(
+                {
+                    item.context["one_or_more_aggregation_id"]
+                    for item in step_items
+                }
+            ),
+        )
+
+        apnap_session = self.session(121_097, players=4)
+        apnap_engine = apnap_session.engine
+        apnap_engine.state.active_player = "A"
+        observer_a = self.add_card(
+            apnap_engine,
+            seat="A",
+            name="Generic Combat Damage Batch Treasure Trigger Fixture",
+            ref="apnap-observer-a",
+            zone="battlefield",
+        )
+        observer_c = self.add_card(
+            apnap_engine,
+            seat="C",
+            name="Generic Combat Damage Batch Treasure Trigger Fixture",
+            ref="apnap-observer-c",
+            zone="battlefield",
+        )
+        apnap_program = self.register_typed_event_trigger(
+            apnap_engine,
+            observer_a,
+        )
+        self.register_typed_event_trigger(apnap_engine, observer_c)
+        multiplier = self.add_card(
+            apnap_engine,
+            seat="A",
+            name="Generic Chosen Rogue Trigger Multiplier Fixture",
+            ref="apnap-trigger-multiplier",
+            zone="battlefield",
+        )
+        multiplier.annotations["chosen_creature_type"] = "Rogue"
+        register_generated_programs(
+            self.db,
+            apnap_engine.semantics,
+            (self.db.by_oracle_id(multiplier.oracle_id),),
+            trust_level="trusted",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        source_a = self.add_card(
+            apnap_engine,
+            seat="A",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="apnap-damage-source-a",
+            zone="battlefield",
+        )
+        source_c = self.add_card(
+            apnap_engine,
+            seat="C",
+            name="Typed Self Attack Life Trigger Fixture",
+            ref="apnap-damage-source-c",
+            zone="battlefield",
+        )
+        resolve_damage_batch(
+            apnap_engine,
+            (
+                damage_proposal(
+                    apnap_engine,
+                    proposal_id="apnap-damage-a",
+                    actor="A",
+                    source_ref=source_a.ref,
+                    target="B",
+                    amount=1,
+                    combat=True,
+                    reason="APNAP damage batch witness",
+                ),
+                damage_proposal(
+                    apnap_engine,
+                    proposal_id="apnap-damage-c",
+                    actor="C",
+                    source_ref=source_c.ref,
+                    target="D",
+                    amount=1,
+                    combat=True,
+                    reason="APNAP damage batch witness",
+                ),
+            ),
+        )
+        apnap_engine._stabilize()
+        self.assertEqual("trigger.order", apnap_engine.state.pending_decision.kind)
+        apnap_session.initial_checkpoint = checkpoint_envelope(
+            apnap_engine.state
+        )
+        apnap_session.commands.clear()
+        apnap_session.decisions.clear()
+        refs = [
+            item["id"]
+            for item in apnap_engine.state.pending_decision.payload_by_actor[
+                "A"
+            ]["triggers"]
+        ]
+        ordered = apnap_session.act(
+            "pilot:A",
+            {"action_id": "order", "triggers": refs},
+        )
+        self.assertTrue(ordered.ok, ordered.summary)
+        apnap_items = [
+            item
+            for item in apnap_engine.state.stack
+            if item.semantic_key == apnap_program.key
+        ]
+        self.assertEqual(3, len(apnap_items))
+        self.assertEqual(
+            ["A", "A", "C"],
+            [item.controller for item in apnap_items],
+        )
+        self.assertEqual(
+            {observer_a.object_id, observer_c.object_id},
+            {item.source_object_id for item in apnap_items},
+        )
+        self.assertEqual(
+            1,
+            sum(
+                "additional_trigger_source" in item.context
+                for item in apnap_items
+            ),
+        )
+        tokens_before = sum(
+            card.is_token and card.zone == "battlefield"
+            for card in apnap_engine.state.cards.values()
+        )
+        for _index in range(40):
+            if not apnap_engine.state.stack:
+                break
+            principal = apnap_session.pending_principals()[0]
+            passed = apnap_session.act(principal, {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertFalse(apnap_engine.state.stack)
+        tokens_after = sum(
+            card.is_token and card.zone == "battlefield"
+            for card in apnap_engine.state.cards.values()
+        )
+        self.assertEqual(tokens_before + 3, tokens_after)
+        expected_hash = authoritative_state_hash(apnap_engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "damage-batch-apnap-replay"
+            apnap_session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_public_any_target_activation_cost_triggers_impulse_access(self):
         session = self.session(121090, players=4)

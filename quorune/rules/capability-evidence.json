@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "813b613c8b531f0a91d78f279a898f38c5fe303206faf37a7eeb885f388fadb3",
-  "declaration_source_fingerprint": "549befe2323449247af060fc434a689c6d4ad648ea888bc08ad87d8ecf61da75",
+  "registry_fingerprint": "87afe0651126ce7a29587de1047d9954ad4ae573a20dded21abca7795164e39f",
+  "declaration_source_fingerprint": "b79c59e02e136d1f31b54757f815bab12a0200189ba3f5e80af265be370de8f0",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -59164,10 +59164,12 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59176,15 +59178,17 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Consume two committed combat-damage results as one exact one-or-more trigger occurrence before token creation."
+      "applicability_note": "Preserve same-recipient coalescing, per-player splits, separate occurrences and damage steps, full prevention, trigger multiplication, and APNAP placement."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_normalized_batch_predicates_share_damage_zone_and_token_owners",
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59193,15 +59197,17 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Use one committed damage occurrence to distinguish source-self combat, source-opponent, and recipient-self predicates."
+      "applicability_note": "Create and resolve one represented trigger for each simultaneously damaged player without merging downstream token-entry consequences."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59210,7 +59216,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Evaluate source-controller and opponent player relations from immutable public damage facts in a four-player table."
+      "applicability_note": "Place independent observers and multiplied occurrences in deterministic four-player APNAP order."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
@@ -59219,6 +59225,8 @@
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59236,6 +59244,8 @@
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59253,6 +59263,8 @@
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59270,6 +59282,8 @@
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59287,6 +59301,8 @@
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59304,6 +59320,8 @@
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59317,10 +59335,12 @@
     {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "replay",
-      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
+      "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
       "official_rule_ids": [
         "120.4",
         "603.2",
+        "603.2c",
+        "603.2d",
         "603.3",
         "603.6"
       ],
@@ -59329,7 +59349,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Replay the source-combat-damage trigger continuation to the identical authoritative state hash."
+      "applicability_note": "Checkpoint and replay per-player aggregation, trigger ordering, multiplier copies, consequence resolution, and the final authoritative state hash."
     },
     {
       "capability_id": "trigger.event.normalized_life_gain",
@@ -66622,5 +66642,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "6a1363e76198cb1877655f4af4a326eece0144fe5c483cbe493551e34916637d"
+  "fingerprint": "9735a8e2442c347669ed72fd8efc6cdfe66a023244c13c6e193a080a831a65eb"
 }
