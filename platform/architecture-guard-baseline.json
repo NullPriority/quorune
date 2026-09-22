@@ -450,7 +450,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 6967,
+    "logical_lines": 6963,
     "methods": [
       {
         "kind": "method",
@@ -1578,11 +1578,11 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7467
+    "physical_lines": 7463
   },
   "exception_binding": {
     "adr": "docs/adr/0101-typed-fixed-keyword-event-effects.md",
-    "allowance_fingerprint": "95bc28da00de1f09b8f94b1fe3bc915efaee55bf12bd11bf3533e828ad2e66b7",
+    "allowance_fingerprint": "dcb3b843542d9027cd1013543437a823cd2470ceb45ed8e294e7a14bd78f9463",
     "exception_id": "ARCH-EXC-0051"
   },
   "legacy_card_specific_operations": [
@@ -1788,7 +1788,7 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 6967
+      "logical_lines": 6963
     },
     {
       "file": "quorune/record.py",

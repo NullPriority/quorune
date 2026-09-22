@@ -1202,7 +1202,7 @@
       "exception_id": "ARCH-EXC-0051",
       "adr": "docs/adr/0101-typed-fixed-keyword-event-effects.md",
       "artifact": "platform/architecture-guard-baseline.json",
-      "allowance_fingerprint": "95bc28da00de1f09b8f94b1fe3bc915efaee55bf12bd11bf3533e828ad2e66b7",
+      "allowance_fingerprint": "dcb3b843542d9027cd1013543437a823cd2470ceb45ed8e294e7a14bd78f9463",
       "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed choose_attacking_token_destinations and exile_top_library_card operations serialized for the v211 fixed keyword event-effect harvest.",
       "rationale": "The measured broad harvest adds two strict typed operations while reusing normalized attack, block, damage, and zone events plus existing life, sacrifice, mana-provenance, token, zone-transition, target, optional-choice, APNAP, projection, and replay owners. The attack-destination handler emits a typed token intent and the library-top handler delegates its sole mutation to ZoneTransitionOwner. CommanderEngine shrinks, while direct and unowned writes, runtime Oracle prose, card-identity dispatch, and oversized production symbols remain flat.",
       "owner": "rules architecture maintainers",

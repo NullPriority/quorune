@@ -1875,11 +1875,7 @@ class CommanderEngine(
     def _clear_mana(self, *, reason: str) -> None:
         for seat, player in self.state.players.items():
             clear_mana_undo_stack(player.stats)
-            lost = clear_step_mana(
-                player,
-                phase=self.state.phase,
-                step=self.state.step,
-            )
+            lost = clear_step_mana(player, phase=self.state.phase, step=self.state.step)
             if lost:
                 self._log(seat, "mana.empty", f"{seat}'s mana pool emptied.", {"lost": lost, "reason": reason}, importance=0, changed_players=[seat])
 
