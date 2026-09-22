@@ -3942,6 +3942,55 @@
           "measurement_probe_id": "fixed-keyword-event-effects-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-combat-entry-keyword-lifecycles",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "keyword_dependency:myriad"
+          ],
+          "canonical_owner_ids": [
+            "capability:casting.alternative_cost.fixed_public",
+            "capability:token.creation.fixed_copy",
+            "capability:trigger.event.normalized_public_action",
+            "capability:trigger.placement.apnap",
+            "capability:zone.change.destination_replacement",
+            "component:quorune.attack_transition_engine_adapter.attack_transition_stack_items",
+            "component:quorune.rules.casting.proposal.build_cast_offer",
+            "component:quorune.semantic_choices.attacking_tokens.AttackingTokenDestinationChoiceHandler",
+            "component:quorune.token_creation.create_tokens",
+            "component:quorune.trigger_processing.schedule_delayed_trigger"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-ordinary-mana-vector",
+            "isolated-printed-keyword-line",
+            "public-controlled-return-cost",
+            "public-midcombat-entry-or-attacking-copy"
+          ],
+          "shared_dependencies": [
+            "token.creation.fixed_copy",
+            "trigger.event.normalized_public_action",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one isolated fixed ordinary-mana Ninjutsu, Commander ninjutsu, Sneak, Web-slinging, Encore, or Blitz method, or one isolated Myriad keyword, through canonical alternative casting or activation, return-as-cost, midcombat timing, Haste, tapped-and-attacking entry, per-recipient attacking-copy, death draw, delayed-cleanup, current-ability, projection, and replay owners",
+          "estimated_implementation_hours": 10,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a policy-floor cross-era combat-entry cohort while consolidating fixed return-as-cost, hand and command-zone activation, alternative casting, Haste and death-draw lifecycle, public attack destinations, replacement-aware copy tokens, delayed sacrifice or exile, and exact replay without another combat or casting engine.",
+          "explicit_exclusions": [
+            "copied, granted, text-changed, conditional, and independently incomplete sibling abilities",
+            "hybrid, phyrexian, snow, variable, nonmana, and otherwise nonordinary costs",
+            "modified reminder text and noncanonical source or recipient relations",
+            "repeated, combined, and temporary keyword instances",
+            "team-specific attack destinations and unsupported team formats",
+            "unrepresented copy modifications, token definitions, and delayed results"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-combat-entry-keyword-lifecycles-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
