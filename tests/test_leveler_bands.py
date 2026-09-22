@@ -429,7 +429,9 @@ class LevelerBandModelAndCompilerTests(unittest.TestCase):
         )
 
         unsupported_keyword = leveler_record(
-            BEASTBREAKER_TEXT.replace("6/6\nTrample", "6/6\nWard—Pay 3 life."),
+            BEASTBREAKER_TEXT.replace(
+                "6/6\nTrample", "6/6\nWard—Sacrifice a creature."
+            ),
             keywords=("Level Up", "Ward"),
         )
         ir = self.compile(unsupported_keyword)

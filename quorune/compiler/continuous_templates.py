@@ -282,7 +282,7 @@ def fixed_query_keyword_grant_handler(
     abilities_text = match.group("abilities")
 
     granted = _attached_granted_abilities(abilities_text)
-    if granted is None:
+    if granted is None or "Protection" in granted[0]:
         return None
     abilities, fragments = granted
     capabilities = {
@@ -302,7 +302,15 @@ def fixed_query_keyword_grant_handler(
             },
             "modifier": {
                 "add_abilities": list(abilities),
-                "add_ability_fragments": [dict(value) for value in fragments],
+                **(
+                    {
+                        "add_ability_fragments": [
+                            dict(value) for value in fragments
+                        ]
+                    }
+                    if fragments
+                    else {}
+                ),
             },
         },
         tuple(sorted(capabilities)),
@@ -349,12 +357,20 @@ def fixed_query_characteristic_grant_handler(
                 "add_abilities": list(
                     keywords[1]["modifier"]["add_abilities"]
                 ),
-                "add_ability_fragments": [
-                    dict(value)
-                    for value in keywords[1]["modifier"].get(
-                        "add_ability_fragments", ()
+                **(
+                    {
+                        "add_ability_fragments": [
+                            dict(value)
+                            for value in keywords[1]["modifier"].get(
+                                "add_ability_fragments", ()
+                            )
+                        ]
+                    }
+                    if keywords[1]["modifier"].get(
+                        "add_ability_fragments"
                     )
-                ],
+                    else {}
+                ),
                 "power": int(anthem[1]["modifier"]["power"]),
                 "toughness": int(anthem[1]["modifier"]["toughness"]),
             },

@@ -511,6 +511,46 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 {"add_abilities": ["Hexproof", "Menace"]},
             ),
             (
+                "Creatures you control have ward {2}.",
+                HANDLER_ID,
+                "source_controller",
+                False,
+                {},
+                {
+                    "add_abilities": ["Ward {2}"],
+                    "add_ability_fragments": [
+                        {
+                            "kind": "ward",
+                            "value": {
+                                "schema_version": 1,
+                                "generic_cost": 2,
+                            },
+                        }
+                    ],
+                },
+            ),
+            (
+                "Creatures you control get +1/+1 and have ward {2}.",
+                CHARACTERISTIC_HANDLER_ID,
+                "source_controller",
+                False,
+                {},
+                {
+                    "add_abilities": ["Ward {2}"],
+                    "add_ability_fragments": [
+                        {
+                            "kind": "ward",
+                            "value": {
+                                "schema_version": 1,
+                                "generic_cost": 2,
+                            },
+                        }
+                    ],
+                    "power": 1,
+                    "toughness": 1,
+                },
+            ),
+            (
                 (
                     "Each other creature you control with a +1/+1 counter "
                     "on it has haste."
@@ -826,10 +866,8 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
             "Attacking tapped creatures you control have flying.",
             "Attacking creatures you control with a +1/+1 counter on them "
             "have trample.",
-            "Creatures you control have ward {2}.",
             "Creatures you control have protection from red.",
             "Artifact permanents you control have flying.",
-            "Creatures you control get +1/+1 and have ward {2}.",
             "Creatures you control get +1/+1 and have protection from red.",
             "Creatures you control have haste until end of turn.",
         )
