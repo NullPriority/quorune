@@ -15,6 +15,7 @@ from .work_selection_bundles import (
     WorkSelectionBundleError,
 )
 from .work_selection_common import (
+    bundle_lowerable_abilities,
     WorkSelectionError,
     mapping as _mapping,
     nonnegative_int as _nonnegative_int,
@@ -1017,16 +1018,8 @@ def _synthesized_frontier_candidates(
         implementation_hours = measurement["implementation_hours"]
         effort = estimated_bundle_effort(implementation_hours)
         prerequisite_id, prerequisite_gain = prerequisite_fanout_identity(measurement["measurement_outcome"])
-        lowerable_abilities = (
-            gains["exact_abilities"]
-            if (
-                measurement["measurement_outcome_current"]
-                and measurement["bounded_executable_verified"]
-            )
-            else sum(
-                int(row.get("lowerable_untrusted_abilities") or 0)
-                for row in measurement["members"]
-            )
+        lowerable_abilities = bundle_lowerable_abilities(
+            measurement, gains
         )
         readiness, eligible, reason = _frontier_decision(
             candidate_id=bundle_id,

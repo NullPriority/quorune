@@ -5979,13 +5979,13 @@
         },
         "oversized_functions_and_methods": {
           "baseline": 29,
-          "current": 29,
-          "delta": 0
+          "current": 28,
+          "delta": -1
         },
         "oversized_modules": {
           "baseline": 7,
-          "current": 7,
-          "delta": 0
+          "current": 6,
+          "delta": -1
         },
         "prohibited_identity_dispatch_count": {
           "baseline": 0,
@@ -12533,17 +12533,6 @@
           "visibility": "private"
         },
         {
-          "end_line": 1146,
-          "file": "quorune/work_selection.py",
-          "kind": "function",
-          "line": 992,
-          "logical_lines": 155,
-          "name": "_synthesized_frontier_candidates",
-          "physical_lines": 155,
-          "symbol": "_synthesized_frontier_candidates",
-          "visibility": "private"
-        },
-        {
           "end_line": 295,
           "file": "quorune/card_programs/trust.py",
           "kind": "function",
@@ -12564,9 +12553,20 @@
           "physical_lines": 150,
           "symbol": "_activated_effect_dependency_gate",
           "visibility": "private"
+        },
+        {
+          "end_line": 1333,
+          "file": "quorune/compiler/continuous_templates.py",
+          "kind": "function",
+          "line": 1181,
+          "logical_lines": 150,
+          "name": "_conditional_target",
+          "physical_lines": 153,
+          "symbol": "_conditional_target",
+          "visibility": "private"
         }
       ],
-      "logical_lines": 229056,
+      "logical_lines": 229063,
       "methods": {
         "dunder": 579,
         "private": 929,
@@ -12617,13 +12617,6 @@
           "physical_lines": 1590
         },
         {
-          "file": "quorune/work_selection.py",
-          "functions_and_methods": 28,
-          "language": "python",
-          "logical_lines": 1501,
-          "physical_lines": 1563
-        },
-        {
           "file": "quorune/rules/casting/costs.py",
           "functions_and_methods": 42,
           "language": "python",
@@ -12643,6 +12636,13 @@
           "language": "python",
           "logical_lines": 1494,
           "physical_lines": 1581
+        },
+        {
+          "file": "quorune/work_selection.py",
+          "functions_and_methods": 28,
+          "language": "python",
+          "logical_lines": 1494,
+          "physical_lines": 1556
         },
         {
           "file": "quorune/damage.py",
@@ -15753,6 +15753,13 @@
           "physical_lines": 126
         },
         {
+          "file": "quorune/work_selection_common.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 114,
+          "physical_lines": 135
+        },
+        {
           "file": "quorune/compiler/fixed_counter_controller_effect_sequences.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -16010,13 +16017,6 @@
           "language": "python",
           "logical_lines": 100,
           "physical_lines": 120
-        },
-        {
-          "file": "quorune/work_selection_common.py",
-          "functions_and_methods": 7,
-          "language": "python",
-          "logical_lines": 100,
-          "physical_lines": 118
         },
         {
           "file": "quorune/impulse_access_model.py",
@@ -17440,7 +17440,7 @@
           "physical_lines": 1
         }
       ],
-      "oversized_function_and_method_count": 29,
+      "oversized_function_and_method_count": 28,
       "oversized_functions_and_methods": [
         {
           "end_line": 1912,
@@ -17740,17 +17740,6 @@
           "visibility": "private"
         },
         {
-          "end_line": 1146,
-          "file": "quorune/work_selection.py",
-          "kind": "function",
-          "line": 992,
-          "logical_lines": 155,
-          "name": "_synthesized_frontier_candidates",
-          "physical_lines": 155,
-          "symbol": "_synthesized_frontier_candidates",
-          "visibility": "private"
-        },
-        {
           "end_line": 295,
           "file": "quorune/card_programs/trust.py",
           "kind": "function",
@@ -17762,7 +17751,7 @@
           "visibility": "public"
         }
       ],
-      "oversized_module_count": 7,
+      "oversized_module_count": 6,
       "oversized_modules": [
         {
           "file": "quorune/engine.py",
@@ -17805,16 +17794,9 @@
           "language": "python",
           "logical_lines": 1504,
           "physical_lines": 1590
-        },
-        {
-          "file": "quorune/work_selection.py",
-          "functions_and_methods": 28,
-          "language": "python",
-          "logical_lines": 1501,
-          "physical_lines": 1563
         }
       ],
-      "physical_lines": 250281,
+      "physical_lines": 250291,
       "python_file_count": 679,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -17832,7 +17814,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 3375,
+      "top_level_functions": 3376,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -32275,7 +32257,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "78001efed848f2f6c934e971b92f4514bd946e558315a186d02dce9c4d5f400a",
+      "fingerprint": "53518c4c5e9ce8a3c958f27d40b5ef5cd922e0ba2d176bc2476d00216c586c36",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {

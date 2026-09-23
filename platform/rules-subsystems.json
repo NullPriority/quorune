@@ -4037,7 +4037,7 @@
         "random, qualified, multiple-card, optional, alternative, sacrifice, counter, energy, poison, evidence, blight, waterbend, dynamic, composite, variable, hybrid, Phyrexian, snow, and restricted Ward costs"
       ],
       "measurement_status": "generated_probe",
-      "measurement_probe_id": "typed-ward-cost-and-composition-closure-existing-owner-v1"
+      "measurement_probe_id": "typed-ward-cost-and-composition-closure-existing-owner-v2"
     },
     {
       "bundle_id": "bundle:standalone-reminder-line-closure",
@@ -4139,6 +4139,15 @@
         "certified_material_residual_reduction_lower_bound": 156,
         "measurement_probe_id": "fixed-restrictive-library-search-existing-owner-v2",
         "reason": "The v1 integrated probe counted 147 newly exact search-bearing Oracle node identities without netting one previously exact structural carrier replaced by whole-card lowering. The v2 probe derives compiled exact nodes minus prior exact nodes per card, preserving the realized 98-card closure and a conservative 146-ability, 156-residual lower bound."
+      },
+      {
+        "transition_id": "oracle-ir-v213-typed-ward-cost-and-composition-closure",
+        "original_expected_complete_card_gain": 16,
+        "certified_complete_card_lower_bound": 16,
+        "certified_exact_ability_lower_bound": 101,
+        "certified_material_residual_reduction_lower_bound": 86,
+        "measurement_probe_id": "typed-ward-cost-and-composition-closure-existing-owner-v2",
+        "reason": "Exact-source certification removed one conditional Ward carrier and one unrelated Toxic query that the first integrated grammar admitted beyond the declared boundary. The corrected probe retains a 16-card and 101-ability lower bound; the corpus realizes those counts while 86 material residual records are removed after whole-program grouping."
       }
     ],
     "harvest_provenance": [

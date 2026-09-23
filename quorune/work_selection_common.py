@@ -26,6 +26,23 @@ def nonnegative_int(value: Any, label: str) -> int:
     return value
 
 
+def bundle_lowerable_abilities(
+    measurement: Mapping[str, Any],
+    gains: Mapping[str, int],
+) -> int:
+    """Use a current implementation-backed cohort as lowerability proof."""
+
+    if (
+        measurement["measurement_outcome_current"]
+        and measurement["bounded_executable_verified"]
+    ):
+        return int(gains["exact_abilities"])
+    return sum(
+        int(row.get("lowerable_untrusted_abilities") or 0)
+        for row in measurement["members"]
+    )
+
+
 def prerequisite_fanout_identity(
     measurement_outcome: Any,
 ) -> tuple[str | None, int | None]:

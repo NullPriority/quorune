@@ -350,7 +350,7 @@ _PROBE_FIXED_COMBAT_ENTRY_KEYWORD_LIFECYCLES = (
     "fixed-combat-entry-keyword-lifecycles-existing-owner-v1"
 )
 _PROBE_TYPED_WARD_CLOSURE = (
-    "typed-ward-cost-and-composition-closure-existing-owner-v1"
+    "typed-ward-cost-and-composition-closure-existing-owner-v2"
 )
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
