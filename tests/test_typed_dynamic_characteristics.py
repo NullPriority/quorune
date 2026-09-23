@@ -151,6 +151,12 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 QUERY_HANDLER,
                 "continuous.characteristics.query_count_modifier",
             ),
+            (
+                "Opponent Ward Grant",
+                "Creatures your opponents control have ward {1}.",
+                KEYWORD_GRANT_HANDLER,
+                "trigger.keyword.ward.fixed_generic",
+            ),
         )
         for index, (name, text, handler_id, capability_id) in enumerate(cases):
             with self.subTest(name=name):
@@ -172,7 +178,6 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 self.assertEqual((), program.residuals)
 
         unsupported = (
-            "Creatures your opponents control have ward {1}.",
             "Multicolored creatures you control have protection from red.",
             "This creature has haste as long as you have exactly 10 life.",
             "This creature gets +1/+1 for each color among permanents you control.",

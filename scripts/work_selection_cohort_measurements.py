@@ -349,6 +349,9 @@ _PROBE_FIXED_KEYWORD_EVENT_EFFECTS = (
 _PROBE_FIXED_COMBAT_ENTRY_KEYWORD_LIFECYCLES = (
     "fixed-combat-entry-keyword-lifecycles-existing-owner-v1"
 )
+_PROBE_TYPED_WARD_CLOSURE = (
+    "typed-ward-cost-and-composition-closure-existing-owner-v2"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -537,6 +540,7 @@ _PROBE_IDS = {
     _PROBE_PUBLIC_STATIC_ACTION_LEGALITY,
     _PROBE_FIXED_KEYWORD_EVENT_EFFECTS,
     _PROBE_FIXED_COMBAT_ENTRY_KEYWORD_LIFECYCLES,
+    _PROBE_TYPED_WARD_CLOSURE,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -4726,6 +4730,150 @@ def _fixed_public_declaration_condition_measurement(
     }
 
 
+def _typed_ward_closure_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact Ward closure through current typed runtime owners."""
+
+    registry = load_default_capability_registry()
+    ward_capabilities = {
+        "trigger.keyword.ward.fixed_generic",
+        "trigger.keyword.ward.fixed_nonmana",
+    }
+    broad_cards: set[str] = set()
+    matched_cards: dict[str, int] = {}
+    matched_abilities = 0
+    matched_residuals = 0
+    complete_cards: set[str] = set()
+    existing_exact_siblings = 0
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = tuple(
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+            and re.search(
+                r"\bward(?:\s|[—–-])",
+                _without_parenthetical_reminder(
+                    _source_line(record, ability)
+                ),
+                re.IGNORECASE,
+            )
+            is not None
+        )
+        if not candidates:
+            continue
+        broad_cards.add(oracle_id)
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            (face.face_id, node.node_id): node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        matched = tuple(
+            ability
+            for ability in candidates
+            if (
+                (
+                    node := nodes.get(
+                        (
+                            str(ability.get("face_id") or "front"),
+                            str(ability.get("ability_id") or ""),
+                        )
+                    )
+                )
+                is not None
+                and node.exact
+                and bool(
+                    ward_capabilities.intersection(
+                        node.capability_dependencies
+                    )
+                )
+            )
+        )
+        if not matched:
+            continue
+        matched_abilities += len(matched)
+        base_residuals = sum(
+            len(ability.get("residuals", ()))
+            for ability in card.get("abilities", [])
+        )
+        matched_residuals += max(
+            0, base_residuals - len(compiled.material_residuals)
+        )
+        remaining = len(compiled.material_residuals)
+        matched_cards[oracle_id] = remaining
+        existing_exact_siblings += sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", [])
+        )
+        if card.get("oracle_ir_status") != "exact" and compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = bool(complete_cards) and (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_residuals
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_residuals,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": matched_abilities,
+            "existing_exact_sibling_nodes": existing_exact_siblings,
+            "remaining_residual_sibling_nodes": sum(
+                matched_cards.values()
+            ),
+            "trusted_program_transitions": len(complete_cards),
+            "unresolved_program_transitions": (
+                len(matched_cards) - len(complete_cards)
+            ),
+            "expected_oracle_residual_reduction": matched_residuals,
+            "expected_card_program_residual_reduction": matched_residuals,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": sum(
+                count > 0 for count in matched_cards.values()
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                broad_cards - set(matched_cards)
+            ),
+        },
+    }
+
+
 def _measurement(
     *,
     frontier: Mapping[str, Any],
@@ -4739,6 +4887,15 @@ def _measurement(
     if probe_id not in _PROBE_IDS:
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
+        )
+    if probe_id == _PROBE_TYPED_WARD_CLOSURE:
+        return _typed_ward_closure_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
         )
     if probe_id == _PROBE_FIXED_SUSPEND_LIFECYCLE:
         return _fixed_suspend_lifecycle_measurement(

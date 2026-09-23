@@ -3181,18 +3181,18 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 6,
+      "version": 7,
       "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Grant one or more selected ordinary keywords in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query.",
-        "inputs": ["active phased-in battlefield source", "source-controller, source-opponent, or global target relation", "closed battlefield type, subtype conjunction or union, defined Outlaw, token, public-state, or positive ability-presence query", "represented attack, block, damage, destruction, targeting, and ordinary combat keywords", "optional fixed power/toughness modifier or exact declaration fragments over the identical creature query"],
+        "inputs": ["active phased-in battlefield source", "source-controller, source-opponent, or global target relation", "closed battlefield type, subtype conjunction or union, defined Outlaw, token, public-state, or positive ability-presence query", "represented attack, block, damage, destruction, targeting, ordinary combat keyword, or fixed-generic Ward fragment", "optional fixed power/toughness modifier or exact declaration fragments over the identical creature query"],
         "outputs": ["source-bound layer-6 keyword grant", "optional source-bound layer-6 declaration-fragment or layer-7c power/toughness grant", "live type, subtype, color-cardinality, supertype, token, named-counter, combat, tap, attachment, modified, positive ability, control, entry, and phasing applicability", "generic layer-6 dependency ordering against additions and removals of the required ability", "immediate source-departure and phasing expiration", "per-keyword capability closure through the existing combat, damage, destruction, or targeting owner"],
         "exclusions": ["arbitrary rules text", "keywords without trusted consumers", "hidden-zone predicates", "negative or absent ability predicates, compound state-and-counter predicates, or dynamically counted predicates", "open conditional, temporary, chosen, or variable abilities", "untyped keyword data"]
       },
       "dependencies": ["state_query.permanent.public_state_predicate"],
       "implementation_components": ["quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler", "quorune.compiler.continuous_templates.fixed_query_characteristic_grant_handler", "quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler", "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject", "quorune.continuous_effects._ability_presence_dependency_ids", "quorune.semantic_runtime.continuous_components.FixedQueryKeywordGrantHandler", "quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicGrantHandler", "quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler", "quorune.card_programs.runtime.collect_card_program_continuous_effects", "quorune.continuous_effects.evaluate_continuous_effects"],
-      "positive_tests": ["test_closed_query_grammar_compiles_exact_with_consumer_capabilities", "test_expanded_query_grammar_and_combined_characteristics_compile_exact", "test_fixed_battlefield_query_extensions_share_one_canonical_condition", "test_measured_50_card_lower_bound_is_capability_closed", "test_public_object_state_and_query_conditions_compile_closed", "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_static_query_and_attachment_declaration_grants_compile_closed"],
+      "positive_tests": ["test_closed_query_grammar_compiles_exact_with_consumer_capabilities", "test_expanded_query_grammar_and_combined_characteristics_compile_exact", "test_fixed_battlefield_query_extensions_share_one_canonical_condition", "test_measured_50_card_lower_bound_is_capability_closed", "test_public_object_state_and_query_conditions_compile_closed", "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_static_query_and_attachment_declaration_grants_compile_closed", "test_fixed_public_ward_costs_and_keyword_composition_compile", "test_fixed_query_ward_grant_uses_typed_layer_six_fragment"],
       "negative_tests": ["test_open_or_unsupported_queries_remain_material_residuals", "test_level_gated_class_keyword_grant_remains_residual", "test_descriptors_fail_closed_and_rejection_has_no_state_effect", "test_raw_oracle_text_without_fragment_does_not_select_behavior", "test_shared_public_query_dependency_fails_closed_across_consumers", "test_static_declaration_grant_dependencies_fail_closed"],
       "interaction_tests": ["test_aura_attachment_and_query_grant_execute_from_one_exact_card", "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners", "test_expanded_query_grants_feed_current_keyword_consumers", "test_exact_grant_executes_while_replacement_siblings_fail_closed", "test_live_queries_track_global_control_subtype_phase_and_zone_changes", "test_multicolor_query_observes_the_cycle_safe_layer_five_boundary", "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay", "test_live_public_object_state_and_layer_five_queries_recompute", "test_subtype_union_recomputes_after_layer_four_and_excludes_source", "test_ability_presence_query_uses_shared_layer_six_dependency_order", "test_static_query_declaration_grant_uses_offer_commit_authority"],
       "multiplayer_tests": ["test_live_queries_track_global_control_subtype_phase_and_zone_changes", "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay", "test_projection_and_replay_preserve_grants_without_private_identities"],
@@ -6124,7 +6124,7 @@
     },
     {
       "id": "trigger.keyword.ward.fixed_generic",
-      "version": 1,
+      "version": 2,
       "official_rules": ["603.3", "702.21", "702.21a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -6134,9 +6134,9 @@
         "exclusions": ["nonmana Ward costs", "variable, hybrid, Phyrexian, snow, or restricted Ward costs", "opponent relation changes outside represented multiplayer state", "target changes after initial trigger creation"]
       },
       "dependencies": ["trigger.placement.apnap"],
-      "implementation_components": ["quorune.trigger_participation.WardSpec", "quorune.semantic_runtime.ability_fragments.WardAbilityFragmentHandler", "quorune.compiler.ability_keyword_fragments.lower_ability_keyword_fragments", "quorune.trigger_processing.TriggerProcessingOwner.collect_ward_occurrences"],
-      "positive_tests": ["test_roaming_throne_type_trigger_multiplier_and_ward"],
-      "negative_tests": ["test_ward_unsupported_costs_remain_residual_and_removed_ability_does_not_trigger"],
+      "implementation_components": ["quorune.trigger_participation.WardSpec", "quorune.semantic_runtime.ability_fragments.WardAbilityFragmentHandler", "quorune.compiler.ward_cost_templates.fixed_ward_spec", "quorune.compiler.ability_keyword_fragments.lower_ability_keyword_fragments", "quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler", "quorune.compiler.continuous_templates.attached_fixed_characteristics_handler", "quorune.trigger_processing.TriggerProcessingOwner.collect_ward_occurrences"],
+      "positive_tests": ["test_roaming_throne_type_trigger_multiplier_and_ward", "test_fixed_public_ward_costs_and_keyword_composition_compile"],
+      "negative_tests": ["test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger"],
       "interaction_tests": ["test_multiple_ward_instances_and_control_change_use_current_state"],
       "multiplayer_tests": ["test_multiple_ward_instances_and_control_change_use_current_state"],
       "privacy_tests": ["test_multiple_ward_instances_and_control_change_use_current_state"],
@@ -6146,6 +6146,33 @@
       "dependency_fail_closed_rationale": "Keyword promotion retains a dependency residual unless immutable ordinary APNAP trigger placement and fixed-generic Ward are trusted.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused Ward mutations ignore current ability removal or invert opponent control; typed occurrence-count assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.keyword.ward.fixed_nonmana",
+      "version": 1,
+      "official_rules": ["118.4", "118.5", "119.4", "603.3", "702.21", "702.21a", "702.21b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile fixed-life and discard-one Ward into current layer-6 fragments, then atomically pay the typed cost or counter the targeting stack item through one private replayable choice owner.",
+        "inputs": ["one printed fixed-life or discard-one Ward instance", "current effective ability fragments", "targeting stack object", "source physical and logical identity", "targeting controller", "current payer life or private hand"],
+        "outputs": ["one Ward occurrence per effective instance", "ordinary APNAP placement", "actor-private payment choice", "canonical life-payment or discard intent", "canonical counter result on decline"],
+        "exclusions": ["random, qualified, multiple-card, optional, alternative, sacrifice, counter, energy, poison, evidence, blight, waterbend, dynamic, composite, variable, hybrid, Phyrexian, snow, or restricted Ward costs", "opponent relation changes outside represented multiplayer state", "granted nonmana Ward outside the closed typed static-component grammar"]
+      },
+      "dependencies": ["trigger.placement.apnap", "zone.discard.typed_cause"],
+      "implementation_components": ["quorune.trigger_participation.WardSpec", "quorune.compiler.ward_cost_templates.fixed_ward_spec", "quorune.semantic_runtime.ability_fragments.WardAbilityFragmentHandler", "quorune.trigger_processing.TriggerProcessingOwner.collect_ward_occurrences", "quorune.semantic_choices.payments.WardPaymentChoiceHandler", "quorune.semantic_runtime.intents.PayLifeIntent", "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent", "quorune.semantic_runtime.intents.CounterStackIntent"],
+      "positive_tests": ["test_fixed_life_and_discard_ward_payments_use_typed_intents"],
+      "negative_tests": ["test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger"],
+      "interaction_tests": ["test_fixed_life_and_discard_ward_payments_use_typed_intents"],
+      "multiplayer_tests": ["test_discard_ward_is_private_and_replays_exactly"],
+      "privacy_tests": ["test_discard_ward_is_private_and_replays_exactly"],
+      "replay_tests": ["test_discard_ward_is_private_and_replays_exactly"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Unsupported Ward costs remain material residuals and cannot create a runtime payment descriptor; represented discard payments depend on the typed discard-cause transition owner.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused payment tests reject life-affordability, private-card, stale-incarnation, decline-countering, and current effective-ability mutations.",
       "blockers": [],
       "status": "trusted"
     },

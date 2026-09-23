@@ -3537,10 +3537,10 @@ class CommanderEngine(
                 item,
                 [
                     {
-                        "op": "counter_unless_pay",
+                        "op": "ward_counter_unless_pay",
                         "player": str(item.context["payer"]),
                         "stack": str(item.context["target_stack"]),
-                        "cost": dict(item.context.get("cost") or {}),
+                        "ward_spec": dict(item.context["ward_spec"]),
                     }
                 ],
                 None,

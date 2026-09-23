@@ -62,6 +62,9 @@ TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID = (
     "ability.static.trigger-multiplier.v1"
 )
 WARD_FRAGMENT_HANDLER_ID = "ability.trigger.ward.v1"
+WARD_NONMANA_FRAGMENT_HANDLER_ID = (
+    "ability.trigger.ward.fixed-nonmana.v1"
+)
 TOXIC_FRAGMENT_HANDLER_ID = "ability.static.toxic.v1"
 COUNTER_MAXIMUM_FRAGMENT_HANDLER_ID = "ability.static.counter-maximum.v1"
 CONDITIONAL_KEYWORD_FRAGMENT_HANDLER_ID = (
@@ -884,12 +887,57 @@ class WardAbilityFragmentHandler:
     )
 
     def validate(self, descriptor: Mapping[str, Any]) -> WardSpec:
-        return _fragment(
+        spec = _fragment(
             descriptor,
             handler_id=self.handler_id,
             event=self.event,
             expected_type=WardSpec,
         )
+        if spec.generic_cost is None:
+            raise SemanticNodeError(
+                "Fixed-generic Ward handler received a nonmana cost"
+            )
+        return spec
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class WardNonmanaAbilityFragmentHandler:
+    handler_id: str = WARD_NONMANA_FRAGMENT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "ability.trigger.ward"
+    event: str = "continuous"
+    rule_references: tuple[str, ...] = (
+        "118.4",
+        "118.5",
+        "119.4",
+        "603.3",
+        "702.21",
+        "702.21a",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        "trigger.keyword.ward.fixed_nonmana",
+    )
+
+    def validate(self, descriptor: Mapping[str, Any]) -> WardSpec:
+        spec = _fragment(
+            descriptor,
+            handler_id=self.handler_id,
+            event=self.event,
+            expected_type=WardSpec,
+        )
+        if spec.generic_cost is not None:
+            raise SemanticNodeError(
+                "Fixed-nonmana Ward handler received a mana cost"
+            )
+        return spec
 
     def lower(
         self,
@@ -1244,6 +1292,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             TriggerMultiplierAbilityFragmentHandler(),
             ToxicAbilityFragmentHandler(),
             WardAbilityFragmentHandler(),
+            WardNonmanaAbilityFragmentHandler(),
         )
     )
     registry.require_registered_capabilities(
@@ -1295,6 +1344,7 @@ __all__ = [
     "STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID",
     "TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID",
     "WARD_FRAGMENT_HANDLER_ID",
+    "WARD_NONMANA_FRAGMENT_HANDLER_ID",
     "TOXIC_FRAGMENT_HANDLER_ID",
     "EnchantAbilityFragmentHandler",
     "TypedEnchantAbilityFragmentHandler",
@@ -1326,6 +1376,7 @@ __all__ = [
     "TriggerMultiplierAbilityFragmentHandler",
     "ToxicAbilityFragmentHandler",
     "WardAbilityFragmentHandler",
+    "WardNonmanaAbilityFragmentHandler",
     "ProtectionAbilityFragmentHandler",
     "PARTNER_WITH_FRAGMENT_HANDLER_ID",
     "PartnerWithAbilityFragmentHandler",

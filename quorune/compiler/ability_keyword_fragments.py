@@ -16,39 +16,48 @@ from ..ability_fragments import (
 from ..aura import parse_enchant_line
 from ..cast_timing import CastTimingPermission, PRINTED_FLASH_MECHANIC
 from ..renown import RENOWN_MECHANIC_ID, RenownSpec
-from ..trigger_participation import WardSpec
 from .ability_keyword_fragment_model import AbilityKeywordFragmentLowering
+from .ward_cost_templates import fixed_ward_spec
 
 
-def _lower_fixed_generic_ward(
+def _lower_fixed_public_ward(
     material_line: str,
     mechanics: tuple[str, ...],
 ) -> AbilityKeywordFragmentLowering | None:
-    if mechanics != ("ward",):
+    if "ward" not in mechanics:
         return None
-    match = re.fullmatch(
-        r"Ward\s+\{(?P<generic>\d+)\}\.?",
-        material_line.strip(),
-        re.IGNORECASE,
+    ward_parts = tuple(
+        part
+        for part in _keyword_parts(material_line)
+        if part.casefold().startswith("ward")
     )
-    if match is None:
+    specs = tuple(fixed_ward_spec(part) for part in ward_parts)
+    if (
+        len(ward_parts) != mechanics.count("ward")
+        or not ward_parts
+        or any(spec is None for spec in specs)
+    ):
         return AbilityKeywordFragmentLowering(
             residual_kind="unsupported_ward_cost",
             residual_reason=(
-                "Ward cost is outside the closed fixed-generic grammar"
+                "Ward cost is outside the closed fixed public grammar"
             ),
-            residual_blockers=("fixed generic Ward cost",),
+            residual_blockers=("fixed public Ward cost",),
         )
     return AbilityKeywordFragmentLowering(
-        handlers=(
+        handlers=tuple(
             {
-                "handler_id": "ability.trigger.ward.v1",
+                "handler_id": (
+                    "ability.trigger.ward.v1"
+                    if spec.generic_cost is not None
+                    else "ability.trigger.ward.fixed-nonmana.v1"
+                ),
                 "schema_version": 1,
                 "event": "continuous",
-                "fragment": ability_fragment_to_dict(
-                    WardSpec(generic_cost=int(match.group("generic")))
-                ),
-            },
+                "fragment": ability_fragment_to_dict(spec),
+            }
+            for spec in specs
+            if spec is not None
         )
     )
 
@@ -232,8 +241,8 @@ def lower_ability_keyword_fragments(
                 },
             )
         )
-    ward = _lower_fixed_generic_ward(material_line, mechanics)
-    if ward is not None:
+    ward = _lower_fixed_public_ward(material_line, mechanics)
+    if ward is not None and ward.residual_kind is not None:
         return ward
     if mechanics == (RENOWN_MECHANIC_ID,):
         matches = tuple(
@@ -266,7 +275,8 @@ def lower_ability_keyword_fragments(
     combat = _lower_combat_keyword_fragments(material_line, mechanics)
     if combat.residual_kind is not None:
         return combat
-    handlers = list(combat.handlers)
+    handlers = list(ward.handlers if ward is not None else ())
+    handlers.extend(combat.handlers)
 
     if "protection" in mechanics:
         protection_parts = tuple(
