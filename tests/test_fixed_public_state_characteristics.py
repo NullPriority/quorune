@@ -697,6 +697,8 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "or more card types among cards in your graveyard.",
             "This creature gets +X/+X during your turn.",
             "During your turn, this creature has ward {2}.",
+            "As long as this creature is untapped, other legendary creatures "
+            "you control have ward {1}.",
             "During your turn, this creature has \"{T}: Draw a card.\"",
             "As long as this creature is equipped, it has ward {2}.",
             "Creatures you control have flying as long as you control an "

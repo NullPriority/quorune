@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "fd215d663109b125f85a081e249e156528cccea5",
+  "baseline_commit": "3275dc13790f13097a042592edf5d9827e0a87d5",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -1581,9 +1581,9 @@
     "physical_lines": 7451
   },
   "exception_binding": {
-    "adr": "docs/adr/0102-typed-fixed-combat-entry-lifecycles.md",
-    "allowance_fingerprint": "4b156217b684586bea297586a0639eb9ce852bb65cf94c5b98cb188eaedaf19c",
-    "exception_id": "ARCH-EXC-0052"
+    "adr": "docs/adr/0103-typed-fixed-public-ward-payments.md",
+    "allowance_fingerprint": "c8ac1510614c23bb44a297b3929f551248742dfc581afba7890e6754e665e425",
+    "exception_id": "ARCH-EXC-0053"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1776,6 +1776,11 @@
       "symbol": "CommanderSession.act"
     },
     {
+      "file": "quorune/work_selection.py",
+      "logical_lines": 155,
+      "symbol": "_synthesized_frontier_candidates"
+    },
+    {
       "file": "server/app.py",
       "logical_lines": 718,
       "symbol": "create_app"
@@ -1801,6 +1806,10 @@
     {
       "file": "quorune/rules/capabilities.py",
       "logical_lines": 1504
+    },
+    {
+      "file": "quorune/work_selection.py",
+      "logical_lines": 1501
     },
     {
       "file": "web/src/App.tsx",
@@ -1972,7 +1981,8 @@
     "untap",
     "untap_all_creatures",
     "untap_targets",
-    "veil_of_summer"
+    "veil_of_summer",
+    "ward_counter_unless_pay"
   ],
   "runtime_oracle_text_access_identities": [],
   "schema_version": 4

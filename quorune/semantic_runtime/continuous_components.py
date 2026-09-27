@@ -36,6 +36,7 @@ from ..declaration_fragments import (
     DeclarationRestrictionTemplate,
 )
 from ..rules.capabilities import load_default_capability_registry
+from ..trigger_participation import WardSpec
 from .component_registry import (
     RuntimeComponentRegistry,
     exact_fields,
@@ -98,6 +99,7 @@ class FixedQueryKeywordGrantNode:
     predicate: ObjectQuerySpec
     exclude_source: bool
     abilities: tuple[str, ...]
+    fragments: tuple[StaticAbilityFragment, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -106,6 +108,7 @@ class FixedQueryCharacteristicGrantNode:
     predicate: ObjectQuerySpec
     exclude_source: bool
     abilities: tuple[str, ...]
+    fragments: tuple[StaticAbilityFragment, ...]
     power: int
     toughness: int
 
@@ -881,21 +884,55 @@ class FixedQueryKeywordGrantHandler:
         modifier = descriptor["modifier"]
         if not isinstance(modifier, Mapping):
             raise SemanticNodeError("runtime handler modifier must be an object")
-        exact_fields(
-            modifier,
+        modifier_fields = set(modifier)
+        if modifier_fields not in (
             {"add_abilities"},
-            field="runtime handler modifier",
-        )
+            {"add_abilities", "add_ability_fragments"},
+        ):
+            raise SemanticNodeError(
+                "fixed query keyword grants have a closed modifier schema"
+            )
         abilities = nonempty_strings(
             modifier["add_abilities"],
             field="modifier.add_abilities",
         )
+        raw_fragments = modifier.get("add_ability_fragments", ())
+        if not isinstance(raw_fragments, (list, tuple)):
+            raise SemanticNodeError(
+                "fixed query keyword grant fragments must be an array"
+            )
+        try:
+            fragments = tuple(
+                ability_fragment_from_dict(value) for value in raw_fragments
+            )
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(
+                "fixed query keyword grant fragments are malformed"
+            ) from exc
+        if any(
+            not isinstance(fragment, WardSpec)
+            or fragment.generic_cost is None
+            for fragment in fragments
+        ):
+            raise SemanticNodeError(
+                "fixed query keyword grants accept only fixed-generic Ward fragments"
+            )
+        ward_labels = tuple(
+            f"Ward {{{fragment.generic_cost}}}" for fragment in fragments
+        )
+        ordinary = tuple(
+            ability for ability in abilities if not ability.startswith("Ward {")
+        )
         if (
             not abilities
             or len(set(abilities)) != len(abilities)
+            or tuple(
+                ability for ability in abilities if ability.startswith("Ward {")
+            )
+            != ward_labels
             or any(
                 ability not in FIXED_CHARACTERISTIC_KEYWORDS
-                for ability in abilities
+                for ability in ordinary
             )
         ):
             raise SemanticNodeError(
@@ -906,6 +943,7 @@ class FixedQueryKeywordGrantHandler:
             predicate=predicate,
             exclude_source=condition["exclude_source"],
             abilities=abilities,
+            fragments=fragments,
         )
 
     def lower(
@@ -928,8 +966,17 @@ class FixedQueryKeywordGrantHandler:
                 sublayer="6",
                 timestamp=context.source_timestamp,
                 operations=tuple(
-                    ContinuousOperation("add_ability", ability)
-                    for ability in node.abilities
+                    (
+                        ContinuousOperation("add_ability", ability)
+                        for ability in node.abilities
+                    )
+                )
+                + tuple(
+                    ContinuousOperation(
+                        "add_ability_fragment",
+                        ability_fragment_to_dict(fragment),
+                    )
+                    for fragment in node.fragments
                 ),
                 origin=ContinuousEffectOrigin.STATIC_ABILITY,
                 applies=predicate,
@@ -985,11 +1032,19 @@ class FixedQueryCharacteristicGrantHandler:
         modifier = descriptor["modifier"]
         if not isinstance(modifier, Mapping):
             raise SemanticNodeError("runtime handler modifier must be an object")
-        exact_fields(
-            modifier,
+        modifier_fields = set(modifier)
+        if modifier_fields not in (
             {"add_abilities", "power", "toughness"},
-            field="runtime handler modifier",
-        )
+            {
+                "add_abilities",
+                "add_ability_fragments",
+                "power",
+                "toughness",
+            },
+        ):
+            raise SemanticNodeError(
+                "fixed query characteristic grants have a closed modifier schema"
+            )
         keyword_node = FixedQueryKeywordGrantHandler().validate(
             {
                 "handler_id": _FIXED_QUERY_KEYWORD_GRANT_HANDLER_ID,
@@ -998,6 +1053,15 @@ class FixedQueryCharacteristicGrantHandler:
                 "condition": descriptor["condition"],
                 "modifier": {
                     "add_abilities": modifier["add_abilities"],
+                    **(
+                        {
+                            "add_ability_fragments": modifier[
+                                "add_ability_fragments"
+                            ]
+                        }
+                        if "add_ability_fragments" in modifier
+                        else {}
+                    ),
                 },
             }
         )
@@ -1018,6 +1082,7 @@ class FixedQueryCharacteristicGrantHandler:
             predicate=keyword_node.predicate,
             exclude_source=keyword_node.exclude_source,
             abilities=keyword_node.abilities,
+            fragments=keyword_node.fragments,
             power=anthem_node.power,
             toughness=anthem_node.toughness,
         )
@@ -1048,8 +1113,17 @@ class FixedQueryCharacteristicGrantHandler:
                 layer=Layer.ABILITY,
                 sublayer="6",
                 operations=tuple(
-                    ContinuousOperation("add_ability", ability)
-                    for ability in node.abilities
+                    (
+                        ContinuousOperation("add_ability", ability)
+                        for ability in node.abilities
+                    )
+                )
+                + tuple(
+                    ContinuousOperation(
+                        "add_ability_fragment",
+                        ability_fragment_to_dict(fragment),
+                    )
+                    for fragment in node.fragments
                 ),
                 **common,
             ),

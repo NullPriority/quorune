@@ -46,7 +46,10 @@ from quorune.work_selection_evidence import (
     non_harvest_metrics_are_conservative,
     validate_harvest_forecast_correction,
 )
-from quorune.work_selection_common import transition_measurement_matches_policy
+from quorune.work_selection_common import (
+    bundle_lowerable_abilities,
+    transition_measurement_matches_policy,
+)
 from quorune.util import stable_json
 from scripts.harvest_outcome_history import (
     _apply_forecast_corrections,
@@ -2307,11 +2310,11 @@ class RulesSchedulerTests(unittest.TestCase):
             "Multicolored creatures you control have flying.",
             "Zombie tokens you control have hexproof and menace.",
             "Each creature you control with a +1/+1 counter on it has trample.",
+            "Creatures you control have ward {2}.",
         )
         rejected = (
             "Creatures you control get +1/+1 for each artifact you control.",
             "Creatures you control lose flying.",
-            "Creatures you control have ward {2}.",
             "Creatures you control are blue in addition to their other colors.",
         )
         for source in accepted:
@@ -5220,6 +5223,42 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertTrue(measurement["bounded_executable_verified"])
         self.assertEqual("upper_bound_only", status)
         self.assertIn("only an upper bound", reason)
+
+    def test_implementation_backed_bundle_uses_measured_exact_ability_floor(self):
+        measurement = {
+            "measurement_outcome_current": True,
+            "bounded_executable_verified": True,
+            "members": [{"lowerable_untrusted_abilities": 0}],
+        }
+        gains = {"exact_abilities": 101}
+        lowerable = bundle_lowerable_abilities(measurement, gains)
+        coverage = self.catalog["work_selection"]["coverage_family"]
+        readiness, eligible, _reason = _frontier_decision(
+            candidate_id="bundle:implementation-backed-fixture",
+            complete_gain=16,
+            ability_gain=101,
+            residual_gain=86,
+            lowerable_untrusted_abilities=lowerable,
+            sole_blockers=16,
+            prerequisites=(),
+            effort="small",
+            policy={
+                **coverage,
+                "consecutive_subthreshold_harvests": 0,
+            },
+        )
+
+        self.assertEqual(101, lowerable)
+        self.assertTrue(eligible)
+        self.assertEqual(
+            "major_exact_ability_harvest",
+            readiness,
+        )
+
+        measurement["measurement_outcome_current"] = False
+        self.assertEqual(
+            0, bundle_lowerable_abilities(measurement, gains)
+        )
 
     def test_bounded_bundle_fails_closed_when_lowerable_census_drifts(self):
         frontier, policies, weights = _bounded_candidate_bundle_fixture()

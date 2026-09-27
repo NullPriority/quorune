@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "family": "CR 702.21 — Fixed public Ward costs",
+  "cases": [
+    {
+      "rule_id": "702.21",
+      "rule_text_sha256": "b311172dd9a45edf995b74d864a3b15130409855af2c5e254d59512104e8c820",
+      "classification": "definition_only",
+      "status": "definition_only",
+      "assertion_kind": "static_traceability",
+      "reviewed": true,
+      "implementation_components": ["quorune.rules.capabilities.CapabilityRegistry"],
+      "executable_test_ids": ["tests.test_trigger_processing_owner.TriggerParticipationCompilerTests.test_fixed_public_ward_costs_and_keyword_composition_compile"],
+      "required_scenarios": [],
+      "covered_scenarios": [],
+      "blockers": [],
+      "notes": ["Keyword heading; fixed generic, fixed life, and discard-one costs are owned by the typed Ward capabilities."]
+    },
+    {
+      "rule_id": "702.21a",
+      "rule_text_sha256": "1dfde9033cbe2fb96b5a1bf1284907a5814dca3a31669a68e4cfbe8dc8c322ac",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.trigger_participation.WardSpec", "quorune.compiler.ward_cost_templates.fixed_ward_spec", "quorune.trigger_processing.TriggerProcessingOwner.collect_ward_occurrences", "quorune.semantic_choices.payments.WardPaymentChoiceHandler"],
+      "executable_test_ids": ["tests.test_trigger_processing_owner.TriggerParticipationCompilerTests.test_fixed_public_ward_costs_and_keyword_composition_compile", "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger", "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_fixed_life_and_discard_ward_payments_use_typed_intents", "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly", "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_rejects_a_stale_card_incarnation"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay", "hidden_information"],
+      "blockers": ["random, qualified, multiple-card, optional, alternative, sacrifice, counter, energy, poison, evidence, blight, waterbend, dynamic, composite, variable, hybrid, Phyrexian, snow, and restricted Ward costs remain unsupported", "granted fixed-life or discard Ward outside the closed typed static-component grammar remains unsupported"],
+      "notes": ["A represented Ward instance freezes its current controller, payer, target stack reference, and typed cost when the targeting event is collected, then resolves through the ordinary APNAP batch and one atomic typed payment or counter choice.", "The discard-one payment exposes eligible hand identities only to the payer and pins each offered card's logical incarnation."]
+    },
+    {
+      "rule_id": "702.21b",
+      "rule_text_sha256": "b7d7fa11e44b8d97ccd447f050462e0a32e6b5da3686fb66c81c48ce81221d5d",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.trigger_processing.TriggerProcessingOwner.collect_ward_occurrences", "quorune.trigger_processing.enqueue_trigger_batch"],
+      "executable_test_ids": ["tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_multiple_ward_instances_and_control_change_use_current_state", "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_occurrence_replays_exactly"],
+      "required_scenarios": ["positive", "interaction", "multiplayer", "replay"],
+      "covered_scenarios": ["positive", "interaction", "multiplayer", "replay"],
+      "blockers": ["copied or text-changed Ward instances outside current typed ability-fragment propagation remain unsupported"],
+      "notes": ["Each current effective Ward fragment creates its own ordinary trigger occurrence and resolves independently."]
+    }
+  ]
+}

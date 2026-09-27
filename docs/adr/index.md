@@ -117,3 +117,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0100 — public cast-cost modifier closure](0100-public-cast-cost-modifier-closure.md)
 - [ADR 0101 — typed fixed keyword event effects](0101-typed-fixed-keyword-event-effects.md)
 - [ADR 0102 — typed fixed combat-entry lifecycles](0102-typed-fixed-combat-entry-lifecycles.md)
+- [ADR 0103 — typed fixed public Ward payments](0103-typed-fixed-public-ward-payments.md)

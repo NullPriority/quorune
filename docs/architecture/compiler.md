@@ -1212,6 +1212,19 @@ uses its public exiled cost object. Variable, modified, repeated, granted,
 copied, team-specific, and independently incomplete forms remain residual. See
 [ADR 0102](../adr/0102-typed-fixed-combat-entry-lifecycles.md).
 
+`compiler/ward_cost_templates.py`, `compiler/ability_keyword_fragments.py`,
+and `compiler/continuous_templates.py` own the fixed public Ward closure.
+Historical fixed-generic Ward fragments retain schema version 1. Fixed positive
+life and discard-one payments use schema version 2, while fixed-generic Ward may
+compose with supported printed keywords or the existing query and attachment
+layer-6 grants. Trigger discovery still reads only current effective fragments
+and emits ordinary APNAP occurrences; one semantic-choice owner delegates the
+typed payment or decline to canonical mana, life, discard, and stack-counter
+intents. Static grants use the shared ability-presence applicability query, not
+a Ward-specific check. Random, qualified, multiple-card, alternative,
+sacrifice, composite, dynamic, and granted nonmana costs remain residual. See
+[ADR 0103](../adr/0103-typed-fixed-public-ward-payments.md).
+
 Fixed multi-event trigger subscriptions reuse that same owner without creating
 a synthetic event. One source-spanned ability may name exactly two represented
 events in the battlefield active zone; the compiler serializes an ordered

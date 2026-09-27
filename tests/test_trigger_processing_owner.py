@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT, keep_all, load_assets, make_session
+from common import keep_all, load_assets, make_session
 from quorune.ability_fragments import (
     ability_fragment_from_dict,
     ability_fragment_to_dict,
@@ -17,6 +17,7 @@ from quorune.compiler.ability_keyword_fragments import (
 from quorune.compiler.trigger_participation_templates import (
     static_trigger_multiplier_handler,
 )
+from quorune.carddb import CardRecord
 from quorune.continuous_effect_state import commit_continuous_effect
 from quorune.continuous_effects import (
     ContinuousEffect,
@@ -35,7 +36,7 @@ from quorune.record import (
     checkpoint_envelope,
     replay_record,
 )
-from quorune.rules.capabilities import CapabilityRegistry
+from quorune.rules.capabilities import load_default_capability_registry
 from quorune.trigger_batches import (
     PendingTriggerItem,
     TriggerBatchError,
@@ -50,9 +51,6 @@ from quorune.trigger_participation import (
 )
 from quorune.trigger_discovery import applicable_trigger_multipliers
 from quorune.trigger_processing import collect_ward_occurrences
-
-
-REGISTRY_PATH = ROOT / "quorune" / "rules" / "capability-registry.json"
 
 
 class StaticTriggerParticipationTests(unittest.TestCase):
@@ -119,6 +117,8 @@ class StaticTriggerParticipationTests(unittest.TestCase):
             ),
         )
         ward = WardSpec(generic_cost=2)
+        life_ward = WardSpec(life_payment=3)
+        discard_ward = WardSpec(discard_cards=1)
 
         self.assertEqual(
             multiplier,
@@ -135,21 +135,29 @@ class StaticTriggerParticipationTests(unittest.TestCase):
                 {"kind": "ward", "value": ward.to_dict()}
             ),
         )
+        for nonmana in (life_ward, discard_ward):
+            with self.subTest(payment_kind=nonmana.payment_kind):
+                self.assertEqual(
+                    nonmana,
+                    ability_fragment_from_dict(
+                        {"kind": "ward", "value": nonmana.to_dict()}
+                    ),
+                )
         with self.assertRaises(TriggerParticipationError):
             TriggerMultiplierSpec.from_dict(
                 {**multiplier.to_dict(), "oracle_text": "live authority"}
             )
         with self.assertRaises(TriggerParticipationError):
             WardSpec.from_dict({**ward.to_dict(), "arbitrary": True})
+        with self.assertRaises(TriggerParticipationError):
+            WardSpec(generic_cost=2, life_payment=2)
 
 
 class TriggerParticipationCompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()
-        cls.capabilities = CapabilityRegistry(
-            json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-        )
+        cls.capabilities = load_default_capability_registry()
 
     @classmethod
     def tearDownClass(cls):
@@ -217,16 +225,98 @@ class TriggerParticipationCompilerTests(unittest.TestCase):
             )
         )
 
-    def test_fixed_generic_ward_compiles_and_unsupported_costs_remain_residual(self):
+    def test_fixed_public_ward_costs_and_keyword_composition_compile(self):
         fixed = lower_ability_keyword_fragments("Ward {2}", ("ward",))
         life = lower_ability_keyword_fragments("Ward—Pay 3 life.", ("ward",))
+        discard = lower_ability_keyword_fragments(
+            "Ward—Discard a card.", ("ward",)
+        )
+        compound = lower_ability_keyword_fragments(
+            "Flying, ward {2}", ("flying", "ward")
+        )
 
         self.assertIsNone(fixed.residual_kind)
         self.assertEqual(1, len(fixed.handlers))
         ward = ability_fragment_from_dict(fixed.handlers[0]["fragment"])
         self.assertEqual(WardSpec(generic_cost=2), ward)
-        self.assertEqual("unsupported_ward_cost", life.residual_kind)
-        self.assertFalse(life.handlers)
+        self.assertIsNone(life.residual_kind)
+        self.assertEqual(
+            WardSpec(life_payment=3),
+            ability_fragment_from_dict(life.handlers[0]["fragment"]),
+        )
+        self.assertIsNone(discard.residual_kind)
+        self.assertEqual(
+            WardSpec(discard_cards=1),
+            ability_fragment_from_dict(discard.handlers[0]["fragment"]),
+        )
+        self.assertIsNone(compound.residual_kind)
+        self.assertEqual(1, len(compound.handlers))
+        self.assertEqual(
+            WardSpec(generic_cost=2),
+            ability_fragment_from_dict(compound.handlers[0]["fragment"]),
+        )
+
+        for source in (
+            "Ward—Discard a card at random.",
+            "Ward—Pay life equal to this creature's power.",
+            "Ward—Sacrifice a creature.",
+            "Ward—{2}, Pay 2 life.",
+        ):
+            with self.subTest(source=source):
+                unsupported = lower_ability_keyword_fragments(
+                    source, ("ward",)
+                )
+                self.assertEqual(
+                    "unsupported_ward_cost", unsupported.residual_kind
+                )
+                self.assertFalse(unsupported.handlers)
+
+        fixtures = (
+            ("Compound Ward", "Creature — Bird", "Flying, ward {2}", ("Flying", "Ward")),
+            ("Life Ward", "Creature — Advisor", "Ward—Pay 3 life.", ("Ward",)),
+            ("Discard Ward", "Creature — Wizard", "Ward—Discard a card.", ("Ward",)),
+            ("Query Ward", "Creature — Whale", "Other creatures you control have ward {2}.", ("Ward",)),
+            ("Query Characteristic Ward", "Enchantment", "Legendary creatures you control get +2/+1 and have ward {1}.", ("Ward",)),
+            ("Attached Ward", "Artifact — Equipment", "Equipped creature gets +1/+1 and has flying and ward {1}.", ("Ward",)),
+        )
+        for index, (name, type_line, oracle_text, keywords) in enumerate(
+            fixtures, start=1
+        ):
+            with self.subTest(card=name):
+                record = CardRecord(
+                    oracle_id=f"00000000-0000-4000-8000-{index:012d}",
+                    name=name,
+                    mana_cost="{2}",
+                    mana_value=2.0,
+                    type_line=type_line,
+                    oracle_text=oracle_text,
+                    power="2" if "Creature" in type_line else None,
+                    toughness="2" if "Creature" in type_line else None,
+                    loyalty=None,
+                    defense=None,
+                    colors=(),
+                    color_identity=(),
+                    keywords=keywords,
+                    produced_mana=(),
+                    layout="normal",
+                    released_at="2026-01-01",
+                    legalities={"commander": "legal"},
+                    faces=(),
+                    raw={},
+                )
+                oracle_ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                ward_nodes = [
+                    node
+                    for face in oracle_ir.faces
+                    for node in face.nodes
+                    if "ward" in node.text.casefold()
+                ]
+                self.assertTrue(ward_nodes)
+                self.assertTrue(all(node.exact for node in ward_nodes))
 
 
 class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
@@ -298,6 +388,55 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
         )
         engine.state.stack.append(item)
         return item
+
+    def grant_ward(self, engine, target, spec: WardSpec) -> None:
+        identity = ContinuousObjectIdentity(
+            object_id=target.object_id,
+            logical_object_id=target.logical_object_id,
+        )
+        commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id=f"fixture:ward:{spec.payment_kind}",
+                source_id="fixture:typed-ward-source",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(
+                    ContinuousOperation(
+                        "add_ability_fragment",
+                        ability_fragment_to_dict(spec),
+                    ),
+                ),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                applies=ObjectQuerySpec(zones=("battlefield",)),
+                locked_objects=(identity,),
+            ),
+        )
+
+    def prepare_ward_payment(self, session, target, spec: WardSpec):
+        engine = session.engine
+        self.grant_ward(engine, target, spec)
+        targeted = self.targeted_item(engine, target, controller="B")
+        self.assertEqual(1, len(collect_ward_occurrences(engine, targeted)))
+        occurrence = engine.state.pending_trigger_batches[0].items[0]
+        self.assertEqual(spec.to_dict(), occurrence.event_facts["ward_spec"])
+        self.assertFalse(engine._stabilize())
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        for seat in engine.seats:
+            result = session.act(f"pilot:{seat}", {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        decision = engine.state.pending_decision
+        self.assertIsNotNone(decision)
+        assert decision is not None
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assertEqual(["B"], decision.actors)
+        return targeted, decision
 
     def test_enter_multiplier_ignores_unrepresented_events_and_types(self):
         engine = self.session(603201).engine
@@ -588,9 +727,9 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
 
-    def test_ward_unsupported_costs_remain_residual_and_removed_ability_does_not_trigger(self):
+    def test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger(self):
         unsupported = lower_ability_keyword_fragments(
-            "Ward—Pay 3 life.", ("ward",)
+            "Ward—Discard a card at random.", ("ward",)
         )
         self.assertEqual("unsupported_ward_cost", unsupported.residual_kind)
 
@@ -751,6 +890,165 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_fixed_life_and_discard_ward_payments_use_typed_intents(self):
+        life_session = self.session(7022104, players=4)
+        life_engine = life_session.engine
+        life_target = self.card(life_engine, "A", "Ichor Wellspring")
+        life_engine.move_card(
+            life_target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        life_before = life_engine.state.players["B"].life
+        targeted, _decision = self.prepare_ward_payment(
+            life_session,
+            life_target,
+            WardSpec(life_payment=3),
+        )
+        result = life_session.act(
+            "pilot:B",
+            {
+                "action_id": "choose",
+                "pay": True,
+                "plan": "PAY_TYPED_WARD",
+                "reason": "Keep the targeting ability on the stack.",
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(life_before - 3, life_engine.state.players["B"].life)
+        self.assertIn(targeted, life_engine.state.stack)
+
+        insufficient = self.session(7022105, players=4)
+        insufficient_engine = insufficient.engine
+        insufficient_target = self.card(
+            insufficient_engine, "A", "Ichor Wellspring"
+        )
+        insufficient_engine.move_card(
+            insufficient_target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        insufficient_engine.state.players["B"].life = 2
+        stale_targeted, _decision = self.prepare_ward_payment(
+            insufficient,
+            insufficient_target,
+            WardSpec(life_payment=3),
+        )
+        rejected = insufficient.act(
+            "pilot:B",
+            {
+                "action_id": "choose",
+                "pay": True,
+                "plan": "REJECT_UNPAYABLE_WARD",
+                "reason": "Prove the stale payment is rolled back.",
+            },
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(2, insufficient_engine.state.players["B"].life)
+        self.assertIn(stale_targeted, insufficient_engine.state.stack)
+        declined = insufficient.act(
+            "pilot:B",
+            {
+                "action_id": "choose",
+                "pay": False,
+                "plan": "DECLINE_TYPED_WARD",
+                "reason": "The fixed life cost is unaffordable.",
+            },
+        )
+        self.assertTrue(declined.ok, declined.summary)
+        self.assertNotIn(stale_targeted, insufficient_engine.state.stack)
+
+    def test_discard_ward_is_private_and_replays_exactly(self):
+        session = self.session(7022106, players=4)
+        engine = session.engine
+        target = self.card(engine, "A", "Ichor Wellspring")
+        payment = self.card(engine, "B", "Mystic Remora")
+        private_a = self.card(engine, "A", "Deflecting Swat")
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        engine.move_card(payment.object_id, "hand", log=False)
+        engine.move_card(private_a.object_id, "hand", log=False)
+        targeted, _decision = self.prepare_ward_payment(
+            session,
+            target,
+            WardSpec(discard_cards=1),
+        )
+        projection_a = json.dumps(
+            StateProjector(self.db, engine.state)._snapshot("pilot:A"),
+            sort_keys=True,
+        )
+        projection_b = json.dumps(
+            StateProjector(self.db, engine.state)._snapshot("pilot:B"),
+            sort_keys=True,
+        )
+        self.assertNotIn(payment.ref, projection_a)
+        self.assertIn(payment.ref, projection_b)
+        self.assertNotIn(private_a.ref, projection_b)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        result = session.act(
+            "pilot:B",
+            {
+                "action_id": "choose",
+                "cards": [payment.ref],
+                "plan": "DISCARD_FOR_WARD",
+                "reason": "Pay the actor-private discard-one Ward cost.",
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", payment.zone)
+        self.assertIn(targeted, engine.state.stack)
+
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "discard-ward-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_discard_ward_rejects_a_stale_card_incarnation(self):
+        session = self.session(7022107, players=4)
+        engine = session.engine
+        target = self.card(engine, "A", "Ichor Wellspring")
+        payment = self.card(engine, "B", "Mystic Remora")
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        engine.move_card(payment.object_id, "hand", log=False)
+        targeted, _decision = self.prepare_ward_payment(
+            session,
+            target,
+            WardSpec(discard_cards=1),
+        )
+        engine.move_card(payment.object_id, "graveyard", log=False)
+        engine.move_card(payment.object_id, "hand", log=False)
+        before_hash = authoritative_state_hash(engine.state)
+        rejected = session.act(
+            "pilot:B",
+            {
+                "action_id": "choose",
+                "cards": [payment.ref],
+                "plan": "REJECT_STALE_WARD_CARD",
+                "reason": "The offered card is a new incarnation.",
+            },
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before_hash, authoritative_state_hash(engine.state))
+        self.assertIn(targeted, engine.state.stack)
+        self.assertEqual("hand", payment.zone)
 
 
 class TriggerOccurrenceTests(unittest.TestCase):

@@ -121,45 +121,124 @@ class TriggerMultiplierSpec:
 
 @dataclass(frozen=True, slots=True)
 class WardSpec:
-    """One represented fixed-generic Ward ability (CR 702.21)."""
+    """One represented fixed public Ward ability (CR 702.21)."""
 
-    generic_cost: int
-    schema_version: int = 1
+    generic_cost: int | None = None
+    life_payment: int | None = None
+    discard_cards: int = 0
+    schema_version: int | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        kinds = sum(
+            (
+                self.generic_cost is not None,
+                self.life_payment is not None,
+                self.discard_cards != 0,
+            )
+        )
+        if kinds != 1:
+            raise TriggerParticipationError(
+                "Ward requires exactly one represented payment kind"
+            )
+        schema_version = self.schema_version
+        if schema_version is None:
+            schema_version = 1 if self.generic_cost is not None else 2
+            object.__setattr__(self, "schema_version", schema_version)
+        if type(schema_version) is not int or schema_version not in {1, 2}:
             raise TriggerParticipationError("Unsupported Ward schema version")
-        if type(self.generic_cost) is not int or self.generic_cost < 0:
+        if self.generic_cost is not None and (
+            type(self.generic_cost) is not int or self.generic_cost < 0
+        ):
             raise TriggerParticipationError(
                 "Ward generic_cost must be a nonnegative integer"
             )
+        if self.life_payment is not None and (
+            type(self.life_payment) is not int or self.life_payment <= 0
+        ):
+            raise TriggerParticipationError(
+                "Ward life_payment must be a positive integer"
+            )
+        if type(self.discard_cards) is not int or self.discard_cards not in {
+            0,
+            1,
+        }:
+            raise TriggerParticipationError(
+                "Ward discard_cards must be zero or one"
+            )
+        if schema_version == 1 and (
+            self.generic_cost is None
+            or self.life_payment is not None
+            or self.discard_cards
+        ):
+            raise TriggerParticipationError(
+                "Ward schema version 1 is fixed-generic only"
+            )
+        if schema_version == 2 and self.generic_cost is not None:
+            raise TriggerParticipationError(
+                "Ward schema version 2 is fixed nonmana only"
+            )
+
+    @property
+    def payment_kind(self) -> str:
+        if self.generic_cost is not None:
+            return "mana"
+        if self.life_payment is not None:
+            return "life"
+        return "discard"
 
     @property
     def capability_id(self) -> str:
-        return "trigger.keyword.ward.fixed_generic"
+        return (
+            "trigger.keyword.ward.fixed_generic"
+            if self.generic_cost is not None
+            else "trigger.keyword.ward.fixed_nonmana"
+        )
 
     @property
     def rule_ids(self) -> tuple[str, ...]:
         return ("603.3", "702.21", "702.21a")
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version == 1:
+            return {
+                "schema_version": 1,
+                "generic_cost": self.generic_cost,
+            }
         return {
-            "schema_version": self.schema_version,
-            "generic_cost": self.generic_cost,
+            "schema_version": 2,
+            "generic_cost": None,
+            "life_payment": self.life_payment,
+            "discard_cards": self.discard_cards,
         }
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "WardSpec":
-        if not isinstance(value, Mapping) or set(value) != {
-            "schema_version",
-            "generic_cost",
-        }:
+        if not isinstance(value, Mapping):
             raise TriggerParticipationError(
                 "Ward fragments have a closed schema"
             )
-        return cls(
-            schema_version=value["schema_version"],
-            generic_cost=value["generic_cost"],
+        if value.get("schema_version") == 1 and set(value) == {
+            "schema_version",
+            "generic_cost",
+        }:
+            return cls(
+                schema_version=1,
+                generic_cost=value["generic_cost"],
+            )
+        if value.get("schema_version") == 2 and set(value) == {
+            "schema_version",
+            "generic_cost",
+            "life_payment",
+            "discard_cards",
+        }:
+            return cls(
+                schema_version=2,
+                generic_cost=value["generic_cost"],
+                life_payment=value["life_payment"],
+                discard_cards=value["discard_cards"],
+            )
+        raise TriggerParticipationError(
+            "Ward fragments have a closed schema"
         )
 
 

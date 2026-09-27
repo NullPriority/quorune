@@ -1245,6 +1245,32 @@
         "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_ninjutsu_four_player_projection_save_load_and_exact_replay",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0053",
+      "adr": "docs/adr/0103-typed-fixed-public-ward-payments.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "c8ac1510614c23bb44a297b3929f551248742dfc581afba7890e6754e665e425",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed ward_counter_unless_pay operation serialized for the v213 typed Ward closure.",
+      "rationale": "The measured broad harvest adds one strict typed semantic choice operation while reusing current layer-6 ability applicability, ordinary APNAP trigger placement, mana and life payments, replacement-aware discard, stack countering, projection, and replay. Its implementation-backed measurement correction makes the existing work-selection dispatcher cross the size threshold without changing selection authority. CommanderEngine, direct and unowned writes, runtime Oracle prose, and card-identity dispatch remain flat; the dedicated Ward parser and payment handler keep Oracle and mutation authority outside the engine.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact structural baseline plus fixed-generic Ward composition, fixed positive life and discard-one Ward payments, WardSpec schema version 2, shared query and attachment layer-6 grants, actor-private discard choice, logical-incarnation validation, the ward_counter_unless_pay operation, and use of a current implementation-backed exact-ability count for the existing bundle eligibility threshold described by ADR 0103; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine growth, arbitrary callbacks, family-specific ability-presence checks, cycle-unsafe dynamic characteristics, granted nonmana Ward, open costs, threshold changes, unmeasured-candidate relaxation, or unrelated grammar remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review and the measured-bundle dispatcher is split below its size threshold; retain the operation and measurement correction only while strict typed cost validation, current effective fragment discovery, shared layer-6 applicability, APNAP placement, atomic payment or countering, unchanged harvest floors, privacy, save/load, and exact replay remain enforced.",
+      "target_milestone": "capability-closed broad Ward harvest through canonical static-component, trigger, payment, discard, counter, projection, and replay owners",
+      "replay_implications": "CardPrograms record only typed Ward fragments and capability dependencies. Historical schema-v1 generic fragments remain readable, while schema-v2 life or discard continuations preserve payer, target stack, payment kind, private choice, logical incarnation, and final hashes without consulting Oracle prose.",
+      "privacy_implications": "Ward sources, controllers, target stack references, and fixed cost kinds are public. Discard candidates are projected only to the targeting controller; unrelated hand identities and physical or logical internal IDs remain absent from other pilot projections.",
+      "security_implications": "Only capability-closed source-spanned programs can emit fixed Ward fragments; unknown fields, unsupported or dynamic costs, stale hand incarnations, unavailable targets, removed current fragments, insufficient payments, malformed choices, and continuation tampering fail before authoritative mutation.",
+      "tests": [
+        "tests.test_trigger_processing_owner.TriggerParticipationCompilerTests.test_fixed_public_ward_costs_and_keyword_composition_compile",
+        "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_open_costs_remain_residual_and_removed_ability_does_not_trigger",
+        "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_fixed_life_and_discard_ward_payments_use_typed_intents",
+        "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_is_private_and_replays_exactly",
+        "tests.test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_discard_ward_rejects_a_stale_card_incarnation",
+        "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_fixed_query_ward_grant_uses_typed_layer_six_fragment",
+        "tests.test_rules_scheduler.RulesSchedulerTests.test_implementation_backed_bundle_uses_measured_exact_ability_floor",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

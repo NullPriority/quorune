@@ -31,8 +31,8 @@ from .public_state_queries import (
     fixed_public_state_parts,
 )
 from .query_characteristic_templates import query_characteristic_quantity
+from .ward_cost_templates import fixed_ward_spec
 from ..rules.source_references import SourceReferenceSpec
-from ..trigger_participation import WardSpec
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
     FixedPublicStateConditionKind,
@@ -281,27 +281,16 @@ def fixed_query_keyword_grant_handler(
     relation, predicate, exclude_source = parsed
     abilities_text = match.group("abilities")
 
-    normalized = re.sub(
-        r",?\s+and\s+", ",", abilities_text.strip(), flags=re.IGNORECASE
-    )
-    abilities = tuple(
-        value.strip().title()
-        for value in normalized.rstrip(".").split(",")
-        if value.strip()
-    )
-    if not abilities or len(set(abilities)) != len(abilities):
-        return None
-    if any(
-        ability not in FIXED_CHARACTERISTIC_KEYWORDS for ability in abilities
+    granted = _attached_granted_abilities(abilities_text)
+    if granted is None or any(
+        ability == "Protection" or ability.startswith("Toxic ")
+        for ability in granted[0]
     ):
         return None
+    abilities, fragments = granted
     capabilities = {
         "continuous.ability.fixed_query_keyword_grant",
-        *(
-            capability
-            for ability in abilities
-            for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[ability]
-        ),
+        *_attached_ability_capabilities(abilities),
     }
     return (
         "continuous-fixed-query-keyword-grant-v2",
@@ -314,7 +303,18 @@ def fixed_query_keyword_grant_handler(
                 "predicate": predicate.to_dict(),
                 "exclude_source": exclude_source,
             },
-            "modifier": {"add_abilities": list(abilities)},
+            "modifier": {
+                "add_abilities": list(abilities),
+                **(
+                    {
+                        "add_ability_fragments": [
+                            dict(value) for value in fragments
+                        ]
+                    }
+                    if fragments
+                    else {}
+                ),
+            },
         },
         tuple(sorted(capabilities)),
     )
@@ -359,6 +359,20 @@ def fixed_query_characteristic_grant_handler(
             "modifier": {
                 "add_abilities": list(
                     keywords[1]["modifier"]["add_abilities"]
+                ),
+                **(
+                    {
+                        "add_ability_fragments": [
+                            dict(value)
+                            for value in keywords[1]["modifier"].get(
+                                "add_ability_fragments", ()
+                            )
+                        ]
+                    }
+                    if keywords[1]["modifier"].get(
+                        "add_ability_fragments"
+                    )
+                    else {}
                 ),
                 "power": int(anthem[1]["modifier"]["power"]),
                 "toughness": int(anthem[1]["modifier"]["toughness"]),
@@ -506,21 +520,33 @@ def _attached_granted_abilities(
                 for fragment in protection
             ),
         )
-    ward = re.fullmatch(
-        r"ward \{(?P<generic>[1-9]\d*)\}",
-        value.strip(),
-        re.IGNORECASE,
+    normalized = re.sub(
+        r",?\s+and\s+", ",", value.strip(), flags=re.IGNORECASE
     )
-    if ward is None:
+    terms = tuple(
+        term.strip()
+        for term in normalized.rstrip(".").split(",")
+        if term.strip()
+    )
+    if not terms:
         return None
-    return (
-        (f"Ward {{{int(ward.group('generic'))}}}",),
-        (
-            ability_fragment_to_dict(
-                WardSpec(generic_cost=int(ward.group("generic")))
-            ),
-        ),
-    )
+    granted_abilities: list[str] = []
+    fragments: list[Mapping[str, Any]] = []
+    for term in terms:
+        ordinary = _attached_abilities(term)
+        if ordinary is not None:
+            granted_abilities.extend(ordinary)
+            fragments.extend(_toxic_ability_fragments(ordinary))
+            continue
+        ward = fixed_ward_spec(term)
+        if ward is None or ward.generic_cost is None:
+            return None
+        label = f"Ward {{{ward.generic_cost}}}"
+        granted_abilities.append(label)
+        fragments.append(ability_fragment_to_dict(ward))
+    if len(granted_abilities) != len(set(granted_abilities)):
+        return None
+    return tuple(granted_abilities), tuple(fragments)
 
 
 def _attached_ability_capabilities(
@@ -1244,6 +1270,8 @@ def _conditional_target(
         descriptor = compiled[1]
         condition = descriptor["condition"]
         modifier = descriptor["modifier"]
+        if modifier.get("add_ability_fragments"):
+            continue
         return (
             {
                 "kind": "fixed_query",

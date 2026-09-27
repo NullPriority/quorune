@@ -8,6 +8,7 @@ from ..aura import is_enchant_keyword_line, parse_enchant_line
 from ..enchant_spec import TypedEnchantSpec
 from ..ability_fragments import parse_protection_line
 from ..rules.attachment_actions import fixed_equip_ability_spec
+from .ward_cost_templates import fixed_ward_spec
 from ..death_return import PERSIST_KEYWORD, UNDYING_KEYWORD
 from ..rules.capabilities import (
     CapabilityClosure,
@@ -145,24 +146,59 @@ def _ward_dependency_gate(
     mechanics: tuple[str, ...],
     material_line: str,
     *,
+    trusted_mechanics: frozenset[str],
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
 ) -> DependencyGate | None:
-    if mechanics != ("ward",):
+    if "ward" not in mechanics:
         return None
-    if re.fullmatch(
-        r"Ward\s+\{\d+\}\.?",
-        material_line.strip(),
-        re.IGNORECASE,
+    ward_parts = tuple(
+        part.strip()
+        for part in re.split(r"[,;]", material_line.rstrip("."))
+        if part.strip().casefold().startswith("ward")
+    )
+    specs = tuple(fixed_ward_spec(part) for part in ward_parts)
+    if (
+        len(ward_parts) != mechanics.count("ward")
+        or not ward_parts
+        or any(spec is None for spec in specs)
     ):
-        return explicit_capability_gate(
-            "trigger.keyword.ward.fixed_generic",
-            capability_registry=capability_registry,
-            capability_profile=capability_profile,
+        return DependencyGate(
+            blockers=("mechanic:ward-unsupported-cost",),
+            capabilities=("trigger.keyword.ward.fixed_generic",),
         )
+    ward_gate = explicit_capabilities_gate(
+        tuple(
+            spec.capability_id for spec in specs if spec is not None
+        ),
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    other_gate = dependency_gate(
+        mechanics=(mechanic for mechanic in mechanics if mechanic != "ward"),
+        effects=(),
+        target_schema=None,
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    combined_gate = explicit_capabilities_gate(
+        (*ward_gate.capabilities, *other_gate.capabilities),
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
     return DependencyGate(
-        blockers=("mechanic:ward-unsupported-cost",),
-        capabilities=("trigger.keyword.ward.fixed_generic",),
+        blockers=tuple(
+            dict.fromkeys(
+                (
+                    *combined_gate.blockers,
+                    *ward_gate.blockers,
+                    *other_gate.blockers,
+                )
+            )
+        ),
+        capabilities=combined_gate.capabilities,
+        closure=combined_gate.closure,
     )
 
 
@@ -350,6 +386,7 @@ def keyword_dependency_gate(
     if ward := _ward_dependency_gate(
         mechanics,
         material_line,
+        trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     ):
