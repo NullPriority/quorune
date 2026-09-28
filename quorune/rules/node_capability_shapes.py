@@ -941,9 +941,7 @@ def fixed_target_characteristics_node_capabilities(
     schema = dict(target_schema or {})
     if not direct_permanent_target_schema_is_closed(schema):
         return ()
-    target_spec = DirectPermanentTargetSpec.from_target_schema(schema)
-    if target_spec.types_any != ("creature",):
-        return ()
+    DirectPermanentTargetSpec.from_target_schema(schema)
     granted_keywords: set[str] = set()
     for effect in effects:
         operation = effect.get("op")

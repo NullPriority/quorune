@@ -4213,6 +4213,63 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "standalone-reminder-line-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:qualified-target-characteristics",
+          "member_family_ids": [
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:unparsed-another-target-creature",
+            "activated_effect:unparsed-target-creature-with",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "duration:until-end-of-turn",
+            "effect_clause:ordered-effect-composition",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:multiple-targets",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "capability:target.permanent.characteristic_predicate",
+            "capability:target.revalidate_resolution",
+            "component:quorune.compiler.direct_target.direct_permanent_target_spec",
+            "component:quorune.compiler.fixed_target_effect_sequences.fixed_target_characteristics_effect_template",
+            "component:quorune.effect_runtime.objects_stack_and_tokens._commit_temporary_characteristic_effect",
+            "component:quorune.rules.node_capability_shapes.fixed_target_characteristics_node_capabilities"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-direct-permanent-target-predicate",
+            "fixed-power-toughness-delta",
+            "fixed-supported-keyword-set",
+            "source-reference-exclusion",
+            "until-end-of-turn-duration"
+          ],
+          "shared_dependencies": [
+            "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "target.permanent.characteristic_predicate",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one fixed power, toughness, or supported-keyword characteristic result applied until end of turn to a single target selected by the existing closed direct-permanent characteristic predicate, including source exclusion, across spell, triggered, activated, quoted-ability, and modal contexts",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a broad cross-era target-characteristic cohort by invoking the existing direct-target descriptor from the existing temporary-characteristic owner, preserving current effective-characteristic offer, command, and resolution revalidation without another target or continuous-effect path.",
+          "explicit_exclusions": [
+            "arbitrary, chosen, relative, hidden-zone, and unsupported direct-target predicates",
+            "dynamic power, toughness, keywords, quantities, coefficients, and durations",
+            "effects that change control, copy values, name, text, type, or color",
+            "independently unsupported conditional, linked-result, replacement, prevention, and sequence siblings",
+            "multiple, divided, optional, up-to, repeated, and target-changing effects",
+            "protection, landwalk, Banding, and keywords without a closed gameplay consumer"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "qualified-target-characteristics-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -4224,14 +4281,21 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v220-encore-source-group-semantics",
-      "compiler_version": "oracle-ir-v220",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "non_harvest_reason": "Corrects Encore source-information lifetime, simultaneous replacement-aware group creation, and single controller-limited delayed cleanup without widening the admitted grammar.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v221-qualified-target-characteristics",
+      "compiler_version": "oracle-ir-v221",
+      "bundle_id": "bundle:qualified-target-characteristics",
+      "candidate_ids": ["bundle:qualified-target-characteristics"],
+      "family_ids": [
+        "duration:until-end-of-turn",
+        "target_or_choice:target-predicate"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution"
+      ],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:qualified-target-characteristics"
     },
     "forecast_corrections": [
       {
@@ -4885,6 +4949,11 @@
         "candidate_id": "compiler:public-intervening-if-trigger-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-public-condition selector has no implementation-eligible carried candidate while the raw continuous-layer and trigger-binding leaders remain heterogeneous. A bounded executable probe requires the condition to parse through the existing closed public-state descriptor and the same source line's normalized event and typed body to become independently exact when the condition is removed. That isolates 100 exact abilities across 96 current Commander carriers and 81 conservative complete-card transitions. The selected composition checks the condition at occurrence and resolution through the canonical public-state snapshot, locks the trigger controller, shares current layer-6 ability applicability and APNAP placement, and preserves projection and replay. Source-counter, source-entry, and attached-source conditions remain excluded until an LKI-safe trigger snapshot owns them; reflexive, delayed, first-time, once-per-turn, chosen, secret, hidden-zone, otherwise, linked, dynamic, unsupported event or body, and independently incomplete forms remain fail-closed. Current identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:qualified-target-characteristics",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-intervening-if selector has no implementation-eligible carried candidate while its raw continuous-layer and unparsed-effect leaders remain heterogeneous. A bounded exact-frontier probe instead isolates a threshold-clearing cohort of fixed temporary characteristic effects whose only missing boundary is a closed qualified or source-excluding direct-permanent target. The selected compiler owner now consumes the existing DirectPermanentTargetSpec for standalone and target-first effects across spell, triggered, activated, quoted-ability, and modal contexts, while the canonical target owner preserves current effective-characteristic offers, command validation, resolution revalidation, protection, projection, and replay. Dynamic results, open predicates, optional or multiple targets, target changing, and independently unsupported siblings remain fail-closed; current cohort identities and measurements are generated from the frontier."
       }
     ]
   },

@@ -20,16 +20,9 @@ from .direct_target import (
 )
 
 
-_TARGET_CREATURE = re.compile(
-    r"(?P<subject>target creature"
-    r"(?P<relation> you control| an opponent controls| you don't control)?|it) "
-    r"(?P<body>.+?) until end of turn\.?",
-    re.IGNORECASE,
-)
-_TARGET_COMBAT_CREATURE = re.compile(
-    r"(?P<subject>target (?:attacking or blocking|attacking|blocking) creature"
-    r"(?: you control| an opponent controls| you don't control)?) "
-    r"(?P<body>.+?) until end of turn\.?",
+_TARGET_CHARACTERISTICS = re.compile(
+    r"(?P<subject>(?:another )?target .+?|it) "
+    r"(?P<body>(?:gets|gains) .+?) until end of turn\.?",
     re.IGNORECASE,
 )
 _GETS = re.compile(
@@ -375,11 +368,11 @@ class FixedTargetCharacteristicsTemplate:
             raise ValueError("Target controller relation is unsupported")
         if self.target_spec is not None and (
             not isinstance(self.target_spec, DirectPermanentTargetSpec)
-            or self.target_spec.combat_state is None
             or self.controller_relation is None
+            or self.target_spec.controller_relation != self.controller_relation
         ):
             raise ValueError(
-                "Fixed characteristics direct target requires combat-state grammar"
+                "Fixed characteristics require one canonical direct target"
             )
         if len(set(self.keywords)) != len(self.keywords) or any(
             value.casefold() not in FIXED_TARGET_CHARACTERISTIC_KEYWORDS
@@ -464,35 +457,20 @@ def fixed_target_characteristics_effect_template(
 ) -> FixedTargetCharacteristicsTemplate | None:
     """Parse one fixed target or target-pronoun characteristic instruction."""
 
-    match = _TARGET_COMBAT_CREATURE.fullmatch(text.strip())
-    target_spec = None
-    if match is not None:
-        target_spec = direct_permanent_target_spec(match.group("subject"))
-        if target_spec is None:
-            return None
-    else:
-        match = _TARGET_CREATURE.fullmatch(text.strip())
+    match = _TARGET_CHARACTERISTICS.fullmatch(text.strip())
     if match is None:
         return None
     subject = match.group("subject").casefold()
     if (subject == "it") is not existing_target:
         return None
-    relation = (
-        ""
-        if target_spec is not None
-        else (match.group("relation") or "").casefold()
+    target_spec = (
+        None if existing_target else direct_permanent_target_spec(subject)
     )
+    if not existing_target and target_spec is None:
+        return None
     controller_relation = (
-        None
-        if existing_target
-        else "you"
-        if relation == " you control"
-        else "opponent"
-        if relation
-        else "any"
+        None if target_spec is None else target_spec.controller_relation
     )
-    if target_spec is not None:
-        controller_relation = target_spec.controller_relation
     body = match.group("body")
     gets = _GETS.fullmatch(body)
     gains = _GAINS.fullmatch(body)

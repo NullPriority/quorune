@@ -46,8 +46,9 @@ power/toughness counters, and current-turn stat deltas. A missing or nonintegral
 value fails closed when that value is required to prove the comparison; an
 either-value predicate may still be proved by its other exact value. The compiler's
 `DirectPermanentTargetSpec` owner supplies
-this one schema vocabulary to counter placement, destruction, exile, and tap
-or untap effects; no effect family adds a private legality predicate. Scoped
+this one schema vocabulary to counter placement, destruction, exile, fixed
+until-end-of-turn characteristic effects, and tap or untap effects; no effect
+family adds a private legality predicate. Scoped
 disjunctions, variable, greatest, least, and source-relative numeric values,
 unnamed counter presence, and name or attachment relations remain residual.
 Ability-presence wording remains outside this target grammar and must use the

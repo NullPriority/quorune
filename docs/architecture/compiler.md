@@ -39,6 +39,11 @@ target-threading grammar. It is the only compiler authority for represented
 fixed counter plus until-end-of-turn characteristic sequences: one clause
 establishes target zero through one closed `DirectPermanentTargetSpec`, later
 clauses use the exact pronoun “it,” and printed operation order is retained.
+Standalone and target-first fixed characteristic effects use that same target
+descriptor, including represented type, subtype, supertype, color, controller,
+combat-state, and source-exclusion predicates. Open target predicates, dynamic
+results, optional or multiple targets, and target-changing effects remain
+residual rather than falling back to a creature-only approximation.
 The runtime consumes only the resulting typed node and never reparses those
 Oracle sentences.
 

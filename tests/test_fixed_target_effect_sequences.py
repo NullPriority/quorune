@@ -505,6 +505,125 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
                     )
                 self.assertEqual(expected, set(node.capability_dependencies))
 
+    def test_qualified_standalone_targets_share_direct_target_contract(self):
+        cases = (
+            (
+                "Target Dwarf creature gets +1/+0 until end of turn.",
+                {"types_all": ["creature"], "subtypes_any": ["dwarf"]},
+            ),
+            (
+                "Another target creature you control gains flying until end "
+                "of turn.",
+                {"controller_relation": "you", "source_exclusion": True},
+            ),
+            (
+                "Target legendary creature gains first strike until end of "
+                "turn.",
+                {"types_any": ["creature"], "supertypes_any": ["legendary"]},
+            ),
+            (
+                "Target black or red creature gets -2/-0 until end of turn.",
+                {"types_any": ["creature"], "colors_any": ["B", "R"]},
+            ),
+            (
+                "Target artifact creature gets +2/+0 until end of turn.",
+                {"types_all": ["artifact", "creature"]},
+            ),
+            (
+                "Target nonblack creature gets -1/-1 until end of turn.",
+                {"types_any": ["creature"], "colors_none": ["B"]},
+            ),
+        )
+        for text, expected in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(
+                    "fixed-target-characteristics-until-end-of-turn-v1",
+                    node.template_id,
+                )
+                for field, value in expected.items():
+                    self.assertEqual(value, node.target_schema[field])
+                if text.startswith("Another target creature"):
+                    self.assertIn(
+                        "target.revalidate_resolution",
+                        node.capability_dependencies,
+                    )
+                else:
+                    self.assertIn(
+                        "target.permanent.characteristic_predicate",
+                        node.capability_dependencies,
+                    )
+
+    def test_qualified_target_characteristics_compile_across_contexts(self):
+        cases = (
+            (
+                "When this creature enters, another target creature you "
+                "control gets +1/+1 and gains vigilance until end of turn.",
+                "Creature — Human Soldier",
+                "triggered_ability",
+            ),
+            (
+                "{1}: Target Elf creature gets +2/+0 until end of turn.",
+                "Creature — Human Druid",
+                "activated_ability",
+            ),
+            (
+                "Choose one —\n"
+                "• Target legendary creature gains first strike until end of "
+                "turn.\n"
+                "• Target artifact creature gains indestructible until end of "
+                "turn.",
+                "Instant",
+                "spell_ability",
+            ),
+            (
+                "All Slivers have \"{1}, Sacrifice this permanent: Target "
+                "Sliver creature gets +2/+2 until end of turn.\"",
+                "Creature — Sliver",
+                "granted_activated_ability",
+            ),
+        )
+        for text, type_line, kind in cases:
+            with self.subTest(kind=kind):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status)
+                self.assertTrue(
+                    any(node.kind == kind and node.exact for node in ir.faces[0].nodes)
+                )
+
+    def test_open_qualified_target_variants_remain_material_residuals(self):
+        for text in (
+            "Target attacking historic creature gets +1/+1 until end of turn.",
+            "Target creature you control other than enchanted creature gets "
+            "+1/+1 until end of turn.",
+            "Target creature gains protection from the color of your choice "
+            "until end of turn.",
+        ):
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_qualified_target_characteristic_compiler_mutant_is_killed(self):
+        text = (
+            "Another target Elf creature you control gets +1/+1 and gains "
+            "vigilance until end of turn."
+        )
+
+        def exact() -> None:
+            self.assertEqual("exact", self.compile(text).status)
+
+        exact()
+        with patch(
+            "quorune.compiler.fixed_target_effect_sequences."
+            "direct_permanent_target_spec",
+            return_value=None,
+        ):
+            with self.assertRaises(AssertionError):
+                exact()
+
     def test_unsupported_target_threaded_variants_remain_material_residuals(
         self,
     ):
@@ -814,13 +933,16 @@ class FixedTargetEffectSequenceRuntimeTests(unittest.TestCase):
         target: CardInstance,
         effects: list[dict[str, object]],
         key: str,
-    ) -> None:
+        target_schema: dict[str, object] | None = None,
+        source: CardInstance | None = None,
+    ) -> StackItem:
         engine = session.engine
         program = SemanticProgram(
             key=key,
             label="Fixed target effect sequence",
             effects=effects,
-            target_schema={
+            target_schema=target_schema
+            or {
                 "zones": ["battlefield"],
                 "categories": ["permanent"],
                 "types_any": ["creature"],
@@ -829,18 +951,18 @@ class FixedTargetEffectSequenceRuntimeTests(unittest.TestCase):
             trust_level="provisional",
         )
         engine.semantics.put(program)
-        engine.state.stack.append(
-            StackItem(
-                stack_id=key,
-                ref=f"S-{key}",
-                kind="triggered_ability",
-                controller="A",
-                label=program.label,
-                semantic_key=program.key,
-                targets=[target.ref],
-                visibility=list(engine.seats),
-            )
+        item = StackItem(
+            stack_id=key,
+            ref=f"S-{key}",
+            kind="triggered_ability",
+            controller="A",
+            label=program.label,
+            source_object_id=source.object_id if source is not None else None,
+            semantic_key=program.key,
+            targets=[target.ref],
+            visibility=list(engine.seats),
         )
+        engine.state.stack.append(item)
         engine.state.active_player = "A"
         engine.state.phase = "precombat_main"
         engine.state.step = "main"
@@ -849,6 +971,166 @@ class FixedTargetEffectSequenceRuntimeTests(unittest.TestCase):
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()
         session.decisions.clear()
+        return item
+
+    def compiled_characteristic_program(
+        self,
+        text: str,
+        *,
+        key: str,
+    ) -> SemanticProgram:
+        record = CardRecord(
+            oracle_id=f"fixture:{key}",
+            name="Qualified Target Fixture",
+            mana_cost="{1}",
+            mana_value=1.0,
+            type_line="Instant",
+            oracle_text=text,
+            power=None,
+            toughness=None,
+            loyalty=None,
+            defense=None,
+            colors=(),
+            color_identity=(),
+            keywords=(),
+            produced_mana=(),
+            layout="normal",
+            released_at="2000-01-01",
+            legalities={"commander": "legal"},
+            faces=(),
+            raw={},
+        )
+        ir = compile_oracle_card(
+            record,
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status)
+        node = ir.faces[0].nodes[0]
+        return SemanticProgram(
+            key=key,
+            label="Qualified target characteristic effect",
+            effects=[dict(effect) for effect in node.effects],
+            target_schema=dict(node.target_schema or {}),
+            trust_level="provisional",
+        )
+
+    def test_qualified_target_effect_applies_and_replays_with_source_exclusion(
+        self,
+    ):
+        session = self.session(60812207, players=4)
+        engine = session.engine
+        source = self.add_permanent(
+            engine,
+            seat="A",
+            name="Elves of Deep Shadow",
+            ref="qualified-source-elf",
+        )
+        target = self.add_permanent(
+            engine,
+            seat="A",
+            name="Elves of Deep Shadow",
+            ref="qualified-target-elf",
+        )
+        opponent_elf = self.add_permanent(
+            engine,
+            seat="B",
+            name="Elves of Deep Shadow",
+            ref="qualified-opponent-elf",
+        )
+        nonelf = self.add_permanent(
+            engine,
+            seat="A",
+            name="Scute Swarm",
+            ref="qualified-nonelf",
+        )
+        program = self.compiled_characteristic_program(
+            "Another target Elf creature you control gets +2/+1 and gains "
+            "vigilance until end of turn.",
+            key="qualified-target-characteristics-replay",
+        )
+        options = engine._semantic_target_options(
+            "A",
+            program.target_schema,
+            source_ref=source.ref,
+        )
+        self.assertNotIn(source.ref, options)
+        self.assertIn(target.ref, options)
+        self.assertNotIn(opponent_elf.ref, options)
+        self.assertNotIn(nonelf.ref, options)
+        self.stage_sequence(
+            session,
+            target=target,
+            effects=[dict(effect) for effect in program.effects],
+            key=program.key,
+            target_schema=dict(program.target_schema or {}),
+            source=source,
+        )
+
+        self.pass_priority(session)
+
+        self.assertEqual(3, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(2, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertIn("vigilance", engine._combat_keywords(target))
+        self.assertEqual(1, engine._numeric_stat(source.object_id, "power"))
+        expected_hash = authoritative_state_hash(engine.state)
+        for seat in engine.seats:
+            self.assertNotIn(
+                source.object_id,
+                json.dumps(session.packet(f"pilot:{seat}", full=True)),
+            )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "qualified-target-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_qualified_target_revalidates_current_characteristics(self):
+        session = self.session(60812208)
+        engine = session.engine
+        target = self.add_permanent(
+            engine,
+            seat="B",
+            name="Mishra, Eminent One",
+            ref="qualified-stale-target",
+        )
+        program = self.compiled_characteristic_program(
+            "Target black or red creature gets -2/-0 until end of turn.",
+            key="qualified-target-characteristics-stale",
+        )
+        selected, _grouped = engine._validate_semantic_targets(
+            "A",
+            None,
+            [target.ref],
+            source_ref=None,
+            target_schema=program.target_schema,
+        )
+        self.assertEqual([target.ref], selected)
+        item = self.stage_sequence(
+            session,
+            target=target,
+            effects=[dict(effect) for effect in program.effects],
+            key=program.key,
+            target_schema=dict(program.target_schema or {}),
+        )
+        target.annotations["copy_overrides"] = {"colors": ["G"]}
+        continuous_before = list(engine.state.continuous_effects)
+        counters_before = dict(target.counters)
+        zone_before = target.zone
+
+        engine._begin_resolve_item(
+            item,
+            [dict(effect) for effect in program.effects],
+            None,
+        )
+
+        self.assertNotIn(item, engine.state.stack)
+        self.assertEqual(continuous_before, engine.state.continuous_effects)
+        self.assertEqual(counters_before, target.counters)
+        self.assertEqual(zone_before, target.zone)
+        self.assertEqual(5, engine._numeric_stat(target.object_id, "power"))
 
     @staticmethod
     def pass_priority(session) -> None:

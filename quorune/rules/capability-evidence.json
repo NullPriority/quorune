@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "1182b0e06b52594e14cd6b2542417cac1f56257add76407fdb192c588b136d59",
-  "declaration_source_fingerprint": "345d106bab111f2d3185d8717b8093dfbb9a0721b2006c2e796ab3bb3915ae1b",
+  "registry_fingerprint": "39672c1a58791410b056c82dd796e9c5ee9230bfce376589a427bc8eda29998a",
+  "declaration_source_fingerprint": "f4288fbc50c01b4a01d5bfdded8810fe052b14bf04c3c8bab347a065118c8df7",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -24716,6 +24716,44 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply the fixed result only to a currently qualified non-source target while preserving controller and subtype restrictions."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_revalidates_current_characteristics",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a selected target whose current effective characteristics no longer satisfy the typed predicate before resolution."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": [
@@ -24773,6 +24811,25 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose the same public legal-target result across four seats without authoritative object identities."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_resolution_continuous_effect_commit_mutant_is_killed",
       "official_rule_ids": [
@@ -24827,6 +24884,25 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared public-set compiler call and prove the represented all-creature effect cannot retain exact trust."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_qualified_target_characteristic_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the canonical direct-target parser from the temporary-characteristic compiler demotes the exact program."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -24982,6 +25058,25 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_open_qualified_target_variants_remain_material_residuals",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep historic, attachment-relative, chosen-protection, and otherwise open target/result forms residual."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "positive",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": [
@@ -25096,6 +25191,44 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_qualified_standalone_targets_share_direct_target_contract",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed temporary characteristics through the shared qualified direct-permanent target descriptor."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_qualified_target_characteristics_compile_across_contexts",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose qualified temporary characteristic targets across spell, trigger, activation, quoted-ability, and modal contexts."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": [
@@ -25153,6 +25286,25 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project public target and characteristic results without physical object identities."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "replay",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristic_command_replays_exactly",
       "official_rule_ids": [
@@ -25207,6 +25359,25 @@
         "commander_review"
       ],
       "applicability_note": "Serialize and replay a source-bound resolution-created effect from exact commands."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay source exclusion, qualified target selection, continuous-effect commitment, and the final authoritative hash."
     },
     {
       "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
@@ -55348,6 +55519,56 @@
     {
       "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply the fixed result only to a currently qualified non-source target while preserving controller and subtype restrictions."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_revalidates_current_characteristics",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a selected target whose current effective characteristics no longer satisfy the typed predicate before resolution."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_targeted_destruction_effect_clauses.TargetedDestructionRuntimeTests.test_compiled_union_destruction_offer_command_resolution_and_replay",
       "official_rule_ids": [
         "105.2",
@@ -55422,6 +55643,31 @@
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose the same public legal-target result across four seats without authoritative object identities."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "mutation",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateCompilerTests.test_typed_target_parser_mutation_is_killed",
       "official_rule_ids": [
@@ -55469,6 +55715,31 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the shared closed characteristic parser from destruction, exile, and tap-state lowering."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_qualified_target_characteristic_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the canonical direct-target parser from the temporary-characteristic compiler demotes the exact program."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -55594,6 +55865,31 @@
         "commander_review"
       ],
       "applicability_note": "Reject noncreature, variable, greatest, exact-without-comparison, scoped-disjunction, and competing numeric target predicates."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_open_qualified_target_variants_remain_material_residuals",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep historic, attachment-relative, chosen-protection, and otherwise open target/result forms residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -55797,6 +56093,56 @@
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_qualified_standalone_targets_share_direct_target_contract",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower fixed temporary characteristics through the shared qualified direct-permanent target descriptor."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_qualified_target_characteristics_compile_across_contexts",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compose qualified temporary characteristic targets across spell, trigger, activation, quoted-ability, and modal contexts."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "privacy",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_four_player_target_predicate_privacy_rollback_and_replay",
       "official_rule_ids": [
@@ -55819,6 +56165,31 @@
         "commander_review"
       ],
       "applicability_note": "Project the seat-scoped legal target set without another seat's pending decision or hidden hand identities."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project public target and characteristic results without physical object identities."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -55869,6 +56240,31 @@
         "commander_review"
       ],
       "applicability_note": "Replay resolution-time fixed numeric target revalidation to the same authoritative state hash."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay source exclusion, qualified target selection, continuous-effect commitment, and the final authoritative hash."
     },
     {
       "capability_id": "target.permanent.damage_history_predicate",
@@ -68325,5 +68721,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "ca437533f947923d231ac5e982b353e723d2623b6aef700b9e83d7428cddf1a7"
+  "fingerprint": "f4b469125316f8dd6985559f371d639d76b8594cf11781cf2a3bd765595c25ec"
 }
