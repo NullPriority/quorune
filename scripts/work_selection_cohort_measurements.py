@@ -3585,24 +3585,18 @@ def _fixed_source_characteristic_measurement(
 ) -> dict[str, Any]:
     """Measure fixed source and newly shared target characteristic effects."""
 
-    registry = load_default_capability_registry()
-    matched_cards: dict[str, int] = {}
-    exact_ability_gain = 0
-    complete_cards = 0
-    one_additional = 0
-    two_additional = 0
-    expected_residual_reduction = 0
-    existing_exact_sibling_nodes = 0
-    remaining_residual_sibling_nodes = 0
-    unsupported_sibling_cards = 0
-    unsupported_grammar_cards: set[str] = set()
-    template_ids = {
-        "fixed-source-characteristics-until-end-of-turn-v1",
-        "fixed-target-characteristics-until-end-of-turn-v1",
-    }
+    return _characteristic_target_measurement(
+        frontier=frontier,
+        bundle_id=bundle_id,
+        probe_id=probe_id,
+        cards_by_oracle_id=cards_by_oracle_id,
+        coverage=coverage,
+        cohort_fingerprint=cohort_fingerprint,
+        member_ids=member_ids,
+    )
 
 
-def _qualified_target_characteristic_measurement(
+def _characteristic_target_measurement(
     *,
     frontier: Mapping[str, Any],
     bundle_id: str,
@@ -3610,8 +3604,9 @@ def _qualified_target_characteristic_measurement(
     cards_by_oracle_id: Mapping[str, Any],
     coverage: Mapping[str, Any],
     cohort_fingerprint: str,
+    member_ids: set[str] | None = None,
 ) -> dict[str, Any]:
-    """Measure fixed characteristic effects using a qualified direct target."""
+    """Measure source or qualified-target fixed characteristic effects."""
 
     registry = load_default_capability_registry()
     template_ids = {
@@ -3627,7 +3622,7 @@ def _qualified_target_characteristic_measurement(
     residual_reduction = 0
     existing_exact_siblings = 0
     remaining_residual_siblings = 0
-    for card in frontier.get("cards", []):
+    for card in (() if member_ids is not None else frontier.get("cards", [])):
         oracle_id = str(card.get("oracle_id") or "")
         record = cards_by_oracle_id.get(oracle_id)
         if record is None:
@@ -3710,7 +3705,7 @@ def _qualified_target_characteristic_measurement(
         or residual_reduction
         >= int(coverage["minimum_material_residual_reduction"])
     )
-    return {
+    qualified_measurement = {
         "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
         "bundle_id": bundle_id,
         "probe_id": probe_id,
@@ -3745,6 +3740,25 @@ def _qualified_target_characteristic_measurement(
                 broad_cards - set(matched_cards)
             ),
         },
+    }
+
+    if member_ids is None:
+        return qualified_measurement
+
+    registry = load_default_capability_registry()
+    matched_cards = {}
+    exact_ability_gain = 0
+    complete_cards = 0
+    one_additional = 0
+    two_additional = 0
+    expected_residual_reduction = 0
+    existing_exact_sibling_nodes = 0
+    remaining_residual_sibling_nodes = 0
+    unsupported_sibling_cards = 0
+    unsupported_grammar_cards: set[str] = set()
+    template_ids = {
+        "fixed-source-characteristics-until-end-of-turn-v1",
+        "fixed-target-characteristics-until-end-of-turn-v1",
     }
 
     for card in frontier.get("cards", []):
@@ -5261,7 +5275,7 @@ def _measurement(
             cohort_fingerprint=cohort_fingerprint,
         )
     if probe_id == _PROBE_QUALIFIED_TARGET_CHARACTERISTICS:
-        return _qualified_target_characteristic_measurement(
+        return _characteristic_target_measurement(
             frontier=frontier,
             bundle_id=bundle_id,
             probe_id=probe_id,
