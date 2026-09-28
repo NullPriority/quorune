@@ -4224,13 +4224,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v217-public-condition-semantics",
-      "compiler_version": "oracle-ir-v217",
+      "transition_id": "oracle-ir-v218-blitz-lifecycle-semantics",
+      "compiler_version": "oracle-ir-v218",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Corrects explicit public-fact thresholds, canonical subtype and quality axes, distinct-attacker cardinality, and same-event trigger visibility without widening the admitted grammar.",
+      "non_harvest_reason": "Corrects Blitz battlefield ability applicability, permanent-graveyard event scope, and delayed sacrifice controller authority without widening the admitted lifecycle grammar.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [

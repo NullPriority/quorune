@@ -1220,8 +1220,16 @@ lower through the existing activation, casting, normalized attack-trigger,
 token, combat-recipient, and delayed-transition owners. Ninjutsu and Sneak
 freeze the returned unblocked attacker's recipient before paying the cost;
 Myriad freezes copyable last-known characteristics when it triggers; Encore
-uses its public exiled cost object. Variable, modified, repeated, granted,
-copied, team-specific, and independently incomplete forms remain residual. See
+uses its public exiled cost object. A resolved Blitz permanent records a
+versioned, incarnation-pinned designation for the exact compiled ability.
+Its graveyard trigger consumes predeparture ability applicability and controller
+facts from the normalized permanent event, so ability removal suppresses the
+draw while loss of creature type does not. The independently created delayed
+sacrifice remains controlled by the caster and moves the permanent only while
+that player still controls the same incarnation; historical v1 designations
+and delayed instructions retain their serialized behavior. Variable, modified,
+repeated, granted, copied, team-specific, and independently incomplete forms
+remain residual. See
 [ADR 0102](../adr/0102-typed-fixed-combat-entry-lifecycles.md).
 
 `compiler/ward_cost_templates.py`, `compiler/ability_keyword_fragments.py`,

@@ -9,6 +9,18 @@ from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
 from quorune.carddb import CardDatabase
+from quorune.continuous_effect_state import (
+    commit_continuous_effect,
+    expire_end_of_turn_continuous_effects,
+)
+from quorune.continuous_effects import (
+    ContinuousEffect,
+    ContinuousEffectDuration,
+    ContinuousEffectOrigin,
+    ContinuousObjectIdentity,
+    ContinuousOperation,
+    Layer,
+)
 from quorune.deck import DeckLoader
 from quorune.model import CardInstance, CombatState
 from quorune.oracle_ir import (
@@ -16,10 +28,17 @@ from quorune.oracle_ir import (
     register_generated_programs,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.semantic_runtime.current_ability_components import (
+    program_has_current_ability_fragments,
+)
 from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
     replay_record,
+)
+from quorune.trigger_processing import (
+    collect_trigger_items,
+    enqueue_trigger_batch,
 )
 from quorune.zone_trigger_events import ZoneTransitionKind
 from scripts.build_test_database import build_fixture_database
@@ -263,6 +282,103 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             if not result.ok:
                 raise AssertionError(result.summary)
         raise AssertionError("Combat-entry lifecycle stack did not resolve")
+
+    def cast_blitz(
+        self,
+        *,
+        seed: int,
+        players: int = 2,
+    ):
+        session = self.session(seed, players=players)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            name="Generic Blitz Adept",
+            ref=f"blitz-source-{seed}",
+        )
+        engine.state.players["A"].mana_pool.update({"C": 1, "R": 1})
+        self.prepare_main(session)
+        action = self.cast_action(engine, source)
+        self.assertIn(
+            "blitz", {option["id"] for option in action["cost_options"]}
+        )
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "cost_option": "blitz",
+                "pay": "auto",
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("battlefield", source.zone)
+        marker = source.annotations.get("fixed_blitz_designation")
+        self.assertIsInstance(marker, dict)
+        assert isinstance(marker, dict)
+        self.assertIsInstance(marker.get("ability_semantic_key"), str, marker)
+        self.assertEqual(1, len(engine.state.delayed_triggers))
+        return session, source
+
+    @staticmethod
+    def remove_blitz_abilities(engine, source: CardInstance, *, suffix: str):
+        return commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id=f"fixture:remove-blitz-abilities:{suffix}",
+                source_id=f"fixture:remove-blitz-abilities-source:{suffix}",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("remove_all_abilities"),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        source.object_id,
+                        source.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+
+    @staticmethod
+    def make_blitz_noncreature(engine, source: CardInstance):
+        return commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id="fixture:blitz-noncreature",
+                source_id="fixture:blitz-noncreature-source",
+                layer=Layer.TYPE,
+                sublayer="4",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("set_types", ["Artifact"]),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        source.object_id,
+                        source.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+
+    @staticmethod
+    def begin_end_step(engine) -> None:
+        items = collect_trigger_items(
+            engine,
+            "step.begin",
+            {"phase": "ending", "step": "end_step", "player": "A"},
+        )
+        enqueue_trigger_batch(engine, items)
+        engine._stabilize()
+
+    @staticmethod
+    def blitz_draw_items(engine):
+        return [
+            item for item in engine.state.stack if item.context.get("blitz") is True
+        ]
 
     def test_ninjutsu_offer_and_same_recipient_entry(self):
         session = self.session(260001)
@@ -633,7 +749,7 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             self.resolve_top(engine)
         self.assertEqual("outside", copy.zone)
 
-    def test_blitz_cast_grants_haste_and_its_dies_trigger_draws(self):
+    def test_blitz_cast_grants_haste_and_graveyard_trigger_draws(self):
         session = self.session(260004)
         engine = session.engine
         source = self.add_card(
@@ -686,6 +802,226 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
         self.assertEqual(
             hand_before + 1, len(engine.state.players["B"].zones["hand"])
         )
+
+    def test_blitz_draw_is_suppressed_by_departure_lki_ability_removal(self):
+        removed_session, removed = self.cast_blitz(seed=260011)
+        removed_engine = removed_session.engine
+        self.remove_blitz_abilities(
+            removed_engine,
+            removed,
+            suffix="suppressed",
+        )
+        self.assertEqual(
+            [],
+            removed_engine._effective_card_data(removed)["ability_fragments"],
+        )
+        removed_engine.move_card(
+            removed.object_id,
+            "graveyard",
+            reason="removed Blitz ability departure",
+            semantic_events=True,
+        )
+        removed_engine._stabilize()
+        self.assertEqual([], self.blitz_draw_items(removed_engine))
+
+    def test_blitz_draw_uses_permanent_graveyard_event_after_type_loss(self):
+        noncreature_session, noncreature = self.cast_blitz(seed=260012)
+        noncreature_engine = noncreature_session.engine
+        self.make_blitz_noncreature(noncreature_engine, noncreature)
+        effective = noncreature_engine._effective_card_data(noncreature)
+        self.assertNotIn(
+            "creature",
+            noncreature_engine._type_parts(effective["type_line"])[0],
+        )
+        hand_before = len(
+            noncreature_engine.state.players["A"].zones["hand"]
+        )
+        noncreature_engine.move_card(
+            noncreature.object_id,
+            "graveyard",
+            reason="noncreature Blitz permanent departure",
+            semantic_events=True,
+        )
+        noncreature_engine._stabilize()
+        self.assertEqual(1, len(self.blitz_draw_items(noncreature_engine)))
+        self.resolve_top(noncreature_engine)
+        self.assertEqual(
+            hand_before + 1,
+            len(noncreature_engine.state.players["A"].zones["hand"]),
+        )
+
+    def test_blitz_draw_ability_restoration_applies_to_later_departure(self):
+        restored_session, restored = self.cast_blitz(seed=260013)
+        restored_engine = restored_session.engine
+        self.remove_blitz_abilities(
+            restored_engine,
+            restored,
+            suffix="restored",
+        )
+        self.assertEqual(
+            1,
+            expire_end_of_turn_continuous_effects(restored_engine.state),
+        )
+        restored_characteristics = restored_engine._effective_card_data(restored)
+        marker = restored.annotations["fixed_blitz_designation"]
+        program = restored_engine.semantics.get(marker["ability_semantic_key"])
+        self.assertIsNotNone(program, marker)
+        assert program is not None
+        self.assertTrue(
+            program_has_current_ability_fragments(
+                program,
+                restored_characteristics,
+            ),
+            (program.key, restored_characteristics["ability_fragments"]),
+        )
+        restored_engine.move_card(
+            restored.object_id,
+            "graveyard",
+            reason="restored Blitz ability departure",
+            semantic_events=True,
+        )
+        restored_engine._stabilize()
+        self.assertEqual(1, len(self.blitz_draw_items(restored_engine)))
+
+    def test_blitz_delayed_sacrifice_requires_its_controller(self):
+        session, source = self.cast_blitz(seed=260014, players=3)
+        engine = session.engine
+        engine.change_control(
+            source.object_id,
+            "B",
+            reason="steal Blitz permanent before cleanup",
+        )
+        self.begin_end_step(engine)
+        self.assertTrue(engine.state.stack)
+        self.resolve_top(engine)
+        self.assertEqual("battlefield", source.zone)
+        self.assertEqual("B", source.controller)
+
+        hand_before = len(engine.state.players["B"].zones["hand"])
+        engine.move_card(
+            source.object_id,
+            "graveyard",
+            reason="later B-controlled Blitz departure",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        draw = self.blitz_draw_items(engine)
+        self.assertEqual(1, len(draw))
+        self.assertEqual("B", draw[0].controller)
+        self.resolve_top(engine)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["B"].zones["hand"]),
+        )
+
+    def test_blitz_normal_delayed_cleanup_sacrifices_and_draws(self):
+        session, source = self.cast_blitz(seed=260020)
+        engine = session.engine
+        hand_before = len(engine.state.players["A"].zones["hand"])
+        self.begin_end_step(engine)
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("graveyard", source.zone)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+
+    def test_blitz_cleanup_is_ability_independent_identity_safe_and_replays(self):
+        removed_session, removed = self.cast_blitz(seed=260015)
+        removed_engine = removed_session.engine
+        self.remove_blitz_abilities(
+            removed_engine,
+            removed,
+            suffix="cleanup-independent",
+        )
+        self.begin_end_step(removed_engine)
+        self.resolve_top(removed_engine)
+        self.assertEqual("graveyard", removed.zone)
+        self.assertEqual([], self.blitz_draw_items(removed_engine))
+
+        stale_session, stale = self.cast_blitz(seed=260016)
+        stale_engine = stale_session.engine
+        stale_engine.move_card(
+            stale.object_id,
+            "exile",
+            reason="Blitz stale incarnation departure",
+            semantic_events=True,
+        )
+        stale_engine.move_card(
+            stale.object_id,
+            "battlefield",
+            reason="Blitz stale incarnation return",
+            semantic_events=True,
+        )
+        current_identity = stale.logical_object_id
+        self.begin_end_step(stale_engine)
+        self.resolve_top(stale_engine)
+        self.assertEqual("battlefield", stale.zone)
+        self.assertEqual(current_identity, stale.logical_object_id)
+
+        replay_session, replay_source = self.cast_blitz(
+            seed=260017,
+            players=4,
+        )
+        replay_engine = replay_session.engine
+        self.begin_end_step(replay_engine)
+        replay_session.initial_checkpoint = checkpoint_envelope(
+            replay_engine.state
+        )
+        replay_session.commands.clear()
+        replay_session.decisions.clear()
+        before_rejection = authoritative_state_hash(replay_engine.state)
+        rejected = replay_session.act("pilot:B", {"action_id": "pass"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(
+            before_rejection,
+            authoritative_state_hash(replay_engine.state),
+        )
+        self.resolve_stack_with_passes(replay_session)
+        self.assertEqual("graveyard", replay_source.zone)
+        self.resolve_stack_with_passes(replay_session)
+        expected_hash = authoritative_state_hash(replay_engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "fixed-combat-entry-blitz"
+            replay_session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_blitz_v1_runtime_payloads_preserve_historical_semantics(self):
+        draw_session, draw_source = self.cast_blitz(seed=260018)
+        draw_engine = draw_session.engine
+        draw_source.annotations["fixed_blitz_designation"] = {
+            "logical_object_id": draw_source.logical_object_id,
+            "controller": "A",
+        }
+        self.remove_blitz_abilities(
+            draw_engine,
+            draw_source,
+            suffix="legacy-v1",
+        )
+        draw_engine.move_card(
+            draw_source.object_id,
+            "graveyard",
+            reason="historical Blitz v1 departure",
+            semantic_events=True,
+        )
+        draw_engine._stabilize()
+        self.assertEqual(1, len(self.blitz_draw_items(draw_engine)))
+
+        delayed_session, delayed_source = self.cast_blitz(seed=260019)
+        delayed_engine = delayed_session.engine
+        delayed = delayed_engine.state.delayed_triggers[0]
+        effect = delayed.stack_template["context"]["dynamic_effects"][0]
+        effect.pop("required_controller")
+        delayed_engine.change_control(
+            delayed_source.object_id,
+            "B",
+            reason="historical Blitz v1 delayed effect",
+        )
+        self.begin_end_step(delayed_engine)
+        self.resolve_top(delayed_engine)
+        self.assertEqual("graveyard", delayed_source.zone)
 
     def test_web_slinging_and_sneak_pay_typed_return_costs(self):
         web_session = self.session(260005)
