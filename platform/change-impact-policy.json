@@ -443,6 +443,7 @@
       "id": "compiler-static-characteristic-expectations",
       "patterns": [
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/public_state_fact_queries.py",
         "quorune/compiler/public_state_queries.py",
         "quorune/compiler/runtime_templates.py"
       ],
@@ -477,6 +478,7 @@
         "quorune/characteristic_evaluation.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/public_state_fact_queries.py",
         "quorune/compiler/public_state_queries.py",
         "quorune/compiler/runtime_templates.py",
         "quorune/continuous_conditions.py",
@@ -486,6 +488,8 @@
         "quorune/drawing/restrictions.py",
         "quorune/object_predicate.py",
         "quorune/object_query.py",
+        "quorune/token_creation.py",
+        "quorune/zone_trigger_processing.py",
         "quorune/semantic_runtime/conditional_continuous.py",
         "quorune/semantic_runtime/continuous_components.py",
         "quorune/turn_history.py",
@@ -498,7 +502,10 @@
         "test_continuous_effect_components",
         "test_continuous_effect_duration",
         "test_fixed_public_state_characteristics",
-        "test_fixed_query_keyword_grants"
+        "test_fixed_query_keyword_grants",
+        "test_token_creation_replacements",
+        "test_turn_history_rules",
+        "test_zone_trigger_events"
       ]
     },
     {

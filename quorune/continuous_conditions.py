@@ -51,6 +51,46 @@ class FixedPublicStateConditionKind(StrEnum):
     ATTACHED_MATCHES_QUERY = "attached_matches_query"
     QUERY_COUNT_AT_LEAST = "query_count_at_least"
     QUERY_COUNT_AT_MOST = "query_count_at_most"
+    PUBLIC_FACT_AT_LEAST = "public_fact_at_least"
+
+
+class FixedPublicStateFact(StrEnum):
+    CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES = (
+        "controller_graveyard_distinct_card_types"
+    )
+    CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES = (
+        "controller_graveyard_distinct_mana_values"
+    )
+    CONTROLLER_GRAVEYARD_HAS_INSTANT_AND_SORCERY = (
+        "controller_graveyard_has_instant_and_sorcery"
+    )
+    CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN = (
+        "controller_nonland_permanents_entered_this_turn"
+    )
+    CONTROLLER_OTHER_CREATURES_ENTERED_THIS_TURN = (
+        "controller_other_creatures_entered_this_turn"
+    )
+    CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN = (
+        "controller_artifacts_entered_this_turn"
+    )
+    CONTROLLER_LIFE_GAINED_THIS_TURN = "controller_life_gained_this_turn"
+    CONTROLLER_LIFE_LOST_THIS_TURN = "controller_life_lost_this_turn"
+    CONTROLLER_PERMANENTS_SACRIFICED_THIS_TURN = (
+        "controller_permanents_sacrificed_this_turn"
+    )
+    CONTROLLER_CREATURES_DIED_THIS_TURN = (
+        "controller_creatures_died_this_turn"
+    )
+    CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN = (
+        "controller_attacked_with_subtype_this_turn"
+    )
+    CONTROLLER_HAND_ADVANTAGE = "controller_hand_advantage"
+    CONTROLLER_LIFE_ABOVE_STARTING = "controller_life_above_starting"
+    CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE = (
+        "controller_at_or_below_half_starting_life"
+    )
+    SOURCE_ATTACKED_THIS_TURN = "source_attacked_this_turn"
+    SOURCE_ATTACKED_BATTLE_THIS_TURN = "source_attacked_battle_this_turn"
 
 
 @dataclass(frozen=True, slots=True)
@@ -165,6 +205,44 @@ class FixedPublicStateConditionSnapshot:
             )
 
 
+def _validate_public_fact_fields(
+    *,
+    kind: FixedPublicStateConditionKind,
+    fact: FixedPublicStateFact | None,
+    parameter: str | None,
+    amount: int | None,
+    schema_version: int,
+) -> None:
+    if kind is not FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST:
+        if fact is not None or parameter is not None:
+            raise FixedPublicStateConditionError(
+                "Only public-fact conditions may carry fact fields"
+            )
+        return
+    if not isinstance(fact, FixedPublicStateFact) or amount == 0:
+        raise FixedPublicStateConditionError(
+            "Public-fact conditions require a closed fact and positive threshold"
+        )
+    if schema_version != 3:
+        raise FixedPublicStateConditionError(
+            "Public-fact conditions require schema version 3"
+        )
+    parameter_fact = FixedPublicStateFact.CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN
+    if fact is parameter_fact:
+        if (
+            type(parameter) is not str
+            or not parameter.strip()
+            or parameter != parameter.casefold()
+        ):
+            raise FixedPublicStateConditionError(
+                "The attack-subtype fact requires one canonical parameter"
+            )
+    elif parameter is not None:
+        raise FixedPublicStateConditionError(
+            "This public fact cannot carry a parameter"
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class FixedPublicStateConditionSpec:
     """One closed condition for a fixed static characteristic effect."""
@@ -174,6 +252,8 @@ class FixedPublicStateConditionSpec:
     counter_name: str | None = None
     predicate: ObjectQuerySpec | None = None
     quantity: CharacteristicQuantitySpec | None = None
+    fact: FixedPublicStateFact | None = None
+    fact_parameter: str | None = None
     schema_version: int = 1
 
     def __post_init__(self) -> None:
@@ -187,9 +267,11 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
             FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
         }
+        fact_kinds = {FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST}
         if type(self.schema_version) is not int or self.schema_version not in {
             1,
             2,
+            3,
         }:
             raise FixedPublicStateConditionError(
                 "Unsupported fixed public-state condition schema version"
@@ -216,6 +298,7 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
             FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
             FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
+            FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
         }
         if self.kind in amount_kinds:
             if type(self.amount) is not int or self.amount < 0:
@@ -280,11 +363,21 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Only query-count conditions may carry a quantity"
             )
+        _validate_public_fact_fields(
+            kind=self.kind,
+            fact=self.fact,
+            parameter=self.fact_parameter,
+            amount=self.amount,
+            schema_version=self.schema_version,
+        )
         if self.kind in extended_kinds and self.schema_version != 2:
             raise FixedPublicStateConditionError(
                 "Extended fixed public-state conditions require schema version 2"
             )
-        if self.kind not in extended_kinds and self.schema_version != 1:
+        if (
+            self.kind not in extended_kinds | fact_kinds
+            and self.schema_version != 1
+        ):
             raise FixedPublicStateConditionError(
                 "Legacy fixed public-state conditions require schema version 1"
             )
@@ -311,6 +404,15 @@ class FixedPublicStateConditionSpec:
                     ),
                 }
             )
+        elif self.schema_version == 3:
+            value.update(
+                {
+                    "predicate": None,
+                    "quantity": None,
+                    "fact": self.fact.value if self.fact is not None else None,
+                    "fact_parameter": self.fact_parameter,
+                }
+            )
         return value
 
     @classmethod
@@ -324,9 +426,11 @@ class FixedPublicStateConditionSpec:
             "counter_name",
         }
         current_fields = legacy_fields | {"predicate", "quantity"}
+        fact_fields = current_fields | {"fact", "fact_parameter"}
         if not isinstance(value, Mapping) or frozenset(value) not in {
             frozenset(legacy_fields),
             frozenset(current_fields),
+            frozenset(fact_fields),
         }:
             raise FixedPublicStateConditionError(
                 "Fixed public-state conditions have a closed schema"
@@ -348,6 +452,11 @@ class FixedPublicStateConditionSpec:
                 if value.get("quantity") is not None
                 else None
             )
+            fact = (
+                FixedPublicStateFact(value["fact"])
+                if value.get("fact") is not None
+                else None
+            )
             return cls(
                 schema_version=value["schema_version"],
                 kind=kind,
@@ -355,6 +464,8 @@ class FixedPublicStateConditionSpec:
                 counter_name=value["counter_name"],
                 predicate=predicate,
                 quantity=quantity,
+                fact=fact,
+                fact_parameter=value.get("fact_parameter"),
             )
         except (
             CharacteristicFragmentError,
@@ -461,6 +572,11 @@ class FixedPublicStateConditionSpec:
                 snapshot.condition_quantity is not None
                 and snapshot.condition_quantity <= int(self.amount)
             )
+        if self.kind is FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST:
+            return (
+                snapshot.condition_quantity is not None
+                and snapshot.condition_quantity >= int(self.amount)
+            )
         raise FixedPublicStateConditionError(
             "Unsupported fixed public-state condition kind"
         )
@@ -470,6 +586,7 @@ __all__ = [
     "FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID",
     "FixedPublicStateConditionError",
     "FixedPublicStateConditionKind",
+    "FixedPublicStateFact",
     "FixedPublicStateConditionSnapshot",
     "FixedPublicStateConditionSpec",
 ]

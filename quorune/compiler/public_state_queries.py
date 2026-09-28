@@ -16,6 +16,12 @@ from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
+from .public_state_fact_queries import (
+    fixed_graveyard_condition_query,
+    fixed_planeswalker_condition_query,
+    fixed_public_condition_query_extension,
+    fixed_public_fact_condition,
+)
 
 
 _CONTROLLED_CREATURE_MODIFIER = re.compile(
@@ -115,7 +121,6 @@ _CARD_TYPE_WORDS = frozenset(
         "creature",
         "enchantment",
         "land",
-        "planeswalker",
     }
 )
 _CONDITION_NUMBER_WORDS = {
@@ -833,6 +838,7 @@ def _fixed_condition_object_query(
         "enchantment",
         "land",
         "permanent",
+        "planeswalker",
     }:
         return None
     if normalized_subject != "permanent":
@@ -923,6 +929,9 @@ def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | 
     )
     if parsed is not None and parsed[0] == "source_controller":
         return parsed[1], parsed[2]
+    query = fixed_planeswalker_condition_query(material)
+    if query is not None:
+        return (query, False) if query is not None else None
     legacy = re.fullmatch(
         r"(?P<quality>black|blue|green|red|white) "
         r"(?P<subject>artifacts?|creatures?|enchantments?|lands?|permanents?)"
@@ -1083,6 +1092,12 @@ def _fixed_public_query_count_condition(
     text: str,
 ) -> FixedPublicStateConditionSpec | None:
     normalized = " ".join(text.strip().rstrip(".").split())
+    extension = (
+        fixed_graveyard_condition_query(normalized)
+        or fixed_public_condition_query_extension(normalized)
+    )
+    if extension is not None:
+        return extension
     global_count = re.fullmatch(
         r"there(?: is| are|'s) (?:(?P<another>another)|"
         r"(?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|"
@@ -1459,6 +1474,12 @@ def _fixed_public_state_condition(
     legacy = _legacy_public_state_condition(normalized)
     if legacy is not None:
         return legacy
+    public_fact = fixed_public_fact_condition(
+        normalized,
+        source_name=source_name,
+    )
+    if public_fact is not None:
+        return public_fact
     public_object = _object_public_state_condition(
         normalized,
         source_name=source_name,

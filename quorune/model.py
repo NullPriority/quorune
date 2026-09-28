@@ -56,6 +56,7 @@ TurnHistoryEventKind = Literal[
     "player_gained_life",
     "player_lost_life",
     "permanent_damaged",
+    "permanent_entered",
 ]
 
 

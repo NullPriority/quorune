@@ -154,6 +154,21 @@ def dispatch_zone_change_occurrence(
         if event.kind == "permanent.leave"
         for value in event.context.get("types", ())
     )
+    current_types = set(
+        str(value)
+        for event in events
+        if event.kind == "permanent.enter"
+        for value in event.context.get("types", ())
+    )
+    if occurrence.destination == "battlefield":
+        host._record_turn_history(
+            "permanent_entered",
+            actor=occurrence.current_controller,
+            object_incarnation=(
+                f"{occurrence.object_id}@{occurrence.zone_change_counter}"
+            ),
+            types=current_types,
+        )
     if (
         occurrence.origin == "battlefield"
         and occurrence.destination == "graveyard"

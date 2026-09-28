@@ -268,11 +268,18 @@ ability additions and power/toughness modifiers through the same applicability
 path. Attachment-relative “it” binds to the explicit enchanted or equipped
 object; other source pronouns remain source-bound. Public state may participate
 in layer-5 quantities, but positive ability presence remains excluded from
-counts. Delirium, distinct-type or mana-value counts, most-common comparisons,
-dynamic amounts, top-library, chosen, hidden-identity, per-opponent aggregate,
-unowned history/designation, compound, exact-attachment-count, quoted-ability,
-type, color, ability-removal, Class-level, Protection, Ward, and unsupported-
-keyword forms remain source-spanned residuals. See
+counts. Schema-v3 facts add cycle-safe distinct card-type and exact mana-value
+sets from the controller's graveyard; sealed entry, attack, sacrifice, death,
+and life history; public hand and starting-life relations; planeswalker subtype
+queries; and exact Equipment attachment counts. Normal and token entry
+producers record the same current-turn permanent-entry fact, and attack history
+seals effective type and subtype membership plus the attacked object class.
+Most-common or tied comparisons, dynamic amounts, top-library, chosen,
+hidden-identity, city blessing, dungeon, initiative, speed, sticker, crime,
+dice, open arithmetic, otherwise branches, per-opponent aggregate, unowned
+history/designation, quoted-ability, type, color, ability-removal, Class-level,
+Protection, Ward, and unsupported-keyword forms remain source-spanned
+residuals. See
 [ADR 0087](../adr/0087-typed-fixed-public-state-characteristics.md).
 
 `compiler/closed_effect_programs.py` owns the broader bounded composition

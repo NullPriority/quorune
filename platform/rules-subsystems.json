@@ -4088,6 +4088,48 @@
       "measurement_probe_id": "typed-token-ability-programs-existing-owner-v1"
     },
     {
+      "bundle_id": "bundle:public-static-condition-closure",
+      "member_family_ids": [
+        "continuous_layer:continuous-effect-layers-and-dependencies"
+      ],
+      "canonical_owner_ids": [
+        "capability:continuous.characteristics.fixed_public_state",
+        "capability:state_query.permanent.public_state_predicate",
+        "component:quorune.card_programs.runtime._FixedPublicStateSnapshotResolver",
+        "component:quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler",
+        "component:quorune.compiler.public_state_queries.fixed_public_state_parts",
+        "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+        "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler"
+      ],
+      "source_contexts": [
+        "static"
+      ],
+      "normalized_literal_parameters": [
+        "cycle-safe-distinct-graveyard-card-types-or-mana-values",
+        "fixed-public-fact-threshold",
+        "live-layer-five-object-query",
+        "source-controller-and-logical-incarnation"
+      ],
+      "shared_dependencies": [
+        "continuous.characteristics.fixed_public_state",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "shared_grammar": "one fixed layer-6 keyword or layer-7c power/toughness body gated by a closed current public query, cycle-safe distinct controller-graveyard characteristic count, sealed entry, attack, sacrifice, death, or life history fact, public hand or starting-life relation, or exact attachment count through the existing typed static-condition owner",
+      "estimated_implementation_hours": 6,
+      "estimated_probe_hours": 1,
+      "estimated_generation_hours": 1,
+      "expected_downstream_closure": "Promotes a normal-floor cross-era conditional-static cohort while making the same schema-v3 public-fact boundary reusable by later legality, trigger, and cost owners without runtime Oracle interpretation or another continuous-effect engine.",
+      "explicit_exclusions": [
+        "ability-presence counts and every quantity outside the cycle-safe layer-5 or sealed public-fact boundary",
+        "city blessing, dungeon, initiative, speed, sticker, crime, dice, top-library, chosen, secret, and named-object conditions",
+        "copied, granted, text-changed, Class-level, and independently unsupported sibling abilities",
+        "dynamic characteristic amounts, type or color changes, base-setting, ability removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
+        "most-common, tied, open arithmetic, arbitrary comparisons, linked results, and otherwise branches"
+      ],
+      "measurement_status": "generated_probe",
+      "measurement_probe_id": "public-static-condition-closure-existing-owner-v1"
+    },
+    {
       "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -4136,21 +4178,18 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v214-typed-token-ability-programs",
-      "compiler_version": "oracle-ir-v214",
-      "bundle_id": "bundle:typed-token-ability-programs",
-      "candidate_ids": ["bundle:typed-token-ability-programs"],
+      "transition_id": "oracle-ir-v215-public-static-condition-closure",
+      "compiler_version": "oracle-ir-v215",
+      "bundle_id": "bundle:public-static-condition-closure",
+      "candidate_ids": ["bundle:public-static-condition-closure"],
       "family_ids": [
-        "activated_effect:create-token",
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:create-token",
-        "event_binding:normalized-event-binding"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "token.creation.typed_ability_definition"
+        "continuous.characteristics.fixed_public_state"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:typed-token-ability-programs"
+      "measurement_id": "measurement:public-static-condition-closure"
     },
     "forecast_corrections": [
       {
@@ -4794,6 +4833,11 @@
         "candidate_id": "compiler:typed-token-ability-programs",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-Ward selector has no eligible carried candidate while its raw continuous-layer and ordered-effect aggregates remain heterogeneous. Bounded probes retire simple sequence extensions, remaining untap policies, Protection grammar, typed additional-cost fragments, and typed emblem programs below the normal floor. The generated explicit-token probe instead isolates more than the exact-ability floor of current Commander carriers whose fixed token shell and quoted child ability are independently exact. The selected owner composes fixed token creation with copiable typed current-ability fragments and source-pinned activated, mana, triggered, declaration, and cycle-safe self-characteristic programs across spell, triggered, activated, loyalty, and modal contexts. Reminder-only predefined tokens, more than two quotes, unsupported child programs, attached, attacking, Role, copy, variable, linked, replacement, prevention, and independently incomplete forms remain fail-closed; current identities and measurements are generated rather than policy-maintained."
+      },
+      {
+        "candidate_id": "compiler:public-static-condition-closure",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-token selector has no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A bounded fixed hand-entry probe was retired at 26 complete cards, 35 exact abilities, and 37 residual removals, and only 20 one-blocker downstream carriers, so it qualified for neither the normal floor nor the prerequisite exception. The selected source-controlled public-condition probe instead reaches the normal complete-card floor through the existing typed static-condition owner. It admits closed cycle-safe distinct graveyard type or mana-value counts, sealed entry, attack, sacrifice, death, and life facts, live layer-5 object queries including planeswalker subtypes, public hand and starting-life relations, and exact attachment counts. City blessing, dungeon, initiative, speed, stickers, crime, dice, top-library, chosen, secret, most-common, otherwise, open comparison, dynamic amount, ability-presence count, and independently unsupported body forms remain fail-closed."
       }
     ]
   },

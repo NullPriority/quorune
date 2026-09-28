@@ -232,7 +232,10 @@ from .model import (
     TurnHistoryEventKind,
     YieldPolicy,
 )
-from .turn_history import opponent_was_dealt_damage_this_turn
+from .turn_history import (
+    opponent_was_dealt_damage_this_turn,
+    record_creature_attack_history,
+)
 from .object_query import exact_numeric_characteristic
 from .permissions import AuthorizedCommand, CapabilityManager, PermissionDenied
 from .protection import (
@@ -5809,13 +5812,7 @@ class CommanderEngine(
             for value in committed
         ]
         for card, target_details in surviving_attackers:
-            self._record_turn_history(
-                "creature_attacked",
-                actor=active,
-                object_incarnation=card.logical_object_id,
-                target=target_details["target"],
-                target_kind=target_details["kind"],
-            )
+            record_creature_attack_history(self, card, target_details)
         used = {card.object_id for card, _ in surviving_attackers}
         self.state.combat.attackers_declared = True
         if used:
