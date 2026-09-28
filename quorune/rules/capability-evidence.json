@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "dbd43fd04e702ba72b26cdccbaa20f5ac9cb2900acaeb88bc6b7413ef84a9a4c",
-  "declaration_source_fingerprint": "79f088fe48ed4655a8b4d3dcda81264c6f714546dca489e36d021e6fd4543355",
+  "registry_fingerprint": "add82fc26965c2739de8fb255a4341eeb552a5c481d874ea8f97d3f4dc2f8299",
+  "declaration_source_fingerprint": "eee3cfb608f5c862732d4ac3c10610baeb6c0103f6beedf3a6a43dcab5b203ae",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -22636,6 +22636,27 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recompute schema-v3 graveyard, entry, attack, life, hand, starting-life, and planeswalker-subtype conditions through the existing layer-6 and layer-7c owner."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_state_conditions_recompute_layer_six_and_seven_results",
       "official_rule_ids": [
         "604.1",
@@ -22678,6 +22699,27 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Evaluate controller-relative public facts in four-player state while retaining exact source incarnation and seat relations."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_turn_gated_attachment_and_anthem_compose",
       "official_rule_ids": [
         "604.1",
@@ -22716,6 +22758,27 @@
         "commander_review"
       ],
       "applicability_note": "Kill a controller-turn to other-turn condition mutant by requiring the enclosing CardProgram fingerprint to change."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Force every public-fact quantity to zero and require all fact-gated layer-6 and layer-7c results to disappear."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -22778,7 +22841,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Keep distinct-type and ability-presence counts, dynamic amounts, unmarked exact counts, per-opponent thresholds above existence, compound or unsupported state comparisons, Ward, and quoted abilities material and residual."
+      "applicability_note": "Keep ability-presence counts, dynamic amounts, unmarked open counts, per-opponent thresholds above existence, otherwise branches, compound or unsupported state comparisons, Ward, and quoted abilities material and residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -22867,6 +22930,27 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_condition_closure_compiles_typed_queries_and_facts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile cycle-safe distinct graveyard values, sealed public facts, public player relations, exact attachment counts, and planeswalker-subtype queries into schema-v3 conditions."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
       "official_rule_ids": [
         "604.1",
@@ -22884,6 +22968,27 @@
         "commander_review"
       ],
       "applicability_note": "Compile direct public-state affected sets plus source, attached-object, and cycle-safe fixed object-count conditions through the existing typed characteristic owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Apply live schema-v3 fact quantities to fixed layer-6 keyword and layer-7c power/toughness results and remove them when the fact is absent."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -22950,6 +23055,27 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
       "official_rule_ids": [
@@ -23010,6 +23136,27 @@
         "commander_review"
       ],
       "applicability_note": "Save and replay authoritative draw, cast, control, query, player-counter, and monarch facts from the exact checkpoint."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Serialize schema-v3 facts plus new entry and attack history and replay the following multiplayer command to the same hash."
     },
     {
       "capability_id": "continuous.characteristics.leveler_bands",
@@ -67769,5 +67916,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "1cd7549d8d06a0b64a1e929d8e956328ed6b99e6bdeabcce21a41bf32787ad1c"
+  "fingerprint": "f08a84275cbc92c1dd194f89daed6a0abd5c65d5502d9d7a290ba79655cd039c"
 }

@@ -9,6 +9,7 @@ from ..continuous_effects import ContinuousEffect
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
     FixedPublicStateConditionKind,
+    FixedPublicStateFact,
     FixedPublicStateConditionSpec,
     FixedPublicStateConditionSnapshot,
 )
@@ -95,6 +96,8 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> int | None:
+        if condition.kind is FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST:
+            return self._public_fact_quantity(source, condition)
         if self.quantity_resolver is None or condition.quantity is None:
             return None
         key = (source.object_id, condition.quantity)
@@ -104,6 +107,169 @@ class _FixedPublicStateSnapshotResolver:
                 condition.quantity,
             )
         return self.quantity_cache[key]
+
+    def _public_fact_quantity(
+        self,
+        source: Any,
+        condition: FixedPublicStateConditionSpec,
+    ) -> int | None:
+        fact = condition.fact
+        if not isinstance(fact, FixedPublicStateFact):
+            return None
+        if fact in {
+            FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
+            FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES,
+            FixedPublicStateFact.CONTROLLER_GRAVEYARD_HAS_INSTANT_AND_SORCERY,
+        }:
+            return self._graveyard_fact_quantity(source, fact)
+        if fact in {
+            FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE,
+            FixedPublicStateFact.CONTROLLER_LIFE_ABOVE_STARTING,
+            FixedPublicStateFact.CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE,
+        }:
+            return self._player_fact_quantity(source, fact)
+        return self._history_fact_quantity(source, condition)
+
+    def _graveyard_fact_quantity(
+        self,
+        source: Any,
+        fact: FixedPublicStateFact,
+    ) -> int | None:
+        if self.public_object_resolver is None:
+            return None
+        rows = tuple(
+            self._public_object(self.state.cards[object_id])
+            for object_id in self.state.players[source.controller].zones["graveyard"]
+        )
+        if any(row is None for row in rows):
+            return None
+        public_rows = tuple(row for row in rows if row is not None)
+        if fact is FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES:
+            return len({value for row in public_rows for value in row.types})
+        if fact is FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES:
+            return len({row.mana_value for row in public_rows})
+        present_types = {value for row in public_rows for value in row.types}
+        return int({"instant", "sorcery"} <= present_types)
+
+    def _history_fact_quantity(
+        self,
+        source: Any,
+        condition: FixedPublicStateConditionSpec,
+    ) -> int | None:
+        fact = condition.fact
+        assert isinstance(fact, FixedPublicStateFact)
+        controller = source.controller
+        history = getattr(self.state, "turn_history", None)
+        turn_sequence = max(0, int(getattr(self.state, "turn_sequence", 0)))
+
+        def events(kind: str) -> tuple[Any, ...]:
+            return current_turn_history_events(
+                history,
+                turn_sequence=turn_sequence,
+                kind=kind,
+            )
+
+        if fact in {
+            FixedPublicStateFact.CONTROLLER_LIFE_GAINED_THIS_TURN,
+            FixedPublicStateFact.CONTROLLER_LIFE_LOST_THIS_TURN,
+        }:
+            event_kind = (
+                "player_gained_life"
+                if fact is FixedPublicStateFact.CONTROLLER_LIFE_GAINED_THIS_TURN
+                else "player_lost_life"
+            )
+            return sum(
+                event.amount
+                for event in events(event_kind)
+                if event.target == controller
+            )
+        event_kinds = {
+            FixedPublicStateFact.CONTROLLER_PERMANENTS_SACRIFICED_THIS_TURN: (
+                "permanent_sacrificed"
+            ),
+            FixedPublicStateFact.CONTROLLER_CREATURES_DIED_THIS_TURN: (
+                "creature_died"
+            ),
+        }
+        if fact in event_kinds:
+            return sum(
+                event.actor == controller for event in events(event_kinds[fact])
+            )
+        if fact in {
+            FixedPublicStateFact.CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN,
+            FixedPublicStateFact.CONTROLLER_OTHER_CREATURES_ENTERED_THIS_TURN,
+            FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN,
+        }:
+            entered = tuple(
+                event
+                for event in events("permanent_entered")
+                if event.actor == controller
+            )
+            if fact is (
+                FixedPublicStateFact
+                .CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN
+            ):
+                return sum("land" not in event.types for event in entered)
+            if fact is FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN:
+                return sum("artifact" in event.types for event in entered)
+            return sum(
+                "creature" in event.types
+                and event.object_incarnation != source.logical_object_id
+                for event in entered
+            )
+        attacks = events("creature_attacked")
+        if fact in {
+            FixedPublicStateFact.SOURCE_ATTACKED_THIS_TURN,
+            FixedPublicStateFact.SOURCE_ATTACKED_BATTLE_THIS_TURN,
+        }:
+            return sum(
+                event.object_incarnation == source.logical_object_id
+                and (
+                    fact is FixedPublicStateFact.SOURCE_ATTACKED_THIS_TURN
+                    or event.target_kind == "battle"
+                )
+                for event in attacks
+            )
+        if fact is FixedPublicStateFact.CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN:
+            subtype = str(condition.fact_parameter or "")
+            return sum(
+                event.actor == controller and subtype in event.types
+                for event in attacks
+            )
+        return None
+
+    def _player_fact_quantity(
+        self,
+        source: Any,
+        fact: FixedPublicStateFact,
+    ) -> int | None:
+        controller = source.controller
+        if fact is FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE:
+            controller_count = len(self.state.players[controller].zones["hand"])
+            opponent_counts = tuple(
+                len(self.state.players[player].zones["hand"])
+                for player in self.state.turn_order
+                if player != controller and self.state.players[player].in_game
+            )
+            return int(
+                bool(opponent_counts)
+                and all(controller_count > count for count in opponent_counts)
+            )
+        starting_life = getattr(
+            getattr(self.state, "config", None),
+            "starting_life",
+            None,
+        )
+        if type(starting_life) is not int or starting_life <= 0:
+            return None
+        life = int(self.state.players[controller].life)
+        if fact is FixedPublicStateFact.CONTROLLER_LIFE_ABOVE_STARTING:
+            return max(0, life - starting_life)
+        if fact is (
+            FixedPublicStateFact.CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE
+        ):
+            return int(life * 2 <= starting_life)
+        return None
 
     def snapshot(
         self,

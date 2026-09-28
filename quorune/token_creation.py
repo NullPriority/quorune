@@ -99,6 +99,8 @@ class TokenCreationHost(Protocol):
 
     def _stable_runtime_id(self, namespace: str, value: str) -> str: ...
 
+    def _record_turn_history(self, kind: str, **kwargs: Any) -> None: ...
+
     def _refresh_world_supertype_timestamp(
         self, card: CardInstance, *, gained_at: int
     ) -> None: ...
@@ -858,6 +860,12 @@ def _record_and_dispatch_token_creation(
         }
         host._dispatch_semantic_event(
             "token.created", context, trigger_batch=trigger_batch
+        )
+        host._record_turn_history(
+            "permanent_entered",
+            actor=controller,
+            object_incarnation=card.logical_object_id,
+            types=tuple(sorted(types)),
         )
         host._dispatch_semantic_event(
             "permanent.enter", context, trigger_batch=trigger_batch

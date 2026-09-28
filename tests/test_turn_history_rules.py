@@ -420,6 +420,10 @@ class CurrentTurnHistoryRuleTests(unittest.TestCase):
         attack = engine._current_turn_history("creature_attacked")[-1]
         self.assertEqual("player", attack.target_kind)
         self.assertEqual("B", attack.target)
+        self.assertGreaterEqual(
+            set(attack.types),
+            {"creature", "test"},
+        )
 
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "turn-history-attack"

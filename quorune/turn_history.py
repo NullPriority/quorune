@@ -3,7 +3,8 @@ from __future__ import annotations
 """Typed current- and previous-turn history ownership."""
 
 from collections import Counter
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
+from typing import Any
 
 from .model import TurnHistory, TurnHistoryEvent, TurnHistoryEventKind
 
@@ -81,6 +82,27 @@ def current_turn_history_events(
     return tuple(event for event in history.events if event.kind == kind)
 
 
+def record_creature_attack_history(
+    host: Any,
+    card: Any,
+    target_details: Mapping[str, str],
+) -> None:
+    """Seal one declared attack's effective type and recipient facts."""
+
+    effective = host._effective_card_data(card)
+    types, subtypes, _supertypes = host._type_parts(
+        str(effective.get("type_line") or "")
+    )
+    host._record_turn_history(
+        "creature_attacked",
+        actor=card.controller,
+        object_incarnation=card.logical_object_id,
+        target=target_details["target"],
+        target_kind=target_details["kind"],
+        types=tuple(sorted({*types, *subtypes})),
+    )
+
+
 def opponent_was_dealt_damage_this_turn(
     history: TurnHistory | None,
     *,
@@ -105,5 +127,6 @@ __all__ = [
     "current_turn_history_events",
     "opponent_was_dealt_damage_this_turn",
     "previous_turn_spell_cast_counts",
+    "record_creature_attack_history",
     "roll_turn_history",
 ]

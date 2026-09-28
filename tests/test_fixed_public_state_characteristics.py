@@ -29,6 +29,7 @@ from quorune.continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
     FixedPublicStateConditionError,
     FixedPublicStateConditionKind,
+    FixedPublicStateFact,
     FixedPublicStateConditionSnapshot,
     FixedPublicStateConditionSpec,
 )
@@ -53,6 +54,7 @@ from quorune.rules.capabilities import (
 from quorune.semantics import SemanticProgram
 from quorune.semantic_runtime import (
     ContinuousEffectSourceContext,
+    LifeChangeIntent,
     default_continuous_effect_component_registry,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
@@ -398,6 +400,90 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             ),
         )
 
+    def test_public_condition_closure_compiles_typed_queries_and_facts(self):
+        base = self.db.lookup("Fresh-Faced Recruit")
+        cases = (
+            (
+                "Delirium — This creature gets +2/+2 as long as there are "
+                "four or more card types among cards in your graveyard.",
+                "public_fact_at_least",
+                "controller_graveyard_distinct_card_types",
+            ),
+            (
+                "Celebration — This creature gets +1/+1 and has trample as "
+                "long as two or more nonland permanents entered the "
+                "battlefield under your control this turn.",
+                "public_fact_at_least",
+                "controller_nonland_permanents_entered_this_turn",
+            ),
+            (
+                "As long as you control a Nissa planeswalker, this creature "
+                "gets +2/+0 and has vigilance.",
+                "query_count_at_least",
+                None,
+            ),
+            (
+                "This creature gets +2/+2 as long as you have more cards in "
+                "hand than each opponent.",
+                "public_fact_at_least",
+                "controller_hand_advantage",
+            ),
+            (
+                "As long as your life total is less than or equal to half "
+                "your starting life total, this creature has indestructible.",
+                "public_fact_at_least",
+                "controller_at_or_below_half_starting_life",
+            ),
+            (
+                "This creature has flying as long as an artifact card is in "
+                "your graveyard.",
+                "query_count_at_least",
+                None,
+            ),
+            (
+                "This creature has indestructible as long as it attacked a "
+                "battle this turn.",
+                "public_fact_at_least",
+                "source_attacked_battle_this_turn",
+            ),
+            (
+                "This creature gets +2/+0 as long as you gained life this "
+                "turn.",
+                "public_fact_at_least",
+                "controller_life_gained_this_turn",
+            ),
+        )
+        for index, (text, expected_kind, expected_fact) in enumerate(cases):
+            with self.subTest(text=text):
+                record = replace(
+                    base,
+                    oracle_id=(
+                        f"00000000-0000-4000-8000-{118_260_000 + index:012d}"
+                    ),
+                    name=f"Public Condition Closure {index}",
+                    type_line="Creature — Fixture",
+                    oracle_text=text,
+                    keywords=(),
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = next(
+                    node
+                    for face in ir.faces
+                    for node in face.nodes
+                    if node.template_id == TEMPLATE_ID
+                )
+                condition = node.handlers[0]["source_condition"]
+                self.assertEqual(expected_kind, condition["kind"])
+                self.assertEqual(expected_fact, condition.get("fact"))
+                default_continuous_effect_component_registry().validate(
+                    node.handlers[0]
+                )
+
     def test_fixed_public_condition_models_use_closed_current_facts(self):
         cases = (
             (
@@ -466,6 +552,53 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                     )
                 )
 
+        for fact, amount in (
+            (
+                FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
+                4,
+            ),
+            (
+                FixedPublicStateFact.CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN,
+                2,
+            ),
+            (FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE, 1),
+        ):
+            with self.subTest(fact=fact):
+                condition = FixedPublicStateConditionSpec(
+                    FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+                    amount=amount,
+                    fact=fact,
+                    schema_version=3,
+                )
+                self.assertEqual(
+                    condition,
+                    FixedPublicStateConditionSpec.from_dict(
+                        condition.to_dict()
+                    ),
+                )
+                self.assertTrue(
+                    condition.matches(
+                        source_context(
+                            condition_quantity=amount,
+                        ).public_state
+                    )
+                )
+                self.assertFalse(
+                    condition.matches(
+                        source_context(
+                            condition_quantity=max(0, amount - 1),
+                        ).public_state
+                    )
+                )
+
+        with self.assertRaises(FixedPublicStateConditionError):
+            FixedPublicStateConditionSpec(
+                FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+                amount=1,
+                fact=FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE,
+                schema_version=2,
+            )
+
     def test_fixed_public_condition_dependencies_fail_closed(self):
         registry_value = json.loads(
             (
@@ -481,6 +614,11 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                 "state_query.permanent.public_state_predicate",
                 "As long as you control another multicolored permanent, "
                 "this creature gets +1/+1.",
+            ),
+            (
+                "state_query.permanent.public_state_predicate",
+                "Delirium — This creature gets +2/+2 as long as there are "
+                "four or more card types among cards in your graveyard.",
             ),
             (
                 "variant.monarch.designate",
@@ -693,8 +831,6 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
     def test_unrepresented_conditions_and_bodies_remain_residual(self):
         base = self.db.lookup("Fresh-Faced Recruit")
         unsupported = (
-            "Delirium — This creature gets +2/+2 as long as there are four "
-            "or more card types among cards in your graveyard.",
             "This creature gets +X/+X during your turn.",
             "During your turn, this creature has ward {2}.",
             "As long as this creature is untapped, other legendary creatures "
@@ -709,10 +845,8 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "controls two or more artifacts.",
             "As long as you control a creature with flying, this creature "
             "gets +1/+1.",
-            "As long as there are five or more mana values among cards in "
-            "your graveyard, this creature gets +1/+1.",
-            "As long as this Equipment has four or more counters on it, "
-            "equipped creature has double strike.",
+            "As long as this Equipment has four or more different kinds of "
+            "counters on it, equipped creature has double strike.",
         )
         for index, text in enumerate(unsupported):
             with self.subTest(text=text):
@@ -1362,6 +1496,221 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
         self.assertTrue(result.ok, result.summary)
         with tempfile.TemporaryDirectory() as directory:
             record_dir = Path(directory) / "public-condition-query-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+
+    def test_public_fact_conditions_recompute_and_replay(self):
+        session = self.session(118_220_011)
+        engine = session.engine
+        source = self.add_constructed_condition_source(
+            session,
+            ref="PUBLIC-FACTS",
+            texts=(
+                "Delirium — This creature gets +2/+2 as long as there are "
+                "four or more card types among cards in your graveyard.",
+                "This creature gets +1/+0 as long as you gained life this turn.",
+                "Celebration — This creature gets +1/+1 and has trample as "
+                "long as two or more nonland permanents entered the "
+                "battlefield under your control this turn.",
+            ),
+        )
+        engine.state.turn_history.events.clear()
+        def characteristics(card: CardInstance):
+            with mock.patch.object(
+                CommanderEngine,
+                "semantic_program_is_current_trusted",
+                return_value=True,
+            ):
+                return engine._effective_card_data(card)
+
+        baseline = characteristics(source)
+        self.assertEqual((3, 3), (int(baseline["power"]), int(baseline["toughness"])))
+        self.assertNotIn("Trample", baseline["keywords"])
+
+        engine.apply_life_change_intent(
+            LifeChangeIntent(
+                actor="A",
+                player="A",
+                amount=1,
+                reason="public-fact condition witness",
+            )
+        )
+        life_active = characteristics(source)
+        self.assertEqual(
+            (4, 3),
+            (int(life_active["power"]), int(life_active["toughness"])),
+        )
+
+        hand_source = self.add_constructed_condition_source(
+            session,
+            ref="HAND-ADVANTAGE",
+            texts=(
+                "This creature gets +0/+1 as long as you have more cards in "
+                "hand than each opponent.",
+            ),
+        )
+        self.assertEqual("3", characteristics(hand_source)["toughness"])
+        opponent_max = max(
+            len(engine.state.players[seat].zones["hand"])
+            for seat in ("B", "C", "D")
+        )
+        while len(engine.state.players["A"].zones["hand"]) <= opponent_max:
+            engine.move_card(
+                engine.state.players["A"].zones["library"][-1],
+                "hand",
+                log=False,
+            )
+        self.assertEqual("4", characteristics(hand_source)["toughness"])
+
+        life_source = self.add_constructed_condition_source(
+            session,
+            ref="STARTING-LIFE",
+            texts=(
+                "As long as your life total is less than or equal to half "
+                "your starting life total, this creature has indestructible.",
+            ),
+        )
+        self.assertNotIn("Indestructible", characteristics(life_source)["keywords"])
+        engine.apply_life_change_intent(
+            LifeChangeIntent(
+                actor="A",
+                player="A",
+                amount=(engine.state.config.starting_life // 2)
+                - engine.state.players["A"].life,
+                reason="starting-life condition witness",
+            )
+        )
+        self.assertIn("Indestructible", characteristics(life_source)["keywords"])
+
+        planeswalker_source = self.add_constructed_condition_source(
+            session,
+            ref="PLANESWALKER-SUBTYPE",
+            texts=(
+                "As long as you control a Nissa planeswalker, this creature "
+                "gets +2/+0 and has vigilance.",
+            ),
+        )
+        self.assertEqual("3", characteristics(planeswalker_source)["power"])
+        engine.create_token(
+            "A",
+            name="Nissa Condition Witness",
+            characteristics={
+                "type_line": "Token Legendary Planeswalker — Nissa",
+                "loyalty": "4",
+                "keywords": [],
+            },
+            reason="planeswalker subtype condition witness",
+        )
+        planeswalker_active = characteristics(planeswalker_source)
+        self.assertEqual("5", planeswalker_active["power"])
+        self.assertIn("Vigilance", planeswalker_active["keywords"])
+
+        attack_source = self.add_constructed_condition_source(
+            session,
+            ref="ATTACKED-BATTLE",
+            texts=(
+                "This creature has indestructible as long as it attacked a "
+                "battle this turn.",
+            ),
+        )
+        self.creature(engine, seat="A", name="Celebration Witness")
+        normal_entry = next(
+            engine.state.cards[object_id]
+            for object_id in engine.state.players["A"].zones["library"]
+            if (
+                (record := engine.card_record(engine.state.cards[object_id]))
+                is not None
+                and record.is_creature
+            )
+        )
+        engine.move_card(
+            normal_entry.object_id,
+            "battlefield",
+            log=False,
+            semantic_events=True,
+        )
+        self.assertIn(
+            normal_entry.logical_object_id,
+            {
+                event.object_incarnation
+                for event in engine._current_turn_history("permanent_entered")
+            },
+        )
+        celebration = characteristics(source)
+        self.assertEqual(
+            (5, 4),
+            (int(celebration["power"]), int(celebration["toughness"])),
+        )
+        self.assertIn("Trample", celebration["keywords"])
+
+        distinct_types: set[str] = set()
+        for object_id in tuple(engine.state.players["A"].zones["library"]):
+            card = engine.state.cards[object_id]
+            row = engine._public_object_query_result(card)
+            if set(row.types) <= distinct_types:
+                continue
+            engine.move_card(card.object_id, "graveyard", log=False)
+            distinct_types.update(row.types)
+            if len(distinct_types) >= 4:
+                break
+        self.assertGreaterEqual(len(distinct_types), 4)
+        delirium = characteristics(source)
+        self.assertEqual(
+            (7, 6),
+            (int(delirium["power"]), int(delirium["toughness"])),
+        )
+
+        self.assertNotIn("Indestructible", characteristics(attack_source)["keywords"])
+        engine._record_turn_history(
+            "creature_attacked",
+            actor="A",
+            object_incarnation=attack_source.logical_object_id,
+            target="BATTLE-FACT",
+            target_kind="battle",
+            types=("creature", "fixture"),
+        )
+        self.assertIn("Indestructible", characteristics(attack_source)["keywords"])
+
+        with mock.patch(
+            "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver."
+            "_public_fact_quantity",
+            return_value=0,
+        ):
+            mutated = characteristics(source)
+        self.assertEqual(
+            (3, 3),
+            (int(mutated["power"]), int(mutated["toughness"])),
+        )
+        self.assertNotIn("Trample", mutated["keywords"])
+
+        projected = json.dumps(session.packet("pilot:B", full=True))
+        for object_id in engine.state.players["A"].zones["hand"]:
+            hidden = engine.state.cards[object_id]
+            self.assertNotIn(hidden.object_id, projected)
+            self.assertNotIn(hidden.ref, projected)
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine._grant_priority("D")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act(
+            "pilot:D",
+            {
+                "action_id": "concede",
+                "choices": {"confirm_concede": True},
+                "plan": "REPLAY_PUBLIC_FACT_CONDITIONS",
+                "reason": "Verify sealed public facts from checkpoint.",
+            },
+        )
+        self.assertTrue(result.ok, result.summary)
+        with tempfile.TemporaryDirectory() as directory:
+            record_dir = Path(directory) / "public-fact-condition-replay"
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)

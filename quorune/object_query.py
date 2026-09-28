@@ -26,7 +26,7 @@ class ObjectQueryResult:
     colors: tuple[str, ...] = ()
     keywords: tuple[str, ...] = ()
     counters: FrozenMap = field(default_factory=FrozenMap)
-    mana_value: int = 0
+    mana_value: float = 0.0
     effective_power: int | None = None
     effective_toughness: int | None = None
     token: bool = False
@@ -147,7 +147,7 @@ def object_query_result(
             str(value).casefold() for value in effective.get("keywords", ())
         ),
         counters=FrozenMap(card.counters),
-        mana_value=int(effective.get("mana_value") or 0),
+        mana_value=float(effective.get("mana_value") or 0),
         effective_power=exact_numeric_characteristic(
             card, effective, "power"
         ),
