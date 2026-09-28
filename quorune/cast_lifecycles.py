@@ -9,6 +9,7 @@ import hashlib
 import re
 from typing import Any, Mapping, Protocol, Sequence
 
+from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .additional_cost_vocabulary import (
     DISCARD_ONE_COST,
     EXILE_ONE_FROM_GRAVEYARD_COST,
@@ -782,6 +783,7 @@ def fixed_zone_cast_timing_is_legal(
 class FixedCastLifecycleHost(Protocol):
     state: Any
     seats: Sequence[str]
+    semantics: Any
 
     def move_card(self, object_id: str, zone: str, **kwargs: Any) -> Any: ...
 
@@ -1067,11 +1069,44 @@ def _complete_blitz_resolution(
     *,
     item: StackItem,
     card: CardInstance,
+    spec: FixedCastLifecycleSpec,
 ) -> None:
     _grant_lifecycle_haste(host, item=item, card=card)
+    registered_programs = tuple(
+        host.semantics.runtime_handler_programs_for_oracle(
+            card.oracle_id,
+            active_zone="all",
+            event=FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
+        )
+    )
+    ability_programs: list[Any] = []
+    for program in registered_programs:
+        if CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage:
+            continue
+        for descriptor in program.handlers:
+            raw_lifecycle = descriptor.get("lifecycle")
+            if (
+                descriptor.get("handler_id")
+                != FIXED_CAST_LIFECYCLE_HANDLER_ID
+                or not isinstance(raw_lifecycle, Mapping)
+            ):
+                continue
+            owned_spec = FixedCastLifecycleSpec.from_dict(raw_lifecycle)
+            if (
+                owned_spec.kind is spec.kind
+                and owned_spec.ability_id == spec.ability_id
+            ):
+                ability_programs.append(program)
+                break
+    if len(ability_programs) != 1:
+        raise FixedCastLifecycleError(
+            "Blitz resolution requires one current typed ability owner"
+        )
     card.annotations["fixed_blitz_designation"] = {
+        "schema_version": 2,
         "logical_object_id": card.logical_object_id,
         "controller": item.controller,
+        "ability_semantic_key": ability_programs[0].key,
     }
     schedule_delayed_trigger(
         host,
@@ -1091,6 +1126,7 @@ def _complete_blitz_resolution(
                         "transition_kind": "sacrifice",
                         "expected_zone_change_counter": card.zone_change_counter,
                         "expected_object_identity": card.logical_object_id,
+                        "required_controller": item.controller,
                     }
                 ]
             },
@@ -1198,7 +1234,7 @@ def complete_fixed_cast_lifecycle_resolution(
     if card.zone != "battlefield" or card.object_kind != "card":
         return
     if spec.kind is FixedCastLifecycleKind.BLITZ:
-        _complete_blitz_resolution(host, item=item, card=card)
+        _complete_blitz_resolution(host, item=item, card=card, spec=spec)
         return
     _complete_dash_or_warp_resolution(host, item=item, card=card, spec=spec)
 

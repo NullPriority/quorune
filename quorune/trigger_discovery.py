@@ -1125,24 +1125,53 @@ def _shared_blitz_trigger_item(
     source: CardInstance,
     event: str,
     context: Mapping[str, Any],
+    *,
+    characteristics: Mapping[str, Any],
 ) -> StackItem | None:
-    """Materialize Blitz's incarnation-pinned dies trigger from its marker."""
+    """Materialize Blitz's incarnation-pinned graveyard trigger from LKI."""
 
     marker = source.annotations.get("fixed_blitz_designation")
+    schema_version = (
+        marker.get("schema_version", 1)
+        if isinstance(marker, Mapping)
+        else None
+    )
+    legacy = schema_version == 1
     if (
-        event != "creature.dies"
+        event != ("creature.dies" if legacy else "permanent.graveyard")
         or str(context.get("card") or "") != source.ref
         or not isinstance(marker, Mapping)
         or marker.get("logical_object_id") != source.logical_object_id
         or type(marker.get("controller")) is not str
     ):
         return None
+    if not legacy:
+        ability_key = marker.get("ability_semantic_key")
+        program = (
+            host.semantics.get(ability_key)
+            if type(ability_key) is str
+            else None
+        )
+        if (
+            schema_version != 2
+            or program is None
+            or program.oracle_id != source.oracle_id
+            or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+            or not program_has_current_ability_fragments(
+                program,
+                characteristics,
+            )
+        ):
+            return None
+    controller = str(context.get("previous_controller") or source.controller)
+    if controller not in host.active_seats:
+        return None
     ref = host._next_ref("S")
     return StackItem(
         stack_id=host._stable_runtime_id("stack", ref),
         ref=ref,
         kind="triggered_ability",
-        controller=source.controller,
+        controller=controller,
         label=f"{source.printed_name} Blitz draw",
         source_object_id=source.object_id,
         visibility=list(host.seats),
@@ -1151,7 +1180,7 @@ def _shared_blitz_trigger_item(
             "event_context": copy.deepcopy(dict(context)),
             "source_logical_object_id": source.logical_object_id,
             "dynamic_effects": [
-                {"op": "draw", "player": source.controller, "count": 1}
+                {"op": "draw", "player": controller, "count": 1}
             ],
             "blitz": True,
         },
@@ -1189,7 +1218,20 @@ def dispatch_semantic_event(
                     context=context,
                 )
             )
-        blitz_item = _shared_blitz_trigger_item(host, source, event, context)
+        active_zone, characteristics, programs = _event_programs_for_source(
+            host,
+            source,
+            event,
+            source_zones=source_zones,
+            source_characteristics=source_characteristics,
+        )
+        blitz_item = _shared_blitz_trigger_item(
+            host,
+            source,
+            event,
+            context,
+            characteristics=characteristics,
+        )
         if blitz_item is not None:
             triggered.append(blitz_item)
             triggered.extend(
@@ -1201,13 +1243,6 @@ def dispatch_semantic_event(
                     context=context,
                 )
             )
-        active_zone, characteristics, programs = _event_programs_for_source(
-            host,
-            source,
-            event,
-            source_zones=source_zones,
-            source_characteristics=source_characteristics,
-        )
         for program in programs:
             if _uses_specialized_stack_spell_cast_owner(program):
                 continue
