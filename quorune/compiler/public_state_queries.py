@@ -15,7 +15,10 @@ from ..continuous_conditions import (
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..rules.source_references import SourceReferenceSpec
-from .creature_subtypes import canonical_creature_subtype
+from .creature_subtypes import (
+    canonical_creature_subtype,
+    canonical_creature_subtype_surface,
+)
 from .public_state_fact_queries import (
     fixed_graveyard_condition_query,
     fixed_planeswalker_condition_query,
@@ -36,16 +39,6 @@ _CONTROLLED_SUBTYPE_PLURAL_MODIFIER = re.compile(
     r"^(?P<other>Other )?(?P<plural>[A-Z][A-Za-z'-]*) you control get "
     r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
     r"(?P<until> until end of turn)?\.?$"
-)
-_IRREGULAR_CREATURE_PLURALS = dict(
-    value.split(":", 1)
-    for value in (
-        "aetherborn:aetherborn|allies:ally|dwarves:dwarf|elves:elf|"
-        "faeries:faerie|heroes:hero|kithkin:kithkin|merfolk:merfolk|"
-        "mice:mouse|myr:myr|oxen:ox|pegasi:pegasus|"
-        "phyrexians:phyrexian|treefolk:treefolk|"
-        "wolves:wolf"
-    ).split("|")
 )
 _STATEFUL_CREATURE_QUALIFIER = re.compile(
     r"^(?:attacking|blocking|enchanted|equipped|modified|tapped|untapped)$"
@@ -143,17 +136,6 @@ _FIXED_NONCREATURE_CONDITION_SUBTYPES = frozenset(
 )
 
 
-def _singular_creature_subtype(plural: str) -> str | None:
-    value = plural.casefold()
-    if direct := canonical_creature_subtype(value):
-        return direct
-    if value in _IRREGULAR_CREATURE_PLURALS:
-        return canonical_creature_subtype(_IRREGULAR_CREATURE_PLURALS[value])
-    if value.endswith("s") and not value.endswith("ss") and len(value) > 2:
-        return canonical_creature_subtype(value[:-1])
-    return None
-
-
 def _canonical_subtype_terms(
     text: str,
 ) -> tuple[tuple[str, ...], bool] | None:
@@ -177,8 +159,9 @@ def _canonical_subtype_terms(
     result: list[str] = []
     for raw in raw_terms:
         term = re.sub(r"^(?:a|an)\s+", "", raw, flags=re.IGNORECASE)
-        subtype = _singular_creature_subtype(term) or canonical_creature_subtype(
-            term
+        subtype = (
+            canonical_creature_subtype_surface(term)
+            or canonical_creature_subtype(term)
         )
         if subtype is not None:
             result.append(subtype)
@@ -643,7 +626,7 @@ def _controlled_subtype_battlefield_query(
                 "types_all": ("artifact",),
             }
         else:
-            subtype = _singular_creature_subtype(plural)
+            subtype = canonical_creature_subtype_surface(plural)
             fields = {
                 "zones": ("battlefield",),
                 "types_all": ("creature",),
@@ -688,7 +671,7 @@ def _global_battlefield_query(
             return None
         fields.update(types_all=("creature",), subtypes_all=(subtype,))
     elif (match := _GLOBAL_PLURAL_SUBJECT.fullmatch(text)):
-        subtype = _singular_creature_subtype(match.group("plural"))
+        subtype = canonical_creature_subtype_surface(match.group("plural"))
         if subtype is None:
             return None
         fields.update(types_all=("creature",), subtypes_all=(subtype,))
@@ -759,7 +742,7 @@ def controlled_creature_fixed_modifier(
     if match is None or bool(match.group("until")) is not until_end_of_turn:
         return None
     qualifier = (
-        _singular_creature_subtype(match.group("plural"))
+        canonical_creature_subtype_surface(match.group("plural"))
         if subtype_plural
         else (match.group("qualifier") or "").casefold()
     )

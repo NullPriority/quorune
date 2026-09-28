@@ -131,23 +131,6 @@ def dispatch_zone_change_occurrence(
     owns_trigger_batch = trigger_batch is None
     pending = trigger_batch if trigger_batch is not None else []
     events = normalized_zone_trigger_events(occurrence)
-    for event in events:
-        context = event.context
-        if event.source_timing == "before":
-            host._dispatch_semantic_event(
-                event.kind,
-                context,
-                sources=departure_sources,
-                source_zones=departure_source_zones,
-                source_characteristics=departure_source_characteristics,
-                trigger_batch=pending,
-            )
-        else:
-            host._dispatch_semantic_event(
-                event.kind,
-                context,
-                trigger_batch=pending,
-            )
     previous_types = set(
         str(value)
         for event in events
@@ -193,6 +176,23 @@ def dispatch_zone_change_occurrence(
             object_incarnation=occurrence.previous_logical_object_id,
             types=previous_types,
         )
+    for event in events:
+        context = event.context
+        if event.source_timing == "before":
+            host._dispatch_semantic_event(
+                event.kind,
+                context,
+                sources=departure_sources,
+                source_zones=departure_source_zones,
+                source_characteristics=departure_source_characteristics,
+                trigger_batch=pending,
+            )
+        else:
+            host._dispatch_semantic_event(
+                event.kind,
+                context,
+                trigger_batch=pending,
+            )
     if any(
         event.kind == "permanent.enter"
         and "saga" in event.context.get("subtypes", ())

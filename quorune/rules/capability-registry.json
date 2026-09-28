@@ -3235,7 +3235,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 5,
+      "version": 6,
       "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -3246,9 +3246,9 @@
       },
       "dependencies": ["state_query.permanent.public_state_predicate"],
       "implementation_components": ["quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler", "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject", "quorune.compiler.public_state_queries.fixed_public_state_parts", "quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver", "quorune.drawing.restrictions.drawn_this_turn", "quorune.turn_history.current_turn_history_events", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.token_creation.create_tokens", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler", "quorune.card_programs.runtime.collect_card_program_continuous_effects", "quorune.continuous_effects.evaluate_continuous_effects"],
-      "positive_tests": ["test_closed_public_state_grammar_compiles_capability_closed", "test_public_object_state_and_query_conditions_compile_closed", "test_public_state_conditions_recompute_layer_six_and_seven_results", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_fixed_public_condition_queries_compile_across_authoritative_facts", "test_fixed_public_condition_models_use_closed_current_facts", "test_public_condition_closure_compiles_typed_queries_and_facts", "test_public_fact_conditions_recompute_and_replay"],
+      "positive_tests": ["test_closed_public_state_grammar_compiles_capability_closed", "test_public_object_state_and_query_conditions_compile_closed", "test_public_state_conditions_recompute_layer_six_and_seven_results", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_fixed_public_condition_queries_compile_across_authoritative_facts", "test_fixed_public_condition_models_use_closed_current_facts", "test_public_condition_closure_compiles_typed_queries_and_facts", "test_public_fact_conditions_recompute_and_replay", "test_public_fact_descriptors_preserve_thresholds_subtypes_and_axes", "test_public_fact_thresholds_use_canonical_producers_and_consumers"],
       "negative_tests": ["test_unrepresented_conditions_and_bodies_remain_residual", "test_public_state_descriptors_fail_closed_without_effects", "test_shared_public_query_dependency_fails_closed_across_consumers", "test_fixed_public_condition_dependencies_fail_closed"],
-      "interaction_tests": ["test_live_public_object_state_and_layer_five_queries_recompute", "test_public_state_conditions_recompute_layer_six_and_seven_results", "test_turn_gated_attachment_and_anthem_compose", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay"],
+      "interaction_tests": ["test_live_public_object_state_and_layer_five_queries_recompute", "test_public_state_conditions_recompute_layer_six_and_seven_results", "test_turn_gated_attachment_and_anthem_compose", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay", "test_subtype_attack_threshold_counts_distinct_event_time_objects"],
       "multiplayer_tests": ["test_turn_gated_attachment_and_anthem_compose", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay"],
       "privacy_tests": ["test_hand_count_condition_projects_and_replays_without_hidden_identity", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay"],
       "replay_tests": ["test_hand_count_condition_projects_and_replays_without_hidden_identity", "test_live_public_object_state_and_layer_five_queries_recompute", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay"],
@@ -5935,7 +5935,7 @@
     },
     {
       "id": "trigger.condition.fixed_public_state",
-      "version": 1,
+      "version": 2,
       "official_rules": ["109.5", "603.4", "608.2a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -5945,13 +5945,13 @@
         "exclusions": ["reflexive, delayed, first-time, once-per-turn, chosen, secret, hidden-zone, and otherwise unrepresented conditions", "conditions outside the closed public-state descriptor", "otherwise branches and linked results", "event bindings or effect bodies without independent exact owners", "same-layer and cycle-sensitive characteristic queries outside the shared layer-5 boundary"]
       },
       "dependencies": ["state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.compiler.public_state_queries.fixed_public_state_condition", "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.card_programs.runtime.fixed_public_state_condition_matches", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.trigger_discovery.semantic_intervening_condition_matches"],
-      "positive_tests": ["test_public_state_intervening_if_contract_matrix"],
+      "implementation_components": ["quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "quorune.compiler.public_state_queries.fixed_public_state_condition", "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.card_programs.runtime.fixed_public_state_condition_matches", "quorune.turn_history.current_turn_history_events", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.trigger_discovery.semantic_intervening_condition_matches"],
+      "positive_tests": ["test_public_state_intervening_if_contract_matrix", "test_intervening_public_facts_preserve_numeric_and_subtype_meaning"],
       "negative_tests": ["test_public_state_intervening_if_contract_matrix", "test_public_state_intervening_if_dependency_and_parser_fail_closed"],
-      "interaction_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays", "test_source_state_intervening_condition_and_current_ability_fail_closed"],
+      "interaction_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays", "test_source_state_intervening_condition_and_current_ability_fail_closed", "test_public_entry_threshold_replays_actions_and_full_draw", "test_public_death_threshold_counts_causing_event_before_trigger", "test_public_attack_subtype_threshold_executes_compiled_consequence"],
       "multiplayer_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
       "privacy_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
-      "replay_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
+      "replay_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays", "test_public_entry_threshold_replays_actions_and_full_draw"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the condition capability or its shared public-state dependency leaves the source-spanned trigger material and untrusted.",

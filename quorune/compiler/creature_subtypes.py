@@ -5,6 +5,7 @@ from ..creature_subtypes import (
     CREATURE_SUBTYPE_RULE_REFERENCE,
     CREATURE_SUBTYPE_SNAPSHOT,
     canonical_creature_subtype,
+    canonical_creature_subtype_surface,
 )
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "CREATURE_SUBTYPE_RULE_REFERENCE",
     "CREATURE_SUBTYPE_SNAPSHOT",
     "canonical_creature_subtype",
+    "canonical_creature_subtype_surface",
 ]

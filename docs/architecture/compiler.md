@@ -268,12 +268,17 @@ ability additions and power/toughness modifiers through the same applicability
 path. Attachment-relative “it” binds to the explicit enchanted or equipped
 object; other source pronouns remain source-bound. Public state may participate
 in layer-5 quantities, but positive ability presence remains excluded from
-counts. Schema-v3 facts add cycle-safe distinct card-type and exact mana-value
+counts. Schema-v4 facts add cycle-safe distinct card-type and exact mana-value
 sets from the controller's graveyard; sealed entry, attack, sacrifice, death,
 and life history; public hand and starting-life relations; planeswalker subtype
-queries; and exact Equipment attachment counts. Normal and token entry
-producers record the same current-turn permanent-entry fact, and attack history
-seals effective type and subtype membership plus the attacked object class.
+queries; and exact Equipment attachment counts. Printed numerical thresholds
+remain explicit descriptor amounts. Graveyard colors, card types, and canonical
+creature subtypes retain distinct query axes. Normal and token entry producers
+record the current transition before trigger discovery, and attack history seals
+effective type and subtype membership plus the attacked object class while
+counting distinct attacking logical objects. Schema-v3 public facts remain a
+historical compatibility form whose attack quantity counts recorded attack
+occurrences.
 Most-common or tied comparisons, dynamic amounts, top-library, chosen,
 hidden-identity, city blessing, dungeon, initiative, speed, sticker, crime,
 dice, open arithmetic, otherwise branches, per-opponent aggregate, unowned

@@ -4224,19 +4224,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v216-public-intervening-if-trigger-closure",
-      "compiler_version": "oracle-ir-v216",
-      "bundle_id": "bundle:public-intervening-if-trigger-closure",
-      "candidate_ids": ["bundle:public-intervening-if-trigger-closure"],
-      "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
-      ],
-      "capability_ids": [
-        "trigger.condition.fixed_public_state"
-      ],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:public-intervening-if-trigger-closure"
+      "transition_id": "oracle-ir-v217-public-condition-semantics",
+      "compiler_version": "oracle-ir-v217",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Corrects explicit public-fact thresholds, canonical subtype and quality axes, distinct-attacker cardinality, and same-event trigger visibility without widening the admitted grammar.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {
