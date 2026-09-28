@@ -13,6 +13,8 @@ AFTERLIFE_CAPABILITY_ID = "trigger.keyword.afterlife.fixed"
 AFTERLIFE_MECHANIC_ID = "afterlife"
 FIXED_TOKEN_COPY_CAPABILITY_ID = "token.creation.fixed_copy"
 FIXED_DELAYED_TOKEN_CAPABILITY_ID = "trigger.delayed.fixed_token_creation"
+TYPED_TOKEN_ABILITY_CAPABILITY_ID = "token.creation.typed_ability_definition"
+TYPED_TOKEN_ABILITY_MECHANIC_ID = "fixed-token-typed-ability-definition"
 
 
 class FixedTokenProductionError(ValueError):
@@ -130,6 +132,8 @@ __all__ = [
     "FixedTokenProductionError",
     "INVESTIGATE_CAPABILITY_ID",
     "INVESTIGATE_MECHANIC_ID",
+    "TYPED_TOKEN_ABILITY_CAPABILITY_ID",
+    "TYPED_TOKEN_ABILITY_MECHANIC_ID",
     "afterlife_token_effect",
     "clue_token_effect",
 ]

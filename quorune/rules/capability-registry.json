@@ -1641,6 +1641,33 @@
       "status": "trusted"
     },
     {
+      "id": "token.creation.typed_ability_definition",
+      "version": 1,
+      "official_rules": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Create a fixed creature token carrying one or two independently exact source-pinned activated, triggered, mana, declaration, or cycle-safe characteristic abilities through the canonical token and current-ability owners.",
+        "inputs": ["one complete fixed creature-token definition", "one or two explicit quoted abilities", "independently exact typed child nodes", "stable generated semantic identities", "resolving controller"],
+        "outputs": ["replacement-ordered token creation", "copiable typed token ability fragments", "recipient-bound activation or trigger programs", "current layer-6 static applicability", "exact replay"],
+        "exclusions": ["reminder-only token definitions", "more than two quoted abilities", "independently inexact child abilities", "dynamic, linked, delayed, modal, replacement, or prevention child text", "attached, attacking, copy, Role, or variable-quantity token shells", "runtime Oracle interpretation"]
+      },
+      "dependencies": ["token.creation.fixed_definition"],
+      "implementation_components": ["quorune.compiler.typed_token_ability_nodes.typed_token_ability_nodes", "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan", "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities", "quorune.token_creation.create_tokens", "quorune.rules.activation.query.activated_abilities", "quorune.trigger_discovery.dispatch_semantic_event", "AbilityFragmentHostMixin._effective_ability_fragments"],
+      "positive_tests": ["test_explicit_token_ability_compiles_as_source_pinned_typed_program", "test_typed_token_abilities_execute_across_spell_trigger_and_activation_contexts"],
+      "negative_tests": ["test_typed_token_ability_grammar_and_dependencies_fail_closed"],
+      "interaction_tests": ["test_typed_token_ability_survives_creator_departure_and_uses_token_identity", "test_typed_token_ability_apnap_privacy_and_replay"],
+      "multiplayer_tests": ["test_typed_token_ability_apnap_privacy_and_replay"],
+      "privacy_tests": ["test_typed_token_ability_apnap_privacy_and_replay"],
+      "replay_tests": ["test_typed_token_ability_apnap_privacy_and_replay"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The token shell remains material unless both canonical fixed token creation and every independently typed child program receive trusted capability closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The compiler mutation removes the token ability wrapper; exact outer and child program assertions plus intrinsic token behavior reject the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "token.creation.fixed_copy",
       "version": 1,
       "official_rules": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],

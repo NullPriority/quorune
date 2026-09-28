@@ -40,8 +40,8 @@
     {
       "mechanic_id": "cr-111-tokens",
       "path": "mechanics/contracts/basic-token-creation.json",
-      "sha256": "779fb2c398b35c76dab0f138d805b37fd58f985c680f07c372de0ddecf4c3207",
-      "version": 5
+      "sha256": "fbc8390b079cbeed692846ffbfee32275b59ac101091fa9af4b737b50bf53179",
+      "version": 6
     },
     {
       "mechanic_id": "battle-cry",
@@ -7353,15 +7353,15 @@
     {
       "category": "game_concepts",
       "contract_path": "mechanics/contracts/basic-token-creation.json",
-      "contract_sha256": "779fb2c398b35c76dab0f138d805b37fd58f985c680f07c372de0ddecf4c3207",
-      "contract_version": 5,
+      "contract_sha256": "fbc8390b079cbeed692846ffbfee32275b59ac101091fa9af4b737b50bf53179",
+      "contract_version": 6,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "oracle_ir._effect_template, compiler.token_templates, compiler.fixed_token_production_templates, compiler.token_production_keyword_nodes, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, standard_token_abilities, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
-      "implementation_version": "token-lifecycle-v5",
+      "implementation_component": "oracle_ir._effect_template, compiler.token_templates, compiler.fixed_token_production_templates, compiler.typed_token_ability_nodes, compiler.token_production_keyword_nodes, typed ability fragments and child CardPrograms, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, standard_token_abilities, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
+      "implementation_version": "token-lifecycle-v6",
       "kind": "rules_section",
       "known_blockers": [
-        "tokens with arbitrary abilities, dynamic values, predefined characteristics outside the closed vocabulary, or linked choices remain residual",
+        "tokens with more than two explicit abilities, independently unsupported child programs, dynamic values, predefined characteristics outside the closed vocabulary, or linked choices remain residual",
         "optional, multiplying beyond the represented fixed additional-token family, prevention, prohibition, and mutable-state token replacements are not compiled",
         "copy-token support excludes source-LKI, modified, linked, nontarget, multiple-target, and zone-relative forms"
       ],
@@ -7391,7 +7391,11 @@
         "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
         "test_multiple_afterlife_instances_share_apnap_batch_and_replay",
         "test_copy_and_delayed_tokens_revalidate_and_replay",
-        "test_token_replacement_order_rollback_and_privacy"
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_explicit_token_ability_compiles_as_source_pinned_typed_program",
+        "test_typed_token_abilities_execute_across_spell_trigger_and_activation_contexts",
+        "test_typed_token_ability_survives_creator_departure_and_uses_token_identity",
+        "test_typed_token_ability_apnap_privacy_and_replay"
       ],
       "trust_level": "untrusted"
     },

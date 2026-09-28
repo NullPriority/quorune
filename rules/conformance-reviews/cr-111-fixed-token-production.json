@@ -5,6 +5,20 @@
   "family": "CR 111 — Fixed predefined and copy-token production",
   "cases": [
     {
+      "rule_id": "111.2",
+      "rule_text_sha256": "1e8d6b6914a5db8507cf3cfe31e1413a4ceed177766178b31423bbff539c9703",
+      "classification": "behavioral",
+      "status": "blocked",
+      "assertion_kind": "unsupported_fail_closed",
+      "reviewed": true,
+      "implementation_components": ["quorune.compiler.typed_token_ability_nodes.typed_token_ability_nodes", "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan", "quorune.token_creation.create_tokens", "quorune.rules.activation.query.activated_abilities", "quorune.trigger_discovery.dispatch_semantic_event"],
+      "executable_test_ids": ["tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_explicit_token_ability_compiles_as_source_pinned_typed_program", "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_typed_token_ability_grammar_and_dependencies_fail_closed", "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_abilities_execute_across_spell_trigger_and_activation_contexts", "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_survives_creator_departure_and_uses_token_identity", "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "hidden_information", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "hidden_information", "replay"],
+      "blockers": ["token shells outside fixed positive creature definitions remain material", "more than two explicit abilities and independently unsupported child programs remain material", "attached, attacking, Role, copy, dynamic, linked, replacement, and prevention forms remain material"],
+      "notes": ["Explicit supported token abilities become copiable typed fragments or recipient-bound child programs at compile time; runtime creation, activation, trigger discovery, APNAP placement, privacy, and replay do not inspect Oracle prose."]
+    },
+    {
       "rule_id": "111.10f",
       "rule_text_sha256": "4e3b8f05782cb2ade83a7165b87e8762502bfabe5f788e56411971aa58b21935",
       "classification": "behavioral",

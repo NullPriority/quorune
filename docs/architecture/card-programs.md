@@ -75,6 +75,14 @@ transition, batched through the ordinary trigger subsystem, and resolved by
 their trusted semantic program. Token reminder or Oracle text is never used
 to discover the trigger.
 
+Explicit abilities in supported fixed creature-token definitions use the same
+boundary. The compiler lowers the token shell and each independently exact
+quoted child together, stores only typed copiable fragments on the created
+token, and pins activated or triggered child programs to stable semantic
+identities. The token remains the runtime source after the creating object
+leaves. More than two quoted abilities, unsupported children, reminder-only
+profiles, and nonfixed token shells remain residual.
+
 Commander pairing is also a CardProgram declaration boundary. Exact ordinary
   `Partner`, `Partner with`, `Choose a Background`, and `Doctor's companion`
   lines compile to distinct trusted `game.setup` capabilities. `Partner with`

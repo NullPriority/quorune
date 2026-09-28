@@ -8,6 +8,10 @@ from typing import Any, Mapping, Sequence
 from ..ability_fragments import (
     AbilityFragmentError,
     AllCreatureTypesCharacteristicDefinitionSpec,
+    GrantedActivatedAbilitySpec,
+    GrantedTriggeredAbilitySpec,
+    QueryCharacteristicModifierSpec,
+    QueryPowerToughnessDefinitionSpec,
     canonical_ability_fragments,
 )
 from ..compiler.token_templates import (
@@ -15,7 +19,10 @@ from ..compiler.token_templates import (
     fixed_token_creation_effect_template,
 )
 from ..compiler.direct_target import direct_permanent_target_spec
-from ..declaration_fragments import DeclarationRestrictionTemplate
+from ..declaration_fragments import (
+    DeclarationRequirementTemplate,
+    DeclarationRestrictionTemplate,
+)
 from ..fixed_token_production import (
     AFTERLIFE_CAPABILITY_ID,
     AFTERLIFE_MECHANIC_ID,
@@ -25,6 +32,8 @@ from ..fixed_token_production import (
     FixedTokenProductionError,
     INVESTIGATE_CAPABILITY_ID,
     INVESTIGATE_MECHANIC_ID,
+    TYPED_TOKEN_ABILITY_CAPABILITY_ID,
+    TYPED_TOKEN_ABILITY_MECHANIC_ID,
     afterlife_token_effect,
     clue_token_effect,
 )
@@ -83,6 +92,7 @@ _AUXILIARY_MECHANICS = frozenset(
         "generated_oracle_ir",
         "spell_resolution",
         "triggered_ability",
+        TYPED_TOKEN_ABILITY_MECHANIC_ID,
         "cr-115-targets",
         "cr-707-copying-objects",
     }
@@ -189,7 +199,7 @@ def _fixed_creature_effect_closure(
     if name != subtype_text or "Legendary" in type_line:
         mechanics.add("fixed-named-token")
     raw_fragments = characteristics.get("ability_fragments", [])
-    if not isinstance(raw_fragments, list) or len(raw_fragments) > 1:
+    if not isinstance(raw_fragments, list) or len(raw_fragments) > 3:
         return None
     try:
         fragments = canonical_ability_fragments(raw_fragments)
@@ -197,20 +207,54 @@ def _fixed_creature_effect_closure(
         return None
     if len(fragments) != len(raw_fragments):
         return None
+    typed_ability_definition = False
+    typed_ability_fragment = False
     for fragment in fragments:
         if isinstance(fragment, AllCreatureTypesCharacteristicDefinitionSpec):
             if "Changeling" not in keywords:
                 return None
             capabilities.add("continuous.characteristics.changeling")
         elif isinstance(fragment, DeclarationRestrictionTemplate):
-            if fragment.template_id not in {
+            legacy_declaration = fragment.template_id in {
                 "intrinsic-block-prohibition-v1",
                 "intrinsic-unblockable-v1",
-            }:
+            }
+            if not legacy_declaration:
+                typed_ability_definition = True
+            if not legacy_declaration and not fragment.mechanics:
                 return None
             capabilities.add("combat.declaration.typed_components")
             mechanics.add("fixed-token-declaration-fragment")
             mechanics.update(fragment.mechanics)
+            typed_ability_fragment = typed_ability_definition
+        elif isinstance(fragment, DeclarationRequirementTemplate):
+            typed_ability_definition = True
+            capabilities.add("combat.declaration.typed_components")
+            mechanics.update(fragment.mechanics)
+            typed_ability_fragment = True
+        elif isinstance(fragment, QueryCharacteristicModifierSpec):
+            typed_ability_definition = True
+            capabilities.add("continuous.characteristics.query_count_modifier")
+            typed_ability_fragment = True
+        elif isinstance(fragment, QueryPowerToughnessDefinitionSpec):
+            typed_ability_definition = True
+            capabilities.add(
+                "continuous.characteristics.query_power_toughness_definition"
+            )
+            typed_ability_fragment = True
+        elif isinstance(
+            fragment,
+            (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec),
+        ):
+            typed_ability_definition = True
+            if (
+                ":token:" not in fragment.ability_id
+                or not fragment.semantic_key.endswith(
+                    f":{fragment.ability_id}"
+                )
+            ):
+                return None
+            typed_ability_fragment = True
         else:
             return None
     if "Changeling" in keywords and not any(
@@ -218,6 +262,10 @@ def _fixed_creature_effect_closure(
         for fragment in fragments
     ):
         return None
+    if typed_ability_definition:
+        if not typed_ability_fragment:
+            return None
+        capabilities.add(TYPED_TOKEN_ABILITY_CAPABILITY_ID)
     return tuple(sorted(capabilities)), mechanics
 
 
@@ -427,6 +475,11 @@ def fixed_token_creation_node_capabilities(
         if closure is None:
             return ()
         capabilities, expected_mechanics = closure
+        typed_ability = TYPED_TOKEN_ABILITY_CAPABILITY_ID in capabilities
+        if typed_ability != (
+            TYPED_TOKEN_ABILITY_MECHANIC_ID in mechanics
+        ):
+            return ()
         if _token_specific_mechanics(mechanic_ids) == expected_mechanics:
             return capabilities
         return ()
