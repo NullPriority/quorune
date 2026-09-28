@@ -159,7 +159,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v213"
+ORACLE_COMPILER_VERSION = "oracle-ir-v214"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1193,6 +1193,7 @@ def _compile_face(
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
     class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=material_rows)
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
+
     if spell:
         typed_face = _typed_whole_spell_face(
             record, face_id=face_id, face_name=face_name, oracle_text=oracle_text,
@@ -1221,7 +1222,7 @@ def _compile_face(
             printed_power=None if record.faces else record.power,
             source_attachment_relation=source_attachment_relation, trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
-            capability_profile=capability_profile, residuals=residuals, keyword_node_compiler=_keyword_nodes, compile_inner=_activated_or_fixed_event_trigger_node, grant_effect_templates=_contextual_effect_templates, material_line_for=_without_parenthetical_reminder,
+            capability_profile=capability_profile, residuals=residuals, keyword_node_compiler=_keyword_nodes, compile_inner=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates, material_line_for=_without_parenthetical_reminder,
         )
         if early_nodes is not None:
             nodes.extend(early_nodes)

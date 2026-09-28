@@ -35,6 +35,7 @@ def generated_ability_id(
         kind=kind,
         face_id=face_id,
         line=line,
+        node_id=node_id,
     )
     if granted is not None:
         return granted

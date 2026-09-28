@@ -321,6 +321,25 @@ class FixedTokenProductionTests(unittest.TestCase):
                 )
 
     def test_token_production_grammar_and_capability_mutants_fail_closed(self):
+        promoted = self.compile(
+            compiler_record(
+                "Typed Token Production",
+                "Create a 1/1 green Boar creature token with "
+                '"When this token dies, create a Food token."',
+                1110899,
+            )
+        )
+        self.assertEqual("exact", promoted.status, promoted.material_residuals)
+        self.assertIn(
+            "token.creation.typed_ability_definition",
+            {
+                capability
+                for face in promoted.faces
+                for node in face.nodes
+                for capability in node.capability_dependencies
+            },
+        )
+
         unsupported = (
             "Investigate X times.",
             "Afterlife 0",
@@ -331,7 +350,6 @@ class FixedTokenProductionTests(unittest.TestCase):
             "Create a 1/1 red Warrior creature token tapped and attacking.",
             "Create a Wicked Role token attached to target creature.",
             "Create an Incubator token.",
-            "Create a 1/1 green Boar creature token with \"When this token dies, create a Food token.\"",
             "Create a 1/1 blue Fish creature token with \"This token has hexproof.\"",
             "Create a 1/1 white Spirit creature token at the beginning of your next end step.",
         )

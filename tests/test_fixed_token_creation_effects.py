@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import keep_all, load_assets, make_session
+from common import keep_all, load_assets, make_session, pass_current
 from quorune.carddb import CardRecord
 from quorune.compiled_activated_abilities import compiled_activated_abilities
 from quorune.damage import damage_proposal, resolve_damage_batch
@@ -30,10 +30,20 @@ from quorune.record import (
     replay_record,
 )
 from quorune.rules.capabilities import (
+    CapabilityRegistry,
     capability_dependencies_for_node,
     load_default_capability_registry,
 )
 from quorune.semantics import SemanticRegistry
+from quorune.trigger_processing import begin_pending_trigger_batch
+
+
+CAPABILITY_REGISTRY_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "quorune"
+    / "rules"
+    / "capability-registry.json"
+)
 
 
 def token_record(
@@ -208,6 +218,124 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_explicit_token_ability_compiles_as_source_pinned_typed_program(self):
+        record = token_record(
+            "Typed Pest Token Fixture",
+            "Create two 1/1 black and green Pest creature tokens with "
+            '"When this token dies, you gain 1 life."',
+            470009,
+        )
+        ir = compile_oracle_card(
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        outer = next(
+            node
+            for node in ir.faces[0].nodes
+            if node.kind == "spell_ability"
+        )
+        inner = next(
+            node
+            for node in ir.faces[0].nodes
+            if node.kind == "granted_triggered_ability"
+        )
+        fragments = outer.effects[0]["characteristics"]["ability_fragments"]
+        self.assertEqual("granted_triggered", fragments[0]["kind"])
+        self.assertEqual(
+            f"{record.oracle_id}:{fragments[0]['value']['ability_id']}",
+            fragments[0]["value"]["semantic_key"],
+        )
+        self.assertEqual(record.oracle_text, outer.text)
+        self.assertEqual("When this token dies, you gain 1 life.", inner.text)
+
+    def test_typed_token_ability_grammar_and_dependencies_fail_closed(self):
+        fixtures = (
+            "Create a 1/1 green Saproling creature token with "
+            '"Perform an unsupported action."',
+            "Create a 1/1 green Saproling creature token with "
+            '"When this token dies, draw a card." and "{T}: Add {G}." '
+            'and "This token can\'t block."',
+            "Create a 1/1 green Saproling creature token with "
+            '"If damage would be dealt to this token, prevent that damage."',
+        )
+        for index, text in enumerate(fixtures):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(
+                    token_record(
+                        "Unsupported Typed Token Fixture",
+                        text,
+                        470030 + index,
+                    ),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+        record = token_record(
+            "Typed Token Dependency Fixture",
+            "Create a 1/1 black and green Pest creature token with "
+            '"When this token dies, you gain 1 life."',
+            470039,
+        )
+        baseline = compile_oracle_card(
+            record,
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        outer = baseline.faces[0].nodes[0]
+        malformed_effects = copy.deepcopy(outer.effects)
+        malformed_effects[0]["characteristics"]["ability_fragments"][0][
+            "value"
+        ]["semantic_key"] = "unrelated:semantic-key"
+        self.assertNotIn(
+            "token.creation.typed_ability_definition",
+            capability_dependencies_for_node(
+                effects=malformed_effects,
+                target_schema=outer.target_schema,
+                mechanic_ids=outer.mechanics,
+                cost_schema=outer.cost,
+            ),
+        )
+        for capability_id in (
+            "token.creation.typed_ability_definition",
+            "token.creation.fixed_definition",
+        ):
+            with self.subTest(capability_id=capability_id):
+                value = json.loads(
+                    CAPABILITY_REGISTRY_PATH.read_text(encoding="utf-8")
+                )
+                row = next(
+                    item
+                    for item in value["capabilities"]
+                    if item["id"] == capability_id
+                )
+                row["status"] = "blocked"
+                row["blockers"] = ["focused typed-token mutation"]
+                registry = CapabilityRegistry(value)
+                registry.mark_evidence_verified("0" * 64)
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+        with patch(
+            "quorune.compiler.typed_token_ability_nodes."
+            "typed_token_ability_nodes",
+            return_value=None,
+        ):
+            mutated = compile_oracle_card(
+                record,
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            )
+        self.assertEqual("unresolved", mutated.status)
 
     def test_enchantment_tokens_and_additional_cost_spell_are_closed(self):
         fixtures = (
@@ -660,6 +788,43 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         )
         return program
 
+    def _resolve_typed_token_card(
+        self, engine, name: str, *, controller: str = "A"
+    ):
+        record = self.db.lookup(name, fuzzy=False)
+        programs = generated_programs(
+            self.db,
+            record,
+            trust_level="trusted",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        for program in programs:
+            engine.semantics.put(program)
+        outer = next(
+            program
+            for program in programs
+            if not program.provenance.get("granted_only")
+            and program.effects
+        )
+        item = StackItem(
+            stack_id=f"typed-token-{name}-{controller}",
+            ref=f"S-typed-token-{name}-{controller}",
+            kind="triggered_ability",
+            controller=controller,
+            label=outer.label,
+            semantic_key=outer.key,
+            visibility=list(engine.active_seats),
+        )
+        engine.state.stack.append(item)
+        engine._continue_resolution(
+            stack_ref=item.ref,
+            effects=[dict(effect) for effect in outer.effects],
+            destination=outer.destination,
+            note=outer.notes,
+        )
+        return programs
+
     @staticmethod
     def _pass_until(session, predicate, *, limit: int = 24):
         for _ in range(limit):
@@ -738,6 +903,299 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         )
         self.assertEqual("3", golem_data["power"])
         self.assertEqual("3", golem_data["toughness"])
+
+    def test_typed_token_abilities_execute_across_spell_trigger_and_activation_contexts(self):
+        fixtures = (
+            (
+                token_record(
+                    "Typed Token Spell",
+                    "Create a 1/1 black and green Pest creature token with "
+                    '"When this token dies, you gain 1 life."',
+                    470040,
+                ),
+                ("spell_ability", "granted_triggered_ability"),
+            ),
+            (
+                token_record(
+                    "Typed Token Trigger",
+                    "When this creature enters, create a 0/1 colorless "
+                    "Eldrazi Spawn creature token with "
+                    '"Sacrifice this token: Add {C}."',
+                    470041,
+                    type_line="Creature — Test",
+                ),
+                ("triggered_ability", "granted_mana_ability"),
+            ),
+            (
+                token_record(
+                    "Typed Token Activation",
+                    "{2}: Create a 1/1 red Mercenary creature token with "
+                    '"{T}: Target creature you control gets +1/+0 until end '
+                    'of turn. Activate only as a sorcery."',
+                    470042,
+                    type_line="Artifact",
+                ),
+                ("activated_ability", "granted_activated_ability"),
+            ),
+            (
+                token_record(
+                    "Typed Token Static",
+                    "Create a 0/0 colorless Construct artifact creature token "
+                    'with "This token gets +1/+1 for each artifact you control."',
+                    470043,
+                ),
+                ("spell_ability",),
+            ),
+        )
+        for record, expected_kinds in fixtures:
+            with self.subTest(record=record.name):
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertEqual(
+                    expected_kinds,
+                    tuple(node.kind for node in ir.faces[0].nodes),
+                )
+                self.assertIn(
+                    "token.creation.typed_ability_definition",
+                    ir.faces[0].nodes[0].capability_dependencies,
+                )
+
+        session = self.session(470141)
+        engine = session.engine
+        self._resolve_typed_token_card(engine, "Skittering Invasion")
+        spawn = next(
+            card
+            for card in engine.state.cards.values()
+            if card.is_token
+            and card.zone == "battlefield"
+            and card.printed_name == "Eldrazi Spawn"
+        )
+        mana_ability = next(
+            ability
+            for ability in engine._activated_abilities(spawn)
+            if ability.mana_ability
+        )
+        colorless_before = engine.state.players["A"].mana_pool["C"]
+        engine._activate(
+            "A",
+            {"source": spawn.ref, "ability": mana_ability.ability_id},
+        )
+        self.assertEqual("outside", spawn.zone)
+        self.assertEqual(
+            colorless_before + 1,
+            engine.state.players["A"].mana_pool["C"],
+        )
+
+        static_ir = compile_oracle_card(
+            fixtures[-1][0],
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        static_outer = static_ir.faces[0].nodes[0]
+        static_item = StackItem(
+            stack_id="typed-static-token",
+            ref="S-typed-static-token",
+            kind="triggered_ability",
+            controller="A",
+            label="Typed static token",
+            visibility=list(engine.active_seats),
+        )
+        engine.state.stack.append(static_item)
+        engine._continue_resolution(
+            stack_ref=static_item.ref,
+            effects=[dict(effect) for effect in static_outer.effects],
+            destination=None,
+            note="typed static token witness",
+        )
+        construct = next(
+            card
+            for card in engine.state.cards.values()
+            if card.is_token
+            and card.zone == "battlefield"
+            and card.printed_name == "Construct"
+        )
+        self.assertEqual("1", engine._effective_card_data(construct)["power"])
+        engine.create_token(
+            "A",
+            name="Artifact Witness",
+            characteristics={"type_line": "Token Artifact"},
+            reason="typed token dynamic characteristic witness",
+        )
+        self.assertEqual("2", engine._effective_card_data(construct)["power"])
+
+    def test_typed_token_ability_survives_creator_departure_and_uses_token_identity(self):
+        session = self.session(470140)
+        engine = session.engine
+        self._resolve_typed_token_card(engine, "Pest Summoning")
+        pests = [
+            card
+            for card in engine.state.cards.values()
+            if card.is_token
+            and card.zone == "battlefield"
+            and card.printed_name == "Pest"
+        ]
+        self.assertEqual(2, len(pests))
+        copied_ref = engine.create_token(
+            "A",
+            name="",
+            copy_of=pests[0].ref,
+            reason="typed token copiable ability witness",
+        )[0]
+        copied = engine._resolve_object(
+            "A", copied_ref, zones={"battlefield"}
+        )
+        self.assertEqual(
+            engine._effective_card_data(pests[0])["ability_fragments"],
+            engine._effective_card_data(copied)["ability_fragments"],
+        )
+        engine.state.players["A"].life = 20
+        engine.move_card(
+            copied.object_id,
+            "graveyard",
+            controller="A",
+            reason="typed token death witness",
+            semantic_events=True,
+        )
+        self.assertFalse(begin_pending_trigger_batch(engine))
+        matching = [
+            item
+            for item in engine.state.stack
+            if ":granted:token:" in str(item.semantic_key)
+        ]
+        self.assertTrue(
+            matching,
+            {
+                "annotations": pests[0].annotations,
+                "stack": [item.to_dict() for item in engine.state.stack],
+                "pending": engine.state.pending_trigger_batches,
+                "events": [event.to_dict() for event in engine.state.events[-8:]],
+            },
+        )
+        trigger = matching[0]
+        self.assertEqual(copied.object_id, trigger.source_object_id)
+        program = engine.semantics.get(trigger.semantic_key)
+        self.assertIsNotNone(program)
+        engine._continue_resolution(
+            stack_ref=trigger.ref,
+            effects=[dict(effect) for effect in program.effects],
+            destination=program.destination,
+            note=program.notes,
+        )
+        self.assertEqual(21, engine.state.players["A"].life)
+        self.assertNotEqual(copied.object_id, pests[0].object_id)
+        self.assertEqual("battlefield", pests[0].zone)
+
+    def test_typed_token_ability_apnap_privacy_and_replay(self):
+        session = self.session(470142, players=4)
+        engine = session.engine
+        self._resolve_typed_token_card(
+            engine, "Pest Summoning", controller="A"
+        )
+        self._resolve_typed_token_card(
+            engine, "Pest Summoning", controller="B"
+        )
+        pests = [
+            card
+            for card in engine.state.cards.values()
+            if card.is_token
+            and card.zone == "battlefield"
+            and card.printed_name == "Pest"
+        ]
+        self.assertEqual(4, len(pests))
+        damage_source = self.card(engine, "Mishra, Eminent One")
+        engine.move_card(
+            damage_source.object_id,
+            "battlefield",
+            controller="A",
+            log=False,
+        )
+        resolve_damage_batch(
+            engine,
+            tuple(
+                damage_proposal(
+                    engine,
+                    proposal_id=f"typed-token-apnap:{index}",
+                    actor="A",
+                    source_ref=damage_source.ref,
+                    target=pest.ref,
+                    amount=1,
+                    combat=False,
+                    reason="typed token APNAP witness",
+                )
+                for index, pest in enumerate(pests)
+            ),
+        )
+        engine._stabilize()
+        decision = engine.state.pending_decision
+        self.assertIsNotNone(decision)
+        self.assertEqual("trigger.order", decision.kind)
+        pending = [
+            item
+            for batch in engine.state.pending_trigger_batches
+            for item in batch.items
+        ]
+        self.assertEqual(4, len(pending))
+        self.assertEqual(
+            {"A", "B"}, {item.controller for item in pending}
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        while (
+            engine.state.pending_decision is not None
+            and engine.state.pending_decision.kind == "trigger.order"
+        ):
+            actor = engine.state.pending_decision.actors[0]
+            projected = session.packet(f"pilot:{actor}", full=True)["decision"]
+            self.assertEqual("trigger.order", projected["kind"])
+            for other in "ABCD":
+                if other != actor:
+                    self.assertIsNone(
+                        session.packet(f"pilot:{other}", full=True)["decision"]
+                    )
+            serialized = json.dumps(projected, sort_keys=True)
+            self.assertTrue(
+                all(pest.object_id not in serialized for pest in pests)
+            )
+            refs = [item["id"] for item in projected["ctx"]["triggers"]]
+            ordered = session.act(
+                f"pilot:{actor}",
+                {"action_id": "order", "triggers": refs},
+            )
+            self.assertTrue(ordered.ok, ordered.summary)
+
+        placed = [
+            item
+            for item in engine.state.stack
+            if ":granted:token:" in str(item.semantic_key)
+        ]
+        self.assertEqual(4, len(placed))
+        self.assertEqual(
+            ["A", "A", "B", "B"],
+            [item.controller for item in placed],
+        )
+        life_before = {
+            seat: engine.state.players[seat].life for seat in ("A", "B")
+        }
+        for _ in range(32):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertFalse(engine.state.stack)
+        self.assertEqual(life_before["A"] + 2, engine.state.players["A"].life)
+        self.assertEqual(life_before["B"] + 2, engine.state.players["B"].life)
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "typed-token-ability-record"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_compiled_fixed_token_batch_is_one_simultaneous_transaction(self):
         session = self.session(470130)

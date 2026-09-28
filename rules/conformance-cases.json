@@ -6336,23 +6336,53 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "semantic_review_not_completed"
+        "token shells outside fixed positive creature definitions remain material",
+        "more than two explicit abilities and independently unsupported child programs remain material",
+        "attached, attacking, Role, copy, dynamic, linked, replacement, and prevention forms remain material"
       ],
       "case_id": "cr-111.2",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "111"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_explicit_token_ability_compiles_as_source_pinned_typed_program",
+        "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_typed_token_ability_grammar_and_dependencies_fail_closed",
+        "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_abilities_execute_across_spell_trigger_and_activation_contexts",
+        "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_survives_creator_departure_and_uses_token_identity",
+        "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay"
+      ],
+      "implementation_components": [
+        "quorune.compiler.typed_token_ability_nodes.typed_token_ability_nodes",
+        "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+        "quorune.token_creation.create_tokens",
+        "quorune.rules.activation.query.activated_abilities",
+        "quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "notes": [
+        "Explicit supported token abilities become copiable typed fragments or recipient-bound child programs at compile time; runtime creation, activation, trigger discovery, APNAP placement, privacy, and replay do not inspect Oracle prose."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "hidden_information",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "111.2",
       "rule_text_sha256": "1e8d6b6914a5db8507cf3cfe31e1413a4ceed177766178b31423bbff539c9703",
       "schema_version": 1,
@@ -6361,7 +6391,7 @@
         "end_line": 648,
         "start_line": 647
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",

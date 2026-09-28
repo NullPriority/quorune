@@ -24349,6 +24349,62 @@
       "applicability_note": "Reject a replacement identifier outside the issued schema without changing the authoritative state hash or committing any token."
     },
     {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_survives_creator_departure_and_uses_token_identity",
+      "official_rule_ids": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep the created token's typed intrinsic program after the creating source leaves, and bind activation, triggering, and current static fragments to each token object rather than the creator."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay",
+      "official_rule_ids": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Create several ability-bearing tokens through the ordinary replacement transaction and place their simultaneous triggers through the shared four-player APNAP batch."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_typed_token_ability_grammar_and_dependencies_fail_closed",
+      "official_rule_ids": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the typed token-ability wrapper and require the complete source span to return to a material residual instead of silently creating an inert display-only token."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_typed_token_ability_grammar_and_dependencies_fail_closed",
+      "official_rule_ids": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep reminder-only, more-than-two, independently unsupported, replacement, prevention, linked, and open quoted token abilities residual, and reject malformed fragment or capability identities."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_explicit_token_ability_compiles_as_source_pinned_typed_program",
+      "official_rule_ids": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower an explicit quoted token ability into one fixed token shell and one source-pinned child program with exact shared source provenance."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay",
+      "official_rule_ids": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project only public token and trigger facts while keeping replacement continuations, physical object identities, and unrelated hidden zones principal-scoped."
+    },
+    {
+      "capability_id": "token.creation.typed_ability_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_apnap_privacy_and_replay",
+      "official_rule_ids": ["111.2", "111.3", "111.4", "608.2c", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save and exactly replay replacement-ordered creation, intrinsic typed token programs, APNAP trigger placement, and final authoritative state."
+    },
+    {
       "capability_id": "trigger.delayed.fixed_next_turn_draw",
       "evidence_class": "interaction",
       "test_id": "tests.test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_typed_aura_and_delayed_draw_compose",

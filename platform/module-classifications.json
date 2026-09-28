@@ -3483,6 +3483,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/typed_token_ability_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/unearth_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -9801,5 +9816,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "d7d79515598a5879b431aabbdb8bdf71fd10b770e30ee426cc07fd1d1551f348"
+  "fingerprint": "16fc068d615c161e8967dd43adc61e67ecf68f35e801c7df8f91117b7d270f91"
 }

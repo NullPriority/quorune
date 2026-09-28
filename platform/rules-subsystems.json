@@ -4040,6 +4040,54 @@
       "measurement_probe_id": "typed-ward-cost-and-composition-closure-existing-owner-v2"
     },
     {
+      "bundle_id": "bundle:typed-token-ability-programs",
+      "member_family_ids": [
+        "activated_effect:create-token",
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "effect_clause:create-token",
+        "event_binding:normalized-event-binding"
+      ],
+      "canonical_owner_ids": [
+        "capability:token.creation.fixed_definition",
+        "capability:token.creation.typed_ability_definition",
+        "component:quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+        "component:quorune.compiler.typed_token_ability_nodes.typed_token_ability_nodes",
+        "component:quorune.rules.activation.query.activated_abilities",
+        "component:quorune.token_creation.create_tokens",
+        "component:quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "source_contexts": [
+        "activated",
+        "modal",
+        "spell",
+        "triggered"
+      ],
+      "normalized_literal_parameters": [
+        "independently-exact-typed-child-program",
+        "one-fixed-creature-token-definition",
+        "one-or-two-explicit-quoted-abilities",
+        "recipient-bound-token-source-identity"
+      ],
+      "shared_dependencies": [
+        "token.creation.fixed_definition",
+        "token.creation.typed_ability_definition"
+      ],
+      "shared_grammar": "one fixed positive creature-token definition carrying one or two explicit quoted activated, mana, triggered, declaration, or cycle-safe self-characteristic abilities, compiled into copiable typed fragments and source-pinned child programs through the existing token, current-ability, activation, normalized-event, APNAP, and replay owners",
+      "estimated_implementation_hours": 7,
+      "estimated_probe_hours": 1,
+      "estimated_generation_hours": 1,
+      "expected_downstream_closure": "Promotes a policy-floor cross-era token cohort across spell, triggered, activated, loyalty, and modal contexts while making the same typed child-program boundary reusable for later created-object families without runtime Oracle interpretation.",
+      "explicit_exclusions": [
+        "attached, attacking, Role, copy, variable-quantity, or otherwise unsupported token shells",
+        "dynamic, linked, delayed, modal, replacement, prevention, copied, granted, or text-changing child programs",
+        "independently unsupported sibling abilities and unsupported token replacement families",
+        "more than two quoted abilities or any independently unsupported child ability",
+        "reminder-only predefined-token text already owned by canonical token profiles"
+      ],
+      "measurement_status": "generated_probe",
+      "measurement_probe_id": "typed-token-ability-programs-existing-owner-v1"
+    },
+    {
       "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -4088,20 +4136,21 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v213-typed-ward-cost-and-composition-closure",
-      "compiler_version": "oracle-ir-v213",
-      "bundle_id": "bundle:typed-ward-cost-and-composition-closure",
-      "candidate_ids": ["bundle:typed-ward-cost-and-composition-closure"],
+      "transition_id": "oracle-ir-v214-typed-token-ability-programs",
+      "compiler_version": "oracle-ir-v214",
+      "bundle_id": "bundle:typed-token-ability-programs",
+      "candidate_ids": ["bundle:typed-token-ability-programs"],
       "family_ids": [
+        "activated_effect:create-token",
         "continuous_layer:continuous-effect-layers-and-dependencies",
-        "keyword_dependency:ward"
+        "effect_clause:create-token",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "trigger.keyword.ward.fixed_generic",
-        "trigger.keyword.ward.fixed_nonmana"
+        "token.creation.typed_ability_definition"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:typed-ward-cost-and-composition-closure"
+      "measurement_id": "measurement:typed-token-ability-programs"
     },
     "forecast_corrections": [
       {
@@ -4740,6 +4789,11 @@
         "candidate_id": "compiler:public-static-action-legality",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-library-permission selector has no implementation-eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate and the dependency-ready counter queue is not the authorized foreground. Bounded comparisons retire fixed control change at 11 complete cards and strict static casting subsets at 24; their coherent shared action-legality union instead reaches the normal exact-ability floor with 100 abilities across 97 cards and 46 conservative complete-card transitions. Fixed public spell timing, cast prohibitions and one-per-turn limits, uncounterability, fixed public activation prohibitions, and the exact attached untap/prohibition compound reuse the canonical cast offer and commit, turn history, stack counter, attachment, untap, current layer-6 ability-applicability, rollback, and replay owners. Temporary, targeted, cost-changing, free-cast, dynamic, subtype-history, spell-self, split-second, Epic, linked, granted, copied, text-changed, and independently unsupported forms remain fail-closed; current identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:typed-token-ability-programs",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-Ward selector has no eligible carried candidate while its raw continuous-layer and ordered-effect aggregates remain heterogeneous. Bounded probes retire simple sequence extensions, remaining untap policies, Protection grammar, typed additional-cost fragments, and typed emblem programs below the normal floor. The generated explicit-token probe instead isolates more than the exact-ability floor of current Commander carriers whose fixed token shell and quoted child ability are independently exact. The selected owner composes fixed token creation with copiable typed current-ability fragments and source-pinned activated, mana, triggered, declaration, and cycle-safe self-characteristic programs across spell, triggered, activated, loyalty, and modal contexts. Reminder-only predefined tokens, more than two quotes, unsupported child programs, attached, attacking, Role, copy, variable, linked, replacement, prevention, and independently incomplete forms remain fail-closed; current identities and measurements are generated rather than policy-maintained."
       }
     ]
   },

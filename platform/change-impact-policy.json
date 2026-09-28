@@ -833,6 +833,29 @@
       ]
     },
     {
+      "id": "typed-token-ability-program-contract",
+      "patterns": [
+        "mechanics/contracts/basic-token-creation.json",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/compiler/typed_token_ability_nodes.py",
+        "quorune/fixed_token_production.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "rules/conformance-reviews/cr-111-fixed-token-production.json",
+        "tests/test_fixed_token_creation_effects.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_copy_objects",
+        "test_fixed_query_quoted_ability_grants",
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_token_creation_replacements",
+        "test_trigger_batches",
+        "test_typed_ability_fragments"
+      ]
+    },
+    {
       "id": "typed-query-self-characteristic-contract",
       "patterns": [
         "quorune/ability_fragments.py",

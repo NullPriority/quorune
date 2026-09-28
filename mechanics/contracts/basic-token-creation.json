@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 5,
+  "contract_version": 6,
   "mechanic_id": "cr-111-tokens",
   "official_name": "Tokens",
   "effective_date": "2026-08-07",
@@ -33,18 +33,19 @@
       "the first nonbattlefield destination before the next state check",
       "outside after cessation"
     ],
-    "objects": ["fixed creature and artifact tokens with closed printed characteristics", "properly named and legendary fixed tokens", "fixed 0/0 black subtype Army tokens created by ordinary Amass", "one token copying a current legal targeted permanent"],
+    "objects": ["fixed creature and artifact tokens with closed printed characteristics", "fixed creature tokens with one or two explicit independently typed abilities", "properly named and legendary fixed tokens", "fixed 0/0 black subtype Army tokens created by ordinary Amass", "one token copying a current legal targeted permanent"],
     "events": [
       "token creation and permanent entry",
       "mandatory fixed additional-token replacement through the immutable token event",
       "staged Amass token creation before the current Army set is queried",
       "canonical Investigate and Afterlife production",
+      "recipient-bound typed token activation and normalized trigger programs",
       "source-independent next-end-step production",
       "token zone change",
       "token cessation as a state-based action"
     ],
     "state_reads": [
-      "controller and compiled token characteristics",
+      "controller and compiled token characteristics, including typed ability fragments",
       "logical incarnation",
       "whether the token has left the battlefield"
     ],
@@ -62,7 +63,7 @@
     "choices": ["ordinary affected-controller token replacement ordering"],
     "hidden_information": ["token facts are public while replacement and library-access choices remain principal-scoped"],
     "apnap": ["Afterlife and delayed production reuse the normalized trigger batch"],
-    "layers": ["token base characteristics become copiable values", "represented Changeling and declaration fragments enter the shared characteristic and ability-presence boundary"],
+    "layers": ["token base characteristics and represented typed abilities become copiable values", "represented Changeling, declaration, and cycle-safe self-characteristic fragments enter the shared characteristic and ability-presence boundary"],
     "replacement_effects": ["the closed mandatory fixed additional-token family may append a known token specification before the authoritative creation commit"],
     "copy": ["one exact target-copy form uses current copiable values after resolution target revalidation", "source-LKI, modified, linked, and zone-relative copies remain outside this slice"],
     "control_change": ["created token enters under the instructed controller"],
@@ -73,7 +74,7 @@
     ],
     "source_leaves": ["Afterlife uses last-known controller and ability presence", "a represented delayed trigger is source-independent"]
   },
-  "variants": ["fixed power/toughness colored creature token", "fixed artifact creature token", "properly named or legendary token", "represented keyword, Changeling, or declaration-fragment token", "Powerstone, Junk, and Vibranium", "fixed black subtype Army token", "canonical Investigate and Afterlife", "exact targeted copy", "fixed next-end-step creation"],
+  "variants": ["fixed power/toughness colored creature token", "fixed artifact creature token", "fixed creature token with one or two explicit typed abilities", "properly named or legendary token", "represented keyword, Changeling, or declaration-fragment token", "Powerstone, Junk, and Vibranium", "fixed black subtype Army token", "canonical Investigate and Afterlife", "exact targeted copy", "fixed next-end-step creation"],
   "witness_cards": [
     {
       "name": "Sprout",
@@ -102,14 +103,18 @@
     "test_afterlife_uses_previous_controller_and_permanent_graveyard_lki",
     "test_multiple_afterlife_instances_share_apnap_batch_and_replay",
     "test_copy_and_delayed_tokens_revalidate_and_replay",
-    "test_token_replacement_order_rollback_and_privacy"
+    "test_token_replacement_order_rollback_and_privacy",
+    "test_explicit_token_ability_compiles_as_source_pinned_typed_program",
+    "test_typed_token_abilities_execute_across_spell_trigger_and_activation_contexts",
+    "test_typed_token_ability_survives_creator_departure_and_uses_token_identity",
+    "test_typed_token_ability_apnap_privacy_and_replay"
   ],
   "implementation": {
-    "component": "oracle_ir._effect_template, compiler.token_templates, compiler.fixed_token_production_templates, compiler.token_production_keyword_nodes, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, standard_token_abilities, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
-    "version": "token-lifecycle-v5"
+    "component": "oracle_ir._effect_template, compiler.token_templates, compiler.fixed_token_production_templates, compiler.typed_token_ability_nodes, compiler.token_production_keyword_nodes, typed ability fragments and child CardPrograms, semantic_runtime.intents.CreateTokenIntent, semantic_choices.preparation_coordination, token_creation.create_tokens, standard_token_abilities, CommanderEngine.move_card/_stabilize, and state_based_actions.evaluate_state_based_actions",
+    "version": "token-lifecycle-v6"
   },
   "known_blockers": [
-    "tokens with arbitrary abilities, dynamic values, predefined characteristics outside the closed vocabulary, or linked choices remain residual",
+    "tokens with more than two explicit abilities, independently unsupported child programs, dynamic values, predefined characteristics outside the closed vocabulary, or linked choices remain residual",
     "optional, multiplying beyond the represented fixed additional-token family, prevention, prohibition, and mutable-state token replacements are not compiled",
     "copy-token support excludes source-LKI, modified, linked, nontarget, multiple-target, and zone-relative forms"
   ],

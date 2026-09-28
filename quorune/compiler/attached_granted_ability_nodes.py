@@ -57,14 +57,22 @@ def attached_granted_program_ability_id(
     kind: str,
     face_id: str,
     line: int,
+    node_id: str | None = None,
 ) -> str | None:
+    token_slot = ""
+    token_match = re.search(
+        r":token-ability:(?P<slot>[1-9][0-9]*)$",
+        str(node_id or ""),
+    )
+    if token_match is not None:
+        token_slot = f":token:{token_match.group('slot')}"
     if kind in {
         GRANTED_ACTIVATED_ABILITY_KIND,
         GRANTED_MANA_ABILITY_KIND,
     }:
-        return f"ability:granted:{face_id}:n{line}"
+        return f"ability:granted:{face_id}:n{line}{token_slot}"
     if kind == GRANTED_TRIGGERED_ABILITY_KIND:
-        return f"trigger:{face_id}:n{line}:granted"
+        return f"trigger:{face_id}:n{line}:granted{token_slot}"
     return None
 
 
@@ -102,6 +110,8 @@ def attached_granted_ability_plan(
     source_line: int,
     card_name: str,
     keywords: Sequence[str],
+    node_id: str | None = None,
+    display_text: str | None = None,
 ) -> AttachedGrantedAbilityPlan | None:
     """Build one closed typed grant from an independently exact inner node."""
 
@@ -136,6 +146,7 @@ def attached_granted_ability_plan(
             kind=node_kind,
             face_id=face_id,
             line=source_line,
+            node_id=node_id,
         )
         if ability_id is None:
             return None
@@ -184,6 +195,7 @@ def attached_granted_ability_plan(
         kind=node_kind,
         face_id=face_id,
         line=source_line,
+        node_id=node_id,
     )
     if ability_id is None:
         return None
@@ -197,7 +209,7 @@ def attached_granted_ability_plan(
                 ability_id=ability_id,
                 semantic_key=semantic_key,
                 event=node.event,
-                label=quoted_text,
+                label=display_text or quoted_text,
             )
         ),
     )
@@ -434,9 +446,33 @@ def compile_keyword_or_attached_grant_nodes(
     residuals: list[OracleResidual],
     keyword_node_compiler: Callable[..., Sequence[OracleNode]],
     compile_inner: Callable[..., OracleNode | None],
+    trigger_node: Callable[..., OracleNode | None],
     grant_effect_templates: Callable[..., tuple[Any, Any]],
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
+    from .typed_token_ability_nodes import typed_token_ability_nodes
+
+    typed_token_nodes = typed_token_ability_nodes(
+        record=record,
+        face_id=face_id,
+        node_id=node_id,
+        line=line,
+        material_line=material_line,
+        span=span,
+        source_name=source_name,
+        effect_template=effect_template,
+        keywords=keywords,
+        printed_card_types=printed_card_types,
+        source_attachment_relation=source_attachment_relation,
+        trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        compile_inner=compile_inner,
+        trigger_node=trigger_node,
+        grant_effect_templates=grant_effect_templates,
+    )
+    if typed_token_nodes is not None:
+        return typed_token_nodes
     keyword_nodes = keyword_node_compiler(
         record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,
