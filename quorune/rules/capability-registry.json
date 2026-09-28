@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 155,
+  "registry_version": 156,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5934,15 +5934,42 @@
       "status": "trusted"
     },
     {
+      "id": "trigger.condition.fixed_public_state",
+      "version": 1,
+      "official_rules": ["109.5", "603.4", "608.2a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Evaluate one closed public-state intervening-if descriptor both when its normalized event occurs and when the resulting triggered ability would resolve, using the trigger controller locked at creation.",
+        "inputs": ["one source-spanned intervening-if clause", "one existing fixed public-state condition descriptor", "one exact normalized event binding", "one current typed source ability at occurrence time"],
+        "outputs": ["no trigger when the condition is false at occurrence time", "ordinary APNAP placement when true", "condition revalidation before resolution", "trigger-controller-relative public queries after source control changes or departure", "exact checkpoint and replay"],
+        "exclusions": ["reflexive, delayed, first-time, once-per-turn, chosen, secret, hidden-zone, and otherwise unrepresented conditions", "conditions outside the closed public-state descriptor", "otherwise branches and linked results", "event bindings or effect bodies without independent exact owners", "same-layer and cycle-sensitive characteristic queries outside the shared layer-5 boundary"]
+      },
+      "dependencies": ["state_query.permanent.public_state_predicate"],
+      "implementation_components": ["quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.compiler.public_state_queries.fixed_public_state_condition", "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.card_programs.runtime.fixed_public_state_condition_matches", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.trigger_discovery.semantic_intervening_condition_matches"],
+      "positive_tests": ["test_public_state_intervening_if_contract_matrix"],
+      "negative_tests": ["test_public_state_intervening_if_contract_matrix", "test_public_state_intervening_if_dependency_and_parser_fail_closed"],
+      "interaction_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays", "test_source_state_intervening_condition_and_current_ability_fail_closed"],
+      "multiplayer_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
+      "privacy_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
+      "replay_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the condition capability or its shared public-state dependency leaves the source-spanned trigger material and untrusted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler test removes the shared condition parser and requires every representative intervening-if form to return to a material trigger residual.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "trigger.effect.fixed_event",
-      "version": 12,
+      "version": 13,
       "official_rules": ["115.1", "120.4", "508.3c", "508.3d", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compose one source-spanned closed normalized-event binding with one independently reviewed typed effect body, including immutable spell-cast facts, exact Heroic, Magecraft, Constellation, Battalion, attachment-relative, bounded public attack, discard, sacrifice, fixed same-zone two-event subscriptions, one-or-more damage or zone batching, public zone, damage, draw, block, Cycling, step, face-up, and fixed source-self combat-growth occurrences, then use ordinary APNAP placement, current layer-6 ability applicability, target selection, optional-choice, and body-specific resolution owners.",
+        "summary": "Compose one source-spanned closed normalized-event binding with one independently reviewed typed effect body, including immutable spell-cast facts, exact Heroic, Magecraft, Constellation, Battalion, attachment-relative, bounded public attack, discard, sacrifice, fixed same-zone two-event subscriptions, one-or-more damage or zone batching, public zone, damage, draw, block, Cycling, step, face-up, fixed source-self combat-growth occurrences, and closed public-state intervening-if conditions, then use ordinary APNAP placement, current layer-6 ability applicability, target selection, optional-choice, and body-specific resolution owners.",
         "inputs": ["one represented beginning-of-step, typed spell-cast fact, exact ability-word, attachment-relative, public action, public zone, damage, draw, block, Cycling, face-up, fixed same-zone multi-event, or source-self binding", "one mandatory or optional exact typed effect body", "current or last-known battlefield, stack, or Cycling hand source", "immutable normalized event facts, per-subscription conditions, and exact one-or-more aggregation when declared", "body-specific target schema and capability closure", "current typed source ability component when the family requires layer-6 applicability"],
         "outputs": ["one ordinary triggered CardProgram", "one immutable typed event predicate", "ordinary APNAP trigger placement", "controller-scoped target selection when required", "body-specific typed effect execution", "source-incarnation-pinned self effects and current-ability suppression", "exact continuation replay"],
-        "exclusions": ["counter-placement bodies retained by the fixed counter trigger capability", "intervening-if, reflexive, state, delayed, ambiguous disjunction, first-time, once-per-turn, attachment-relative forms outside the exact closure, and combined-event triggers outside exact Magecraft", "discard and sacrifice bindings outside their typed cause owners", "event bindings outside the closed normalized vocabulary", "tap-state, source-token damage, damage-to-creature, and unrestricted damage bindings", "chosen-value, targeted-spell outside exact Heroic source targeting, copied-spell outside exact Magecraft, linked-name, dynamic-count, payment-history beyond paid Kicker, and dynamic-threshold spell-cast predicates", "bodies without one exact reviewed typed effect template", "granted, copied, or removed abilities outside the shared typed ability-presence boundary", "same-layer and dynamic type-changing interactions outside a sealed cycle-safe characteristic snapshot"]
+        "exclusions": ["counter-placement bodies retained by the fixed counter trigger capability", "intervening-if outside the fixed public-state descriptor, reflexive, state, delayed, ambiguous disjunction, first-time, once-per-turn, attachment-relative forms outside the exact closure, and combined-event triggers outside exact Magecraft", "discard and sacrifice bindings outside their typed cause owners", "event bindings outside the closed normalized vocabulary", "tap-state, source-token damage, damage-to-creature, and unrestricted damage bindings", "chosen-value, targeted-spell outside exact Heroic source targeting, copied-spell outside exact Magecraft, linked-name, dynamic-count, payment-history beyond paid Kicker, and dynamic-threshold spell-cast predicates", "bodies without one exact reviewed typed effect template", "granted, copied, or removed abilities outside the shared typed ability-presence boundary", "same-layer and dynamic type-changing interactions outside a sealed cycle-safe characteristic snapshot"]
       },
       "dependencies": ["trigger.placement.apnap"],
       "implementation_components": ["quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node", "quorune.compiler.fixed_public_multi_event_bindings.fixed_public_multi_event_binding_spec", "quorune.rules.event_subscriptions.FixedEventSubscriptionSet", "quorune.card_programs.model.ability_to_card_dict", "quorune.compiler.fixed_public_action_event_bindings.fixed_public_action_event_binding_spec", "quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec", "quorune.compiler.fixed_source_combat_growth.fixed_source_combat_growth_effect_template", "quorune.compiler.spell_cast_predicates.FixedSpellCastSubject", "quorune.compiler.spell_cast_predicates.fixed_spell_cast_binding_spec", "quorune.rules.casting.commit._dispatch_cast_events", "quorune.rules.spell_cast_events.SpellCopyEvent", "quorune.spell_copy_engine_adapter.dispatch_normalized_spell_copy_event", "quorune.attack_transition_engine_adapter.attack_transition_stack_items", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.damage._collect_damage_result_triggers", "quorune.player_result_events.dispatch_card_draw_event", "quorune.player_result_events.dispatch_life_gain_event", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.trigger_discovery.program_has_current_ability_fragments", "quorune.trigger_processing.collect_trigger_items"],

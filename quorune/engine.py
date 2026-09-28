@@ -145,6 +145,7 @@ from .trigger_processing import (
 from .trigger_discovery import (
     dispatch_semantic_event,
     semantic_event_condition_matches,
+    semantic_intervening_condition_matches,
     semantic_event_matches,
     semantic_event_value,
 )
@@ -3606,14 +3607,11 @@ class CommanderEngine(
             and program.event_condition is not None
         ):
             source = self.state.cards.get(item.source_object_id or "")
-            condition_holds = bool(
-                source is not None
-                and source.zone == program.active_zone
-                and self._semantic_event_condition_matches(
-                    program.event_condition,
-                    source=source,
-                    context=item.context,
-                )
+            condition_holds = semantic_intervening_condition_matches(
+                self,
+                program,
+                source=source,
+                context=item.context,
             )
             if not condition_holds:
                 self.state.stack.remove(item)

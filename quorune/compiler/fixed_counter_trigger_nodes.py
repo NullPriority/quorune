@@ -1,11 +1,17 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..continuous_conditions import (
+    FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
+    FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+    FixedPublicStateConditionKind,
+    FixedPublicStateConditionSpec,
+)
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
@@ -35,11 +41,15 @@ from .spell_cast_predicates import (
     FixedSpellCastTurnRelation,
     fixed_spell_cast_binding_spec,
 )
+from .public_state_queries import fixed_public_state_condition
 
 
 FIXED_COUNTER_EVENT_TRIGGER_MECHANIC = "fixed-counter-event-trigger"
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC = (
     "fixed-typed-event-effect-trigger"
+)
+FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY = (
+    "trigger.condition.fixed_public_state"
 )
 FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC = (
     "trigger-event-spell-cast-fixed-characteristics"
@@ -81,6 +91,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-magecraft-spell-action-trigger-v1",
         "fixed-counter-constellation-entry-trigger-v1",
         "fixed-counter-battalion-attack-trigger-v1",
+        "fixed-counter-public-state-source-zone-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(
@@ -233,6 +244,10 @@ _SCHEDULED_TRIGGER = re.compile(
     r"^At the beginning of "
     r"(?P<schedule>your upkeep|each upkeep|your end step|each end step|"
     r"the end step|combat on your turn|each combat), (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_PUBLIC_INTERVENING_IF_TRIGGER = re.compile(
+    r"^(?P<prefix>.+?), if (?P<condition>[^,]+), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _CONTROLLED_LAND_ENTRY_TRIGGER = re.compile(
@@ -484,6 +499,7 @@ class FixedCounterTriggerBinding:
     public_mechanic: str | None = None
     public_template_id: str | None = None
     public_capabilities: tuple[str, ...] = ()
+    public_state_condition: FixedPublicStateConditionSpec | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -556,6 +572,13 @@ class FixedCounterTriggerBinding:
         if self.public_mechanic is None and self.public_capabilities:
             raise ValueError(
                 "Only public event triggers accept explicit capabilities"
+            )
+        if self.public_state_condition is not None and not isinstance(
+            self.public_state_condition,
+            FixedPublicStateConditionSpec,
+        ):
+            raise ValueError(
+                "Intervening-if triggers require one typed public-state condition"
             )
 
     @property
@@ -716,7 +739,7 @@ class FixedCounterTriggerBinding:
         }[self.event]
 
     @property
-    def event_condition(self) -> Mapping[str, Any] | None:
+    def _base_event_condition(self) -> Mapping[str, Any] | None:
         if self.public_mechanic is not None:
             return self.public_condition
         if self.zone_subject is not None:
@@ -805,6 +828,21 @@ class FixedCounterTriggerBinding:
                 },
             )
         return {"all": conditions}
+
+    @property
+    def event_condition(self) -> Mapping[str, Any] | None:
+        condition = self._base_event_condition
+        if self.public_state_condition is None:
+            return condition
+        public_condition = {
+            "field": FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
+            "op": "truthy",
+            "value": True,
+            "condition": self.public_state_condition.to_dict(),
+        }
+        if condition is None:
+            return public_condition
+        return {"all": [condition, public_condition]}
 
 
 def _zone_change_trigger_binding(
@@ -965,6 +1003,41 @@ def _source_event_trigger_binding(
     return None
 
 
+def _public_state_source_self_trigger_binding(
+    material_line: str,
+    *,
+    card_name: str | None,
+) -> FixedCounterTriggerBinding | None:
+    """Bind only the source-self zone forms admitted by typed intervening-if."""
+
+    subjects = (
+        r"this (?:artifact|Aura|card|creature|enchantment|Equipment|land|permanent)"
+    )
+    if card_name:
+        subjects = rf"(?:{subjects}|{re.escape(card_name)})"
+    match = re.fullmatch(
+        rf"(?:When|Whenever) {subjects} (?P<event>enters|dies), "
+        r"(?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    event = match.group("event").casefold()
+    return FixedCounterTriggerBinding(
+        event=(
+            FixedCounterTriggerEvent.SOURCE_VEHICLE_DIES
+            if event == "dies"
+            else FixedCounterTriggerEvent.SOURCE_VEHICLE_ENTER
+        ),
+        variant=f"public_state_source_{event}",
+        body=match.group("body"),
+        public_active_zone="battlefield",
+        public_mechanic="trigger-event-normalized-zone-change",
+        public_template_id="fixed-counter-public-state-source-zone-trigger-v1",
+    )
+
+
 def _public_trigger_binding(
     material_line: str,
     *,
@@ -999,6 +1072,32 @@ def fixed_counter_trigger_binding(
     *,
     card_name: str | None = None,
 ) -> FixedCounterTriggerBinding | None:
+    intervening = _PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
+    if intervening is not None:
+        condition = fixed_public_state_condition(
+            intervening.group("condition"),
+            source_name=card_name or "This source",
+        )
+        if condition is None:
+            return None
+        if condition.kind in {
+            FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
+            FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
+            FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+        }:
+            return None
+        base = fixed_counter_trigger_binding(
+            f"{intervening.group('prefix')}, {intervening.group('body')}",
+            card_name=card_name,
+        )
+        if base is None:
+            base = _public_state_source_self_trigger_binding(
+                f"{intervening.group('prefix')}, {intervening.group('body')}",
+                card_name=card_name,
+            )
+        if base is None or base.public_state_condition is not None:
+            return None
+        return replace(base, public_state_condition=condition)
     public = _public_trigger_binding(
         material_line,
         card_name=card_name,
@@ -1096,7 +1195,15 @@ def _event_runtime_coverage(
         values.append("one_or_more_event_batch")
     if binding.variant in MULTI_EVENT_BINDING_CLOSURE_VARIANTS:
         values.append("fixed_multi_event_subscription")
-    return tuple(values)
+    if binding.public_state_condition is not None:
+        values.extend(
+            (
+                CURRENT_ABILITY_FRAGMENT_COVERAGE,
+                "intervening_condition",
+                FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+            )
+        )
+    return tuple(dict.fromkeys(values))
 
 
 def _binding_effect_template(
@@ -1220,7 +1327,14 @@ def fixed_counter_event_trigger_node(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
-        explicit_capabilities=binding.public_capabilities,
+        explicit_capabilities=(
+            *binding.public_capabilities,
+            *(
+                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+                if binding.public_state_condition is not None
+                else ()
+            ),
+        ),
     )
     residual_ids = (
         (
@@ -1342,7 +1456,14 @@ def fixed_typed_event_effect_trigger_node(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
-        explicit_capabilities=binding.public_capabilities,
+        explicit_capabilities=(
+            *binding.public_capabilities,
+            *(
+                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+                if binding.public_state_condition is not None
+                else ()
+            ),
+        ),
     )
     residual_ids = (
         (
@@ -1404,6 +1525,7 @@ __all__ = [
     "FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC",
     "FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS",
     "FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC",
+    "FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY",
     "OPTIONAL_COUNTER_PLACEMENT_OPERATION",
     "OPTIONAL_FIXED_COUNTER_EVENT_TRIGGER_MECHANIC",
     "MULTI_EVENT_BINDING_CLOSURE_VARIANTS",

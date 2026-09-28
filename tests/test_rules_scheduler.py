@@ -4822,6 +4822,80 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(1, measured["exact_ability_gain"])
         self.assertEqual(1, measured["material_residual_reduction"])
 
+    def test_public_intervening_if_trigger_probe_requires_closed_composition(self):
+        families = [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+        ]
+        record = CardRecord(
+            oracle_id="public-intervening-if-trigger-fixture",
+            name="Public Intervening If Trigger Fixture",
+            mana_cost="{2}{U}",
+            mana_value=3.0,
+            type_line="Creature — Advisor",
+            oracle_text=(
+                "At the beginning of your upkeep, if you control an artifact, "
+                "draw a card."
+            ),
+            power="2",
+            toughness="2",
+            loyalty=None,
+            defense=None,
+            colors=("U",),
+            color_identity=("U",),
+            keywords=(),
+            produced_mana=(),
+            layout="normal",
+            released_at="2026-09-28",
+            legalities={"commander": "legal"},
+            faces=(),
+            raw={},
+        )
+        measured = build_work_selection_cohort_measurements(
+            frontier={
+                "cards": [
+                    {
+                        "oracle_id": record.oracle_id,
+                        "oracle_ir_status": "unresolved",
+                        "exact_ability_count": 0,
+                        "minimum_known_blocker_set": families,
+                        "abilities": [
+                            {
+                                "ability_id": "front:n1",
+                                "face_id": "front",
+                                "source_line": 1,
+                                "status": "unresolved",
+                                "residuals": [{"family_ids": families}],
+                            }
+                        ],
+                    }
+                ]
+            },
+            bundle_policies=[
+                {
+                    "bundle_id": "bundle:public-intervening-if-trigger-closure",
+                    "member_family_ids": families,
+                    "measurement_probe_id": (
+                        "public-intervening-if-trigger-closure-existing-owner-v1"
+                    ),
+                }
+            ],
+            cards_by_oracle_id={record.oracle_id: record},
+            coverage={
+                "minimum_complete_card_gain": 1,
+                "minimum_exact_ability_gain": 1,
+                "minimum_material_residual_reduction": 1,
+            },
+            cohort_fingerprints={
+                "bundle:public-intervening-if-trigger-closure": "0" * 64
+            },
+        )["measurements"][0]
+        self.assertEqual("bounded_executable", measured["decision"])
+        self.assertEqual(1, measured["affected_commander_cards"])
+        self.assertEqual(1, measured["complete_card_gain"])
+        self.assertEqual(1, measured["exact_ability_gain"])
+        self.assertEqual(1, measured["material_residual_reduction"])
+
     def test_public_event_binding_closure_probe_and_measurement_are_closed(self):
         probe_id = "public-event-binding-closure-existing-owner-v1"
         equipment = SimpleNamespace(

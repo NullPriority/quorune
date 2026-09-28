@@ -4130,6 +4130,52 @@
       "measurement_probe_id": "public-static-condition-closure-existing-owner-v1"
     },
     {
+      "bundle_id": "bundle:public-intervening-if-trigger-closure",
+      "member_family_ids": [
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
+      ],
+      "canonical_owner_ids": [
+        "capability:trigger.condition.fixed_public_state",
+        "capability:trigger.effect.fixed_event",
+        "component:quorune.card_programs.runtime.fixed_public_state_condition_matches",
+        "component:quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
+        "component:quorune.compiler.public_state_queries.fixed_public_state_condition",
+        "component:quorune.continuous_conditions.FixedPublicStateConditionSpec",
+        "component:quorune.trigger_discovery.semantic_event_condition_matches"
+      ],
+      "source_contexts": [
+        "triggered"
+      ],
+      "normalized_literal_parameters": [
+        "closed-public-state-condition-descriptor",
+        "independently-exact-normalized-event-binding",
+        "independently-exact-typed-effect-body",
+        "trigger-controller-locked-revalidation"
+      ],
+      "shared_dependencies": [
+        "state_query.permanent.public_state_predicate",
+        "trigger.condition.fixed_public_state",
+        "trigger.effect.fixed_event",
+        "trigger.placement.apnap"
+      ],
+      "shared_grammar": "one source-spanned intervening-if clause whose condition is represented by the existing closed public-state descriptor and whose normalized event binding and typed effect body are independently exact, checked at occurrence and again before resolution through the same trigger-controller-relative owner",
+      "estimated_implementation_hours": 6,
+      "estimated_probe_hours": 1,
+      "estimated_generation_hours": 1,
+      "expected_downstream_closure": "Promotes a normal-floor cross-era conditional-trigger cohort while reusing the public query, sealed turn-history, normalized event, current layer-6 ability-applicability, APNAP, target, effect, projection, and replay owners without another trigger engine or runtime Oracle parser.",
+      "explicit_exclusions": [
+        "chosen, secret, hidden-zone, named-object, top-library, and unsupported public-state conditions",
+        "copied, granted, text-changed, and independently unsupported sibling abilities",
+        "event bindings and effect bodies without independent exact typed owners",
+        "otherwise branches, linked results, open arithmetic, arbitrary comparisons, and dynamic amounts",
+        "reflexive, delayed, first-time, once-per-turn, and otherwise unrepresented trigger grammar",
+        "same-layer and cycle-sensitive characteristic queries outside the shared layer-5 boundary"
+      ],
+      "measurement_status": "generated_probe",
+      "measurement_probe_id": "public-intervening-if-trigger-closure-existing-owner-v1"
+    },
+    {
       "bundle_id": "bundle:standalone-reminder-line-closure",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies",
@@ -4178,18 +4224,19 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v215-public-static-condition-closure",
-      "compiler_version": "oracle-ir-v215",
-      "bundle_id": "bundle:public-static-condition-closure",
-      "candidate_ids": ["bundle:public-static-condition-closure"],
+      "transition_id": "oracle-ir-v216-public-intervening-if-trigger-closure",
+      "compiler_version": "oracle-ir-v216",
+      "bundle_id": "bundle:public-intervening-if-trigger-closure",
+      "candidate_ids": ["bundle:public-intervening-if-trigger-closure"],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "continuous.characteristics.fixed_public_state"
+        "trigger.condition.fixed_public_state"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-static-condition-closure"
+      "measurement_id": "measurement:public-intervening-if-trigger-closure"
     },
     "forecast_corrections": [
       {
@@ -4838,6 +4885,11 @@
         "candidate_id": "compiler:public-static-condition-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-token selector has no eligible carried candidate while its raw continuous-layer leader remains a heterogeneous aggregate. A bounded fixed hand-entry probe was retired at 26 complete cards, 35 exact abilities, and 37 residual removals, and only 20 one-blocker downstream carriers, so it qualified for neither the normal floor nor the prerequisite exception. The selected source-controlled public-condition probe instead reaches the normal complete-card floor through the existing typed static-condition owner. It admits closed cycle-safe distinct graveyard type or mana-value counts, sealed entry, attack, sacrifice, death, and life facts, live layer-5 object queries including planeswalker subtypes, public hand and starting-life relations, and exact attachment counts. City blessing, dungeon, initiative, speed, stickers, crime, dice, top-library, chosen, secret, most-common, otherwise, open comparison, dynamic amount, ability-presence count, and independently unsupported body forms remain fail-closed."
+      },
+      {
+        "candidate_id": "compiler:public-intervening-if-trigger-closure",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-public-condition selector has no implementation-eligible carried candidate while the raw continuous-layer and trigger-binding leaders remain heterogeneous. A bounded executable probe requires the condition to parse through the existing closed public-state descriptor and the same source line's normalized event and typed body to become independently exact when the condition is removed. That isolates 100 exact abilities across 96 current Commander carriers and 81 conservative complete-card transitions. The selected composition checks the condition at occurrence and resolution through the canonical public-state snapshot, locks the trigger controller, shares current layer-6 ability applicability and APNAP placement, and preserves projection and replay. Source-counter, source-entry, and attached-source conditions remain excluded until an LKI-safe trigger snapshot owns them; reflexive, delayed, first-time, once-per-turn, chosen, secret, hidden-zone, otherwise, linked, dynamic, unsupported event or body, and independently incomplete forms remain fail-closed. Current identities and measurements are generated from the frontier."
       }
     ]
   },

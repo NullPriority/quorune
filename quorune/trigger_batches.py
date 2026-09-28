@@ -139,6 +139,7 @@ class TriggerOccurrence(Mapping[str, Any]):
             "source_logical_object_id",
             "source_zone",
             "one_or_more_aggregation_id",
+            "intervening_condition_controller",
         ):
             value = context.get(field)
             if value is not None:

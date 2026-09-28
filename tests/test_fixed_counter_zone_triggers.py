@@ -873,6 +873,186 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         self.finish_replacements(session, "A")
         self.assertIn(source.counters.get("charge"), {5, 6})
 
+    def test_public_state_intervening_condition_rechecks_locked_controller_and_replays(
+        self,
+    ):
+        session = self.session(121095, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Public Query Intervening Draw Fixture",
+            ref="public-intervening-query",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+        witness = self.add_card(
+            engine,
+            seat="A",
+            name="Sol Ring",
+            ref="public-intervening-artifact",
+            zone="battlefield",
+        )
+        hand_before = len(engine.state.players["A"].zones["hand"])
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        self.assertTrue(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+        for seat in engine.active_seats:
+            packet = json.dumps(
+                session.packet(f"pilot:{seat}", full=True),
+                sort_keys=True,
+            )
+            self.assertNotIn(source.object_id, packet)
+            self.assertNotIn(source.logical_object_id, packet)
+        engine.move_card(witness.object_id, "graveyard", log=False)
+        self.resolve_top(engine)
+        self.assertEqual(
+            hand_before,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+
+        engine.move_card(witness.object_id, "battlefield", log=False)
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        engine.change_control(
+            source.object_id,
+            "B",
+            reason="intervening trigger controller-lock witness",
+        )
+        self.resolve_top(engine)
+        self.assertEqual(
+            hand_before + 1,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+
+        engine.change_control(
+            source.object_id,
+            "A",
+            reason="restore intervening trigger source",
+        )
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        engine.move_card(source.object_id, "graveyard", log=False)
+        engine.state.priority_player = engine.state.active_player
+        engine._issue_priority(engine.state.active_player)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual(
+            hand_before + 2,
+            len(engine.state.players["A"].zones["hand"]),
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "public-intervening-trigger"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_source_state_intervening_condition_and_current_ability_fail_closed(
+        self,
+    ):
+        session = self.session(121096)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Source State Intervening Life Fixture",
+            ref="public-intervening-source-state",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        life_before = engine.state.players["A"].life
+
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        source.tapped = True
+        self.resolve_top(engine)
+        self.assertEqual(life_before, engine.state.players["A"].life)
+
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+        source.tapped = False
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        engine.move_card(source.object_id, "graveyard", log=False)
+        engine.move_card(source.object_id, "battlefield", log=False)
+        self.assertFalse(source.tapped)
+        self.resolve_top(engine)
+        self.assertEqual(life_before, engine.state.players["A"].life)
+
+        commit_continuous_effect(
+            engine.state,
+            ContinuousEffect(
+                effect_id="fixture:remove-public-intervening-ability",
+                source_id="fixture:remove-public-intervening-owner",
+                layer=Layer.ABILITY,
+                sublayer="6",
+                timestamp=engine._next_zone_timestamp(),
+                operations=(ContinuousOperation("remove_all_abilities"),),
+                origin=ContinuousEffectOrigin.RESOLUTION,
+                duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                applies=ObjectQuerySpec(zones=("battlefield",)),
+                locked_objects=(
+                    ContinuousObjectIdentity(
+                        object_id=source.object_id,
+                        logical_object_id=source.logical_object_id,
+                    ),
+                ),
+            ),
+        )
+        self.assertEqual(
+            [],
+            engine._effective_card_data(source)["ability_fragments"],
+        )
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A"),
+        )
+        engine._stabilize()
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
     def test_optional_counter_trigger_choice_composes_with_replacement_and_replay(
         self,
     ):
