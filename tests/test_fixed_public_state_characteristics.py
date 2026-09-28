@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import ROOT, keep_all, make_session
+from common import ROOT, advance_fixture_turn, keep_all, make_session
 from quorune.ability_fragments import (
     StaticComponentSpec,
     ability_fragment_to_dict,
@@ -24,6 +24,10 @@ from quorune.characteristic_fragments import (
 )
 from quorune.compiler.continuous_templates import (
     fixed_public_state_characteristics_handler,
+)
+from quorune.compiler.public_state_fact_queries import (
+    fixed_graveyard_condition_query,
+    fixed_public_fact_condition,
 )
 from quorune.continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
@@ -58,6 +62,7 @@ from quorune.semantic_runtime import (
     default_continuous_effect_component_registry,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from quorune.turn_history import record_creature_attack_history
 from scripts.build_test_database import build_fixture_database
 
 
@@ -483,6 +488,77 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                 default_continuous_effect_component_registry().validate(
                     node.handlers[0]
                 )
+
+    def test_public_fact_descriptors_preserve_thresholds_subtypes_and_axes(self):
+        threshold_cases = (
+            (
+                "two or more nonland permanents entered the battlefield under "
+                "your control this turn",
+                "controller_nonland_permanents_entered_this_turn",
+            ),
+            (
+                "two or more creatures died under your control this turn",
+                "controller_creatures_died_this_turn",
+            ),
+        )
+        for text, fact in threshold_cases:
+            with self.subTest(text=text):
+                condition = fixed_public_fact_condition(
+                    text,
+                    source_name="Threshold Fixture",
+                )
+                self.assertIsNotNone(condition)
+                assert condition is not None
+                self.assertEqual(4, condition.schema_version)
+                self.assertEqual(
+                    condition,
+                    FixedPublicStateConditionSpec.from_dict(
+                        condition.to_dict()
+                    ),
+                )
+                self.assertEqual(2, condition.amount)
+                self.assertEqual(fact, condition.fact.value)
+
+        for plural, subtype in (
+            ("Goblins", "goblin"),
+            ("Elves", "elf"),
+            ("Samurai", "samurai"),
+        ):
+            with self.subTest(plural=plural):
+                condition = fixed_public_fact_condition(
+                    f"you attacked with two or more {plural} this turn",
+                    source_name="Attack Fixture",
+                )
+                self.assertIsNotNone(condition)
+                assert condition is not None
+                self.assertEqual(4, condition.schema_version)
+                self.assertEqual(2, condition.amount)
+                self.assertEqual(subtype, condition.fact_parameter)
+
+        self.assertIsNone(
+            fixed_public_fact_condition(
+                "you attacked with two or more Shinythings this turn",
+                source_name="Attack Fixture",
+            )
+        )
+        green = fixed_graveyard_condition_query(
+            "a green card is in your graveyard"
+        )
+        self.assertIsNotNone(green)
+        assert green is not None and green.quantity is not None
+        self.assertEqual(("G",), green.quantity.query.colors_all)
+        self.assertFalse(green.quantity.query.subtypes_all)
+        goblin = fixed_graveyard_condition_query(
+            "a Goblin card is in your graveyard"
+        )
+        self.assertIsNotNone(goblin)
+        assert goblin is not None and goblin.quantity is not None
+        self.assertEqual(("goblin",), goblin.quantity.query.subtypes_all)
+        self.assertIsNone(
+            fixed_graveyard_condition_query(
+                "a shiny card is in your graveyard"
+            )
+        )
 
     def test_fixed_public_condition_models_use_closed_current_facts(self):
         cases = (
@@ -1499,6 +1575,223 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+    def test_public_fact_thresholds_use_canonical_producers_and_consumers(self):
+        session = self.session(118_220_021)
+        engine = session.engine
+        source = self.creature(
+            engine,
+            seat="A",
+            name="Public Threshold Consumer",
+        )
+        engine.state.turn_history.events.clear()
+
+        entry_condition = fixed_public_fact_condition(
+            "two or more nonland permanents entered the battlefield under "
+            "your control this turn",
+            source_name=source.printed_name,
+        )
+        death_condition = fixed_public_fact_condition(
+            "two or more creatures died under your control this turn",
+            source_name=source.printed_name,
+        )
+        self.assertIsNotNone(entry_condition)
+        self.assertIsNotNone(death_condition)
+        assert entry_condition is not None and death_condition is not None
+
+        def holds(condition: FixedPublicStateConditionSpec) -> bool:
+            return engine._fixed_public_state_condition_holds(
+                source,
+                condition,
+            )
+
+        self.assertFalse(holds(entry_condition))
+        engine.create_token(
+            "A",
+            name="Threshold Land",
+            characteristics={"type_line": "Token Land — Gate"},
+            reason="public threshold land control",
+        )
+        self.assertFalse(holds(entry_condition))
+        first_entry_ref = engine.create_token(
+            "A",
+            name="Threshold Artifact",
+            characteristics={"type_line": "Token Artifact"},
+            reason="public threshold first nonland",
+        )[0]
+        self.assertFalse(holds(entry_condition))
+        first_entry = engine._resolve_object(
+            "A",
+            first_entry_ref,
+            zones={"battlefield"},
+        )
+        engine.move_card(first_entry.object_id, "graveyard", log=False)
+        second_entries = engine.create_token(
+            "A",
+            name="Threshold Pair",
+            quantity=2,
+            characteristics={"type_line": "Token Enchantment"},
+            reason="public threshold simultaneous nonlands",
+        )
+        self.assertTrue(holds(entry_condition))
+        second_entry = engine._resolve_object(
+            "A",
+            second_entries[0],
+            zones={"battlefield"},
+        )
+        engine.change_control(
+            second_entry.object_id,
+            "B",
+            reason="public threshold later control change",
+        )
+        self.assertTrue(holds(entry_condition))
+
+        advance_fixture_turn(engine)
+        self.assertFalse(holds(entry_condition))
+        victims = [
+            self.creature(
+                engine,
+                seat="A",
+                name=f"Death Threshold Victim {index}",
+            )
+            for index in range(3)
+        ]
+        opposing_victim = self.creature(
+            engine,
+            seat="A",
+            name="Death Threshold Opposing Controller",
+        )
+        engine.state.turn_history.events.clear()
+        engine.change_control(
+            opposing_victim.object_id,
+            "B",
+            reason="death threshold previous controller",
+        )
+        engine.move_card(
+            opposing_victim.object_id,
+            "graveyard",
+            semantic_events=True,
+        )
+        self.assertFalse(holds(death_condition))
+        engine.move_card(
+            victims[0].object_id,
+            "graveyard",
+            semantic_events=True,
+        )
+        self.assertFalse(holds(death_condition))
+        engine.move_card(
+            victims[1].object_id,
+            "graveyard",
+            semantic_events=True,
+        )
+        self.assertTrue(holds(death_condition))
+        engine.move_card(
+            victims[2].object_id,
+            "graveyard",
+            semantic_events=True,
+        )
+        self.assertTrue(holds(death_condition))
+
+    def test_subtype_attack_threshold_counts_distinct_event_time_objects(self):
+        session = self.session(118_220_022)
+        engine = session.engine
+        source = self.creature(
+            engine,
+            seat="A",
+            name="Subtype Attack Consumer",
+        )
+        first = self.creature(
+            engine,
+            seat="A",
+            name="First Goblin Attacker",
+            subtype="Goblin",
+        )
+        second = self.creature(
+            engine,
+            seat="A",
+            name="Second Goblin Attacker",
+            subtype="Goblin",
+        )
+        nonmatching = self.creature(
+            engine,
+            seat="A",
+            name="Elf Attacker",
+            subtype="Elf",
+        )
+        engine.state.turn_history.events.clear()
+        condition = FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+            amount=2,
+            fact=(
+                FixedPublicStateFact
+                .CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN
+            ),
+            fact_parameter="goblin",
+            schema_version=4,
+        )
+        historical_condition = FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+            amount=2,
+            fact=(
+                FixedPublicStateFact
+                .CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN
+            ),
+            fact_parameter="goblin",
+            schema_version=3,
+        )
+        self.assertEqual(
+            historical_condition,
+            FixedPublicStateConditionSpec.from_dict(
+                historical_condition.to_dict()
+            ),
+        )
+
+        def holds() -> bool:
+            return engine._fixed_public_state_condition_holds(
+                source,
+                condition,
+            )
+
+        record_creature_attack_history(
+            engine,
+            first,
+            {"target": "B", "kind": "player"},
+        )
+        record_creature_attack_history(
+            engine,
+            first,
+            {"target": "C", "kind": "player"},
+        )
+        self.assertTrue(
+            engine._fixed_public_state_condition_holds(
+                source,
+                historical_condition,
+            )
+        )
+        self.assertFalse(holds())
+        record_creature_attack_history(
+            engine,
+            nonmatching,
+            {"target": "B", "kind": "player"},
+        )
+        self.assertFalse(holds())
+        record_creature_attack_history(
+            engine,
+            second,
+            {"target": "D", "kind": "player"},
+        )
+        self.assertTrue(holds())
+        engine.change_control(
+            first.object_id,
+            "B",
+            reason="attack threshold later control change",
+        )
+        first.annotations["token_characteristics"]["type_line"] = (
+            "Token Creature — Elf"
+        )
+        self.assertTrue(holds())
+        advance_fixture_turn(engine)
+        self.assertFalse(holds())
 
     def test_public_fact_conditions_recompute_and_replay(self):
         session = self.session(118_220_011)

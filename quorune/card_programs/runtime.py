@@ -232,9 +232,19 @@ class _FixedPublicStateSnapshotResolver:
             )
         if fact is FixedPublicStateFact.CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN:
             subtype = str(condition.fact_parameter or "")
-            return sum(
-                event.actor == controller and subtype in event.types
+            matching = tuple(
+                event
                 for event in attacks
+                if event.actor == controller and subtype in event.types
+            )
+            if condition.schema_version == 3:
+                return len(matching)
+            return len(
+                {
+                    event.object_incarnation
+                    for event in matching
+                    if event.object_incarnation is not None
+                }
             )
         return None
 

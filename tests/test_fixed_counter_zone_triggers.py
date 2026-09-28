@@ -91,6 +91,7 @@ from quorune.semantic_choices.optional_counter_placement import (
 )
 from quorune.semantic_runtime import LifeChangeIntent
 from quorune.trigger_processing import collect_trigger_items, enqueue_trigger_batch
+from quorune.turn_history import record_creature_attack_history
 from scripts.build_test_database import build_fixture_database
 
 
@@ -974,6 +975,207 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_public_entry_threshold_replays_actions_and_full_draw(self):
+        session = self.session(121099)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Nonland Entry Threshold Draw Fixture",
+            ref="public-entry-threshold",
+            zone="hand",
+        )
+        self.register_typed_event_trigger(engine, source)
+        setup = self.deck_card(engine, "A", "Sol Ring")
+        engine.move_card(setup.object_id, "hand", log=False)
+        engine.state.turn_history.events.clear()
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.players["A"].mana_pool.update({"C": 3, "U": 1})
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine._grant_priority("A")
+        engine.pump()
+
+        def action_ids() -> set[str]:
+            decision = session.packet("pilot:A", full=True)["decision"]
+            self.assertIsNotNone(decision)
+            assert decision is not None
+            return {
+                str(action["id"])
+                for action in decision["ctx"]["legal"]["actions"]
+            }
+
+        def pass_until(predicate, label: str) -> None:
+            for _ in range(12):
+                if predicate():
+                    return
+                pass_current(session)
+            self.fail(
+                f"public entry threshold did not reach {label}: "
+                f"source_zone={source.zone!r}, "
+                f"library={len(engine.state.players['A'].zones['library'])}, "
+                f"stack={[(item.kind, item.semantic_key) for item in engine.state.stack]!r}, "
+                f"pending={getattr(engine.state.pending_decision, 'kind', None)!r}, "
+                f"record={session.record_status!r}, pause={session.pause_reason!r}, "
+                f"history={[(event.kind, event.actor, event.types) for event in engine.state.turn_history.events]!r}"
+            )
+
+        self.assertIn(f"cast:{setup.ref}", action_ids())
+        library_before = len(engine.state.players["A"].zones["library"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        cast_setup = session.act(
+            "pilot:A",
+            {"action_id": f"cast:{setup.ref}"},
+        )
+        self.assertTrue(cast_setup.ok, cast_setup.summary)
+        pass_until(lambda: setup.zone == "battlefield", "setup entry")
+        self.assertIn(f"cast:{source.ref}", action_ids())
+        cast_source = session.act(
+            "pilot:A",
+            {"action_id": f"cast:{source.ref}"},
+        )
+        self.assertTrue(cast_source.ok, cast_source.summary)
+        pass_until(
+            lambda: source.zone == "battlefield"
+            and not engine.state.stack
+            and len(engine.state.players["A"].zones["library"])
+            == library_before - 1,
+            "compiled trigger consequence",
+        )
+
+        self.assertEqual(
+            2,
+            sum(
+                event.kind == "permanent_entered"
+                and event.actor == "A"
+                and "land" not in event.types
+                for event in engine.state.turn_history.events
+            ),
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "public-entry-threshold-actions"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_public_death_threshold_counts_causing_event_before_trigger(self):
+        session = self.session(121100)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Death Threshold Draw Fixture",
+            ref="public-death-threshold",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        victims = tuple(
+            self.add_card(
+                engine,
+                seat="A",
+                name="Generic Creature Goblin Fixture",
+                ref=f"public-death-victim-{index}",
+                zone="battlefield",
+            )
+            for index in range(2)
+        )
+        engine.state.turn_history.events.clear()
+        library_before = len(engine.state.players["A"].zones["library"])
+
+        engine.move_card(
+            victims[0].object_id,
+            "graveyard",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+        engine.move_card(
+            victims[1].object_id,
+            "graveyard",
+            semantic_events=True,
+        )
+        engine._stabilize()
+        self.assertTrue(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+        self.resolve_top(engine)
+        self.assertEqual(
+            library_before - 1,
+            len(engine.state.players["A"].zones["library"]),
+        )
+
+    def test_public_attack_subtype_threshold_executes_compiled_consequence(self):
+        session = self.session(121101)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Goblin Attack Threshold Draw Fixture",
+            ref="public-goblin-attack-threshold",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        attackers = tuple(
+            self.add_card(
+                engine,
+                seat="A",
+                name="Generic Creature Goblin Fixture",
+                ref=f"public-goblin-attacker-{index}",
+                zone="battlefield",
+            )
+            for index in range(2)
+        )
+        engine.state.turn_history.events.clear()
+        record_creature_attack_history(
+            engine,
+            attackers[0],
+            {"target": "B", "kind": "player"},
+        )
+        record_creature_attack_history(
+            engine,
+            attackers[0],
+            {"target": "B", "kind": "player"},
+        )
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A", step="end_step"),
+        )
+        engine._stabilize()
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+
+        record_creature_attack_history(
+            engine,
+            attackers[1],
+            {"target": "B", "kind": "player"},
+        )
+        library_before = len(engine.state.players["A"].zones["library"])
+        engine._dispatch_semantic_event(
+            "step.begin",
+            self.step_context(player="A", step="end_step"),
+        )
+        engine._stabilize()
+        self.assertTrue(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+        self.resolve_top(engine)
+        self.assertEqual(
+            library_before - 1,
+            len(engine.state.players["A"].zones["library"]),
+        )
 
     def test_source_state_intervening_condition_and_current_ability_fail_closed(
         self,

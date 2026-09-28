@@ -13,6 +13,7 @@ from ..continuous_conditions import (
     FixedPublicStateConditionSpec,
     FixedPublicStateFact,
 )
+from ..creature_subtypes import canonical_creature_subtype_surface
 from ..rules.source_references import SourceReferenceSpec
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 
@@ -42,7 +43,7 @@ def _condition(
         amount=amount,
         fact=fact,
         fact_parameter=parameter,
-        schema_version=3,
+        schema_version=4,
     )
 
 
@@ -116,8 +117,12 @@ def fixed_graveyard_condition_query(
         "sorcery",
     }:
         fields["types_all"] = (quality,)
+    elif quality in _COLORS:
+        fields["colors_all"] = (_COLORS[quality],)
+    elif (subtype := canonical_creature_subtype_surface(quality)) is not None:
+        fields["subtypes_all"] = (subtype,)
     else:
-        fields["subtypes_all"] = (quality,)
+        return None
     return _query_condition(
         amount=1,
         scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
@@ -187,38 +192,48 @@ def _fixed_scalar_fact(
 ) -> FixedPublicStateConditionSpec | None:
     facts = {
         "you gained life this turn": (
-            FixedPublicStateFact.CONTROLLER_LIFE_GAINED_THIS_TURN
+            FixedPublicStateFact.CONTROLLER_LIFE_GAINED_THIS_TURN,
+            1,
         ),
         "you lost life this turn": (
-            FixedPublicStateFact.CONTROLLER_LIFE_LOST_THIS_TURN
+            FixedPublicStateFact.CONTROLLER_LIFE_LOST_THIS_TURN,
+            1,
         ),
         "you sacrificed a permanent this turn": (
-            FixedPublicStateFact.CONTROLLER_PERMANENTS_SACRIFICED_THIS_TURN
+            FixedPublicStateFact.CONTROLLER_PERMANENTS_SACRIFICED_THIS_TURN,
+            1,
         ),
         "another creature entered the battlefield under your control this turn": (
-            FixedPublicStateFact.CONTROLLER_OTHER_CREATURES_ENTERED_THIS_TURN
+            FixedPublicStateFact.CONTROLLER_OTHER_CREATURES_ENTERED_THIS_TURN,
+            1,
         ),
         "an artifact entered the battlefield under your control this turn": (
-            FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN
+            FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN,
+            1,
         ),
         "two or more nonland permanents entered the battlefield under your control this turn": (
-            FixedPublicStateFact.CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN
+            FixedPublicStateFact.CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN,
+            2,
         ),
         "two or more creatures died under your control this turn": (
-            FixedPublicStateFact.CONTROLLER_CREATURES_DIED_THIS_TURN
+            FixedPublicStateFact.CONTROLLER_CREATURES_DIED_THIS_TURN,
+            2,
         ),
         "you have more cards in hand than each opponent": (
-            FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE
+            FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE,
+            1,
         ),
         "your life total is less than or equal to half your starting life total": (
-            FixedPublicStateFact.CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE
+            FixedPublicStateFact.CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE,
+            1,
         ),
         "an instant card and a sorcery card are in your graveyard": (
-            FixedPublicStateFact.CONTROLLER_GRAVEYARD_HAS_INSTANT_AND_SORCERY
+            FixedPublicStateFact.CONTROLLER_GRAVEYARD_HAS_INSTANT_AND_SORCERY,
+            1,
         ),
     }
-    fact = facts.get(normalized.casefold())
-    return _condition(fact) if fact is not None else None
+    parsed = facts.get(normalized.casefold())
+    return _condition(parsed[0], amount=parsed[1]) if parsed is not None else None
 
 
 def fixed_public_fact_condition(
@@ -285,10 +300,15 @@ def fixed_public_fact_condition(
         return None
     amount = _amount(subtype_attack.group("count"))
     assert amount is not None and amount > 0
+    subtype = canonical_creature_subtype_surface(
+        subtype_attack.group("subtype")
+    )
+    if subtype is None:
+        return None
     return _condition(
         FixedPublicStateFact.CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN,
         amount=amount,
-        parameter=subtype_attack.group("subtype").casefold(),
+        parameter=subtype,
     )
 
 

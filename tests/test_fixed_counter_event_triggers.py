@@ -903,6 +903,78 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             with self.subTest(excluded=text):
                 self.assertNotEqual("exact", self.compile(text).status)
 
+    def test_intervening_public_facts_preserve_numeric_and_subtype_meaning(self):
+        cases = (
+            (
+                "At the beginning of your upkeep, if two or more nonland "
+                "permanents entered the battlefield under your control this "
+                "turn, draw a card.",
+                "controller_nonland_permanents_entered_this_turn",
+                2,
+                None,
+            ),
+            (
+                "At the beginning of your upkeep, if two or more creatures "
+                "died under your control this turn, draw a card.",
+                "controller_creatures_died_this_turn",
+                2,
+                None,
+            ),
+            (
+                "At the beginning of your upkeep, if you attacked with two "
+                "or more Goblins this turn, draw a card.",
+                "controller_attacked_with_subtype_this_turn",
+                2,
+                "goblin",
+            ),
+            (
+                "At the beginning of your upkeep, if you attacked with two "
+                "or more Elves this turn, draw a card.",
+                "controller_attacked_with_subtype_this_turn",
+                2,
+                "elf",
+            ),
+            (
+                "At the beginning of your upkeep, if you attacked with two "
+                "or more Samurai this turn, draw a card.",
+                "controller_attacked_with_subtype_this_turn",
+                2,
+                "samurai",
+            ),
+        )
+
+        def public_condition(value: Mapping) -> Mapping:
+            if value.get("field") == "fixed_public_state_condition":
+                condition = value.get("condition")
+                if isinstance(condition, Mapping):
+                    return condition
+            for key in ("all", "any"):
+                for child in value.get(key, ()):
+                    if isinstance(child, Mapping):
+                        found = public_condition(child)
+                        if found:
+                            return found
+            return {}
+
+        for text, fact, amount, parameter in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature — Advisor")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                condition = public_condition(ir.faces[0].nodes[0].event_condition)
+                self.assertEqual("public_fact_at_least", condition["kind"])
+                self.assertEqual(4, condition["schema_version"])
+                self.assertEqual(amount, condition["amount"])
+                self.assertEqual(fact, condition["fact"])
+                self.assertEqual(parameter, condition["fact_parameter"])
+
+        malformed = self.compile(
+            "At the beginning of your upkeep, if you attacked with two or "
+            "more Shinythings this turn, draw a card.",
+            type_line="Creature — Advisor",
+        )
+        self.assertNotEqual("exact", malformed.status)
+        self.assertTrue(malformed.material_residuals)
+
     def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
         cases = (
             "Whenever an opponent casts or copies a spell, draw a card.",

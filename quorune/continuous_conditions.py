@@ -229,9 +229,9 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
-    if schema_version != 3:
+    if schema_version not in {3, 4}:
         raise FixedPublicStateConditionError(
-            "Public-fact conditions require schema version 3"
+            "Public-fact conditions require schema version 3 or 4"
         )
     parameter_fact = FixedPublicStateFact.CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN
     if fact is parameter_fact:
@@ -278,6 +278,7 @@ class FixedPublicStateConditionSpec:
             1,
             2,
             3,
+            4,
         }:
             raise FixedPublicStateConditionError(
                 "Unsupported fixed public-state condition schema version"
@@ -410,7 +411,7 @@ class FixedPublicStateConditionSpec:
                     ),
                 }
             )
-        elif self.schema_version == 3:
+        elif self.schema_version in {3, 4}:
             value.update(
                 {
                     "predicate": None,

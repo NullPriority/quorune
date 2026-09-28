@@ -48,6 +48,17 @@ CREATURE_SUBTYPES = frozenset(
 CREATURE_SUBTYPE_RULE_REFERENCE = "205.3m"
 CREATURE_SUBTYPE_SNAPSHOT = "2026-06-19"
 
+_IRREGULAR_CREATURE_PLURALS = dict(
+    value.split(":", 1)
+    for value in (
+        "aetherborn:aetherborn|allies:ally|dwarves:dwarf|elves:elf|"
+        "faeries:faerie|heroes:hero|kithkin:kithkin|merfolk:merfolk|"
+        "mice:mouse|myr:myr|oxen:ox|pegasi:pegasus|"
+        "phyrexians:phyrexian|treefolk:treefolk|"
+        "wolves:wolf"
+    ).split("|")
+)
+
 
 def canonical_creature_subtype(value: str) -> str | None:
     """Return one pinned creature subtype, or ``None`` if unsupported."""
@@ -60,9 +71,33 @@ def canonical_creature_subtype(value: str) -> str | None:
     return normalized if normalized in CREATURE_SUBTYPES else None
 
 
+def canonical_creature_subtype_surface(value: str) -> str | None:
+    """Resolve one pinned subtype from a supported singular or plural surface."""
+
+    if type(value) is not str:
+        return None
+    normalized = " ".join(
+        value.casefold().replace("’", "'").replace("\ufffd", "'").split()
+    )
+    if direct := canonical_creature_subtype(normalized):
+        return direct
+    if normalized in _IRREGULAR_CREATURE_PLURALS:
+        return canonical_creature_subtype(
+            _IRREGULAR_CREATURE_PLURALS[normalized]
+        )
+    if (
+        normalized.endswith("s")
+        and not normalized.endswith("ss")
+        and len(normalized) > 2
+    ):
+        return canonical_creature_subtype(normalized[:-1])
+    return None
+
+
 __all__ = [
     "CREATURE_SUBTYPES",
     "CREATURE_SUBTYPE_RULE_REFERENCE",
     "CREATURE_SUBTYPE_SNAPSHOT",
     "canonical_creature_subtype",
+    "canonical_creature_subtype_surface",
 ]
