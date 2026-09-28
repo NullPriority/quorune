@@ -26,6 +26,11 @@ from .creature_power_damage import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
 )
 from .errors import GameRuleError
+from .continuous_conditions import (
+    FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
+    FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+    FixedPublicStateConditionSpec,
+)
 from .rules.event_subscriptions import FixedEventSubscriptionSet
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
@@ -157,6 +162,12 @@ class TriggerDiscoveryHost(Protocol):
 
     def _numeric_stat(self, object_id: str, stat: str) -> int: ...
 
+    def _fixed_public_state_condition_holds(
+        self,
+        source: CardInstance,
+        condition: FixedPublicStateConditionSpec,
+    ) -> bool: ...
+
     def card_record(self, card: CardInstance) -> Any: ...
 
     def semantic_program_is_current_trusted(
@@ -183,8 +194,12 @@ def semantic_event_value(
     source: CardInstance,
     context: Mapping[str, Any],
 ) -> Any:
+    locked_controller = context.get(
+        "intervening_condition_controller",
+        source.controller,
+    )
     substitutions = {
-        "$source.controller": source.controller,
+        "$source.controller": locked_controller,
         "$source.owner": source.owner,
         "$source.ref": source.ref,
         "$source.object_id": source.object_id,
@@ -288,6 +303,58 @@ def _keyword_intervening_condition_actual(
     )
 
 
+def _public_state_intervening_actual(
+    host: TriggerDiscoveryHost,
+    condition: Mapping[str, Any],
+    *,
+    source: CardInstance,
+    context: Mapping[str, Any],
+) -> bool:
+    raw_condition = condition.get("condition")
+    if not isinstance(raw_condition, Mapping):
+        raise GameRuleError(
+            "Public-state intervening conditions require a typed descriptor"
+        )
+    try:
+        public_condition = FixedPublicStateConditionSpec.from_dict(raw_condition)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    controller = context.get("intervening_condition_controller")
+    if controller is not None and (
+        type(controller) is not str or controller not in host.state.players
+    ):
+        raise GameRuleError(
+            "Intervening-condition controller must name an active seat"
+        )
+    public_source = copy.copy(source)
+    if isinstance(controller, str):
+        public_source.controller = controller
+    locked_identity = context.get("source_logical_object_id")
+    if (
+        isinstance(controller, str)
+        and type(locked_identity) is str
+        and locked_identity
+        and public_source.logical_object_id != locked_identity
+    ):
+        public_source.zone = "departed"
+        public_source.attached_to = None
+        public_source.counters = {}
+        identity_prefix = f"{public_source.object_id}@"
+        incarnation = locked_identity.removeprefix(identity_prefix)
+        if (
+            not locked_identity.startswith(identity_prefix)
+            or not incarnation.isdigit()
+        ):
+            raise GameRuleError(
+                "Intervening-condition source identity is malformed"
+            )
+        public_source.zone_change_counter = int(incarnation)
+    return host._fixed_public_state_condition_holds(
+        public_source,
+        public_condition,
+    )
+
+
 def _semantic_condition_actual(
     host: TriggerDiscoveryHost,
     condition: Mapping[str, Any],
@@ -298,6 +365,13 @@ def _semantic_condition_actual(
     field = str(condition.get("field") or "")
     if not field:
         raise GameRuleError("Semantic event condition requires a field")
+    if field == FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD:
+        return _public_state_intervening_actual(
+            host,
+            condition,
+            source=source,
+            context=context,
+        )
     if field == "source_controller_subtype_count":
         subtype = str(condition.get("subtype") or "").casefold()
         if not subtype:
@@ -548,6 +622,31 @@ def semantic_event_condition_matches(
         str(condition.get("op") or "eq"),
         actual,
         expected,
+    )
+
+
+def semantic_intervening_condition_matches(
+    host: TriggerDiscoveryHost,
+    program: SemanticProgram,
+    *,
+    source: CardInstance | None,
+    context: Mapping[str, Any],
+) -> bool:
+    """Recheck one intervening-if program at its trigger-owner boundary."""
+
+    return bool(
+        source is not None
+        and program.event_condition is not None
+        and (
+            FIXED_PUBLIC_STATE_INTERVENING_COVERAGE in program.coverage
+            or source.zone == program.active_zone
+        )
+        and semantic_event_condition_matches(
+            host,
+            program.event_condition,
+            source=source,
+            context=context,
+        )
     )
 
 
@@ -870,6 +969,14 @@ def _semantic_trigger_context(
         ),
         **_echo_control_context(source, program.event_condition),
         **(
+            {"intervening_condition_controller": source.controller}
+            if _condition_mentions_field(
+                selected_condition,
+                FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
+            )
+            else {}
+        ),
+        **(
             {"trigger_target_selection_pending": True}
             if program.target_schema
             else {}
@@ -1191,6 +1298,7 @@ __all__ = [
     "applicable_trigger_multipliers",
     "dispatch_semantic_event",
     "semantic_event_condition_matches",
+    "semantic_intervening_condition_matches",
     "semantic_event_matches",
     "semantic_event_value",
     "trigger_multiplier_participations",

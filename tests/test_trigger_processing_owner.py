@@ -1068,6 +1068,7 @@ class TriggerOccurrenceTests(unittest.TestCase):
                 "source_logical_object_id": "logical-2",
                 "source_zone": "battlefield",
                 "intervening_condition": {"field": "enabled"},
+                "intervening_condition_controller": "A",
                 "trigger_target_selection_pending": True,
                 "additional_trigger_source": {
                     "source_object_id": "multiplier-1"
@@ -1099,6 +1100,7 @@ class TriggerOccurrenceTests(unittest.TestCase):
             {"source_logical_object_id": 4},
             {"trigger_target_selection_pending": 1},
             {"intervening_condition": []},
+            {"intervening_condition_controller": 4},
             {"additional_trigger_source": "oracle text"},
         )
         for update in malformed_values:

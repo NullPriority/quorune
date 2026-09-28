@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "fdd50ae9c5106d1f36b112081954ffef97bd634b62378c91dce9c8115e8de920"
+verified: "6b0bf696e1beedf8e5f1d185cea01a4bd46be538a57dee047fc46706f37f06c2"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -29,6 +29,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Rowan Kenrith | 209 | 28 | 5 | 6 | 5 | 21 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
+| Starscream, Power Hungry // Starscream, Seeker Leader | 208 | 28 | 6 | 8 | 4 | 19 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 205 | 25 | 7 | 4 | 5 | 22 | `blocked` |
 | Crystal Fragments // Summon: Alexander | 204 | 26 | 7 | 7 | 7 | 8 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Era of Enlightenment // Hand of Enlightenment | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Invasion of Ixalan // Belligerent Regisaur | 179 | 22 | 6 | 4 | 5 | 16 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
-| Invasion of Tolvada // The Broken Sky | 178 | 21 | 6 | 4 | 5 | 17 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

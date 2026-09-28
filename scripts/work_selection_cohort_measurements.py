@@ -53,6 +53,7 @@ from quorune.compiler.modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from quorune.compiler.public_zone_move_templates import (
     public_zone_move_effect_template,
 )
+from quorune.compiler.public_state_queries import fixed_public_state_condition
 from quorune.compiler.public_cast_cost_modifiers import (
     public_cast_cost_modifier_template,
     public_cast_cost_modifier_v2_template,
@@ -358,6 +359,9 @@ _PROBE_TYPED_TOKEN_ABILITY_PROGRAMS = (
 _PROBE_PUBLIC_STATIC_CONDITION_CLOSURE = (
     "public-static-condition-closure-existing-owner-v1"
 )
+_PROBE_PUBLIC_INTERVENING_IF_TRIGGER_CLOSURE = (
+    "public-intervening-if-trigger-closure-existing-owner-v1"
+)
 _CAST_LIFECYCLE_FANOUT_TERMS = (
     "aftermath",
     "blitz",
@@ -549,6 +553,7 @@ _PROBE_IDS = {
     _PROBE_TYPED_WARD_CLOSURE,
     _PROBE_TYPED_TOKEN_ABILITY_PROGRAMS,
     _PROBE_PUBLIC_STATIC_CONDITION_CLOSURE,
+    _PROBE_PUBLIC_INTERVENING_IF_TRIGGER_CLOSURE,
 }
 
 _FIXED_TARGET_SET_COMPOSITION_MECHANICS = {
@@ -5058,6 +5063,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_PUBLIC_INTERVENING_IF_TRIGGER_CLOSURE:
+        return _public_intervening_if_trigger_closure_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_TYPED_WARD_CLOSURE:
         return _typed_ward_closure_measurement(
             frontier=frontier,
@@ -8690,6 +8704,170 @@ def _public_static_condition_closure_measurement(
             ),
             "cards_excluded_by_unsupported_grammar": len(
                 broad_cards - set(matched_cards)
+            ),
+        },
+    }
+
+
+def _public_intervening_if_trigger_candidate(
+    *,
+    record: Any,
+    ability: Mapping[str, Any],
+) -> bool:
+    source_name, _source_is_permanent, _attachment = _source_face_context(
+        record, ability
+    )
+    material = trigger_ability_word_material_line(
+        _without_parenthetical_reminder(_source_line(record, ability))
+    )
+    match = re.fullmatch(
+        r"(?P<prefix>.+?), if (?P<condition>[^,]+), (?P<body>.+)",
+        material,
+        re.IGNORECASE,
+    )
+    return bool(
+        match is not None
+        and fixed_public_state_condition(
+            match.group("condition"),
+            source_name=source_name,
+        )
+        is not None
+    )
+
+
+def _public_intervening_if_trigger_closure_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure closed public conditions composed with exact event bodies."""
+
+    registry = load_default_capability_registry()
+    capability_id = "trigger.condition.fixed_public_state"
+    broad_cards: set[str] = set()
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    exact_ability_gain = 0
+    residual_reduction = 0
+    existing_exact_siblings = 0
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = tuple(
+            ability
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+            and _public_intervening_if_trigger_candidate(
+                record=record,
+                ability=ability,
+            )
+        )
+        if not candidates:
+            continue
+        broad_cards.add(oracle_id)
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        nodes = {
+            (face.face_id, node.node_id): node
+            for face in compiled.faces
+            for node in face.nodes
+        }
+        matched = tuple(
+            ability
+            for ability in candidates
+            if (
+                (
+                    node := nodes.get(
+                        (
+                            str(ability.get("face_id") or "front"),
+                            str(ability.get("ability_id") or ""),
+                        )
+                    )
+                )
+                is not None
+                and node.exact
+                and capability_id in node.capability_dependencies
+            )
+        )
+        if not matched:
+            continue
+        previous_exact = int(card.get("exact_ability_count") or 0)
+        current_exact = sum(
+            int(node.exact)
+            for face in compiled.faces
+            for node in face.nodes
+        )
+        gain = max(0, current_exact - previous_exact)
+        previous_residuals = sum(
+            len(ability.get("residuals", ()))
+            for ability in card.get("abilities", ())
+        )
+        reduced = max(
+            0, previous_residuals - len(compiled.material_residuals)
+        )
+        if not (gain or reduced):
+            continue
+        matched_cards[oracle_id] = len(compiled.material_residuals)
+        exact_ability_gain += gain
+        residual_reduction += reduced
+        existing_exact_siblings += previous_exact
+        if card.get("oracle_ir_status") != "exact" and compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = bool(complete_cards) and (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": len(matched_cards),
+            "existing_exact_sibling_nodes": existing_exact_siblings,
+            "remaining_residual_sibling_nodes": sum(matched_cards.values()),
+            "trusted_program_transitions": len(complete_cards),
+            "unresolved_program_transitions": (
+                len(matched_cards) - len(complete_cards)
+            ),
+            "expected_oracle_residual_reduction": residual_reduction,
+            "expected_card_program_residual_reduction": residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": sum(
+                count > 0 for count in matched_cards.values()
+            ),
+            "cards_excluded_by_unsupported_grammar": max(
+                0,
+                len(broad_cards) - len(matched_cards),
             ),
         },
     }

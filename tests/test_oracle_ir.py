@@ -2106,8 +2106,8 @@ class OracleIRTests(unittest.TestCase):
         record = replace(
             self.db.lookup("Elvish Visionary"),
             oracle_text=(
-                "When this creature enters, if you control an Elf, "
-                "draw a card."
+                "When this creature enters, if a chosen player controls "
+                "an Elf, draw a card."
             ),
         )
         ir = compile_oracle_card(record)

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "add82fc26965c2739de8fb255a4341eeb552a5c481d874ea8f97d3f4dc2f8299",
-  "declaration_source_fingerprint": "eee3cfb608f5c862732d4ac3c10610baeb6c0103f6beedf3a6a43dcab5b203ae",
+  "registry_fingerprint": "b66f17d06c24217fdd535455f4f0b53315322e9a980dc26019cb281a26de9493",
+  "declaration_source_fingerprint": "b17c9992e10b5e362d45a94fa4caff8c7fb3feb1e563c105a3a70b3473f35325",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -57850,6 +57850,118 @@
       "applicability_note": "Save and exactly replay replacement-ordered creation, intrinsic typed token programs, APNAP trigger placement, and final authoritative state."
     },
     {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_state_intervening_condition_and_current_ability_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recheck live source state before resolution and suppress occurrence when the shared current-ability owner removes the trigger."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the trigger controller fixed through source control change and source departure in a four-player game."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_state_intervening_if_dependency_and_parser_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the shared condition parser and require the representative source lines to return to material trigger residuals."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_state_intervening_if_dependency_and_parser_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Block exact admission when the typed condition capability or shared parser is unavailable."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_state_intervening_if_contract_matrix",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile closed step, source-zone, attack, query, history, and public-status intervening-if conditions through the shared typed descriptor and normalized event owner."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project only ordinary public trigger state while controller-relative evaluation remains authoritative."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Checkpoint a trigger after source departure and replay the second condition check and effect result exactly."
+    },
+    {
       "capability_id": "trigger.delayed.fixed_next_turn_draw",
       "evidence_class": "interaction",
       "test_id": "tests.test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_typed_aura_and_delayed_draw_compose",
@@ -67916,5 +68028,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "f08a84275cbc92c1dd194f89daed6a0abd5c65d5502d9d7a290ba79655cd039c"
+  "fingerprint": "8ef39b121ebd74030d6a8a88d4d910da5d81d07ef4463e27d76aeb046c2e720c"
 }

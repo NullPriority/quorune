@@ -804,7 +804,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever you cast a spell with mana value 3, draw a card.",
             "Whenever you cast a spell that targets a creature, draw a card.",
             "Whenever you cast or copy a Spirit spell, draw a card.",
-            "Whenever you cast a Spirit spell, if you control an artifact, draw a card.",
+            "Whenever you cast a Spirit spell, if a chosen player controls "
+            "an artifact, draw a card.",
             "Whenever you cast a spell of the chosen color, draw a card.",
             "Whenever you cast a spell with mana value greater than the "
             "number of counters on this artifact, draw a card.",
@@ -816,10 +817,94 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.faces[0].residuals)
 
+    def test_public_state_intervening_if_contract_matrix(self):
+        cases = (
+            (
+                "At the beginning of your upkeep, if you control an artifact, "
+                "draw a card.",
+                "Creature — Advisor",
+                "step.begin",
+                "query_count_at_least",
+            ),
+            (
+                "When this creature enters, if you gained life this turn, "
+                "draw a card.",
+                "Creature — Wizard",
+                "permanent.enter.self",
+                "public_fact_at_least",
+            ),
+            (
+                "Whenever this creature attacks, if there are four or more "
+                "card types among cards in your graveyard, this creature gets "
+                "+2/+2 until end of turn.",
+                "Creature — Horror",
+                "creature.attacks",
+                "public_fact_at_least",
+            ),
+            (
+                "At the beginning of each end step, if you're the monarch, "
+                "create a 1/1 white Human creature token.",
+                "Enchantment",
+                "step.begin",
+                "controller_is_monarch",
+            ),
+        )
+
+        def fields(condition: Mapping | None) -> set[str]:
+            if not isinstance(condition, Mapping):
+                return set()
+            result = (
+                {str(condition["field"])}
+                if isinstance(condition.get("field"), str)
+                else set()
+            )
+            for key in ("all", "any"):
+                for child in condition.get(key, ()):
+                    result.update(
+                        fields(child if isinstance(child, Mapping) else None)
+                    )
+            return result
+
+        for text, type_line, event, condition_kind in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(event, node.event)
+                self.assertIn(
+                    "fixed_public_state_condition",
+                    fields(node.event_condition),
+                )
+                serialized = json.dumps(node.event_condition, sort_keys=True)
+                self.assertIn(condition_kind, serialized)
+                self.assertIn("intervening_condition", node.runtime_coverage)
+                self.assertIn(
+                    "fixed_public_state_intervening_condition",
+                    node.runtime_coverage,
+                )
+                self.assertIn(
+                    CURRENT_ABILITY_FRAGMENT_COVERAGE,
+                    node.runtime_coverage,
+                )
+                self.assertIn(
+                    "trigger.condition.fixed_public_state",
+                    node.capability_dependencies,
+                )
+
+        excluded = (
+            "At the beginning of your upkeep, if a chosen player controls an "
+            "artifact, draw a card.",
+            "At the beginning of your upkeep, if you control an artifact or "
+            "enchantment and have seven cards in hand, draw a card.",
+            "At the beginning of your upkeep, if you control an artifact, "
+            "draw a card. Otherwise, discard a card.",
+        )
+        for text in excluded:
+            with self.subTest(excluded=text):
+                self.assertNotEqual("exact", self.compile(text).status)
+
     def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
         cases = (
-            "At the beginning of your upkeep, if you have no cards in hand, "
-            "draw a card.",
             "Whenever an opponent casts or copies a spell, draw a card.",
             "Whenever this creature attacks alone, draw a card.",
             "When you do, draw a card.",
@@ -836,6 +921,49 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                     )
                 )
                 self.assertTrue(ir.faces[0].residuals)
+
+    def test_public_state_intervening_if_dependency_and_parser_fail_closed(self):
+        text = (
+            "At the beginning of your upkeep, if you control an artifact, "
+            "draw a card."
+        )
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        dependency = next(
+            row
+            for row in registry["capabilities"]
+            if row["id"] == "trigger.condition.fixed_public_state"
+        )
+        dependency["status"] = "blocked"
+        dependency["blockers"] = ["focused intervening-condition mutation"]
+        blocked = compile_oracle_card(
+            replace(
+                self.db.lookup("Scheduled Counter Trigger Fixture"),
+                name="Intervening Dependency Fixture",
+                oracle_text=text,
+                type_line="Creature — Advisor",
+                keywords=(),
+                faces=(),
+            ),
+            capability_registry=CapabilityRegistry(registry),
+            capability_profile="commander_review",
+        )
+        self.assertNotEqual("exact", blocked.status)
+        self.assertIn(
+            "capability:status:trigger.condition.fixed_public_state:blocked",
+            {
+                blocker
+                for residual in blocked.material_residuals
+                for blocker in residual.blockers
+            },
+        )
+        with patch(
+            "quorune.compiler.fixed_counter_trigger_nodes."
+            "fixed_public_state_condition",
+            return_value=None,
+        ):
+            mutated = self.compile(text, type_line="Creature — Advisor")
+        self.assertNotEqual("exact", mutated.status)
+        self.assertTrue(mutated.material_residuals)
 
     def test_fixed_source_zone_and_damage_bindings_compile_exactly(self):
         cases = (
@@ -986,8 +1114,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def test_fixed_source_event_near_misses_remain_material(self):
         cases = (
-            "When this Vehicle enters, if you control an artifact, draw a "
-            "card.",
+            "When this Vehicle enters, if a chosen player controls an "
+            "artifact, draw a card.",
             "When this Vehicle leaves the battlefield, draw a card.",
             "When this creature is put into a graveyard from the battlefield, "
             "draw a card.",
@@ -1972,7 +2100,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever this creature attacks alone, put a +1/+1 counter on this creature.",
             "Whenever an opponent gains life, put a +1/+1 counter on this creature.",
             "Whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
-            "At the beginning of your upkeep, if you control a creature, put a charge counter on this artifact.",
+            "At the beginning of your upkeep, if a chosen player controls a "
+            "creature, put a charge counter on this artifact.",
             "At the beginning of your upkeep, put X charge counters on this artifact.",
             "At the beginning of your upkeep, you may put X charge counters on this artifact.",
             "At the beginning of your upkeep, you may put a charge counter on this artifact. If you do, draw a card.",

@@ -19,6 +19,12 @@ class FixedPublicStateConditionError(ValueError):
 FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID = (
     "continuous.characteristics.fixed-public-state.v1"
 )
+FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD = (
+    "fixed_public_state_condition"
+)
+FIXED_PUBLIC_STATE_INTERVENING_COVERAGE = (
+    "fixed_public_state_intervening_condition"
+)
 
 
 class FixedPublicStateConditionKind(StrEnum):
@@ -584,6 +590,8 @@ class FixedPublicStateConditionSpec:
 
 __all__ = [
     "FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID",
+    "FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD",
+    "FIXED_PUBLIC_STATE_INTERVENING_COVERAGE",
     "FixedPublicStateConditionError",
     "FixedPublicStateConditionKind",
     "FixedPublicStateFact",
