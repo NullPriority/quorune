@@ -804,7 +804,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever you cast a spell with mana value 3, draw a card.",
             "Whenever you cast a spell that targets a creature, draw a card.",
             "Whenever you cast or copy a Spirit spell, draw a card.",
-            "Whenever you cast a Spirit spell, if you control an artifact, draw a card.",
+            "Whenever you cast a Spirit spell, if a chosen player controls "
+            "an artifact, draw a card.",
             "Whenever you cast a spell of the chosen color, draw a card.",
             "Whenever you cast a spell with mana value greater than the "
             "number of counters on this artifact, draw a card.",
@@ -1113,8 +1114,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def test_fixed_source_event_near_misses_remain_material(self):
         cases = (
-            "When this Vehicle enters, if you control an artifact, draw a "
-            "card.",
+            "When this Vehicle enters, if a chosen player controls an "
+            "artifact, draw a card.",
             "When this Vehicle leaves the battlefield, draw a card.",
             "When this creature is put into a graveyard from the battlefield, "
             "draw a card.",
@@ -2099,7 +2100,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever this creature attacks alone, put a +1/+1 counter on this creature.",
             "Whenever an opponent gains life, put a +1/+1 counter on this creature.",
             "Whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
-            "At the beginning of your upkeep, if you control a creature, put a charge counter on this artifact.",
+            "At the beginning of your upkeep, if a chosen player controls a "
+            "creature, put a charge counter on this artifact.",
             "At the beginning of your upkeep, put X charge counters on this artifact.",
             "At the beginning of your upkeep, you may put X charge counters on this artifact.",
             "At the beginning of your upkeep, you may put a charge counter on this artifact. If you do, draw a card.",
