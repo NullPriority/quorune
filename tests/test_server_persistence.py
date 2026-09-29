@@ -221,6 +221,47 @@ class ServerPersistenceTests(unittest.IsolatedAsyncioTestCase):
             restored = persistence.load(self.db, session.state.game_id)
             self.assertEqual(session.state.revision, restored.session.state.revision)
 
+    async def test_review_size_fixed_point_derives_semantics_once(self):
+        session = self.make_session(33007)
+        session.pause(
+            {
+                "kind": "administrative_stop",
+                "label": "Single semantic derivation test",
+            }
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            persistence = DirectoryGamePersistence(Path(tmp) / "games")
+            service = GameService(session)
+            record_dir = persistence.game_directory(session.state.game_id)
+
+            from quorune import report as report_module
+
+            with mock.patch.object(
+                report_module,
+                "derive_review",
+                wraps=report_module.derive_review,
+            ) as derive:
+                persistence.save(service)
+
+            self.assertEqual(1, derive.call_count)
+            review = json.loads(
+                (record_dir / "review.json").read_text(encoding="utf-8")
+            )
+            sizes = review["size_comparison"]
+            self.assertEqual(
+                (record_dir / "review.json").stat().st_size
+                + (record_dir / "review.md").stat().st_size,
+                sizes["review_artifact_bytes"],
+            )
+            self.assertEqual(
+                sum(
+                    path.stat().st_size
+                    for path in record_dir.iterdir()
+                    if path.is_file()
+                ),
+                sizes["complete_record_bytes"],
+            )
+
     async def test_sqlite_idempotency_survives_service_restart_without_token(self):
         session = self.make_session(33002)
         envelope = self.envelope(session, command_id="durable-1")

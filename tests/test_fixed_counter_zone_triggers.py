@@ -124,6 +124,8 @@ def focused_database(directory: str) -> CardDatabase:
             / "fixed-typed-event-trigger-cards.json",
             ROOT / "tests" / "fixtures" / "typecycling-cards.json",
             ROOT / "tests" / "fixtures" / "kicker-rules-cards.json",
+            ROOT / "tests" / "fixtures" / "mill-cards.json",
+            ROOT / "tests" / "fixtures" / "regeneration-cards.json",
         ],
         database,
     )
@@ -1063,6 +1065,423 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
         expected_hash = authoritative_state_hash(engine.state)
         with tempfile.TemporaryDirectory() as temporary:
             record_dir = Path(temporary) / "public-entry-threshold-actions"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_simultaneous_entry_history_is_complete_before_discovery_in_both_orders(self):
+        for source_first in (True, False):
+            with self.subTest(source_first=source_first):
+                session = self.session(121102 + int(source_first))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Nonland Entry Threshold Draw Fixture",
+                    ref=f"simultaneous-entry-source-{source_first}",
+                    zone="hand",
+                )
+                program = self.register_typed_event_trigger(engine, source)
+                companion = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Creature Goblin Fixture",
+                    ref=f"simultaneous-entry-companion-{source_first}",
+                    zone="hand",
+                )
+                engine.state.turn_history.events.clear()
+                library_before = len(engine.state.players["A"].zones["library"])
+                ordered = (source, companion) if source_first else (companion, source)
+
+                engine._move_cards_simultaneously(
+                    tuple((card.object_id, "battlefield") for card in ordered),
+                    reason="simultaneous entry history witness",
+                    log=False,
+                )
+                engine._stabilize()
+                matching = [
+                    item for item in engine.state.stack if item.semantic_key == program.key
+                ]
+                self.assertEqual(1, len(matching))
+                self.resolve_top(engine)
+                self.assertEqual(
+                    library_before - 1,
+                    len(engine.state.players["A"].zones["library"]),
+                )
+                self.assertEqual(
+                    2,
+                    sum(
+                        event.kind == "permanent_entered"
+                        and event.actor == "A"
+                        and "land" not in event.types
+                        for event in engine.state.turn_history.events
+                    ),
+                )
+
+    def test_sequential_entry_history_remains_distinct(self):
+        cases = ((True, 0), (False, 1))
+        for source_first, expected_draws in cases:
+            with self.subTest(source_first=source_first):
+                session = self.session(121104 + int(source_first))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Nonland Entry Threshold Draw Fixture",
+                    ref=f"sequential-entry-source-{source_first}",
+                    zone="hand",
+                )
+                program = self.register_typed_event_trigger(engine, source)
+                companion = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Creature Goblin Fixture",
+                    ref=f"sequential-entry-companion-{source_first}",
+                    zone="hand",
+                )
+                engine.state.turn_history.events.clear()
+                library_before = len(engine.state.players["A"].zones["library"])
+                ordered = (source, companion) if source_first else (companion, source)
+                for card in ordered:
+                    engine.move_card(
+                        card.object_id,
+                        "battlefield",
+                        semantic_events=True,
+                    )
+                    engine._stabilize()
+                matching = [
+                    item for item in engine.state.stack if item.semantic_key == program.key
+                ]
+                self.assertEqual(expected_draws, len(matching))
+                for _ in range(expected_draws):
+                    self.resolve_top(engine)
+                self.assertEqual(
+                    library_before - expected_draws,
+                    len(engine.state.players["A"].zones["library"]),
+                )
+
+    def test_simultaneous_death_history_precedes_each_occurrence_discovery(self):
+        session = self.session(121106)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Death Threshold Draw Fixture",
+            ref="simultaneous-death-source",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        victims = tuple(
+            self.add_card(
+                engine,
+                seat="A",
+                name="Generic Creature Goblin Fixture",
+                ref=f"simultaneous-death-victim-{index}",
+                zone="battlefield",
+            )
+            for index in range(2)
+        )
+        engine.state.turn_history.events.clear()
+        library_before = len(engine.state.players["A"].zones["library"])
+        engine._move_cards_simultaneously(
+            tuple((card.object_id, "graveyard") for card in victims),
+            reason="simultaneous death history witness",
+            log=False,
+        )
+        self.assertEqual(1, len(engine.state.pending_trigger_batches))
+        pending = [
+            item
+            for item in engine.state.pending_trigger_batches[0].items
+            if item.source_ability_id == program.key
+        ]
+        self.assertEqual(2, len(pending))
+        engine._stabilize()
+        if engine.state.pending_decision is not None:
+            self.assertEqual("trigger.order", engine.state.pending_decision.kind)
+            ordered = session.act(
+                "pilot:A",
+                {
+                    "action_id": "order",
+                    "triggers": [item.ref for item in pending],
+                },
+            )
+            self.assertTrue(ordered.ok, ordered.summary)
+        for _ in range(2):
+            self.resolve_top(engine)
+        self.assertEqual(
+            library_before - 2,
+            len(engine.state.players["A"].zones["library"]),
+        )
+
+    def test_leaving_observer_uses_complete_simultaneous_death_history_in_both_orders(self):
+        for source_first in (True, False):
+            with self.subTest(source_first=source_first):
+                session = self.session(121107 + int(source_first))
+                engine = session.engine
+                source = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Death Threshold Draw Fixture",
+                    ref=f"leaving-death-source-{source_first}",
+                    zone="battlefield",
+                )
+                program = self.register_typed_event_trigger(engine, source)
+                victim = self.add_card(
+                    engine,
+                    seat="A",
+                    name="Generic Creature Goblin Fixture",
+                    ref=f"leaving-death-victim-{source_first}",
+                    zone="battlefield",
+                )
+                engine.state.turn_history.events.clear()
+                library_before = len(engine.state.players["A"].zones["library"])
+                ordered = (source, victim) if source_first else (victim, source)
+                engine._move_cards_simultaneously(
+                    tuple((card.object_id, "graveyard") for card in ordered),
+                    reason="leaving observer simultaneous history witness",
+                    log=False,
+                )
+                engine._stabilize()
+                matching = [
+                    item for item in engine.state.stack if item.semantic_key == program.key
+                ]
+                self.assertEqual(1, len(matching))
+                self.resolve_top(engine)
+                self.assertEqual(
+                    library_before - 1,
+                    len(engine.state.players["A"].zones["library"]),
+                )
+
+    def test_simultaneous_history_uses_final_destinations_and_previous_controllers(self):
+        replacement_session = self.session(121109)
+        replacement_engine = replacement_session.engine
+        source = self.add_card(
+            replacement_engine,
+            seat="A",
+            name="Generic Death Threshold Draw Fixture",
+            ref="replacement-history-source",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(replacement_engine, source)
+        replacement_source = self.add_card(
+            replacement_engine,
+            seat="B",
+            name="Mill Exile Replacement",
+            ref="replacement-history-void-source",
+            zone="battlefield",
+        )
+        for generated in generated_programs(
+            self.db,
+            self.db.by_oracle_id(replacement_source.oracle_id),
+            trust_level="trusted",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        ):
+            replacement_engine.semantics.put(generated)
+        redirected = self.add_card(
+            replacement_engine,
+            seat="A",
+            name="Generic Creature Goblin Fixture",
+            ref="replacement-history-redirected",
+            zone="battlefield",
+        )
+        dies = self.add_card(
+            replacement_engine,
+            seat="B",
+            controller="A",
+            name="Generic Creature Goblin Fixture",
+            ref="replacement-history-dies",
+            zone="battlefield",
+        )
+        replacement_engine.state.turn_history.events.clear()
+        replacement_engine._move_cards_simultaneously(
+            (
+                (redirected.object_id, "graveyard"),
+                (dies.object_id, "graveyard"),
+            ),
+            reason="replacement-filtered simultaneous history witness",
+            log=False,
+        )
+        replacement_engine._stabilize()
+        self.assertEqual("exile", redirected.zone)
+        self.assertEqual("graveyard", dies.zone)
+        self.assertEqual(1, redirected.counters.get("void", 0))
+        self.assertEqual(
+            1,
+            sum(
+                event.kind == "creature_died"
+                and event.actor == "A"
+                for event in replacement_engine.state.turn_history.events
+            ),
+        )
+        self.assertFalse(
+            any(
+                item.semantic_key == program.key
+                for item in replacement_engine.state.stack
+            )
+        )
+
+        controller_session = self.session(121110)
+        controller_engine = controller_session.engine
+        controller_source = self.add_card(
+            controller_engine,
+            seat="A",
+            name="Generic Death Threshold Draw Fixture",
+            ref="multiple-controller-history-source",
+            zone="battlefield",
+        )
+        controller_program = self.register_typed_event_trigger(
+            controller_engine,
+            controller_source,
+        )
+        controlled_a = self.add_card(
+            controller_engine,
+            seat="A",
+            name="Generic Creature Goblin Fixture",
+            ref="multiple-controller-a",
+            zone="battlefield",
+        )
+        controlled_b = self.add_card(
+            controller_engine,
+            seat="B",
+            name="Generic Creature Goblin Fixture",
+            ref="multiple-controller-b",
+            zone="battlefield",
+        )
+        controller_engine.state.turn_history.events.clear()
+        controller_engine._move_cards_simultaneously(
+            (
+                (controlled_a.object_id, "graveyard"),
+                (controlled_b.object_id, "graveyard"),
+            ),
+            reason="multiple-controller simultaneous history witness",
+            log=False,
+        )
+        controller_engine._stabilize()
+        self.assertEqual(
+            {"A": 1, "B": 1},
+            {
+                seat: sum(
+                    event.kind == "creature_died" and event.actor == seat
+                    for event in controller_engine.state.turn_history.events
+                )
+                for seat in "AB"
+            },
+        )
+        self.assertFalse(
+            any(
+                item.semantic_key == controller_program.key
+                for item in controller_engine.state.stack
+            )
+        )
+
+    def test_simultaneous_death_history_replays_from_pre_action_checkpoint(self):
+        session = self.session(121111)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Death Threshold Draw Fixture",
+            ref="replay-death-threshold-source",
+            zone="battlefield",
+        )
+        program = self.register_typed_event_trigger(engine, source)
+        victims = tuple(
+            self.add_card(
+                engine,
+                seat="A",
+                name="Generic Creature Goblin Fixture",
+                ref=f"replay-death-threshold-victim-{index}",
+                zone="battlefield",
+            )
+            for index in range(2)
+        )
+        wrath = self.add_card(
+            engine,
+            seat="A",
+            name="Wrath of God",
+            ref="replay-death-threshold-wrath",
+            zone="hand",
+        )
+        for generated in generated_programs(
+            self.db,
+            self.db.by_oracle_id(wrath.oracle_id),
+            trust_level="trusted",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        ):
+            engine.semantics.put(generated)
+        engine.state.turn_history.events.clear()
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.players["A"].mana_pool.update({"C": 2, "W": 2})
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine._grant_priority("A")
+        engine.pump()
+        decision = session.packet("pilot:A", full=True)["decision"]
+        self.assertIsNotNone(decision)
+        assert decision is not None
+        action = next(
+            value
+            for value in decision["ctx"]["legal"]["actions"]
+            if value.get("card") == wrath.ref
+        )
+        library_before = len(engine.state.players["A"].zones["library"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"C": 2, "W": 2},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        for _ in range(48):
+            decision = engine.state.pending_decision
+            if decision is not None and decision.kind == "trigger.order":
+                pending = engine.state.pending_trigger_batches[0].items
+                result = session.act(
+                    "pilot:A",
+                    {
+                        "action_id": "order",
+                        "triggers": [item.ref for item in pending],
+                    },
+                )
+                self.assertTrue(result.ok, result.summary)
+                continue
+            if (
+                not engine.state.stack
+                and not engine.state.pending_trigger_batches
+                and len(engine.state.players["A"].zones["library"])
+                == library_before - 2
+            ):
+                break
+            pass_current(session)
+        else:
+            self.fail("simultaneous death replay witness did not converge")
+        self.assertEqual("graveyard", wrath.zone)
+        self.assertTrue(all(card.zone == "graveyard" for card in victims))
+        self.assertEqual(
+            3,
+            sum(
+                event.kind == "creature_died" and event.actor == "A"
+                for event in engine.state.turn_history.events
+            ),
+        )
+        self.assertFalse(
+            any(item.semantic_key == program.key for item in engine.state.stack)
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "simultaneous-death-history-record"
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)

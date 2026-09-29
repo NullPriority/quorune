@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import gzip
+import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import subprocess
 import sys
+from urllib import error as url_error
+from urllib import request as url_request
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,6 +95,59 @@ def _decode_frontier(raw: bytes, *, label: str) -> dict:
     if not isinstance(value, dict):
         raise ValueError(f"{label} card frontier must be an object")
     return value
+
+
+def _remote_git_blob(object_id: str) -> bytes | None:
+    """Read one immutable receipt blob when shallow Git lacks the object."""
+
+    repository = str(os.environ.get("GITHUB_REPOSITORY") or "")
+    if (
+        not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository)
+        or not re.fullmatch(r"[0-9a-f]{40}", object_id)
+    ):
+        return None
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "quorune-generated-owner",
+    }
+    token = str(
+        os.environ.get("GH_TOKEN")
+        or os.environ.get("GITHUB_TOKEN")
+        or ""
+    )
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    try:
+        with url_request.urlopen(
+            url_request.Request(
+                f"https://api.github.com/repos/{repository}/git/blobs/{object_id}",
+                headers=headers,
+            ),
+            timeout=30,
+        ) as response:
+            payload = json.loads(response.read())
+    except (
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        url_error.URLError,
+    ):
+        return None
+    if (
+        not isinstance(payload, dict)
+        or payload.get("encoding") != "base64"
+        or type(payload.get("content")) is not str
+    ):
+        return None
+    try:
+        raw = base64.b64decode(payload["content"], validate=False)
+    except (TypeError, ValueError):
+        return None
+    identity = hashlib.sha1(
+        f"blob {len(raw)}\0".encode("ascii") + raw
+    ).hexdigest()
+    return raw if identity == object_id else None
 
 
 def _durable_main_frontier(*, expected_fingerprint: str) -> dict:
@@ -193,11 +250,15 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
             stderr=subprocess.PIPE,
         )
         if completed.returncode:
-            return _durable_main_frontier(
-                expected_fingerprint=expected,
-            )
+            raw = _remote_git_blob(object_id)
+            if raw is None:
+                return _durable_main_frontier(
+                    expected_fingerprint=expected,
+                )
+        else:
+            raw = completed.stdout
         value = _decode_frontier(
-            completed.stdout,
+            raw,
             label="Landed transition base",
         )
         if value.get("fingerprint") != expected:

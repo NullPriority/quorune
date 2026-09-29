@@ -284,6 +284,16 @@ damage, prevention, and entry participation remain blocked. New rules work must
 identify event/replacement participation and use capability IDs from the
 versioned registry.
 
+The simultaneous zone-transition owner separates history publication from
+trigger discovery. After every replacement-aware move in a batch commits, it
+records entry, death, discard, and sacrifice history for the actual final
+occurrences, then discovers each occurrence's triggers. Intervening conditions
+therefore see the complete simultaneous event regardless of enumeration order,
+while genuinely sequential moves remain separate. Trigger discovery still uses
+the existing pre-event source, characteristic, controller, and attachment LKI;
+a redirected or prevented move contributes only the history of the transition
+that actually occurred.
+
 The normalized trigger vocabulary also carries a bounded public binding
 closure without adding producer-specific engines. Attack, block, damage,
 Cycling, step, and zone-transition owners emit immutable occurrences; trigger

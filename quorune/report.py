@@ -1556,66 +1556,12 @@ def derive_review(
         },
     }
     if record_directory:
-        directory = Path(record_directory)
-        migrated_from = (manifest or {}).get("migrated_from")
-        before_bytes = (
-            Path(str(migrated_from)).stat().st_size
-            if migrated_from and Path(str(migrated_from)).exists()
-            else None
+        from .review_artifacts import record_size_comparison
+
+        report["size_comparison"] = record_size_comparison(
+            record_directory,
+            manifest=manifest,
         )
-        component_bytes = {
-            path.name: path.stat().st_size
-            for path in directory.glob("*")
-            if path.is_file()
-        }
-        core_names = {
-            "manifest.json",
-            "checkpoint.json",
-            "initial-checkpoint.json.gz",
-            "commands.jsonl",
-            "events.jsonl",
-            "decisions.jsonl",
-            "semantics.json",
-            "cursors.json",
-            "pilot-profiles.json",
-            "plans.json",
-            "pilot-memory.json",
-        }
-        resumable_core = sum(
-            value for name, value in component_bytes.items() if name in core_names
-        )
-        review_artifacts = sum(
-            value
-            for name, value in component_bytes.items()
-            if name in {"review.json", "review.md"}
-        )
-        record_total = sum(component_bytes.values())
-        report["size_comparison"] = {
-            "legacy_game_json_bytes": before_bytes,
-            "record_components_bytes": component_bytes,
-            "checkpoint_bytes": component_bytes.get("checkpoint.json", 0),
-            "initial_checkpoint_bytes": component_bytes.get(
-                "initial-checkpoint.json.gz", 0
-            ),
-            "command_journal_bytes": component_bytes.get("commands.jsonl", 0),
-            "event_journal_bytes": component_bytes.get("events.jsonl", 0),
-            "decision_journal_bytes": component_bytes.get("decisions.jsonl", 0),
-            "manifest_bytes": component_bytes.get("manifest.json", 0),
-            "review_artifact_bytes": review_artifacts,
-            "resumable_core_bytes": resumable_core,
-            "complete_record_bytes": record_total,
-            "record_total_bytes": record_total,
-            "bytes_saved_before_derived_review": (
-                before_bytes - resumable_core
-                if before_bytes is not None
-                else None
-            ),
-            "percent_smaller_before_derived_review": (
-                round((before_bytes - resumable_core) * 100 / before_bytes, 1)
-                if before_bytes
-                else None
-            ),
-        }
     return report
 
 

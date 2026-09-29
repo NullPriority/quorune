@@ -56,6 +56,7 @@ from .zone_trigger_processing import (
     DepartureTriggerSnapshot,
     capture_departure_trigger_sources,
     dispatch_zone_change_occurrence,
+    record_zone_change_history,
     semantic_event_sources,
 )
 from .day_night import synchronize_day_night
@@ -762,8 +763,48 @@ class ZoneTransitionOwner:
         transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY,
         read_ahead_chapter: int | None = None,
         trigger_batch: list[StackItem] | None = None,
+        history_pre_recorded: bool = False,
     ) -> tuple[ZoneChangeOccurrence, list[StackItem], bool]:
-        occurrence = ZoneChangeOccurrence(
+        occurrence = self._zone_change_occurrence(
+            card,
+            departure=departure,
+            destination=destination,
+            reason=reason,
+            transition_kind=transition_kind,
+            read_ahead_chapter=read_ahead_chapter,
+        )
+        owns_trigger_batch = trigger_batch is None
+        event_triggers = trigger_batch if trigger_batch is not None else []
+        sources = departure.trigger_sources
+        dispatch_zone_change_occurrence(
+            self.host,
+            occurrence,
+            card,
+            departure_sources=sources.sources,
+            departure_source_zones=sources.source_zones,
+            departure_source_characteristics=sources.source_characteristics,
+            trigger_batch=event_triggers,
+            history_pre_recorded=history_pre_recorded,
+        )
+        if owns_trigger_batch and occurrence.destination == "battlefield":
+            synchronize_day_night(
+                self.host,
+                reason="bound permanent entered the battlefield",
+                trigger_batch=event_triggers,
+            )
+        return occurrence, event_triggers, owns_trigger_batch
+
+    def _zone_change_occurrence(
+        self,
+        card: CardInstance,
+        *,
+        departure: ZoneDepartureSnapshot,
+        destination: str | None,
+        reason: str,
+        transition_kind: ZoneTransitionKind,
+        read_ahead_chapter: int | None,
+    ) -> ZoneChangeOccurrence:
+        return ZoneChangeOccurrence(
             object_id=card.object_id,
             card_ref=card.ref,
             owner=card.owner,
@@ -786,25 +827,6 @@ class ZoneTransitionOwner:
             read_ahead_chapter=read_ahead_chapter,
             cast_option=departure.cast_option,
         )
-        owns_trigger_batch = trigger_batch is None
-        event_triggers = trigger_batch if trigger_batch is not None else []
-        sources = departure.trigger_sources
-        dispatch_zone_change_occurrence(
-            self.host,
-            occurrence,
-            card,
-            departure_sources=sources.sources,
-            departure_source_zones=sources.source_zones,
-            departure_source_characteristics=sources.source_characteristics,
-            trigger_batch=event_triggers,
-        )
-        if owns_trigger_batch and occurrence.destination == "battlefield":
-            synchronize_day_night(
-                self.host,
-                reason="bound permanent entered the battlefield",
-                trigger_batch=event_triggers,
-            )
-        return occurrence, event_triggers, owns_trigger_batch
 
     def move_cards_simultaneously(
         self,
@@ -863,6 +885,24 @@ class ZoneTransitionOwner:
                 characteristic_lki_prepared=True,
                 transition_kind=kinds.get(object_id, ZoneTransitionKind.ORDINARY),
             )
+        occurrences = tuple(
+            self._zone_change_occurrence(
+                card,
+                departure=departure,
+                destination=card.zone,
+                reason=reason,
+                transition_kind=kinds.get(
+                    card.object_id,
+                    ZoneTransitionKind.ORDINARY,
+                ),
+                read_ahead_chapter=prepared[
+                    card.object_id
+                ].read_ahead_chapter,
+            )
+            for card, departure in snapshots
+        )
+        for occurrence in occurrences:
+            record_zone_change_history(self.host, occurrence)
         trigger_batch: list[StackItem] = []
         for card, departure in snapshots:
             sources = departure.trigger_sources
@@ -886,6 +926,7 @@ class ZoneTransitionOwner:
                     prepared[card.object_id].read_ahead_chapter
                 ),
                 trigger_batch=trigger_batch,
+                history_pre_recorded=True,
             )
         if any(card.zone == "battlefield" for card, _departure in snapshots):
             synchronize_day_night(
