@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source_commit": "5a712f54c259247ab08afdd64b39a182484c0302",
+  "compiler_version": "oracle-ir-v219",
+  "record_kind": "synthetic_historical_encore_command_replay",
+  "historical_cleanup_trigger_refs": ["S2", "S3"],
+  "current_runtime_disposition": "explicit_runtime_trust_incompatibility",
+  "included_components": [
+    "manifest.json",
+    "semantics.json",
+    "initial-checkpoint.json.gz",
+    "commands.jsonl"
+  ]
+}

@@ -1229,8 +1229,13 @@ Myriad freezes copyable last-known characteristics when it triggers. Encore
 records its post-cost public source zone and copiable values, uses current
 information only while that exact incarnation remains there, and otherwise
 consumes the sealed last-known snapshot. Its per-opponent and replacement-
-expanded copies enter through one grouped token event and one controller-
-limited delayed sacrifice. A resolved Blitz permanent records a
+expanded copies enter through one grouped token event. One delayed trigger
+filters those recorded incarnations by current zone and original controller,
+then submits every eligible copy to one simultaneous sacrifice through the
+canonical replacement-aware zone owner. Archived pre-v220 Encore records used
+independent per-token cleanup triggers; the current replay path rejects their
+runtime-trust identity instead of decoding them as the grouped result. A
+resolved Blitz permanent records a
 versioned, incarnation-pinned designation for the exact compiled ability.
 Its graveyard trigger consumes predeparture ability applicability and controller
 facts from the normalized permanent event, so ability removal suppresses the

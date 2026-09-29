@@ -18,7 +18,6 @@ from .replacement_effects import (
     ReplacementEffect,
     ReplacementSelection,
 )
-from .replacement.model import walk_events
 from .semantic_runtime.counter_replacements import (
     CounterPlacementEventSpec,
     collect_counter_placement_replacement_effects,
@@ -41,19 +40,32 @@ def validate_counter_event_subjects(
     around a permanent that left and returned under the same public ref.
     """
 
-    for root in events:
-        if not isinstance(root, ReplaceableEvent):
-            raise CounterPlacementError(
-                "Counter subject validation requires typed events"
-            )
-        for event in walk_events(root):
-            if event.kind != "counter.place" or event.affected_object is None:
-                continue
+    def validate(
+        event: ReplaceableEvent,
+        parent: ReplaceableEvent | None = None,
+    ) -> None:
+        if event.kind == "counter.place" and event.affected_object is not None:
             card = host.state.cards.get(event.affected_object.object_id)
             expected_zone = event.payload.get("target_zone")
             expected_logical_id = event.payload.get(
                 "target_logical_object_id"
             )
+            if event.payload.get("follows_zone_destination") is True:
+                if (
+                    parent is None
+                    or parent.kind != "zone.change"
+                    or parent.affected_object is None
+                    or parent.affected_object.object_id
+                    != event.affected_object.object_id
+                    or expected_zone != parent.payload.get("destination")
+                ):
+                    raise CounterPlacementError(
+                        "Prospective zone counter lost its parent event"
+                    )
+                expected_logical_id = parent.payload.get(
+                    "logical_object_id"
+                )
+                expected_zone = parent.payload.get("origin")
             prospective_subject = (
                 event.payload.get("prospective_subject") is True
             )
@@ -63,7 +75,7 @@ def validate_counter_event_subjects(
                     and type(expected_logical_id) is str
                     and bool(expected_logical_id)
                 ):
-                    continue
+                    return
             if (
                 card is None
                 or type(expected_zone) is not str
@@ -76,6 +88,15 @@ def validate_counter_event_subjects(
                 raise CounterPlacementError(
                     "Counter replacement continuation subject changed"
                 )
+        for child in event.children:
+            validate(child, event)
+
+    for root in events:
+        if not isinstance(root, ReplaceableEvent):
+            raise CounterPlacementError(
+                "Counter subject validation requires typed events"
+            )
+        validate(root)
 
 
 class CounterPlacementHost(Protocol):

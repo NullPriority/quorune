@@ -14,10 +14,12 @@ from .combat_relationship_state import (
     commit_attack_declaration,
 )
 from .cast_lifecycles import FIXED_CAST_LIFECYCLE_CAPABILITY_ID
+from .errors import GameRuleError
 from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .replacement.immutable import FrozenMap, freeze_value, thaw_value
 from .trigger_processing import schedule_delayed_trigger
 from .util import mana_cost_to_vector
+from .zone_trigger_events import ZoneTransitionKind
 
 
 NINJUTSU_ABILITY_HANDLER_ID = "ability.activated.ninjutsu.v1"
@@ -568,19 +570,23 @@ def resolve_encore_tokens(host: NinjutsuHost, intent: EncoreTokensIntent) -> tup
                     "dynamic_effects": [
                         {
                             "op": "move_if_in_zone",
-                            "card": card.ref,
+                            "cards": [
+                                {
+                                    "card": card.ref,
+                                    "expected_zone_change_counter": (
+                                        card.zone_change_counter
+                                    ),
+                                    "expected_object_identity": (
+                                        card.logical_object_id
+                                    ),
+                                }
+                                for card in created
+                            ],
                             "from": "battlefield",
                             "destination": "graveyard",
                             "transition_kind": "sacrifice",
                             "required_controller": intent.actor,
-                            "expected_zone_change_counter": (
-                                card.zone_change_counter
-                            ),
-                            "expected_object_identity": (
-                                card.logical_object_id
-                            ),
                         }
-                        for card in created
                     ]
                 },
             },
@@ -588,6 +594,105 @@ def resolve_encore_tokens(host: NinjutsuHost, intent: EncoreTokensIntent) -> tup
             once=True,
         )
     return tuple(card.ref for card in created)
+
+
+def resolve_encore_cleanup_group(
+    host: Any,
+    effect: Mapping[str, Any],
+    *,
+    actor: str,
+    operation: str,
+    reason: str,
+) -> tuple[str, ...]:
+    allowed = {
+        "op",
+        "cards",
+        "from",
+        "destination",
+        "transition_kind",
+        "required_controller",
+        "reason",
+        "_replacement_selections",
+        "_runtime_source",
+    }
+    if operation != "move_if_in_zone" or set(effect) - allowed:
+        raise GameRuleError("Grouped Encore cleanup has a closed schema")
+    raw_cards = effect.get("cards")
+    expected_zone = effect.get("from")
+    destination = effect.get("destination")
+    required_controller = effect.get("required_controller")
+    if (
+        not isinstance(raw_cards, (list, tuple))
+        or not raw_cards
+        or expected_zone != "battlefield"
+        or destination != "graveyard"
+        or effect.get("transition_kind") != "sacrifice"
+        or required_controller != actor
+    ):
+        raise GameRuleError(
+            "Grouped Encore sacrifice must use its trigger controller"
+        )
+    eligible: list[str] = []
+    seen: set[str] = set()
+    for raw in raw_cards:
+        if (
+            not isinstance(raw, Mapping)
+            or set(raw)
+            != {
+                "card",
+                "expected_zone_change_counter",
+                "expected_object_identity",
+            }
+            or type(raw["card"]) is not str
+            or not raw["card"]
+            or type(raw["expected_zone_change_counter"]) is not int
+            or raw["expected_zone_change_counter"] < 0
+            or type(raw["expected_object_identity"]) is not str
+            or not raw["expected_object_identity"]
+            or raw["card"] in seen
+        ):
+            raise GameRuleError(
+                "Grouped Encore cleanup identities are malformed"
+            )
+        seen.add(raw["card"])
+        try:
+            card = host._resolve_object(actor, raw["card"])
+        except GameRuleError:
+            continue
+        if (
+            card.zone != expected_zone
+            or card.phased_out
+            or card.controller != required_controller
+            or card.zone_change_counter
+            != raw["expected_zone_change_counter"]
+            or card.logical_object_id
+            != raw["expected_object_identity"]
+        ):
+            continue
+        eligible.append(card.ref)
+    if not eligible:
+        return ()
+    raw_selections = effect.get("_replacement_selections", ())
+    if not isinstance(raw_selections, (list, tuple)):
+        raise GameRuleError(
+            "Grouped Encore cleanup replacements must be an array"
+        )
+    from .semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+
+    try:
+        intent = MoveObjectsSimultaneouslyIntent(
+            actor=actor,
+            object_refs=tuple(eligible),
+            expected_zones=(expected_zone,),
+            destination=destination,
+            reason=reason,
+            transition_kind=ZoneTransitionKind.SACRIFICE,
+            controlled_only=True,
+            replacement_selections=tuple(raw_selections),
+        )
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return host.move_objects_simultaneously_intent(intent)
 
 
 def encore_attack_requirement(card: Any) -> str | None:
