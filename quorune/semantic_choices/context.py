@@ -116,6 +116,8 @@ class SemanticChoiceQuery(
 
     def damage_source_candidate_refs(self) -> tuple[str, ...]: ...
 
+    def token_creation_preview(self) -> tuple[Mapping[str, Any], ...]: ...
+
     @property
     def damage_source_candidates_are_complete(self) -> bool: ...
 
@@ -145,6 +147,7 @@ class SnapshotSemanticChoiceQuery:
     draw_permissions_by_seat: FrozenMap = field(default_factory=FrozenMap)
     materialized_choice_candidates: tuple[str, ...] = ()
     materialized_damage_source_candidates: tuple[str, ...] | None = None
+    materialized_token_creation_preview: tuple[FrozenMap, ...] = ()
     current_turn_sequence: int = 0
 
     def __post_init__(self) -> None:
@@ -169,6 +172,14 @@ class SnapshotSemanticChoiceQuery:
             tuple(
                 value if isinstance(value, FrozenMap) else FrozenMap(value)
                 for value in self.authorized_cast_option_rows
+            ),
+        )
+        object.__setattr__(
+            self,
+            "materialized_token_creation_preview",
+            tuple(
+                value if isinstance(value, FrozenMap) else FrozenMap(value)
+                for value in self.materialized_token_creation_preview
             ),
         )
 
@@ -333,6 +344,9 @@ class SnapshotSemanticChoiceQuery:
 
     def damage_source_candidate_refs(self) -> tuple[str, ...]:
         return tuple(self.materialized_damage_source_candidates or ())
+
+    def token_creation_preview(self) -> tuple[Mapping[str, Any], ...]:
+        return tuple(self.materialized_token_creation_preview)
 
     @property
     def damage_source_candidates_are_complete(self) -> bool:

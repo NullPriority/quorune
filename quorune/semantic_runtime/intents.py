@@ -1329,6 +1329,7 @@ class CreateTokenIntent:
     temporary_keywords: tuple[str, ...] = ()
     tapped: bool = False
     attacking_assignments: tuple[str, ...] = ()
+    attacking_groups: tuple[str, ...] = ()
     sacrifice_at_end_step: bool = False
     sacrifice_on_controller_end_step: bool = False
     exile_at_end_of_combat: bool = False
@@ -1343,9 +1344,7 @@ class CreateTokenIntent:
                 "Token-creation intents require actor, controller, and reason"
             )
         if type(self.quantity) is not int or self.quantity < 0:
-            raise ValueError(
-                "Token-creation quantity must be an exact nonnegative integer"
-            )
+            raise ValueError("Token-creation quantity must be nonnegative")
         if self.copy_of is not None and (
             type(self.copy_of) is not str or not self.copy_of
         ):
@@ -1359,12 +1358,8 @@ class CreateTokenIntent:
                 object.__setattr__(
                     self, "copy_snapshot", FrozenMap(self.copy_snapshot)
                 )
-        if type(self.name) is not str or (
-            not self.name and self.copy_of is None
-        ):
-            raise ValueError(
-                "Token-creation intents require a name unless copying an object"
-            )
+        if type(self.name) is not str or not (self.name or self.copy_of):
+            raise ValueError("Token creation requires a name or copy source")
         keywords = tuple(self.temporary_keywords)
         if (
             any(type(value) is not str or not value for value in keywords)
@@ -1381,14 +1376,21 @@ class CreateTokenIntent:
         ):
             raise ValueError("Token sacrifice flags must be booleans")
         assignments = tuple(self.attacking_assignments)
-        if any(type(value) is not str or not value for value in assignments) or (
-            assignments and len(assignments) != self.quantity
-        ):
-            raise ValueError(
-                "Attacking token assignments must match the token quantity"
+        groups = tuple(self.attacking_groups)
+        malformed_plan = (
+            any(
+                type(value) is not str or not value
+                for value in (*assignments, *groups)
             )
+            or (groups and len(groups) != self.quantity)
+            or (not groups and assignments and len(assignments) != self.quantity)
+            or (groups and len(assignments) < self.quantity)
+        )
+        if malformed_plan:
+            raise ValueError("Attacking token plan is malformed")
         object.__setattr__(self, "temporary_keywords", keywords)
         object.__setattr__(self, "attacking_assignments", assignments)
+        object.__setattr__(self, "attacking_groups", groups)
         if not isinstance(self.characteristics, FrozenMap):
             object.__setattr__(
                 self,

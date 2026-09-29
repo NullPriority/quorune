@@ -25,6 +25,7 @@ from .operations import (
     DredgeDraw,
     GrantAffectedObjectKeyword,
     MultiplyAmount,
+    MultiplyTokenCreation,
     PreventAmount,
     PreventDraw,
     PreventUsingShield,
@@ -457,6 +458,39 @@ def _apply_additional_token(
     )
 
 
+def _apply_token_multiplier(
+    event: ReplaceableEvent,
+    payload: dict[str, Any],
+    operation: MultiplyTokenCreation,
+) -> None:
+    if event.kind != "token.create":
+        raise ReplacementEffectError(
+            "Token multiplication requires a token.create event"
+        )
+    tokens = payload.get("tokens", ())
+    if not isinstance(tokens, Sequence) or isinstance(tokens, (str, bytes)):
+        raise ReplacementEffectError("Token creation tokens must be an array")
+    originals: list[dict[str, Any]] = []
+    for token in tokens:
+        if not isinstance(token, Mapping):
+            raise ReplacementEffectError(
+                "Token creation specifications must be objects"
+            )
+        originals.append(thaw_value(token))
+    component = {
+        "handler_id": operation.handler_id,
+        "source": operation.source_ref,
+        "multiplier": operation.factor,
+    }
+    copies = []
+    for _ in range(operation.factor - 1):
+        for token in originals:
+            clone = thaw_value(token)
+            clone["replacement_component"] = component
+            copies.append(clone)
+    payload["tokens"] = [*originals, *copies]
+
+
 def _apply_affected_object_keyword(
     event: ReplaceableEvent,
     payload: dict[str, Any],
@@ -572,6 +606,9 @@ def _apply_operation(
         return entry_scope
     if isinstance(operation, CreateAdditionalToken):
         _apply_additional_token(event, payload, operation)
+        return entry_scope
+    if isinstance(operation, MultiplyTokenCreation):
+        _apply_token_multiplier(event, payload, operation)
         return entry_scope
     if isinstance(operation, ReserveZoneChange):
         if event.kind != "zone.change" or entry_scope is None:

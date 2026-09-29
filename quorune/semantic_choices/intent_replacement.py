@@ -144,6 +144,9 @@ _CREATE_TOKEN_FIELDS_V3 = _CREATE_TOKEN_FIELDS | {
     "exile_at_end_of_combat"
 }
 _CREATE_TOKEN_FIELDS_V4 = _CREATE_TOKEN_FIELDS_V3 | {"copy_snapshot"}
+_CREATE_TOKEN_FIELDS_V5 = _CREATE_TOKEN_FIELDS | {"attacking_groups"}
+_CREATE_TOKEN_FIELDS_V6 = _CREATE_TOKEN_FIELDS_V3 | {"attacking_groups"}
+_CREATE_TOKEN_FIELDS_V7 = _CREATE_TOKEN_FIELDS_V4 | {"attacking_groups"}
 _LIFE_CHANGE_FIELDS = {
     "actor",
     "player",
@@ -331,6 +334,8 @@ def _create_token_intent_identity(
         identity["exile_at_end_of_combat"] = True
     if intent.copy_snapshot is not None:
         identity["copy_snapshot"] = thaw_value(intent.copy_snapshot)
+    if intent.attacking_groups:
+        identity["attacking_groups"] = list(intent.attacking_groups)
     return identity
 
 
@@ -1054,6 +1059,9 @@ def _validate_create_token_intent_identity(
         frozenset(_CREATE_TOKEN_FIELDS),
         frozenset(_CREATE_TOKEN_FIELDS_V3),
         frozenset(_CREATE_TOKEN_FIELDS_V4),
+        frozenset(_CREATE_TOKEN_FIELDS_V5),
+        frozenset(_CREATE_TOKEN_FIELDS_V6),
+        frozenset(_CREATE_TOKEN_FIELDS_V7),
     }:
         raise SemanticChoiceError(
             "Token-creation intent identity fields are malformed"
@@ -1061,9 +1069,12 @@ def _validate_create_token_intent_identity(
     characteristics = value["characteristics"]
     temporary_keywords = value["temporary_keywords"]
     attacking_assignments = value.get("attacking_assignments", ())
+    attacking_groups = value.get("attacking_groups", ())
     if not isinstance(characteristics, Mapping) or not isinstance(
         temporary_keywords, (list, tuple)
-    ) or not isinstance(attacking_assignments, (list, tuple)):
+    ) or not isinstance(attacking_assignments, (list, tuple)) or not isinstance(
+        attacking_groups, (list, tuple)
+    ):
         raise SemanticChoiceError(
             "Token-creation intent identity is malformed"
         )
@@ -1084,6 +1095,7 @@ def _validate_create_token_intent_identity(
             temporary_keywords=tuple(temporary_keywords),
             tapped=value.get("tapped", False),
             attacking_assignments=tuple(attacking_assignments),
+            attacking_groups=tuple(attacking_groups),
             sacrifice_at_end_step=value["sacrifice_at_end_step"],
             sacrifice_on_controller_end_step=(
                 value["sacrifice_on_controller_end_step"]
@@ -1096,7 +1108,7 @@ def _validate_create_token_intent_identity(
         raise SemanticChoiceError(
             "Token-creation intent identity is malformed"
         ) from exc
-    return {
+    identity = {
         "actor": intent.actor,
         "controller": intent.controller,
         "name": intent.name,
@@ -1116,6 +1128,8 @@ def _validate_create_token_intent_identity(
         identity["exile_at_end_of_combat"] = True
     if intent.copy_snapshot is not None:
         identity["copy_snapshot"] = thaw_value(intent.copy_snapshot)
+    if intent.attacking_groups:
+        identity["attacking_groups"] = list(intent.attacking_groups)
     return identity
 
 

@@ -4224,14 +4224,20 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v218-blitz-lifecycle-semantics",
-      "compiler_version": "oracle-ir-v218",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "non_harvest_reason": "Corrects Blitz battlefield ability applicability, permanent-graveyard event scope, and delayed sacrifice controller authority without widening the admitted lifecycle grammar.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v219-token-destination-replacement-semantics",
+      "compiler_version": "oracle-ir-v219",
+      "bundle_id": "bundle:token-quantity-replacement-correction",
+      "candidate_ids": [
+        "compiler:token-quantity-replacement"
+      ],
+      "family_ids": [
+        "replacement_effect:replacement-applicability"
+      ],
+      "capability_ids": [
+        "token.creation.quantity_replacement"
+      ],
+      "non_harvest_reason": null,
+      "expected_complete_card_gain": 3
     },
     "forecast_corrections": [
       {

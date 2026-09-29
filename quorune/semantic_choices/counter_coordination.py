@@ -15,6 +15,7 @@ from ..counter_placement import (
 )
 from ..semantic_runtime import (
     IntentPlan,
+    CreateTokenIntent,
     LifeChangeIntent,
     LibrarySelectionIntent,
     MoveObjectsSimultaneouslyIntent,
@@ -135,6 +136,7 @@ def _issue_semantic_intent_replacement_choice(
         | ProliferateIntent
         | MoveObjectsSimultaneouslyIntent
         | ZoneMoveIntent
+        | CreateTokenIntent
     ),
     intent_index: int,
     required: ReplacementChoiceRequired,
@@ -261,6 +263,7 @@ def continue_semantic_completion(
                     SurveilLibraryIntent,
                     LibrarySelectionIntent,
                     ZoneMoveIntent,
+                    CreateTokenIntent,
                 ),
             ):
                 _issue_semantic_intent_replacement_choice(

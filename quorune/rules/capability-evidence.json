@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "748d895998f66174e70514600db46166598b3020902a3e8fa211d8a4e82cfa31",
-  "declaration_source_fingerprint": "b17c9992e10b5e362d45a94fa4caff8c7fb3feb1e563c105a3a70b3473f35325",
+  "registry_fingerprint": "14af1a58383851f3eaca8664d8c7af0b8ad29816b9cb8d79d06ed686519f8c37",
+  "declaration_source_fingerprint": "1f5617befc213193e3acd37aab51af5cb5327803e223831b1b66b7a5b3619be7",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -57717,6 +57717,153 @@
       "applicability_note": "Reject a replacement identifier outside the issued schema without changing the authoritative state hash or committing any token."
     },
     {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_myriad_token_multiplier_expands_per_copy_destination_choices",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the multiplier before Myriad destinations so every resulting copy retains its associated opponent and receives an independent legal destination."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_myriad_token_multiplier_expands_per_copy_destination_choices",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the selected nondefending opponent association for every replacement-expanded Myriad copy in four-player combat."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_replacement_model_hardening.ReplacementImmutabilityTests.test_token_multiplier_operation_rejects_wrong_event_without_mutation",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bind the typed multiplier operation to token.create and prove an event-kind mutation cannot alter the immutable source event."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_token_multiplier_rejects_open_or_malformed_forms",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep triple, qualified-token, and opponent-controller multiplier clauses residual rather than widening the exact controller-scoped doubling grammar."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_token_creation_replacements.TokenCreationReplacementTests.test_token_multiplier_preserves_specifications_and_simultaneous_commit",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Double the complete immutable token specification while preserving tapped state, temporary keywords, and one simultaneous creation timestamp."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_token_multiplier_replacement_order_resumes_before_destinations",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suspend competing token multipliers for the affected controller before exposing only the public expanded destination choice."
+    },
+    {
+      "capability_id": "token.creation.quantity_replacement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_token_multiplier_replacement_order_resumes_before_destinations",
+      "official_rule_ids": [
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay replacement ordering, the expanded per-copy destination decision, simultaneous entry, and delayed cleanup scheduling to the same authoritative hash."
+    },
+    {
       "capability_id": "token.creation.typed_ability_definition",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_typed_token_ability_survives_creator_departure_and_uses_token_identity",
@@ -68028,5 +68175,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "3b51aadd631e67be848c2f3212b7f2a72994c7d2621615a8a85a51cb2a49119b"
+  "fingerprint": "dd5549b2efc4fe0fdf8436da0edd12ac9e99fac07c70387dcbda790200d10a0c"
 }

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
-from ..replacement import CreateAdditionalToken
+from ..replacement import CreateAdditionalToken, MultiplyTokenCreation
 from ..replacement_effects import (
     ReplaceableEvent,
     ReplacementBatchChoice,
@@ -29,6 +29,7 @@ from ..standard_token_abilities import (
 
 _ADDITIONAL_TOKEN_HANDLER_ID = "replacement.token.additional.v1"
 _GENERIC_ADDITIONAL_TOKEN_HANDLER_ID = "replacement.token.additional.v2"
+_TOKEN_QUANTITY_HANDLER_ID = "replacement.token.quantity.v1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -606,6 +607,104 @@ class GenericAdditionalTokenReplacementHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class TokenQuantityReplacementHandler:
+    """Closed mandatory controller-scoped token quantity multiplier."""
+
+    handler_id: str = _TOKEN_QUANTITY_HANDLER_ID
+    schema_version: int = 1
+    family: str = "replacement.token_quantity"
+    event: str = "token.create"
+    rule_references: tuple[str, ...] = (
+        "111.2",
+        "614.1",
+        "614.1a",
+        "614.4",
+        "614.5",
+        "614.6",
+        "614.16",
+        "616.1",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        "token.creation.quantity_replacement",
+    )
+
+    def validate(self, descriptor: Mapping[str, Any]) -> int:
+        exact_fields(
+            descriptor,
+            {
+                "handler_id",
+                "schema_version",
+                "event",
+                "condition",
+                "multiplier",
+            },
+            field="runtime handler",
+        )
+        if descriptor["handler_id"] != self.handler_id:
+            raise SemanticNodeError("Runtime handler ID does not match registry")
+        if descriptor["schema_version"] != self.schema_version:
+            raise SemanticNodeError(
+                f"Unsupported {self.handler_id} schema version"
+            )
+        if descriptor["event"] != self.event:
+            raise SemanticNodeError(f"{self.handler_id} must handle {self.event}")
+        condition = descriptor["condition"]
+        if not isinstance(condition, Mapping):
+            raise SemanticNodeError("runtime handler condition must be an object")
+        exact_fields(
+            condition,
+            {"event_controller"},
+            field="runtime handler condition",
+        )
+        if condition["event_controller"] != "source_controller":
+            raise SemanticNodeError(
+                "token quantity replacement requires "
+                "event_controller=source_controller"
+            )
+        multiplier = descriptor["multiplier"]
+        if type(multiplier) is not int or multiplier != 2:
+            raise SemanticNodeError(
+                "token quantity replacement requires multiplier 2"
+            )
+        return multiplier
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: TokenCreationReplacementContext,
+    ) -> tuple[AdditionalTokenIntent, ...]:
+        self.validate(descriptor)
+        return ()
+
+    def replacement_effect(
+        self,
+        descriptor: Mapping[str, Any],
+        context: TokenCreationReplacementContext,
+    ) -> ReplacementEffect:
+        multiplier = self.validate(descriptor)
+        return ReplacementEffect(
+            effect_id=(
+                f"{self.handler_id}:{context.source_ref}:"
+                f"{context.component_id or 'quantity'}"
+            ),
+            source_id=context.source_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "event_controller": {"eq": context.source_controller},
+            },
+            operations=(
+                MultiplyTokenCreation(
+                    factor=multiplier,
+                    handler_id=self.handler_id,
+                    source_ref=context.source_ref,
+                ),
+            ),
+            label=f"{context.source_ref}: create twice that many tokens",
+        )
+
+
 class TokenCreationReplacementRegistry(
     RuntimeComponentRegistry[
         TokenCreationReplacementContext,
@@ -634,6 +733,7 @@ def default_token_creation_replacement_registry(
         (
             AdditionalTokenReplacementHandler(),
             GenericAdditionalTokenReplacementHandler(),
+            TokenQuantityReplacementHandler(),
         )
     )
     registry.require_registered_capabilities(

@@ -1233,6 +1233,7 @@ class SemanticChoiceIntentHostMixin:
                     if intent.attacking_assignments
                     else None
                 ),
+                attacking_groups=intent.attacking_groups,
                 reason=intent.reason,
                 replacement_selections=intent.replacement_selections,
             )

@@ -7,7 +7,7 @@ import unittest
 
 from common import keep_all, load_assets, make_session
 from quorune.card_overrides import normalize_game_record_v3_runtime_handler
-from quorune.model import StackItem
+from quorune.model import CardInstance, StackItem
 from quorune.compiler.token_templates import (
     static_additional_token_replacement_handler,
 )
@@ -108,6 +108,71 @@ class TokenCreationReplacementTests(unittest.TestCase):
         source.printed_name = "Anonymous replacement source"
         engine.move_card(source.object_id, "battlefield", controller="A")
         return source
+
+    def install_generated_doubling_season(self, engine, *, ref: str):
+        record = self.db.lookup("Doubling Season")
+        source = CardInstance(
+            object_id=f"fixture:{ref}",
+            ref=ref,
+            oracle_id=record.oracle_id,
+            printed_name=record.name,
+            owner="A",
+            controller="A",
+            zone="battlefield",
+            zone_timestamp=engine.state.event_sequence + 1,
+            acquired_control_turn_count=-1,
+            known_to=list(engine.seats),
+            revealed_to=list(engine.seats),
+        )
+        engine.state.cards[source.object_id] = source
+        engine.state.players["A"].zones["battlefield"].append(source.object_id)
+        result = register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+        )
+        self.assertGreaterEqual(result["runtime_handlers_promoted"], 1)
+        return source
+
+    def test_token_multiplier_preserves_specifications_and_simultaneous_commit(self):
+        session = self.session(1250590)
+        engine = session.engine
+        self.install_generated_doubling_season(
+            engine, ref="token-multiplier-source"
+        )
+
+        created = engine.create_token(
+            "A",
+            name="Treasure",
+            quantity=2,
+            tapped=True,
+            characteristics={"type_line": "Token Artifact — Treasure"},
+            temporary_keywords=("Haste",),
+            reason="token multiplier specification witness",
+        )
+        cards = [engine._resolve_object("A", ref) for ref in created]
+
+        self.assertEqual(4, len(cards))
+        self.assertEqual(1, len({card.zone_timestamp for card in cards}))
+        self.assertTrue(all(card.tapped for card in cards))
+        self.assertTrue(
+            all("Haste" in card.temporary_keywords for card in cards)
+        )
+        event = next(
+            event
+            for event in reversed(engine.state.events)
+            if event.code == "token.create"
+        )
+        self.assertEqual(
+            ["replacement.token.quantity.v1"],
+            [
+                component["handler_id"]
+                for component in event.details["replacement_components"]
+            ],
+        )
 
     def test_registered_additional_token_components_replace_without_name_dispatch(
         self,

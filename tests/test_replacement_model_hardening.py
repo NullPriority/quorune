@@ -10,6 +10,7 @@ from quorune.replacement_effects import (
     CreateAffectedObjectCounter,
     CreateAdditionalToken,
     MultiplyAmount,
+    MultiplyTokenCreation,
     ReplaceableEvent,
     ReplacementClass,
     ReplacementContinuation,
@@ -46,6 +47,36 @@ def effect(
 
 
 class ReplacementImmutabilityTests(unittest.TestCase):
+    def test_token_multiplier_operation_rejects_wrong_event_without_mutation(self):
+        operation = MultiplyTokenCreation(
+            factor=2,
+            handler_id="replacement.token.quantity.v1",
+            source_ref="multiplier-source",
+        )
+        self.assertEqual(operation, operation_from_dict(operation.to_dict()))
+        event = ReplaceableEvent(
+            event_id="token-multiplier:wrong-event",
+            kind="damage",
+            affected_player="A",
+            payload={"amount": 3},
+        )
+        replacement = ReplacementEffect(
+            effect_id="token-multiplier:wrong-event",
+            source_id="multiplier-source",
+            event_kind="damage",
+            replacement_class=ReplacementClass.OTHER,
+            operations=(operation,),
+        )
+        choice = replacement_choice(event, (replacement,))
+        before = immutable_fingerprint(event.to_dict())
+        with self.assertRaisesRegex(
+            ReplacementEffectError, "token.create event"
+        ):
+            apply_replacement(
+                choice, (replacement,), replacement.effect_id
+            )
+        self.assertEqual(before, immutable_fingerprint(event.to_dict()))
+
     def test_caller_mutation_cannot_change_event_effect_or_nested_values(self):
         payload = {"amount": 3, "metadata": {"values": [1, {"x": 2}]}}
         conditions = {"metadata": {"contains": "marker"}}
