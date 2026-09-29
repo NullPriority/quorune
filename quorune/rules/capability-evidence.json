@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3e8942e6f2c2bee1d7c9b03234e1d854d761e503ae33ee1b8b7eef8583aa18d7",
-  "declaration_source_fingerprint": "b497e3c620cfb24a73a42f528ab5c944a6ae3e2c26d0962d212c7ab4a71252f2",
+  "registry_fingerprint": "c460d83dcce47a3b1fd98a9fdde581ba39b0a61657665124cd8a6469e050ef35",
+  "declaration_source_fingerprint": "171570c16e95a822ac1cfdfca5d8e84635d181491ce17034e31f566b7135bdaf",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -18859,7 +18859,7 @@
     {
       "capability_id": "combat.entry.lifecycle.fixed_public",
       "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_countered_commander_and_historical_boundaries",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_cleanup_filters_each_recorded_incarnation_as_one_group",
       "official_rule_ids": [
         "113.7a",
         "601.2b",
@@ -18888,7 +18888,109 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Preserve paid costs after countering, resolve through Commander-zone replacement, replay exactly, and retain the historical source-present payload boundary."
+      "applicability_note": "Filter stolen, departed, reentered, phased-out, and eligible copies by recorded logical incarnation and original trigger controller before the single group commit."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_cleanup_is_one_simultaneous_sacrifice_event",
+      "official_rule_ids": [
+        "113.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "602.1",
+        "602.2",
+        "608.2h",
+        "702.49",
+        "702.49a",
+        "702.49b",
+        "702.49c",
+        "702.49d",
+        "702.116",
+        "702.116a",
+        "702.116b",
+        "702.141a",
+        "702.152a",
+        "702.152b",
+        "702.188a",
+        "702.190a",
+        "702.190b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the real delayed Encore cleanup as one simultaneous sacrifice so both departed token incarnations produce the complete threshold-trigger consequences."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_countered_commander_and_legacy_effect_payload",
+      "official_rule_ids": [
+        "113.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "602.1",
+        "602.2",
+        "608.2h",
+        "702.49",
+        "702.49a",
+        "702.49b",
+        "702.49c",
+        "702.49d",
+        "702.116",
+        "702.116a",
+        "702.116b",
+        "702.141a",
+        "702.152a",
+        "702.152b",
+        "702.188a",
+        "702.190a",
+        "702.190b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve paid costs after countering, resolve through Commander-zone replacement, replay exactly, and retain the legacy source-present effect-payload decoding boundary without claiming historical execution."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_group_cleanup_replacement_choice_resumes_atomically",
+      "official_rule_ids": [
+        "113.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "602.1",
+        "602.2",
+        "608.2h",
+        "702.49",
+        "702.49a",
+        "702.49b",
+        "702.49c",
+        "702.49d",
+        "702.116",
+        "702.116a",
+        "702.116b",
+        "702.141a",
+        "702.152a",
+        "702.152b",
+        "702.188a",
+        "702.190a",
+        "702.190b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suspend a two-object cleanup before mutation, preserve affected-player replacement privacy through save/load, and commit the replacement-adjusted group only after all choices resume."
     },
     {
       "capability_id": "combat.entry.lifecycle.fixed_public",
@@ -18991,6 +19093,40 @@
         "commander_review"
       ],
       "applicability_note": "Create one Encore copy for each current opponent and retain a distinct opponent-specific attack designation."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_group_cleanup_replacement_choice_resumes_atomically",
+      "official_rule_ids": [
+        "113.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "602.1",
+        "602.2",
+        "608.2h",
+        "702.49",
+        "702.49a",
+        "702.49b",
+        "702.49c",
+        "702.49d",
+        "702.116",
+        "702.116a",
+        "702.116b",
+        "702.141a",
+        "702.152a",
+        "702.152b",
+        "702.188a",
+        "702.190a",
+        "702.190b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve the grouped cleanup and APNAP replacement choices in four-player state through one batch."
     },
     {
       "capability_id": "combat.entry.lifecycle.fixed_public",
@@ -19131,6 +19267,40 @@
     {
       "capability_id": "combat.entry.lifecycle.fixed_public",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_group_cleanup_replacement_choice_resumes_atomically",
+      "official_rule_ids": [
+        "113.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "602.1",
+        "602.2",
+        "608.2h",
+        "702.49",
+        "702.49a",
+        "702.49b",
+        "702.49c",
+        "702.49d",
+        "702.116",
+        "702.116a",
+        "702.116b",
+        "702.141a",
+        "702.152a",
+        "702.152b",
+        "702.188a",
+        "702.190a",
+        "702.190b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose the grouped replacement decision only to the affected player while other seats receive no private choice."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_ninjutsu_four_player_projection_save_load_and_exact_replay",
       "official_rule_ids": [
         "113.7a",
@@ -19161,6 +19331,40 @@
         "commander_review"
       ],
       "applicability_note": "Reveal the Ninjutsu source publicly only while its ability is on the stack without exposing unrelated private hand cards."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_group_cleanup_replacement_choice_resumes_atomically",
+      "official_rule_ids": [
+        "113.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "602.1",
+        "602.2",
+        "608.2h",
+        "702.49",
+        "702.49a",
+        "702.49b",
+        "702.49c",
+        "702.49d",
+        "702.116",
+        "702.116a",
+        "702.116b",
+        "702.141a",
+        "702.152a",
+        "702.152b",
+        "702.188a",
+        "702.190a",
+        "702.190b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Checkpoint before grouped cleanup, load during replacement ordering, resume without partial mutation, and replay the final replacement-adjusted destinations exactly."
     },
     {
       "capability_id": "combat.entry.lifecycle.fixed_public",
@@ -19229,6 +19433,40 @@
         "commander_review"
       ],
       "applicability_note": "Replay the return cost, public reveal, stack resolution, tapped entry, and attack-recipient relationship to the same authoritative hash."
+    },
+    {
+      "capability_id": "combat.entry.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_pre_v220_encore_record_is_explicitly_incompatible",
+      "official_rule_ids": [
+        "113.7a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "602.1",
+        "602.2",
+        "608.2h",
+        "702.49",
+        "702.49a",
+        "702.49b",
+        "702.49c",
+        "702.49d",
+        "702.116",
+        "702.116a",
+        "702.116b",
+        "702.141a",
+        "702.152a",
+        "702.152b",
+        "702.188a",
+        "702.190a",
+        "702.190b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise a genuine oracle-ir-v219 Encore Game Record through the real replay entry point and reject its two-trigger cleanup at the runtime-trust identity boundary instead of reinterpreting it as the grouped result."
     },
     {
       "capability_id": "combat.goad.prohibition.controller_creatures",
@@ -24754,6 +24992,25 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Register the compiled activated ability as current trusted behavior, then exercise offer, payment, resolution, current-characteristic revalidation, and cleanup expiration through the product action path."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristics_lock_effective_set_and_cleanup",
       "official_rule_ids": [
@@ -24827,6 +25084,25 @@
         "commander_review"
       ],
       "applicability_note": "Expose the same public legal-target result across four seats without authoritative object identities."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer the activated ability in four-player state only to its controller while preserving controller-relative and source-excluding target qualification."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -25305,6 +25581,25 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep the private action decision scoped to the acting seat while exposing only public qualified target references."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "replay",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_controlled_characteristic_command_replays_exactly",
       "official_rule_ids": [
@@ -25378,6 +25673,25 @@
         "commander_review"
       ],
       "applicability_note": "Replay source exclusion, qualified target selection, continuous-effect commitment, and the final authoritative hash."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay from the checkpoint before the real activation through payment, target commitment, and the full fixed characteristic result."
     },
     {
       "capability_id": "continuous.resolution.fixed_keyword_until_control_change",
@@ -55569,6 +55883,31 @@
     {
       "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the same current effective subtype, controller, and source-exclusion predicate for the product offer, submitted command, and resolution-time target revalidation."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
       "test_id": "tests.test_targeted_destruction_effect_clauses.TargetedDestructionRuntimeTests.test_compiled_union_destruction_offer_command_resolution_and_replay",
       "official_rule_ids": [
         "105.2",
@@ -55665,6 +56004,31 @@
         "commander_review"
       ],
       "applicability_note": "Expose the same public legal-target result across four seats without authoritative object identities."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude the opponent-controlled matching subtype and the controller's nonmatching permanent from the four-player public target domain."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -56193,6 +56557,31 @@
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Project the public legal target references without granting another seat the acting player's activation decision."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
       "evidence_class": "replay",
       "test_id": "tests.test_counter_target_predicates.CounterTargetPredicateRuntimeTests.test_four_player_target_predicate_privacy_rollback_and_replay",
       "official_rule_ids": [
@@ -56265,6 +56654,31 @@
         "commander_review"
       ],
       "applicability_note": "Replay source exclusion, qualified target selection, continuous-effect commitment, and the final authoritative hash."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_target_effect_sequences.FixedTargetEffectSequenceRuntimeTests.test_trusted_qualified_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the same qualified target selection and resulting characteristic effect from the pre-action checkpoint."
     },
     {
       "capability_id": "target.permanent.damage_history_predicate",
@@ -68831,5 +69245,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "691f8eb7a2119d44c05b225bdd258056ecb64103eec787017b7319408f1c9e3d"
+  "fingerprint": "13f9469e784efb2a4e1e46aed789d018a51f1f120b23ff38f07b9082d4a7f478"
 }

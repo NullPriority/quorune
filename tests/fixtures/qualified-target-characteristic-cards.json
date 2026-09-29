@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "qualified_target_characteristic_cards",
+  "source": "constructed generic assurance fixtures",
+  "cards": [
+    {
+      "oracle_id": "60812210-0000-4000-8000-000000000001",
+      "name": "Qualified Elf Mentor Fixture",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{1}: Another target Elf creature you control gets +2/+1 and gains vigilance until end of turn.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-29",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

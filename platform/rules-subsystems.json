@@ -4281,13 +4281,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v222-simultaneous-history-ordering",
-      "compiler_version": "oracle-ir-v222",
+      "transition_id": "oracle-ir-v223-encore-simultaneous-cleanup",
+      "compiler_version": "oracle-ir-v223",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Corrects simultaneous replacement-adjusted history publication before member trigger discovery without widening Oracle grammar or card support.",
+      "non_harvest_reason": "Corrects Encore's delayed cleanup to one incarnation-filtered simultaneous sacrifice and records the explicit pre-v220 replay incompatibility without widening Oracle grammar or card support.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [

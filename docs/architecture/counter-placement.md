@@ -63,7 +63,9 @@ event is exhausted before its child is considered. Every replacement choice
 is complete before the move; the child counter commits only after the card
 reaches its validated destination. A counter on a card outside the battlefield
 is represented for ordering but remains outside the permanent-only quantity
-component.
+component. A suspended continuation validates that prospective child against
+its parent zone event and the unchanged origin incarnation; it does not require
+the card to occupy the replacement destination before the parent event commits.
 
 The Oracle compiler lowers the closed “an opponent's card from anywhere would
 enter a graveyard; exile it with one named counter instead” family to this same

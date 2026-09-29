@@ -37,7 +37,7 @@ from quorune.keyword_counters import (
     keyword_counter_mechanic,
 )
 from quorune.zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
-from quorune.oracle_ir import compile_oracle_card
+from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
@@ -70,6 +70,10 @@ def focused_card_database(directory: str) -> CardDatabase:
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
             ROOT / "tests" / "fixtures" / "counter-replacement-cards.json",
+            ROOT
+            / "tests"
+            / "fixtures"
+            / "qualified-target-characteristic-cards.json",
         ],
         database,
     )
@@ -1131,6 +1135,164 @@ class FixedTargetEffectSequenceRuntimeTests(unittest.TestCase):
         self.assertEqual(counters_before, target.counters)
         self.assertEqual(zone_before, target.zone)
         self.assertEqual(5, engine._numeric_stat(target.object_id, "power"))
+
+    def test_trusted_qualified_activation_uses_real_action_path_and_replays(self):
+        session = self.session(60812210, players=4)
+        engine = session.engine
+        source = self.add_permanent(
+            engine,
+            seat="A",
+            name="Qualified Elf Mentor Fixture",
+            ref="trusted-qualified-source",
+        )
+        target = self.add_permanent(
+            engine,
+            seat="A",
+            name="Elves of Deep Shadow",
+            ref="trusted-qualified-target",
+        )
+        opponent_elf = self.add_permanent(
+            engine,
+            seat="B",
+            name="Elves of Deep Shadow",
+            ref="trusted-qualified-opponent",
+        )
+        nonelf = self.add_permanent(
+            engine,
+            seat="A",
+            name="Scute Swarm",
+            ref="trusted-qualified-nonelf",
+        )
+        record = self.db.lookup("Qualified Elf Mentor Fixture")
+        registration = register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="trusted",
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        self.assertGreaterEqual(registration["programs_generated"], 1)
+        programs = engine.semantics.programs_for_oracle(record.oracle_id)
+        self.assertTrue(programs)
+        self.assertTrue(
+            all(
+                engine.semantic_program_is_current_trusted(program)
+                for program in programs
+            )
+        )
+        engine.state.players["A"].mana_pool["C"] = 1
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine.pump()
+        action_id = f"activate:{source.ref}:ab1"
+        decision = session.packet("pilot:A", full=True)["decision"]
+        action = next(
+            row
+            for row in decision["ctx"]["legal"]["actions"]
+            if row["id"] == action_id
+        )
+        legal_refs = set(action["target_schema"]["legal_refs"])
+        self.assertNotIn(source.ref, legal_refs)
+        self.assertIn(target.ref, legal_refs)
+        self.assertNotIn(opponent_elf.ref, legal_refs)
+        self.assertNotIn(nonelf.ref, legal_refs)
+        for seat in ("B", "C", "D"):
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+
+        before_rejection = authoritative_state_hash(engine.state)
+        rejected = session.act(
+            "pilot:A",
+            {"action_id": action_id, "targets": [source.ref]},
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before_rejection, authoritative_state_hash(engine.state))
+        self.assertEqual(1, engine.state.players["A"].mana_pool["C"])
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        activated = session.act(
+            "pilot:A",
+            {"action_id": action_id, "targets": [target.ref], "pay": "auto"},
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertEqual(
+            0,
+            sum(engine.state.players["A"].mana_pool.values()),
+        )
+        self.pass_priority(session)
+        self.assertEqual(3, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(2, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertIn("vigilance", engine._combat_keywords(target))
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "trusted-qualified-action"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+        self.assertGreater(expire_end_of_turn_continuous_effects(engine.state), 0)
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertNotIn("vigilance", engine._combat_keywords(target))
+
+        stale = self.session(60812211, players=4)
+        stale_engine = stale.engine
+        stale_source = self.add_permanent(
+            stale_engine,
+            seat="A",
+            name="Qualified Elf Mentor Fixture",
+            ref="trusted-qualified-stale-source",
+        )
+        stale_target = self.add_permanent(
+            stale_engine,
+            seat="A",
+            name="Elves of Deep Shadow",
+            ref="trusted-qualified-stale-target",
+        )
+        register_generated_programs(
+            self.db,
+            stale_engine.semantics,
+            (record,),
+            trust_level="trusted",
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        stale_engine.state.players["A"].mana_pool["C"] = 1
+        stale_engine.state.active_player = "A"
+        stale_engine.state.started = True
+        stale_engine.state.phase = "precombat_main"
+        stale_engine.state.step = "main"
+        stale_engine._grant_priority("A")
+        stale_engine.pump()
+        stale_action = f"activate:{stale_source.ref}:ab1"
+        committed = stale.act(
+            "pilot:A",
+            {
+                "action_id": stale_action,
+                "targets": [stale_target.ref],
+                "pay": "auto",
+            },
+        )
+        self.assertTrue(committed.ok, committed.summary)
+        stale_target.annotations["copy_overrides"] = {
+            "type_line": "Creature — Human"
+        }
+        self.pass_priority(stale)
+        self.assertEqual(1, stale_engine._numeric_stat(stale_target.object_id, "power"))
+        self.assertNotIn("vigilance", stale_engine._combat_keywords(stale_target))
 
     @staticmethod
     def pass_priority(session) -> None:
