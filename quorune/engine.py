@@ -1223,6 +1223,7 @@ class CommanderEngine(
         reason: str,
         transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None,
         trigger_batch: list[StackItem] | None = None,
+        history_pre_recorded: bool = False,
     ) -> None:
         """Game Record v3 compatibility facade for normalized zone events."""
 
@@ -1248,6 +1249,7 @@ class CommanderEngine(
                 reason=reason,
                 transition_kind=transition_kind, read_ahead_chapter=read_ahead_chapter,
                 trigger_batch=trigger_batch,
+                history_pre_recorded=history_pre_recorded,
             )
         )
         origin_types, _, _ = self._type_parts(

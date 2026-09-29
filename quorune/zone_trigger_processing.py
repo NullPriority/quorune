@@ -125,57 +125,15 @@ def dispatch_zone_change_occurrence(
         str, Mapping[str, Any]
     ],
     trigger_batch: list[StackItem] | None = None,
+    history_pre_recorded: bool = False,
 ) -> None:
     """Detect represented events from immutable facts, then use CR 603.3."""
 
     owns_trigger_batch = trigger_batch is None
     pending = trigger_batch if trigger_batch is not None else []
     events = normalized_zone_trigger_events(occurrence)
-    previous_types = set(
-        str(value)
-        for event in events
-        if event.kind == "permanent.leave"
-        for value in event.context.get("types", ())
-    )
-    current_types = set(
-        str(value)
-        for event in events
-        if event.kind == "permanent.enter"
-        for value in event.context.get("types", ())
-    )
-    if occurrence.destination == "battlefield":
-        host._record_turn_history(
-            "permanent_entered",
-            actor=occurrence.current_controller,
-            object_incarnation=(
-                f"{occurrence.object_id}@{occurrence.zone_change_counter}"
-            ),
-            types=current_types,
-        )
-    if (
-        occurrence.origin == "battlefield"
-        and occurrence.destination == "graveyard"
-        and "creature" in previous_types
-    ):
-        host._record_turn_history(
-            "creature_died",
-            actor=occurrence.previous_controller,
-            object_incarnation=occurrence.previous_logical_object_id,
-            types=previous_types,
-        )
-    if occurrence.transition_kind is ZoneTransitionKind.DISCARD:
-        host._record_turn_history(
-            "card_discarded",
-            actor=occurrence.previous_controller,
-            object_incarnation=occurrence.previous_logical_object_id,
-        )
-    if occurrence.transition_kind is ZoneTransitionKind.SACRIFICE:
-        host._record_turn_history(
-            "permanent_sacrificed",
-            actor=occurrence.previous_controller,
-            object_incarnation=occurrence.previous_logical_object_id,
-            types=previous_types,
-        )
+    if not history_pre_recorded:
+        record_zone_change_history(host, occurrence, events=events)
     for event in events:
         context = event.context
         if event.source_timing == "before":
@@ -208,10 +166,76 @@ def dispatch_zone_change_occurrence(
         enqueue_trigger_batch(host, pending)
 
 
+def record_zone_change_history(
+    host: ZoneTriggerProcessingHost,
+    occurrence: ZoneChangeOccurrence,
+    *,
+    events: Sequence[Any] | None = None,
+) -> None:
+    """Record one committed occurrence without discovering its triggers."""
+
+    normalized = tuple(events or normalized_zone_trigger_events(occurrence))
+    previous_types = set(
+        str(value)
+        for event in normalized
+        if event.kind == "permanent.leave"
+        for value in event.context.get("types", ())
+    )
+    current_types = set(
+        str(value)
+        for event in normalized
+        if event.kind == "permanent.enter"
+        for value in event.context.get("types", ())
+    )
+    if any(event.kind == "permanent.enter" for event in normalized):
+        host._record_turn_history(
+            "permanent_entered",
+            actor=occurrence.current_controller,
+            object_incarnation=(
+                f"{occurrence.object_id}@{occurrence.zone_change_counter}"
+            ),
+            types=current_types,
+        )
+    if (
+        occurrence.origin == "battlefield"
+        and occurrence.destination == "graveyard"
+        and "creature" in previous_types
+    ):
+        host._record_turn_history(
+            "creature_died",
+            actor=occurrence.previous_controller,
+            object_incarnation=occurrence.previous_logical_object_id,
+            types=previous_types,
+        )
+    moved = occurrence.origin != occurrence.destination
+    if (
+        moved
+        and occurrence.origin == "hand"
+        and occurrence.transition_kind is ZoneTransitionKind.DISCARD
+    ):
+        host._record_turn_history(
+            "card_discarded",
+            actor=occurrence.previous_controller,
+            object_incarnation=occurrence.previous_logical_object_id,
+        )
+    if (
+        moved
+        and occurrence.origin == "battlefield"
+        and occurrence.transition_kind is ZoneTransitionKind.SACRIFICE
+    ):
+        host._record_turn_history(
+            "permanent_sacrificed",
+            actor=occurrence.previous_controller,
+            object_incarnation=occurrence.previous_logical_object_id,
+            types=previous_types,
+        )
+
+
 __all__ = [
     "ZoneTriggerProcessingHost",
     "DepartureTriggerSnapshot",
     "capture_departure_trigger_sources",
     "dispatch_zone_change_occurrence",
+    "record_zone_change_history",
     "semantic_event_sources",
 ]
