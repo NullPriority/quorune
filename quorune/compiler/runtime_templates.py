@@ -50,10 +50,7 @@ from .fixed_self_entry_counter_templates import (
 )
 from ..entry_state_conditions import FIXED_ENTRY_CONDITION_HANDLER_ID
 from .life_templates import static_life_handler
-from .token_templates import (
-    static_additional_token_replacement_handler,
-    static_token_quantity_replacement_handler,
-)
+from .token_templates import static_additional_token_replacement_handler
 from .trigger_participation_templates import static_trigger_multiplier_handler
 from .untap_step_templates import static_untap_step_handler
 from .zone_templates import static_zone_destination_replacement_handler
@@ -585,17 +582,6 @@ def static_runtime_template(
                 dependency_reason=(
                     "generic counter-quantity replacement depends on an "
                     "untrusted rules capability"
-                ),
-            )
-        token_quantity = static_token_quantity_replacement_handler(text)
-        if token_quantity is not None:
-            return StaticRuntimeTemplate(
-                compiled=token_quantity,
-                kind="replacement_effect",
-                event="token.create",
-                dependency_reason=(
-                    "token quantity replacement depends on an untrusted "
-                    "rules capability"
                 ),
             )
         additional_token = static_additional_token_replacement_handler(text)

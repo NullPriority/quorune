@@ -24431,10 +24431,10 @@
     {
       "capability_id": "token.creation.quantity_replacement",
       "evidence_class": "negative",
-      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_token_multiplier_rejects_open_or_malformed_forms",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleCompilerTests.test_token_multiplier_oracle_grammar_remains_residual",
       "official_rule_ids": ["111.2", "614.1", "614.1a", "614.4", "614.5", "614.6", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Keep triple, qualified-token, and opponent-controller multiplier clauses residual rather than widening the exact controller-scoped doubling grammar."
+      "applicability_note": "Keep the printed multiplier wording residual while the recovery proves only the generic typed runtime component and attacking-token transaction boundary."
     },
     {
       "capability_id": "token.creation.quantity_replacement",

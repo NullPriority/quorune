@@ -7,8 +7,13 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT, keep_all, make_session
-from quorune.carddb import CardDatabase
+from common import (
+    ROOT,
+    keep_all,
+    make_session,
+    register_token_quantity_multiplier,
+)
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.continuous_effect_state import (
     commit_continuous_effect,
     expire_end_of_turn_continuous_effects,
@@ -69,6 +74,30 @@ EXPECTED_TEMPLATES = {
     "Generic Blitz Adept": "fixed-blitz-cast-lifecycle-v1",
     "Generic Myriad Adept": "fixed-myriad-trigger-v1",
 }
+
+
+def token_multiplier_record(oracle_text: str, suffix: int) -> CardRecord:
+    return CardRecord(
+        oracle_id=f"26000000-0000-4000-8000-{suffix:012d}",
+        name=f"Generic token multiplier {suffix}",
+        mana_cost="{3}{G}",
+        mana_value=4.0,
+        type_line="Enchantment",
+        oracle_text=oracle_text,
+        power=None,
+        toughness=None,
+        loyalty=None,
+        defense=None,
+        colors=("G",),
+        color_identity=("G",),
+        keywords=(),
+        produced_mana=(),
+        layout="normal",
+        released_at="2026-01-01",
+        legalities={"commander": "legal"},
+        faces=(),
+        raw={},
+    )
 
 
 def focused_database(directory: str) -> CardDatabase:
@@ -153,35 +182,21 @@ class FixedCombatEntryKeywordLifecycleCompilerTests(unittest.TestCase):
         self.assertNotEqual("exact", mutated.status)
         self.assertTrue(mutated.material_residuals)
 
-    def test_token_multiplier_compiles_for_replacement_expanded_myriad(self):
+    def test_token_multiplier_oracle_grammar_remains_residual(self):
         ir = compile_oracle_card(
-            self.db.lookup("Doubling Season"),
+            token_multiplier_record(
+                "If an effect would create one or more tokens under your "
+                "control, it creates twice that many of those tokens instead.",
+                1,
+            ),
             capability_registry=self.capabilities,
             capability_profile="commander_review",
         )
         token_node = ir.faces[0].nodes[0]
-        self.assertTrue(token_node.exact)
-        self.assertEqual(
-            "static-token-quantity-multiplier-v1",
-            token_node.template_id,
-        )
-        self.assertEqual(
-            (
-                {
-                    "handler_id": "replacement.token.quantity.v1",
-                    "schema_version": 1,
-                    "event": "token.create",
-                    "condition": {
-                        "event_controller": "source_controller",
-                    },
-                    "multiplier": 2,
-                },
-            ),
-            token_node.handlers,
-        )
+        self.assertFalse(token_node.exact)
+        self.assertTrue(ir.material_residuals)
 
     def test_token_multiplier_rejects_open_or_malformed_forms(self):
-        base = self.db.lookup("Doubling Season")
         unsupported = (
             "If an effect would create one or more tokens under your control, "
             "it creates three times that many of those tokens instead.",
@@ -193,12 +208,7 @@ class FixedCombatEntryKeywordLifecycleCompilerTests(unittest.TestCase):
         for index, text in enumerate(unsupported):
             with self.subTest(text=text):
                 ir = compile_oracle_card(
-                    replace(
-                        base,
-                        oracle_id=f"26000000-0000-4000-8000-000000009{index:03d}",
-                        name=f"Unsupported token multiplier {index}",
-                        oracle_text=text,
-                    ),
+                    token_multiplier_record(text, index + 10),
                     capability_registry=self.capabilities,
                     capability_profile="commander_review",
                 )
@@ -291,6 +301,21 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             promote_exact_effect_programs=True,
         )
         return card
+
+    def add_token_quantity_multiplier(self, engine, *, ref: str) -> CardInstance:
+        source = self.add_card(
+            engine,
+            name="Generic Token Quantity Multiplier",
+            ref=ref,
+            zone="battlefield",
+        )
+        register_token_quantity_multiplier(
+            self.db,
+            engine,
+            source,
+            self.capabilities,
+        )
+        return source
 
     @staticmethod
     def resolve_top(engine) -> None:
@@ -898,11 +923,8 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             ref="myriad-multiplied-source",
             zone="battlefield",
         )
-        self.add_card(
-            engine,
-            name="Doubling Season",
-            ref="myriad-token-multiplier",
-            zone="battlefield",
+        self.add_token_quantity_multiplier(
+            engine, ref="myriad-token-multiplier"
         )
         walker_ref = engine.create_token(
             "C",
@@ -994,11 +1016,8 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             zone="battlefield",
         )
         for index in range(2):
-            self.add_card(
-                engine,
-                name="Doubling Season",
-                ref=f"myriad-token-multiplier-{index}",
-                zone="battlefield",
+            self.add_token_quantity_multiplier(
+                engine, ref=f"myriad-token-multiplier-{index}"
             )
         walker_ref = engine.create_token(
             "C",
@@ -1099,11 +1118,8 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             ref="myriad-stale-source",
             zone="battlefield",
         )
-        self.add_card(
-            engine,
-            name="Doubling Season",
-            ref="myriad-stale-multiplier",
-            zone="battlefield",
+        self.add_token_quantity_multiplier(
+            engine, ref="myriad-stale-multiplier"
         )
         walker_ref = engine.create_token(
             "C",

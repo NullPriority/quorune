@@ -7,7 +7,13 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT, keep_all, make_session, pass_current
+from common import (
+    ROOT,
+    keep_all,
+    make_session,
+    pass_current,
+    register_token_quantity_multiplier,
+)
 from quorune.carddb import CardDatabase
 from quorune.compiler.keyword_event_effect_nodes import (
     FIXED_KEYWORD_EVENT_EFFECT_MECHANIC,
@@ -879,17 +885,15 @@ class FixedKeywordEventEffectRuntimeTests(unittest.TestCase):
         multiplier = self.add_card(
             engine,
             seat="A",
-            name="Doubling Season",
+            name="Generic Token Quantity Multiplier",
             ref="mobilize-token-multiplier",
             zone="battlefield",
         )
-        register_generated_programs(
+        register_token_quantity_multiplier(
             self.db,
-            engine.semantics,
-            (self.db.lookup("Doubling Season"),),
-            capability_registry=self.capabilities,
-            capability_profile="commander_review",
-            promote_exact_runtime_handlers=True,
+            engine,
+            multiplier,
+            self.capabilities,
         )
         self.assertEqual("battlefield", multiplier.zone)
         walker_ref = engine.create_token(

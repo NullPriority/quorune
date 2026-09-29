@@ -34,12 +34,6 @@ _CONTROLLED_FRAME = re.compile(
     rf"{_ADDITIONAL_DEFINITION} are created instead\.?$",
     re.IGNORECASE,
 )
-_QUANTITY_MULTIPLIER_FRAME = re.compile(
-    r"^If an effect would create one or more tokens under your control, "
-    r"it creates twice that many of those tokens instead\.?$",
-    re.IGNORECASE,
-)
-
 _TOKEN_TREASURE = "Treasure"
 _TOKEN_FOOD = "Food"
 _TOKEN_MAP = "Map"
@@ -504,28 +498,9 @@ def static_additional_token_replacement_handler(
     )
 
 
-def static_token_quantity_replacement_handler(
-    text: str,
-) -> tuple[str, Mapping[str, Any], str] | None:
-    """Lower one complete mandatory controller-scoped doubling clause."""
-
-    if _QUANTITY_MULTIPLIER_FRAME.fullmatch(" ".join(text.split())) is None:
-        return None
-    return (
-        "static-token-quantity-multiplier-v1",
-        {
-            "handler_id": "replacement.token.quantity.v1",
-            "schema_version": 1,
-            "event": "token.create",
-            "condition": {"event_controller": "source_controller"},
-            "multiplier": 2,
-        },
-        "token.creation.quantity_replacement",
-    )
 __all__ = [
     "FIXED_TOKEN_DEFINITION_BATCH_MECHANIC",
     "FixedTokenCreationTemplate",
     "fixed_token_creation_effect_template",
     "static_additional_token_replacement_handler",
-    "static_token_quantity_replacement_handler",
 ]

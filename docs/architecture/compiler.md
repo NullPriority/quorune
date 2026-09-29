@@ -1233,18 +1233,17 @@ repeated, granted, copied, team-specific, and independently incomplete forms
 remain residual. See
 [ADR 0102](../adr/0102-typed-fixed-combat-entry-lifecycles.md).
 
-`compiler/token_templates.py` also owns one complete controller-scoped
-“twice that many” token replacement clause. The typed replacement operation
-copies the current immutable token specifications, including Myriad's selected
-opponent association, before token identities or timestamps exist. Myriad first
+The generic typed token-quantity replacement component copies the current
+immutable token specifications, including Myriad's selected-opponent
+association, before token identities or timestamps exist. Myriad first
 collects its optional per-opponent creation decisions, resolves replacement
 ordering without mutation, then asks independently where every resulting copy
 attacks within that opponent's legal player/planeswalker set. The canonical
 token owner reruns the pinned selection journal and commits the expanded group
 with one timestamp; delayed cleanup remains pinned to every created
-incarnation. Triple, qualified-token, opponent-controller, optional, and other
-quantity grammar remains residual. Historical one-stage Myriad continuations
-retain their schema-v1 completion path.
+incarnation. Printed token-quantity replacement grammar remains residual.
+Historical one-stage Myriad continuations retain their schema-v1 completion
+path.
 
 `compiler/ward_cost_templates.py`, `compiler/ability_keyword_fragments.py`,
 and `compiler/continuous_templates.py` own the fixed public Ward closure.

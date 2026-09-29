@@ -4226,18 +4226,12 @@
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v219-token-destination-replacement-semantics",
       "compiler_version": "oracle-ir-v219",
-      "bundle_id": "bundle:token-quantity-replacement-correction",
-      "candidate_ids": [
-        "compiler:token-quantity-replacement"
-      ],
-      "family_ids": [
-        "replacement_effect:replacement-applicability"
-      ],
-      "capability_ids": [
-        "token.creation.quantity_replacement"
-      ],
-      "non_harvest_reason": null,
-      "expected_complete_card_gain": 3
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Corrects replacement-expanded Myriad and Mobilize destination choices through a generic typed token-quantity component without admitting new Oracle grammar or card support.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {

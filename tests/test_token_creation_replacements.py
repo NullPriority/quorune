@@ -5,7 +5,12 @@ import json
 import tempfile
 import unittest
 
-from common import keep_all, load_assets, make_session
+from common import (
+    keep_all,
+    load_assets,
+    make_session,
+    register_token_quantity_multiplier,
+)
 from quorune.card_overrides import normalize_game_record_v3_runtime_handler
 from quorune.model import CardInstance, StackItem
 from quorune.compiler.token_templates import (
@@ -109,8 +114,8 @@ class TokenCreationReplacementTests(unittest.TestCase):
         engine.move_card(source.object_id, "battlefield", controller="A")
         return source
 
-    def install_generated_doubling_season(self, engine, *, ref: str):
-        record = self.db.lookup("Doubling Season")
+    def install_token_quantity_multiplier(self, engine, *, ref: str):
+        record = self.db.lookup("Generic Token Quantity Multiplier")
         source = CardInstance(
             object_id=f"fixture:{ref}",
             ref=ref,
@@ -126,21 +131,18 @@ class TokenCreationReplacementTests(unittest.TestCase):
         )
         engine.state.cards[source.object_id] = source
         engine.state.players["A"].zones["battlefield"].append(source.object_id)
-        result = register_generated_programs(
+        register_token_quantity_multiplier(
             self.db,
-            engine.semantics,
-            (record,),
-            capability_registry=load_default_capability_registry(),
-            capability_profile="commander_review",
-            promote_exact_runtime_handlers=True,
+            engine,
+            source,
+            load_default_capability_registry(),
         )
-        self.assertGreaterEqual(result["runtime_handlers_promoted"], 1)
         return source
 
     def test_token_multiplier_preserves_specifications_and_simultaneous_commit(self):
         session = self.session(1250590)
         engine = session.engine
-        self.install_generated_doubling_season(
+        self.install_token_quantity_multiplier(
             engine, ref="token-multiplier-source"
         )
 

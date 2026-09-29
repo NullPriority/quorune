@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import asdict
+import hashlib
 import os
 from pathlib import Path
 
@@ -10,6 +12,8 @@ from quorune.counter_removal import (
     plan_counter_removal_effect,
 )
 from quorune.model import TurnHistory
+from quorune.semantics import SemanticProgram
+from quorune.util import stable_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = Path(os.environ.get("MTG_CARD_DB", ROOT / "data" / "scryfall-20260728-compact.sqlite3"))
@@ -52,6 +56,74 @@ def pass_current(session, *, yield_mode=None):
     result = session.act(principal, response)
     assert result.ok, result.summary
     return principal
+
+
+def register_token_quantity_multiplier(
+    db,
+    engine,
+    source,
+    capability_registry,
+):
+    """Register the generic trusted runtime fixture without Oracle admission."""
+
+    capability_id = "token.creation.quantity_replacement"
+    closure = capability_registry.closure(
+        (capability_id,),
+        profile="commander_review",
+    )
+    assert closure.trusted, closure.blockers
+    record = db.by_oracle_id(source.oracle_id)
+    oracle_hash = hashlib.sha256(
+        record.oracle_text.encode("utf-8")
+    ).hexdigest()
+    rulings_hash = hashlib.sha256(
+        stable_json(
+            sorted(
+                (asdict(ruling) for ruling in db.rulings(record)),
+                key=lambda row: (
+                    str(row["published_at"]),
+                    str(row["source"]),
+                    str(row["comment"]),
+                    str(row["oracle_id"]),
+                ),
+            )
+        ).encode("utf-8")
+    ).hexdigest()
+    program = SemanticProgram(
+        key=f"fixture:{record.oracle_id}:token-quantity-replacement",
+        label="Generic token quantity replacement",
+        oracle_id=record.oracle_id,
+        ability_id="replacement:front:token-quantity",
+        active_zone="battlefield",
+        event="token.create",
+        trust_level="trusted",
+        provenance={
+            "compiler_version": "generic-runtime-fixture-v1",
+            "authored_by": "test fixture",
+            "face_id": "front",
+            "review_status": "focused runtime fixture",
+            "source_oracle_hash": oracle_hash,
+            "source_rulings_hash": rulings_hash,
+            "template_id": "generic-token-quantity-runtime-fixture-v1",
+        },
+        handlers=[
+            {
+                "handler_id": "replacement.token.quantity.v1",
+                "schema_version": 1,
+                "event": "token.create",
+                "condition": {
+                    "event_controller": "source_controller",
+                },
+                "multiplier": 2,
+            }
+        ],
+        tests=["generic token quantity replacement runtime fixture"],
+        capability_dependencies=[capability_id],
+        capability_closure=closure.to_dict(),
+    )
+    engine.semantics.put(program)
+    assert engine.semantic_program_is_current_trusted(program)
+    return program
 
 
 def set_fixture_turn(engine, turn_sequence: int) -> None:
