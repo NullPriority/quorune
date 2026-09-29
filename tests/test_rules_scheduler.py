@@ -4,6 +4,7 @@ from copy import deepcopy
 import gzip
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -78,6 +79,7 @@ from scripts.harvest_outcome_history import (
 from scripts.update_rules_scheduler import _compact_markdown
 from scripts.update_work_selection_cohort_measurements import (
     _completed_transition_measurement_is_current,
+    _remote_git_blob,
     _durable_main_frontier,
     _preserved_transition_is_current,
     _source_checkpoint_frontier,
@@ -3541,6 +3543,53 @@ class RulesSchedulerTests(unittest.TestCase):
             expected,
             _source_checkpoint_frontier(transition_id)["fingerprint"],
         )
+
+    def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
+        transition_id = self.catalog["work_selection"][
+            "semantic_transition_declaration"
+        ]["transition_id"]
+        outcome = next(
+            row
+            for row in self.work_inputs["harvest_outcome_history"]["entries"]
+            if row.get("transition_id") == transition_id
+        )
+        blob_id = outcome["base_receipt"]["blobs"][
+            "coverage/card-unlock-frontier.json.gz"
+        ]["git_blob_oid"]
+        raw = subprocess.run(
+            ["git", "cat-file", "blob", blob_id],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.PIPE,
+        ).stdout
+        missing = subprocess.CompletedProcess(
+            args=["git", "cat-file", "blob", blob_id],
+            returncode=1,
+            stdout=b"",
+            stderr=b"missing in shallow checkout",
+        )
+        with (
+            mock.patch(
+                "scripts.update_work_selection_cohort_measurements."
+                "subprocess.run",
+                return_value=missing,
+            ),
+            mock.patch(
+                "scripts.update_work_selection_cohort_measurements."
+                "_remote_git_blob",
+                return_value=raw,
+            ) as remote,
+        ):
+            recovered = _source_checkpoint_frontier(transition_id)
+        remote.assert_called_once_with(blob_id)
+        self.assertEqual(
+            outcome["measurement_frontier_fingerprint"],
+            recovered["fingerprint"],
+        )
+
+    def test_remote_receipt_blob_rejects_untrusted_context(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertIsNone(_remote_git_blob("a" * 40))
 
     def test_transition_probe_recovers_exact_durable_main_frontier(self):
         raw = subprocess.run(
