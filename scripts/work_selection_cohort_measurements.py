@@ -117,6 +117,7 @@ from quorune.compiler.declaration_nodes import (
     fixed_declaration_fragment_sequence,
     fixed_static_declaration_grant_handler,
 )
+from quorune.compiler.direct_target import DirectPermanentTargetSpec
 from quorune.compiler.query_characteristic_templates import (
     query_power_toughness_definition_handler,
     query_self_characteristics_handler,
@@ -311,6 +312,9 @@ _PROBE_FIXED_ZONE_CAST_LIFECYCLES = (
 _PROBE_FIXED_SOURCE_CHARACTERISTICS = (
     "fixed-source-characteristics-existing-owner-v1"
 )
+_PROBE_QUALIFIED_TARGET_CHARACTERISTICS = (
+    "qualified-target-characteristics-existing-owner-v1"
+)
 _PROBE_FIXED_SINGLE_OBJECT_REANIMATION = (
     "fixed-single-object-reanimation-existing-owner-v1"
 )
@@ -500,6 +504,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_SUSPEND_LIFECYCLE,
     _PROBE_FIXED_ZONE_CAST_LIFECYCLES,
     _PROBE_FIXED_SOURCE_CHARACTERISTICS,
+    _PROBE_QUALIFIED_TARGET_CHARACTERISTICS,
     _PROBE_FIXED_SINGLE_OBJECT_REANIMATION,
     _PROBE_FIXED_CREATURE_POWER_DAMAGE,
     _PROBE_FIXED_PUBLIC_DAMAGE_PREDICATES,
@@ -3580,8 +3585,168 @@ def _fixed_source_characteristic_measurement(
 ) -> dict[str, Any]:
     """Measure fixed source and newly shared target characteristic effects."""
 
+    return _characteristic_target_measurement(
+        frontier=frontier,
+        bundle_id=bundle_id,
+        probe_id=probe_id,
+        cards_by_oracle_id=cards_by_oracle_id,
+        coverage=coverage,
+        cohort_fingerprint=cohort_fingerprint,
+        member_ids=member_ids,
+    )
+
+
+def _characteristic_target_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+    member_ids: set[str] | None = None,
+) -> dict[str, Any]:
+    """Measure source or qualified-target fixed characteristic effects."""
+
     registry = load_default_capability_registry()
+    template_ids = {
+        "fixed-target-characteristics-until-end-of-turn-v1",
+        "fixed-target-counter-characteristics-sequence-v1",
+    }
+    broad_cards: set[str] = set()
     matched_cards: dict[str, int] = {}
+    exact_ability_gain = 0
+    complete_cards = 0
+    one_additional = 0
+    two_additional = 0
+    residual_reduction = 0
+    existing_exact_siblings = 0
+    remaining_residual_siblings = 0
+    for card in (() if member_ids is not None else frontier.get("cards", [])):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        broad = any(
+            "until end of turn" in line.casefold()
+            and "target " in line.casefold()
+            and any(
+                marker in line.casefold()
+                for marker in (" gets ", " gains ")
+            )
+            for line in str(record.oracle_text).splitlines()
+        )
+        if not broad or card.get("oracle_ir_status") == "exact":
+            continue
+        broad_cards.add(oracle_id)
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        previous = {
+            str(ability.get("ability_id") or ""): ability
+            for ability in card.get("abilities", ())
+        }
+        represented = []
+        for face in compiled.faces:
+            for node in face.nodes:
+                if (
+                    not node.exact
+                    or node.template_id not in template_ids
+                    or previous.get(node.node_id, {}).get("status") == "exact"
+                ):
+                    continue
+                try:
+                    target = DirectPermanentTargetSpec.from_target_schema(
+                        node.target_schema  # type: ignore[arg-type]
+                    )
+                except (TypeError, ValueError):
+                    continue
+                if not (
+                    target.uses_compound_characteristics
+                    or target.source_exclusion
+                ):
+                    continue
+                represented.append(node)
+        if not represented:
+            continue
+        matched_cards[oracle_id] = len(represented)
+        prior_exact = sum(
+            ability.get("status") == "exact"
+            for ability in card.get("abilities", ())
+        )
+        compiled_exact = sum(
+            node.exact for face in compiled.faces for node in face.nodes
+        )
+        exact_ability_gain += max(0, compiled_exact - prior_exact)
+        remaining = [
+            node for face in compiled.faces for node in face.nodes if not node.exact
+        ]
+        existing_exact_siblings += prior_exact
+        remaining_residual_siblings += len(remaining)
+        complete_cards += compiled.status == "exact"
+        one_additional += len(remaining) == 1
+        two_additional += len(remaining) == 2
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        residual_reduction += max(
+            0,
+            base_residuals - len(compiled.material_residuals),
+        )
+    reaches_floor = (
+        complete_cards >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    qualified_measurement = {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": complete_cards,
+        "one_additional_blocker_cards": one_additional,
+        "two_additional_blocker_cards": two_additional,
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": exact_ability_gain,
+            "existing_exact_sibling_nodes": existing_exact_siblings,
+            "remaining_residual_sibling_nodes": remaining_residual_siblings,
+            "trusted_program_transitions": complete_cards,
+            "unresolved_program_transitions": (
+                len(matched_cards) - complete_cards
+            ),
+            "expected_oracle_residual_reduction": residual_reduction,
+            "expected_card_program_residual_reduction": residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": (
+                len(matched_cards) - complete_cards
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                broad_cards - set(matched_cards)
+            ),
+        },
+    }
+
+    if member_ids is None:
+        return qualified_measurement
+
+    registry = load_default_capability_registry()
+    matched_cards = {}
     exact_ability_gain = 0
     complete_cards = 0
     one_additional = 0
@@ -5105,6 +5270,15 @@ def _measurement(
             bundle_id=bundle_id,
             probe_id=probe_id,
             member_ids={str(value) for value in bundle["member_family_ids"]},
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
+    if probe_id == _PROBE_QUALIFIED_TARGET_CHARACTERISTICS:
+        return _characteristic_target_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id,
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,

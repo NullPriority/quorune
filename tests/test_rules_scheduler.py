@@ -41,6 +41,7 @@ from quorune.work_selection_bundles import (
     WorkSelectionBundleError,
 )
 from quorune.work_selection_evidence import (
+    _validate_cohort_row_shape,
     _validate_non_harvest_history,
     _validate_transition_measurements,
     non_harvest_metrics_are_conservative,
@@ -85,6 +86,7 @@ from scripts.update_work_selection_cohort_measurements import (
 )
 from scripts.work_selection_cohort_measurements import (
     _attached_quoted_ability_grant_measurement,
+    _characteristic_target_measurement,
     _fixed_activation_zone_change_predicate_measurement,
     _fixed_entry_return_requirement_measurement,
     _fixed_creature_power_damage_measurement,
@@ -4028,6 +4030,81 @@ class RulesSchedulerTests(unittest.TestCase):
             )
         self.assertEqual("bounded_executable", measurement["decision"])
         self.assertEqual(1, measurement["affected_commander_cards"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+
+    def test_qualified_target_characteristic_probe_is_schema_complete(self):
+        source = "Target legendary creature gets +1/+1 until end of turn."
+        record = SimpleNamespace(
+            oracle_id="fixture:qualified-target-characteristics",
+            name="Qualified target characteristic fixture",
+            oracle_text=source,
+            type_line="Instant",
+            faces=(),
+        )
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "unresolved",
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "face_id": "front",
+                            "source_line": 1,
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                }
+            ]
+        }
+        node = SimpleNamespace(
+            node_id="front:n1",
+            exact=True,
+            template_id="fixed-target-characteristics-until-end-of-turn-v1",
+            target_schema={
+                "zones": ["battlefield"],
+                "categories": ["permanent"],
+                "count": 1,
+                "types_any": ["creature"],
+                "supertypes_any": ["legendary"],
+            },
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(node,)),),
+            material_residuals=(),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _characteristic_target_measurement(
+                frontier=frontier,
+                bundle_id="bundle:qualified-target-characteristics",
+                probe_id=(
+                    "qualified-target-characteristics-existing-owner-v1"
+                ),
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertTrue(_validate_cohort_row_shape(measurement))
+        self.assertEqual("bounded_executable", measurement["decision"])
         self.assertEqual(1, measurement["complete_card_gain"])
         self.assertEqual(1, measurement["exact_ability_gain"])
         self.assertEqual(1, measurement["material_residual_reduction"])
