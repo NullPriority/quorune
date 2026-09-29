@@ -102,6 +102,8 @@ class ActivationCommitHost(Protocol):
 
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
+    def _copyable_characteristics(self, card: Any) -> Mapping[str, Any]: ...
+
     def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
 
     def _pay_for_cost(self, seat: str, requirements: Mapping[str, int], response: Mapping[str, Any], **kwargs: Any) -> tuple[dict[str, int], list[dict[str, Any]]]: ...
@@ -571,6 +573,7 @@ def _activation_stack_item(
     paid_objects: Sequence[str],
     attachment_snapshot: SourceAttachmentSnapshot | None,
     special_cost_context: tuple[str, Mapping[str, Any]] | None,
+    encore_source_context: Mapping[str, Any] | None,
 ) -> StackItem:
     details = dict(thaw_json(proposal.details))
     snapshots = [
@@ -605,6 +608,7 @@ def _activation_stack_item(
                 else {}
             ),
             **dict(details.get("builtin_context") or {}),
+            **dict(encore_source_context or {}),
             "target_groups": thaw_json(proposal.target_groups),
             "target_snapshots": thaw_json(proposal.target_snapshots),
             "targets_revalidated": False,
@@ -775,11 +779,18 @@ def commit_activation(
     except ActivationUsageError as exc:
         raise GameRuleError(str(exc)) from exc
     origin = _commit_source_cost(host, source, ability, response)
+    encore_source_context = None
     if program is not None and any(
         effect.get("op") == ENCORE_EFFECT_OPERATION
         for effect in program.effects
     ):
+        from ...token_creation import token_copy_snapshot
+
         source_logical_object_id = source.logical_object_id
+        encore_source_context = {
+            "encore_source_zone": source.zone,
+            "encore_copy_snapshot": token_copy_snapshot(host, source),
+        }
     if ability.mana_ability:
         complete_mana_activation(
             host,
@@ -803,6 +814,7 @@ def commit_activation(
         paid_objects,
         attachment_snapshot,
         special_cost_context,
+        encore_source_context,
     )
     begin_ninjutsu_reveal(host, source, item)
     host.state.stack.append(item)

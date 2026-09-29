@@ -252,9 +252,15 @@ class EncoreTokensEffectHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        legacy_fields = frozenset({"op"})
+        current_fields = frozenset(
+            {"op", "source_zone", "copy_snapshot"}
+        )
         if frozenset(effect) not in {
-            frozenset({"op"}),
-            frozenset({"op", "_replacement_selections"}),
+            legacy_fields,
+            legacy_fields | {"_replacement_selections"},
+            current_fields,
+            current_fields | {"_replacement_selections"},
         } or effect.get("op") != self.operation:
             raise SemanticNodeError("Encore token effect is malformed")
         source = context.source
@@ -272,6 +278,18 @@ class EncoreTokensEffectHandler:
             raise SemanticNodeError(
                 "Encore replacement selections must be an array"
             )
+        source_zone = effect.get("source_zone")
+        copy_snapshot = effect.get("copy_snapshot")
+        if (source_zone is None) != (copy_snapshot is None) or (
+            source_zone is not None
+            and (
+                source_zone not in {"command", "exile"}
+                or not isinstance(copy_snapshot, Mapping)
+            )
+        ):
+            raise SemanticNodeError(
+                "Encore source zone and copy snapshot are malformed"
+            )
         return IntentPlan(
             operation=self.operation,
             handler_id=self.handler_id,
@@ -286,6 +304,14 @@ class EncoreTokensEffectHandler:
                         seat
                         for seat in context.query.active_seats
                         if seat != context.actor
+                    ),
+                    source_zone=(
+                        str(source_zone) if source_zone is not None else None
+                    ),
+                    copy_snapshot=(
+                        FrozenMap(copy_snapshot)
+                        if isinstance(copy_snapshot, Mapping)
+                        else None
                     ),
                     replacement_selections=tuple(selections),
                 ),

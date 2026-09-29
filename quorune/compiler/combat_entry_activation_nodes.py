@@ -203,7 +203,13 @@ def fixed_encore_keyword_node(
         exact=not residual_ids,
         template_id="fixed-encore-activation-v1",
         cost=activated_ability_cost(spec.to_activated_ability()),
-        effects=({"op": ENCORE_EFFECT_OPERATION},),
+        effects=(
+            {
+                "op": ENCORE_EFFECT_OPERATION,
+                "source_zone": "$context.encore_source_zone",
+                "copy_snapshot": "$context.encore_copy_snapshot",
+            },
+        ),
         handlers=(fixed_encore_handler_descriptor(spec),),
         runtime_coverage=(
             "graveyard_sorcery_activation",

@@ -80,6 +80,8 @@ class TokenCreationHost(Protocol):
         printed_entry_characteristics: bool = False,
     ) -> Mapping[str, Any]: ...
 
+    def _copyable_characteristics(self, card: Any) -> Mapping[str, Any]: ...
+
     def _compiled_enchant_spec(
         self,
         card: CardInstance,
@@ -134,6 +136,30 @@ class TokenCreationHost(Protocol):
 _ATTACKING_FIELD = "attacking"
 _ATTACKING_GROUP_FIELD = "_attacking_group"
 _REASON_FIELD = "reason"
+
+
+@dataclass(frozen=True, slots=True)
+class GroupedTokenCreation:
+    refs: tuple[str, ...]
+    grouped_refs: tuple[tuple[str, str], ...]
+
+
+def token_copy_snapshot(
+    host: TokenCreationHost,
+    source: CardInstance,
+) -> dict[str, Any]:
+    """Capture one public copiable-value snapshot for later token creation."""
+
+    copyable = copy.deepcopy(dict(host._copyable_characteristics(source)))
+    return {
+        "oracle_id": source.oracle_id,
+        "printed_name": source.printed_name,
+        "annotations": {
+            "copied_from": source.object_id,
+            "copy_overrides": copyable,
+        },
+        "characteristics": copyable,
+    }
 
 
 @dataclass(frozen=True, slots=True)
@@ -353,6 +379,28 @@ def _assign_expanded_attacking_destinations(
             "Expanded attacking assignments exceed the token plan"
         )
     return tuple(assigned)
+
+
+def _detach_creation_groups(
+    token_specs: Sequence[Mapping[str, Any]],
+) -> tuple[tuple[Mapping[str, Any], ...], tuple[str | None, ...]]:
+    cleaned: list[Mapping[str, Any]] = []
+    groups: list[str | None] = []
+    for raw_spec in token_specs:
+        spec = dict(raw_spec)
+        group = spec.pop(_ATTACKING_GROUP_FIELD, None)
+        quantity = int(spec.get("quantity", 1))
+        if quantity < 0:
+            raise TokenCreationError(
+                "Replacement token quantity cannot be negative"
+            )
+        if group is not None and (type(group) is not str or not group):
+            raise TokenCreationError(
+                "Token creation groups must be nonempty strings"
+            )
+        cleaned.append(spec)
+        groups.extend([group] * quantity)
+    return tuple(cleaned), tuple(groups)
 
 
 def _creation_subject(
@@ -1263,6 +1311,98 @@ def create_tokens(
         base_name=name,
         base_quantity=quantity,
         reason=reason,
+    )
+
+
+def create_grouped_tokens(
+    host: TokenCreationHost,
+    controller: str,
+    *,
+    groups: Sequence[str],
+    name: str = "",
+    copy_of: str | None = None,
+    copy_source_zone: str = "battlefield",
+    copy_snapshot: Mapping[str, Any] | None = None,
+    characteristics: Mapping[str, Any] | None = None,
+    temporary_keywords: Sequence[str] = (),
+    reason: str = "grouped token effect",
+    replacement_selections: Sequence[
+        str | None | Mapping[str, Any]
+    ] = (),
+) -> GroupedTokenCreation:
+    """Create one replacement-aware token event while retaining group identity."""
+
+    normalized_groups = tuple(groups)
+    if not normalized_groups or any(
+        type(value) is not str or not value for value in normalized_groups
+    ):
+        raise TokenCreationError(
+            "Grouped token creation requires nonempty string groups"
+        )
+    if len(normalized_groups) != len(set(normalized_groups)):
+        raise TokenCreationError("Grouped token creation groups must be unique")
+    host._require_seat(controller, in_game=True)
+    token_specs, created_types, created_subtypes, sources = (
+        _token_specification_inputs(
+            host,
+            controller,
+            name=name,
+            quantity=len(normalized_groups),
+            tapped=False,
+            attacking=None,
+            attacking_groups=normalized_groups,
+            battle_protector=None,
+            copy_of=copy_of,
+            copy_source_zone=copy_source_zone,
+            copy_snapshot=copy_snapshot,
+            characteristics=characteristics,
+            temporary_keywords=temporary_keywords,
+            aura_target_ref=None,
+        )
+    )
+    replacement_effects = _token_replacement_effects(
+        host,
+        controller,
+        created_types,
+        created_subtypes,
+        sources,
+    )
+    resolved = _resolved_token_specs(
+        host,
+        controller,
+        quantity=len(normalized_groups),
+        token_specs=token_specs,
+        created_types=created_types,
+        created_subtypes=created_subtypes,
+        replacement_effects=replacement_effects,
+        replacement_selections=replacement_selections,
+    )
+    cleaned_specs, expanded_groups = _detach_creation_groups(resolved.specs)
+    refs = tuple(
+        _commit_resolved_token_specs(
+            host,
+            controller,
+            resolved=ResolvedTokenSpecs(
+                specs=cleaned_specs,
+                journal=resolved.journal,
+                remaining_selections=resolved.remaining_selections,
+            ),
+            base_name=name,
+            base_quantity=len(normalized_groups),
+            reason=reason,
+        )
+    )
+    if len(refs) != len(expanded_groups):
+        raise TokenCreationError(
+            "Grouped token identities changed before commit"
+        )
+    return GroupedTokenCreation(
+        refs=refs,
+        grouped_refs=tuple(
+            (ref, group)
+            for ref, group in zip(refs, expanded_groups)
+            if group is not None
+        ),
     )
 
 

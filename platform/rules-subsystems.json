@@ -4224,13 +4224,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v219-token-destination-replacement-semantics",
-      "compiler_version": "oracle-ir-v219",
+      "transition_id": "oracle-ir-v220-encore-source-group-semantics",
+      "compiler_version": "oracle-ir-v220",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Corrects replacement-expanded Myriad and Mobilize destination choices through a generic typed token-quantity component without admitting new Oracle grammar or card support.",
+      "non_harvest_reason": "Corrects Encore source-information lifetime, simultaneous replacement-aware group creation, and single controller-limited delayed cleanup without widening the admitted grammar.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [

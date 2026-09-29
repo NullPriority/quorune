@@ -447,6 +447,8 @@ class EncoreTokensIntent:
     source_ref: str
     source_logical_object_id: str
     opponents: tuple[str, ...]
+    source_zone: str | None = None
+    copy_snapshot: FrozenMap | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
@@ -472,75 +474,120 @@ class EncoreTokensIntent:
             raise CombatEntryActivationError(
                 "Encore opponents must be unique nonactor seats"
             )
+        if (self.source_zone is None) != (self.copy_snapshot is None):
+            raise CombatEntryActivationError(
+                "Encore source zone and copy snapshot must be paired"
+            )
+        if self.source_zone is not None:
+            if self.source_zone not in {"command", "exile"}:
+                raise CombatEntryActivationError(
+                    "Encore copy source zone must be public"
+                )
+            snapshot = self.copy_snapshot
+            if not isinstance(snapshot, FrozenMap):
+                snapshot = freeze_value(
+                    snapshot,
+                    field="encore.copy_snapshot",
+                )
+            if (
+                not isinstance(snapshot, FrozenMap)
+                or set(snapshot)
+                != {
+                    "oracle_id",
+                    "printed_name",
+                    "annotations",
+                    "characteristics",
+                }
+            ):
+                raise CombatEntryActivationError(
+                    "Encore copy snapshot is malformed"
+                )
+            object.__setattr__(self, "copy_snapshot", snapshot)
 
 
 def resolve_encore_tokens(host: NinjutsuHost, intent: EncoreTokensIntent) -> tuple[str, ...]:
+    from .token_creation import create_grouped_tokens, token_copy_snapshot
+
     source = host.state.cards.get(intent.source_object_id)
-    if (
-        source is None
-        or source.ref != intent.source_ref
-        or source.logical_object_id != intent.source_logical_object_id
-        or source.zone != "exile"
-        or source.owner != intent.actor
-        or any(opponent not in host.state.players for opponent in intent.opponents)
-    ):
+    if any(opponent not in host.state.players for opponent in intent.opponents):
         return ()
-    created_refs: list[str] = []
-    for opponent in intent.opponents:
-        refs = host.create_token(
+    if intent.copy_snapshot is None:
+        if (
+            source is None
+            or source.ref != intent.source_ref
+            or source.logical_object_id != intent.source_logical_object_id
+            or source.zone != "exile"
+            or source.owner != intent.actor
+        ):
+            return ()
+        snapshot = token_copy_snapshot(host, source)
+    elif (
+        source is not None
+        and source.ref == intent.source_ref
+        and source.logical_object_id == intent.source_logical_object_id
+        and source.zone == intent.source_zone
+        and source.owner == intent.actor
+    ):
+        snapshot = token_copy_snapshot(host, source)
+    else:
+        snapshot = thaw_value(intent.copy_snapshot)
+    result = create_grouped_tokens(
+        host,
+        intent.actor,
+        groups=intent.opponents,
+        copy_of=intent.source_ref,
+        copy_source_zone="exile",
+        copy_snapshot=snapshot,
+        temporary_keywords=("Haste",),
+        reason="Encore resolved",
+        replacement_selections=intent.replacement_selections,
+    )
+    created: list[Any] = []
+    for created_ref, opponent in result.grouped_refs:
+        card = host._resolve_object(
             intent.actor,
-            name="",
-            quantity=1,
-            copy_of=source.ref,
-            copy_source_zone="exile",
-            temporary_keywords=("Haste",),
-            reason="Encore resolved",
-            replacement_selections=intent.replacement_selections,
+            created_ref,
+            zones={"battlefield"},
+            controlled_only=True,
         )
-        for created_ref in refs:
-            created = host._resolve_object(
-                intent.actor,
-                created_ref,
-                zones={"battlefield"},
-                controlled_only=True,
-            )
-            created.annotations[ENCORE_ATTACK_DESIGNATION] = {
-                "logical_object_id": created.logical_object_id,
-                "opponent": opponent,
-            }
-            schedule_delayed_trigger(
-                host,
-                controller=intent.actor,
-                label=f"Sacrifice {created.ref}",
-                event_kind="step.begin",
-                condition={"phase": "ending", "step": "end_step"},
-                stack_template={
-                    "label": f"Encore — sacrifice {created.ref}",
-                    "context": {
-                        "dynamic_effects": [
-                            {
-                                "op": "move_if_in_zone",
-                                "card": created.ref,
-                                "from": "battlefield",
-                                "destination": "graveyard",
-                                "transition_kind": "sacrifice",
-                                "required_controller": intent.actor,
-                                "expected_zone_change_counter": (
-                                    created.zone_change_counter
-                                ),
-                                "expected_object_identity": (
-                                    created.logical_object_id
-                                ),
-                            }
-                        ]
-                    },
+        card.annotations[ENCORE_ATTACK_DESIGNATION] = {
+            "logical_object_id": card.logical_object_id,
+            "opponent": opponent,
+        }
+        created.append(card)
+    if created:
+        schedule_delayed_trigger(
+            host,
+            controller=intent.actor,
+            label="Sacrifice Encore tokens",
+            event_kind="step.begin",
+            condition={"phase": "ending", "step": "end_step"},
+            stack_template={
+                "label": "Encore — sacrifice tokens",
+                "context": {
+                    "dynamic_effects": [
+                        {
+                            "op": "move_if_in_zone",
+                            "card": card.ref,
+                            "from": "battlefield",
+                            "destination": "graveyard",
+                            "transition_kind": "sacrifice",
+                            "required_controller": intent.actor,
+                            "expected_zone_change_counter": (
+                                card.zone_change_counter
+                            ),
+                            "expected_object_identity": (
+                                card.logical_object_id
+                            ),
+                        }
+                        for card in created
+                    ]
                 },
-                source_object_id=created.object_id,
-                referred_object_ids=(created.object_id,),
-                once=True,
-            )
-            created_refs.append(created.ref)
-    return tuple(created_refs)
+            },
+            referred_object_ids=tuple(card.object_id for card in created),
+            once=True,
+        )
+    return tuple(card.ref for card in created)
 
 
 def encore_attack_requirement(card: Any) -> str | None:

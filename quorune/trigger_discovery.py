@@ -1003,16 +1003,9 @@ def _semantic_trigger_context(
         effect.get("op") == "choose_myriad_token_destinations"
         for effect in program.effects
     ):
-        copyable = copy.deepcopy(dict(host._copyable_characteristics(source)))
-        stack_context["myriad_copy_snapshot"] = {
-            "oracle_id": source.oracle_id,
-            "printed_name": source.printed_name,
-            "annotations": {
-                "copied_from": source.object_id,
-                "copy_overrides": copyable,
-            },
-            "characteristics": copyable,
-        }
+        from .token_creation import token_copy_snapshot
+
+        stack_context["myriad_copy_snapshot"] = token_copy_snapshot(host, source)
     if (
         isinstance(program.event_condition, Mapping)
         and program.event_condition.get("field")
