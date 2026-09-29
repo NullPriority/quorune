@@ -48,6 +48,75 @@ def _atomic_text(path: Path, text: str) -> None:
             temporary.unlink(missing_ok=True)
 
 
+def record_size_comparison(
+    directory: str | Path,
+    *,
+    manifest: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Measure one durable record without re-deriving its semantic review."""
+
+    directory = Path(directory)
+    migrated_from = (manifest or {}).get("migrated_from")
+    before_bytes = (
+        Path(str(migrated_from)).stat().st_size
+        if migrated_from and Path(str(migrated_from)).exists()
+        else None
+    )
+    component_bytes = {
+        path.name: path.stat().st_size
+        for path in directory.glob("*")
+        if path.is_file()
+    }
+    core_names = {
+        "manifest.json",
+        "checkpoint.json",
+        "initial-checkpoint.json.gz",
+        "commands.jsonl",
+        "events.jsonl",
+        "decisions.jsonl",
+        "semantics.json",
+        "cursors.json",
+        "pilot-profiles.json",
+        "plans.json",
+        "pilot-memory.json",
+    }
+    resumable_core = sum(
+        value for name, value in component_bytes.items() if name in core_names
+    )
+    review_artifacts = sum(
+        value
+        for name, value in component_bytes.items()
+        if name in {"review.json", "review.md"}
+    )
+    record_total = sum(component_bytes.values())
+    return {
+        "legacy_game_json_bytes": before_bytes,
+        "record_components_bytes": component_bytes,
+        "checkpoint_bytes": component_bytes.get("checkpoint.json", 0),
+        "initial_checkpoint_bytes": component_bytes.get(
+            "initial-checkpoint.json.gz", 0
+        ),
+        "command_journal_bytes": component_bytes.get("commands.jsonl", 0),
+        "event_journal_bytes": component_bytes.get("events.jsonl", 0),
+        "decision_journal_bytes": component_bytes.get("decisions.jsonl", 0),
+        "manifest_bytes": component_bytes.get("manifest.json", 0),
+        "review_artifact_bytes": review_artifacts,
+        "resumable_core_bytes": resumable_core,
+        "complete_record_bytes": record_total,
+        "record_total_bytes": record_total,
+        "bytes_saved_before_derived_review": (
+            before_bytes - resumable_core
+            if before_bytes is not None
+            else None
+        ),
+        "percent_smaller_before_derived_review": (
+            round((before_bytes - resumable_core) * 100 / before_bytes, 1)
+            if before_bytes
+            else None
+        ),
+    }
+
+
 def _publish_review(
     directory: Path,
     engine: CommanderEngine,
@@ -82,14 +151,8 @@ def _publish_review(
     for _ in range(5):
         _atomic_text(directory / "review.json", stable_json(review))
         _atomic_text(directory / "review.md", review_markdown(review))
-        refreshed = derive_review(
-            engine,
-            decisions=decisions,
-            manifest=manifest,
-            record_directory=directory,
-        )
-        sizes = refreshed.get("size_comparison")
-        review = refreshed
+        sizes = record_size_comparison(directory, manifest=manifest)
+        review["size_comparison"] = sizes
         if sizes == previous_sizes:
             break
         previous_sizes = sizes

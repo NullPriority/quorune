@@ -12305,13 +12305,13 @@
           "visibility": "public"
         },
         {
-          "end_line": 1619,
+          "end_line": 1565,
           "file": "quorune/report.py",
           "kind": "function",
           "line": 542,
-          "logical_lines": 1074,
+          "logical_lines": 1019,
           "name": "derive_review",
-          "physical_lines": 1078,
+          "physical_lines": 1024,
           "symbol": "derive_review",
           "visibility": "public"
         },
@@ -12624,7 +12624,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 231571,
+      "logical_lines": 231576,
       "methods": {
         "dunder": 580,
         "private": 943,
@@ -12647,18 +12647,18 @@
           "physical_lines": 1912
         },
         {
-          "file": "quorune/report.py",
-          "functions_and_methods": 16,
-          "language": "python",
-          "logical_lines": 1754,
-          "physical_lines": 1792
-        },
-        {
           "file": "web/src/App.tsx",
           "functions_and_methods": null,
           "language": "web",
           "logical_lines": 1728,
           "physical_lines": 1784
+        },
+        {
+          "file": "quorune/report.py",
+          "functions_and_methods": 16,
+          "language": "python",
+          "logical_lines": 1699,
+          "physical_lines": 1738
         },
         {
           "file": "quorune/record.py",
@@ -15363,6 +15363,13 @@
           "physical_lines": 179
         },
         {
+          "file": "quorune/review_artifacts.py",
+          "functions_and_methods": 5,
+          "language": "python",
+          "logical_lines": 155,
+          "physical_lines": 181
+        },
+        {
           "file": "quorune/target_predicates.py",
           "functions_and_methods": 5,
           "language": "python",
@@ -16166,13 +16173,6 @@
           "language": "python",
           "logical_lines": 96,
           "physical_lines": 107
-        },
-        {
-          "file": "quorune/review_artifacts.py",
-          "functions_and_methods": 4,
-          "language": "python",
-          "logical_lines": 95,
-          "physical_lines": 118
         },
         {
           "file": "quorune/semantic_runtime/counter_keyword_abilities.py",
@@ -17526,13 +17526,13 @@
           "visibility": "public"
         },
         {
-          "end_line": 1619,
+          "end_line": 1565,
           "file": "quorune/report.py",
           "kind": "function",
           "line": 542,
-          "logical_lines": 1074,
+          "logical_lines": 1019,
           "name": "derive_review",
-          "physical_lines": 1078,
+          "physical_lines": 1024,
           "symbol": "derive_review",
           "visibility": "public"
         },
@@ -17840,18 +17840,18 @@
           "physical_lines": 1912
         },
         {
-          "file": "quorune/report.py",
-          "functions_and_methods": 16,
-          "language": "python",
-          "logical_lines": 1754,
-          "physical_lines": 1792
-        },
-        {
           "file": "web/src/App.tsx",
           "functions_and_methods": null,
           "language": "web",
           "logical_lines": 1728,
           "physical_lines": 1784
+        },
+        {
+          "file": "quorune/report.py",
+          "functions_and_methods": 16,
+          "language": "python",
+          "logical_lines": 1699,
+          "physical_lines": 1738
         },
         {
           "file": "quorune/record.py",
@@ -17868,7 +17868,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 252938,
+      "physical_lines": 252947,
       "python_file_count": 681,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -17886,7 +17886,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 3411,
+      "top_level_functions": 3412,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -32423,7 +32423,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "75cee5b8458acab2f8bbd05feb148c20789ecad416b59b670546518895ccedcd",
+      "fingerprint": "6a7aa843e798ef1de1fb8b9d063f47ef4a9cea01fe12269c4acd1827cfa58411",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -33281,11 +33281,11 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4326,
-      "discovered_total": 7635,
+      "conventional_ast_cases": 4327,
+      "discovered_total": 7636,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
-        "compiler_named": 239,
+        "compiler_named": 240,
         "fuzz_named": 1,
         "privacy_or_projection_named": 76,
         "replay_named": 349,
