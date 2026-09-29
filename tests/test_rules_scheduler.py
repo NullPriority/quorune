@@ -3545,14 +3545,8 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
     def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
-        transition_id = self.catalog["work_selection"][
-            "semantic_transition_declaration"
-        ]["transition_id"]
-        outcome = next(
-            row
-            for row in self.work_inputs["harvest_outcome_history"]["entries"]
-            if row.get("transition_id") == transition_id
-        )
+        outcome = self.work_inputs["harvest_outcome_history"]["entries"][-1]
+        transition_id = outcome["transition_id"]
         blob_id = outcome["base_receipt"]["blobs"][
             "coverage/card-unlock-frontier.json.gz"
         ]["git_blob_oid"]
