@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "3275dc13790f13097a042592edf5d9827e0a87d5",
+  "baseline_commit": "838c837f7cc6216c02f260af3938aa566f3d2d18",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -450,7 +450,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 6951,
+    "logical_lines": 6950,
     "methods": [
       {
         "kind": "method",
@@ -1578,12 +1578,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7451
+    "physical_lines": 7450
   },
   "exception_binding": {
-    "adr": "docs/adr/0103-typed-fixed-public-ward-payments.md",
-    "allowance_fingerprint": "c8ac1510614c23bb44a297b3929f551248742dfc581afba7890e6754e665e425",
-    "exception_id": "ARCH-EXC-0053"
+    "adr": "docs/adr/0079-typed-fixed-public-zone-moves.md",
+    "allowance_fingerprint": "3a975ab193aada03114316329da2ea4cb24edc20e3bd84186aedce0911f3c520",
+    "exception_id": "ARCH-EXC-0054"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1702,7 +1702,7 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 240,
+      "logical_lines": 237,
       "symbol": "CommanderEngine._prepare_stack_resolution"
     },
     {
@@ -1747,7 +1747,7 @@
     },
     {
       "file": "quorune/report.py",
-      "logical_lines": 1074,
+      "logical_lines": 1019,
       "symbol": "derive_review"
     },
     {
@@ -1776,11 +1776,6 @@
       "symbol": "CommanderSession.act"
     },
     {
-      "file": "quorune/work_selection.py",
-      "logical_lines": 155,
-      "symbol": "_synthesized_frontier_candidates"
-    },
-    {
       "file": "server/app.py",
       "logical_lines": 718,
       "symbol": "create_app"
@@ -1793,7 +1788,7 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 6951
+      "logical_lines": 6950
     },
     {
       "file": "quorune/record.py",
@@ -1801,15 +1796,11 @@
     },
     {
       "file": "quorune/report.py",
-      "logical_lines": 1754
+      "logical_lines": 1699
     },
     {
       "file": "quorune/rules/capabilities.py",
       "logical_lines": 1504
-    },
-    {
-      "file": "quorune/work_selection.py",
-      "logical_lines": 1501
     },
     {
       "file": "web/src/App.tsx",
@@ -1948,6 +1939,7 @@
     "protection_from_everything_until_next_turn",
     "pump_controlled_creatures",
     "put_artifact_from_hand",
+    "put_card_from_hand",
     "put_land_from_hand",
     "reanimate",
     "reanimate_attached_creature_aura",
@@ -1967,6 +1959,7 @@
     "scry",
     "search",
     "self_zone_move",
+    "set_public_tap_state",
     "shuffle_graveyard_bottom_random",
     "shuffle_into_library",
     "springheart_landfall",

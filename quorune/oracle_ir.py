@@ -68,6 +68,9 @@ from .compiler.keyword_event_effect_nodes import (
 from .compiler.fixed_library_selection_templates import (
     fixed_library_selection_effect_template,
 )
+from .compiler.hand_entry_templates import (
+    fixed_private_hand_entry_effect_template,
+)
 from .compiler.explore_templates import single_explore_effect_template
 from .compiler.keyword_templates import keyword_mechanics
 from .compiler.life_templates import fixed_life_effect_template
@@ -159,7 +162,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v223"
+ORACLE_COMPILER_VERSION = "oracle-ir-v224"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -273,6 +276,9 @@ def _effect_template(
     library_selection = fixed_library_selection_effect_template(normalized)
     if library_selection is not None:
         return library_selection.compiled()
+    hand_entry = fixed_private_hand_entry_effect_template(normalized)
+    if hand_entry is not None:
+        return hand_entry.compiled()
     library_search = fixed_library_search_effect_template(normalized)
     if library_search is not None:
         return library_search.compiled()

@@ -4270,6 +4270,71 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "qualified-target-characteristics-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-object-movement-closure",
+          "member_family_ids": [
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:put-onto-battlefield",
+            "activated_effect:return",
+            "activated_effect:tap-state",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:put-onto-battlefield",
+            "effect_clause:return",
+            "effect_clause:tap-state",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:permanent.tap_state.fixed_set",
+            "capability:zone.move.fixed_private_hand_choice",
+            "capability:zone.move.fixed_public_set",
+            "component:quorune.affected_permanents.AffectedPermanentSetSpec",
+            "component:quorune.compiler.hand_entry_templates.FixedPrivateHandEntryTemplate",
+            "component:quorune.compiler.public_tap_state_set_templates.FixedPublicTapStateSetTemplate",
+            "component:quorune.compiler.public_zone_move_templates.PublicZoneMoveSetTemplate",
+            "component:quorune.public_tap_state_sets.resolve_public_tap_state_set",
+            "component:quorune.public_zone_moves.resolve_public_zone_move_set",
+            "component:quorune.semantic_choices.object_selection.PutTypedCardFromHandHandler",
+            "component:quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-current-public-object-query",
+            "fixed-battlefield-or-graveyard-origin-and-destination",
+            "fixed-owner-or-actor-battlefield-controller",
+            "fixed-private-controller-hand-choice",
+            "fixed-tapped-or-untapped-result"
+          ],
+          "shared_dependencies": [
+            "permanent.tap.effect",
+            "permanent.tap_state.fixed_set",
+            "permanent.untap.effect",
+            "target.revalidate_resolution",
+            "zone.change.destination_replacement",
+            "zone.move.fixed_private_hand_choice",
+            "zone.move.fixed_public_set"
+          ],
+          "shared_grammar": "one closed typed object query moved between public zones, selected privately from its controller's hand for battlefield entry, or assigned one fixed tap state through the existing target, affected-set, zone-transition, replacement, projection, and replay owners",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes a normal-floor cross-era movement cohort across spells, triggers, activations, and modal programs while sharing current characteristic queries, APNAP public-set ordering, owner-relative destinations, prospective battlefield controller facts, private selection, stun-counter replacement, rollback, projection, and exact replay.",
+          "explicit_exclusions": [
+            "attachment-dependent battlefield entry, including Auras, and additional entry-counter instructions",
+            "continuous untap prohibitions, next-untap-step schedules, remove-from-combat riders, and optional aggregate tap-or-untap choices",
+            "independently unsupported sibling abilities, history-linked results, and unrepresented destination replacements",
+            "library, opponent-hand, command, stack, attacking-entry, copied, granted, and text-changed private selections",
+            "variable, optional public-set, random, chosen, linked, delayed-return, numeric-characteristic, dynamic-count, and open exception-list movement"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-object-movement-closure-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -4281,14 +4346,25 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v223-encore-simultaneous-cleanup",
-      "compiler_version": "oracle-ir-v223",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "non_harvest_reason": "Corrects Encore's delayed cleanup to one incarnation-filtered simultaneous sacrifice and records the explicit pre-v220 replay incompatibility without widening Oracle grammar or card support.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v224-public-object-movement-closure",
+      "compiler_version": "oracle-ir-v224",
+      "bundle_id": "bundle:public-object-movement-closure",
+      "candidate_ids": ["bundle:public-object-movement-closure"],
+      "family_ids": [
+        "activated_effect:put-onto-battlefield",
+        "activated_effect:tap-state",
+        "effect_clause:put-onto-battlefield",
+        "effect_clause:return",
+        "effect_clause:tap-state",
+        "target_or_choice:target-predicate"
+      ],
+      "capability_ids": [
+        "permanent.tap_state.fixed_set",
+        "zone.move.fixed_private_hand_choice",
+        "zone.move.fixed_public_set"
+      ],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:public-object-movement-closure"
     },
     "forecast_corrections": [
       {
@@ -4947,6 +5023,11 @@
         "candidate_id": "compiler:qualified-target-characteristics",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-intervening-if selector has no implementation-eligible carried candidate while its raw continuous-layer and unparsed-effect leaders remain heterogeneous. A bounded exact-frontier probe instead isolates a threshold-clearing cohort of fixed temporary characteristic effects whose only missing boundary is a closed qualified or source-excluding direct-permanent target. The selected compiler owner now consumes the existing DirectPermanentTargetSpec for standalone and target-first effects across spell, triggered, activated, quoted-ability, and modal contexts, while the canonical target owner preserves current effective-characteristic offers, command validation, resolution revalidation, protection, projection, and replay. Dynamic results, open predicates, optional or multiple targets, target changing, and independently unsupported siblings remain fail-closed; current cohort identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:public-object-movement-closure",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-recovery selector has no implementation-eligible carried candidate while the raw continuous-layer and unparsed-effect leaders remain heterogeneous and the dependency-ready counter queue is not the foreground. A bounded current-frontier probe isolates 101 exact abilities across 100 current Commander carriers, 81 conservative complete-card transitions, and 104 material residual removals through one public-object movement boundary. Fixed public battlefield and graveyard sets, fixed private controller-hand entry, and fixed public tap-state sets reuse the canonical object query, target, APNAP affected-set, destination-replacement, prospective-entry, stun-counter, projection, rollback, and replay owners. Variable, attachment-dependent, linked, delayed, random, chosen, dynamic-count, continuous-untap, copied, granted, text-changed, and independently unsupported forms remain fail-closed; current identities and measurements are generated from the frontier."
       }
     ]
   },

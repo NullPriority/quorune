@@ -68,7 +68,7 @@ def fixed_target_reanimation_node_capabilities(
         or not set((*target.types_any, *target.types_all)).intersection(
             _PERMANENT_TYPES
         )
-        or set(target.types_none) - {"land"}
+        or set(target.types_none) - {"creature", "land"}
         or target.keywords_all
         or target.keywords_none
         or target.colors_any

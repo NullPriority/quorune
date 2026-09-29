@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
 from ..public_zone_moves import (
+    PublicBattlefieldController,
     PublicZoneDestination,
     PublicZoneMoveSetSpec,
     PublicZoneOrigin,
@@ -20,6 +21,10 @@ from ..rules.graveyard_card_targets import (
 )
 from .destruction_templates import fixed_affected_permanent_query
 from .direct_target import compiled_direct_target, direct_target_effect
+from .public_tap_state_set_templates import (
+    FixedPublicTapStateSetTemplate,
+    fixed_public_tap_state_set_effect_template,
+)
 
 
 def _player_target_schema(*, opponent: bool = False) -> dict[str, Any]:
@@ -110,6 +115,8 @@ class PublicZoneMoveSetTemplate:
             "exile"
             if self.spec.destination is PublicZoneDestination.EXILE
             else "return-to-owner-hand"
+            if self.spec.destination is PublicZoneDestination.OWNER_HAND
+            else "fixed-public-zone-move"
         )
         return (
             mechanic,
@@ -243,11 +250,23 @@ def _graveyard_set_template(text: str) -> PublicZoneMoveSetTemplate | None:
     )
 
 
-def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
+def _battlefield_set_template(
+    text: str,
+    *,
+    action: str,
+    destination: PublicZoneDestination,
+) -> PublicZoneMoveSetTemplate | None:
     match = re.fullmatch(
-        r"exile (?:all|each) (?P<subject>.+?)"
+        rf"{action} (?:all|each) (?P<subject>.+?)"
         r"(?P<relation> target opponent controls| target player controls|"
-        r" you control| your opponents control)?\.?",
+        r" target opponent owns| target player owns| you control| you own|"
+        r" your opponents control| your opponents own)?"
+        + (
+            r" to (?:their owners['’] hands|their owner['’]s hand|their hand)"
+            if destination is PublicZoneDestination.OWNER_HAND
+            else ""
+        )
+        + r"\.?",
         text.strip(),
         re.IGNORECASE,
     )
@@ -263,56 +282,190 @@ def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
         spec=PublicZoneMoveSetSpec(
             query=query,
             origin=PublicZoneOrigin.BATTLEFIELD,
-            destination=PublicZoneDestination.EXILE,
+            destination=destination,
             relation_axis=axis,
             seat_relation=seat_relation,
             target_seat=target_seat,
             exclude_source=exclude_source,
         ),
         target_schema=target_schema,
+    )
+
+
+def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    return _battlefield_set_template(
+        text,
+        action="exile",
+        destination=PublicZoneDestination.EXILE,
     )
 
 
 def _battlefield_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    exception = re.fullmatch(
+        r"return all creatures to their owners['’] hands except for "
+        r"(?P<subtypes>.+)",
+        text.strip().rstrip("."),
+        re.IGNORECASE,
+    )
+    if exception is not None:
+        parsed = fixed_affected_permanent_query(
+            "creatures except for " + exception.group("subtypes")
+        )
+        if parsed is None:
+            return None
+        query, exclude_source = parsed
+        return PublicZoneMoveSetTemplate(
+            spec=PublicZoneMoveSetSpec(
+                query=query,
+                origin=PublicZoneOrigin.BATTLEFIELD,
+                destination=PublicZoneDestination.OWNER_HAND,
+                exclude_source=exclude_source,
+            )
+        )
+    return _battlefield_set_template(
+        text,
+        action="return",
+        destination=PublicZoneDestination.OWNER_HAND,
+    )
+
+
+def _graveyard_card_query(subject: str) -> ObjectQuerySpec | None:
+    normalized = " ".join(subject.casefold().split())
+    fields: dict[str, Any] = {"zones": ("graveyard",)}
+    if normalized.startswith("legendary "):
+        fields["supertypes_all"] = ("legendary",)
+        normalized = normalized.removeprefix("legendary ")
+    elif normalized.startswith("basic "):
+        fields["supertypes_all"] = ("basic",)
+        normalized = normalized.removeprefix("basic ")
+    type_words = {
+        "artifact": "artifact",
+        "battle": "battle",
+        "creature": "creature",
+        "enchantment": "enchantment",
+        "land": "land",
+        "planeswalker": "planeswalker",
+    }
+    parts = tuple(
+        part.strip()
+        for part in normalized.replace(", and ", ", ")
+        .replace(" and ", ", ")
+        .split(",")
+    )
+    if not parts or any(part not in type_words for part in parts):
+        return None
+    values = tuple(sorted(type_words[part] for part in parts))
+    if len(values) == 1:
+        fields["types_all"] = values
+    else:
+        fields["types_any"] = values
+    if fields.get("supertypes_all") == ("basic",) and values != ("land",):
+        return None
+    return ObjectQuerySpec(**fields)
+
+
+def _graveyard_public_move_template(
+    text: str,
+) -> PublicZoneMoveSetTemplate | None:
+    normalized = " ".join(text.strip().split())
+    ordered_hand = re.fullmatch(
+        r"Return to your hand all (?P<subject>.+?) cards in your graveyard\.?",
+        normalized,
+        re.IGNORECASE,
+    )
+    if ordered_hand is not None:
+        query = _graveyard_card_query(ordered_hand.group("subject"))
+        return (
+            PublicZoneMoveSetTemplate(
+                spec=PublicZoneMoveSetSpec(
+                    query=query,
+                    origin=PublicZoneOrigin.GRAVEYARD,
+                    destination=PublicZoneDestination.OWNER_HAND,
+                    relation_axis=PublicZoneRelationAxis.OWNER,
+                    seat_relation=PublicZoneSeatRelation.ACTOR,
+                    schema_version=2,
+                )
+            )
+            if query is not None
+            else None
+        )
     match = re.fullmatch(
-        r"return (?:all|each) (?P<subject>.+?)"
-        r"(?P<relation> target opponent controls| target player controls|"
-        r" target opponent owns| target player owns| you control| you own|"
-        r" your opponents control| your opponents own)? to "
-        r"(?:their owners['’] hands|their owner['’]s hand|their hand)\.?",
-        text.strip(),
+        r"(?P<verb>Return|Put) all (?P<subject>.+?) cards from "
+        r"(?P<scope>your graveyard|all graveyards) "
+        r"(?P<direction>to|onto) (?P<destination>your hand|the battlefield)"
+        r"(?P<tapped> tapped)?"
+        r"(?: under (?P<controller>your|their owners['’]) control)?\.?",
+        normalized,
         re.IGNORECASE,
     )
     if match is None:
         return None
-    parsed = fixed_affected_permanent_query(match.group("subject"))
-    relation = _relation(match.group("relation") or "")
-    if parsed is None or relation is None:
+    verb = match.group("verb").casefold()
+    direction = match.group("direction").casefold()
+    destination_text = match.group("destination").casefold()
+    if (verb == "return" and direction != "to") or (
+        verb == "put" and direction != "onto"
+    ):
         return None
-    query, exclude_source = parsed
-    axis, seat_relation, target_seat, target_schema = relation
+    query = _graveyard_card_query(match.group("subject"))
+    if query is None:
+        return None
+    destination = (
+        PublicZoneDestination.OWNER_HAND
+        if destination_text == "your hand"
+        else PublicZoneDestination.BATTLEFIELD
+    )
+    types = set((*query.types_all, *query.types_any))
+    if destination is PublicZoneDestination.BATTLEFIELD and (
+        not types or types.intersection({"artifact", "enchantment"})
+    ):
+        return None
+    scope = match.group("scope").casefold()
+    controller = (match.group("controller") or "").casefold().replace("’", "'")
+    battlefield_controller = None
+    if destination is PublicZoneDestination.BATTLEFIELD:
+        battlefield_controller = (
+            PublicBattlefieldController.ACTOR
+            if controller == "your"
+            else PublicBattlefieldController.OWNER
+        )
+        if scope == "all graveyards" and not controller:
+            return None
+    elif match.group("tapped") or match.group("controller"):
+        return None
     return PublicZoneMoveSetTemplate(
         spec=PublicZoneMoveSetSpec(
             query=query,
-            origin=PublicZoneOrigin.BATTLEFIELD,
-            destination=PublicZoneDestination.OWNER_HAND,
-            relation_axis=axis,
-            seat_relation=seat_relation,
-            target_seat=target_seat,
-            exclude_source=exclude_source,
-        ),
-        target_schema=target_schema,
+            origin=PublicZoneOrigin.GRAVEYARD,
+            destination=destination,
+            relation_axis=PublicZoneRelationAxis.OWNER,
+            seat_relation=(
+                PublicZoneSeatRelation.ACTOR
+                if scope == "your graveyard"
+                else PublicZoneSeatRelation.ANY
+            ),
+            battlefield_controller=battlefield_controller,
+            battlefield_tapped=bool(match.group("tapped")),
+            schema_version=2,
+        )
     )
 
 
 def public_zone_move_effect_template(
     text: str,
-) -> PublicGraveyardCardExileTemplate | PublicZoneMoveSetTemplate | None:
+) -> (
+    PublicGraveyardCardExileTemplate
+    | PublicZoneMoveSetTemplate
+    | FixedPublicTapStateSetTemplate
+    | None
+):
     return (
         public_graveyard_card_exile_template(text)
         or _graveyard_set_template(text)
+        or _graveyard_public_move_template(text)
         or _battlefield_exile_template(text)
         or _battlefield_return_template(text)
+        or fixed_public_tap_state_set_effect_template(text)
     )
 
 

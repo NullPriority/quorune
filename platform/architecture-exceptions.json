@@ -1271,6 +1271,32 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0054",
+      "adr": "docs/adr/0079-typed-fixed-public-zone-moves.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "3a975ab193aada03114316329da2ea4cb24edc20e3bd84186aedce0911f3c520",
+      "exact_allowance": "Only the schema-4 structural state-write identities, owner classifications, zero prohibited runtime Oracle-text and card-identity dispatch counts, engine methods, size ceilings, Oracle-ID literals, legacy helpers, module classifications, and the reviewed put_card_from_hand and set_public_tap_state operations serialized for the v224 public-object movement closure.",
+      "rationale": "The measured broad harvest adds two strict typed operations while reusing the existing object-query, semantic-choice, tap-state, zone-transition, destination-replacement, Commander, target, projection, and replay owners. The public tap-state intent lives with its focused rules owner, capability routing remains in the existing public-zone shape, and CommanderEngine shrinks by one logical line. Direct and unowned writes, runtime Oracle prose, card-identity dispatch, and oversized production symbols remain flat.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "The exact structural baseline plus PublicZoneMoveSetSpec schema version 2, put_card_from_hand, set_public_tap_state, one actor-private fixed hand selection, one fixed public tap-state set, closed public battlefield and graveyard movement, prospective battlefield controller and tapped facts, and the existing canonical owners described by ADR 0079; new runtime Oracle interpretation, card-identity dispatch, unowned mutation, engine growth, arbitrary callbacks, family-specific ability-presence checks, attachment-dependent entry, dynamic or chosen object sets, open movement grammar, or additional unreviewed operations remain forbidden.",
+      "removal_condition": "Remove the exception when the registered universal-operation inventory no longer requires baseline review; retain these operations only while closed descriptor validation, current object revalidation, stable private option ordering, canonical affected-set selection, destination and stun replacement, atomic rollback, principal projection, and exact replay remain enforced.",
+      "target_milestone": "capability-closed public-object movement harvest through canonical query, choice, tap-state, zone-transition, replacement, projection, and replay owners",
+      "replay_implications": "CardPrograms record only typed source-spanned descriptors. Public set controller and tapped facts, private chosen refs, target-player relations, simultaneous move ordering, new logical incarnations, and resulting tap state are serialized and verified through exact command replay without consulting Oracle prose.",
+      "privacy_implications": "Public affected sets and tap results remain public. Eligible actor-hand identities and the private choice capability are projected only to that actor; other pilots receive neither names nor physical object identities before the selected card becomes public.",
+      "security_implications": "Only capability-closed generated programs can emit the two reviewed operations; unknown fields, unsupported queries, unavailable targets, stale private selections, invalid destination controllers, malformed tapped policies, unrepresented attachment entry, and continuation tampering fail before mutation.",
+      "tests": [
+        "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_object_movement_matrix_preserves_meaning_fields",
+        "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_private_hand_entry_matrix_compiles_through_one_choice_owner",
+        "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_tap_state_set_matrix_compiles_through_shared_query",
+        "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_public_tap_state_set_uses_current_query_stun_and_replays",
+        "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_private_hand_entry_is_projected_revalidated_and_replays",
+        "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_private_hand_entry_rejects_stale_selection_without_mutation",
+        "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_graveyard_public_sets_enter_with_fixed_controller_and_tapped_policy",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

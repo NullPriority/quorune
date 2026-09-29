@@ -9,7 +9,8 @@ from ..affected_permanents import (
     PermanentControllerRelation,
 )
 from ..mana import BASIC_LAND_MANA
-from ..object_predicate import ObjectQuerySpec
+from ..creature_subtypes import canonical_creature_subtype_surface
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .direct_target import (
     DirectPermanentTargetSpec,
     compiled_direct_target,
@@ -244,6 +245,56 @@ def fixed_affected_permanent_query(
             kwargs["excluded_types"] = ("land",)
         return ObjectQuerySpec(**kwargs), exclude_source
 
+    if phrase == "multicolored permanents":
+        kwargs["minimum_color_count"] = 2
+        return ObjectQuerySpec(**kwargs), exclude_source
+    if phrase == "noncreature, nonland permanents":
+        kwargs["excluded_types"] = ("creature", "land")
+        return ObjectQuerySpec(**kwargs), exclude_source
+    if phrase == "creatures without flying":
+        kwargs["types_all"] = ("creature",)
+        kwargs["keywords_none"] = ("flying",)
+        return ObjectQuerySpec(**kwargs), exclude_source
+
+    state_match = re.fullmatch(
+        r"(?P<state>attacking|blocking) creatures",
+        phrase,
+    )
+    if state_match is not None:
+        kwargs["types_all"] = ("creature",)
+        kwargs["state_predicate"] = PermanentStatePredicateSpec(
+            **{state_match.group("state"): True}
+        )
+        return ObjectQuerySpec(**kwargs), exclude_source
+
+    exception_match = re.fullmatch(
+        r"creatures except (?:for )?(?P<subtypes>.+)",
+        phrase,
+    )
+    if exception_match is not None:
+        words = tuple(
+            part.strip()
+            for part in exception_match.group("subtypes")
+            .replace(", and ", ", ")
+            .replace(" and ", ", ")
+            .split(",")
+        )
+        subtypes = tuple(
+            canonical_creature_subtype_surface(word) for word in words
+        )
+        if not words or any(value is None for value in subtypes):
+            return None
+        kwargs["types_all"] = ("creature",)
+        kwargs["excluded_subtypes"] = tuple(
+            value for value in subtypes if value is not None
+        )
+        return ObjectQuerySpec(**kwargs), exclude_source
+
+    subtype = canonical_creature_subtype_surface(phrase)
+    if subtype is not None:
+        kwargs["subtypes_all"] = (subtype,)
+        return ObjectQuerySpec(**kwargs), exclude_source
+
     match = re.fullmatch(
         r"(?:(?P<quality>legendary|basic|tapped|untapped|token|nontoken|"
         r"white|blue|black|red|green|nonartifact|noncreature|nonenchantment|"
@@ -254,11 +305,18 @@ def fixed_affected_permanent_query(
     if match is None:
         return None
     body = match.group("body")
+    quality = match.group("quality")
+    if body == "permanents":
+        types = ()
+        if quality is None:
+            return ObjectQuerySpec(**kwargs), exclude_source
+    else:
+        types = None
     land_subtype = _BASIC_LAND_SUBTYPES.get(body.casefold())
     if land_subtype is not None:
         kwargs["types_all"] = ("land",)
         kwargs["subtypes_all"] = (land_subtype,)
-    else:
+    elif types is None:
         types = _split_type_list(body)
         if types is None:
             return None
@@ -266,7 +324,6 @@ def fixed_affected_permanent_query(
             kwargs["types_all"] = types
         else:
             kwargs["types_any"] = types
-    quality = match.group("quality")
     if quality == "legendary":
         kwargs["supertypes_all"] = ("legendary",)
     elif quality == "basic":

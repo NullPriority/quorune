@@ -40,6 +40,13 @@ def _quality_fields(value: str) -> dict[str, Any] | None:
     fields = {
         "creature": {"types_any": ["creature"]},
         "artifact": {"types_any": ["artifact"]},
+        "artifact creature": {
+            "types_all": ["artifact", "creature"],
+        },
+        "noncreature artifact": {
+            "types_any": ["artifact"],
+            "types_none": ["creature"],
+        },
         "enchantment": {"types_any": ["enchantment"]},
         "land": {"types_any": ["land"]},
         "planeswalker": {"types_any": ["planeswalker"]},
@@ -106,7 +113,7 @@ def _quality_fields(value: str) -> dict[str, Any] | None:
     if fields is not None:
         return fields
     subtype = re.fullmatch(
-        r"(?P<subtype>[A-Za-z][A-Za-z'’-]*) creature",
+        r"(?P<subtype>[A-Za-z][A-Za-z'’-]*) (?P<domain>creature|permanent)",
         value.strip(),
     )
     if subtype is None:
@@ -115,7 +122,11 @@ def _quality_fields(value: str) -> dict[str, Any] | None:
     if canonical is None:
         return None
     return {
-        "types_any": ["creature"],
+        "types_any": (
+            ["creature"]
+            if subtype.group("domain").casefold() == "creature"
+            else list(_PERMANENT_TYPES)
+        ),
         "subtypes_any": [canonical],
     }
 
@@ -139,7 +150,7 @@ class FixedTargetReanimationTemplate:
             or not set((*group.types_any, *group.types_all)).intersection(
                 _PERMANENT_TYPES
             )
-            or set(group.types_none) - {"land"}
+            or set(group.types_none) - {"creature", "land"}
         ):
             raise ValueError("Reanimation target schema is outside the closed family")
         if type(self.tapped) is not bool or type(self.owner_controls) is not bool:

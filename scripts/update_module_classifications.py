@@ -248,6 +248,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/casting_cost_host.py",
         "quorune/permanent_exile.py",
         "quorune/public_zone_moves.py",
+        "quorune/public_tap_state_sets.py",
         "quorune/public_alternative_costs.py",
         "quorune/permanent_designations.py",
         "quorune/day_night.py",
@@ -482,7 +483,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/spell_copy_engine_adapter.py",
     }:
         return "trigger_processing"
-    if relative == "quorune/tap_state.py":
+    if relative in {"quorune/public_tap_state_sets.py", "quorune/tap_state.py"}:
         return "tap_state_effects"
     if relative in {
         "quorune/declaration_rule_effects.py",

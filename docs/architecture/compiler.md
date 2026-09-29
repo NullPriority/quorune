@@ -552,14 +552,30 @@ one shared grammar across spell, triggered, activated, and modal bodies. It
 lowers a target physical card in any graveyard through a closed card-type,
 card-type-union, or excluded-type predicate, fixed graveyard-owner sweeps,
 and closed battlefield affected sets moving toward exile or each object's
-owner's hand. Set membership uses the same cycle-safe `ObjectQuerySpec`
-characteristic boundary as other affected-set owners and is frozen in APNAP
-order before the canonical simultaneous zone transaction. Variable, optional,
-linked-result, delayed-return, exception-list, chosen-quality, dynamic-count,
-numeric-characteristic, hidden-origin, reanimation, and multiple-destination
-forms remain source-spanned residuals. Commander-profile trust also requires
-the typed CR 903.9 owner choice; the compiler never excludes commanders from
-an otherwise universal Oracle instruction.
+owner's hand. The same descriptor admits closed graveyard sets moving to owner
+hand or entering under the owner or resolving actor, with an explicit tapped
+policy; prospective controller facts and the final replacement-adjusted group
+flow through the canonical simultaneous zone transaction. Set membership uses
+the same cycle-safe `ObjectQuerySpec` boundary as other affected-set owners and
+is frozen in APNAP order. Closed creature-subtype exception lists are typed
+query data rather than runtime prose. Variable, optional, linked-result,
+delayed-return, open exception, chosen-quality, dynamic-count, numeric-
+characteristic, attachment-dependent entry, and multiple-destination forms
+remain source-spanned residuals. Commander-profile trust also requires the
+typed CR 903.9 owner choice; the compiler never excludes commanders from an
+otherwise universal Oracle instruction.
+
+`compiler/hand_entry_templates.py` and
+`compiler/public_tap_state_set_templates.py` reuse that public-object query
+boundary for two adjacent fixed families. The former offers one actor-private,
+owner-pinned hand choice and revalidates the same current object before the
+ordinary replacement-aware battlefield move. The latter locks one current
+public permanent set and delegates each fixed tap or untap result to the
+canonical tap-state owner, including stun-counter replacement. Choice options
+are ordered by stable object reference so checkpoint replay cannot depend on
+in-memory card insertion order. Aura entry, additional entry counters,
+attacking entry, wider hidden selection, continuous untap prohibitions, and
+dynamic or chosen tap predicates remain residual.
 
 `compiler/fixed_owner_zone_move_templates.py` owns the complementary closed
 single-object and public-choice grammar whose destination is determined by the

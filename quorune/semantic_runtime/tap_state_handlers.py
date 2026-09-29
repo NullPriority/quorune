@@ -3,6 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..affected_permanents import (
+    AffectedPermanentSetError,
+    AffectedPermanentSetSpec,
+    PermanentControllerRelation,
+)
+from ..public_tap_state_sets import SetPublicPermanentsTappedIntent
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
@@ -179,8 +185,68 @@ class UntapAllCreaturesHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class SetPublicTapStateSetHandler:
+    handler_id: str = "generic.set-public-tap-state-set.v1"
+    schema_version: int = 1
+    family: str = "permanent.tap_state"
+    operation: str = "set_public_tap_state"
+    rule_references: tuple[str, ...] = (
+        "608.2c",
+        "701.26",
+        "701.26a",
+        "701.26b",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        "permanent.tap_state.fixed_set",
+    )
+
+    def lower(
+        self,
+        effect: Mapping[str, Any],
+        context: ReadOnlyHandlerContext,
+    ) -> IntentPlan:
+        if (
+            set(effect) != {"op", "source", "set", "tapped"}
+            or effect.get("op") != self.operation
+            or type(effect.get("tapped")) is not bool
+        ):
+            raise SemanticNodeError(
+                "Public-set tap-state effect has an invalid shape"
+            )
+        try:
+            spec = AffectedPermanentSetSpec.from_dict(effect["set"])
+        except (KeyError, TypeError, AffectedPermanentSetError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        if spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER:
+            context.query.require_active_seat(
+                str(spec.target_controller or "")
+            )
+        source_ref = effect.get("source")
+        if source_ref is not None and (
+            type(source_ref) is not str or not source_ref
+        ):
+            raise SemanticNodeError(
+                "Public-set tap-state source must be a nonempty reference"
+            )
+        return IntentPlan(
+            operation=self.operation,
+            handler_id=self.handler_id,
+            intents=(
+                SetPublicPermanentsTappedIntent(
+                    actor=context.actor,
+                    spec=spec,
+                    tapped=effect["tapped"],
+                    reason=context.default_reason,
+                    source_ref=source_ref,
+                ),
+            ),
+        )
+
+
 TAP_STATE_HANDLERS = (
     TapPermanentHandler(),
     UntapPermanentHandler(),
     UntapAllCreaturesHandler(),
+    SetPublicTapStateSetHandler(),
 )
