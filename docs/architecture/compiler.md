@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-19"
+verified: "2026-09-28"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -1206,8 +1206,9 @@ block, attack, committed-damage, or zone-change event rather than a parallel
 keyword engine. Afflict and Annihilator consume the sealed defending player;
 Firebending records its surviving mana in the canonical provenance lot owner;
 Ingest moves the damaged player's current library top through the zone-
-replacement owner; Mobilize uses one private per-token public attack-
-destination choice and replacement-aware token creation; and Soulshift uses
+replacement owner; Mobilize resolves the immutable token replacement batch
+before issuing one private destination choice for every resulting attacking
+token, then commits the complete group simultaneously; and Soulshift uses
 the existing graveyard target, optional effect, and last-known-controller
 owners. Variable, repeated, combined, granted, copied, conditional, and
 independently incomplete forms remain source-spanned residuals.
@@ -1231,6 +1232,18 @@ and delayed instructions retain their serialized behavior. Variable, modified,
 repeated, granted, copied, team-specific, and independently incomplete forms
 remain residual. See
 [ADR 0102](../adr/0102-typed-fixed-combat-entry-lifecycles.md).
+
+The generic typed token-quantity replacement component copies the current
+immutable token specifications, including Myriad's selected-opponent
+association, before token identities or timestamps exist. Myriad first
+collects its optional per-opponent creation decisions, resolves replacement
+ordering without mutation, then asks independently where every resulting copy
+attacks within that opponent's legal player/planeswalker set. The canonical
+token owner reruns the pinned selection journal and commits the expanded group
+with one timestamp; delayed cleanup remains pinned to every created
+incarnation. Printed token-quantity replacement grammar remains residual.
+Historical one-stage Myriad continuations retain their schema-v1 completion
+path.
 
 `compiler/ward_cost_templates.py`, `compiler/ability_keyword_fragments.py`,
 and `compiler/continuous_templates.py` own the fixed public Ward closure.

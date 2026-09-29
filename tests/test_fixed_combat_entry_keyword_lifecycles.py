@@ -7,8 +7,13 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT, keep_all, make_session
-from quorune.carddb import CardDatabase
+from common import (
+    ROOT,
+    keep_all,
+    make_session,
+    register_token_quantity_multiplier,
+)
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.continuous_effect_state import (
     commit_continuous_effect,
     expire_end_of_turn_continuous_effects,
@@ -27,6 +32,7 @@ from quorune.oracle_ir import (
     compile_oracle_card,
     register_generated_programs,
 )
+from quorune.projection import StateProjector
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.current_ability_components import (
     program_has_current_ability_fragments,
@@ -35,6 +41,15 @@ from quorune.record import (
     authoritative_state_hash,
     checkpoint_envelope,
     replay_record,
+)
+from quorune.replacement.immutable import FrozenMap
+from quorune.semantic_choices.attacking_tokens import (
+    MyriadTokenDestinationChoiceHandler,
+)
+from quorune.semantic_choices.context import SnapshotSemanticChoiceQuery
+from quorune.semantic_choices.model import (
+    SemanticChoiceContinuation,
+    SemanticChoiceFrame,
 )
 from quorune.trigger_processing import (
     collect_trigger_items,
@@ -61,11 +76,36 @@ EXPECTED_TEMPLATES = {
 }
 
 
+def token_multiplier_record(oracle_text: str, suffix: int) -> CardRecord:
+    return CardRecord(
+        oracle_id=f"26000000-0000-4000-8000-{suffix:012d}",
+        name=f"Generic token multiplier {suffix}",
+        mana_cost="{3}{G}",
+        mana_value=4.0,
+        type_line="Enchantment",
+        oracle_text=oracle_text,
+        power=None,
+        toughness=None,
+        loyalty=None,
+        defense=None,
+        colors=("G",),
+        color_identity=("G",),
+        keywords=(),
+        produced_mana=(),
+        layout="normal",
+        released_at="2026-01-01",
+        legalities={"commander": "legal"},
+        faces=(),
+        raw={},
+    )
+
+
 def focused_database(directory: str) -> CardDatabase:
     database = Path(directory) / "fixed-combat-entry-keyword-lifecycles.sqlite3"
     build_fixture_database(
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
+            ROOT / "tests" / "fixtures" / "counter-replacement-cards.json",
             FIXTURE_PATH,
         ],
         database,
@@ -141,6 +181,39 @@ class FixedCombatEntryKeywordLifecycleCompilerTests(unittest.TestCase):
             )
         self.assertNotEqual("exact", mutated.status)
         self.assertTrue(mutated.material_residuals)
+
+    def test_token_multiplier_oracle_grammar_remains_residual(self):
+        ir = compile_oracle_card(
+            token_multiplier_record(
+                "If an effect would create one or more tokens under your "
+                "control, it creates twice that many of those tokens instead.",
+                1,
+            ),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        token_node = ir.faces[0].nodes[0]
+        self.assertFalse(token_node.exact)
+        self.assertTrue(ir.material_residuals)
+
+    def test_token_multiplier_rejects_open_or_malformed_forms(self):
+        unsupported = (
+            "If an effect would create one or more tokens under your control, "
+            "it creates three times that many of those tokens instead.",
+            "If an effect would create one or more creature tokens under your "
+            "control, it creates twice that many of those tokens instead.",
+            "If an effect would create one or more tokens under an opponent's "
+            "control, it creates twice that many of those tokens instead.",
+        )
+        for index, text in enumerate(unsupported):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(
+                    token_multiplier_record(text, index + 10),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertFalse(ir.faces[0].nodes[0].exact)
+                self.assertTrue(ir.material_residuals)
 
 
 class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
@@ -228,6 +301,21 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             promote_exact_effect_programs=True,
         )
         return card
+
+    def add_token_quantity_multiplier(self, engine, *, ref: str) -> CardInstance:
+        source = self.add_card(
+            engine,
+            name="Generic Token Quantity Multiplier",
+            ref=ref,
+            zone="battlefield",
+        )
+        register_token_quantity_multiplier(
+            self.db,
+            engine,
+            source,
+            self.capabilities,
+        )
+        return source
 
     @staticmethod
     def resolve_top(engine) -> None:
@@ -718,9 +806,17 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             {
                 "action_id": "choose",
                 "attacking": {
-                    "myriad:C": walker_ref,
+                    "myriad:C": "create",
                     "myriad:D": "decline",
                 },
+            },
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        chosen = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": {"myriad:C:0": walker_ref},
             },
         )
         self.assertTrue(chosen.ok, chosen.summary)
@@ -745,9 +841,332 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
         engine.state.step = "end_combat"
         engine.state.phase_index = 8
         engine._enter_step()
+        if (
+            engine.state.pending_decision is not None
+            and engine.state.pending_decision.kind == "trigger.order"
+        ):
+            refs = [
+                row["id"]
+                for row in engine.state.pending_decision.payload_by_actor["A"][
+                    "triggers"
+                ]
+            ]
+            ordered = session.act(
+                "pilot:A", {"action_id": "order", "triggers": refs}
+            )
+            self.assertTrue(ordered.ok, ordered.summary)
         while engine.state.stack:
             self.resolve_top(engine)
         self.assertEqual("outside", copy.zone)
+
+    def test_historical_myriad_destination_continuation_remains_supported(self):
+        handler = MyriadTokenDestinationChoiceHandler()
+        continuation = SemanticChoiceContinuation(
+            handler_id=handler.handler_id,
+            handler_version=handler.schema_version,
+            stack_ref="S-historical-myriad",
+            effect=FrozenMap(
+                {
+                    "op": handler.operation,
+                    "player": "A",
+                    "copy_of": "historical-source",
+                    "copy_snapshot": {
+                        "oracle_id": "historical-oracle",
+                        "printed_name": "Historical Myriad Source",
+                        "annotations": {},
+                        "characteristics": {
+                            "type_line": "Creature — Test",
+                            "power": "2",
+                            "toughness": "2",
+                        },
+                    },
+                    "defending_player": "B",
+                    "_choice_actor": "A",
+                    "_opponents": ("C", "D"),
+                    "_destinations": {"C": ("C",), "D": ("D",)},
+                    "_stack_label": "Historical Myriad",
+                }
+            ),
+            remaining=(),
+            destination=None,
+            note="",
+            semantic_frame=SemanticChoiceFrame(
+                semantic_program_id="historical:myriad",
+                semantic_program_version=1,
+                stack_object="S-historical-myriad",
+                instruction_pointer=0,
+                controller="A",
+            ),
+        )
+        completion = handler.complete(
+            continuation,
+            {
+                "attacking": {
+                    "myriad:C": "C",
+                    "myriad:D": "decline",
+                }
+            },
+            SnapshotSemanticChoiceQuery(
+                seat_order=("A", "B", "C", "D"),
+                active_order=("A", "B", "C", "D"),
+            ),
+        )
+        self.assertEqual(1, len(completion.intents))
+        self.assertEqual(("C",), completion.intents[0].attacking_assignments)
+
+    def test_myriad_token_multiplier_expands_per_copy_destination_choices(self):
+        session = self.session(260030, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            name="Generic Myriad Adept",
+            ref="myriad-multiplied-source",
+            zone="battlefield",
+        )
+        self.add_token_quantity_multiplier(
+            engine, ref="myriad-token-multiplier"
+        )
+        walker_ref = engine.create_token(
+            "C",
+            name="Myriad multiplied planeswalker recipient",
+            characteristics={
+                "type_line": "Token Planeswalker — Test",
+                "loyalty": "5",
+            },
+        )[0]
+
+        self.declare_attack(session, source, target="B")
+        self.resolve_top(engine)
+        chosen = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": {
+                    "myriad:C": "create",
+                    "myriad:D": "decline",
+                },
+            },
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        decision = engine.state.pending_decision
+        self.assertIsNotNone(decision)
+        schema = decision.payload_by_actor["A"]["legal_actions"][0][
+            "choice_schema"
+        ]
+        self.assertEqual(
+            {"myriad:C:0", "myriad:C:1"},
+            set(schema["legal_refs"]),
+        )
+        chosen = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": {
+                    "myriad:C:0": "C",
+                    "myriad:C:1": walker_ref,
+                },
+            },
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        copies = [
+            card
+            for card in engine.state.cards.values()
+            if card.zone == "battlefield"
+            and card.is_token
+            and card.oracle_id == source.oracle_id
+        ]
+        self.assertEqual(2, len(copies))
+        self.assertEqual({"C", walker_ref}, {card.attacking for card in copies})
+        self.assertEqual(1, len({card.zone_timestamp for card in copies}))
+        self.assertEqual(2, len(engine.state.delayed_triggers))
+
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.phase = "combat"
+        engine.state.step = "end_combat"
+        engine.state.phase_index = 8
+        engine._enter_step()
+        if (
+            engine.state.pending_decision is not None
+            and engine.state.pending_decision.kind == "trigger.order"
+        ):
+            refs = [
+                row["id"]
+                for row in engine.state.pending_decision.payload_by_actor["A"][
+                    "triggers"
+                ]
+            ]
+            ordered = session.act(
+                "pilot:A", {"action_id": "order", "triggers": refs}
+            )
+            self.assertTrue(ordered.ok, ordered.summary)
+        while engine.state.stack:
+            self.resolve_top(engine)
+        self.assertTrue(all(card.zone == "outside" for card in copies))
+
+    def test_token_multiplier_replacement_order_resumes_before_destinations(self):
+        session = self.session(260031, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            name="Generic Myriad Adept",
+            ref="myriad-ordered-source",
+            zone="battlefield",
+        )
+        for index in range(2):
+            self.add_token_quantity_multiplier(
+                engine, ref=f"myriad-token-multiplier-{index}"
+            )
+        walker_ref = engine.create_token(
+            "C",
+            name="Myriad ordered planeswalker recipient",
+            characteristics={
+                "type_line": "Token Planeswalker — Test",
+                "loyalty": "5",
+            },
+        )[0]
+        self.declare_attack(session, source, target="B")
+        self.resolve_top(engine)
+        optional = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": {
+                    "myriad:C": "create",
+                    "myriad:D": "decline",
+                },
+            },
+        )
+        self.assertTrue(optional.ok, optional.summary)
+        self.assertEqual("replacement.order", engine.state.pending_decision.kind)
+        projector = StateProjector(self.db, engine.state)
+        self.assertIsNotNone(projector._decision("pilot:A"))
+        for seat in ("B", "C", "D"):
+            self.assertIsNone(projector._decision(f"pilot:{seat}"))
+        self.assertNotIn(
+            "replacement_batch",
+            json.dumps(projector._decision("pilot:A")),
+        )
+        self.assertFalse(
+            any(
+                card.is_token and card.oracle_id == source.oracle_id
+                for card in engine.state.cards.values()
+            )
+        )
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        option = engine.state.pending_decision.payload_by_actor["A"]["options"][0][
+            "id"
+        ]
+        ordered = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "choices": {"replacement": option},
+            },
+        )
+        self.assertTrue(ordered.ok, ordered.summary)
+        self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        refs = engine.state.pending_decision.payload_by_actor["A"][
+            "legal_actions"
+        ][0]["choice_schema"]["legal_refs"]
+        self.assertEqual(4, len(refs))
+        self.assertFalse(
+            any(
+                card.is_token and card.oracle_id == source.oracle_id
+                for card in engine.state.cards.values()
+            )
+        )
+        chosen = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": {
+                    ref: ("C" if index % 2 == 0 else walker_ref)
+                    for index, ref in enumerate(refs)
+                },
+            },
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        copies = [
+            card
+            for card in engine.state.cards.values()
+            if card.zone == "battlefield"
+            and card.is_token
+            and card.oracle_id == source.oracle_id
+        ]
+        self.assertEqual(4, len(copies))
+        self.assertEqual(4, len(engine.state.delayed_triggers))
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "myriad-multiplier-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_myriad_expanded_destination_stale_recipient_rolls_back(self):
+        session = self.session(260032, players=4)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            name="Generic Myriad Adept",
+            ref="myriad-stale-source",
+            zone="battlefield",
+        )
+        self.add_token_quantity_multiplier(
+            engine, ref="myriad-stale-multiplier"
+        )
+        walker_ref = engine.create_token(
+            "C",
+            name="Myriad stale planeswalker recipient",
+            characteristics={
+                "type_line": "Token Planeswalker — Test",
+                "loyalty": "5",
+            },
+        )[0]
+        walker = engine._resolve_object("C", walker_ref)
+        self.declare_attack(session, source, target="B")
+        self.resolve_top(engine)
+        optional = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": {
+                    "myriad:C": "create",
+                    "myriad:D": "decline",
+                },
+            },
+        )
+        self.assertTrue(optional.ok, optional.summary)
+        engine.move_card(
+            walker.object_id,
+            "graveyard",
+            reason="stale Myriad destination witness",
+        )
+        before = authoritative_state_hash(engine.state)
+        stale = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": {
+                    "myriad:C:0": walker_ref,
+                    "myriad:C:1": "C",
+                },
+            },
+        )
+        self.assertFalse(stale.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        self.assertFalse(
+            any(
+                card.is_token and card.oracle_id == source.oracle_id
+                for card in engine.state.cards.values()
+            )
+        )
 
     def test_blitz_cast_grants_haste_and_graveyard_trigger_draws(self):
         session = self.session(260004)

@@ -34,7 +34,6 @@ _CONTROLLED_FRAME = re.compile(
     rf"{_ADDITIONAL_DEFINITION} are created instead\.?$",
     re.IGNORECASE,
 )
-
 _TOKEN_TREASURE = "Treasure"
 _TOKEN_FOOD = "Food"
 _TOKEN_MAP = "Map"

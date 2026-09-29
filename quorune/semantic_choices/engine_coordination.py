@@ -13,6 +13,8 @@ from ..semantic_runtime import (
     IntentPlan,
     prepare_draw_resolution,
 )
+from ..token_creation import preview_token_creation
+from ..replacement_effects import ReplacementChoiceRequired
 from ..targets import TargetGroup, available_modes, target_plan
 from ..util import unique_preserving_order
 from .context import (
@@ -372,6 +374,59 @@ class SemanticChoiceCoordinationMixin:
             )
         )
 
+    def _semantic_choice_token_creation_preview(
+        self,
+        actor: str,
+        effect: Mapping[str, Any],
+    ) -> tuple[FrozenMap, ...]:
+        operation = str(effect.get("op") or "")
+        common: dict[str, Any]
+        if operation == "choose_attacking_token_destinations":
+            quantity = effect.get("quantity")
+            if type(quantity) is not int or quantity < 0:
+                return ()
+            common = {
+                "name": str(effect.get("name") or ""),
+                "quantity": quantity,
+                "tapped": True,
+                "attacking_groups": tuple("any" for _ in range(quantity)),
+                "characteristics": dict(
+                    effect.get("characteristics") or {}
+                ),
+            }
+        elif (
+            operation == "choose_myriad_token_destinations"
+            and effect.get("stage") == "destinations"
+        ):
+            opponents = effect.get("opponents")
+            if not isinstance(opponents, (list, tuple)):
+                return ()
+            groups = tuple(str(value) for value in opponents)
+            common = {
+                "name": "",
+                "quantity": len(groups),
+                "tapped": True,
+                "attacking_groups": groups,
+                "copy_of": str(effect.get("copy_of") or ""),
+                "copy_snapshot": (
+                    dict(effect["copy_snapshot"])
+                    if isinstance(effect.get("copy_snapshot"), Mapping)
+                    else None
+                ),
+            }
+        else:
+            return ()
+        selections = effect.get("_replacement_selections", ())
+        if not isinstance(selections, (list, tuple)):
+            return ()
+        resolved = preview_token_creation(
+            self,
+            actor,
+            **common,
+            replacement_selections=tuple(selections),
+        )
+        return tuple(FrozenMap(value) for value in resolved.specs)
+
     def _semantic_choice_query(
         self,
         actor: str,
@@ -464,6 +519,11 @@ class SemanticChoiceCoordinationMixin:
                     actor, object_rows
                 )
             ),
+            materialized_token_creation_preview=(
+                self._semantic_choice_token_creation_preview(
+                    actor, choice_effect
+                )
+            ),
             current_turn_sequence=self.state.turn_sequence,
         )
     def _semantic_choice_context(
@@ -520,6 +580,20 @@ class SemanticChoiceCoordinationMixin:
                 effect,
                 self._semantic_choice_context(item, seat, effect),
             )
+        except ReplacementChoiceRequired as required:
+            from ..replacement_decisions import issue_replacement_order_choice
+
+            issue_replacement_order_choice(
+                self,
+                item=item,
+                effect=effect,
+                remaining=remaining,
+                destination=destination,
+                note=note,
+                instruction_pointer=instruction_pointer,
+                required=required,
+            )
+            return
         except SemanticChoiceError as exc:
             raise GameRuleError(str(exc)) from exc
         continuation = SemanticChoiceContinuation(

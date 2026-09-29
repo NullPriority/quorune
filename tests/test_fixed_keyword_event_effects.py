@@ -7,7 +7,13 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT, keep_all, make_session, pass_current
+from common import (
+    ROOT,
+    keep_all,
+    make_session,
+    pass_current,
+    register_token_quantity_multiplier,
+)
 from quorune.carddb import CardDatabase
 from quorune.compiler.keyword_event_effect_nodes import (
     FIXED_KEYWORD_EVENT_EFFECT_MECHANIC,
@@ -34,7 +40,11 @@ from quorune.deck import DeckLoader
 from quorune.engine import TURN_STEPS
 from quorune.model import CardInstance, CombatState, PlayerState
 from quorune.object_predicate import ObjectQuerySpec
-from quorune.oracle_ir import compile_oracle_card, generated_programs
+from quorune.oracle_ir import (
+    compile_oracle_card,
+    generated_programs,
+    register_generated_programs,
+)
 from quorune.projection import StateProjector
 from quorune.record import (
     authoritative_state_hash,
@@ -76,6 +86,7 @@ def focused_database(directory: str) -> CardDatabase:
     build_fixture_database(
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
+            ROOT / "tests" / "fixtures" / "counter-replacement-cards.json",
             FIXTURE_PATH,
         ],
         database,
@@ -859,6 +870,87 @@ class FixedKeywordEventEffectRuntimeTests(unittest.TestCase):
             expected_soulshift_hash,
             soulshift_replay["final_state_hash"],
         )
+
+    def test_mobilize_token_multiplier_expands_independent_destination_choices(self):
+        session = self.session(250290, players=4)
+        engine = session.engine
+        mobilize = self.add_card(
+            engine,
+            seat="A",
+            name="Mobilize Event Fixture",
+            ref="mobilize-multiplied-source",
+            zone="battlefield",
+        )
+        self.register(engine, mobilize)
+        multiplier = self.add_card(
+            engine,
+            seat="A",
+            name="Generic Token Quantity Multiplier",
+            ref="mobilize-token-multiplier",
+            zone="battlefield",
+        )
+        register_token_quantity_multiplier(
+            self.db,
+            engine,
+            multiplier,
+            self.capabilities,
+        )
+        self.assertEqual("battlefield", multiplier.zone)
+        walker_ref = engine.create_token(
+            "C",
+            name="Mobilize multiplied planeswalker recipient",
+            characteristics={
+                "type_line": "Token Planeswalker — Test",
+                "loyalty": "5",
+            },
+        )[0]
+        battle_ref = engine.create_token(
+            "D",
+            name="Mobilize multiplied battle recipient",
+            battle_protector="B",
+            characteristics={
+                "type_line": "Token Battle — Siege",
+                "defense": "5",
+            },
+        )[0]
+        self.declare_attack(session, mobilize, target="B")
+        self.resolve_top(engine)
+        decision = engine.state.pending_decision
+        self.assertEqual("semantic.choice", decision.kind)
+        refs = decision.payload_by_actor["A"]["legal_actions"][0][
+            "choice_schema"
+        ]["legal_refs"]
+        self.assertEqual(4, len(refs))
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        destinations = ("B", "C", walker_ref, battle_ref)
+        chosen = session.act(
+            "pilot:A",
+            {
+                "action_id": "choose",
+                "attacking": dict(zip(refs, destinations)),
+            },
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        warriors = [
+            card
+            for card in engine.state.cards.values()
+            if card.zone == "battlefield"
+            and card.controller == "A"
+            and card.printed_name == "Warrior"
+        ]
+        self.assertEqual(4, len(warriors))
+        self.assertEqual(set(destinations), {card.attacking for card in warriors})
+        self.assertEqual(1, len({card.zone_timestamp for card in warriors}))
+        self.assertEqual(4, len(engine.state.delayed_triggers))
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "mobilize-token-multiplier"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
 
 if __name__ == "__main__":

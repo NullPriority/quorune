@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "0f46ababf9202ac57d5d1ceb24528c1373ff2aac44b2c53646cf75b72efc423b"
+verified: "f8932db3b260d4b9d1e6da049c6b50a0307d4d0a57f50f5ae851d0a85a2df2ea"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,7 +17,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 2,719
+- Pieces: 2,721
 - Cards indexed: 31,623
 - Material abilities classified: 59,434
 - Unclassified material spans: 0
@@ -36,7 +36,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `compiler_cardprogram` — Compiler and CardProgram pieces | 1,489 |
 | `continuous_effects` — Static abilities and continuous effects | 53 |
 | `costs_mana` — Costs and mana | 9 |
-| `events_mutations` — Typed events and mutations | 118 |
+| `events_mutations` — Typed events and mutations | 119 |
 | `keyword_mechanics` — Keyword actions and keyword abilities | 595 |
 | `multiplayer_commander` — Multiplayer, Commander, and profile pieces | 5 |
 | `object_identity` — Object identity and lifetime | 36 |
@@ -45,7 +45,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `proposals` — Casting and activation proposals | 33 |
 | `quantities` — Quantity and value expressions | 1 |
 | `references` — References | 1 |
-| `replacement_prevention` — Replacement and prevention | 23 |
+| `replacement_prevention` — Replacement and prevention | 24 |
 | `triggers` — Triggers | 3 |
 
 ## Universal systems
@@ -58,10 +58,10 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `generic_triggers_stack_placement` | `inventoried` | 3 | 3 |
 | `multiplayer_player_leaving_commander` | `compositional` | 7 | 0 |
 | `objects_identity_zones_faces_copies` | `inventoried` | 44 | 1 |
-| `replacement_prevention` | `inventoried` | 23 | 4 |
+| `replacement_prevention` | `inventoried` | 24 | 4 |
 | `state_turn_loops_stabilization` | `inventoried` | 0 | 0 |
 | `targets_modes_searches_references_choices` | `inventoried` | 16 | 10 |
-| `typed_transactions_events_mutations` | `inventoried` | 314 | 87 |
+| `typed_transactions_events_mutations` | `inventoried` | 315 | 87 |
 
 ## Highest current blocker leverage
 

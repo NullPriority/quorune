@@ -132,6 +132,7 @@ class TokenCreationHost(Protocol):
 
 
 _ATTACKING_FIELD = "attacking"
+_ATTACKING_GROUP_FIELD = "_attacking_group"
 _REASON_FIELD = "reason"
 
 
@@ -160,6 +161,198 @@ class ResolvedTokenSpecs:
     remaining_selections: tuple[
         str | None | Mapping[str, Any], ...
     ]
+
+
+def _token_specification_inputs(
+    host: TokenCreationHost,
+    controller: str,
+    *,
+    name: str,
+    quantity: int,
+    tapped: bool,
+    attacking: str | Sequence[str] | None,
+    attacking_groups: Sequence[str],
+    battle_protector: str | None,
+    copy_of: str | None,
+    copy_source_zone: str,
+    copy_snapshot: Mapping[str, Any] | None,
+    characteristics: Mapping[str, Any] | None,
+    temporary_keywords: Sequence[str],
+    aura_target_ref: str | None,
+) -> tuple[
+    tuple[Mapping[str, Any], ...],
+    set[str],
+    set[str],
+    list[Any],
+]:
+    normalized_characteristics = characteristics
+    if not copy_of:
+        try:
+            normalized_characteristics = standard_token_characteristics(
+                characteristics
+            )
+        except ValueError as exc:
+            raise TokenCreationError(str(exc)) from exc
+    created_types, created_subtypes, sources = _creation_subject(
+        host,
+        controller,
+        name=name,
+        quantity=quantity,
+        copy_of=copy_of,
+        characteristics=normalized_characteristics,
+        copy_source_zone=copy_source_zone,
+        copy_snapshot=copy_snapshot,
+    )
+    base = {
+        "name": name,
+        "quantity": 1,
+        "tapped": tapped,
+        "battle_protector": battle_protector,
+        "copy_of": copy_of,
+        "copy_source_zone": copy_source_zone,
+        **(
+            {"copy_snapshot": copy.deepcopy(dict(copy_snapshot))}
+            if copy_snapshot is not None
+            else {}
+        ),
+        "characteristics": copy.deepcopy(
+            dict(normalized_characteristics or {})
+        ),
+        "temporary_keywords": list(temporary_keywords),
+        "aura_target_ref": aura_target_ref,
+    }
+    groups = tuple(attacking_groups)
+    if groups:
+        if (
+            len(groups) != quantity
+            or any(type(value) is not str or not value for value in groups)
+            or attacking is not None
+        ):
+            raise TokenCreationError(
+                "Attacking token associations must match the base quantity"
+            )
+        token_specs = tuple(
+            {**base, _ATTACKING_GROUP_FIELD: group}
+            for group in groups
+        )
+    elif isinstance(attacking, (list, tuple)):
+        assignments = tuple(attacking)
+        if len(assignments) != quantity or any(
+            type(value) is not str or not value for value in assignments
+        ):
+            raise TokenCreationError(
+                "Attacking token assignments must match the token quantity"
+            )
+        token_specs = tuple(
+            {**base, _ATTACKING_FIELD: destination}
+            for destination in assignments
+        )
+    else:
+        token_specs = (
+            {
+                **base,
+                "quantity": quantity,
+                _ATTACKING_FIELD: attacking,
+            },
+        )
+    return token_specs, created_types, created_subtypes, sources
+
+
+def preview_token_creation(
+    host: TokenCreationHost,
+    controller: str,
+    *,
+    name: str,
+    quantity: int,
+    tapped: bool = False,
+    attacking_groups: Sequence[str],
+    copy_of: str | None = None,
+    copy_source_zone: str = "battlefield",
+    copy_snapshot: Mapping[str, Any] | None = None,
+    characteristics: Mapping[str, Any] | None = None,
+    temporary_keywords: Sequence[str] = (),
+    replacement_selections: Sequence[
+        str | None | Mapping[str, Any]
+    ] = (),
+) -> ResolvedTokenSpecs:
+    """Resolve token replacements without allocating or committing objects."""
+
+    host._require_seat(controller, in_game=True)
+    if quantity < 0:
+        raise TokenCreationError("Token quantity cannot be negative")
+    token_specs, created_types, created_subtypes, sources = (
+        _token_specification_inputs(
+            host,
+            controller,
+            name=name,
+            quantity=quantity,
+            tapped=tapped,
+            attacking=None,
+            attacking_groups=attacking_groups,
+            battle_protector=None,
+            copy_of=copy_of,
+            copy_source_zone=copy_source_zone,
+            copy_snapshot=copy_snapshot,
+            characteristics=characteristics,
+            temporary_keywords=temporary_keywords,
+            aura_target_ref=None,
+        )
+    )
+    effects = _token_replacement_effects(
+        host,
+        controller,
+        created_types,
+        created_subtypes,
+        sources,
+    )
+    return _resolved_token_specs(
+        host,
+        controller,
+        quantity=quantity,
+        token_specs=token_specs,
+        created_types=created_types,
+        created_subtypes=created_subtypes,
+        replacement_effects=effects,
+        replacement_selections=replacement_selections,
+    )
+
+
+def _assign_expanded_attacking_destinations(
+    token_specs: Sequence[Mapping[str, Any]],
+    assignments: Sequence[str],
+) -> tuple[Mapping[str, Any], ...]:
+    supplied = tuple(assignments)
+    if any(type(value) is not str or not value for value in supplied):
+        raise TokenCreationError(
+            "Expanded attacking assignments must be nonempty strings"
+        )
+    assigned: list[Mapping[str, Any]] = []
+    index = 0
+    for raw_spec in token_specs:
+        spec = dict(raw_spec)
+        group = spec.pop(_ATTACKING_GROUP_FIELD, None)
+        quantity = int(spec.get("quantity", 1))
+        if group is None:
+            assigned.append(spec)
+            continue
+        for _ in range(quantity):
+            if index >= len(supplied):
+                raise TokenCreationError(
+                    "Expanded attacking assignments are incomplete"
+                )
+            assigned.append(
+                {
+                    **spec,
+                    "quantity": 1,
+                    _ATTACKING_FIELD: supplied[index],
+                }
+            )
+            index += 1
+    if index != len(supplied):
+        raise TokenCreationError(
+            "Expanded attacking assignments exceed the token plan"
+        )
+    return tuple(assigned)
 
 
 def _creation_subject(
@@ -912,6 +1105,25 @@ def _create_token_specs(
         replacement_effects=replacement_effects,
         replacement_selections=replacement_selections,
     )
+    return _commit_resolved_token_specs(
+        host,
+        controller,
+        resolved=resolved,
+        base_name=base_name,
+        base_quantity=base_quantity,
+        reason=reason,
+    )
+
+
+def _commit_resolved_token_specs(
+    host: TokenCreationHost,
+    controller: str,
+    *,
+    resolved: ResolvedTokenSpecs,
+    base_name: str,
+    base_quantity: int,
+    reason: str,
+) -> list[str]:
     resolved_specs = _preflight_aura_token_specs(
         host,
         controller,
@@ -966,6 +1178,7 @@ def create_tokens(
     quantity: int = 1,
     tapped: bool = False,
     attacking: str | Sequence[str] | None = None,
+    attacking_groups: Sequence[str] = (),
     battle_protector: str | None = None,
     copy_of: str | None = None,
     copy_source_zone: str = "battlefield",
@@ -991,84 +1204,65 @@ def create_tokens(
         raise TokenCreationError("Token copy snapshot must be an object")
     if quantity < 0:
         raise TokenCreationError("Token quantity cannot be negative")
-    if not copy_of:
-        try:
-            characteristics = standard_token_characteristics(characteristics)
-        except ValueError as exc:
-            raise TokenCreationError(str(exc)) from exc
-    created_types, created_subtypes, sources = _creation_subject(
-        host,
-        controller,
-        name=name,
-        quantity=quantity,
-        copy_of=copy_of,
-        characteristics=characteristics,
-        copy_source_zone=copy_source_zone,
-        copy_snapshot=copy_snapshot,
+    expanded_assignments = (
+        tuple(attacking)
+        if attacking_groups and isinstance(attacking, (list, tuple))
+        else ()
     )
-    if isinstance(attacking, (list, tuple)):
-        assignments = tuple(attacking)
-        if len(assignments) != quantity or any(
-            type(value) is not str or not value for value in assignments
-        ):
-            raise TokenCreationError(
-                "Attacking token assignments must match the token quantity"
-            )
-        token_specs = tuple(
-            {
-                "name": name,
-                "quantity": 1,
-                "tapped": tapped,
-                _ATTACKING_FIELD: destination,
-                "battle_protector": battle_protector,
-                "copy_of": copy_of,
-                "copy_source_zone": copy_source_zone,
-                **(
-                    {"copy_snapshot": copy.deepcopy(dict(copy_snapshot))}
-                    if copy_snapshot is not None
-                    else {}
-                ),
-                "characteristics": copy.deepcopy(
-                    dict(characteristics or {})
-                ),
-                "temporary_keywords": list(temporary_keywords),
-                "aura_target_ref": aura_target_ref,
-            }
-            for destination in assignments
+    token_specs, created_types, created_subtypes, sources = (
+        _token_specification_inputs(
+            host,
+            controller,
+            name=name,
+            quantity=quantity,
+            tapped=tapped,
+            attacking=(None if attacking_groups else attacking),
+            attacking_groups=attacking_groups,
+            battle_protector=battle_protector,
+            copy_of=copy_of,
+            copy_source_zone=copy_source_zone,
+            copy_snapshot=copy_snapshot,
+            characteristics=characteristics,
+            temporary_keywords=temporary_keywords,
+            aura_target_ref=aura_target_ref,
         )
-    else:
-        token_specs = (
-            {
-                "name": name,
-                "quantity": quantity,
-                "tapped": tapped,
-                _ATTACKING_FIELD: attacking,
-                "battle_protector": battle_protector,
-                "copy_of": copy_of,
-                "copy_source_zone": copy_source_zone,
-                **(
-                    {"copy_snapshot": copy.deepcopy(dict(copy_snapshot))}
-                    if copy_snapshot is not None
-                    else {}
-                ),
-                "characteristics": copy.deepcopy(
-                    dict(characteristics or {})
-                ),
-                "temporary_keywords": list(temporary_keywords),
-                "aura_target_ref": aura_target_ref,
-            },
-        )
-    return _create_token_specs(
+    )
+    replacement_effects = _token_replacement_effects(
         host,
         controller,
+        created_types,
+        created_subtypes,
+        sources,
+    )
+    resolved = _resolved_token_specs(
+        host,
+        controller,
+        quantity=quantity,
         token_specs=token_specs,
         created_types=created_types,
         created_subtypes=created_subtypes,
-        replacement_sources=sources,
+        replacement_effects=replacement_effects,
+        replacement_selections=replacement_selections,
+    )
+    resolved_specs = (
+        _assign_expanded_attacking_destinations(
+            resolved.specs,
+            expanded_assignments,
+        )
+        if attacking_groups
+        else resolved.specs
+    )
+    return _commit_resolved_token_specs(
+        host,
+        controller,
+        resolved=ResolvedTokenSpecs(
+            specs=resolved_specs,
+            journal=resolved.journal,
+            remaining_selections=resolved.remaining_selections,
+        ),
         base_name=name,
         base_quantity=quantity,
         reason=reason,
-        replacement_selections=replacement_selections,
     )
 
 

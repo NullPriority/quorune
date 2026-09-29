@@ -59,6 +59,7 @@ from scripts.harvest_outcome_history import (
     _latest_semantic_receipt,
     _non_harvest_content_entry,
     _refresh_content_entry,
+    _reclassify_unlanded_content_entry,
     _replace_unlanded_content_entry,
     _receipt,
     _receipt_content_fingerprint,
@@ -1881,6 +1882,62 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             corrected_declaration["family_ids"], corrected["family_ids"]
         )
+
+    def test_unlanded_harvest_can_be_reclassified_as_non_harvest(self):
+        provenance = self.catalog["work_selection"]["harvest_provenance"]
+        latest = provenance[-1]
+        base = _receipt(ROOT, latest["head_commit"])
+        superseded_declaration = {
+            "transition_id": "fixture-unlanded-reclassification",
+            "compiler_version": base["compiler_version"],
+            "bundle_id": "bundle:fixture-unlanded-reclassification",
+            "candidate_ids": ["compiler:fixture-unlanded-reclassification"],
+            "family_ids": ["effect_clause:fixture-unlanded-reclassification"],
+            "capability_ids": ["effect.fixture_unlanded_reclassification"],
+            "expected_complete_card_gain": 0,
+            "non_harvest_reason": None,
+            "outcome_kind": "harvest",
+        }
+        superseded = _content_entry(
+            superseded_declaration,
+            base=base,
+            head=base,
+        )
+        corrected_head = deepcopy(base)
+        corrected_head["architecture"]["production_logical_lines"] += 1
+        corrected_head["blobs"][
+            "coverage/architecture-audit.json"
+        ]["semantic_sha256"] = "f" * 64
+        corrected_declaration = {
+            "transition_id": superseded_declaration["transition_id"],
+            "compiler_version": base["compiler_version"],
+            "bundle_id": None,
+            "candidate_ids": [],
+            "family_ids": [],
+            "capability_ids": [],
+            "expected_complete_card_gain": None,
+            "non_harvest_reason": (
+                "Corrects one unpublished semantic boundary without changing "
+                "card support."
+            ),
+            "outcome_kind": "non_harvest",
+        }
+
+        corrected = _reclassify_unlanded_content_entry(
+            superseded,
+            declaration=corrected_declaration,
+            base=base,
+            head=corrected_head,
+        )
+
+        self.assertIsNotNone(corrected)
+        self.assertEqual(
+            corrected,
+            _validate_non_harvest_content_entry(corrected),
+        )
+        self.assertEqual("non_harvest", corrected["outcome_kind"])
+        self.assertIsNone(corrected["bundle_id"])
+        self.assertEqual(0, corrected["actual_complete_card_gain"])
 
     def test_pending_semantic_outcome_blocks_the_next_harvest(self):
         inputs = deepcopy(self.work_inputs)

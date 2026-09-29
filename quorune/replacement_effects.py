@@ -17,6 +17,7 @@ from .replacement import (
     GrantAffectedObjectKeyword,
     PreventionAllocationChoice,
     MultiplyAmount,
+    MultiplyTokenCreation,
     PreventAmount,
     PreventUsingShield,
     ReplaceableEvent,

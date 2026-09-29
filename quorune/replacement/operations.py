@@ -446,6 +446,39 @@ class CreateAdditionalToken:
 
 
 @dataclass(frozen=True, slots=True)
+class MultiplyTokenCreation:
+    """Copy every current token specification within one creation event.
+
+    The immutable specifications, including any association used to choose an
+    attacking destination, are copied before the authoritative token owner
+    allocates identities or commits permanents.
+    """
+
+    factor: int
+    handler_id: str
+    source_ref: str
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self) -> None:
+        _integer(self.factor, field="token multiplier factor", minimum=2)
+        for field_name in ("handler_id", "source_ref"):
+            value = getattr(self, field_name)
+            if type(value) is not str or not value.strip():
+                raise ReplacementOperationError(
+                    f"Token multiplication requires nonempty {field_name}"
+                )
+            object.__setattr__(self, field_name, value.strip())
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "op": "multiply_token_creation",
+            "factor": self.factor,
+            "handler_id": self.handler_id,
+            "source_ref": self.source_ref,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class ReserveZoneChange:
     objects: tuple[str, ...] = ()
     from_field: str | None = None
@@ -566,6 +599,7 @@ ReplacementOperation: TypeAlias = (
     | CreateAffectedObjectCounter
     | GrantAffectedObjectKeyword
     | CreateAdditionalToken
+    | MultiplyTokenCreation
     | ReserveZoneChange
     | CapResultLifeLoss
     | PreventDraw
@@ -587,6 +621,7 @@ _TYPED_OPERATION_TYPES = (
     CreateAffectedObjectCounter,
     GrantAffectedObjectKeyword,
     CreateAdditionalToken,
+    MultiplyTokenCreation,
     ReserveZoneChange,
     CapResultLifeLoss,
     PreventDraw,
@@ -738,6 +773,27 @@ def _additional_token_from_dict(
     )
 
 
+def _token_multiplier_from_dict(
+    value: Mapping[str, Any],
+    *,
+    operation: str,
+) -> MultiplyTokenCreation:
+    _exact_fields(
+        value,
+        {"op", "factor", "handler_id", "source_ref"},
+        operation=operation,
+    )
+    return MultiplyTokenCreation(
+        factor=_integer(
+            value["factor"],
+            field="token multiplier factor",
+            minimum=2,
+        ),
+        handler_id=value["handler_id"],
+        source_ref=value["source_ref"],
+    )
+
+
 def _redirect_damage_from_dict(
     value: Mapping[str, Any],
     *,
@@ -868,6 +924,8 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         return _affected_object_keyword_from_dict(value, operation=op)
     if op == "create_additional_token":
         return _additional_token_from_dict(value, operation=op)
+    if op == "multiply_token_creation":
+        return _token_multiplier_from_dict(value, operation=op)
     if op == "reserve_zone_change":
         if "objects" in value:
             _exact_fields(value, {"op", "objects"}, operation=op)
