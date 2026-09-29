@@ -14,6 +14,7 @@ from common import (
     register_token_quantity_multiplier,
 )
 from quorune.carddb import CardDatabase, CardRecord
+from quorune.combat_entry_activations import resolve_encore_tokens
 from quorune.continuous_effect_state import (
     commit_continuous_effect,
     expire_end_of_turn_continuous_effects,
@@ -36,6 +37,13 @@ from quorune.projection import StateProjector
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime.current_ability_components import (
     program_has_current_ability_fragments,
+)
+from quorune.semantic_runtime.combat_entry_activations import (
+    EncoreTokensEffectHandler,
+)
+from quorune.semantic_runtime.context import (
+    ReadOnlyHandlerContext,
+    SemanticSourceContext,
 )
 from quorune.record import (
     authoritative_state_hash,
@@ -106,6 +114,7 @@ def focused_database(directory: str) -> CardDatabase:
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
             ROOT / "tests" / "fixtures" / "counter-replacement-cards.json",
+            ROOT / "tests" / "fixtures" / "fixed-typed-event-trigger-cards.json",
             FIXTURE_PATH,
         ],
         database,
@@ -140,6 +149,19 @@ class FixedCombatEntryKeywordLifecycleCompilerTests(unittest.TestCase):
                 )
                 self.assertTrue(node.exact)
                 self.assertEqual("exact", ir.status)
+                if name == "Generic Encore Adept":
+                    self.assertEqual(
+                        (
+                            {
+                                "op": "encore_tokens",
+                                "source_zone": "$context.encore_source_zone",
+                                "copy_snapshot": (
+                                    "$context.encore_copy_snapshot"
+                                ),
+                            },
+                        ),
+                        node.effects,
+                    )
 
     def test_open_combat_entry_variants_remain_residual(self):
         base = self.db.lookup("Generic Ninjutsu Adept")
@@ -406,6 +428,49 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
         assert isinstance(marker, dict)
         self.assertIsInstance(marker.get("ability_semantic_key"), str, marker)
         self.assertEqual(1, len(engine.state.delayed_triggers))
+        return session, source
+
+    def activate_encore(
+        self,
+        *,
+        seed: int,
+        players: int = 3,
+        is_commander: bool = False,
+    ):
+        session = self.session(seed, players=players)
+        engine = session.engine
+        source = self.add_card(
+            engine,
+            name="Generic Encore Adept",
+            ref=f"encore-source-{seed}",
+            zone="graveyard",
+            is_commander=is_commander,
+        )
+        engine.state.players["A"].mana_pool.update({"B": 1, "C": 2})
+        self.prepare_main(session)
+        if (
+            is_commander
+            and engine.state.pending_decision is not None
+            and engine.state.pending_decision.kind == "state.commander_zone"
+        ):
+            remained = session.act(
+                "pilot:A",
+                {"a": "choose", "choice": "remain"},
+            )
+            self.assertTrue(remained.ok, remained.summary)
+            self.prepare_main(session)
+        action_id = f"activate:{source.ref}:ab1"
+        legal = session.packet("pilot:A", full=True)["decision"]["ctx"][
+            "legal"
+        ]
+        self.assertTrue(
+            any(row["id"] == action_id for row in legal["actions"])
+        )
+        result = session.act(
+            "pilot:A", {"action_id": action_id, "pay": "auto"}
+        )
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(engine.state.stack)
         return session, source
 
     @staticmethod
@@ -759,7 +824,299 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
                 for card in copies
             },
         )
-        self.assertEqual(2, len(engine.state.delayed_triggers))
+        self.assertEqual(1, len(engine.state.delayed_triggers))
+
+    def test_encore_uses_exiled_lki_after_source_departure_and_reentry(self):
+        for seed, reenter in ((260033, False), (260034, True)):
+            with self.subTest(reenter=reenter):
+                session, source = self.activate_encore(
+                    seed=seed,
+                    players=3,
+                )
+                engine = session.engine
+                self.assertEqual("exile", source.zone)
+                exiled_identity = source.logical_object_id
+                original_name = source.printed_name
+                engine.move_card(
+                    source.object_id,
+                    "hand",
+                    reason="Encore source lifetime witness",
+                    semantic_events=True,
+                )
+                if reenter:
+                    engine.move_card(
+                        source.object_id,
+                        "exile",
+                        reason="Encore new-incarnation witness",
+                        semantic_events=True,
+                    )
+                    self.assertNotEqual(
+                        exiled_identity,
+                        source.logical_object_id,
+                    )
+                    source.printed_name = "New Encore Incarnation"
+                self.resolve_stack_with_passes(session)
+                copies = [
+                    card
+                    for card in engine.state.cards.values()
+                    if card.zone == "battlefield"
+                    and card.is_token
+                    and card.oracle_id == source.oracle_id
+                ]
+                self.assertEqual(2, len(copies))
+                self.assertEqual(
+                    {original_name},
+                    {card.printed_name for card in copies},
+                )
+
+        current_session, current_source = self.activate_encore(
+            seed=260036,
+            players=3,
+        )
+        current_engine = current_session.engine
+        current_source.annotations["copy_overrides"] = {
+            "power": "7",
+            "toughness": "7",
+        }
+        self.resolve_stack_with_passes(current_session)
+        current_copies = [
+            card
+            for card in current_engine.state.cards.values()
+            if card.zone == "battlefield"
+            and card.is_token
+            and card.oracle_id == current_source.oracle_id
+        ]
+        self.assertEqual(2, len(current_copies))
+        self.assertEqual(
+            {"7"},
+            {
+                str(current_engine._effective_card_data(card).get("power"))
+                for card in current_copies
+            },
+        )
+
+    def test_encore_countered_commander_and_historical_boundaries(self):
+        countered_session, countered_source = self.activate_encore(
+            seed=260037,
+            players=3,
+        )
+        countered_engine = countered_session.engine
+        countered_engine._counter_stack_item(
+            countered_engine.state.stack[-1].ref,
+            reason="Encore countered activation witness",
+        )
+        countered_engine._stabilize()
+        self.assertEqual("exile", countered_source.zone)
+        self.assertFalse(
+            any(
+                card.is_token and card.oracle_id == countered_source.oracle_id
+                for card in countered_engine.state.cards.values()
+            )
+        )
+        self.assertFalse(countered_engine.state.delayed_triggers)
+
+        commander_session, commander = self.activate_encore(
+            seed=260038,
+            players=3,
+            is_commander=True,
+        )
+        commander_engine = commander_session.engine
+        self.assertIsNotNone(commander_engine.state.pending_decision)
+        self.assertEqual(
+            "state.commander_zone",
+            commander_engine.state.pending_decision.kind,
+        )
+        replaced = commander_session.act(
+            "pilot:A",
+            {"a": "choose", "choice": "command"},
+        )
+        self.assertTrue(replaced.ok, replaced.summary)
+        self.assertEqual("command", commander.zone)
+        commander_session.initial_checkpoint = checkpoint_envelope(
+            commander_engine.state
+        )
+        commander_session.commands.clear()
+        commander_session.decisions.clear()
+        self.resolve_stack_with_passes(commander_session)
+        commander_copies = [
+            card
+            for card in commander_engine.state.cards.values()
+            if card.zone == "battlefield"
+            and card.is_token
+            and card.oracle_id == commander.oracle_id
+        ]
+        self.assertEqual(2, len(commander_copies))
+        commander_hash = authoritative_state_hash(commander_engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "encore-commander-replay"
+            commander_session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(commander_hash, replay["final_state_hash"])
+
+        legacy_session = self.session(260039, players=3)
+        legacy_engine = legacy_session.engine
+        legacy_source = self.add_card(
+            legacy_engine,
+            name="Generic Encore Adept",
+            ref="encore-legacy-source",
+            zone="exile",
+        )
+        handler = EncoreTokensEffectHandler()
+        legacy_plan = handler.lower(
+            {"op": "encore_tokens"},
+            ReadOnlyHandlerContext.from_sequences(
+                actor="A",
+                default_reason="Historical Encore payload",
+                seats=legacy_engine.seats,
+                active_seats=legacy_engine.active_seats,
+                apnap_order=legacy_engine.apnap_order(),
+                source=SemanticSourceContext(
+                    stack_ref="S-historical-encore",
+                    object_id=legacy_source.object_id,
+                    logical_object_id=legacy_source.logical_object_id,
+                    card_ref=legacy_source.ref,
+                ),
+            ),
+        )
+        legacy_refs = resolve_encore_tokens(
+            legacy_engine,
+            legacy_plan.intents[0],
+        )
+        self.assertEqual(2, len(legacy_refs))
+        self.assertEqual(1, len(legacy_engine.state.delayed_triggers))
+
+    def test_encore_group_creation_cleanup_and_replay_are_single_events(self):
+        session = self.session(260035, players=3)
+        engine = session.engine
+        observer = self.add_card(
+            engine,
+            name="Generic Token Entry Life Trigger Fixture",
+            ref="encore-group-observer",
+            zone="battlefield",
+        )
+        self.assertEqual("battlefield", observer.zone)
+        for index in range(2):
+            self.add_token_quantity_multiplier(
+                engine,
+                ref=f"encore-group-multiplier-{index}",
+            )
+        source = self.add_card(
+            engine,
+            name="Generic Encore Adept",
+            ref="encore-group-source",
+            zone="graveyard",
+        )
+        engine.state.players["A"].mana_pool.update({"B": 1, "C": 2})
+        self.prepare_main(session)
+        action_id = f"activate:{source.ref}:ab1"
+        activated = session.act(
+            "pilot:A", {"action_id": action_id, "pay": "auto"}
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        for _ in range(12):
+            decision = engine.state.pending_decision
+            if decision is not None and decision.kind == "replacement.order":
+                break
+            passed = session.act(
+                session.pending_principals()[0],
+                {"action_id": "pass"},
+            )
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertIsNotNone(engine.state.pending_decision)
+        self.assertEqual(
+            "replacement.order",
+            engine.state.pending_decision.kind,
+        )
+        projector = StateProjector(self.db, engine.state)
+        self.assertIsNotNone(projector._decision("pilot:A"))
+        self.assertIsNone(projector._decision("pilot:B"))
+        self.assertIsNone(projector._decision("pilot:C"))
+        self.assertFalse(
+            any(
+                card.is_token and card.oracle_id == source.oracle_id
+                for card in engine.state.cards.values()
+            )
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        option = engine.state.pending_decision.payload_by_actor["A"][
+            "options"
+        ][0]["id"]
+        chosen = session.act(
+            "pilot:A",
+            {"action_id": "choose", "choices": {"replacement": option}},
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.resolve_stack_with_passes(session)
+        copies = [
+            card
+            for card in engine.state.cards.values()
+            if card.zone == "battlefield"
+            and card.is_token
+            and card.oracle_id == source.oracle_id
+        ]
+        self.assertEqual(8, len(copies))
+        self.assertEqual(1, len({card.zone_timestamp for card in copies}))
+        self.assertEqual(
+            {"B": 4, "C": 4},
+            {
+                opponent: sum(
+                    card.annotations["encore_attack_if_able"]["opponent"]
+                    == opponent
+                    for card in copies
+                )
+                for opponent in ("B", "C")
+            },
+        )
+        self.assertEqual(41, engine.state.players["A"].life)
+        self.assertEqual(39, engine.state.players["B"].life)
+        self.assertEqual(39, engine.state.players["C"].life)
+        token_events = [
+            event
+            for event in engine.state.events
+            if event.code == "token.create"
+            and any(
+                ref == card.ref
+                for ref in event.details["objects"]
+                for card in copies
+            )
+        ]
+        self.assertEqual(1, len(token_events))
+        self.assertEqual(1, len(engine.state.delayed_triggers))
+        creation_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "encore-group-creation-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(creation_hash, replay["final_state_hash"])
+
+        stolen = copies[0]
+        engine.change_control(
+            stolen.object_id,
+            "B",
+            reason="Encore cleanup controller witness",
+        )
+        self.begin_end_step(engine)
+        self.assertEqual(1, len(engine.state.stack))
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("battlefield", stolen.zone)
+        self.assertEqual("B", stolen.controller)
+        self.assertTrue(
+            all(card.zone == "outside" for card in copies[1:])
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "encore-group-cleanup-replay"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
 
     def test_myriad_uses_per_opponent_optional_destinations_and_delayed_exile(self):
         session = self.session(260003, players=4)

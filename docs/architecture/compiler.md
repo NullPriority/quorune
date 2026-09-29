@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-28"
+verified: "2026-09-29"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -1219,9 +1219,13 @@ bounded fixed combat-entry lifecycle family. Isolated ordinary-mana Ninjutsu,
 Commander ninjutsu, Encore, Blitz, Sneak, and Web-slinging plus bare Myriad
 lower through the existing activation, casting, normalized attack-trigger,
 token, combat-recipient, and delayed-transition owners. Ninjutsu and Sneak
-freeze the returned unblocked attacker's recipient before paying the cost;
-Myriad freezes copyable last-known characteristics when it triggers; Encore
-uses its public exiled cost object. A resolved Blitz permanent records a
+freeze the returned unblocked attacker's recipient before paying the cost.
+Myriad freezes copyable last-known characteristics when it triggers. Encore
+records its post-cost public source zone and copiable values, uses current
+information only while that exact incarnation remains there, and otherwise
+consumes the sealed last-known snapshot. Its per-opponent and replacement-
+expanded copies enter through one grouped token event and one controller-
+limited delayed sacrifice. A resolved Blitz permanent records a
 versioned, incarnation-pinned designation for the exact compiled ability.
 Its graveyard trigger consumes predeparture ability applicability and controller
 facts from the normalized permanent event, so ability removal suppresses the
