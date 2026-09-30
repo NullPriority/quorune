@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 158,
+  "registry_version": 159,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3716,6 +3716,33 @@
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-set duration nodes from becoming exact; every represented keyword node also separately declares and closes its exact combat, damage, destruction, activation, or targeting consumer capabilities.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_activated_characteristic_dependency_gate_mutant_is_killed, test_fixed_public_creature_set_compiler_mutant_is_killed, test_qualified_target_characteristic_compiler_mutant_is_killed, and test_fixed_resolution_keyword_shape_requires_exact_consumers reject missing typed closure, test_resolution_continuous_effect_commit_mutant_is_killed rejects a suppressed journal commit, and test_resolution_and_static_ability_changes_share_layer_six_ordering rejects bypassing the shared ability evaluator.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.resolution.temporary_target_interactions",
+      "version": 1,
+      "official_rules": ["115.1", "400.7", "608.2b", "608.2d", "608.2h", "611.2a", "611.2c", "611.2d", "613.1f", "613.4c", "702.16"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile one direct-target temporary characteristic instruction with a spell-cost X, a supported keyword list, a resolution choice, a current-target conditional rider, or a fixed unblockable or regeneration tail through the existing typed owners.",
+        "inputs": ["one source-spanned complete instruction", "one canonical direct permanent target", "spell-cost X when present", "current public target characteristics", "resolution controller or current target controller", "fixed typed protection quality or keyword options"],
+        "outputs": ["canonical target revalidation", "principal-scoped scalar choice", "locked-incarnation layer-6 or layer-7c result", "existing declaration-rule or regeneration result", "cleanup expiration and exact replay"],
+        "exclusions": ["variable activated costs and unbound or derived X values", "open conditions, dynamic counts, target changes, multiple targets, and arbitrary duration", "unsupported keyword choices or protection qualities", "must-be-blocked requirements and independent unsupported carrier or sibling grammar"]
+      },
+      "dependencies": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "target.revalidate_resolution"],
+      "implementation_components": ["quorune.compiler.temporary_target_interactions.temporary_target_interaction_effect_template", "quorune.compiler.temporary_target_interactions.restrict_temporary_interaction_context", "quorune.effect_runtime.temporary_target_interactions.temporary_keyword_operations", "quorune.effect_runtime.temporary_target_interactions.temporary_target_condition_matches", "quorune.rules.temporary_target_interaction_shapes.temporary_target_interaction_node_capabilities", "quorune.rules.temporary_target_interactions.TargetConditionSpec", "quorune.semantic_choices.scalar.ChooseOptionHandler", "quorune.continuous_effect_state.create_resolution_continuous_effect"],
+      "positive_tests": ["test_temporary_interactions_compile_across_contexts", "test_trusted_x_cast_uses_selected_cost_and_expires", "test_trusted_keyword_choice_and_unblockable_activation"],
+      "negative_tests": ["test_temporary_interaction_exclusions_and_shape_mutations", "test_temporary_interaction_dependencies_and_compiler_mutation", "test_stale_target_and_payment_rejection_roll_back"],
+      "interaction_tests": ["test_temporary_protection_uses_debt_and_current_chooser", "test_current_target_conditions_and_regeneration", "test_trusted_keyword_choice_and_unblockable_activation"],
+      "multiplayer_tests": ["test_temporary_protection_uses_debt_and_current_chooser"],
+      "privacy_tests": ["test_temporary_protection_uses_debt_and_current_chooser"],
+      "replay_tests": ["test_temporary_protection_uses_debt_and_current_chooser", "test_trusted_x_cast_uses_selected_cost_and_expires", "test_trusted_keyword_choice_and_unblockable_activation"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the shared characteristic or target owner makes the new node inexact; each keyword, protection, target predicate, declaration rule, and regeneration consumer remains an independent dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler mutation removes the complete temporary-target production, and exact descriptor, capability, action, and consequence assertions reject the missing production or malformed shape.",
       "blockers": [],
       "status": "trusted"
     },

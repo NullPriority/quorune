@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 from ..keyword_counters import keyword_counter_mechanic
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..landwalk import BASIC_LANDWALK_TYPES
 from ..zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
 from .creature_subtypes import canonical_creature_subtype
 from .counter_placement_templates import (
@@ -26,13 +27,16 @@ _TARGET_CHARACTERISTICS = re.compile(
     re.IGNORECASE,
 )
 _GETS = re.compile(
-    r"gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
+    r"gets (?P<power>[+-](?:\d+|X))/(?P<toughness>[+-](?:\d+|X))"
     r"(?: and gains (?P<keywords>.+))?",
     re.IGNORECASE,
 )
 _GAINS = re.compile(r"gains (?P<keywords>.+)", re.IGNORECASE)
 FIXED_TARGET_CHARACTERISTIC_KEYWORDS = frozenset(
     keyword.casefold() for keyword in FIXED_CHARACTERISTIC_KEYWORDS
+)
+TEMPORARY_TARGET_CHARACTERISTIC_KEYWORDS = FIXED_TARGET_CHARACTERISTIC_KEYWORDS | frozenset(
+    {"horsemanship", *(keyword for keyword, _land in BASIC_LANDWALK_TYPES)}
 )
 _SEQUENCE_MECHANIC = "fixed-target-effect-sequence"
 FIXED_SOURCE_CHARACTERISTIC_MECHANIC = (
@@ -87,20 +91,36 @@ _ZONE_OBJECT_SEQUENCE = re.compile(
 )
 
 
-def _keyword_list(text: str) -> tuple[str, ...] | None:
+def _keyword_list(
+    text: str, *, extended: bool = False
+) -> tuple[str, ...] | None:
+    vocabulary = (
+        TEMPORARY_TARGET_CHARACTERISTIC_KEYWORDS
+        if extended else FIXED_TARGET_CHARACTERISTIC_KEYWORDS
+    )
     values = tuple(
         value.strip().casefold()
-        for value in re.split(r"\s+and\s+", text)
-        if value.strip()
+        for value in re.split(
+            r",\s*(?:and\s+)?|\s+and\s+" if extended else r"\s+and\s+", text
+        )
     )
     if (
-        not values
-        or len(values) > 2
+        not values or any(not value for value in values)
+        or len(values) > (3 if extended else 2)
         or len(set(values)) != len(values)
-        or any(value not in FIXED_TARGET_CHARACTERISTIC_KEYWORDS for value in values)
+        or any(value not in vocabulary for value in values)
     ):
         return None
     return tuple(value.title() for value in values)
+
+
+def _signed_characteristic_amount(value: str) -> int | str:
+    normalized = value.upper()
+    if normalized == "+X":
+        return "$x"
+    if normalized == "-X":
+        return "$neg_x"
+    return int(value)
 
 
 def _source_kind_is_compatible(
@@ -351,8 +371,8 @@ def fixed_source_characteristics_effect_template(
 
 @dataclass(frozen=True, slots=True)
 class FixedTargetCharacteristicsTemplate:
-    power: int | None
-    toughness: int | None
+    power: int | str | None
+    toughness: int | str | None
     keywords: tuple[str, ...]
     controller_relation: str | None
     target_spec: DirectPermanentTargetSpec | None = None
@@ -362,6 +382,15 @@ class FixedTargetCharacteristicsTemplate:
             raise ValueError("Power and toughness changes must be paired")
         if self.power == 0 and self.toughness == 0:
             raise ValueError("Characteristic change cannot be empty")
+        if any(
+            value is not None
+            and not (
+                type(value) is int
+                or (type(value) is str and value in {"$x", "$neg_x"})
+            )
+            for value in (self.power, self.toughness)
+        ):
+            raise ValueError("Characteristic amount is unsupported")
         if self.power is None and not self.keywords:
             raise ValueError("Characteristic change cannot be empty")
         if self.controller_relation not in {None, "any", "you", "opponent"}:
@@ -375,7 +404,7 @@ class FixedTargetCharacteristicsTemplate:
                 "Fixed characteristics require one canonical direct target"
             )
         if len(set(self.keywords)) != len(self.keywords) or any(
-            value.casefold() not in FIXED_TARGET_CHARACTERISTIC_KEYWORDS
+            value.casefold() not in TEMPORARY_TARGET_CHARACTERISTIC_KEYWORDS
             for value in self.keywords
         ):
             raise ValueError("Granted keyword set is unsupported")
@@ -454,6 +483,7 @@ def fixed_target_characteristics_effect_template(
     text: str,
     *,
     existing_target: bool = False,
+    extended: bool = False,
 ) -> FixedTargetCharacteristicsTemplate | None:
     """Parse one fixed target or target-pronoun characteristic instruction."""
 
@@ -476,22 +506,27 @@ def fixed_target_characteristics_effect_template(
     gains = _GAINS.fullmatch(body)
     if gets is not None:
         keywords = (
-            _keyword_list(gets.group("keywords"))
+            _keyword_list(gets.group("keywords"), extended=extended)
             if gets.group("keywords")
             else ()
         )
         if keywords is None:
             return None
+        if not extended and any(
+            "x" in gets.group(field).casefold()
+            for field in ("power", "toughness")
+        ):
+            return None
         return FixedTargetCharacteristicsTemplate(
-            power=int(gets.group("power")),
-            toughness=int(gets.group("toughness")),
+            power=_signed_characteristic_amount(gets.group("power")),
+            toughness=_signed_characteristic_amount(gets.group("toughness")),
             keywords=keywords,
             controller_relation=controller_relation,
             target_spec=target_spec,
         )
     if gains is None:
         return None
-    keywords = _keyword_list(gains.group("keywords"))
+    keywords = _keyword_list(gains.group("keywords"), extended=extended)
     if keywords is None:
         return None
     return FixedTargetCharacteristicsTemplate(

@@ -94,6 +94,7 @@ from quorune.compiler.hand_inspection_templates import (
     FIXED_HAND_INSPECTION_OPERATION,
     fixed_hand_inspection_effect_template,
 )
+from quorune.rules.temporary_target_interactions import TEMPORARY_TARGET_INTERACTION_CAPABILITY
 from quorune.compiler.fixed_public_characteristic_sets import (
     fixed_public_characteristic_set_effect_template,
 )
@@ -203,6 +204,7 @@ _PROBE_FIXED_LIBRARY_SELECTION = (
 _PROBE_FIXED_HAND_INSPECTION = (
     "fixed-target-hand-inspection-existing-owner-v1"
 )
+_PROBE_TEMPORARY_TARGET_INTERACTION = "temporary-target-interaction-closure-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
 )
@@ -555,6 +557,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_FIXED_LIBRARY_SELECTION,
     _PROBE_FIXED_HAND_INSPECTION,
+    _PROBE_TEMPORARY_TARGET_INTERACTION,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
@@ -1199,6 +1202,8 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_TEMPORARY_TARGET_INTERACTION:
+        return "target " in source.casefold() and "until end of turn" in source.casefold()
     if probe_id == _PROBE_FIXED_HAND_INSPECTION:
         if card_record is None or ability is None:
             raise WorkSelectionCohortMeasurementError(
@@ -5625,6 +5630,12 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_TEMPORARY_TARGET_INTERACTION:
+        return _temporary_target_interaction_measurement(
+            frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_TRIGGER_ABILITY_WORD_CARRIER:
         return _trigger_ability_word_carrier_measurement(
             frontier=frontier,
@@ -8051,6 +8062,67 @@ def _fixed_hand_inspection_measurement(
             if reaches_floor
             else "retired_below_harvest_floor"
         ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _temporary_target_interaction_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Count current exact nodes, never lexical matches or old hand counts."""
+
+    registry = load_default_capability_registry()
+    abilities = residuals = 0
+    remaining_by_card: dict[str, int] = {}
+    complete: set[str] = set()
+    for card in frontier.get("cards", ()):
+        if card.get("oracle_ir_status") == "exact":
+            continue
+        oracle_id = str(card["oracle_id"])
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(f"Missing pinned card {oracle_id}")
+        if "target " not in record.oracle_text.casefold() or "until end of turn" not in record.oracle_text.casefold():
+            continue
+        compiled = compile_oracle_card(record, capability_registry=registry,
+                                       capability_profile="commander_review")
+        previous = {(str(a.get("face_id") or "front"), str(a.get("ability_id") or "")): a
+                    for a in card.get("abilities", ())}
+        promoted = {
+            (face.face_id, node.node_id) for face in compiled.faces for node in face.nodes
+            if node.exact and TEMPORARY_TARGET_INTERACTION_CAPABILITY in node.capability_dependencies
+            and previous.get((face.face_id, node.node_id), {}).get("status") != "exact"
+        }
+        if not promoted:
+            continue
+        abilities += len(promoted)
+        residuals += sum(len(a.get("residuals", ())) for identity, a in previous.items() if identity in promoted)
+        remaining_by_card[oracle_id] = sum(
+            a.get("status") != "exact" and identity not in promoted for identity, a in previous.items()
+        )
+        if compiled.status == "exact":
+            complete.add(oracle_id)
+    reaches_floor = (
+        len(complete) >= int(coverage["minimum_complete_card_gain"])
+        or abilities >= int(coverage["minimum_exact_ability_gain"])
+        or residuals >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id, "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(remaining_by_card),
+        "complete_card_gain": len(complete),
+        "one_additional_blocker_cards": sum(count == 1 for count in remaining_by_card.values()),
+        "two_additional_blocker_cards": sum(count == 2 for count in remaining_by_card.values()),
+        "exact_ability_gain": abilities, "material_residual_reduction": residuals,
+        "decision": "bounded_executable" if reaches_floor else "retired_below_harvest_floor",
         "grants_gameplay_trust": False,
     }
 

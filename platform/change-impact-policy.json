@@ -1332,6 +1332,24 @@
       ]
     },
     {
+      "id": "temporary-target-interaction-contract",
+      "patterns": [
+        "quorune/compiler/temporary_target_interactions.py",
+        "quorune/effect_runtime/temporary_target_interactions.py",
+        "quorune/rules/temporary_target_interactions.py",
+        "quorune/rules/temporary_target_interaction_shapes.py",
+        "tests/fixtures/temporary-target-interaction-cards.json",
+        "tests/test_temporary_target_interactions.py"
+      ],
+      "test_modules": [
+        "test_activated_draw_abilities", "test_card_program_trust",
+        "test_closed_effect_programs", "test_fixed_target_effect_sequences",
+        "test_landwalk", "test_regeneration_rules",
+        "test_rules_scheduler", "test_semantic_choice_characterization",
+        "test_temporary_target_interactions"
+      ]
+    },
+    {
       "id": "fixed-target-hand-inspection-contract",
       "patterns": [
         "quorune/compiler/hand_inspection_templates.py",

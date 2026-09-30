@@ -101,6 +101,13 @@ pins supertypes and mana value alongside type, subtype, and color. A missing
 required mana value produces `UNRESOLVED`, and every DEBT consumer fails closed.
 No consumer reparses Oracle text or maintains a family-specific quality check.
 
+Represented temporary Protection grants use that same typed fragment in the
+resolution-created layer-6 journal. Fixed color and artifact qualities, or a
+color selected by the resolving controller or the target's current controller,
+therefore apply through the ordinary targeting, blocking, attachment and damage
+consumers. The selected quality and affected incarnation remain fixed until
+cleanup; later entrants and returned incarnations do not inherit the grant.
+
 It never reads or mutates `GameState`, parses Oracle text, chooses a target, or
 discovers characteristics. It returns a closed allowed-or-blocked reason.
 Malformed controller, keyword, color, boolean, and typed-verdict values fail

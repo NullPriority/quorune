@@ -74,6 +74,9 @@ from .compiler.hand_entry_templates import (
 from .compiler.hand_inspection_templates import (
     fixed_hand_inspection_effect_template,
 )
+from .compiler.temporary_target_interactions import (
+    restrict_temporary_interaction_context,
+)
 from .compiler.explore_templates import single_explore_effect_template
 from .compiler.keyword_templates import keyword_mechanics
 from .compiler.life_templates import fixed_life_effect_template
@@ -165,7 +168,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v226"
+ORACLE_COMPILER_VERSION = "oracle-ir-v227"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1411,7 +1414,7 @@ def _compile_face(
                 residual_ids=(residual_id,),
             )
         )
-    resolved_nodes = _class_context.apply_class_context(context=class_context, oracle_id=record.oracle_id, face_id=face_id, material_rows=material_rows, printed_keywords=keywords, nodes=reject_cast_cost_composition(nodes, residuals), residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
+    resolved_nodes = _class_context.apply_class_context(context=class_context, oracle_id=record.oracle_id, face_id=face_id, material_rows=material_rows, printed_keywords=keywords, nodes=reject_cast_cost_composition(restrict_temporary_interaction_context(record, face_id, nodes, residuals), residuals), residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
     return _leveler_face_ir(
         leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
         keywords, resolved_nodes, residuals, capability_registry, capability_profile,

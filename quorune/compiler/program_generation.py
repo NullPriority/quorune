@@ -88,6 +88,9 @@ from ..rules.library_selection_capability_shapes import (
 from ..rules.hand_inspection_capability_shapes import (
     fixed_hand_inspection_node_capabilities,
 )
+from ..rules.temporary_target_interaction_shapes import (
+    temporary_target_interaction_node_capabilities,
+)
 from ..rules.surveil_capability_shapes import fixed_surveil_node_capabilities
 from ..rules.fixed_controller_effect_shapes import (
     fixed_counter_controller_effect_sequence_node_capabilities,
@@ -900,6 +903,21 @@ def _is_closed_fixed_target_characteristics_program(
     )
 
 
+def _is_closed_temporary_target_interaction_program(
+    program: SemanticProgram,
+) -> bool:
+    required = set(
+        temporary_target_interaction_node_capabilities(
+            effects=program.effects,
+            target_schema=program.target_schema,
+            mechanic_ids=program.coverage,
+        )
+    )
+    return bool(required) and required.issubset(
+        program.capability_dependencies
+    )
+
+
 def _is_closed_fixed_source_characteristics_program(
     program: SemanticProgram,
 ) -> bool:
@@ -1264,6 +1282,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_bolster_program,
         _is_closed_fixed_amass_program,
         _is_closed_fixed_target_characteristics_program,
+        _is_closed_temporary_target_interaction_program,
         _is_closed_fixed_source_characteristics_program,
         _is_closed_temporary_declaration_restriction_program,
         _is_closed_fixed_target_effect_sequence_program,

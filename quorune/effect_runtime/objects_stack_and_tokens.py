@@ -37,6 +37,9 @@ from ..permanent_transform import commit_transform_batch
 from ..util import unique_preserving_order
 from ..trigger_processing import schedule_delayed_trigger
 from ..token_creation import TokenCreationError, create_token_batch
+from .temporary_target_interactions import (
+    temporary_keyword_operations, temporary_target_condition_matches,
+)
 
 
 OPERATIONS = effect_family_contract("objects-stack-and-tokens.v1").operations
@@ -797,6 +800,8 @@ def _apply_grant_keyword_until_end_of_turn(
         str(effect["card"]),
         zones={"battlefield"},
     )
+    if not temporary_target_condition_matches(host, effect, card):
+        return card.ref
     keyword = str(effect["keyword"])
     if not _commit_temporary_characteristic_effect(
         host,
@@ -804,7 +809,7 @@ def _apply_grant_keyword_until_end_of_turn(
         card,
         layer=Layer.ABILITY,
         sublayer="6",
-        operations=(ContinuousOperation("add_ability", keyword),),
+        operations=temporary_keyword_operations(host, effect, keyword),
     ):
         card.temporary_keywords = unique_preserving_order(
             [*card.temporary_keywords, keyword]
@@ -839,6 +844,8 @@ def _apply_modify_stats_until_end_of_turn(
         str(effect["card"]),
         zones={"battlefield"},
     )
+    if not temporary_target_condition_matches(host, effect, card):
+        return card.ref
     power = int(effect.get("power", 0))
     toughness = int(effect.get("toughness", 0))
     if not _commit_temporary_characteristic_effect(
@@ -882,7 +889,6 @@ def _apply_modify_stats_until_end_of_turn(
         changed_objects=[card.object_id],
     )
     return card.ref
-
 
 
 def _apply_grant_play_without_mana_cost(

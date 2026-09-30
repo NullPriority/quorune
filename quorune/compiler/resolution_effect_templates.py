@@ -65,6 +65,7 @@ from .self_counter_keyword_actions import (
 from .temporary_declaration_templates import (
     temporary_declaration_restriction_effect_template,
 )
+from .temporary_target_interactions import temporary_target_interaction_effect_template
 
 
 CompiledEffectTemplate = tuple[
@@ -245,7 +246,7 @@ def typed_resolution_effect_template(
     if fixed_target_sequence is not None:
         return fixed_target_sequence.compiled()
     for compiler in (
-        fixed_target_reanimation_effect_template, public_zone_move_effect_template,
+        fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
         destruction_effect_template,
         targeted_exile_effect_template,
         targeted_return_to_hand_effect_template,
