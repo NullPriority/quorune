@@ -2,7 +2,7 @@
 title: "Commander card-unlock frontier"
 status: "generated"
 authoritative_source: "coverage/card-unlock-frontier.json.gz"
-verified: "b5d979f2924b6dd658a2ab1d9e51407b0b41ffb52dbd7a3ff176a0054d9bf25e"
+verified: "86de35b5dc6877efa22425cbda1e304f7db7b103468af4d54e66badb7f33f0e4"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,16 +14,16 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 ## Snapshot
 
 - Cards considered: 31,623
-- Oracle states: `{"exact":11294,"partial":10594,"unresolved":9735}`
-- CardProgram states: `{"residual":20329,"trusted":11294}`
+- Oracle states: `{"exact":11344,"partial":10583,"unresolved":9696}`
+- CardProgram states: `{"residual":20279,"trusted":11344}`
 - Hard construction failures: 0
-- Frontier fingerprint: `b5d979f2924b6dd658a2ab1d9e51407b0b41ffb52dbd7a3ff176a0054d9bf25e`
+- Frontier fingerprint: `86de35b5dc6877efa22425cbda1e304f7db7b103468af4d54e66badb7f33f0e4`
 
 ## Highest-leverage single families
 
 | Family | Occurrences | Cards | Sole-blocker cards | Exact abilities | Readiness | Risk |
 |---|---:|---:|---:|---:|---|---|
-| `continuous_layer:continuous-effect-layers-and-dependencies` | 4,077 | 3,452 | 1,827 | 4,077 | missing_lowering | very_high |
+| `continuous_layer:continuous-effect-layers-and-dependencies` | 4,076 | 3,451 | 1,828 | 4,076 | missing_lowering | very_high |
 | `keyword_dependency:banding` | 24 | 24 | 19 | 24 | missing_contract | medium |
 | `effect_clause:typed-spell-additional-cost-clause` | 106 | 106 | 18 | 18 | missing_lowering | high |
 | `effect_clause:life-change` | 466 | 464 | 16 | 41 | missing_lowering | high |
@@ -39,7 +39,7 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 | `keyword_dependency:assist` | 16 | 16 | 9 | 16 | missing_contract | medium |
 | `keyword_dependency:learn` | 13 | 13 | 9 | 13 | missing_contract | medium |
 | `keyword_dependency:enlist` | 12 | 12 | 9 | 12 | missing_contract | medium |
-| `effect_clause:create-token` | 524 | 509 | 8 | 64 | missing_lowering | high |
+| `effect_clause:create-token` | 523 | 508 | 8 | 63 | missing_lowering | high |
 | `keyword_dependency:split-second` | 21 | 21 | 8 | 21 | missing_contract | medium |
 | `activated_effect:exile` | 291 | 274 | 8 | 20 | missing_lowering | high |
 | `effect_clause:return` | 477 | 464 | 8 | 18 | missing_lowering | high |
@@ -53,26 +53,26 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 
 | Families | Exact cards | Exact abilities | Residuals |
 |---|---:|---:|---:|
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:start-your-engines` | 1,870 | 4,141 | 4,141 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:start-your-engines` | 1,868 | 4,135 | 4,223 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:life-change, keyword_dependency:start-your-engines` | 1,866 | 4,158 | 4,158 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, replacement:damage-prevention` | 1,865 | 4,147 | 4,147 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:typed-spell-additional-cost-clause` | 1,865 | 4,119 | 4,207 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:create-token` | 1,864 | 4,156 | 4,163 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:life-change` | 1,863 | 4,142 | 4,142 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:umbra-armor` | 1,863 | 4,132 | 4,132 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, effect_clause:unparsed-splice-onto-arcane` | 1,862 | 4,139 | 4,139 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, replacement:damage-prevention` | 1,862 | 4,131 | 4,131 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:create-token` | 1,861 | 4,140 | 4,147 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, effect_clause:life-change` | 1,861 | 4,136 | 4,224 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:extort` | 1,861 | 4,135 | 4,135 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, mechanic_dependency:fading-remaining-lifecycle` | 1,861 | 4,134 | 4,134 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:unparsed-this-creature-can` | 1,861 | 4,129 | 4,130 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:split-second` | 1,860 | 4,138 | 4,138 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, replacement:damage-prevention` | 1,860 | 4,125 | 4,213 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:umbra-armor` | 1,860 | 4,116 | 4,116 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:exile` | 1,859 | 4,137 | 4,139 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 1,859 | 4,134 | 4,229 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:start-your-engines` | 1,871 | 4,140 | 4,140 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:start-your-engines` | 1,869 | 4,134 | 4,222 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:life-change, keyword_dependency:start-your-engines` | 1,867 | 4,157 | 4,157 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, replacement:damage-prevention` | 1,866 | 4,146 | 4,146 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:typed-spell-additional-cost-clause` | 1,866 | 4,118 | 4,206 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:create-token` | 1,865 | 4,155 | 4,162 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, effect_clause:life-change` | 1,864 | 4,141 | 4,141 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:umbra-armor` | 1,864 | 4,131 | 4,131 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, effect_clause:unparsed-splice-onto-arcane` | 1,863 | 4,138 | 4,138 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, replacement:damage-prevention` | 1,863 | 4,130 | 4,130 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, activated_effect:create-token` | 1,862 | 4,139 | 4,146 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, effect_clause:life-change` | 1,862 | 4,135 | 4,223 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:extort` | 1,862 | 4,134 | 4,134 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, mechanic_dependency:fading-remaining-lifecycle` | 1,862 | 4,133 | 4,133 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:unparsed-this-creature-can` | 1,862 | 4,128 | 4,129 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, keyword_dependency:split-second` | 1,861 | 4,137 | 4,137 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, replacement:damage-prevention` | 1,861 | 4,124 | 4,212 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:banding, keyword_dependency:umbra-armor` | 1,861 | 4,115 | 4,115 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:start-your-engines, activated_effect:exile` | 1,860 | 4,136 | 4,138 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 1,860 | 4,133 | 4,228 |
 
 ## Hard construction failures
 
