@@ -23,6 +23,7 @@ from high_risk_interaction_support import (
     IMPULSE_ACCESS_AND_CHOICE_PAIRS,
     MADNESS_AND_CHOICE_PAIRS,
     PUBLIC_SET_AND_CHOICE_PAIRS,
+    PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS,
     REANIMATION_RESIDUAL_BOUNDARY_PAIRS,
     REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS,
     REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
@@ -233,6 +234,14 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(
             self,
             (TOKEN_AND_DAMAGE_PREVENTION_PAIR,),
+            database=self.db,
+        )
+
+    def test_public_object_movement_residual_pairs_fail_closed(self) -> None:
+        self.assertEqual(2, len(PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self,
+            PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS,
             database=self.db,
         )
 

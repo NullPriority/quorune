@@ -6974,6 +6974,60 @@
       ],
       "interaction_order": 2,
       "assertion": "The controller discards one exact land card through the selected activation-cost owner, places the resulting impulse-access trigger above the independently targeted public any-target activation, grants only the committed top-card permission, then resolves the original player damage with public projection and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_public_object_movement_residual_pairs_fail_closed",
+      "piece_ids": [
+        "capability.permanent.tap_state.fixed_set",
+        "residual.replacement.damage-prevention"
+      ],
+      "capability_ids": ["permanent.tap_state.fixed_set"],
+      "interaction_order": 2,
+      "assertion": "A constructed planeswalker retains one exact fixed public tap-set activation while unresolved self-prevention prose keeps the complete CardProgram unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_targeted_effect_then_private_hand_choice_revalidates_and_replays",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.zone.move.fixed_private_hand_choice"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "zone.move.fixed_private_hand_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "A generic targeted destruction spell resolves its qualified artifact-or-enchantment target before projecting one actor-private land choice, then commits the selected current hand incarnation and replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_targeted_effect_then_private_hand_choice_revalidates_and_replays",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.move.fixed_private_hand_choice"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.move.fixed_private_hand_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "The same generic spell revalidates its locked target before any private choice; an illegal target prevents the hand-entry continuation, preserves the private hand, and replays from the pre-resolution checkpoint."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_public_object_movement_residual_pairs_fail_closed",
+      "piece_ids": [
+        "capability.zone.move.fixed_private_hand_choice",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": ["zone.move.fixed_private_hand_choice"],
+      "interaction_order": 2,
+      "assertion": "A constructed permanent retains one exact private land-entry activation while an independently unresolved conditional draw activation keeps the complete CardProgram unavailable at strict or compatible runtime admission."
     }
   ]
 }

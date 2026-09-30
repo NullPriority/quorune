@@ -382,6 +382,26 @@
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
       "faces": []
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000313",
+      "name": "Generic Target Then Hand Entry Fixture",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy target artifact or enchantment. You may put a land card from your hand onto the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "faces": []
     }
   ],
   "rulings": []
