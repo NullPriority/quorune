@@ -675,6 +675,86 @@ class FixedQueryQuotedAbilityGrantRuntimeTests(unittest.TestCase):
             ["nonartifact_spell_prohibited"]["C"],
         )
 
+    def test_query_scaled_grant_revalidates_current_ability_and_replays(self):
+        stale_session = self.session(1190710, players=4)
+        stale_engine = stale_session.engine
+        stale_grant = self.add_source(
+            stale_engine,
+            name="Query Grant Characteristic Fixture",
+            ref="query-characteristic-stale-grant",
+        )
+        stale_recipient = self.creature(
+            stale_engine,
+            ref="query-characteristic-stale-recipient",
+        )
+        key = (
+            "fixture-query-grant-characteristic:ability:granted:front:n1"
+        )
+        stale_ability = self.grant_ability(
+            stale_engine,
+            stale_recipient,
+            key,
+        )
+        stale_engine.state.players["A"].mana_pool["C"] = 1
+        stale_offer = self.activation_offer(
+            stale_session,
+            stale_recipient,
+            stale_ability,
+        )
+        self.remove_all_abilities(
+            stale_engine,
+            stale_grant,
+            suffix="query-characteristic-grant",
+        )
+        before = authoritative_state_hash(stale_engine.state)
+        rejected = stale_session.act(
+            "pilot:A",
+            {"action_id": stale_offer["id"], "pay": "auto"},
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(stale_engine.state))
+        self.assertEqual(1, stale_engine.state.players["A"].mana_pool["C"])
+
+        session = self.session(1190711, players=4)
+        engine = session.engine
+        self.add_source(
+            engine,
+            name="Query Grant Characteristic Fixture",
+            ref="query-characteristic-grant",
+        )
+        recipient = self.creature(
+            engine,
+            ref="query-characteristic-recipient",
+        )
+        self.creature(engine, ref="query-characteristic-companion")
+        ability = self.grant_ability(engine, recipient, key)
+        engine.state.players["A"].mana_pool["C"] = 1
+        offer = self.activation_offer(session, recipient, ability)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        activated = session.act(
+            "pilot:A",
+            {"action_id": offer["id"], "pay": "auto"},
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        for _ in range(8):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual(4, engine._numeric_stat(recipient.object_id, "power"))
+        self.assertEqual(
+            4,
+            engine._numeric_stat(recipient.object_id, "toughness"),
+        )
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "query-characteristic-grant"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+
     def test_global_granted_triggers_preserve_multiplicity_apnap_and_privacy(self):
         session = self.session(1190705, players=4)
         engine = session.engine

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_query_characteristic_cards",
+  "source": "constructed generic assurance fixtures",
+  "cards": [
+    {
+      "oracle_id": "17200600-0000-4000-8000-000000000001",
+      "name": "Query-Scaled Mentor Fixture",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{1}: Target creature you control gains vigilance and gets +1/+1 until end of turn for each creature you control.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-30",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

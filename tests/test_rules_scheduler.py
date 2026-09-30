@@ -102,6 +102,7 @@ from scripts.work_selection_cohort_measurements import (
     _is_fixed_owner_zone_move_candidate,
     _partner_with_measurement,
     _public_object_movement_closure_measurement,
+    _public_query_characteristic_modifier_measurement,
     _public_cast_cost_modifier_closure_measurement,
     _public_event_binding_closure_measurement,
     _fixed_token_production_measurement,
@@ -4205,6 +4206,93 @@ class RulesSchedulerTests(unittest.TestCase):
                 frontier=frontier,
                 bundle_id="bundle:public-object-movement-closure",
                 probe_id="public-object-movement-closure-existing-owner-v1",
+                cards_by_oracle_id={record.oracle_id: record},
+                coverage={
+                    "minimum_complete_card_gain": 1,
+                    "minimum_exact_ability_gain": 1,
+                    "minimum_material_residual_reduction": 1,
+                },
+                cohort_fingerprint="0" * 64,
+            )
+        self.assertTrue(_validate_cohort_row_shape(measurement))
+        self.assertEqual("bounded_executable", measurement["decision"])
+        self.assertEqual(1, measurement["complete_card_gain"])
+        self.assertEqual(1, measurement["exact_ability_gain"])
+        self.assertEqual(1, measurement["material_residual_reduction"])
+
+    def test_public_query_characteristic_probe_counts_existing_owner_transition(
+        self,
+    ):
+        record = SimpleNamespace(
+            oracle_id="fixture:public-query-characteristic",
+            name="Public query characteristic fixture",
+            oracle_text=(
+                "Target creature gets +X/+X until end of turn, where X is "
+                "the number of creatures you control."
+            ),
+            type_line="Instant",
+            faces=(),
+        )
+        frontier = {
+            "cards": [
+                {
+                    "oracle_id": record.oracle_id,
+                    "oracle_ir_status": "unresolved",
+                    "exact_ability_count": 0,
+                    "abilities": [
+                        {
+                            "ability_id": "front:n1",
+                            "face_id": "front",
+                            "source_line": 1,
+                            "status": "unresolved",
+                            "residuals": [{"residual_id": "r1"}],
+                        }
+                    ],
+                }
+            ]
+        }
+        node = SimpleNamespace(
+            node_id="front:n1",
+            exact=True,
+            capability_dependencies=(
+                "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                "quantity_expression.public_query_effect_amount",
+            ),
+            effects=(
+                {
+                    "op": "modify_stats_until_end_of_turn",
+                    "card": "$target.0",
+                    "power": {
+                        "kind": "public_query_effect_amount",
+                    },
+                    "toughness": {
+                        "kind": "public_query_effect_amount",
+                    },
+                },
+            ),
+        )
+        compiled = SimpleNamespace(
+            faces=(SimpleNamespace(face_id="front", nodes=(node,)),),
+            status="exact",
+        )
+        with (
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "load_default_capability_registry",
+                return_value=object(),
+            ),
+            mock.patch(
+                "scripts.work_selection_cohort_measurements."
+                "compile_oracle_card",
+                return_value=compiled,
+            ),
+        ):
+            measurement = _public_query_characteristic_modifier_measurement(
+                frontier=frontier,
+                bundle_id="bundle:public-query-characteristic-modifiers",
+                probe_id=(
+                    "public-query-characteristic-modifier-existing-owner-v1"
+                ),
                 cards_by_oracle_id={record.oracle_id: record},
                 coverage={
                     "minimum_complete_card_gain": 1,

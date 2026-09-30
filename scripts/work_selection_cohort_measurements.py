@@ -140,6 +140,9 @@ from quorune.public_zone_moves import FIXED_OWNER_ZONE_MOVE_CAPABILITY
 from quorune.public_alternative_costs import (
     FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY,
 )
+from quorune.query_effect_amount_model import (
+    PUBLIC_QUERY_AMOUNT_CAPABILITY,
+)
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.library_search_capability_shapes import (
     FIXED_LIBRARY_SEARCH_CAPABILITY_ID,
@@ -200,6 +203,9 @@ _PROBE_FIXED_PUBLIC_CHARACTERISTIC_SET = (
 )
 _PROBE_PUBLIC_QUERY_EFFECT_AMOUNT = (
     "public-query-effect-amount-existing-owner-v1"
+)
+_PROBE_PUBLIC_QUERY_CHARACTERISTIC_MODIFIERS = (
+    "public-query-characteristic-modifier-existing-owner-v1"
 )
 _PROBE_PUBLIC_ACTIVATION_CONDITIONS = (
     "public-activation-condition-existing-owner-v1"
@@ -492,6 +498,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_CONTROLLED_CHARACTERISTIC,
     _PROBE_FIXED_PUBLIC_CHARACTERISTIC_SET,
     _PROBE_PUBLIC_QUERY_EFFECT_AMOUNT,
+    _PROBE_PUBLIC_QUERY_CHARACTERISTIC_MODIFIERS,
     _PROBE_FIXED_CAST_LIFECYCLES,
     _PROBE_FIXED_CASTING_SURFACE,
     _PROBE_FIXED_ENTRY_RETURN_REQUIREMENTS,
@@ -5620,6 +5627,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_PUBLIC_QUERY_CHARACTERISTIC_MODIFIERS:
+        return _public_query_characteristic_modifier_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_PUBLIC_ACTIVATION_CONDITIONS:
         return _public_activation_condition_measurement(
             frontier=frontier,
@@ -8207,6 +8223,11 @@ _PUBLIC_QUERY_EFFECT_AMOUNT_LINE = re.compile(
     r"\bCreate X .+ tokens?, where X is the number of)",
     re.IGNORECASE,
 )
+_PUBLIC_QUERY_CHARACTERISTIC_LINE = re.compile(
+    r"\bgets [+-](?:X|\d+)/[+-](?:X|\d+).*"
+    r"(?:where X is|for each)",
+    re.IGNORECASE,
+)
 
 
 def _contains_public_query_effect_amount(value: Any) -> bool:
@@ -8307,6 +8328,145 @@ def _public_query_effect_amount_measurement(
             )
             not in matched_ids
             for ability in card.get("abilities", [])
+        )
+        matched_cards[oracle_id] = remaining
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or matched_residuals
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": matched_residuals,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _contains_public_query_characteristic_modifier(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        if value.get("op") == "modify_stats_until_end_of_turn":
+            return any(
+                isinstance(value.get(field), Mapping)
+                and value[field].get("kind") == "public_query_effect_amount"
+                for field in ("power", "toughness")
+            )
+        return any(
+            _contains_public_query_characteristic_modifier(child)
+            for child in value.values()
+        )
+    return isinstance(value, (list, tuple)) and any(
+        _contains_public_query_characteristic_modifier(child)
+        for child in value
+    )
+
+
+def _public_query_characteristic_modifier_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure query-scaled layer-7c results through existing typed owners."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_residuals = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        if not _PUBLIC_QUERY_CHARACTERISTIC_LINE.search(
+            str(record.oracle_text or "")
+        ):
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        previous = {
+            (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            ): ability
+            for ability in card.get("abilities", ())
+        }
+        matched_ids: set[tuple[str, str]] = set()
+        for face in compiled.faces:
+            for node in face.nodes:
+                source_node_id = node.node_id
+                if (
+                    (face.face_id, source_node_id) not in previous
+                    and source_node_id.endswith(":granted")
+                ):
+                    source_node_id = source_node_id.removesuffix(":granted")
+                source_identity = (face.face_id, source_node_id)
+                if (
+                    node.exact
+                    and previous.get(source_identity, {}).get("status")
+                    != "exact"
+                    and PUBLIC_QUERY_AMOUNT_CAPABILITY
+                    in node.capability_dependencies
+                    and "continuous.resolution.fixed_characteristics_until_end_of_turn"
+                    in node.capability_dependencies
+                    and (
+                        _contains_public_query_characteristic_modifier(
+                            node.effects
+                        )
+                        or _contains_public_query_characteristic_modifier(
+                            node.target_schema
+                        )
+                    )
+                ):
+                    matched_ids.add(source_identity)
+        if not matched_ids:
+            continue
+        matched_abilities += len(matched_ids)
+        matched_residuals += sum(
+            len(ability.get("residuals", ()))
+            for ability in card.get("abilities", ())
+            if (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            )
+            in matched_ids
+        )
+        remaining = sum(
+            ability.get("status") != "exact"
+            and (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            )
+            not in matched_ids
+            for ability in card.get("abilities", ())
         )
         matched_cards[oracle_id] = remaining
         if compiled.status == "exact":
