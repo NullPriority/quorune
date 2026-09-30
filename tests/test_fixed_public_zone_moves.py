@@ -360,6 +360,14 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                 False,
             ),
             (
+                "Return all creature cards from your graveyard to the battlefield.",
+                PublicZoneOrigin.GRAVEYARD,
+                PublicZoneDestination.BATTLEFIELD,
+                {"types_all": ["creature"]},
+                public_zone_moves.PublicBattlefieldController.OWNER,
+                False,
+            ),
+            (
                 "Return all legendary creature cards from your graveyard to your hand.",
                 PublicZoneOrigin.GRAVEYARD,
                 PublicZoneDestination.OWNER_HAND,

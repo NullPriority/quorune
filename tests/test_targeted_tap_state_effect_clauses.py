@@ -282,9 +282,9 @@ class TargetedTapStateCompilerTests(unittest.TestCase):
 
     def test_unsupported_tap_state_variants_remain_material_residuals(self):
         for text in (
-            "Untap all creatures you control.",
-            "Tap all creatures target player controls.",
-            "Untap each other Elf you control.",
+            "Untap all creatures chosen at random.",
+            "Tap each creature with mana value 3 or less.",
+            "Untap all creatures that entered this turn.",
             "Tap equipped creature.",
         ):
             with self.subTest(text=text):
