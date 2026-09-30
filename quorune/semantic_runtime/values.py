@@ -137,6 +137,8 @@ def resolve_semantic_value(
         return item.ref
     if value == "$x":
         return item.x_value or 0
+    if value == "$neg_x":
+        return -(item.x_value or 0)
     if value == "$turn_sequence":
         return host.state.turn_sequence
     if value == "$station.power":
@@ -148,6 +150,16 @@ def resolve_semantic_value(
         return item.context.get(value.removeprefix("$context."))
     if value == "$targets":
         return [target for target in item.targets if target is not None]
+    current_controller_match = re.fullmatch(
+        r"\$target\.current_controller[.\[](?P<index>\d+)\]?",
+        value,
+    )
+    if current_controller_match:
+        index = int(current_controller_match.group(_INDEX_GROUP))
+        if index >= len(item.targets) or item.targets[index] is None:
+            return None
+        snapshot = host._target_snapshot(str(item.targets[index]))
+        return snapshot.get("controller")
     attribute_match = re.fullmatch(
         r"\$target\.(?P<attribute>controller|owner|mana_value|colors|type_line)"
         r"[.\[](?P<index>\d+)\]?",

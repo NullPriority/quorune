@@ -97,10 +97,9 @@ from .library_search_capability_shapes import (
     fixed_library_search_covered_mechanics, fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
 )
-from .library_selection_capability_shapes import (
-    fixed_library_selection_node_capabilities,
-)
+from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
 from .hand_inspection_capability_shapes import FIXED_HAND_INSPECTION_CAPABILITY, FIXED_HAND_INSPECTION_MECHANIC, fixed_hand_inspection_node_capabilities
+from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
@@ -460,7 +459,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         CLOSED_EFFECT_PROGRAM_MECHANIC,
         FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_MECHANIC,
-        FIXED_NEXT_TURN_DRAW_MECHANIC,
+        FIXED_NEXT_TURN_DRAW_MECHANIC, "temporary-target-interaction",
         IMPULSE_ACCESS_MECHANIC_ID, PARTNER_WITH_SEARCH_MECHANIC_ID,
         "adapt",
         "monstrosity",
@@ -1053,7 +1052,7 @@ def _targeted_effect_capabilities(
         fixed_homogeneous_target_set_node_capabilities,
         fixed_player_counter_placement_node_capabilities,
         optional_fixed_counter_event_trigger_node_capabilities,
-        fixed_target_characteristics_node_capabilities,
+        fixed_target_characteristics_node_capabilities, temporary_target_interaction_node_capabilities,
         fixed_source_characteristics_node_capabilities,
         temporary_declaration_restriction_node_capabilities,
         fixed_target_effect_sequence_node_capabilities,
@@ -1381,6 +1380,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         ),
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
+        "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
     }
     return {
         mechanic

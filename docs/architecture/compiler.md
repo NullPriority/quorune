@@ -47,6 +47,23 @@ residual rather than falling back to a creature-only approximation.
 The runtime consumes only the resulting typed node and never reparses those
 Oracle sentences.
 
+`compiler/temporary_target_interactions.py` composes that same direct-target
+descriptor with signed spell-cost X, supported comma-separated keyword lists,
+fixed color or artifact Protection, a choice of color or two supported keywords,
+a closed current-target conditional rider, or a fixed regeneration or
+unblockable tail. It keeps the original fixed leaf-parser boundary intact.
+X requires an X-bearing spell mana cost on the selected face; undefined X,
+variable activated costs and other derived quantities remain residual.
+Resolution choices use the existing scalar-choice owner. A recipient-controller
+color choice reads the target's current controller when the instruction begins.
+Conditional riders evaluate current public characteristics once before creating
+the locked layer-6 or layer-7c effect. The same continuous-effect journal stores
+temporary Protection as a typed fragment, and existing DEBT consumers enforce it.
+Open conditions, unsupported qualities or keywords, target-changing and
+multiple-target effects, other durations and must-be-blocked requirements remain
+residual. Existing carrier and independently closed composition owners still
+govern triggered, activated and modal admission.
+
 `compiler/fixed_source_effect_sequences.py` owns the separate source-threaded
 two-clause grammar. It accepts one fixed positive counter placement on a
 permanent source followed by one represented fixed characteristic result until

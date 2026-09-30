@@ -261,6 +261,7 @@
       "test_prevention_trigger_stack",
       "test_regeneration_rules",
       "test_targeted_tap_state_effect_clauses",
+      "test_temporary_target_interactions",
       "test_typed_land_entry_participation",
       "test_zone_trigger_events"
     ],

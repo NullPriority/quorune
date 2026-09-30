@@ -4453,6 +4453,60 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "fixed-target-hand-inspection-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:temporary-target-interaction-closure",
+          "member_family_ids": [
+            "activated_effect:unparsed-target-creature-gains",
+            "activated_effect:unparsed-target-creature-gets",
+            "activated_effect:unparsed-target-creature-with",
+            "activated_effect:unparsed-target-creature-you",
+            "duration:until-end-of-turn",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unparsed-choose-one",
+            "effect_clause:unparsed-target-creature-gains",
+            "effect_clause:unparsed-target-creature-gets",
+            "effect_clause:unparsed-target-creature-you",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "quantity_expression:dynamic-quantity",
+            "reference_binding:linked-result-reference",
+            "target_or_choice:conditional-effect",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.resolution.temporary_target_interactions",
+            "component:quorune.compiler.temporary_target_interactions.temporary_target_interaction_effect_template",
+            "component:quorune.continuous_effect_state.create_resolution_continuous_effect",
+            "component:quorune.effect_runtime.temporary_target_interactions.temporary_target_condition_matches",
+            "component:quorune.rules.temporary_target_interaction_shapes.temporary_target_interaction_node_capabilities",
+            "component:quorune.semantic_choices.scalar.ChooseOptionHandler"
+          ],
+          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "normalized_literal_parameters": [
+            "cost-bound-signed-spell-x", "current-target-condition",
+            "fixed-keyword-or-color-choice", "fixed-protection-quality",
+            "fixed-regeneration-or-unblockable-tail", "supported-keyword-list"
+          ],
+          "shared_dependencies": [
+            "combat.declaration.typed_components",
+            "continuous.resolution.declaration_rules_until_end_of_turn",
+            "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "permanent.regeneration.fixed_effect", "protection.typed.debt",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one complete temporary direct-target effect with supported signed spell-cost X, fixed keyword lists, typed protection qualities, resolution-time keyword or color choice, a closed current-target condition, or a fixed regeneration or unblockable tail",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes reusable temporary target interactions across spell, activated, triggered and modal carriers through canonical target, scalar choice, characteristic, protection, declaration and regeneration owners.",
+          "explicit_exclusions": [
+            "open conditions or arithmetic, multiple targets, target changes and unrepresented durations",
+            "undefined, derived or activated X and independently unsupported costs or carrier grammar",
+            "unsupported keyword or protection choices and must-be-blocked requirements"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "temporary-target-interaction-closure-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -4464,26 +4518,28 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v226-fixed-target-hand-inspection",
-      "compiler_version": "oracle-ir-v226",
-      "bundle_id": "bundle:fixed-target-hand-inspection",
-      "candidate_ids": ["bundle:fixed-target-hand-inspection"],
+      "transition_id": "oracle-ir-v227-temporary-target-interaction-closure",
+      "compiler_version": "oracle-ir-v227",
+      "bundle_id": "bundle:temporary-target-interaction-closure",
+      "candidate_ids": ["bundle:temporary-target-interaction-closure"],
       "family_ids": [
-        "activated_effect:look-reveal",
-        "activated_effect:unparsed-target-opponent-reveals",
-        "effect_clause:look-reveal",
-        "effect_clause:unparsed-target-opponent-reveals",
-        "effect_clause:unparsed-target-player-reveals",
+        "activated_effect:unparsed-target-creature-gains",
+        "activated_effect:unparsed-target-creature-gets",
+        "duration:until-end-of-turn",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:unparsed-target-creature-gains",
+        "effect_clause:unparsed-target-creature-gets",
+        "quantity_expression:dynamic-quantity",
         "reference_binding:linked-result-reference",
         "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "choice.target_hand.fixed_inspection_move",
-        "target.revalidate_resolution",
-        "zone.change.destination_replacement"
+        "continuous.resolution.temporary_target_interactions",
+        "protection.typed.debt",
+        "target.revalidate_resolution"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-target-hand-inspection"
+      "measurement_id": "measurement:temporary-target-interaction-closure"
     },
     "forecast_corrections": [
       {
