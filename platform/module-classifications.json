@@ -2628,6 +2628,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/hand_entry_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/impulse_access_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -3079,6 +3094,21 @@
     },
     {
       "file": "quorune/compiler/public_state_queries.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/public_tap_state_set_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -5378,6 +5408,20 @@
       "file": "quorune/public_alternative_costs.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/public_tap_state_sets.py",
+      "layer": "rules",
+      "owning_subsystem": "tap_state_effects",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -9831,5 +9875,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "60a7b3be029515c39256d3215cbed6d059ec460b81d3e686a559da806f3def2b"
+  "fingerprint": "314f79cdcf9979d3a1d250d3973031a3500726e1e394206b5de2bfb981e2b88b"
 }

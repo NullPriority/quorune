@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "f12da803b809a5bd7c54e36d4e069e12221fc1833080804953f318d8004be0cd"
+verified: "45ed1397e1c0ad68aa9ba840612982b3624388d0bd124258dfafda1424e3bcc3"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -32,7 +32,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Starscream, Power Hungry // Starscream, Seeker Leader | 208 | 28 | 6 | 8 | 4 | 19 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 205 | 25 | 7 | 4 | 5 | 22 | `blocked` |
-| Crystal Fragments // Summon: Alexander | 204 | 26 | 7 | 7 | 7 | 8 | `blocked` |
 | Esper Origins // Summon: Esper Maduin | 204 | 21 | 7 | 5 | 6 | 20 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
 | The Legend of Kuruk // Avatar Kuruk | 204 | 28 | 6 | 6 | 11 | 5 | `blocked` |
@@ -48,6 +47,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
 | The Modern Age // Vector Glider | 191 | 26 | 7 | 5 | 6 | 6 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 190 | 23 | 4 | 7 | 10 | 19 | `blocked` |
+| Crystal Fragments // Summon: Alexander | 189 | 27 | 6 | 7 | 4 | 8 | `blocked` |
 | Invasion of Segovia // Caetus, Sea Tyrant of Segovia | 189 | 20 | 6 | 4 | 6 | 23 | `blocked` |
 | Okiba Reckoner Raid // Nezumi Road Captain | 189 | 24 | 7 | 6 | 6 | 6 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |

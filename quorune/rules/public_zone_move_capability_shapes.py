@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..affected_permanents import (
+    AffectedPermanentSetError,
+    AffectedPermanentSetSpec,
+    PermanentControllerRelation,
+)
 from ..attachment_references import (
     AttachmentReferenceError,
     AttachmentReferenceKind,
@@ -125,13 +130,21 @@ _OWNER_ZONE_TARGET_SCHEMAS = _target_schema_values()
 def fixed_owner_zone_move_covered_mechanics(
     capability_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    if FIXED_OWNER_ZONE_MOVE_CAPABILITY not in set(capability_ids):
-        return ()
-    return (
-        FIXED_OWNER_ZONE_MOVE_MECHANIC,
-        "fixed-public-zone-move",
-        "return-to-owner-hand",
-    )
+    supplied = set(capability_ids)
+    covered: set[str] = set()
+    if FIXED_OWNER_ZONE_MOVE_CAPABILITY in supplied:
+        covered.update(
+            {
+                FIXED_OWNER_ZONE_MOVE_MECHANIC,
+                "fixed-public-zone-move",
+                "return-to-owner-hand",
+            }
+        )
+    if "zone.move.fixed_private_hand_choice" in supplied:
+        covered.update({"fixed-private-hand-entry", "fixed-public-zone-move"})
+    if "permanent.tap_state.fixed_set" in supplied:
+        covered.update({"fixed-public-tap-state-set", "tap-and-untap"})
+    return tuple(sorted(covered))
 
 
 def _closed_owner_zone_target_schema(value: Mapping[str, Any] | None) -> bool:
@@ -297,6 +310,20 @@ def fixed_public_zone_move_set_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
+    private_hand = fixed_private_hand_entry_node_capabilities(
+        effects=effects,
+        target_schema=target_schema,
+        mechanic_ids=mechanic_ids,
+    )
+    if private_hand:
+        return private_hand
+    public_tap_state = fixed_public_tap_state_set_node_capabilities(
+        effects=effects,
+        target_schema=target_schema,
+        mechanic_ids=mechanic_ids,
+    )
+    if public_tap_state:
+        return public_tap_state
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not {
         "fixed-public-zone-move",
@@ -331,9 +358,153 @@ def fixed_public_zone_move_set_node_capabilities(
     return ("zone.move.fixed_public_set",)
 
 
+def fixed_private_hand_entry_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, Any]],
+    target_schema: Mapping[str, Any] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (
+        not {"fixed-private-hand-entry", "fixed-public-zone-move"}.issubset(
+            mechanics
+        )
+        or len(effects) != 1
+        or target_schema is not None
+    ):
+        return ()
+    effect = effects[0]
+    if (
+        set(effect) != {"op", "player", "query", "tapped"}
+        or effect.get("op") != "put_card_from_hand"
+        or effect.get("player") != "$controller"
+        or type(effect.get("tapped")) is not bool
+    ):
+        return ()
+    try:
+        query = ObjectQuerySpec.from_dict(effect["query"])
+    except (KeyError, TypeError, ObjectQueryError):
+        return ()
+    if (
+        query.zones != ("hand",)
+        or query.owner is not None
+        or query.controller is not None
+        or query.excluded_controllers
+        or query.excluded_types
+        or query.subtypes_any
+        or query.excluded_subtypes
+        or query.colors_all
+        or query.colorless is not None
+        or query.keywords_all
+        or query.keywords_none
+        or query.token is not None
+        or query.tapped is not None
+        or query.include_phased_out
+        or query.known_to_actor is not None
+        or query.exclude_ref is not None
+        or query.state_predicate is not None
+    ):
+        return ()
+    permanent_types = {
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "land",
+        "planeswalker",
+    }
+    allowed = any(
+        (
+            query.types_all == ("land",)
+            and not query.types_any
+            and not query.subtypes_all
+            and not query.colors_any
+            and query.minimum_color_count is None
+            and query.supertypes_all in {(), ("basic",)}
+        ,
+            query.types_all == ("creature",)
+            and not query.types_any
+            and not query.subtypes_all
+            and not query.supertypes_all
+            and len(query.colors_any) <= 2
+            and query.minimum_color_count in {None, 2}
+            and not (query.colors_any and query.minimum_color_count is not None)
+        ,
+            query.types_all == ("artifact",)
+            and query.subtypes_all == ("equipment",)
+            and not query.types_any
+            and not query.supertypes_all
+            and not query.colors_any
+            and query.minimum_color_count is None
+        ,
+            set(query.types_any) == permanent_types
+            and not query.types_all
+            and query.subtypes_all == ("minotaur",)
+            and not query.supertypes_all
+            and not query.colors_any
+            and query.minimum_color_count is None
+        )
+    )
+    return (
+        (
+            "zone.move.fixed_private_hand_choice",
+            "zone.change.destination_replacement",
+        )
+        if allowed
+        else ()
+    )
+
+
+def fixed_public_tap_state_set_node_capabilities(
+    *,
+    effects: Sequence[Mapping[str, Any]],
+    target_schema: Mapping[str, Any] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (
+        not {"tap-and-untap", "fixed-public-tap-state-set"}.issubset(
+            mechanics
+        )
+        or len(effects) != 1
+    ):
+        return ()
+    effect = effects[0]
+    if (
+        set(effect) != {"op", "source", "set", "tapped"}
+        or effect.get("op") != "set_public_tap_state"
+        or effect.get("source") != "$source"
+        or type(effect.get("tapped")) is not bool
+    ):
+        return ()
+    try:
+        spec = AffectedPermanentSetSpec.from_dict(effect["set"])
+    except (KeyError, TypeError, AffectedPermanentSetError):
+        return ()
+    targeted = (
+        spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER
+    )
+    if targeted:
+        if (
+            "cr-115-targets" not in mechanics
+            or dict(target_schema or {}) not in _PLAYER_TARGETS
+            or spec.target_controller != "$target.0"
+        ):
+            return ()
+        return (
+            "permanent.tap_state.fixed_set",
+            "target.revalidate_resolution",
+        )
+    if target_schema is not None or "cr-115-targets" in mechanics:
+        return ()
+    return ("permanent.tap_state.fixed_set",)
+
+
 __all__ = [
     "fixed_owner_zone_move_covered_mechanics",
     "fixed_owner_zone_move_node_capabilities",
     "fixed_public_zone_move_set_node_capabilities",
+    "fixed_private_hand_entry_node_capabilities",
+    "fixed_public_tap_state_set_node_capabilities",
     "public_graveyard_card_exile_node_capabilities",
 ]

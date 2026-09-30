@@ -835,10 +835,29 @@ class ZoneTransitionOwner:
         reason: str,
         log: bool = False,
         tapped: bool | None = None,
+        destination_controllers: Mapping[str, str] | None = None,
         replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
         transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
     ) -> list[CardInstance]:
         kinds = normalized_transition_kind_map(changes, transition_kinds)
+        controllers = dict(destination_controllers or {})
+        change_ids = {object_id for object_id, _destination in changes}
+        if set(controllers) - change_ids or any(
+            type(value) is not str or value not in self.host.active_seats
+            for value in controllers.values()
+        ):
+            raise GameRuleError(
+                "Simultaneous zone-move destination controllers are invalid"
+            )
+        entry_characteristics = {
+            object_id: capture_prospective_entry_characteristics(
+                self.host,
+                card=self.state.cards[object_id],
+                enter_face=None,
+            )[0]
+            for object_id, destination in changes
+            if destination == "battlefield"
+        }
         sources = tuple(copy.deepcopy(source) for source in self.semantic_event_sources())
         source_snapshot = DepartureTriggerSnapshot(
             sources=sources,
@@ -855,6 +874,12 @@ class ZoneTransitionOwner:
                 object_id: bool(tapped) if tapped is not None else False
                 for object_id, _destination in changes
             },
+            destination_controllers={
+                object_id: controllers[object_id]
+                for object_id, destination in changes
+                if destination == "battlefield" and object_id in controllers
+            },
+            entry_characteristics=entry_characteristics,
             sources=sources,
             source_zones=source_snapshot.source_zones,
             selections=tuple(replacement_selections),
@@ -877,6 +902,7 @@ class ZoneTransitionOwner:
                 object_id,
                 destination,
                 zone_timestamp=destination_timestamp,
+                controller=controllers.get(object_id),
                 tapped=tapped,
                 reason=reason,
                 log=log,

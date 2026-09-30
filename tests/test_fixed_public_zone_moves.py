@@ -32,6 +32,7 @@ from quorune.object_predicate import ObjectQuerySpec
 from quorune.object_query import ObjectQueryResult
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.projection import StateProjector
+import quorune.public_zone_moves as public_zone_moves
 from quorune.public_zone_moves import (
     FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     PublicZoneDestination,
@@ -233,6 +234,27 @@ class FixedPublicZoneMoveModelTests(unittest.TestCase):
         with self.assertRaises(PublicZoneMoveError):
             PublicZoneMoveSetSpec.from_dict(malformed)
 
+    def test_graveyard_entry_descriptor_preserves_controller_and_tapped_policy(self):
+        spec = PublicZoneMoveSetSpec(
+            query=ObjectQuerySpec(
+                zones=("graveyard",),
+                types_all=("land",),
+            ),
+            origin=PublicZoneOrigin.GRAVEYARD,
+            destination=PublicZoneDestination.BATTLEFIELD,
+            relation_axis=PublicZoneRelationAxis.OWNER,
+            seat_relation=PublicZoneSeatRelation.ACTOR,
+            battlefield_controller=public_zone_moves.PublicBattlefieldController.OWNER,
+            battlefield_tapped=True,
+            schema_version=2,
+        )
+        self.assertEqual(spec, PublicZoneMoveSetSpec.from_dict(spec.to_dict()))
+        self.assertTrue(spec.battlefield_tapped)
+        self.assertIs(
+            public_zone_moves.PublicBattlefieldController.OWNER,
+            spec.battlefield_controller,
+        )
+
 
 class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
     @classmethod
@@ -294,6 +316,157 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                 self.assertEqual(kind, node.kind)
                 self.assertIn(capability, node.capability_dependencies)
                 self.assertEqual(text, text[node.span.start : node.span.end])
+
+    def test_public_object_movement_matrix_preserves_meaning_fields(self):
+        cases = (
+            (
+                "Return all attacking creatures to their owners' hands.",
+                PublicZoneOrigin.BATTLEFIELD,
+                PublicZoneDestination.OWNER_HAND,
+                {"types_all": ["creature"], "attacking": True},
+                None,
+                False,
+            ),
+            (
+                "Return all creatures to their owners' hands except for Krakens, Leviathans, Octopuses, and Serpents.",
+                PublicZoneOrigin.BATTLEFIELD,
+                PublicZoneDestination.OWNER_HAND,
+                {
+                    "types_all": ["creature"],
+                    "excluded_subtypes": [
+                        "kraken",
+                        "leviathan",
+                        "octopus",
+                        "serpent",
+                    ],
+                },
+                None,
+                False,
+            ),
+            (
+                "Return all land cards from your graveyard to the battlefield tapped.",
+                PublicZoneOrigin.GRAVEYARD,
+                PublicZoneDestination.BATTLEFIELD,
+                {"types_all": ["land"]},
+                public_zone_moves.PublicBattlefieldController.OWNER,
+                True,
+            ),
+            (
+                "Put all creature cards from all graveyards onto the battlefield under your control.",
+                PublicZoneOrigin.GRAVEYARD,
+                PublicZoneDestination.BATTLEFIELD,
+                {"types_all": ["creature"]},
+                public_zone_moves.PublicBattlefieldController.ACTOR,
+                False,
+            ),
+            (
+                "Return all creature cards from your graveyard to the battlefield.",
+                PublicZoneOrigin.GRAVEYARD,
+                PublicZoneDestination.BATTLEFIELD,
+                {"types_all": ["creature"]},
+                public_zone_moves.PublicBattlefieldController.OWNER,
+                False,
+            ),
+            (
+                "Return all legendary creature cards from your graveyard to your hand.",
+                PublicZoneOrigin.GRAVEYARD,
+                PublicZoneDestination.OWNER_HAND,
+                {
+                    "types_all": ["creature"],
+                    "supertypes_all": ["legendary"],
+                },
+                None,
+                False,
+            ),
+        )
+        for text, origin, destination, expected, controller, tapped in cases:
+            with self.subTest(text=text):
+                template = public_zone_move_effect_template(text)
+                self.assertIsNotNone(template)
+                assert template is not None
+                spec = template.spec
+                self.assertIs(origin, spec.origin)
+                self.assertIs(destination, spec.destination)
+                query = spec.query.canonical_dict()
+                for field, value in expected.items():
+                    if field == "attacking":
+                        self.assertTrue(query["state_predicate"]["attacking"])
+                    else:
+                        self.assertEqual(value, query[field])
+                self.assertIs(controller, spec.battlefield_controller)
+                self.assertIs(tapped, spec.battlefield_tapped)
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertIn(
+                    "zone.move.fixed_public_set",
+                    ir.faces[0].nodes[0].capability_dependencies,
+                )
+
+    def test_private_hand_entry_matrix_compiles_through_one_choice_owner(self):
+        cases = (
+            ("You may put a land card from your hand onto the battlefield.", "land"),
+            ("You may put a basic land card from your hand onto the battlefield tapped.", "land"),
+            ("You may put a creature card from your hand onto the battlefield.", "creature"),
+            ("You may put an Equipment card from your hand onto the battlefield.", "equipment"),
+            ("You may put a green creature card from your hand onto the battlefield.", "creature"),
+            ("You may put a multicolored creature card from your hand onto the battlefield.", "creature"),
+        )
+        for text, marker in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("put_card_from_hand", node.effects[0]["op"])
+                self.assertIn(marker, json.dumps(node.effects[0]["query"]))
+                self.assertIn(
+                    "zone.move.fixed_private_hand_choice",
+                    node.capability_dependencies,
+                )
+
+        for text in (
+            "You may put a historic permanent card from your hand onto the battlefield.",
+            "Each player may put a creature card from their hand onto the battlefield.",
+            "You may put an Aura card from your hand onto the battlefield.",
+            "You may put a creature card from your hand onto the battlefield with a +1/+1 counter on it.",
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", self.compile(text).status)
+
+    def test_public_tap_state_set_matrix_compiles_through_shared_query(self):
+        cases = (
+            ("Tap all creatures.", True, "any"),
+            ("Untap all creatures you control.", False, "actor"),
+            ("Tap all creatures target player controls.", True, "target_player"),
+            ("Tap all creatures without flying.", True, "any"),
+            ("Untap each other Myr you control.", False, "actor"),
+            ("Untap all Forests.", False, "any"),
+            ("Tap all multicolored permanents.", True, "any"),
+            ("Untap all noncreature, nonland permanents.", False, "any"),
+        )
+        for text, tapped, relation in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("set_public_tap_state", node.effects[0]["op"])
+                self.assertIs(tapped, node.effects[0]["tapped"])
+                self.assertEqual(
+                    relation,
+                    node.effects[0]["set"]["controller_relation"],
+                )
+                self.assertIn(
+                    "permanent.tap_state.fixed_set",
+                    node.capability_dependencies,
+                )
+
+        for text in (
+            "Tap all creatures with mana value 3 or less.",
+            "Untap all creatures of the creature type of your choice.",
+            "You may tap or untap all creatures you control.",
+            "Tap all creatures. They don't untap during their controllers' next untap steps.",
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", self.compile(text).status)
 
     def test_type_qualified_public_graveyard_targets_compile_exact(self):
         for kind in PublicGraveyardCardTargetKind:
@@ -526,7 +699,7 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
             "Exile target card with mana value 3 from a graveyard.",
             "Exile all creatures with mana value 3 or less.",
             "Exile all creatures. Return them at the next end step.",
-            "Return all creatures except Krakens to their owners' hands.",
+            "Return all creatures except legendary creatures to their owners' hands.",
             "Return all permanents of the color of your choice to their owners' hands.",
             "Return all creatures from your graveyard to the battlefield.",
         )
@@ -834,7 +1007,28 @@ class _RuntimeBase(unittest.TestCase):
             if session.state.stack:
                 principals = session.pending_principals()
                 self.assertTrue(principals)
-                result = session.act(principals[0], {"action_id": "pass"})
+                self.assertIsNotNone(decision)
+                assert decision is not None
+                self.assertEqual(
+                    "priority",
+                    decision.kind,
+                    decision.to_dict(),
+                )
+                projected = StateProjector(
+                    self.db,
+                    session.state,
+                )._decision(principals[0])
+                self.assertIsNotNone(projected)
+                assert projected is not None
+                pass_action = next(
+                    row
+                    for row in projected["ctx"]["legal"]["actions"]
+                    if row.get("action") == "pass"
+                )
+                result = session.act(
+                    principals[0],
+                    {"action_id": pass_action["id"]},
+                )
                 self.assertTrue(result.ok, result.summary)
                 continue
             if decision is None:
@@ -855,6 +1049,434 @@ class _RuntimeBase(unittest.TestCase):
 
 
 class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
+    def test_public_tap_state_set_uses_current_query_stun_and_replays(self):
+        session = self.session(7294171, spell="Fixed Public Tap Set Fixture")
+        engine = session.engine
+        self.promote_fixture(engine, "Fixed Public Tap Set Fixture")
+        controlled = [
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A"
+            and card.zone != "command"
+            and card.printed_name != "Fixed Public Tap Set Fixture"
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        ][:2]
+        self.assertEqual(2, len(controlled))
+        opposing = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        for card in controlled:
+            engine.move_card(
+                card.object_id,
+                "battlefield",
+                controller="A",
+                tapped=True,
+                log=False,
+            )
+        engine.move_card(
+            opposing.object_id,
+            "battlefield",
+            controller="B",
+            tapped=True,
+            log=False,
+        )
+        controlled[0].counters["stun"] = 1
+        source, action = self.ready_spell(
+            session,
+            "Fixed Public Tap Set Fixture",
+            {"C": 2, "U": 1},
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"C": 2, "U": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(session)
+        self.assertEqual("graveyard", source.zone)
+        self.assertTrue(controlled[0].tapped)
+        self.assertEqual(0, controlled[0].counters.get("stun", 0))
+        self.assertFalse(controlled[1].tapped)
+        self.assertTrue(opposing.tapped)
+        self.assert_replays(session, "fixed-public-tap-state-set-record")
+
+    def test_graveyard_public_sets_enter_with_fixed_controller_and_tapped_policy(self):
+        land_session = self.session(
+            729418,
+            spell="Fixed Graveyard Land Return Fixture",
+        )
+        land_engine = land_session.engine
+        self.promote_fixture(
+            land_engine,
+            "Fixed Graveyard Land Return Fixture",
+        )
+        lands = [
+            card
+            for card in land_engine.state.cards.values()
+            if card.owner == "A"
+            and card.zone != "command"
+            and "land"
+            in land_engine._type_parts(
+                str(land_engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        ][:2]
+        self.assertEqual(2, len(lands))
+        previous_logical_ids = {
+            card.object_id: card.logical_object_id for card in lands
+        }
+        for card in lands:
+            land_engine.move_card(card.object_id, "graveyard", log=False)
+        source, action = self.ready_spell(
+            land_session,
+            "Fixed Graveyard Land Return Fixture",
+            {"C": 3, "G": 1},
+        )
+        land_session.initial_checkpoint = checkpoint_envelope(land_engine.state)
+        land_session.commands.clear()
+        land_session.decisions.clear()
+        cast = land_session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"C": 3, "G": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(land_session)
+        self.assertEqual("graveyard", source.zone)
+        for card in lands:
+            self.assertEqual("battlefield", card.zone)
+            self.assertEqual("A", card.controller)
+            self.assertTrue(card.tapped)
+            self.assertNotEqual(
+                previous_logical_ids[card.object_id],
+                card.logical_object_id,
+            )
+        self.assert_replays(land_session, "fixed-public-land-entry-record")
+
+        creature_session = self.session(
+            729419,
+            spell="Fixed Graveyard Creature Entry Fixture",
+        )
+        creature_engine = creature_session.engine
+        self.promote_fixture(
+            creature_engine,
+            "Fixed Graveyard Creature Entry Fixture",
+        )
+        creatures = []
+        for seat in "BC":
+            creature = next(
+                card
+                for card in creature_engine.state.cards.values()
+                if card.owner == seat
+                and card.zone != "command"
+                and "creature"
+                in creature_engine._type_parts(
+                    str(
+                        creature_engine._effective_card_data(card).get(
+                            "type_line"
+                        )
+                        or ""
+                    )
+                )[0]
+            )
+            creature_engine.move_card(
+                creature.object_id,
+                "graveyard",
+                log=False,
+            )
+            creatures.append(creature)
+        source, action = self.ready_spell(
+            creature_session,
+            "Fixed Graveyard Creature Entry Fixture",
+            {"C": 5, "B": 1},
+        )
+        creature_session.initial_checkpoint = checkpoint_envelope(
+            creature_engine.state
+        )
+        creature_session.commands.clear()
+        creature_session.decisions.clear()
+        cast = creature_session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"C": 5, "B": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_all(creature_session)
+        self.assertEqual("graveyard", source.zone)
+        for creature in creatures:
+            self.assertEqual("battlefield", creature.zone)
+            self.assertEqual("A", creature.controller)
+            self.assertFalse(creature.tapped)
+        self.assert_replays(
+            creature_session,
+            "fixed-public-creature-entry-record",
+        )
+
+    def test_private_hand_entry_is_projected_revalidated_and_replays(self):
+        session = self.session(729420, spell="Fixed Hand Entry Fixture")
+        engine = session.engine
+        self.promote_fixture(engine, "Fixed Hand Entry Fixture")
+        candidate = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A"
+            and card.printed_name != "Fixed Hand Entry Fixture"
+            and card.zone != "command"
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(candidate.object_id, "hand", log=False)
+        previous_logical_id = candidate.logical_object_id
+        _source, action = self.ready_activation(
+            session,
+            "Fixed Hand Entry Fixture",
+            {"C": 1},
+        )
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        activated = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"C": 1},
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.pass_until_choice(session)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        actor_decision = StateProjector(self.db, engine.state)._decision("pilot:A")
+        self.assertIsNotNone(actor_decision)
+        assert actor_decision is not None
+        self.assertIn(candidate.ref, json.dumps(actor_decision))
+        opponent_packet = json.dumps(session.packet("pilot:B", full=True))
+        self.assertNotIn(candidate.ref, opponent_packet)
+        self.assertNotIn(candidate.object_id, opponent_packet)
+        chosen = session.act(
+            "pilot:A",
+            {"action_id": "choose", "card": candidate.ref},
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.resolve_all(session)
+        self.assertEqual("battlefield", candidate.zone)
+        self.assertEqual("A", candidate.controller)
+        self.assertFalse(candidate.tapped)
+        self.assertNotEqual(previous_logical_id, candidate.logical_object_id)
+        self.assert_replays(session, "fixed-private-hand-entry-record")
+
+    def test_private_hand_entry_rejects_stale_selection_without_mutation(self):
+        session = self.session(729421, spell="Fixed Hand Entry Fixture")
+        engine = session.engine
+        self.promote_fixture(engine, "Fixed Hand Entry Fixture")
+        candidate = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A"
+            and card.printed_name != "Fixed Hand Entry Fixture"
+            and card.zone != "command"
+            and "creature"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(candidate.object_id, "hand", log=False)
+        _source, action = self.ready_activation(
+            session,
+            "Fixed Hand Entry Fixture",
+            {"C": 1},
+        )
+        activated = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "pay": "manual",
+                "payment": {"C": 1},
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.pass_until_choice(session)
+        engine.move_card(candidate.object_id, "graveyard", log=False)
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act(
+            "pilot:A",
+            {"action_id": "choose", "card": candidate.ref},
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+
+    def test_targeted_effect_then_private_hand_choice_revalidates_and_replays(self):
+        session = self.session(
+            729422,
+            spell="Generic Target Then Hand Entry Fixture",
+        )
+        engine = session.engine
+        self.promote_fixture(engine, "Generic Target Then Hand Entry Fixture")
+        target = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "artifact"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        land = next(
+            card
+            for card in engine.state.cards.values()
+            if card.owner == "A"
+            and card.zone != "command"
+            and "land"
+            in engine._type_parts(
+                str(engine._effective_card_data(card).get("type_line") or "")
+            )[0]
+        )
+        engine.move_card(land.object_id, "hand", log=False)
+        source, action = self.ready_spell(
+            session,
+            "Generic Target Then Hand Entry Fixture",
+            {"C": 1, "G": 1},
+        )
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:A",
+            {
+                "action_id": action["id"],
+                "targets": [target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "G": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        self.pass_until_choice(session)
+        self.assertEqual("graveyard", target.zone)
+        self.assertEqual("hand", land.zone)
+        actor_decision = StateProjector(self.db, engine.state)._decision(
+            "pilot:A"
+        )
+        self.assertIsNotNone(actor_decision)
+        assert actor_decision is not None
+        self.assertIn(land.ref, json.dumps(actor_decision))
+        opponent_packet = json.dumps(session.packet("pilot:B", full=True))
+        self.assertNotIn(land.ref, opponent_packet)
+        self.assertNotIn(land.object_id, opponent_packet)
+        chosen = session.act(
+            "pilot:A",
+            {"action_id": "choose", "card": land.ref},
+        )
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.resolve_all(session)
+        self.assertEqual("battlefield", land.zone)
+        self.assertEqual("A", land.controller)
+        self.assertEqual("graveyard", source.zone)
+        self.assert_replays(
+            session,
+            "target-then-private-hand-entry-record",
+        )
+
+        stale = self.session(
+            729423,
+            spell="Generic Target Then Hand Entry Fixture",
+        )
+        stale_engine = stale.engine
+        self.promote_fixture(
+            stale_engine,
+            "Generic Target Then Hand Entry Fixture",
+        )
+        stale_target = next(
+            card
+            for card in stale_engine.state.cards.values()
+            if card.owner == "B"
+            and card.zone != "command"
+            and "artifact"
+            in stale_engine._type_parts(
+                str(
+                    stale_engine._effective_card_data(card).get("type_line")
+                    or ""
+                )
+            )[0]
+        )
+        stale_engine.move_card(
+            stale_target.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        stale_land = next(
+            card
+            for card in stale_engine.state.cards.values()
+            if card.owner == "A"
+            and card.zone != "command"
+            and "land"
+            in stale_engine._type_parts(
+                str(
+                    stale_engine._effective_card_data(card).get("type_line")
+                    or ""
+                )
+            )[0]
+        )
+        stale_engine.move_card(stale_land.object_id, "hand", log=False)
+        stale_source, stale_action = self.ready_spell(
+            stale,
+            "Generic Target Then Hand Entry Fixture",
+            {"C": 1, "G": 1},
+        )
+        cast = stale.act(
+            "pilot:A",
+            {
+                "action_id": stale_action["id"],
+                "targets": [stale_target.ref],
+                "pay": "manual",
+                "payment": {"C": 1, "G": 1},
+            },
+        )
+        self.assertTrue(cast.ok, cast.summary)
+        stale_engine.move_card(stale_target.object_id, "hand", log=False)
+        stale.initial_checkpoint = checkpoint_envelope(stale_engine.state)
+        stale.commands.clear()
+        stale.decisions.clear()
+        self.resolve_all(stale)
+        self.assertEqual("hand", stale_target.zone)
+        self.assertEqual("hand", stale_land.zone)
+        self.assertEqual("graveyard", stale_source.zone)
+        self.assert_replays(
+            stale,
+            "stale-target-before-private-hand-entry-record",
+        )
+
     def test_jirina_graveyard_trigger_and_protection_activation_replay(self):
         session = self.session(729410)
         engine = session.engine
@@ -1160,6 +1782,7 @@ class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
     def test_mass_zone_moves_use_apnap_replacements_and_replay(self):
         session = self.session(729402, spell="Fixed Public Return")
         engine = session.engine
+        self.promote_fixture(engine, "Fixed Public Return")
         commanders = []
         for seat in ("A", "B", "C", "D"):
             commander = self.commander(engine, seat)

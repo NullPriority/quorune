@@ -325,6 +325,7 @@ from .intents import (
     ProliferateIntent,
     ProliferateSubject,
 )
+from ..public_tap_state_sets import SetPublicPermanentsTappedIntent
 from .interpreter import SemanticInterpreter
 from .nodes import (
     BecomeMonarchNode,
@@ -594,6 +595,7 @@ __all__ = [
     "SetCardDesignationIntent",
     "SetPermanentTappedIntent",
     "SetPermanentsTappedIntent",
+    "SetPublicPermanentsTappedIntent",
     "SetFixedTargetSetTappedHandler",
     "ShuffleLibraryIntent",
     "SetPermanentTappedNode",

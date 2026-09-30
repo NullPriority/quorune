@@ -20853,6 +20853,54 @@
       "applicability_note": "Execute an already-authorized instruction to tap one resolved battlefield permanent through the canonical tap-state path, producing a public change only when it was untapped."
     },
     {
+      "capability_id": "permanent.tap_state.fixed_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_public_tap_state_set_uses_current_query_stun_and_replays",
+      "official_rule_ids": ["109.2", "608.2c", "701.26", "701.26a", "701.26b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose one current public affected set with the canonical untap owner and stun-counter replacement without changing an opponent-controlled permanent."
+    },
+    {
+      "capability_id": "permanent.tap_state.fixed_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_public_tap_state_set_uses_current_query_stun_and_replays",
+      "official_rule_ids": ["109.2", "608.2c", "701.26", "701.26a", "701.26b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve a controller-relative affected set in four-player state while preserving unrelated public tap states."
+    },
+    {
+      "capability_id": "permanent.tap_state.fixed_set",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_tap_state_set_matrix_compiles_through_shared_query",
+      "official_rule_ids": ["109.2", "608.2c", "701.26", "701.26a", "701.26b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Alter the typed operation, tap direction, relation, or closed predicate and require capability admission to fail."
+    },
+    {
+      "capability_id": "permanent.tap_state.fixed_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_tap_state_set_matrix_compiles_through_shared_query",
+      "official_rule_ids": ["109.2", "608.2c", "701.26", "701.26a", "701.26b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep dynamic mana value, chosen subtype, optional aggregate, and next-untap-step forms outside the closed affected-set grammar."
+    },
+    {
+      "capability_id": "permanent.tap_state.fixed_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_tap_state_set_matrix_compiles_through_shared_query",
+      "official_rule_ids": ["109.2", "608.2c", "701.26", "701.26a", "701.26b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed type, subtype, color-cardinality, negative-type, keyword, source-exclusion, and controller relations through one affected-set descriptor."
+    },
+    {
+      "capability_id": "permanent.tap_state.fixed_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_public_tap_state_set_uses_current_query_stun_and_replays",
+      "official_rule_ids": ["109.2", "608.2c", "701.26", "701.26a", "701.26b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the selected public set, stun replacement, resulting tap states, and final authoritative hash exactly."
+    },
+    {
       "capability_id": "permanent.tap_state.optional_choice",
       "evidence_class": "interaction",
       "test_id": "tests.test_targeted_tap_state_effect_clauses.TargetedTapStateRuntimeTests.test_optional_tap_state_choice_is_seat_scoped_atomic_and_replays",
@@ -29243,10 +29291,82 @@
       "applicability_note": "Replay target selection, simultaneous replacement-aware movement, actual public destinations, priority, and final authoritative hash."
     },
     {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_private_hand_entry_is_projected_revalidated_and_replays",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compose the private choice with current predicate revalidation and canonical replacement-aware battlefield entry."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_private_hand_entry_is_projected_revalidated_and_replays",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Resolve the actor-scoped private choice in four-player state without exposing the candidate to other seats."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_private_hand_entry_matrix_compiles_through_one_choice_owner",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the typed compiler production or alter its closed operation and predicate shape; capability admission fails."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_private_hand_entry_matrix_compiles_through_one_choice_owner",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep Aura, historic, each-player, and entry-counter forms outside the closed private choice grammar."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_private_hand_entry_matrix_compiles_through_one_choice_owner",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile the closed land, creature, Equipment, color, and subtype predicates into one typed private hand-entry choice."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_private_hand_entry_is_projected_revalidated_and_replays",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Project eligible private hand identities only to the resolving controller until the selected card enters the public battlefield."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_private_hand_entry_is_projected_revalidated_and_replays",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay activation, private selection, new incarnation, public entry, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_private_hand_entry_rejects_stale_selection_without_mutation",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject a selected card that left the hand before completion without committing another mutation."
+    },
+    {
+      "capability_id": "zone.move.fixed_public_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_graveyard_public_sets_enter_with_fixed_controller_and_tapped_policy",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Move one immutable multi-owner graveyard set through prospective entry replacement and a simultaneous zone transaction under the printed controller and tapped policy."
+    },
+    {
       "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_mass_zone_moves_use_apnap_replacements_and_replay",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose one immutable public set with simultaneous APNAP replacement preparation, normalized departures, one trigger batch, and replay."
     },
@@ -29254,7 +29374,7 @@
       "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_mass_zone_moves_use_apnap_replacements_and_replay",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Select the fixed set in four-player APNAP order across multiple owners or controllers before a simultaneous move."
     },
@@ -29262,7 +29382,7 @@
       "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_zone_move_dependencies_and_shape_mutations_fail_closed",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill compiler removal and reject changed origin, destination, relation, target, query, source, and operation shapes before capability closure."
     },
@@ -29270,7 +29390,7 @@
       "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_unsupported_public_zone_move_shapes_remain_residual",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep dynamic counts, chosen predicates, linked results, delayed returns, exception lists, and hidden-origin sets outside the closed grammar."
     },
@@ -29278,15 +29398,23 @@
       "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_public_zone_moves_compile_across_effect_contexts",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower fixed battlefield exile, battlefield owner-hand return, and graveyard sweep sets through one source-spanned typed descriptor."
     },
     {
       "capability_id": "zone.move.fixed_public_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_object_movement_matrix_preserves_meaning_fields",
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Compile fixed current battlefield predicates and public graveyard card sets while preserving destination, controller, tapped, and owner-relation fields."
+    },
+    {
+      "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_public_zone_move_privacy_and_stale_identity_roll_back",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Retain public-origin card knowledge after owner-hand movement while excluding unrelated private zones and internal identities."
     },
@@ -29294,7 +29422,7 @@
       "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_mass_zone_moves_use_apnap_replacements_and_replay",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the complete selected set, replacement decisions, simultaneous new incarnations, triggers, and final authoritative hash."
     },
@@ -29302,7 +29430,7 @@
       "capability_id": "zone.move.fixed_public_set",
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_public_zone_move_privacy_and_stale_identity_roll_back",
-      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
+      "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.7", "403.3", "404.3", "406.1", "406.2", "608.2b", "608.2c", "701.13", "701.13a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject stale set membership or identity before the canonical batch commits any move, event, or visible state."
     },

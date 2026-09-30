@@ -24,6 +24,11 @@ from ..combat_entry_activations import (
     resolve_ninjutsu_entry,
 )
 from ..self_zone_move import resolve_self_zone_move, SelfZoneMoveIntent
+from ..public_tap_state_sets import (
+    PublicTapStateSetError,
+    SetPublicPermanentsTappedIntent,
+    resolve_public_tap_state_set,
+)
 from .context import SemanticNodeError
 from .intents import (
     AddManaIntent,
@@ -542,8 +547,16 @@ def _execute_counter_placement_intent(
 
 PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent
 PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent)
-TapStateIntent = SetPermanentTappedIntent | SetPermanentsTappedIntent
-TAP_STATE_INTENT_TYPES = (SetPermanentTappedIntent, SetPermanentsTappedIntent)
+TapStateIntent = (
+    SetPermanentTappedIntent
+    | SetPermanentsTappedIntent
+    | SetPublicPermanentsTappedIntent
+)
+TAP_STATE_INTENT_TYPES = (
+    SetPermanentTappedIntent,
+    SetPermanentsTappedIntent,
+    SetPublicPermanentsTappedIntent,
+)
 
 
 def _execute_player_intent(
@@ -600,6 +613,19 @@ def _execute_tap_state_intent(
             logical_object_id=intent.logical_object_id,
         )
         return intent.object_ref, result
+    if isinstance(intent, SetPublicPermanentsTappedIntent):
+        try:
+            result = resolve_public_tap_state_set(
+                sink,
+                actor=intent.actor,
+                spec=intent.spec,
+                tapped=intent.tapped,
+                reason=intent.reason,
+                source_ref=intent.source_ref,
+            )
+        except PublicTapStateSetError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return intent.actor, result
     result = tuple(
         tap_state.set_permanent_tapped(
             sink,

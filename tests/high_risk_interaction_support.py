@@ -848,6 +848,26 @@ _WITNESSES = {
         "from the top.",
         "{3}{U}",
     ),
+    "public-tap-prevention-boundary": _Witness(
+        "Generic Public Tap Prevention Boundary Fixture",
+        "Legendary Planeswalker — Test",
+        "+1: Tap all creatures target player controls.\n"
+        "0: Prevent all damage that would be dealt to this planeswalker "
+        "this turn.",
+        "{3}{W}",
+        loyalty="4",
+    ),
+    "private-hand-conditional-boundary": _Witness(
+        "Generic Private Hand Conditional Boundary Fixture",
+        "Creature — Test",
+        "{1}, {T}: You may put a land card from your hand onto the "
+        "battlefield tapped.\n"
+        "{4}, {T}: Draw a card. If you control eight or more lands, draw "
+        "two cards instead.",
+        "{1}{G}{U}",
+        power="2",
+        toughness="3",
+    ),
 }
 
 
@@ -906,6 +926,17 @@ PREVENTION_AND_REPLACEMENT_PAIRS = (
 TOKEN_AND_DAMAGE_PREVENTION_PAIR = _pair(
     "capability.token.creation.fixed_definition",
     "residual.replacement.damage-prevention",
+)
+
+PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS = (
+    _pair(
+        "capability.permanent.tap_state.fixed_set",
+        "residual.replacement.damage-prevention",
+    ),
+    _pair(
+        "capability.zone.move.fixed_private_hand_choice",
+        "residual.target_or_choice.conditional-effect",
+    ),
 )
 
 FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS = (
@@ -1381,6 +1412,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *DECLARATION_AND_REPLACEMENT_PAIRS,
             *PREVENTION_AND_REPLACEMENT_PAIRS,
             TOKEN_AND_DAMAGE_PREVENTION_PAIR,
+            *PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS,
             *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
             *IMPULSE_ACCESS_AND_CHOICE_PAIRS,
@@ -1545,6 +1577,14 @@ _bind("teferis-moat", *DECLARATION_AND_REPLACEMENT_PAIRS)
 _bind("shieldmage-elder", PREVENTION_AND_REPLACEMENT_PAIRS[0])
 _bind("winds-of-qal-sisma", *PREVENTION_AND_REPLACEMENT_PAIRS[1:])
 _bind("gideon-ally-of-zendikar", TOKEN_AND_DAMAGE_PREVENTION_PAIR)
+_bind(
+    "public-tap-prevention-boundary",
+    PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS[0],
+)
+_bind(
+    "private-hand-conditional-boundary",
+    PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS[1],
+)
 _bind("rasputin", FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS[0])
 _bind("chromatic-armor", *FIXED_SELF_ENTRY_AND_REPLACEMENT_PAIRS[1:])
 _bind(
@@ -1766,6 +1806,7 @@ __all__ = [
     "IMPULSE_ACCESS_AND_CHOICE_PAIRS",
     "MADNESS_AND_CHOICE_PAIRS",
     "PREVENTION_AND_REPLACEMENT_PAIRS",
+    "PUBLIC_OBJECT_MOVEMENT_RESIDUAL_PAIRS",
     "PUBLIC_SET_AND_CHOICE_PAIRS",
     "REANIMATION_RESIDUAL_BOUNDARY_PAIRS",
     "REGENERATION_PROHIBITION_AND_CONTINUOUS_PAIRS",

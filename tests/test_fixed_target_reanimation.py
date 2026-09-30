@@ -226,7 +226,7 @@ class FixedTargetReanimationCompilerTests(unittest.TestCase):
     def test_reanimation_unsupported_and_malformed_shapes_fail_closed(self):
         unsupported = (
             "Return a creature card from your graveyard to the battlefield.",
-            "Return all creature cards from your graveyard to the battlefield.",
+            "Return all Aura cards from your graveyard to the battlefield.",
             "Return target instant card from your graveyard to the battlefield.",
             "Return target creature card with mana value X or less from your graveyard to the battlefield.",
             "Return target creature card from your graveyard to the battlefield with a finality counter on it.",

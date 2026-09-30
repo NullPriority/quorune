@@ -315,6 +315,9 @@ _PROBE_FIXED_SOURCE_CHARACTERISTICS = (
 _PROBE_QUALIFIED_TARGET_CHARACTERISTICS = (
     "qualified-target-characteristics-existing-owner-v1"
 )
+_PROBE_PUBLIC_OBJECT_MOVEMENT_CLOSURE = (
+    "public-object-movement-closure-existing-owner-v1"
+)
 _PROBE_FIXED_SINGLE_OBJECT_REANIMATION = (
     "fixed-single-object-reanimation-existing-owner-v1"
 )
@@ -505,6 +508,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_ZONE_CAST_LIFECYCLES,
     _PROBE_FIXED_SOURCE_CHARACTERISTICS,
     _PROBE_QUALIFIED_TARGET_CHARACTERISTICS,
+    _PROBE_PUBLIC_OBJECT_MOVEMENT_CLOSURE,
     _PROBE_FIXED_SINGLE_OBJECT_REANIMATION,
     _PROBE_FIXED_CREATURE_POWER_DAMAGE,
     _PROBE_FIXED_PUBLIC_DAMAGE_PREDICATES,
@@ -5283,6 +5287,15 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_PUBLIC_OBJECT_MOVEMENT_CLOSURE:
+        return _public_object_movement_closure_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_FIXED_SINGLE_OBJECT_REANIMATION:
         return _fixed_single_object_reanimation_measurement(
             frontier=frontier,
@@ -9387,6 +9400,166 @@ def _fixed_owner_zone_move_measurement(
             else "retired_below_harvest_floor"
         ),
         "grants_gameplay_trust": False,
+    }
+
+
+def _is_public_object_movement_candidate(text: str) -> bool:
+    normalized = " ".join(text.casefold().split())
+    return bool(
+        (
+            " from your hand onto the battlefield" in normalized
+            and "put " in normalized
+        )
+        or re.search(
+            r"\b(?:return|put|exile)\b.*\b(?:all|each)\b",
+            normalized,
+        )
+        or (
+            "target player's graveyard" in normalized
+            and "exile" in normalized
+        )
+        or re.search(
+            r"\b(?:tap|untap)\b.*\b(?:all|each)\b",
+            normalized,
+        )
+    )
+
+
+def _public_object_movement_closure_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact fixed public movement through the shared object owners."""
+
+    registry = load_default_capability_registry()
+    capability_ids = {
+        "permanent.tap_state.fixed_set",
+        "zone.move.fixed_private_hand_choice",
+        "zone.move.fixed_public_set",
+    }
+    broad_cards: set[str] = set()
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    exact_ability_gain = 0
+    residual_reduction = 0
+    existing_exact_siblings = 0
+    for card in frontier.get("cards", ()):
+        if card.get("oracle_ir_status") == "exact":
+            continue
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        if not _is_public_object_movement_candidate(
+            str(record.oracle_text or "")
+        ):
+            continue
+        broad_cards.add(oracle_id)
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        previous = {
+            (
+                str(ability.get("face_id") or "front"),
+                str(ability.get("ability_id") or ""),
+            ): ability
+            for ability in card.get("abilities", ())
+        }
+        represented = tuple(
+            node
+            for face in compiled.faces
+            for node in face.nodes
+            if node.exact
+            and previous.get((face.face_id, node.node_id), {}).get("status")
+            != "exact"
+            and capability_ids.intersection(node.capability_dependencies)
+        )
+        if not represented:
+            continue
+        previous_exact = int(card.get("exact_ability_count") or 0)
+        current_exact = sum(
+            int(node.exact)
+            for face in compiled.faces
+            for node in face.nodes
+        )
+        gain = max(0, current_exact - previous_exact)
+        previous_residuals = sum(
+            len(ability.get("residuals", ()))
+            for ability in card.get("abilities", ())
+        )
+        reduced = max(
+            0,
+            previous_residuals - len(compiled.material_residuals),
+        )
+        if not (gain or reduced):
+            continue
+        remaining = sum(
+            not node.exact
+            for face in compiled.faces
+            for node in face.nodes
+        )
+        matched_cards[oracle_id] = remaining
+        exact_ability_gain += gain
+        residual_reduction += reduced
+        existing_exact_siblings += previous_exact
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = bool(matched_cards) and (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or exact_ability_gain >= int(coverage["minimum_exact_ability_gain"])
+        or residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": exact_ability_gain,
+        "material_residual_reduction": residual_reduction,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+        "candidate_accounting": {
+            "affected_oracle_carriers": exact_ability_gain,
+            "existing_exact_sibling_nodes": existing_exact_siblings,
+            "remaining_residual_sibling_nodes": sum(
+                matched_cards.values()
+            ),
+            "trusted_program_transitions": len(complete_cards),
+            "unresolved_program_transitions": (
+                len(matched_cards) - len(complete_cards)
+            ),
+            "expected_oracle_residual_reduction": residual_reduction,
+            "expected_card_program_residual_reduction": residual_reduction,
+            "newly_applicable_high_risk_pairs": 0,
+            "cards_excluded_by_unsupported_sibling": sum(
+                count > 0 for count in matched_cards.values()
+            ),
+            "cards_excluded_by_unsupported_grammar": len(
+                broad_cards - set(matched_cards)
+            ),
+        },
     }
 
 

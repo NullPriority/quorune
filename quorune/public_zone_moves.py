@@ -41,6 +41,12 @@ class PublicZoneOrigin(str, Enum):
 class PublicZoneDestination(str, Enum):
     EXILE = "exile"
     OWNER_HAND = "hand"
+    BATTLEFIELD = "battlefield"
+
+
+class PublicBattlefieldController(str, Enum):
+    OWNER = "owner"
+    ACTOR = "actor"
 
 
 class PublicZoneRelationAxis(str, Enum):
@@ -55,7 +61,7 @@ class PublicZoneSeatRelation(str, Enum):
     TARGET_PLAYER = "target_player"
 
 
-_SET_FIELDS = frozenset(
+_SET_FIELDS_V1 = frozenset(
     {
         "schema_version",
         "origin",
@@ -66,6 +72,9 @@ _SET_FIELDS = frozenset(
         "exclude_source",
         "query",
     }
+)
+_SET_FIELDS_V2 = _SET_FIELDS_V1 | frozenset(
+    {"battlefield_controller", "battlefield_tapped"}
 )
 
 
@@ -86,10 +95,12 @@ class PublicZoneMoveSetSpec:
     seat_relation: PublicZoneSeatRelation = PublicZoneSeatRelation.ANY
     target_seat: str | None = None
     exclude_source: bool = False
+    battlefield_controller: PublicBattlefieldController | None = None
+    battlefield_tapped: bool = False
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise PublicZoneMoveError(
                 "Unsupported public zone-move set schema version"
             )
@@ -126,10 +137,6 @@ class PublicZoneMoveSetSpec:
                 "Public zone-move sets exclude phased-out objects"
             )
         if self.origin is PublicZoneOrigin.GRAVEYARD:
-            if self.destination is not PublicZoneDestination.EXILE:
-                raise PublicZoneMoveError(
-                    "The represented graveyard set moves only to exile"
-                )
             if self.relation_axis is not PublicZoneRelationAxis.OWNER:
                 raise PublicZoneMoveError(
                     "Graveyard sets use owner-relative seats"
@@ -142,6 +149,40 @@ class PublicZoneMoveSetSpec:
             raise PublicZoneMoveError(
                 "Graveyard set grammar does not exclude the resolving source"
             )
+        if type(self.battlefield_tapped) is not bool:
+            raise PublicZoneMoveError(
+                "Public zone-move battlefield tapped policy must be boolean"
+            )
+        if self.destination is PublicZoneDestination.BATTLEFIELD:
+            if (
+                self.schema_version != 2
+                or self.origin is not PublicZoneOrigin.GRAVEYARD
+                or not isinstance(
+                    self.battlefield_controller,
+                    PublicBattlefieldController,
+                )
+            ):
+                raise PublicZoneMoveError(
+                    "Public battlefield entry requires a v2 graveyard set and controller policy"
+                )
+        elif self.battlefield_controller is not None or self.battlefield_tapped:
+            raise PublicZoneMoveError(
+                "Only battlefield destinations accept entry policies"
+            )
+        if (
+            self.schema_version == 1
+            and self.origin is PublicZoneOrigin.GRAVEYARD
+            and self.destination is not PublicZoneDestination.EXILE
+        ):
+            raise PublicZoneMoveError(
+                "Historical public graveyard sets move only to exile"
+            )
+        if self.schema_version == 1 and (
+            self.battlefield_controller is not None or self.battlefield_tapped
+        ):
+            raise PublicZoneMoveError(
+                "Historical public zone-move sets cannot carry entry policies"
+            )
         if self.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER:
             _nonempty(self.target_seat, field="Public zone-move target seat")
         elif self.target_seat is not None:
@@ -150,7 +191,7 @@ class PublicZoneMoveSetSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "origin": self.origin.value,
             "destination": self.destination.value,
@@ -160,10 +201,25 @@ class PublicZoneMoveSetSpec:
             "exclude_source": self.exclude_source,
             "query": self.query.canonical_dict(),
         }
+        if self.schema_version == 2:
+            value.update(
+                {
+                    "battlefield_controller": (
+                        self.battlefield_controller.value
+                        if self.battlefield_controller is not None
+                        else None
+                    ),
+                    "battlefield_tapped": self.battlefield_tapped,
+                }
+            )
+        return value
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "PublicZoneMoveSetSpec":
-        if not isinstance(value, Mapping) or frozenset(value) != _SET_FIELDS:
+        if not isinstance(value, Mapping) or frozenset(value) not in {
+            _SET_FIELDS_V1,
+            _SET_FIELDS_V2,
+        }:
             raise PublicZoneMoveError(
                 "Public zone-move set fields are incomplete or unknown"
             )
@@ -176,6 +232,12 @@ class PublicZoneMoveSetSpec:
                 seat_relation=PublicZoneSeatRelation(value["seat_relation"]),
                 target_seat=value["target_seat"],
                 exclude_source=value["exclude_source"],
+                battlefield_controller=(
+                    PublicBattlefieldController(value["battlefield_controller"])
+                    if value.get("battlefield_controller") is not None
+                    else None
+                ),
+                battlefield_tapped=value.get("battlefield_tapped", False),
                 schema_version=value["schema_version"],
             )
         except (
@@ -463,6 +525,19 @@ def resolve_public_zone_move_set(
     if snapshot.objects:
         from .zone_transitions import ZoneTransitionOwner
 
+        controllers = (
+            {
+                value.object_id: (
+                    actor
+                    if spec.battlefield_controller
+                    is PublicBattlefieldController.ACTOR
+                    else value.owner
+                )
+                for value in snapshot.objects
+            }
+            if spec.destination is PublicZoneDestination.BATTLEFIELD
+            else None
+        )
         ZoneTransitionOwner(host).move_cards_simultaneously(
             tuple(
                 (value.object_id, spec.destination.value)
@@ -470,6 +545,12 @@ def resolve_public_zone_move_set(
             ),
             reason=reason,
             log=False,
+            tapped=(
+                spec.battlefield_tapped
+                if spec.destination is PublicZoneDestination.BATTLEFIELD
+                else None
+            ),
+            destination_controllers=controllers,
             replacement_selections=replacement_selections,
         )
     host._log(

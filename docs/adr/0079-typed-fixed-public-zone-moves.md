@@ -2,7 +2,7 @@
 title: "ADR 0079: typed fixed public-zone moves"
 status: "ADR"
 authoritative_source: "public-zone move descriptors, Commander zone rules, and capability registry"
-verified: "2026-08-21"
+verified: "2026-09-29"
 audience: "rules, compiler, runtime, replay, and architecture contributors"
 maintenance: "hand-maintained"
 adr_id: "0079"
@@ -39,10 +39,20 @@ the existing single-object zone-transition owner.
 `PublicZoneMoveSetSpec` owns fixed public battlefield or graveyard sets. Its
 descriptor contains the exact origin, requested destination, immutable
 `ObjectQuerySpec`, owner/controller relation, target seat when present, and
-source exclusion. Selection freezes one APNAP-ordered identity set, revalidates
-every member, and delegates the complete batch to
+source exclusion. Schema version 2 additionally carries a closed prospective
+battlefield controller policy and exact tapped result for graveyard-entry
+sets. Selection freezes one APNAP-ordered identity set, revalidates every
+member, and delegates the complete batch to
 `ZoneTransitionOwner.move_cards_simultaneously`. Empty sets are ordinary
 no-ops. No object moves before every represented replacement choice is ready.
+
+The same typed object boundary owns two adjacent cases rather than adding
+special zone branches. `PutTypedCardFromHandHandler` projects one private,
+owner-pinned hand choice to the actor, orders eligible refs canonically,
+revalidates the current object, and submits the normal single-object move.
+`SetPublicTapStateSetHandler` locks a current public permanent set and submits
+the fixed result through the existing tap/untap owner, including stun-counter
+replacement. Neither handler interprets Oracle text at runtime.
 
 `commander_zones.py` owns CR 903.9 identity and choice models. A designated
 physical commander's hand/library event receives an owner-optional command-zone
@@ -61,10 +71,16 @@ parses Oracle prose or dispatches on card identity.
 
 - optional or variable quantities, chosen subsets, random selection, and
   multiple destinations;
-- legendary, subtype, mana-value, dynamic-count, chosen-quality, combat-state,
-  attachment-expanded, and exception-list predicates;
-- hidden origins, graveyard reanimation, linked results, delayed return, and
-  temporary exile;
+- dynamic-count, chosen-quality, numeric-characteristic, attachment-expanded,
+  and open exception predicates;
+- graveyard entry that may contain Auras, needs attachment choices, adds
+  counters, or otherwise crosses an unrepresented entry interaction;
+- hidden origins other than the closed actor-private hand choice, linked
+  results, delayed return, and temporary exile;
+- private choices for Auras, arbitrary permanents, nonpermanents, multiple
+  cards, attacking entry, or later linked use of the selected identity;
+- dynamic or chosen tap predicates, continuous untap prohibitions, later-step
+  schedules, and optional tap-or-untap results;
 - merged and melded Commander cases governed by CR 903.9c;
 - a Commander state choice combined with an independently unrepresented
   zone-moving state-based action.
@@ -89,15 +105,16 @@ boundary.
 
 ## Consequences
 
-One effect family now covers direct typed public-graveyard exile, fixed
-graveyard sweeps, fixed battlefield exile, and fixed battlefield owner-hand
-return without creating another zone engine. Four-player tests cover typed
-advertisement, APNAP replacement choice, Commander choices, privacy, stale
-identity rollback, and exact replay. Capability and reusable-piece evidence are
-bound to those behavioral tests.
+One shared boundary now covers direct typed public-graveyard exile, fixed
+graveyard sweeps, fixed battlefield exile and owner-hand return, closed public
+graveyard entry, one private controller-hand entry, and fixed public tap-state
+sets without creating another zone, choice, or tap engine. Four-player tests
+cover typed advertisement, APNAP replacement choice, Commander choices,
+privacy, stale identity rollback, stun replacement, prospective controller
+facts, and exact replay. Capability and reusable-piece evidence are bound to
+those behavioral tests.
 
-This is a measured major-prerequisite exception rather than a claimed broad
-harvest. The exact full-corpus card, ability, and residual deltas remain owned
-by the generated compiler/frontier reports. Broader hidden-zone, linked-result,
-and reanimation families must harvest this prerequisite through their own
-typed owners.
+The exact full-corpus card, ability, and residual deltas remain owned by the
+generated compiler/frontier reports. Broader hidden-zone, linked-result,
+attachment-dependent entry, and dynamic tap-state families require their own
+typed prerequisites before admission.
