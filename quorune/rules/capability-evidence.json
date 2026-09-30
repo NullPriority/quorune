@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2dcf5d07177ed64e1f6778d0f5699337590f4161a255dfac018a97cb52e11b57",
-  "declaration_source_fingerprint": "fd29e78380560a0ff6070cea1bf2c15671a6d25fd82b85c97368624d2ed2d518",
+  "registry_fingerprint": "0476fae12e8c9496291a62d768969313f893835947d8c678954fcea0389a15aa",
+  "declaration_source_fingerprint": "b3889e9bb0e2d556e0e309f15d0da94963023cdac76002af2019770e96641c00",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -51418,11 +51418,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_query_scaled_grant_revalidates_current_ability_and_replays",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Revalidate a query-granted activation through the shared layer-6 component owner, then resolve its typed public quantity into the recipient-bound layer-7c effect."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_delegate_to_draw_and_token_owners",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51437,8 +51457,10 @@
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_life_use_existing_replacement_owner",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51453,8 +51475,10 @@
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51469,8 +51493,10 @@
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_use_current_layer_five_state_and_locked_controller",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51482,11 +51508,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_scaled_characteristics_use_resolution_state_and_cleanup",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolve a signed query-scaled power/toughness result from current layer-5 state, commit it through the existing locked-incarnation layer-7c owner, expire it at cleanup, and reject a returned target incarnation."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_zero_query_amount_and_stale_target_use_existing_target_owner",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51498,11 +51544,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer and commit the trusted controller-qualified activation in a four-seat session, reject an opponent-controlled target, and resolve the controller-scoped count through the ordinary action path."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amount_four_player_projection_save_load_and_replay",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51517,8 +51583,10 @@
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_public_query_amount_compiler_and_resolver_mutants_are_killed",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51533,8 +51601,10 @@
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_public_query_amount_resolver_mutant_is_killed",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51549,8 +51619,10 @@
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_public_query_amount_grammar_and_schema_fail_closed",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51565,8 +51637,10 @@
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_compiler_lowers_public_query_amounts_across_contexts",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51577,12 +51651,50 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_compiler_lowers_query_scaled_characteristics_across_contexts",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compile source-self and direct-target query-scaled temporary power/toughness modifiers across spell, activation, normalized trigger, and typed quoted-activation carriers without adding an effect operation."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Expose the activation decision only to its authenticated controller while other principals receive no private action or target-selection packet."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amount_four_player_projection_save_load_and_replay",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -51594,11 +51706,49 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_query_scaled_grant_revalidates_current_ability_and_replays",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the current granted-ability offer, payment, query-scaled layer-7c result, and final authoritative state from the pre-activation checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay from the pre-activation checkpoint through payment, targeting, query resolution, layer-7c commitment, and the final authoritative state hash."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amount_four_player_projection_save_load_and_replay",
       "official_rule_ids": [
         "608.2h",
+        "611.2c",
         "613.1d",
-        "613.1e"
+        "613.1e",
+        "613.4c"
       ],
       "supported_profiles": [
         "traditional",
@@ -69581,5 +69731,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "77de04cfc577bae5e02c2b84e04f7545fc1f35de352cedf915df7f330f000443"
+  "fingerprint": "e633eb3af06d9f8ae9204cb6f3d38f8dd1fabb2b0fb4ae382296058b211324c2"
 }

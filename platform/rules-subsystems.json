@@ -2524,6 +2524,65 @@
           "measurement_probe_id": "public-query-effect-amount-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:public-query-characteristic-modifiers",
+          "member_family_ids": [
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:unparsed-target-creature-gets",
+            "activated_effect:unparsed-this-creature-gets",
+            "continuous_layer:continuous-effect-layers-and-dependencies",
+            "duration:until-end-of-turn",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unparsed-target-creature-gets",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "quantity_expression:dynamic-quantity",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "capability:quantity_expression.public_query_effect_amount",
+            "capability:target.revalidate_resolution",
+            "component:quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+            "component:quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.effect_runtime.objects_stack_and_tokens._apply_modify_stats_until_end_of_turn",
+            "component:quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+            "component:quorune.semantic_runtime.values.resolve_semantic_value"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "controller-or-global-public-zone",
+            "fixed-signed-power-and-toughness-coefficients",
+            "layer-five-object-query",
+            "resolution-time-count",
+            "single-source-or-direct-target",
+            "until-end-of-turn-duration"
+          ],
+          "shared_dependencies": [
+            "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "quantity_expression.public_query_effect_amount",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one source-self or direct-target power/toughness modifier until end of turn whose signed fixed coefficients scale with one closed controller or global battlefield, graveyard, or identity-free hand CharacteristicQuantitySpec across spell, triggered, activated, and typed quoted-activation contexts",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Extends the existing semantic scalar and fixed temporary-characteristic owners without another effect operation: the stack controller's current cycle-safe layer-5 count resolves immediately before the existing target/source layer-7c result, while target revalidation, current granted-ability applicability, cleanup, projection, and replay stay canonical.",
+          "explicit_exclusions": [
+            "base-setting, type, color, control, copy, name, text, variable-duration, and dynamic-keyword changes",
+            "greatest, distinct, devotion, mana-symbol, party, linked-result, this-way, chosen, named, random, arithmetic-offset, and open comparison amounts",
+            "independently unsupported carrier events, costs, conditions, siblings, quoted shells, and keywords without a closed gameplay consumer",
+            "multiple, divided, optional, repeated, aggregate-set, and target-changing results",
+            "opponent-relative, attachment-derived, source-counter, source-excluding, ability-presence, tapped, combat-state, hidden-identity, and later-layer quantities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-query-characteristic-modifier-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:public-activation-conditions",
           "member_family_ids": [
             "activated_effect:counter",
@@ -4346,25 +4405,26 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v224-public-object-movement-closure",
-      "compiler_version": "oracle-ir-v224",
-      "bundle_id": "bundle:public-object-movement-closure",
-      "candidate_ids": ["bundle:public-object-movement-closure"],
+      "transition_id": "oracle-ir-v225-public-query-characteristic-modifiers",
+      "compiler_version": "oracle-ir-v225",
+      "bundle_id": "bundle:public-query-characteristic-modifiers",
+      "candidate_ids": ["bundle:public-query-characteristic-modifiers"],
       "family_ids": [
-        "activated_effect:put-onto-battlefield",
-        "activated_effect:tap-state",
-        "effect_clause:put-onto-battlefield",
-        "effect_clause:return",
-        "effect_clause:tap-state",
+        "activated_effect:unparsed-target-creature-gets",
+        "activated_effect:unparsed-this-creature-gets",
+        "continuous_layer:continuous-effect-layers-and-dependencies",
+        "duration:until-end-of-turn",
+        "effect_clause:unparsed-target-creature-gets",
+        "quantity_expression:dynamic-quantity",
         "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "permanent.tap_state.fixed_set",
-        "zone.move.fixed_private_hand_choice",
-        "zone.move.fixed_public_set"
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "quantity_expression.public_query_effect_amount",
+        "target.revalidate_resolution"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-object-movement-closure"
+      "measurement_id": "measurement:public-query-characteristic-modifiers"
     },
     "forecast_corrections": [
       {
@@ -5028,6 +5088,11 @@
         "candidate_id": "compiler:public-object-movement-closure",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-recovery selector has no implementation-eligible carried candidate while the raw continuous-layer and unparsed-effect leaders remain heterogeneous and the dependency-ready counter queue is not the foreground. A bounded current-frontier probe isolates 101 exact abilities across 100 current Commander carriers, 81 conservative complete-card transitions, and 104 material residual removals through one public-object movement boundary. Fixed public battlefield and graveyard sets, fixed private controller-hand entry, and fixed public tap-state sets reuse the canonical object query, target, APNAP affected-set, destination-replacement, prospective-entry, stun-counter, projection, rollback, and replay owners. Variable, attachment-dependent, linked, delayed, random, chosen, dynamic-count, continuous-untap, copied, granted, text-changed, and independently unsupported forms remain fail-closed; current identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:public-query-characteristic-modifiers",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-movement selector has no implementation-eligible carried candidate while the raw continuous-layer and unparsed-effect leaders remain heterogeneous and the dependency-ready counter queue is not the authorized foreground. A bounded compiler simulation retires the narrower target/source-only slice below policy, while the generated integrated existing-owner probe reaches the normal complete-card floor by including normalized trigger and already-typed quoted-activation carriers. The selected family reuses the existing PublicQueryAmountSpec, cycle-safe layer-5 CharacteristicQuantitySpec, stack-controller scalar resolution, direct target and current granted-ability applicability, layer-7c temporary characteristic, cleanup, projection, and replay owners. Opponent-relative, attachment, source-counter, source-excluding, later-layer, linked, chosen, arithmetic, aggregate-set, multiple-target, variable-duration, and independently unsupported carrier forms remain fail-closed; current identities and measurements are generated from the frontier."
       }
     ]
   },

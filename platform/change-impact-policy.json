@@ -903,6 +903,9 @@
         "quorune/query_effect_amount_model.py",
         "quorune/semantic_runtime/query_effect_amounts.py",
         "quorune/semantic_runtime/values.py",
+        "tests/fixtures/fixed-query-quoted-ability-grants.json",
+        "tests/fixtures/public-query-characteristic-cards.json",
+        "tests/test_fixed_query_quoted_ability_grants.py",
         "tests/test_public_query_effect_amounts.py"
       ],
       "test_modules": [
@@ -912,6 +915,7 @@
         "test_fixed_counter_player_cast_triggers",
         "test_fixed_damage_effect_clauses",
         "test_fixed_player_life_effects",
+        "test_fixed_query_quoted_ability_grants",
         "test_fixed_token_creation_effects",
         "test_public_query_effect_amounts",
         "test_token_creation_replacements",

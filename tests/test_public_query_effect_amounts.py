@@ -7,9 +7,9 @@ import tempfile
 import unittest
 from unittest import mock
 
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
 from quorune.card_programs import compile_card_program
-from quorune.carddb import CardRecord
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.characteristic_fragments import (
     CharacteristicQuantityScope,
     CharacteristicQuantitySpec,
@@ -20,6 +20,10 @@ from quorune.damage_prevention import (
     DamageSubject,
     PreventionMode,
 )
+from quorune.continuous_effect_state import (
+    expire_end_of_turn_continuous_effects,
+)
+from quorune.deck import DeckLoader
 from quorune.model import CardInstance, StackItem
 from quorune.object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from quorune.oracle_ir import generated_programs, register_generated_programs
@@ -46,6 +50,7 @@ from quorune.rules.capabilities import (
 from quorune.semantic_runtime.context import SemanticNodeError
 from quorune.semantic_runtime.values import resolve_semantic_value
 from quorune.trigger_processing import collect_trigger_items, enqueue_trigger_batch
+from scripts.build_test_database import build_fixture_database
 
 
 class _NoRulingsDatabase:
@@ -83,6 +88,22 @@ def query_amount_record(
         faces=(),
         raw={},
     )
+
+
+def focused_query_characteristic_database(directory: str) -> CardDatabase:
+    database = Path(directory) / "public-query-characteristics.sqlite3"
+    build_fixture_database(
+        [
+            ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
+            ROOT / "tests" / "fixtures" / "counter-replacement-cards.json",
+            ROOT
+            / "tests"
+            / "fixtures"
+            / "public-query-characteristic-cards.json",
+        ],
+        database,
+    )
+    return CardDatabase(database)
 
 
 def _contains_query_amount(value) -> bool:
@@ -179,6 +200,108 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                 self.assertTrue(_contains_query_amount(ability.effects))
                 self.assertTrue(ability.capability_closure["trusted"])
 
+    def test_compiler_lowers_query_scaled_characteristics_across_contexts(self):
+        cases = (
+            (
+                "Target creature gets +X/+0 until end of turn, where X is "
+                "the number of creature cards in your graveyard.",
+                "Generic Query Spell",
+                "Instant",
+                "$target.0",
+                1,
+                0,
+            ),
+            (
+                "{1}: This creature gets +X/+X until end of turn, where X "
+                "is the number of creatures you control.",
+                "Generic Query Activation",
+                "Creature — Elf",
+                "$source",
+                1,
+                1,
+            ),
+            (
+                "Whenever this creature attacks, it gets +X/+X until end "
+                "of turn, where X is the number of creatures you control.",
+                "Generic Query Trigger",
+                "Creature — Elf",
+                "$source",
+                1,
+                1,
+            ),
+            (
+                "Target creature gains vigilance and gets +2/+1 until end "
+                "of turn for each creature you control.",
+                "Generic Query Compound",
+                "Instant",
+                "$target.0",
+                2,
+                1,
+            ),
+            (
+                "All Elves have \"{T}: Target Elf creature gets +X/+0 until "
+                "end of turn, where X is the number of Elves on the "
+                "battlefield.\"",
+                "Generic Query Grant",
+                "Creature — Elf",
+                "$target.0",
+                1,
+                0,
+            ),
+        )
+        for index, (
+            text,
+            name,
+            type_line,
+            reference,
+            power_coefficient,
+            toughness_coefficient,
+        ) in enumerate(cases):
+            with self.subTest(text=text):
+                program = self.compile(
+                    query_amount_record(
+                        text,
+                        suffix=172_000_100 + index,
+                        name=name,
+                        type_line=type_line,
+                    )
+                )
+                self.assertEqual((), program.residuals)
+                ability = next(
+                    ability
+                    for ability in program.abilities
+                    if any(
+                        effect.get("op") == "modify_stats_until_end_of_turn"
+                        for effect in ability.effects
+                    )
+                )
+                modifier = next(
+                    effect
+                    for effect in ability.effects
+                    if effect.get("op") == "modify_stats_until_end_of_turn"
+                )
+                self.assertEqual(reference, modifier["card"])
+                for field, coefficient in (
+                    ("power", power_coefficient),
+                    ("toughness", toughness_coefficient),
+                ):
+                    if coefficient == 0:
+                        self.assertEqual(0, modifier[field])
+                    else:
+                        self.assertEqual(
+                            coefficient,
+                            modifier[field]["coefficient"],
+                        )
+                self.assertIn(
+                    PUBLIC_QUERY_AMOUNT_CAPABILITY,
+                    ability.capability_dependencies,
+                )
+                self.assertIn(
+                    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                    ability.capability_dependencies,
+                )
+                self.assertTrue(ability.capability_closure["trusted"])
+
     def test_public_query_amount_grammar_and_schema_fail_closed(self):
         excluded = (
             "You gain life equal to your life total.",
@@ -197,6 +320,19 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "• Draw a card.",
             "Creatures you control have \"Whenever this creature attacks, you "
             "gain 1 life for each artifact you control.\"",
+            "Target creature gets +X/+X until end of turn, where X is its power.",
+            "Target creature gets +X/+X until end of turn, where X is the "
+            "number of creatures an opponent controls.",
+            "Target creature gets +1/+1 until end of turn for each tapped "
+            "creature you control.",
+            "Target creature gets +1/+1 until end of turn for each other "
+            "creature you control.",
+            "Target creature gets +X/+X until your next turn, where X is the "
+            "number of creatures you control.",
+            "Up to two target creatures each get +X/+X until end of turn, "
+            "where X is the number of creatures you control.",
+            "Target creature gets +X/+X until end of turn, where X is the "
+            "number of creatures you control, then draw a card.",
         )
         for index, text in enumerate(excluded):
             with self.subTest(text=text):
@@ -269,6 +405,15 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                 {"op": "life", "delta": valid},
                 {"op": "draw", "count": valid},
             ),
+            (
+                {
+                    "op": "modify_stats_until_end_of_turn",
+                    "card": "$target.0",
+                    "power": valid,
+                    "toughness": valid,
+                },
+                {"op": "draw", "count": 1},
+            ),
         ):
             with self.subTest(effects=effects):
                 self.assertEqual(
@@ -281,20 +426,28 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                 )
 
     def test_public_query_amount_compiler_and_resolver_mutants_are_killed(self):
-        record = query_amount_record(
-            "You gain 1 life for each creature you control.",
-            suffix=172_002_000,
+        records = (
+            query_amount_record(
+                "You gain 1 life for each creature you control.",
+                suffix=172_002_000,
+            ),
+            query_amount_record(
+                "Target creature gets +X/+X until end of turn, where X is "
+                "the number of creatures you control.",
+                suffix=172_002_001,
+            ),
         )
 
         def assert_compiled() -> None:
-            program = self.compile(record)
-            self.assertEqual((), program.residuals)
-            self.assertTrue(
-                any(
-                    _contains_query_amount(ability.effects)
-                    for ability in program.abilities
+            for record in records:
+                program = self.compile(record)
+                self.assertEqual((), program.residuals)
+                self.assertTrue(
+                    any(
+                        _contains_query_amount(ability.effects)
+                        for ability in program.abilities
+                    )
                 )
-            )
 
         assert_compiled()
         with mock.patch(
@@ -672,6 +825,92 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         self.assertEqual(1, event.details["base_quantity"])
         self.assertEqual(1, event.details["replacement_count"])
 
+    def test_query_scaled_characteristics_use_resolution_state_and_cleanup(self):
+        session = self.session(172_003_150, players=2)
+        engine = session.engine
+        target = self.token(
+            engine,
+            "B",
+            name="Query Characteristic Target",
+            type_line="Token Creature — Citizen",
+        )
+        for index in range(2):
+            self.token(
+                engine,
+                "A",
+                name=f"Query Characteristic Counter {index}",
+                type_line="Token Creature — Citizen",
+            )
+        changed = self.token(
+            engine,
+            "A",
+            name="Query Characteristic Device",
+            type_line="Token Artifact — Device",
+        )
+        engine.apply_effect(
+            {"op": "add_type", "card": changed.ref, "type": "Creature"},
+            actor="A",
+        )
+        program = self.program(
+            "Target creature gains vigilance and gets +2/+1 until end of "
+            "turn for each creature you control.",
+            suffix=172_003_151,
+        )
+        item = self.stack_program(
+            engine,
+            program,
+            suffix=172_003_151,
+            controller="A",
+            targets=(target.ref,),
+            kind="spell",
+        )
+        self.token(
+            engine,
+            "A",
+            name="Late Query Characteristic Creature",
+            type_line="Token Creature — Citizen",
+        )
+
+        engine._begin_resolve_item(
+            item,
+            [dict(effect) for effect in program.effects],
+            program.destination,
+            note=program.notes,
+        )
+
+        self.assertEqual(9, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(5, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertIn("vigilance", engine._combat_keywords(target))
+        self.assertGreater(expire_end_of_turn_continuous_effects(engine.state), 0)
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertNotIn("vigilance", engine._combat_keywords(target))
+
+        stale = self.stack_program(
+            engine,
+            program,
+            suffix=172_003_152,
+            controller="A",
+            targets=(target.ref,),
+            kind="spell",
+        )
+        engine.move_card(target.object_id, "graveyard", log=False)
+        engine.move_card(
+            target.object_id,
+            "battlefield",
+            controller="B",
+            log=False,
+        )
+        continuous_before = list(engine.state.continuous_effects or ())
+        engine._begin_resolve_item(
+            stale,
+            [dict(effect) for effect in program.effects],
+            program.destination,
+            note=program.notes,
+        )
+        self.assertEqual(continuous_before, engine.state.continuous_effects)
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "power"))
+
     def test_query_amounts_trigger_uses_normalized_event_and_apnap_owner(self):
         session = self.session(172_003_200)
         engine = session.engine
@@ -910,6 +1149,191 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         with self.assertRaises(SemanticNodeError):
             resolve_semantic_value(engine, effect, item)
         self.assertEqual(before, authoritative_state_hash(engine.state))
+
+
+class PublicQueryCharacteristicActionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        cls.db = focused_query_characteristic_database(cls.temporary.name)
+        loader = DeckLoader(cls.db)
+        cls.mishra = loader.load(
+            ROOT / "examples" / "mishra-eminent-one.txt",
+            commander="Mishra, Eminent One",
+            deck_name="Mishra",
+        )
+        cls.zimone = loader.load(
+            ROOT / "examples" / "zimone-and-dina.txt",
+            commander="Zimone and Dina",
+            deck_name="Zimone",
+        )
+        cls.capabilities = load_default_capability_registry()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def session(self, seed: int):
+        session = make_session(
+            self.db,
+            self.mishra,
+            self.zimone,
+            players=4,
+            seed=seed,
+            auto_pass_empty=False,
+        )
+        keep_all(session)
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        session.commands.clear()
+        session.decisions.clear()
+        return session
+
+    def add_permanent(
+        self,
+        engine,
+        *,
+        seat: str,
+        name: str,
+        ref: str,
+    ) -> CardInstance:
+        record = self.db.lookup(name)
+        card = CardInstance(
+            object_id=f"fixture:{ref}",
+            ref=ref,
+            oracle_id=record.oracle_id,
+            printed_name=record.name,
+            owner=seat,
+            controller=seat,
+            zone="battlefield",
+            zone_timestamp=engine._next_zone_timestamp(),
+            known_to=list(engine.seats),
+            revealed_to=list(engine.seats),
+        )
+        engine.state.cards[card.object_id] = card
+        engine.state.players[seat].zones["battlefield"].append(card.object_id)
+        return card
+
+    @staticmethod
+    def resolve_priority(session) -> None:
+        for _ in range(20):
+            if not session.engine.state.stack:
+                return
+            principals = session.pending_principals()
+            if not principals:
+                session.engine.pump()
+                principals = session.pending_principals()
+            assert principals
+            result = session.act(principals[0], {"action_id": "pass"})
+            assert result.ok, result.summary
+        raise AssertionError("Query-scaled activation did not resolve")
+
+    def test_trusted_query_scaled_activation_uses_real_action_path_and_replays(self):
+        session = self.session(172_006_000)
+        engine = session.engine
+        source = self.add_permanent(
+            engine,
+            seat="A",
+            name="Query-Scaled Mentor Fixture",
+            ref="query-scaled-source",
+        )
+        target = self.add_permanent(
+            engine,
+            seat="A",
+            name="Elves of Deep Shadow",
+            ref="query-scaled-target",
+        )
+        opponent = self.add_permanent(
+            engine,
+            seat="B",
+            name="Elves of Deep Shadow",
+            ref="query-scaled-opponent",
+        )
+        record = self.db.lookup("Query-Scaled Mentor Fixture")
+        registration = register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            trust_level="trusted",
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        self.assertGreaterEqual(registration["programs_generated"], 1)
+        self.assertTrue(
+            all(
+                engine.semantic_program_is_current_trusted(program)
+                for program in engine.semantics.programs_for_oracle(
+                    record.oracle_id
+                )
+            )
+        )
+        engine.state.players["A"].mana_pool["C"] = 1
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine.pump()
+        action_id = f"activate:{source.ref}:ab1"
+        decision = session.packet("pilot:A", full=True)["decision"]
+        action = next(
+            row
+            for row in decision["ctx"]["legal"]["actions"]
+            if row["id"] == action_id
+        )
+        legal_refs = set(action["target_schema"]["legal_refs"])
+        self.assertIn(source.ref, legal_refs)
+        self.assertIn(target.ref, legal_refs)
+        self.assertNotIn(opponent.ref, legal_refs)
+        for seat in ("B", "C", "D"):
+            self.assertIsNone(
+                session.packet(f"pilot:{seat}", full=True)["decision"]
+            )
+
+        before_rejection = authoritative_state_hash(engine.state)
+        rejected = session.act(
+            "pilot:A",
+            {"action_id": action_id, "targets": [opponent.ref]},
+        )
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before_rejection, authoritative_state_hash(engine.state))
+        self.assertEqual(1, engine.state.players["A"].mana_pool["C"])
+
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        activated = session.act(
+            "pilot:A",
+            {
+                "action_id": action_id,
+                "targets": [target.ref],
+                "pay": "auto",
+            },
+        )
+        self.assertTrue(activated.ok, activated.summary)
+        self.resolve_priority(session)
+        self.assertEqual(3, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(3, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertIn("vigilance", engine._combat_keywords(target))
+        expected_hash = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "query-scaled-action"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected_hash, replay["final_state_hash"])
+        self.assertGreater(expire_end_of_turn_continuous_effects(engine.state), 0)
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertNotIn("vigilance", engine._combat_keywords(target))
 
 
 if __name__ == "__main__":
