@@ -875,9 +875,9 @@ class ZoneTransitionOwner:
                 for object_id, _destination in changes
             },
             destination_controllers={
-                object_id: controllers.get(object_id)
+                object_id: controllers[object_id]
                 for object_id, destination in changes
-                if destination == "battlefield"
+                if destination == "battlefield" and object_id in controllers
             },
             entry_characteristics=entry_characteristics,
             sources=sources,

@@ -999,7 +999,28 @@ class _RuntimeBase(unittest.TestCase):
             if session.state.stack:
                 principals = session.pending_principals()
                 self.assertTrue(principals)
-                result = session.act(principals[0], {"action_id": "pass"})
+                self.assertIsNotNone(decision)
+                assert decision is not None
+                self.assertEqual(
+                    "priority",
+                    decision.kind,
+                    decision.to_dict(),
+                )
+                projected = StateProjector(
+                    self.db,
+                    session.state,
+                )._decision(principals[0])
+                self.assertIsNotNone(projected)
+                assert projected is not None
+                pass_action = next(
+                    row
+                    for row in projected["ctx"]["legal"]["actions"]
+                    if row.get("action") == "pass"
+                )
+                result = session.act(
+                    principals[0],
+                    {"action_id": pass_action["id"]},
+                )
                 self.assertTrue(result.ok, result.summary)
                 continue
             if decision is None:
@@ -1753,6 +1774,7 @@ class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
     def test_mass_zone_moves_use_apnap_replacements_and_replay(self):
         session = self.session(729402, spell="Fixed Public Return")
         engine = session.engine
+        self.promote_fixture(engine, "Fixed Public Return")
         commanders = []
         for seat in ("A", "B", "C", "D"):
             commander = self.commander(engine, seat)
