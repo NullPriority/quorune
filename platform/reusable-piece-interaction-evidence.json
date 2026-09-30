@@ -4,6 +4,15 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_discard_zone_with_multiple_damage_recipients_fails_closed",
+      "piece_ids": ["capability.zone.change.destination_replacement", "residual.target_or_choice.multiple-damage-recipients"],
+      "capability_ids": ["zone.change.destination_replacement"],
+      "interaction_order": 2,
+      "assertion": "A generic permanent has an exact targeted discard/life activation through the existing replacement-aware movement owner, but its unrepresented multiple-damage-recipient activation keeps the whole CardProgram unavailable at both strict and compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_bound_effect_replacement_residual_pairs_fail_closed",
       "piece_ids": ["capability.resolution.effect_program.bound_references", "residual.replacement.replacement-applicability"],
       "capability_ids": ["resolution.effect_program.bound_references"],

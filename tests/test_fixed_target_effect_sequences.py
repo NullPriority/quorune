@@ -782,7 +782,11 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
         )
 
         def exact() -> None:
-            self.assertEqual("exact", self.compile(text).status)
+            ir = self.compile(text)
+            self.assertEqual("exact", ir.status)
+            # A valid generic fallback must not hide loss of the specialized
+            # owner's stable identity in this owner-removal mutation.
+            self.assertEqual(SEQUENCE_TEMPLATE_ID, ir.faces[0].nodes[0].template_id)
 
         exact()
         with patch(

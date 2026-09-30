@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.affected_player_discard_templates import (
     FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
     FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC,
@@ -60,15 +60,16 @@ def current_capabilities() -> CapabilityRegistry:
 class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.temporary = tempfile.TemporaryDirectory()
-        cls.db = focused_database(cls.temporary.name)
-        cls.base = cls.db.lookup("Sol Ring")
+        cls.base = CardRecord(
+            oracle_id="fixture:affected-player-discard-compiler",
+            name="Generic Affected Player Discard Compiler Fixture",
+            mana_cost="{1}", mana_value=1, type_line="Artifact", oracle_text="",
+            power=None, toughness=None, loyalty=None, defense=None,
+            colors=(), color_identity=(), keywords=(), produced_mana=(),
+            layout="normal", released_at="2026-01-01",
+            legalities={"commander":"legal"}, faces=(), raw={},
+        )
         cls.capabilities = current_capabilities()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.db.close()
-        cls.temporary.cleanup()
 
     def compile(self, text: str, *, registry=None, type_line="Sorcery"):
         return compile_oracle_card(
@@ -147,7 +148,7 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
             "Target player discards their hand.",
             "Target player reveals their hand and discards a card.",
             "You may have target player discard a card.",
-            "Target player discards two cards, then draws two cards.",
+            "Target player discards two cards at random, then draws two cards.",
             "Discard a card.",
         )
         for text in unsupported:
@@ -209,6 +210,19 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
         ir = self.compile(text, registry=registry)
         self.assertNotEqual("exact", ir.status)
         self.assertTrue(ir.material_residuals)
+
+    def test_bound_discard_draw_integration_preserves_leaf_boundary(self):
+        text = "Target player discards two cards, then draws two cards."
+        self.assertIsNone(fixed_affected_player_discard_effect_template(text))
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual("bound-effect-program-v1", node.template_id)
+        self.assertIn("resolution.effect_program.bound_references", node.capability_dependencies)
+        self.assertEqual(("choose_cards_apnap", "draw"), tuple(e["op"] for e in node.effects))
+        self.assertEqual(["$target.0"], node.effects[0]["players"])
+        self.assertEqual("discard", node.effects[0]["then"])
+        self.assertEqual("$target.0", node.effects[1]["player"])
 
     def test_affected_player_discard_compiler_mutant_is_killed(self):
         witnesses = (

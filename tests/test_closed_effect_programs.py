@@ -16,6 +16,9 @@ from quorune.compiler.closed_effect_programs import (
     CLOSED_EFFECT_PROGRAM_TEMPLATE_ID,
     closed_effect_program_template,
 )
+from quorune.compiler.bound_effect_programs import (
+    BOUND_EFFECT_PROGRAM_CAPABILITY, BOUND_EFFECT_PROGRAM_TEMPLATE_ID,
+)
 from quorune.model import StackItem
 from quorune.oracle_ir import (
     ORACLE_COMPILER_VERSION,
@@ -257,7 +260,25 @@ class ClosedEffectProgramCompilerTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status, ir.material_residuals)
                 node = ir.faces[0].nodes[0]
                 self.assertEqual(kind, node.kind)
-                self.assertEqual(CLOSED_EFFECT_PROGRAM_TEMPLATE_ID, node.template_id)
+                if record.oracle_text in {
+                    "Target player loses 2 life and you gain 2 life.",
+                    "Target opponent loses 2 life and you gain 3 life.",
+                }:
+                    # The integrated player-subject owner now keeps this
+                    # target alongside an independently explicit controller
+                    # instruction. The older leaf production is still valid.
+                    leaf = closed_effect_program_template(
+                        record.oracle_text,
+                        compile_component=partial(_reviewed_atomic_effect_template, card_name=record.name),
+                    )
+                    self.assertIsNotNone(leaf)
+                    self.assertEqual(CLOSED_EFFECT_PROGRAM_TEMPLATE_ID, leaf.template_id)
+                    self.assertEqual(leaf.effects, node.effects)
+                    self.assertEqual(leaf.target_schema, node.target_schema)
+                    self.assertEqual(BOUND_EFFECT_PROGRAM_TEMPLATE_ID, node.template_id)
+                    self.assertIn(BOUND_EFFECT_PROGRAM_CAPABILITY, node.capability_dependencies)
+                else:
+                    self.assertEqual(CLOSED_EFFECT_PROGRAM_TEMPLATE_ID, node.template_id)
                 self.assertEqual(
                     operations,
                     tuple(effect["op"] for effect in node.effects),
