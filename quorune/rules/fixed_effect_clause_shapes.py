@@ -68,6 +68,7 @@ from .token_creation_capability_shapes import (
 )
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
+from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
     FIXED_OPTIONAL_EFFECT_MECHANIC,
@@ -98,6 +99,7 @@ _COMPONENT_RESOLVERS = (
     fixed_counter_removal_node_capabilities,
     fixed_player_counter_placement_node_capabilities,
     fixed_target_characteristics_node_capabilities,
+    temporary_target_interaction_node_capabilities,
     fixed_creature_power_damage_node_capabilities,
     temporary_declaration_restriction_node_capabilities,
     fixed_damage_node_capabilities,

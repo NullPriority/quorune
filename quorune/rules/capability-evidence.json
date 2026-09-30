@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "52719608bc2fde781cc9836e622c9d5ec9f87e3728709f785fb43b7fc023eb39",
-  "declaration_source_fingerprint": "230fd23e3c9d6798532b0f949f3cc3c77ca2105df8b39e2105242e2f7e66a1f8",
+  "registry_fingerprint": "fcd854d7598f97983ca7208e18c2b65fa4a4de199776a5e600d3d3698026e5af",
+  "declaration_source_fingerprint": "2dc5d57548a682e9c14ae0dd8660986401690bff96aef7dea7a508ab0ee9de4d",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -52735,6 +52735,300 @@
       "applicability_note": "Replay one ordinary destruction, one shield replacement, one Indestructible result, and their canonical simultaneous transition."
     },
     {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_counter_choice_resumes_after_prior_effect_once",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Commit a prior modifier, suspend at counter replacement ordering, then apply the counter and final untap without repeating prior work."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_target_revalidation_precedes_but_does_not_repeat_between_effects",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Revalidate original target qualifiers before resolution, then retain the established reference after an earlier effect grants Shroud."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The targeted player draws or privately discards before that player's life changes; the casting controller remains distinct."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use the selected player and their existing private choice authority in a four-seat game."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_effect_dependency_and_compiler_mutants",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the binding production or blocking an existing component owner restores material residuals and prevents exact capability closure."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "negative",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_effect_exclusions_and_malformed_shapes",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Keep separate target occurrences, unsupported possessive or cross-zone references, unknown components and malformed descriptor fields outside admission."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_effect_grammar_compiles_across_contexts",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bind grammatical subjects and one target-zero reference across independently typed ordered components in spell, activation, trigger and modal carriers."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_qualified_target_binding_and_stale_rollback",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Offer and pay a real registered qualified cast and source-excluding activation, resolve both components and preserve cleanup expiration."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The discard decision belongs only to the affected principal and no other seat receives its private schema."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_counter_choice_resumes_after_prior_effect_once",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load at the represented replacement boundary and replay the actual cast and resumed consequences from its pre-action checkpoint."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_target_revalidation_precedes_but_does_not_repeat_between_effects",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact replay begins before the real trusted cast and preserves the later untap after the earlier Shroud grant."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay targeted draw/life changes and save/load a pending discard before the later life-loss component."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_qualified_target_binding_and_stale_rollback",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay real offered casts and activations with the inherited target contract and complete characteristic/untap consequences."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_qualified_target_binding_and_stale_rollback",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Illegal target injection rolls back before payment; an old target incarnation cannot be untapped or modified after leaving and returning."
+    },
+    {
       "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "interaction",
       "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
@@ -70307,5 +70601,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "b88342430b9c40f57e4ad716fbd6ead3c14c9d63789a3eb611df7e1fd234900f"
+  "fingerprint": "f2aee08aba9fec8eeafec5e4c561fea073fd9bb77ae68d285ff42aefd599cf36"
 }

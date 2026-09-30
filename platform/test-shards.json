@@ -220,6 +220,7 @@
       "test_untap_step_rules"
     ],
     "functional-08": [
+      "test_bound_effect_programs",
       "test_casting_payment_keywords",
       "test_closed_effect_programs",
       "test_combat_damage_rules",

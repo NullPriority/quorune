@@ -135,10 +135,7 @@ from ..compiler import public_query_effect_amounts as _query
 from ..compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_MECHANIC,
 )
-from .closed_effect_program_shapes import (
-    CLOSED_EFFECT_PROGRAM_MECHANIC,
-    closed_effect_program_node_capabilities,
-)
+from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC, closed_effect_program_node_capabilities
 from .modal_capability_shapes import (
     fixed_choose_one_modal_branches,
     fixed_nonrepeating_modal_branches,
@@ -456,7 +453,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
-        CLOSED_EFFECT_PROGRAM_MECHANIC,
+        CLOSED_EFFECT_PROGRAM_MECHANIC, "bound-effect-program",
         FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_MECHANIC,
         FIXED_NEXT_TURN_DRAW_MECHANIC, "temporary-target-interaction",
@@ -1381,6 +1378,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
+        "resolution.effect_program.bound_references": "bound-effect-program",
     }
     return {
         mechanic

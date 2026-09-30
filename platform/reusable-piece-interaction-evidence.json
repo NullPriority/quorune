@@ -4,6 +4,24 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_bound_effect_replacement_residual_pairs_fail_closed",
+      "piece_ids": ["capability.resolution.effect_program.bound_references", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["resolution.effect_program.bound_references"],
+      "interaction_order": 2,
+      "assertion": "A generic permanent retains an exact bound targeted draw/life activation while an unresolved draw-step replacement prevents strict and compatible admission of the complete CardProgram."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_bound_effect_replacement_residual_pairs_fail_closed",
+      "piece_ids": ["capability.resolution.effect_program.bound_references", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["resolution.effect_program.bound_references"],
+      "interaction_order": 2,
+      "assertion": "The bound reference capability does not erase unresolved replacement-ordering semantics or admit an approximation at the runtime boundary."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_temporary_target_replacement_residual_pairs_fail_closed",
       "piece_ids": ["capability.continuous.resolution.temporary_target_interactions", "residual.replacement.replacement-applicability"],
       "capability_ids": ["continuous.resolution.temporary_target_interactions"],

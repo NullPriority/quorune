@@ -32,6 +32,13 @@ class _Witness:
 
 
 _WITNESSES = {
+    "bound-effect-replacement-boundary": _Witness(
+        "Generic Bound Effect Replacement Boundary Fixture",
+        "Artifact",
+        "Skip your draw step.\n"
+        "{1}: Target player draws two cards and loses 2 life.",
+        "{2}",
+    ),
     "temporary-target-replacement-boundary": _Witness(
         "Generic Temporary Target Replacement Boundary Fixture",
         "Artifact",
@@ -1323,6 +1330,14 @@ TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS = tuple(
     )
 )
 
+BOUND_EFFECT_AND_REPLACEMENT_PAIRS = tuple(
+    _pair("capability.resolution.effect_program.bound_references", replacement)
+    for replacement in (
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering",
+    )
+)
+
 DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS = tuple(
     _pair("capability.counter.producer.dynamic_self_entry", replacement)
     for replacement in (
@@ -1421,6 +1436,7 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *COST_AND_REPLACEMENT_PAIRS,
             *RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
             *TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS,
+            *BOUND_EFFECT_AND_REPLACEMENT_PAIRS,
             *DYNAMIC_SELF_ENTRY_AND_REPLACEMENT_PAIRS,
             *CONTINUOUS_AND_REPLACEMENT_PAIRS,
             CONTINUOUS_LAYER_AND_REGENERATION_RESIDUAL_PAIR,
@@ -1573,6 +1589,7 @@ _bind(
     *RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
 )
 _bind("temporary-target-replacement-boundary", *TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS)
+_bind("bound-effect-replacement-boundary", *BOUND_EFFECT_AND_REPLACEMENT_PAIRS)
 _bind("prismatic-circle", CONTINUOUS_AND_REPLACEMENT_PAIRS[0])
 _bind("kirtars-wrath", CONTINUOUS_AND_REPLACEMENT_PAIRS[1])
 _bind("floating-shield", *CONTINUOUS_AND_REPLACEMENT_PAIRS[2:4])
@@ -1830,6 +1847,7 @@ __all__ = [
     "REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS",
     "RESTRICTED_MANA_AND_REPLACEMENT_PAIRS",
     "TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS",
+    "BOUND_EFFECT_AND_REPLACEMENT_PAIRS",
     "TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS",
     "TOKEN_AND_DAMAGE_PREVENTION_PAIR",
     "TRIGGER_AND_REPLACEMENT_PAIRS",
