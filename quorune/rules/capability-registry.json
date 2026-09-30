@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 157,
+  "registry_version": 158,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7280,6 +7280,33 @@
       "dependency_fail_closed_rationale": "",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_damage_result_replacement_component_mutants_are_killed replaces the fixed multiplier with identity, while test_tampered_semantic_life_intent_fails_closed_without_mutation changes the resumable input; the result and rollback assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "choice.target_hand.fixed_inspection_move",
+      "version": 1,
+      "official_rules": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile and resolve one targeted public hand reveal or controller-only hand look, with either observation, one mandatory current-characteristic card selection moved immediately to graveyard or exile, or one fixed all-matching discard batch.",
+        "inputs": ["one source-spanned target-player or target-opponent hand-inspection instruction", "one closed HandCardPredicateSpec when movement is instructed", "current target hand", "resolution controller", "current legal player target", "applicable zone-destination replacements"],
+        "outputs": ["principal-correct hand knowledge", "one controller-scoped private selection when required", "current-characteristic option revalidation", "one replacement-aware simultaneous zone transaction", "exact continuation replay"],
+        "exclusions": ["optional, random, named, chosen, variable, multiple, alternating, or affected-player-selected cards", "cross-zone alternatives, cast or play permissions, delayed links, linked quantities, and card-name behavior", "temporary reveal duration, arbitrary look/reveal subjects, and independently unsupported carrier grammar", "conditional and compound tails except one independently closed fixed controller Scry or life instruction"]
+      },
+      "dependencies": ["target.revalidate_resolution", "zone.change.destination_replacement"],
+      "implementation_components": ["quorune.compiler.hand_inspection_templates.fixed_hand_inspection_effect_template", "quorune.effect_runtime.hand_inspection.commit_hand_inspection", "quorune.rules.hand_inspection.HandCardPredicateSpec", "quorune.rules.hand_inspection.InspectHandIntent", "quorune.rules.hand_inspection_capability_shapes.fixed_hand_inspection_node_capabilities", "quorune.semantic_choices.hand_inspection.FixedHandInspectionHandler", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.inspect_hand_intent", "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
+      "positive_tests": ["test_hand_inspection_compiles_across_contexts_predicates_and_fixed_tails", "test_trusted_cast_reveals_selects_and_discards_through_public_action"],
+      "negative_tests": ["test_unsupported_hand_inspection_grammar_and_shape_mutations_fail_closed", "test_illegal_target_and_stale_selection_reject_without_hidden_leak_or_mutation"],
+      "interaction_tests": ["test_discard_and_exile_use_current_characteristics_replacement_and_resume_once", "test_bulk_discard_preserves_one_committed_batch"],
+      "multiplayer_tests": ["test_public_reveal_private_look_projection_and_exact_replay"],
+      "privacy_tests": ["test_public_reveal_private_look_projection_and_exact_replay", "test_illegal_target_and_stale_selection_reject_without_hidden_leak_or_mutation"],
+      "replay_tests": ["test_public_reveal_private_look_projection_and_exact_replay", "test_discard_and_exile_use_current_characteristics_replacement_and_resume_once"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking target revalidation or destination replacement removes exact capability closure; malformed predicates, hidden-owner access, stale options, and changed hands reject before movement.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused compiler and shape mutation test removes the shared production and mutates its visibility, action, predicate, or target schema; exact-node and trusted-program assertions reject every survivor.",
       "blockers": [],
       "status": "trusted"
     },

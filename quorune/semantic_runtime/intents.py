@@ -5,11 +5,7 @@ from typing import Any, Literal, Mapping, TypeAlias
 
 from ..affected_permanents import AffectedPermanentSetSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec
-from ..drawing.model import (
-    DiscardDrawnCardUnlessType,
-    DrawnCardAction,
-    RevealDrawnCard,
-)
+from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..impulse_access_model import ImpulseAccessDuration
 from ..entry_counter_model import EffectEntryCounter
@@ -18,6 +14,7 @@ from ..replacement.immutable import FrozenMap, freeze_value
 from ..rules.library_scry import ScryArrangement
 from ..rules.library_selection import LibrarySelectionArrangement
 from ..rules.library_surveillance import SurveilArrangement
+from ..rules.hand_inspection import InspectHandIntent
 from ..zone_object_keyword_model import (
     ZoneObjectKeywordGrantError,
     normalized_zone_object_keyword,
@@ -1628,6 +1625,7 @@ SemanticIntent: TypeAlias = (
     | LifeChangeIntent
     | PayLifeIntent
     | RevealLibraryCardsIntent
+    | InspectHandIntent
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent
     | SurveilLibraryIntent

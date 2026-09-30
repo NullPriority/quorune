@@ -102,6 +102,8 @@
       "reviewed": true,
       "implementation_components": [
         "CommanderEngine.move_card",
+        "quorune.semantic_choices.hand_inspection.FixedHandInspectionHandler",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.inspect_hand_intent",
         "StateProjector._view_seats_for",
         "StateProjector._card_visible",
         "StateProjector._snapshot",
@@ -113,25 +115,30 @@
         "tests.test_hand_rules.HandRuleTests.test_revealed_hand_identity_is_scoped_to_authorized_viewers",
         "tests.test_hand_rules.HandRuleTests.test_owner_hand_remains_visible_while_controlling_a_player",
         "tests.test_hand_rules.HandRuleTests.test_hand_order_is_private_and_owner_projection_is_always_available",
-        "tests.test_exact_mishra_closure.ExactMishraClosureTests.test_mindslaver_routes_controlled_turn_to_controller_pilot"
+        "tests.test_exact_mishra_closure.ExactMishraClosureTests.test_mindslaver_routes_controlled_turn_to_controller_pilot",
+        "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_trusted_cast_reveals_selects_and_discards_through_public_action",
+        "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_public_reveal_private_look_projection_and_exact_replay",
+        "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_illegal_target_and_stale_selection_reject_without_hidden_leak_or_mutation"
       ],
       "required_scenarios": [
         "positive",
         "negative",
         "interaction",
         "multiplayer",
-        "hidden_information"
+        "hidden_information",
+        "replay"
       ],
       "covered_scenarios": [
         "positive",
         "negative",
         "interaction",
         "multiplayer",
-        "hidden_information"
+        "hidden_information",
+        "replay"
       ],
       "blockers": [],
       "notes": [
-        "Every projection exposes hand_n while ordinary opponents receive no hidden identities or hidden-zone movement names. Owners retain complete hand access outside their priority window and while controlling another player; CR 723.4 adds the controlled hand without replacing the controller's own. A directly observed public-to-hand transition remains in known_hand but does not grant full hand inspection. Hand ordering is private and rules-insignificant."
+        "Every projection exposes hand_n while ordinary opponents receive no hidden identities or hidden-zone movement names. Owners retain complete hand access outside their priority window and while controlling another player; CR 723.4 adds the controlled hand without replacing the controller's own. A directly observed public-to-hand transition remains in known_hand but does not grant full hand inspection. A targeted public reveal makes every current hand identity known to all live seats, while a look makes those identities known only to the resolving controller; exact replay preserves both knowledge states. Hand ordering is private and rules-insignificant."
       ]
     }
   ]

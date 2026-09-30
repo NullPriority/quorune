@@ -4,6 +4,7 @@ from dataclasses import replace
 from typing import Any, Mapping, Sequence
 
 from ..errors import GameRuleError
+from ..rules.hand_inspection import FIXED_HAND_INSPECTION_OPERATION
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
 from ..object_query import object_query_result
@@ -37,13 +38,29 @@ class SemanticChoiceCoordinationMixin:
     def _semantic_choice_object_rows(
         self,
         actor: str,
+        effect: Mapping[str, Any] | None = None,
     ) -> tuple[ChoiceObjectView, ...]:
         public_zones = {
             "battlefield", "graveyard", "exile", "command", "stack"
         }
+        choice_effect = effect or {}
+        inspected_hand_owner = (
+            str(choice_effect.get("target") or "")
+            if choice_effect.get("op") == FIXED_HAND_INSPECTION_OPERATION
+            else ""
+        )
+        if inspected_hand_owner not in self.active_seats:
+            inspected_hand_owner = ""
         rows: list[ChoiceObjectView] = []
         for card in self.state.cards.values():
-            if card.zone not in public_zones and card.owner != actor:
+            inspected_hidden_card = (
+                card.zone == "hand" and card.owner == inspected_hand_owner
+            )
+            if (
+                card.zone not in public_zones
+                and card.owner != actor
+                and not inspected_hidden_card
+            ):
                 continue
             effective = self._effective_card_data(card)
             types, subtypes, supertypes = self._type_parts(
@@ -54,7 +71,9 @@ class SemanticChoiceCoordinationMixin:
                 effective,
                 type_parts=(types, subtypes, supertypes),
                 known_to_actor=(
-                    actor in card.known_to or card.zone in public_zones
+                    actor in card.known_to
+                    or card.zone in public_zones
+                    or inspected_hidden_card
                 ),
                 attached_to_ref=(
                     self.state.cards[card.attached_to].ref
@@ -438,7 +457,7 @@ class SemanticChoiceCoordinationMixin:
         """Materialize only actor-visible, immutable choice facts."""
 
         choice_effect = effect or {}
-        object_rows = self._semantic_choice_object_rows(actor)
+        object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
             self._semantic_choice_target_facts(
                 actor, choice_effect, response

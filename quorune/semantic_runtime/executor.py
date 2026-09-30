@@ -62,6 +62,7 @@ from .intents import (
     MoveLibraryCardsToBottomIntent,
     MillCardsIntent,
     ImpulseAccessIntent,
+    InspectHandIntent,
     ScryLibraryIntent,
     SurveilLibraryIntent,
     PayManaCostIntent,
@@ -166,6 +167,11 @@ class SemanticIntentSink(
     def reveal_library_cards_intent(
         self,
         intent: RevealLibraryCardsIntent,
+    ) -> tuple[str, ...]: ...
+
+    def inspect_hand_intent(
+        self,
+        intent: InspectHandIntent,
     ) -> tuple[str, ...]: ...
 
     def move_library_cards_to_bottom_intent(
@@ -450,8 +456,12 @@ def _execute_permanent_object_intent(
     )
 
 
-RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent
-RECORDING_INTENT_TYPES = (RecordChoiceIntent, ExploreCompletedIntent)
+RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent | InspectHandIntent
+RECORDING_INTENT_TYPES = (
+    RecordChoiceIntent,
+    ExploreCompletedIntent,
+    InspectHandIntent,
+)
 
 
 def _execute_recording_intent(
@@ -461,6 +471,8 @@ def _execute_recording_intent(
     if isinstance(intent, RecordChoiceIntent):
         sink.record_choice_intent(intent)
         return intent.actor, None
+    if isinstance(intent, InspectHandIntent):
+        return intent.player, sink.inspect_hand_intent(intent)
     sink.complete_explore_intent(intent)
     return intent.explorer_ref, None
 

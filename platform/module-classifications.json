@@ -2643,6 +2643,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/hand_inspection_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/impulse_access_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4425,6 +4440,21 @@
     },
     {
       "file": "quorune/effect_runtime/declaration_effects.py",
+      "layer": "semantics",
+      "owning_subsystem": "effect_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/effect_runtime/hand_inspection.py",
       "layer": "semantics",
       "owning_subsystem": "effect_runtime",
       "allowed_dependency_layers": [
@@ -6632,6 +6662,34 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/hand_inspection.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/hand_inspection_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/impulse_access_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -7475,6 +7533,21 @@
     },
     {
       "file": "quorune/semantic_choices/fixed_library_selection.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_choices/hand_inspection.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
       "allowed_dependency_layers": [
@@ -9875,5 +9948,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "314f79cdcf9979d3a1d250d3973031a3500726e1e394206b5de2bfb981e2b88b"
+  "fingerprint": "56ae52eebaa5872b49db9eb7d0189ce799f3e708384d9d2be7ed19b43469fcbe"
 }

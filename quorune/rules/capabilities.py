@@ -100,6 +100,7 @@ from .library_search_capability_shapes import (
 from .library_selection_capability_shapes import (
     fixed_library_selection_node_capabilities,
 )
+from .hand_inspection_capability_shapes import FIXED_HAND_INSPECTION_CAPABILITY, FIXED_HAND_INSPECTION_MECHANIC, fixed_hand_inspection_node_capabilities
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
@@ -1072,7 +1073,7 @@ def _targeted_effect_capabilities(
         class_level_node_capabilities,
         fixed_library_search_node_capabilities,
         fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
-        fixed_library_selection_node_capabilities,
+        fixed_library_selection_node_capabilities, fixed_hand_inspection_node_capabilities,
         fixed_life_node_capabilities,
         fixed_controller_effect_sequence_node_capabilities,
         fixed_counter_controller_effect_sequence_node_capabilities,
@@ -1357,14 +1358,13 @@ def _affected_player_choice_covered_mechanics(
     supplied: set[str],
 ) -> set[str]:
     covered: set[str] = set()
-    if FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY in supplied:
-        covered.update(
-            {FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC, "cr-402-hand"}
-        )
-    if FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY in supplied:
-        covered.update(
-            {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice"}
-        )
+    for capability, mechanics in (
+        (FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY, {FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC, "cr-402-hand"}),
+        (FIXED_HAND_INSPECTION_CAPABILITY, {FIXED_HAND_INSPECTION_MECHANIC, "cr-402-hand"}),
+        (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice"}),
+    ):
+        if capability in supplied:
+            covered.update(mechanics)
     return covered
 
 

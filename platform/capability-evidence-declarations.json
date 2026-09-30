@@ -5725,6 +5725,102 @@
       "applicability_note": "Reject a target valid only for an unselected sibling mode without changing the authoritative state hash."
     },
     {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_bulk_discard_preserves_one_committed_batch",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reveal the complete current target hand and commit every matching fixed predicate card through one simultaneous discard intent without a controller selection."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_discard_and_exile_use_current_characteristics_replacement_and_resume_once",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Revalidate current hand characteristics and suspend the chosen discard at the canonical destination-replacement owner before resuming exactly once."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_public_reveal_private_look_projection_and_exact_replay",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Authorize only the resolving controller to look at one target opponent's hand in a four-player game while the other two opponents retain hidden projections."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionCompilerTests.test_unsupported_hand_inspection_grammar_and_shape_mutations_fail_closed",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Remove the shared production and mutate visibility, action, predicate, controller, or target shape so every direct, triggered, activated, modal, and typed-tail witness loses exact closure."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionCompilerTests.test_hand_inspection_dependencies_fail_closed",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Block target revalidation or destination replacement and prove the source-spanned program cannot remain exact or trusted."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionCompilerTests.test_unsupported_hand_inspection_grammar_and_shape_mutations_fail_closed",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Keep optional, random, named, multiple, cross-zone, bracketed alternate-text, delayed-link, and malformed descriptor variants material and nonexecutable."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionCompilerTests.test_hand_inspection_compiles_across_contexts_predicates_and_fixed_tails",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower public reveal, private look, current characteristic predicates, one-card discard or exile, all-matching discard, and fixed controller tails across shared carrier contexts."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_trusted_cast_reveals_selects_and_discards_through_public_action",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Offer, target, pay for, resolve, choose from, and commit a correctly registered trusted generic hand-inspection spell through the public action path."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_public_reveal_private_look_projection_and_exact_replay",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Expose a looked-at hand only to the resolving controller while public reveal exposes that hand to all seats and neither path leaks physical or logical object identity."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_discard_and_exile_use_current_characteristics_replacement_and_resume_once",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the private controller selection, replacement decision, public exile result, continuation, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_public_reveal_private_look_projection_and_exact_replay",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the public target, private hand observation, principal-specific knowledge state, and spell resolution to the identical final hash."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_illegal_target_and_stale_selection_reject_without_hidden_leak_or_mutation",
+      "official_rule_ids": ["115.1", "400.7", "402.3", "608.2b", "608.2d", "608.2h", "701.9", "701.20", "701.20a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Counter an illegal player target before hand exposure and reject a selected card that left the inspected hand without mutating the post-staleness authoritative state."
+    },
+    {
       "capability_id": "combat.attack.defender",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_keyword_rules.CombatKeywordRuleTests.test_effective_defender_gain_and_loss_change_shared_legality",

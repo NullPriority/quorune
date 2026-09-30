@@ -1,18 +1,25 @@
 {
   "schema_version": 1,
-  "contract_version": 2,
+  "contract_version": 3,
   "mechanic_id": "cr-402-hand",
   "official_name": "Hand",
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "rule_references": [
+    "115.1",
+    "400.7",
     "402",
     "402.1",
     "402.2",
     "402.3",
+    "608.2b",
+    "608.2d",
+    "608.2h",
     "701.9",
     "701.9a",
-    "701.9c"
+    "701.9c",
+    "701.20",
+    "701.20a"
   ],
   "glossary_references": [
     "hand",
@@ -47,6 +54,9 @@
       "draw one or more cards",
       "put a card into a hand",
       "resolve one fixed affected-player discard",
+      "inspect one targeted hand by public reveal or controller-only look",
+      "move one controller-selected inspected card to graveyard or exile",
+      "discard every card matching one fixed inspected-hand predicate",
       "discard excess cards during cleanup",
       "move a publicly identified card into a hand"
     ],
@@ -56,14 +66,16 @@
       "per-player hand count",
       "owner-scoped hand identities",
       "viewer-scoped known hand identities",
-      "private APNAP discard candidates and selected refs"
+      "private APNAP discard candidates and selected refs",
+      "controller-scoped target-hand candidates and current typed characteristics"
     ],
     "state_writes": [
       "per-player hand membership",
       "viewer-scoped card knowledge",
       "maximum hand size",
       "cleanup discard selection",
-      "one simultaneous replacement-aware fixed discard batch"
+      "one simultaneous replacement-aware fixed discard batch",
+      "principal-scoped known target-hand identities"
     ],
     "costs": [
       "discard costs consume cards from the paying player's hand",
@@ -81,6 +93,8 @@
       "the active player chooses exactly the excess cards to discard at cleanup",
       "one affected player at a time privately chooses up to the required fixed discard count in APNAP order",
       "no chosen card moves until every affected nonempty hand has completed its choice",
+      "the resolving controller chooses one matching card from an inspected target hand when instructed",
+      "a selected inspected-hand card is revalidated by current characteristics before movement",
       "hand arrangement is presentation-only and has no rules-significant authoritative order"
     ],
     "hidden_information": [
@@ -90,7 +104,9 @@
       "a hidden-zone move publishes the move and count change without publishing identity",
       "a directly observed public-to-hand move remains known without granting permission to inspect the hand",
       "a player controlling another player sees both the controlled player's hand and their own hand",
-      "a fixed simultaneous discard does not disclose another affected player's candidates or prior choice before commitment"
+      "a fixed simultaneous discard does not disclose another affected player's candidates or prior choice before commitment",
+      "a public hand reveal exposes every current hand identity to every live seat",
+      "a look at a hand exposes every current hand identity only to the resolving controller"
     ],
     "apnap": [
       "fixed target-player, target-opponent, each-player, and each-opponent discard effects use the shared APNAP simultaneous-choice system"
@@ -100,7 +116,8 @@
     ],
     "replacement_effects": [
       "draw and zone-change replacements are delegated to their producing effect",
-      "fixed affected-player discard enters the canonical destination-replacement coordinator before any selected hand card moves"
+      "fixed affected-player discard enters the canonical destination-replacement coordinator before any selected hand card moves",
+      "selected and all-matching inspected-hand moves enter the same canonical destination-replacement coordinator"
     ],
     "copy": [
       "copy behavior does not expose unrelated hand identity"
@@ -137,7 +154,11 @@
     "controller of another player",
     "fixed one-, two-, or three-card affected-player discard",
     "private APNAP collection followed by simultaneous replacement-aware discard",
-    "presentation-only hand arrangement"
+    "presentation-only hand arrangement",
+    "target-player public hand reveal",
+    "target-player controller-only hand look",
+    "mandatory current-characteristic one-card discard or exile",
+    "fixed all-matching revealed-hand discard"
   ],
   "witness_cards": [
     {
@@ -184,16 +205,22 @@
     "test_fixed_count_discard_uses_available_cards_and_skips_empty_hand",
     "test_discard_choice_resumes_following_typed_effect",
     "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
-    "test_stale_and_malformed_private_discard_reject_before_mutation"
+    "test_stale_and_malformed_private_discard_reject_before_mutation",
+    "test_hand_inspection_compiles_across_contexts_predicates_and_fixed_tails",
+    "test_trusted_cast_reveals_selects_and_discards_through_public_action",
+    "test_public_reveal_private_look_projection_and_exact_replay",
+    "test_illegal_target_and_stale_selection_reject_without_hidden_leak_or_mutation",
+    "test_discard_and_exile_use_current_characteristics_replacement_and_resume_once",
+    "test_bulk_discard_preserves_one_committed_batch"
   ],
   "implementation": {
-    "component": "CommanderEngine.create/draw/move_card/cleanup discard, PlayerState hand and maximum size, StateProjector multi-seat hand knowledge projection, and the typed private APNAP discard compiler and simultaneous zone-transition owner",
-    "version": "hand-foundation-v2"
+    "component": "CommanderEngine.create/draw/move_card/cleanup discard, PlayerState hand and maximum size, StateProjector multi-seat hand knowledge projection, the typed private APNAP discard compiler, the target-hand inspection semantic-choice owner, and the simultaneous zone-transition owner",
+    "version": "hand-foundation-v3"
   },
   "known_blockers": [
     "continuous maximum-hand-size modifiers and no-maximum effects are not compiled through CR 613.11",
-    "random, optional, variable, all-hand, named, revealed, type-qualified, linked-result, cost, cleanup, and keyword-specific discard grammar remains incomplete",
-    "complete Oracle grammar for arbitrary reveal, look-at-hand, and other private simultaneous hand-choice effects remains incomplete",
+    "random, optional, variable, named, chosen, arbitrary multi-card, linked-result, cost, cleanup, and keyword-specific discard grammar remains incomplete",
+    "complete Oracle grammar for arbitrary reveal, look-at-hand, cross-zone selection, cast/play permission, and delayed linked hand effects remains incomplete",
     "complete draw and zone-change replacement ordering remains incomplete",
     "browser-local hand arrangement controls are not yet implemented, although authoritative hand order is rules-insignificant"
   ],

@@ -41,6 +41,7 @@ from ..destruction_sets import (
     resolve_destruction_set,
 )
 from ..effect_runtime import dispatch_effect
+from ..effect_runtime.hand_inspection import commit_hand_inspection
 from ..life_change import (
     commit_life_change_batch,
     LifeChangeError,
@@ -83,6 +84,7 @@ from ..semantic_runtime import (
     EliminatePlayersIntent,
     ExploreCompletedIntent,
     GrantZoneObjectKeywordIntent,
+    InspectHandIntent,
     LifeChangeIntent,
     LibrarySelectionIntent,
     MoveLibraryCardsToBottomIntent,
@@ -744,6 +746,12 @@ class SemanticChoiceIntentHostMixin:
             changed_objects=object_ids,
         )
         return refs
+
+    def inspect_hand_intent(
+        self,
+        intent: InspectHandIntent,
+    ) -> tuple[str, ...]:
+        return commit_hand_inspection(self, intent)
 
     def move_library_cards_to_bottom_intent(
         self,
