@@ -31,6 +31,7 @@ from high_risk_interaction_support import (
     SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS,
     TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS,
     TOKEN_AND_DAMAGE_PREVENTION_PAIR,
+    TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS,
     TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
     assert_high_risk_boundary_pairs,
 )
@@ -72,6 +73,12 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             self,
             RESTRICTED_MANA_AND_REPLACEMENT_PAIRS,
             database=self.db,
+        )
+
+    def test_temporary_target_replacement_residual_pairs_fail_closed(self):
+        self.assertEqual(2, len(TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self, TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS, database=self.db,
         )
 
     def test_dynamic_self_entry_replacement_residual_pairs_fail_closed(

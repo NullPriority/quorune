@@ -73,6 +73,9 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
         )
 
     def test_temporary_interactions_compile_across_contexts(self):
+        self.assertIsNone(fixed_target_characteristics_effect_template(
+            "Target creature gains protection from the color of your choice until end of turn."
+        ))
         bodies = (
             "Target creature gets +1/+1 and gains flying, first strike, and trample until end of turn.",
             "Target creature gains horsemanship until end of turn.",

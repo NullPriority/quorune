@@ -602,7 +602,7 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
             "Target attacking historic creature gets +1/+1 until end of turn.",
             "Target creature you control other than enchanted creature gets "
             "+1/+1 until end of turn.",
-            "Target creature gains protection from the color of your choice "
+            "Target creature gains protection from the card type of your choice "
             "until end of turn.",
         ):
             with self.subTest(text=text):

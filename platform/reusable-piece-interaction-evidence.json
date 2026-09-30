@@ -3,6 +3,24 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_temporary_target_replacement_residual_pairs_fail_closed",
+      "piece_ids": ["capability.continuous.resolution.temporary_target_interactions", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["continuous.resolution.temporary_target_interactions"],
+      "interaction_order": 2,
+      "assertion": "A generic permanent retains an exact fixed temporary Protection activation while its unresolved draw-step replacement keeps the complete CardProgram unavailable at both strict and compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_temporary_target_replacement_residual_pairs_fail_closed",
+      "piece_ids": ["capability.continuous.resolution.temporary_target_interactions", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["continuous.resolution.temporary_target_interactions"],
+      "interaction_order": 2,
+      "assertion": "The same generic permanent preserves the unresolved replacement-ordering boundary and cannot acquire strict or compatible runtime readiness merely because its temporary target activation is represented."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
       "test_id": "test_all_represented_restrictions_are_cumulative",
       "piece_ids": [
