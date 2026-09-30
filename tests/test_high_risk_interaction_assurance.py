@@ -6,6 +6,7 @@ from common import DB_PATH
 from high_risk_interaction_support import (
     ALL_HIGH_RISK_BOUNDARY_PAIRS,
     BOUND_EFFECT_AND_REPLACEMENT_PAIRS,
+    CONTINUOUS_AND_REPLACEMENT_PAIRS,
     DISCARD_ZONE_AND_MULTIPLE_DAMAGE_PAIR,
     ATTACHMENT_AND_CONTINUOUS_PAIRS,
     ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
@@ -65,6 +66,11 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             self,
             (CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,),
             database=self.db,
+        )
+
+    def test_continuous_prevention_result_link_remains_a_residual_pair(self):
+        assert_high_risk_boundary_pairs(
+            self, (CONTINUOUS_AND_REPLACEMENT_PAIRS[4],), database=self.db,
         )
 
     def test_restricted_mana_replacement_residual_pairs_fail_closed(

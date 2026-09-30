@@ -665,7 +665,8 @@ _WITNESSES = {
         "Creature — Human Wizard",
         "This creature has all activated abilities of all creature cards in exile.\n"
         "{T}: Untap target attacking creature. Prevent all combat damage "
-        "that would be dealt to and dealt by that creature this turn.",
+        "that would be dealt to and dealt by that creature this turn. "
+        "You gain life equal to the damage prevented this way.",
         "{3}{W}{U}",
         power="3",
         toughness="5",
