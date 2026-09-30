@@ -41,6 +41,10 @@ promote a spectator, select another seat, or request an analyst view.
 - Reconnect begins with a full projection and independent connection cursor.
 - A delta applies only to its exact projected base hash.
 - Private choice candidates appear only in the chooser's decision form.
+- A public hand reveal marks every current card in that hand known to all live
+  seats, while a look at a hand marks those identities known only to the
+  resolving controller. The resulting selection form remains controller-only
+  in both cases.
 - A face-down public-zone object's controller can see its identity. Ownership
   alone grants no visibility; other seats need explicit known or revealed
   state.

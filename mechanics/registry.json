@@ -376,8 +376,8 @@
     {
       "mechanic_id": "cr-402-hand",
       "path": "mechanics/contracts/hand.json",
-      "sha256": "e24ef43d7d7f3c9ec5d52737c5f8ce55f015684bd9b2ba73b4d1eaa496c7d939",
-      "version": 2
+      "sha256": "30e01c75881e91bfaf92a6c441cce993ad4df74d763120919156492581fb4b9a",
+      "version": 3
     },
     {
       "mechanic_id": "cr-604-handling-static-abilities",
@@ -8468,17 +8468,17 @@
     {
       "category": "zones",
       "contract_path": "mechanics/contracts/hand.json",
-      "contract_sha256": "e24ef43d7d7f3c9ec5d52737c5f8ce55f015684bd9b2ba73b4d1eaa496c7d939",
-      "contract_version": 2,
+      "contract_sha256": "30e01c75881e91bfaf92a6c441cce993ad4df74d763120919156492581fb4b9a",
+      "contract_version": 3,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "CommanderEngine.create/draw/move_card/cleanup discard, PlayerState hand and maximum size, StateProjector multi-seat hand knowledge projection, and the typed private APNAP discard compiler and simultaneous zone-transition owner",
-      "implementation_version": "hand-foundation-v2",
+      "implementation_component": "CommanderEngine.create/draw/move_card/cleanup discard, PlayerState hand and maximum size, StateProjector multi-seat hand knowledge projection, the typed private APNAP discard compiler, the target-hand inspection semantic-choice owner, and the simultaneous zone-transition owner",
+      "implementation_version": "hand-foundation-v3",
       "kind": "rules_section",
       "known_blockers": [
         "continuous maximum-hand-size modifiers and no-maximum effects are not compiled through CR 613.11",
-        "random, optional, variable, all-hand, named, revealed, type-qualified, linked-result, cost, cleanup, and keyword-specific discard grammar remains incomplete",
-        "complete Oracle grammar for arbitrary reveal, look-at-hand, and other private simultaneous hand-choice effects remains incomplete",
+        "random, optional, variable, named, chosen, arbitrary multi-card, linked-result, cost, cleanup, and keyword-specific discard grammar remains incomplete",
+        "complete Oracle grammar for arbitrary reveal, look-at-hand, cross-zone selection, cast/play permission, and delayed linked hand effects remains incomplete",
         "complete draw and zone-change replacement ordering remains incomplete",
         "browser-local hand arrangement controls are not yet implemented, although authoritative hand order is rules-insignificant"
       ],
@@ -8505,7 +8505,13 @@
         "test_fixed_count_discard_uses_available_cards_and_skips_empty_hand",
         "test_discard_choice_resumes_following_typed_effect",
         "test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",
-        "test_stale_and_malformed_private_discard_reject_before_mutation"
+        "test_stale_and_malformed_private_discard_reject_before_mutation",
+        "test_hand_inspection_compiles_across_contexts_predicates_and_fixed_tails",
+        "test_trusted_cast_reveals_selects_and_discards_through_public_action",
+        "test_public_reveal_private_look_projection_and_exact_replay",
+        "test_illegal_target_and_stale_selection_reject_without_hidden_leak_or_mutation",
+        "test_discard_and_exile_use_current_characteristics_replacement_and_resume_once",
+        "test_bulk_discard_preserves_one_committed_batch"
       ],
       "trust_level": "untrusted"
     },

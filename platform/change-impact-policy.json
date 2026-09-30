@@ -1332,6 +1332,27 @@
       ]
     },
     {
+      "id": "fixed-target-hand-inspection-contract",
+      "patterns": [
+        "quorune/compiler/hand_inspection_templates.py",
+        "quorune/effect_runtime/hand_inspection.py",
+        "quorune/rules/hand_inspection.py",
+        "quorune/rules/hand_inspection_capability_shapes.py",
+        "quorune/semantic_choices/hand_inspection.py",
+        "tests/fixtures/fixed-hand-inspection-cards.json",
+        "tests/test_fixed_hand_inspection.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_affected_player_discards",
+        "test_fixed_hand_inspection",
+        "test_game_record_v3",
+        "test_hand_rules",
+        "test_semantic_choice_characterization",
+        "test_targeting_v070"
+      ]
+    },
+    {
       "id": "fixed-restrictive-library-search-contract",
       "patterns": [
         "quorune/compiler/library_search_templates.py",

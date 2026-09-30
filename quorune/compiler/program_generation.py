@@ -85,6 +85,9 @@ from ..rules.library_search_capability_shapes import (
 from ..rules.library_selection_capability_shapes import (
     fixed_library_selection_node_capabilities,
 )
+from ..rules.hand_inspection_capability_shapes import (
+    fixed_hand_inspection_node_capabilities,
+)
 from ..rules.surveil_capability_shapes import fixed_surveil_node_capabilities
 from ..rules.fixed_controller_effect_shapes import (
     fixed_counter_controller_effect_sequence_node_capabilities,
@@ -511,6 +514,15 @@ def _is_closed_fixed_library_selection_program(
     return _node_capabilities_close_program(
         program,
         fixed_library_selection_node_capabilities,
+    )
+
+
+def _is_closed_fixed_hand_inspection_program(
+    program: SemanticProgram,
+) -> bool:
+    return _node_capabilities_close_program(
+        program,
+        fixed_hand_inspection_node_capabilities,
     )
 
 
@@ -1232,6 +1244,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_type_to_hand_search_program,
         _is_closed_fixed_life_program,
         _is_closed_fixed_library_selection_program,
+        _is_closed_fixed_hand_inspection_program,
         _is_closed_fixed_scry_program,
         _is_closed_fixed_surveil_program,
         _is_closed_fixed_token_creation_program,

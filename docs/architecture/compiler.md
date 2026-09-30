@@ -379,6 +379,18 @@ discard forms remain source-spanned residuals. A separate controller relation
 permits one through four cards only as a leaf of the closed fixed draw sequence
 described above; standalone controller discards remain outside this owner.
 
+`compiler/hand_inspection_templates.py` owns the distinct targeted-hand
+inspection grammar. It preserves public reveal versus controller-only look in
+one typed descriptor, applies a closed current-characteristic hand predicate,
+and routes one mandatory controller-selected discard or exile—or one fixed
+all-matching discard—through the ordinary simultaneous replacement-aware zone
+owner. The semantic-choice owner exposes the inspected identities only to
+authorized principals, revalidates the selected current hand object, and
+resumes any independently closed controller life or Scry tail exactly once.
+Optional, random, named, chosen, variable, multi-card, cross-zone, cast/play,
+delayed-link, linked-quantity, and unsupported carrier forms remain material
+residuals.
+
 `compiler/modal_templates.py` preserves the strict fixed `Choose one` spell
 owner and separately owns bounded fixed nonrepeating modal blocks across whole
 spells, normalized triggers, and supported activated abilities. The expanded

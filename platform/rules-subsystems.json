@@ -4394,6 +4394,65 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "public-object-movement-closure-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-target-hand-inspection",
+          "member_family_ids": [
+            "activated_effect:look-reveal",
+            "activated_effect:ordered-effect-composition",
+            "activated_effect:unparsed-target-opponent-reveals",
+            "effect_clause:exile",
+            "effect_clause:look-reveal",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unparsed-target-opponent-reveals",
+            "effect_clause:unparsed-target-player-reveals",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "reference_binding:linked-result-reference",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:choice.target_hand.fixed_inspection_move",
+            "component:quorune.compiler.hand_inspection_templates.fixed_hand_inspection_effect_template",
+            "component:quorune.effect_runtime.hand_inspection.commit_hand_inspection",
+            "component:quorune.rules.hand_inspection.HandCardPredicateSpec",
+            "component:quorune.rules.hand_inspection_capability_shapes.fixed_hand_inspection_node_capabilities",
+            "component:quorune.semantic_choices.hand_inspection.FixedHandInspectionHandler",
+            "component:quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.inspect_hand_intent",
+            "component:quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "controller-private-look-or-public-reveal",
+            "current-hand-characteristic-predicate",
+            "fixed-controller-life-or-scry-tail",
+            "immediate-graveyard-or-exile-destination",
+            "target-player-or-opponent"
+          ],
+          "shared_dependencies": [
+            "library.scry.fixed_controller",
+            "life.change.effect",
+            "target.revalidate_resolution",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "one targeted controller-private hand look or public reveal followed by observation, one mandatory controller-selected current-characteristic card moved immediately to graveyard or exile, or one all-matching fixed discard batch, with at most one independently closed controller life or Scry tail",
+          "estimated_implementation_hours": 6,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Promotes the measured cross-era hand-inspection cohort through one typed hidden-information owner while preserving canonical target revalidation, current characteristics, public or principal-scoped knowledge, replacement-aware movement, rollback, multiplayer projection, and exact replay.",
+          "explicit_exclusions": [
+            "conditional and compound tails except one independently closed fixed controller life or Scry instruction",
+            "cross-zone alternatives, cast or play permissions, delayed links, linked quantities, and card-name behavior",
+            "optional, random, named, chosen, variable, multiple, alternating, and affected-player-selected cards",
+            "temporary reveal duration, arbitrary look or reveal subjects, and independently unsupported carrier grammar"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-target-hand-inspection-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -4405,26 +4464,26 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v225-public-query-characteristic-modifiers",
-      "compiler_version": "oracle-ir-v225",
-      "bundle_id": "bundle:public-query-characteristic-modifiers",
-      "candidate_ids": ["bundle:public-query-characteristic-modifiers"],
+      "transition_id": "oracle-ir-v226-fixed-target-hand-inspection",
+      "compiler_version": "oracle-ir-v226",
+      "bundle_id": "bundle:fixed-target-hand-inspection",
+      "candidate_ids": ["bundle:fixed-target-hand-inspection"],
       "family_ids": [
-        "activated_effect:unparsed-target-creature-gets",
-        "activated_effect:unparsed-this-creature-gets",
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "duration:until-end-of-turn",
-        "effect_clause:unparsed-target-creature-gets",
-        "quantity_expression:dynamic-quantity",
+        "activated_effect:look-reveal",
+        "activated_effect:unparsed-target-opponent-reveals",
+        "effect_clause:look-reveal",
+        "effect_clause:unparsed-target-opponent-reveals",
+        "effect_clause:unparsed-target-player-reveals",
+        "reference_binding:linked-result-reference",
         "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "continuous.resolution.fixed_characteristics_until_end_of_turn",
-        "quantity_expression.public_query_effect_amount",
-        "target.revalidate_resolution"
+        "choice.target_hand.fixed_inspection_move",
+        "target.revalidate_resolution",
+        "zone.change.destination_replacement"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-query-characteristic-modifiers"
+      "measurement_id": "measurement:fixed-target-hand-inspection"
     },
     "forecast_corrections": [
       {

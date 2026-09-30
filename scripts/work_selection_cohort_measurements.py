@@ -22,6 +22,7 @@ from quorune.commander_pairing import (
 from quorune.compiler.activated_zone_change_costs import (
     fixed_activated_zone_change_cost,
 )
+from quorune.compiler.activated_mana_nodes import _activated_effect_material
 from quorune.compiler.action_permission_templates import (
     static_action_permission_handler,
 )
@@ -88,6 +89,10 @@ from quorune.compiler.fixed_source_combat_growth import (
 )
 from quorune.compiler.fixed_library_selection_templates import (
     fixed_library_selection_effect_template,
+)
+from quorune.compiler.hand_inspection_templates import (
+    FIXED_HAND_INSPECTION_OPERATION,
+    fixed_hand_inspection_effect_template,
 )
 from quorune.compiler.fixed_public_characteristic_sets import (
     fixed_public_characteristic_set_effect_template,
@@ -194,6 +199,9 @@ _PROBE_FIXED_HOMOGENEOUS_TARGET_SET = (
 )
 _PROBE_FIXED_LIBRARY_SELECTION = (
     "fixed-library-selection-existing-owner-v1"
+)
+_PROBE_FIXED_HAND_INSPECTION = (
+    "fixed-target-hand-inspection-existing-owner-v1"
 )
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
@@ -546,6 +554,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_FACE_DOWN_LIFECYCLE,
     _PROBE_FIXED_HOMOGENEOUS_TARGET_SET,
     _PROBE_FIXED_LIBRARY_SELECTION,
+    _PROBE_FIXED_HAND_INSPECTION,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
@@ -1148,6 +1157,41 @@ def _source_face_context(
     return face_name, support_source, attachment
 
 
+def _fixed_hand_inspection_instruction_candidates(
+    source: str,
+    *,
+    card_record: Any,
+    ability: Mapping[str, Any],
+) -> tuple[str, ...]:
+    material = _without_parenthetical_reminder(source).strip()
+    card_name, _source_is_permanent, _attachment_relation = (
+        _source_face_context(card_record, ability)
+    )
+    candidates = [
+        material,
+        re.sub(r"^(?:[IVXLCDM]+|[•�])\s*[—-]\s*", "", material),
+        trigger_ability_word_material_line(material),
+    ]
+    binding = fixed_counter_trigger_binding(material, card_name=card_name)
+    if binding is not None:
+        candidates.append(binding.body)
+    candidates.extend(
+        material[match.end() :]
+        for match in re.finditer(
+            r",\s+(?=(?:Target|Look at target)\b)",
+            material,
+            re.IGNORECASE,
+        )
+    )
+    parsed = parse_activated_abilities(
+        card_name=card_name,
+        oracle_text=material,
+        keywords=getattr(card_record, "keywords", ()),
+    )
+    candidates.extend(_activated_effect_material(activation) for activation in parsed)
+    return tuple(dict.fromkeys(value for value in candidates if value))
+
+
 def _matches_probe(
     probe_id: str,
     source: str,
@@ -1155,6 +1199,19 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_FIXED_HAND_INSPECTION:
+        if card_record is None or ability is None:
+            raise WorkSelectionCohortMeasurementError(
+                "Target-hand inspection measurement requires card context"
+            )
+        return any(
+            fixed_hand_inspection_effect_template(body) is not None
+            for body in _fixed_hand_inspection_instruction_candidates(
+                source,
+                card_record=card_record,
+                ability=ability,
+            )
+        )
     if probe_id == _PROBE_FIXED_COMBAT_ENTRY_KEYWORD_LIFECYCLES:
         material = _without_parenthetical_reminder(source).strip()
         fixed_cost = r"(?:\{(?:\d+|[WUBRGC])\})+"
@@ -5558,6 +5615,16 @@ def _measurement(
             coverage=coverage,
             cohort_fingerprint=cohort_fingerprint,
         )
+    if probe_id == _PROBE_FIXED_HAND_INSPECTION:
+        return _fixed_hand_inspection_measurement(
+            frontier=frontier,
+            bundle_id=bundle_id,
+            probe_id=probe_id,
+            member_ids=member_ids,
+            cards_by_oracle_id=cards_by_oracle_id,
+            coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint,
+        )
     if probe_id == _PROBE_TRIGGER_ABILITY_WORD_CARRIER:
         return _trigger_ability_word_carrier_measurement(
             frontier=frontier,
@@ -7858,6 +7925,127 @@ def _fixed_library_selection_measurement(
         ),
         "exact_ability_gain": matched_abilities,
         "material_residual_reduction": matched_abilities,
+        "decision": (
+            "bounded_executable"
+            if reaches_floor
+            else "retired_below_harvest_floor"
+        ),
+        "grants_gameplay_trust": False,
+    }
+
+
+def _contains_fixed_hand_inspection(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        return bool(
+            value.get("op") == FIXED_HAND_INSPECTION_OPERATION
+            or any(
+                _contains_fixed_hand_inspection(child)
+                for child in value.values()
+            )
+        )
+    if isinstance(value, (list, tuple)):
+        return any(_contains_fixed_hand_inspection(child) for child in value)
+    return False
+
+
+def _fixed_hand_inspection_measurement(
+    *,
+    frontier: Mapping[str, Any],
+    bundle_id: str,
+    probe_id: str,
+    member_ids: set[str],
+    cards_by_oracle_id: Mapping[str, Any],
+    coverage: Mapping[str, Any],
+    cohort_fingerprint: str,
+) -> dict[str, Any]:
+    """Measure exact promotions through the integrated hidden-hand owner."""
+
+    registry = load_default_capability_registry()
+    matched_abilities = 0
+    matched_cards: dict[str, int] = {}
+    complete_cards: set[str] = set()
+    residual_reduction = 0
+    for card in frontier.get("cards", []):
+        oracle_id = str(card.get("oracle_id") or "")
+        record = cards_by_oracle_id.get(oracle_id)
+        if record is None:
+            raise WorkSelectionCohortMeasurementError(
+                f"Cohort measurement lacks pinned card {oracle_id}"
+            )
+        candidates = [
+            ability
+            for ability in card.get("abilities", [])
+            if ability.get("status") != "exact"
+            and _matches_probe(
+                probe_id,
+                _source_line(record, ability),
+                card_record=record,
+                ability=ability,
+            )
+        ]
+        if not candidates:
+            continue
+        compiled = compile_oracle_card(
+            record,
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        represented = 0
+        for ability in candidates:
+            face_id = str(ability.get("face_id") or "front")
+            source_line = int(ability.get("source_line") or 0)
+            face = next(
+                (
+                    value
+                    for value in compiled.faces
+                    if value.face_id == face_id
+                ),
+                None,
+            )
+            if face is not None and any(
+                node.exact
+                and node.span.line == source_line
+                and _contains_fixed_hand_inspection(node.to_dict())
+                for node in face.nodes
+            ):
+                represented += 1
+        if not represented:
+            continue
+        matched_abilities += represented
+        matched_cards[oracle_id] = len(
+            set(card.get("minimum_known_blocker_set", [])) - member_ids
+        )
+        base_residuals = sum(
+            max(1, len(ability.get("residuals", ())))
+            for ability in card.get("abilities", ())
+            if ability.get("status") != "exact"
+        )
+        residual_reduction += max(
+            0, base_residuals - len(compiled.material_residuals)
+        )
+        if compiled.status == "exact":
+            complete_cards.add(oracle_id)
+    reaches_floor = (
+        len(complete_cards) >= int(coverage["minimum_complete_card_gain"])
+        or matched_abilities >= int(coverage["minimum_exact_ability_gain"])
+        or residual_reduction
+        >= int(coverage["minimum_material_residual_reduction"])
+    )
+    return {
+        "measurement_id": "measurement:" + bundle_id.split(":", 1)[-1],
+        "bundle_id": bundle_id,
+        "probe_id": probe_id,
+        "cohort_fingerprint": cohort_fingerprint,
+        "affected_commander_cards": len(matched_cards),
+        "complete_card_gain": len(complete_cards),
+        "one_additional_blocker_cards": sum(
+            count == 1 for count in matched_cards.values()
+        ),
+        "two_additional_blocker_cards": sum(
+            count == 2 for count in matched_cards.values()
+        ),
+        "exact_ability_gain": matched_abilities,
+        "material_residual_reduction": residual_reduction,
         "decision": (
             "bounded_executable"
             if reaches_floor
