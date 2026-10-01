@@ -1212,6 +1212,10 @@ family-specific layer-6 applicability check. The earlier enum fragment remains
 replay-readable only. See
 [ADR 0088](../adr/0088-typed-query-self-characteristics.md).
 
+Required and excluded keyword predicates are both outside this layer-5 quantity
+boundary. Typed descriptor decoding rejects them before counting, including for
+a known-empty collection; they cannot silently produce a zero result.
+
 `compiler/effect_template_composition.py` routes reviewed atomic effects into
 closed clause/program composition and gives query-derived amounts one shared
 entry point. `compiler/public_query_effect_amounts.py` reuses that same typed

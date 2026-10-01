@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Reject negative as well as positive keyword predicates in layer-5 quantity
+  descriptors before resolution, preserving ordinary count and scalar formats.
+
 - Bind closed public characteristic-qualified entry and departure triggers to
   the normalized zone-event owner, preserving source union, token and source
   exclusion, previous-controller LKI, ordinary APNAP placement and exact replay.

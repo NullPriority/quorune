@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "331bc06703de2cef98c3296c872f5ec86d10a024df32a8c37a200aed2a05b2ac",
-  "declaration_source_fingerprint": "df61ddcec92b2b2cbe2aee5ef12aaf5f79d2305c455b8d59dd29dfe9441a3149",
+  "declaration_source_fingerprint": "45b6efb790cd5c87439222af3d98e05e59b65e1264d13164285dc8337b6c43df",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -52192,6 +52192,60 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_public_amount_decoder_rejects_negative_keyword_queries",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject a complete schema-v5 negative-keyword query rather than accepting an unsupported layer-6 predicate at the layer-5 quantity boundary."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_quantity_constructor_rejects_all_late_keyword_polarities",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject both required and excluded keyword predicates before a battlefield or graveyard quantity descriptor can be constructed."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_resolver_rejects_negative_keyword_even_for_known_empty_zone",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A known-empty collection cannot turn an unsupported later-layer predicate into an authorized zero scalar result."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_public_query_amount_grammar_and_schema_fail_closed",
       "official_rule_ids": [
         "608.2h",
@@ -70832,5 +70886,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "d9c866cf53e8a3efc7298ff7b3ff315a103b41e4434afff917d31c942c62b341"
+  "fingerprint": "ff67ab2fa5673a22b6245b6f5830f3b359a2dd1e402f5e6c019a1bceaac53bdd"
 }

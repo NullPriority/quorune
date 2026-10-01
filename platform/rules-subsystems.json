@@ -4582,21 +4582,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v230-qualified-zone-event-queries",
-      "compiler_version": "oracle-ir-v230",
-      "bundle_id": "bundle:qualified-zone-event-queries",
-      "candidate_ids": ["bundle:qualified-zone-event-queries"],
-      "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
-      ],
-      "capability_ids": [
-        "trigger.event.normalized_zone_change",
-        "trigger.event.qualified_zone_change",
-        "trigger.placement.apnap"
-      ],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:qualified-zone-event-queries"
+      "transition_id": "oracle-ir-v231-layer5-quantity-keyword-boundary",
+      "compiler_version": "oracle-ir-v231",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Correct the existing layer-5 quantity descriptor boundary to reject negative as well as positive keyword predicates before constructor, decoding, and resolution paths can accept an unsupported later-layer count. No Oracle grammar or quantity semantics are expanded.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {

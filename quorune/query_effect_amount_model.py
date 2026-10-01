@@ -38,6 +38,7 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
         or query.controller is not None
         or query.excluded_controllers
         or query.keywords_all
+        or query.keywords_none
         or query.tapped is not None
         or query.include_phased_out
         or query.known_to_actor is not None
