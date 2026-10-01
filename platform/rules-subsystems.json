@@ -4507,6 +4507,45 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "temporary-target-interaction-closure-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:bound-effect-program-closure",
+          "member_family_ids": [
+            "activated_effect:unparsed-target-creature-gains",
+            "activated_effect:unparsed-target-creature-gets",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unparsed-target-creature-gains",
+            "effect_clause:unparsed-target-creature-gets",
+            "reference_binding:linked-result-reference",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:resolution.effect_program.bound_references",
+            "component:quorune.compiler.bound_effect_programs.bound_effect_program_template",
+            "component:quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+            "component:quorune.engine.CommanderEngine._continue_resolution",
+            "component:quorune.rules.bound_effect_program_shapes.bound_effect_program_node_capabilities"
+          ],
+          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "normalized_literal_parameters": [
+            "fixed-player-subject", "one-explicit-target-occurrence",
+            "original-target-qualifiers", "printed-order", "single-current-incarnation-reference"
+          ],
+          "shared_dependencies": [
+            "resolution.effect_program.closed_components", "target.revalidate_resolution"
+          ],
+          "shared_grammar": "two through four mandatory typed components sharing one player subject or reusing one explicitly established public target through it, that player, that creature or that permanent; every component remains independently capability-closed and executes in printed order",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes broad spell, triggered, activated and modal carriers through existing leaf compilers, target legality, effect execution and resumable private or replacement choices.",
+          "explicit_exclusions": [
+            "conditional, optional, random, derived, linked-result and unsupported leaf instructions",
+            "multiple explicit target occurrences, cross-zone targets and hidden-object references",
+            "owner or controller possessives, newly selected objects and incompatible reference nouns"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "bound-effect-program-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -4518,28 +4557,26 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v227-temporary-target-interaction-closure",
-      "compiler_version": "oracle-ir-v227",
-      "bundle_id": "bundle:temporary-target-interaction-closure",
-      "candidate_ids": ["bundle:temporary-target-interaction-closure"],
+      "transition_id": "oracle-ir-v228-bound-effect-program-closure",
+      "compiler_version": "oracle-ir-v228",
+      "bundle_id": "bundle:bound-effect-program-closure",
+      "candidate_ids": ["bundle:bound-effect-program-closure"],
       "family_ids": [
         "activated_effect:unparsed-target-creature-gains",
         "activated_effect:unparsed-target-creature-gets",
-        "duration:until-end-of-turn",
         "effect_clause:ordered-effect-composition",
         "effect_clause:unparsed-target-creature-gains",
         "effect_clause:unparsed-target-creature-gets",
-        "quantity_expression:dynamic-quantity",
         "reference_binding:linked-result-reference",
         "target_or_choice:target-predicate"
       ],
       "capability_ids": [
-        "continuous.resolution.temporary_target_interactions",
-        "protection.typed.debt",
+        "resolution.effect_program.bound_references",
+        "resolution.effect_program.closed_components",
         "target.revalidate_resolution"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:temporary-target-interaction-closure"
+      "measurement_id": "measurement:bound-effect-program-closure"
     },
     "forecast_corrections": [
       {

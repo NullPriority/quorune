@@ -1350,6 +1350,26 @@
       ]
     },
     {
+      "id": "bound-effect-program-contract",
+      "patterns": [
+        "quorune/compiler/bound_effect_programs.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/rules/bound_effect_program_shapes.py",
+        "quorune/rules/closed_effect_program_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "tests/fixtures/bound-effect-program-cards.json",
+        "tests/test_bound_effect_programs.py"
+      ],
+      "test_modules": [
+        "test_activated_draw_abilities", "test_bound_effect_programs",
+        "test_card_program_trust", "test_closed_effect_programs",
+        "test_fixed_affected_player_discards", "test_fixed_controller_effect_sequences", "test_fixed_counter_event_triggers",
+        "test_fixed_effect_clause_sequences", "test_fixed_target_effect_sequences",
+        "test_high_risk_interaction_assurance", "test_rules_scheduler",
+        "test_semantic_choice_characterization", "test_temporary_target_interactions"
+      ]
+    },
+    {
       "id": "fixed-target-hand-inspection-contract",
       "patterns": [
         "quorune/compiler/hand_inspection_templates.py",

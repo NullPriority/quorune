@@ -5,6 +5,9 @@ import unittest
 from common import DB_PATH
 from high_risk_interaction_support import (
     ALL_HIGH_RISK_BOUNDARY_PAIRS,
+    BOUND_EFFECT_AND_REPLACEMENT_PAIRS,
+    CONTINUOUS_AND_REPLACEMENT_PAIRS,
+    DISCARD_ZONE_AND_MULTIPLE_DAMAGE_PAIR,
     ATTACHMENT_AND_CONTINUOUS_PAIRS,
     ATTACHED_CHARACTERISTIC_AND_DAMAGE_PREVENTION_PAIR,
     CAST_COST_MODIFIER_AND_DAMAGE_PREVENTION_PAIR,
@@ -65,6 +68,11 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             database=self.db,
         )
 
+    def test_continuous_prevention_result_link_remains_a_residual_pair(self):
+        assert_high_risk_boundary_pairs(
+            self, (CONTINUOUS_AND_REPLACEMENT_PAIRS[4],), database=self.db,
+        )
+
     def test_restricted_mana_replacement_residual_pairs_fail_closed(
         self,
     ) -> None:
@@ -79,6 +87,17 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         self.assertEqual(2, len(TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS))
         assert_high_risk_boundary_pairs(
             self, TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS, database=self.db,
+        )
+
+    def test_bound_effect_replacement_residual_pairs_fail_closed(self):
+        self.assertEqual(2, len(BOUND_EFFECT_AND_REPLACEMENT_PAIRS))
+        assert_high_risk_boundary_pairs(
+            self, BOUND_EFFECT_AND_REPLACEMENT_PAIRS, database=self.db,
+        )
+
+    def test_discard_zone_with_multiple_damage_recipients_fails_closed(self):
+        assert_high_risk_boundary_pairs(
+            self, (DISCARD_ZONE_AND_MULTIPLE_DAMAGE_PAIR,), database=self.db,
         )
 
     def test_dynamic_self_entry_replacement_residual_pairs_fail_closed(

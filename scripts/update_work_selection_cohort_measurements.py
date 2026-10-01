@@ -63,19 +63,14 @@ def _build(database: Path) -> dict:
             card.oracle_id: card
             for card in cards.iter_cards(commander_legal_only=True)
         }
-    transition_measurements = _transition_measurements(
-        records=records,
-        coverage=coverage,
-        bundles=bundles,
-    )
-    value = build_work_selection_cohort_measurements(
-        frontier=frontier,
-        bundle_policies=bundles,
-        cards_by_oracle_id=records,
-        coverage=coverage,
-        cohort_fingerprints=fingerprints,
-        transition_measurements=transition_measurements,
-    )
+        transition_measurements = _transition_measurements(
+            records=records, coverage=coverage, bundles=bundles, database=cards,
+        )
+        value = build_work_selection_cohort_measurements(
+            frontier=frontier, bundle_policies=bundles, cards_by_oracle_id=records,
+            coverage=coverage, cohort_fingerprints=fingerprints,
+            transition_measurements=transition_measurements, database=cards,
+        )
     validate_work_selection_cohort_measurements(
         value,
         frontier=frontier,
@@ -428,7 +423,7 @@ def _transition_coverage(coverage: dict, *, transition_id: str) -> dict:
 
 
 def _transition_measurements(
-    *, records: dict, coverage: dict, bundles: list[dict]
+    *, records: dict, coverage: dict, bundles: list[dict], database=None
 ) -> list[dict]:
     catalog = json.loads(POLICY.read_text(encoding="utf-8"))
     declaration = catalog["work_selection"].get(
@@ -495,6 +490,7 @@ def _transition_measurements(
         cards_by_oracle_id=records,
         coverage=coverage,
         cohort_fingerprints=fingerprints,
+        database=database,
     )["measurements"][0]
     if not _transition_measurement_is_eligible(
         measured,

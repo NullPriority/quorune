@@ -7,6 +7,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .fixed_effect_clause_shapes import (
     closed_effect_component_capabilities,
 )
+from .bound_effect_program_shapes import bound_effect_program_node_capabilities
 
 
 CLOSED_EFFECT_PROGRAM_MECHANIC = "closed-effect-program"
@@ -34,6 +35,10 @@ def closed_effect_program_node_capabilities(
     """Own a bounded ordered program when every flattened effect is closed."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if "bound-effect-program" in mechanics:
+        return bound_effect_program_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
     if (
         CLOSED_EFFECT_PROGRAM_MECHANIC not in mechanics
         or not 2 <= len(effects) <= 8

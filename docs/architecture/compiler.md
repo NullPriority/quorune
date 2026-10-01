@@ -323,6 +323,21 @@ repeated, variable, linked-result, unsupported optional,
 shared-subject, multi-target-group, quoted-boundary, parenthetical-boundary,
 and more-than-four-component programs remain source-spanned residuals.
 
+`compiler/bound_effect_programs.py` owns the complementary single-reference
+composition boundary. Two through four mandatory components may share one
+player subject or reuse one explicitly established player or battlefield target
+through “it,” “that player,” “that creature,” or “that permanent.” It retains
+the original target qualifiers and source exclusion, verifies reference-domain
+compatibility, and emits the existing effects in printed order. Separate
+explicit target occurrences never become one target merely because their
+schemas match. The bound-reference capability checks every component against
+its typed owner; execution, replacement choices, private affected-player
+choices, and checkpoint continuations remain in their existing owners. Owner
+or controller possessives, cross-zone or hidden-object references, unsupported
+leaf grammar, conditional or optional linkage, and derived results remain
+residual. Whole-program integration may admit these bounded combinations while
+the original unbound leaf composition correctly continues to reject them.
+
 `compiler/optional_effect_templates.py` owns one leading `You may` around one
 independently exact atomic effect. It preserves the nested effect's target
 schema and mechanic dependencies, adds only the generic controller choice,

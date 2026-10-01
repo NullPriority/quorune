@@ -635,12 +635,12 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
             "Up to one target creature gets +1/+1 until end of turn. Put a +1/+1 counter on it.",
             "Target creature gets +X/+X until end of turn. Put a +1/+1 counter on it.",
             "Target creature gets +1/+1 until end of turn. You may put a +1/+1 counter on it.",
-            "Target creature gains protection from the color of your choice until end of turn. Put a +1/+1 counter on it.",
-            "Target creature gets +1/+1 until end of turn. Scry 1. Put a +1/+1 counter on it.",
+            "Target creature gains protection from the card type of your choice until end of turn. Put a +1/+1 counter on it.",
+            "Target creature gets +1/+1 until end of turn. Scry X. Put a +1/+1 counter on it.",
             "Target creature gets +1/+1 until end of turn. Put a +1/+1 counter on target creature.",
             "Put a +1/+1 counter on it. It gains flying until end of turn.",
             "Target creature gains flying or reach until end of turn. Put a +1/+1 counter on it.",
-            "Target creature gets +1/+1 until end of turn. Put a +1/+1 counter and a flying counter on it.",
+            "Target creature gets +1/+1 until end of turn. Put a counter of your choice on it.",
         )
         for text in texts:
             with self.subTest(text=text):
@@ -653,6 +653,20 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
                 ir = self.compile(text)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_bound_composition_promotes_leaf_only_residuals(self):
+        texts = (
+            "Target creature gains protection from the color of your choice until end of turn. Put a +1/+1 counter on it.",
+            "Target creature gets +1/+1 until end of turn. Scry 1. Put a +1/+1 counter on it.",
+            "Target creature gets +1/+1 until end of turn. Put a +1/+1 counter and a flying counter on it.",
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_target_effect_sequence_template(text, card_name="Fixture"))
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertTrue(any("resolution.effect_program.bound_references" in node.capability_dependencies
+                                    for face in ir.faces for node in face.nodes))
 
     def test_trusted_hexproof_behavior_promotes_exact_sequence(self):
         text = (
@@ -768,7 +782,11 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
         )
 
         def exact() -> None:
-            self.assertEqual("exact", self.compile(text).status)
+            ir = self.compile(text)
+            self.assertEqual("exact", ir.status)
+            # A valid generic fallback must not hide loss of the specialized
+            # owner's stable identity in this owner-removal mutation.
+            self.assertEqual(SEQUENCE_TEMPLATE_ID, ir.faces[0].nodes[0].template_id)
 
         exact()
         with patch(

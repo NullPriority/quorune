@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind one explicit public target or shared player subject across bounded,
+  mandatory effect components while retaining qualifiers, printed order,
+  existing private and replacement continuations, and exact replay. Separate
+  target occurrences and unsupported reference domains remain residual.
+
 ### Typed ordinary Convoke
 
 - Added a face-pinned ordinary Convoke CardProgram family and immutable payment

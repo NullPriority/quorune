@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Callable, Mapping
 
 from .closed_effect_programs import closed_effect_program_template
+from .bound_effect_programs import bound_effect_program_template
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
 from .public_query_effect_amounts import public_query_effect_amount_template
 
@@ -43,6 +44,9 @@ def reviewed_effect_template_composition(
     )
     if sequence is not None:
         return sequence.compiled()
+    bound = bound_effect_program_template(text, compile_component=compile_atomic)
+    if bound is not None:
+        return bound.compiled()
     program = closed_effect_program_template(
         text,
         compile_component=compile_atomic,
