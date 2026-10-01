@@ -917,6 +917,7 @@
       ],
       "test_modules": [
         "test_activated_draw_abilities",
+        "test_continuous_effect_duration",
         "test_damage_prevention_shields",
         "test_declared_effect_amounts",
         "test_fixed_counter_event_triggers",
@@ -933,6 +934,18 @@
       ],
       "test_suites": [
         "events-replacement-zone"
+      ]
+    },
+    {
+      "id": "ordinary-cycling-runtime-closure-contract",
+      "patterns": [
+        "quorune/compiler/cycling_nodes.py",
+        "tests/test_ordinary_cycling.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_declared_effect_amounts",
+        "test_ordinary_cycling"
       ]
     },
     {

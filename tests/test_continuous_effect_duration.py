@@ -1051,7 +1051,7 @@ class ContinuousEffectModelTests(unittest.TestCase):
             "{1}: This creature gets +X/+X until end of turn.",
             (
                 "{1}: Creatures you control get +X/+X until end of turn, where "
-                "X is the number of creatures you control."
+                "X is the number of creatures you control with power 4 or greater."
             ),
             "{1}: This creature gets +1/+1.",
             "{1}: This creature gains protection from red until end of turn.",
@@ -1064,6 +1064,27 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_declared_public_count_characteristic_activation_uses_existing_owners(self):
+        ir = compile_oracle_card(
+            activated_characteristic_card(
+                "{1}: Creatures you control get +X/+X until end of turn, where "
+                "X is the number of creatures you control."
+            ),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status)
+        self.assertFalse(ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertIn("quantity_expression.declared_effect_amount", node.capability_dependencies)
+        self.assertIn("quantity_expression.public_query_effect_amount", node.capability_dependencies)
+        self.assertIn("continuous.resolution.fixed_characteristics_until_end_of_turn", node.capability_dependencies)
+        effect = node.effects[0]
+        self.assertEqual("modify_all_matching_permanents_until_end_of_turn", effect["op"])
+        self.assertEqual("public_query_effect_amount", effect["power"]["kind"])
+        self.assertEqual(2, effect["power"]["schema_version"])
+        self.assertEqual(effect["power"]["binding_id"], effect["toughness"]["binding_id"])
 
     def test_activated_characteristic_dependency_gate_mutant_is_killed(self):
         def assert_exact() -> None:
