@@ -4608,8 +4608,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v234-declared-effect-amounts",
-      "compiler_version": "oracle-ir-v234",
+      "transition_id": "oracle-ir-v235-declared-effect-amounts",
+      "compiler_version": "oracle-ir-v235",
       "bundle_id": "bundle:declared-effect-amounts",
       "candidate_ids": ["compiler:declared-effect-amounts"],
       "family_ids": ["effect_clause:deal-damage", "effect_clause:draw", "quantity_expression:dynamic-quantity"],

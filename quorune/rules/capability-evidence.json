@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "61e63717cf84f5589bcdda2449bf7d2bdff27b81bcfb8f370c73693a7f6457d8",
-  "declaration_source_fingerprint": "b068fbd8f46acaa34fd46f8e24986a69352c8b82005040f3f7ef0c4048b30cf3",
+  "declaration_source_fingerprint": "fa03c1649f9a37c91db919a9e0e12b38fb67c88116814f9fea407a08058afed0",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -52200,6 +52200,23 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_declared_public_quantity_cannot_omit_its_query_owner",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the public-query owner tag from an otherwise valid declared public count fails closed rather than substituting declared-amount and result capabilities."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned",
       "official_rule_ids": [
         "107.3a",
@@ -71460,5 +71477,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "3384e81f75ec4b61df1980fbd9bf247cfac09995e0c1b307916957f40c1aabde"
+  "fingerprint": "f5c0888d06527fa59655a723115b5d832eb1a7b4c1ea5033529f348790fd8631"
 }

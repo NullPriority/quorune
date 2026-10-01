@@ -189,6 +189,22 @@ class DeclaredEffectAmountCompilerTests(unittest.TestCase):
         self.assertFalse(result["grants_gameplay_trust"])
         self.assertEqual("retired_below_harvest_floor",result["decision"])
 
+    def test_declared_public_quantity_cannot_omit_its_query_owner(self):
+        from quorune.rules.capabilities import capability_dependencies_for_node
+
+        compiled = self.compile(generic_spell(
+            "Draw X cards, where X is the number of cards in your hand.",
+            mana_cost="{2}{G}",
+        ))
+        self.assertEqual("exact",compiled.status)
+        node = compiled.faces[0].nodes[0]
+        valid = capability_dependencies_for_node(effects=node.effects,
+            target_schema=node.target_schema,mechanic_ids=node.mechanics)
+        self.assertIn("quantity_expression.public_query_effect_amount",valid)
+        self.assertEqual((),capability_dependencies_for_node(effects=node.effects,
+            target_schema=node.target_schema,mechanic_ids=[mechanic for mechanic in node.mechanics
+                if mechanic != "public-query-effect-amount"]))
+
 
 class DeclaredEffectAmountValueTests(unittest.TestCase):
     def quantity(self):
@@ -452,10 +468,12 @@ class DeclaredEffectAmountActionTests(unittest.TestCase):
                 engine.state = deepcopy(pristine)
                 engine.permissions = CapabilityManager(engine.state)
                 source = self.add(engine,name,zone="hand")
-                action = self.ready(session,source,{"W":1,"C":2})
+                action = self.ready(session,source,{"W":1,"C":3})
                 cards = set(engine.state.cards)
                 self.checkpoint(session)
-                response = {"action_id":action["id"],"x":2,"pay":"auto"}
+                # Three distinguishes execution from the compiler's first
+                # fixed-value projection (two), rather than echoing it.
+                response = {"action_id":action["id"],"x":3,"pay":"auto"}
                 if name == "Generic Announced Damage":
                     self.assertIn(target.ref,action["target_schema"]["legal_refs"])
                     response["targets"] = [target.ref]
@@ -466,19 +484,19 @@ class DeclaredEffectAmountActionTests(unittest.TestCase):
                 self.assertEqual(0,engine.state.players["A"].mana_pool.get("C",0))
                 current = engine.state.cards[target.object_id]
                 if "Damage" in name:
-                    self.assertEqual(2,current.marked_damage)
+                    self.assertEqual(3,current.marked_damage)
                 elif name == "Generic Announced Token":
                     created = set(engine.state.cards)-cards
-                    self.assertEqual(2,len(created))
+                    self.assertEqual(3,len(created))
                     for object_id in created:
                         token = engine.state.cards[object_id]
                         self.assertTrue(token.is_token)
                         self.assertEqual("A",token.controller)
-                        self.assertEqual(2,engine._numeric_stat(object_id,"power"))
-                        self.assertEqual(2,engine._numeric_stat(object_id,"toughness"))
+                        self.assertEqual(3,engine._numeric_stat(object_id,"power"))
+                        self.assertEqual(3,engine._numeric_stat(object_id,"toughness"))
                 else:
-                    self.assertEqual(0,engine._numeric_stat(target.object_id,"power"))
-                    self.assertEqual(4,engine._numeric_stat(target.object_id,"toughness"))
+                    self.assertEqual(-1,engine._numeric_stat(target.object_id,"power"))
+                    self.assertEqual(3,engine._numeric_stat(target.object_id,"toughness"))
                 self.replay(session,load=True)
                 if name == "Generic Announced Swell":
                     expire_end_of_turn_continuous_effects(engine.state)

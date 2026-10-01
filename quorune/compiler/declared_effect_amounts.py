@@ -185,6 +185,8 @@ def declared_amount_shape_context(
             if value["kind"] == CAST_X_AMOUNT_KIND:
                 spec = CastXAmountSpec.from_dict(value)
             else:
+                if "public-query-effect-amount" not in mechanics:
+                    raise PublicQueryAmountError("Declared public amounts require their query owner")
                 spec = PublicQueryAmountSpec.from_dict(value)
                 if spec.schema_version != 2:
                     raise PublicQueryAmountError("Declared instruction requires its binding identity")

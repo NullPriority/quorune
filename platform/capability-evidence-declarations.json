@@ -21884,6 +21884,14 @@
     {
       "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_declared_public_quantity_cannot_omit_its_query_owner",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Removing the public-query owner tag from an otherwise valid declared public count fails closed rather than substituting declared-amount and result capabilities."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned",
       "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
