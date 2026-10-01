@@ -4611,7 +4611,7 @@
       "transition_id": "oracle-ir-v235-declared-effect-amounts",
       "compiler_version": "oracle-ir-v235",
       "bundle_id": "bundle:declared-effect-amounts",
-      "candidate_ids": ["compiler:declared-effect-amounts"],
+      "candidate_ids": ["bundle:declared-effect-amounts"],
       "family_ids": ["effect_clause:deal-damage", "effect_clause:draw", "quantity_expression:dynamic-quantity"],
       "capability_ids": ["quantity_expression.declared_effect_amount"],
       "non_harvest_reason": null,
