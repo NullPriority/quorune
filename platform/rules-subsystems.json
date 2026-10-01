@@ -4582,13 +4582,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v231-layer5-quantity-keyword-boundary",
-      "compiler_version": "oracle-ir-v231",
+      "transition_id": "oracle-ir-v232-public-quantity-program-registration",
+      "compiler_version": "oracle-ir-v232",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Correct the existing layer-5 quantity descriptor boundary to reject negative as well as positive keyword predicates before constructor, decoding, and resolution paths can accept an unsupported later-layer count. No Oracle grammar or quantity semantics are expanded.",
+      "non_harvest_reason": "Restore ordinary trusted spell and activation registration for already admitted public-query effect amounts through their canonical fixed-shape and capability owners. No Oracle grammar or quantity semantics are expanded.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [

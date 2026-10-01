@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed trusted public-quantity spell action fixtures",
+  "cards": [
+    {"oracle_id":"00000000-0000-4000-8000-000000000699","name":"Generic Count Draw","mana_cost":"{G}","cmc":1,"type_line":"Sorcery","oracle_text":"Draw a card for each creature you control.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+  ],
+  "rulings": []
+}

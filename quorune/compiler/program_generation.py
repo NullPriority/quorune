@@ -16,6 +16,10 @@ from ..rules.capabilities import (
     capability_dependencies_for_node,
 )
 from .modal_program_closure import is_closed_fixed_modal_program
+from .public_query_effect_amounts import (
+    PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC,
+    public_query_amount_program_is_closed,
+)
 from .prevention_templates import is_closed_fixed_prevention_program
 from ..rules.counter_capability_shapes import (
     fixed_counter_placement_group_node_capabilities,
@@ -1252,6 +1256,7 @@ def _is_closed_fixed_public_zone_move_set_program(
 def _closed_effect_recognizers():
     return (
         is_closed_fixed_modal_program,
+        _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
         _is_closed_fixed_damage_program,
         _is_closed_fixed_next_turn_draw_program,
@@ -1304,6 +1309,22 @@ def _closed_effect_recognizers():
         _is_closed_public_graveyard_card_exile_program,
         _is_closed_fixed_public_zone_move_set_program,
         _is_closed_targeted_tap_state_program,
+    )
+
+
+def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
+    """Refine existing fixed effect shapes without treating a scalar as prose."""
+
+    if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in program.coverage:
+        return False
+    return public_query_amount_program_is_closed(
+        program,
+        required_dependencies=capability_dependencies_for_node(
+            effects=program.effects,
+            target_schema=program.target_schema,
+            mechanic_ids=program.coverage,
+            cost_schema=program.cost_schema,
+        )
     )
 
 

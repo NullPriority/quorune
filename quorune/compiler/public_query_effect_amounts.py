@@ -458,6 +458,41 @@ def _fixed_shape_effects(
     return tuple(projected)
 
 
+def public_query_amount_program_is_closed(program: Any, *, required_dependencies) -> bool:
+    """Keep scalar admission with its existing fixed shape and target owners."""
+    from ..rules.node_capability_shapes import (
+        fixed_damage_node_capabilities, fixed_draw_node_capabilities,
+        fixed_source_characteristics_node_capabilities,
+        fixed_target_characteristics_node_capabilities,
+    )
+    from ..rules.fixed_controller_effect_shapes import fixed_life_node_capabilities
+    from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+
+    if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in program.coverage:
+        return False
+    context = public_query_amount_shape_context(program.effects, set(program.coverage))
+    if context is None:
+        return False
+    effects, mechanics = context
+    required = set(required_dependencies)
+    if (
+        PUBLIC_QUERY_AMOUNT_CAPABILITY not in required
+        or not required.issubset(program.capability_dependencies)
+    ):
+        return False
+    return any(
+        resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics)
+        for resolver in (
+            fixed_damage_node_capabilities,
+            fixed_draw_node_capabilities,
+            fixed_life_node_capabilities,
+            fixed_token_creation_node_capabilities,
+            fixed_target_characteristics_node_capabilities,
+            fixed_source_characteristics_node_capabilities,
+        )
+    )
+
+
 def public_query_amount_shape_context(
     effects: Sequence[Mapping[str, Any]], mechanics: set[str]
 ) -> tuple[tuple[Mapping[str, Any], ...], set[str]] | None:

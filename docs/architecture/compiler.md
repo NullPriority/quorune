@@ -1228,6 +1228,10 @@ source/direct-target temporary power/toughness operation and target schema. A
 power/toughness result may retain fixed supported keywords beside the
 query-scaled modifier. It serializes each quantity as a semantic scalar value
 rather than a new effect operation.
+Ordinary program registration validates the same scalar projection and the
+unchanged fixed effect and target shape before promoting a spell or activation.
+It requires the quantity capability and the full original dependency closure;
+a scalar descriptor alone cannot grant trust.
 `semantic_runtime/query_effect_amounts.py` validates and resolves that scalar,
 and `semantic_runtime/values.py` supplies the stack object's locked controller
 to the cycle-safe layer-5 quantity evaluator immediately before the unchanged

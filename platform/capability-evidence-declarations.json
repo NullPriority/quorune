@@ -21804,6 +21804,14 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Execute a genuinely current-trusted offered spell through command payment, the locked-controller quantity and draw owners, then verify exact replay and save/load."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_delegate_to_draw_and_token_owners",
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21852,6 +21860,14 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "The source controller's creatures determine the amount in a real four-player action; another controller's creature is excluded."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21880,6 +21896,14 @@
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replace the resolution-time quantity result and prove the locked-controller behavioral result detects the survivor."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_public_quantity_registration_rejects_malformed_and_missing_dependencies",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject malformed scalars, later-layer queries, wrong target domains, unknown effects and every omitted dependency before promotion."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -21916,6 +21940,14 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_existing_public_quantity_spell_shapes_are_promotable",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Existing draw, life, damage, token and temporary characteristic scalars reach the canonical effect-program admission boundary rather than fixed-integer-only recognizers."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_compiler_lowers_public_query_amounts_across_contexts",
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21928,6 +21960,14 @@
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile source-self and direct-target query-scaled temporary power/toughness modifiers across spell, activation, normalized trigger, and typed quoted-activation carriers without adding an effect operation."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Only the acting principal receives the authoritative action decision; quantities do not expose other players' hidden identities."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -21952,6 +21992,14 @@
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the current granted-ability offer, payment, query-scaled layer-7c result, and final authoritative state from the pre-activation checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A checkpoint before the offered spell reproduces payment, stack execution and exact draw consequences through the real Game Record path."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
