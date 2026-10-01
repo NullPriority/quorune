@@ -4546,6 +4546,31 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "bound-effect-program-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:qualified-zone-event-queries",
+          "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
+          "canonical_owner_ids": [
+            "capability:trigger.event.qualified_zone_change",
+            "component:quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec",
+            "component:quorune.trigger_discovery.semantic_event_condition_matches",
+            "component:quorune.zone_trigger_events.sealed_public_characteristic_facts"
+          ],
+          "source_contexts": ["triggered"],
+          "normalized_literal_parameters": ["closed-public-characteristics", "departure-lki", "single-object-occurrence", "source-union-and-exclusion"],
+          "shared_dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+          "shared_grammar": "one closed characteristic-qualified single-object entry, death, graveyard or leave subscription with an independently exact typed body; existing productions retain precedence",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Closes reusable public event-query carriers across independently supported counter, life, draw, damage, token, characteristic and target bodies without adding another trigger or characteristic engine.",
+          "explicit_exclusions": [
+            "aggregation, cross-zone cards, hidden, chosen and linked subjects",
+            "counter, combat-state, damage-history, relative and total-stat queries",
+            "unrepresented event producers and independently unsupported bodies or sibling abilities"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "qualified-zone-event-query-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -4557,26 +4582,21 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v228-bound-effect-program-closure",
-      "compiler_version": "oracle-ir-v228",
-      "bundle_id": "bundle:bound-effect-program-closure",
-      "candidate_ids": ["bundle:bound-effect-program-closure"],
+      "transition_id": "oracle-ir-v230-qualified-zone-event-queries",
+      "compiler_version": "oracle-ir-v230",
+      "bundle_id": "bundle:qualified-zone-event-queries",
+      "candidate_ids": ["bundle:qualified-zone-event-queries"],
       "family_ids": [
-        "activated_effect:unparsed-target-creature-gains",
-        "activated_effect:unparsed-target-creature-gets",
-        "effect_clause:ordered-effect-composition",
-        "effect_clause:unparsed-target-creature-gains",
-        "effect_clause:unparsed-target-creature-gets",
-        "reference_binding:linked-result-reference",
-        "target_or_choice:target-predicate"
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "resolution.effect_program.bound_references",
-        "resolution.effect_program.closed_components",
-        "target.revalidate_resolution"
+        "trigger.event.normalized_zone_change",
+        "trigger.event.qualified_zone_change",
+        "trigger.placement.apnap"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:bound-effect-program-closure"
+      "measurement_id": "measurement:qualified-zone-event-queries"
     },
     "forecast_corrections": [
       {

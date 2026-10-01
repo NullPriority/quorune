@@ -49,6 +49,14 @@ class ExactMishraClosureTests(unittest.TestCase):
         engine.state.priority_player = None
         engine._prepare_stack_resolution()
 
+    def artifact_entry_program(self, engine, source):
+        programs = [program for program in engine.semantics.programs_for_oracle(source.oracle_id)
+                    if program.event == "permanent.enter"
+                    and "trigger.event.qualified_zone_change" in program.capability_dependencies]
+        self.assertEqual(1, len(programs))
+        self.assertTrue(engine.semantic_program_is_current_trusted(programs[0]))
+        return programs[0]
+
     @staticmethod
     def prepare_main(engine, seat: str = "A"):
         engine.state.active_player = seat
@@ -244,6 +252,7 @@ class ExactMishraClosureTests(unittest.TestCase):
         session = self.make_session(1104)
         engine = session.engine
         synthesizer = self.card(engine, "A", "Simulacrum Synthesizer")
+        program = self.artifact_entry_program(engine, synthesizer)
         portal = self.card(engine, "A", "The Stasis Coffin")
         engine.move_card(
             synthesizer.object_id,
@@ -277,6 +286,8 @@ class ExactMishraClosureTests(unittest.TestCase):
             semantic_events=True,
         )
         self.assertFalse(engine._stabilize())
+        self.assertEqual(1, len(engine.state.stack))
+        self.assertEqual(program.key, engine.state.stack[0].semantic_key)
         self.resolve_top(engine)
         constructs = [
             card
@@ -466,9 +477,7 @@ class ExactMishraClosureTests(unittest.TestCase):
                 kind="triggered_ability",
                 controller="A",
                 label="Synthetic artifact trigger",
-                semantic_key=(
-                    f"{synthesizer.oracle_id}:trigger:artifact-enter"
-                ),
+                semantic_key=self.artifact_entry_program(engine, synthesizer).key,
                 source_object_id=synthesizer.object_id,
             )
             engine.state.players["A"].mana_pool["C"] = 2
@@ -631,9 +640,7 @@ class ExactMishraClosureTests(unittest.TestCase):
             kind="triggered_ability",
             controller="A",
             label="Artifact-source trigger",
-            semantic_key=(
-                f"{synthesizer.oracle_id}:trigger:artifact-enter"
-            ),
+            semantic_key=self.artifact_entry_program(engine, synthesizer).key,
             source_object_id=synthesizer.object_id,
         )
         before_life = engine.state.players["A"].life
@@ -683,9 +690,7 @@ class ExactMishraClosureTests(unittest.TestCase):
             kind="triggered_ability",
             controller="A",
             label="Controlled trigger",
-            semantic_key=(
-                f"{synthesizer.oracle_id}:trigger:artifact-enter"
-            ),
+            semantic_key=self.artifact_entry_program(engine, synthesizer).key,
             source_object_id=synthesizer.object_id,
         )
         activated = self.stack_item(
@@ -694,9 +699,7 @@ class ExactMishraClosureTests(unittest.TestCase):
             kind="activated_ability",
             controller="A",
             label="Controlled activated ability",
-            semantic_key=(
-                f"{synthesizer.oracle_id}:trigger:artifact-enter"
-            ),
+            semantic_key=self.artifact_entry_program(engine, synthesizer).key,
             source_object_id=synthesizer.object_id,
         )
         engine.state.players["A"].mana_pool["C"] = 2

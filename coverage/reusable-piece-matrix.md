@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "a56ec619733262ec97d14521399eb89485b78223dc896c7ca47bf43d1707179a"
+verified: "372c7605eb92cf44e04dbd00fdfbf0542f70032bf1e60b4ac32f1951571b10b5"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,19 +17,19 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 2,803
+- Pieces: 2,804
 - Cards indexed: 31,623
-- Material abilities classified: 59,402
+- Material abilities classified: 59,400
 - Unclassified material spans: 0
 - Mapped pinned rules: 1,067 / 3,309
-- Applicable piece pairs: 90,797
+- Applicable piece pairs: 91,161
 - Covered piece pairs: 997
 
 ## Ontology classes
 
 | Class | Pieces |
 |---|---:|
-| `actions_permissions` — Actions, permissions, and prohibitions | 109 |
+| `actions_permissions` — Actions, permissions, and prohibitions | 110 |
 | `card_forms` — Card types and specialized forms | 8 |
 | `choices_continuations` — Modes, targets, choices, and continuations | 14 |
 | `combat` — Combat | 26 |
@@ -52,7 +52,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | System | Status | Pieces | Blocking pieces |
 |---|---|---:|---:|
-| `action_legality_casting_activation_costs_mana` | `inventoried` | 151 | 6 |
+| `action_legality_casting_activation_costs_mana` | `inventoried` | 152 | 6 |
 | `combat` | `compositional` | 26 | 0 |
 | `derived_characteristics_static_layers` | `inventoried` | 54 | 7 |
 | `generic_triggers_stack_placement` | `inventoried` | 3 | 3 |
@@ -67,7 +67,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,074 | 1,835 | 1,835 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,072 | 1,841 | 1,841 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,909 | 170 | 170 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,471 | 134 | 134 | `absent` | `untested` |
 | `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 106 | 20 | 20 | `absent` | `untested` |

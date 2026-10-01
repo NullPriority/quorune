@@ -96,6 +96,7 @@ from quorune.compiler.hand_inspection_templates import (
 )
 from quorune.rules.temporary_target_interactions import TEMPORARY_TARGET_INTERACTION_CAPABILITY
 from quorune.compiler.bound_effect_programs import BOUND_EFFECT_PROGRAM_CAPABILITY
+from quorune.compiler.qualified_zone_event_bindings import QUALIFIED_ZONE_CAPABILITY, qualified_public_zone_event_binding_spec
 from quorune.card_programs import bind_card_program_runtime
 from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.semantics import SemanticRegistry
@@ -210,6 +211,7 @@ _PROBE_FIXED_HAND_INSPECTION = (
 )
 _PROBE_TEMPORARY_TARGET_INTERACTION = "temporary-target-interaction-closure-existing-owner-v1"
 _PROBE_BOUND_EFFECT_PROGRAM = "bound-effect-program-existing-owner-v1"
+_PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
 )
@@ -564,6 +566,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_HAND_INSPECTION,
     _PROBE_TEMPORARY_TARGET_INTERACTION,
     _PROBE_BOUND_EFFECT_PROGRAM,
+    _PROBE_QUALIFIED_ZONE_EVENT,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
@@ -1208,6 +1211,13 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_QUALIFIED_ZONE_EVENT:
+        if card_record is None:
+            raise WorkSelectionCohortMeasurementError("Qualified zone query measurement requires card context")
+        return any(qualified_public_zone_event_binding_spec(
+            trigger_ability_word_material_line(_without_parenthetical_reminder(line)),
+            card_name=str(card_record.name),
+        ) is not None for line in source.splitlines())
     if probe_id == _PROBE_BOUND_EFFECT_PROGRAM:
         return (" and " in source.casefold() or ". " in source) and any(
             word in source.casefold() for word in ("target ", "each player", "each opponent", "you ")
@@ -5294,7 +5304,7 @@ def _measurement(
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
         )
-    if probe_id == _PROBE_BOUND_EFFECT_PROGRAM:
+    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_QUALIFIED_ZONE_EVENT}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8090,8 +8100,9 @@ def _bound_effect_program_measurement(
     """Measure exact promotions and real whole-program capability closure."""
 
     if database is None:
-        raise WorkSelectionCohortMeasurementError("Bound-effect measurement requires the pinned database")
+        raise WorkSelectionCohortMeasurementError("Capability-closed harvest measurement requires the pinned database")
     registry = load_default_capability_registry()
+    capability = QUALIFIED_ZONE_CAPABILITY if probe_id == _PROBE_QUALIFIED_ZONE_EVENT else BOUND_EFFECT_PROGRAM_CAPABILITY
     abilities = residuals = 0
     remaining: dict[str, int] = {}
     complete: set[str] = set()
@@ -8102,7 +8113,7 @@ def _bound_effect_program_measurement(
         record = cards_by_oracle_id.get(oracle_id)
         if record is None:
             raise WorkSelectionCohortMeasurementError(f"Missing pinned card {oracle_id}")
-        if not _matches_probe(probe_id, record.oracle_text):
+        if not _matches_probe(probe_id, record.oracle_text, card_record=record):
             continue
         compiled = compile_oracle_card(record, capability_registry=registry,
                                        capability_profile="commander_review")
@@ -8110,7 +8121,7 @@ def _bound_effect_program_measurement(
                     for a in card.get("abilities", ())}
         promoted = {
             (face.face_id, node.node_id) for face in compiled.faces for node in face.nodes
-            if node.exact and BOUND_EFFECT_PROGRAM_CAPABILITY in node.capability_dependencies
+            if node.exact and capability in node.capability_dependencies
             and previous.get((face.face_id, node.node_id), {}).get("status") != "exact"
         }
         if not promoted:

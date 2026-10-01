@@ -236,6 +236,7 @@
       "test_landwalk",
       "test_madness_rules",
       "test_mana_abilities",
+      "test_qualified_zone_event_queries",
       "test_self_zone_move_rules",
       "test_surveil_rules",
       "test_targeted_destruction_effect_clauses",

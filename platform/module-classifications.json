@@ -3168,6 +3168,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/qualified_zone_event_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/query_characteristic_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10035,5 +10050,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "5da7eb49c74abd49b9dbe9780a540d8ee65b9dc544daa8dd3092b95558a41327"
+  "fingerprint": "833156dfcd90e2764e31db71cccdbf904d11e16d9865329265418d2b2ca0357c"
 }

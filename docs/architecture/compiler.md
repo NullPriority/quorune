@@ -1240,7 +1240,8 @@ granted, and open-arithmetic forms remain source-spanned residuals.
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed owner, prior controller, type,
-subtype, color, token, attachment, and integer-power facts; damage and draw use
+subtype, supertype, color, keyword, mana-value, token, attachment, and integer
+power/toughness facts; damage and draw use
 committed result events; spell-cast schema v5 adds committed public target
 references while retaining historical schemas. Completed attack, block,
 Cycling, face-up, and spell-copy actions share one public-action occurrence
@@ -1265,8 +1266,27 @@ a player or a planeswalker or battle; opponent noncombat damage; and exact
 one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
 and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
-sacrifice, tap-state, source-token damage, chosen, legendary, modified, and
-counter-bearing forms remain residual. See
+sacrifice, tap-state, source-token damage, chosen, modified, and
+counter-bearing public-action forms remain residual.
+
+`compiler/qualified_zone_event_bindings.py` adds closed single-object public
+entry, death, graveyard, and leave subjects through that same event-effect
+owner. It normalizes subject-word order into the existing characteristic query
+parser and emits only ordinary declarative occurrence predicates, not another
+targeting check. Fixed type/subtype unions, color, supertype, keyword, mana-value,
+and individual power/toughness comparisons may compose with controller, token,
+source-exclusion, and graveyard-owner facts. A source-or-another union preserves
+the independent source branch; existing productions retain precedence and their
+serialized descriptors. Superseded reviewed execution views retire when this
+generic production owns the same printed ability; current games never execute
+both, while saved historical registries retain their pinned compatibility data.
+Entry reads committed current characteristics and
+departure reads sealed battlefield LKI, including when the observer also leaves.
+The shared layer-6 ability query controls discovery and the existing APNAP,
+target, effect, replacement, and replay owners execute the resulting trigger.
+Aggregation, cross-zone card subjects, hidden or chosen information, counter,
+combat-state, damage-history, relative and total-stat queries, and independently
+unsupported event or body forms remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
 
 `compiler/keyword_event_effect_nodes.py` owns the isolated fixed printed
