@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 import json
 from pathlib import Path
+from types import SimpleNamespace
 import tempfile
 import unittest
 from unittest import mock
@@ -11,6 +12,7 @@ from common import ROOT, keep_all, load_assets, make_session
 from quorune.card_programs import compile_card_program
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.characteristic_fragments import (
+    CharacteristicFragmentError,
     CharacteristicQuantityScope,
     CharacteristicQuantitySpec,
 )
@@ -48,6 +50,7 @@ from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from quorune.semantic_runtime.query_effect_amounts import resolve_public_query_amount
 from quorune.semantic_runtime.values import resolve_semantic_value
 from quorune.trigger_processing import collect_trigger_items, enqueue_trigger_batch
 from scripts.build_test_database import build_fixture_database
@@ -114,6 +117,56 @@ def _contains_query_amount(value) -> bool:
     if isinstance(value, (list, tuple)):
         return any(_contains_query_amount(child) for child in value)
     return False
+
+
+class PublicQuantityBoundaryTests(unittest.TestCase):
+    """CR 613.1e/f: layer-5 quantities cannot query current keywords."""
+
+    @staticmethod
+    def descriptor(*, negative: bool, zone: str = "battlefield"):
+        query = ObjectQuerySpec(zones=(zone,), types_all=("creature",))
+        quantity = CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE, query=query)
+        result = PublicQueryAmountSpec(quantity=quantity).to_dict()
+        if negative:
+            # A complete schema-v5 query, not an extra key on an older schema.
+            result["quantity"]["query"] = replace(
+                query, keywords_none=("flying",)).to_dict()
+        return result
+
+    def test_quantity_constructor_rejects_all_late_keyword_polarities(self):
+        for zone in ("battlefield", "graveyard"):
+            for field in ("keywords_all", "keywords_none"):
+                with self.subTest(zone=zone, field=field):
+                    query = ObjectQuerySpec(zones=(zone,), **{field: ("flying",)})
+                    with self.assertRaises(CharacteristicFragmentError):
+                        CharacteristicQuantitySpec(
+                            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+                            query=query)
+
+    def test_public_amount_decoder_rejects_negative_keyword_queries(self):
+        for zone in ("battlefield", "graveyard"):
+            with self.subTest(zone=zone):
+                with self.assertRaises(PublicQueryAmountError):
+                    PublicQueryAmountSpec.from_dict(self.descriptor(negative=True, zone=zone))
+
+    def test_resolver_rejects_negative_keyword_even_for_known_empty_zone(self):
+        host = SimpleNamespace(state=SimpleNamespace(
+            players={"A": SimpleNamespace(zones={"battlefield": [], "graveyard": []})},
+            cards={}))
+        item = SimpleNamespace(controller="A", ref="generic:stack-source")
+        for zone in ("battlefield", "graveyard"):
+            with self.subTest(zone=zone):
+                with self.assertRaises(PublicQueryAmountError):
+                    resolve_public_query_amount(host, self.descriptor(negative=True, zone=zone), item)
+                self.assertEqual(0, resolve_public_query_amount(
+                    host, self.descriptor(negative=False, zone=zone), item))
+
+    def test_supported_layer5_query_and_legacy_scalar_round_trip(self):
+        for zone in ("battlefield", "graveyard"):
+            with self.subTest(zone=zone):
+                value = self.descriptor(negative=False, zone=zone)
+                self.assertEqual(value, PublicQueryAmountSpec.from_dict(value).to_dict())
 
 
 class PublicQueryEffectAmountCompilerTests(unittest.TestCase):

@@ -21884,6 +21884,30 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_public_amount_decoder_rejects_negative_keyword_queries",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject a complete schema-v5 negative-keyword query rather than accepting an unsupported layer-6 predicate at the layer-5 quantity boundary."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_quantity_constructor_rejects_all_late_keyword_polarities",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject both required and excluded keyword predicates before a battlefield or graveyard quantity descriptor can be constructed."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_resolver_rejects_negative_keyword_even_for_known_empty_zone",
+      "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A known-empty collection cannot turn an unsupported later-layer predicate into an authorized zero scalar result."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_public_query_amount_grammar_and_schema_fail_closed",
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
