@@ -12,6 +12,7 @@ from ..query_effect_amount_model import (
 )
 from ..rules.source_references import SourceReferenceSpec
 from .query_characteristic_templates import query_characteristic_quantity
+from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
 
 PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
@@ -239,6 +240,42 @@ _AMOUNT_FIELDS = {
 }
 
 
+def _source_characteristic_amount_base(
+    effects: Sequence[Mapping[str, Any]],
+) -> FixedSourceCharacteristicsTemplate | None:
+    """Consume the entire fixed self result before adapting its scalar."""
+    modifiers = [
+        effect for effect in effects
+        if effect.get("op") == "modify_stats_until_end_of_turn"
+    ]
+    if len(modifiers) != 1 or not 1 <= len(effects) <= 3:
+        return None
+    keywords = []
+    for effect in effects:
+        if effect.get("card") != "$source":
+            return None
+        if effect.get("op") == "modify_stats_until_end_of_turn":
+            if set(effect) != {"op", "card", "power", "toughness"} or any(
+                type(effect.get(field)) is not int
+                for field in ("power", "toughness")
+            ):
+                return None
+        elif effect.get("op") == "grant_keyword_until_end_of_turn":
+            if set(effect) != {"op", "card", "keyword"} or type(effect["keyword"]) is not str:
+                return None
+            keywords.append(effect["keyword"])
+        else:
+            return None
+    try:
+        return FixedSourceCharacteristicsTemplate(
+            source_kind="query-stat-modifier",
+            power=modifiers[0]["power"], toughness=modifiers[0]["toughness"],
+            keywords=tuple(keywords),
+        )
+    except ValueError:
+        return None
+
+
 def public_query_effect_amount_template(
     text: str,
     *,
@@ -290,14 +327,20 @@ def public_query_effect_amount_template(
         template_id, effects, target_schema, mechanics = compile_fixed(
             fixed_text
         )
+        if template_id is None or not mechanics:
+            return None
+        if target_schema is None and effects and all(effect.get("card") == "$source" for effect in effects):
+            source_template = _source_characteristic_amount_base(effects)
+            if source_template is None:
+                return None
+            template_id, effects, target_schema, mechanics = source_template.compiled()
         modified = 0
         projected: list[Mapping[str, Any]] = []
         for raw_effect in effects:
             effect = deepcopy(dict(raw_effect))
-            if effect.get("op") == "modify_stats_until_end_of_turn":
+            if effect.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}:
                 if (
-                    set(effect) != {"op", "card", "power", "toughness"}
-                    or type(effect.get("power")) is not int
+                    type(effect.get("power")) is not int
                     or type(effect.get("toughness")) is not int
                 ):
                     return None
@@ -371,7 +414,7 @@ def contains_public_query_characteristic_amount(value: Any) -> bool:
     """Return whether one temporary stat operation carries this scalar."""
 
     if isinstance(value, Mapping):
-        if value.get("op") == "modify_stats_until_end_of_turn":
+        if value.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}:
             return any(
                 isinstance(value.get(field), Mapping)
                 and value[field].get("kind") == PUBLIC_QUERY_AMOUNT_KIND
@@ -394,7 +437,7 @@ def _fixed_shape_effects(
 
     projected = [deepcopy(dict(effect)) for effect in effects]
     characteristic = any(
-        effect.get("op") == "modify_stats_until_end_of_turn"
+        effect.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}
         and contains_public_query_effect_amount(effect)
         for effect in projected
     )
@@ -402,7 +445,7 @@ def _fixed_shape_effects(
         modifiers = tuple(
             effect
             for effect in projected
-            if effect.get("op") == "modify_stats_until_end_of_turn"
+            if effect.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}
         )
         references = {
             effect.get("card")
@@ -411,6 +454,7 @@ def _fixed_shape_effects(
             in {
                 "grant_keyword_until_end_of_turn",
                 "modify_stats_until_end_of_turn",
+                "apply_source_characteristics_until_end_of_turn",
             }
         }
         if (
@@ -422,6 +466,7 @@ def _fixed_shape_effects(
                 not in {
                     "grant_keyword_until_end_of_turn",
                     "modify_stats_until_end_of_turn",
+                    "apply_source_characteristics_until_end_of_turn",
                 }
                 for effect in projected
             )
@@ -433,7 +478,7 @@ def _fixed_shape_effects(
     for effect in projected:
         operation = str(effect.get("op") or "")
         fields: tuple[str, ...]
-        if operation == "modify_stats_until_end_of_turn":
+        if operation in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}:
             fields = ("power", "toughness")
         else:
             field = _AMOUNT_FIELDS.get(operation)
@@ -456,6 +501,41 @@ def _fixed_shape_effects(
     ):
         return None
     return tuple(projected)
+
+
+def public_query_amount_program_is_closed(program: Any, *, required_dependencies) -> bool:
+    """Keep scalar admission with its existing fixed shape and target owners."""
+    from ..rules.node_capability_shapes import (
+        fixed_damage_node_capabilities, fixed_draw_node_capabilities,
+        fixed_source_characteristics_node_capabilities,
+        fixed_target_characteristics_node_capabilities,
+    )
+    from ..rules.fixed_controller_effect_shapes import fixed_life_node_capabilities
+    from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+
+    if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in program.coverage:
+        return False
+    context = public_query_amount_shape_context(program.effects, set(program.coverage))
+    if context is None:
+        return False
+    effects, mechanics = context
+    required = set(required_dependencies)
+    if (
+        PUBLIC_QUERY_AMOUNT_CAPABILITY not in required
+        or not required.issubset(program.capability_dependencies)
+    ):
+        return False
+    return any(
+        resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics)
+        for resolver in (
+            fixed_damage_node_capabilities,
+            fixed_draw_node_capabilities,
+            fixed_life_node_capabilities,
+            fixed_token_creation_node_capabilities,
+            fixed_target_characteristics_node_capabilities,
+            fixed_source_characteristics_node_capabilities,
+        )
+    )
 
 
 def public_query_amount_shape_context(

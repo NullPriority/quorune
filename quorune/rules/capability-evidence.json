@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "331bc06703de2cef98c3296c872f5ec86d10a024df32a8c37a200aed2a05b2ac",
-  "declaration_source_fingerprint": "45b6efb790cd5c87439222af3d98e05e59b65e1264d13164285dc8337b6c43df",
+  "registry_fingerprint": "870f288b96b89dda3e764ad90b5954f63758e917f7720f3f7ef3b808814e64fe",
+  "declaration_source_fingerprint": "232686a4bdfdba8088bec3adff8f8b1deeaf6459de25444469f48c79ba8c2175",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -26406,6 +26406,29 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_source_self_runtime_reference_distinguishes_incarnations",
+      "official_rule_ids": [
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing source owner applies to the current matching incarnation after control changes and ignores departed or re-entered incarnations."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
       "official_rule_ids": [
@@ -26498,6 +26521,29 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_source_owner_zero_quantity_is_a_valid_no_op",
+      "official_rule_ids": [
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A validated source-characteristic scalar resolving to zero produces no component or mutation; malformed fields remain independently rejected."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
       "official_rule_ids": [
@@ -26541,6 +26587,29 @@
         "commander_review"
       ],
       "applicability_note": "Save, load, and exactly replay one four-layer source animation with a shared timestamp."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
+      "official_rule_ids": [
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real registered activation commits payment and resolves a zero source quantity as a no-op, preserving save/load and exact replay."
     },
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
@@ -52012,6 +52081,42 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Execute a genuinely current-trusted offered spell through command payment, the locked-controller quantity and draw owners, then verify exact replay and save/load."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_source_self_runtime_reference_distinguishes_incarnations",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real compiled programs distinguish present, absent, re-entered and control-changed sources without transferring the old modifier to a new incarnation."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_delegate_to_draw_and_token_owners",
       "official_rule_ids": [
         "608.2h",
@@ -52120,6 +52225,24 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The source controller's creatures determine the amount in a real four-player action; another controller's creature is excluded."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
       "official_rule_ids": [
         "608.2h",
@@ -52188,6 +52311,42 @@
         "commander_review"
       ],
       "applicability_note": "Replace the resolution-time quantity result and prove the locked-controller behavioral result detects the survivor."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_public_quantity_registration_rejects_malformed_and_missing_dependencies",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject malformed scalars, later-layer queries, wrong target domains, unknown effects and every omitted dependency before promotion."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_source_scalar_adaptation_consumes_all_fixed_components",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Do not discard unknown source effects, extra fields, Boolean stats, duplicate modifiers or unsupported keyword riders while adapting the scalar."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -52264,6 +52423,42 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_source_self_activation_is_trusted_and_replays",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Normal current-trusted source-self activation shares payment, the canonical identity-pinned characteristic operation, expiration and exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_existing_public_quantity_spell_shapes_are_promotable",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing draw, life, damage, token and temporary characteristic scalars reach the canonical effect-program admission boundary rather than fixed-integer-only recognizers."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_compiler_lowers_public_query_amounts_across_contexts",
       "official_rule_ids": [
         "608.2h",
@@ -52296,6 +52491,24 @@
         "commander_review"
       ],
       "applicability_note": "Compile source-self and direct-target query-scaled temporary power/toughness modifiers across spell, activation, normalized trigger, and typed quoted-activation carriers without adding an effect operation."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Only the acting principal receives the authoritative action decision; quantities do not expose other players' hidden identities."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -52350,6 +52563,42 @@
         "commander_review"
       ],
       "applicability_note": "Replay the current granted-ability offer, payment, query-scaled layer-7c result, and final authoritative state from the pre-activation checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_actual_v232_source_quantity_record_fails_closed_without_reinterpretation",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual pre-correction Git implementation generated the archived generic record; changed exact-runtime trust provenance explicitly rejects replay before mutation without rewriting its saved legacy operation."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A checkpoint before the offered spell reproduces payment, stack execution and exact draw consequences through the real Game Record path."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -70886,5 +71135,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "ff67ab2fa5673a22b6245b6f5830f3b359a2dd1e402f5e6c019a1bceaac53bdd"
+  "fingerprint": "54ede9bc5914b3b65dd9ee2f5228186ba690523405e06f0748b03124fb0ca4d2"
 }

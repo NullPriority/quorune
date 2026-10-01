@@ -11,6 +11,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Promote already admitted public-query spell and activation amounts through
+  their canonical fixed-effect shape and complete capability closure, so normal
+  action execution does not leave supported quantities provisional.
+  Source-self results use the existing identity-pinned characteristic owner;
+  absent and re-entered sources are ignored and zero results do not block play.
+
 - Reject negative as well as positive keyword predicates in layer-5 quantity
   descriptors before resolution, preserving ordinary count and scalar formats.
 
