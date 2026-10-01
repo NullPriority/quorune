@@ -42,6 +42,7 @@ from .spell_cast_predicates import (
     fixed_spell_cast_binding_spec,
 )
 from .public_state_queries import fixed_public_state_condition
+from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
 
 
 FIXED_COUNTER_EVENT_TRIGGER_MECHANIC = "fixed-counter-event-trigger"
@@ -1055,16 +1056,7 @@ def _public_trigger_binding(
     )
     if spec is None:
         return None
-    return FixedCounterTriggerBinding(
-        event=FixedCounterTriggerEvent(spec.event),
-        variant=spec.variant,
-        body=spec.body,
-        public_condition=spec.condition,
-        public_active_zone=spec.active_zone,
-        public_mechanic=spec.mechanic,
-        public_template_id=spec.template_id,
-        public_capabilities=spec.capabilities,
-    )
+    return public_binding_from_spec(spec, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
 
 
 def fixed_counter_trigger_binding(
@@ -1160,7 +1152,8 @@ def fixed_counter_trigger_binding(
     return _zone_change_trigger_binding(
         material_line,
         card_name=card_name,
-    )
+    ) or public_binding_from_spec(qualified_public_zone_event_binding_spec(material_line, card_name=card_name),
+                                 binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
 
 
 def _nested_operations(value: Any) -> set[str]:
@@ -1183,7 +1176,7 @@ def _event_runtime_coverage(
     current_ability: bool,
 ) -> tuple[str, ...]:
     values: list[str] = []
-    if current_ability or binding.variant in {
+    if current_ability or binding.variant == QUALIFIED_ZONE_VARIANT or binding.variant in {
         *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
         *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,

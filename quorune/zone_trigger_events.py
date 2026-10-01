@@ -335,10 +335,10 @@ def _type_parts(characteristics: Mapping[str, Any]) -> tuple[set[str], set[str]]
     return types, subtypes
 
 
-def _public_numeric_power(characteristics: Mapping[str, Any]) -> int | None:
-    """Read a sealed integer power without re-entering characteristic evaluation."""
+def _public_numeric_power(characteristics: Mapping[str, Any], field: str = "power") -> int | None:
+    """Read a sealed integer statistic without re-entering characteristic evaluation."""
 
-    value = characteristics.get("power")
+    value = characteristics.get(field)
     if type(value) is int:
         return value
     if isinstance(value, float) and value.is_integer():
@@ -366,12 +366,16 @@ def sealed_public_characteristic_facts(
 ) -> dict[str, Any]:
     """Normalize public facts from one already-sealed characteristic view."""
 
-    types, subtypes = _type_parts(characteristics)
+    types, subtypes, supertypes = type_parts(str(characteristics.get("type_line") or ""))
     return {
         "types": sorted(types),
         "subtypes": sorted(subtypes),
         "colors": _public_colors(characteristics),
         "power": _public_numeric_power(characteristics),
+        "toughness": _public_numeric_power(characteristics, "toughness"),
+        "supertypes": sorted(supertypes),
+        "keywords": sorted(str(value).casefold() for value in characteristics.get("keywords", ()) or ()),
+        "mana_value": float(characteristics.get("mana_value", 0) or 0),
     }
 
 

@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind closed public characteristic-qualified entry and departure triggers to
+  the normalized zone-event owner, preserving source union, token and source
+  exclusion, previous-controller LKI, ordinary APNAP placement and exact replay.
+  Unsupported event queries and independently incomplete bodies stay residual.
+
 - Bind one explicit public target or shared player subject across bounded,
   mandatory effect components while retaining qualifiers, printed order,
   existing private and replacement continuations, and exact replay. Separate

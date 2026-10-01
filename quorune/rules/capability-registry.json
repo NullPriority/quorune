@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 160,
+  "registry_version": 161,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6016,13 +6016,13 @@
     },
     {
       "id": "trigger.event.normalized_zone_change",
-      "version": 6,
+      "version": 7,
       "official_rules": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Derive represented permanent-enter, permanent-leave, creature-dies, permanent-graveyard, typed discard, typed sacrifice, graveyard-departure, and physical countered-spell occurrences from immutable facts captured around the canonical committed zone change; a simultaneous owner records the complete batch's actual final history before discovering any member's triggers while preserving pre-event source LKI.",
         "inputs": ["committed single transition or complete simultaneous transition batch", "previous and current logical identities", "previous and current characteristics", "previous owner, controller, attachment, and token facts", "pre-event source-zone snapshot", "actual replacement-adjusted final destinations"],
-        "outputs": ["immutable normalized event context", "complete simultaneous current-turn history before intervening-condition discovery", "one detection attempt per matching occurrence", "last-known owner, controller, type, subtype, color, integer-power, token, tapped-state, and attachment characteristics", "one-or-more trigger-batch aggregation for exact supported entry and graveyard-departure wording", "typed discard and sacrifice cause identity", "ordered pre-counter and post-graveyard events for a physical spell", "ordinary trigger batch input"],
+        "outputs": ["immutable normalized event context", "complete simultaneous current-turn history before intervening-condition discovery", "one detection attempt per matching occurrence", "last-known owner, controller, type, subtype, supertype, color, keyword, mana-value, integer-power/toughness, token, tapped-state, and attachment characteristics", "one-or-more trigger-batch aggregation for exact supported entry and graveyard-departure wording", "typed discard and sacrifice cause identity", "ordered pre-counter and post-graveyard events for a physical spell", "ordinary trigger batch input"],
         "exclusions": ["intervening-if and reflexive grammar", "state triggers", "delayed trigger creation", "visibility-dependent hidden-zone triggers", "zone changes whose authoritative producer does not carry the required typed cause", "countered abilities and spell copies without physical card movement", "enters-as and enters-with replacement effects"]
       },
       "dependencies": [],
@@ -6038,6 +6038,33 @@
       "dependency_fail_closed_rationale": "This event detector produces immutable occurrence facts; stack placement and effect results are declared separately by each CardProgram.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_zone_trigger_detection_mutant_is_killed suppresses ordinary normalized event derivation and test_counter_event_derivation_mutant_is_killed suppresses counter-event derivation; the focused occurrence assertions reject both survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.qualified_zone_change",
+      "version": 1,
+      "official_rules": ["109.2", "400.7", "603.2", "603.3", "603.6a", "603.6c", "603.10", "603.10a"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile closed single-object public entry and departure characteristic queries into existing normalized event predicates, preserving source union, source exclusion, token, controller and graveyard-owner distinctions.",
+        "inputs": ["one complete source-spanned public zone trigger", "closed public permanent characteristic query", "committed entry characteristics or previous battlefield departure facts", "one independently exact typed effect body"],
+        "outputs": ["one existing normalized event subscription", "current layer-6 trigger applicability", "exact public occurrence predicates", "ordinary APNAP trigger placement", "canonical effect execution and exact replay"],
+        "exclusions": ["one-or-more aggregation", "cross-zone card and hidden-zone subjects", "chosen, linked, counter, combat-state, damage-history or relative characteristic predicates", "dynamic quantities and total-power-plus-toughness arithmetic", "unrepresented event producers and independent unsupported effect bodies"]
+      },
+      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+      "implementation_components": ["quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec", "quorune.compiler.direct_target.DirectPermanentTargetSpec", "quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_trigger_binding", "quorune.zone_trigger_events.sealed_public_characteristic_facts", "quorune.trigger_discovery.semantic_event_condition_matches"],
+      "positive_tests": ["test_qualified_zone_event_grammar_preserves_domains", "test_trusted_entry_queries_use_current_characteristics_without_targeting"],
+      "negative_tests": ["test_qualified_zone_event_exclusions_remain_residual", "test_qualified_zone_dependencies_and_parser_mutation_fail_closed"],
+      "interaction_tests": ["test_departure_queries_preserve_lki_controller_and_replacement_destinations", "test_source_union_and_shared_ability_removal_use_existing_owners"],
+      "multiplayer_tests": ["test_simultaneous_qualified_deaths_keep_apnap_and_full_consequences"],
+      "privacy_tests": ["test_simultaneous_qualified_deaths_keep_apnap_and_full_consequences"],
+      "replay_tests": ["test_trusted_entry_queries_use_current_characteristics_without_targeting", "test_simultaneous_qualified_deaths_keep_apnap_and_full_consequences"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the qualified query, normalized occurrence or APNAP dependency prevents exact program admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing the qualified production restores its witness to a material residual; qualifier, LKI and source-union consequence assertions reject incorrect predicates.",
       "blockers": [],
       "status": "trusted"
     },

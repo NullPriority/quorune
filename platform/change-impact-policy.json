@@ -1350,6 +1350,25 @@
       ]
     },
     {
+      "id": "qualified-zone-event-query-contract",
+      "patterns": [
+        "quorune/compiler/qualified_zone_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/zone_trigger_events.py",
+        "tests/fixtures/qualified-zone-event-cards.json",
+        "tests/test_qualified_zone_event_queries.py"
+      ],
+      "test_modules": [
+        "test_ability_word_event_triggers",
+        "test_capability_evidence", "test_card_program_trust",
+        "test_fixed_counter_event_triggers", "test_fixed_counter_zone_triggers",
+        "test_fixed_query_quoted_ability_grants", "test_game_record_v3",
+        "test_high_risk_interaction_assurance", "test_qualified_zone_event_queries",
+        "test_rules_scheduler", "test_turn_history_rules", "test_typed_ability_fragments",
+        "test_zone_trigger_events"
+      ]
+    },
+    {
       "id": "bound-effect-program-contract",
       "patterns": [
         "quorune/compiler/bound_effect_programs.py",
