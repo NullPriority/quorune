@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_commit": "b066baabe70e0356b3c14b232690302c44b00375",
+  "compiler_version": "oracle-ir-v232",
+  "record_kind": "synthetic_historical_public_quantity_source_command_replay",
+  "construction": "Actual archived Git source; canonical compiler generated trusted programs; normal offered activation and payment from a constructed generic checkpoint.",
+  "historical_operation": "modify_stats_until_end_of_turn",
+  "historical_source_reference": "$source",
+  "current_runtime_disposition": "explicit_runtime_trust_incompatibility",
+  "included_components": ["manifest.json", "semantics.json", "initial-checkpoint.json.gz", "commands.jsonl"]
+}

@@ -267,7 +267,7 @@ def _apply_source_characteristics_until_end_of_turn(
             )
         )
     if not components:
-        raise GameRuleError("Source characteristic effect cannot be empty")
+        return card.ref
     try:
         create_resolution_continuous_effect_components(
             host,

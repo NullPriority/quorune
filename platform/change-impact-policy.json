@@ -898,6 +898,7 @@
       "patterns": [
         "quorune/compiler/program_generation.py",
         "quorune/compiler/effect_template_composition.py",
+        "quorune/effect_runtime/objects_stack_and_tokens.py",
         "quorune/compiler/public_query_effect_amounts.py",
         "quorune/compiler/query_characteristic_templates.py",
         "quorune/dynamic_characteristics.py",
@@ -909,7 +910,8 @@
         "tests/test_fixed_query_quoted_ability_grants.py",
         "tests/test_public_query_effect_amounts.py",
         "tests/test_public_query_action_registration.py",
-        "tests/fixtures/public-query-action-cards.json"
+        "tests/fixtures/public-query-action-cards.json",
+        "tests/fixtures/records/public-query-self-v232-b066baab/**"
       ],
       "test_modules": [
         "test_activated_draw_abilities",
@@ -919,6 +921,7 @@
         "test_fixed_damage_effect_clauses",
         "test_fixed_player_life_effects",
         "test_fixed_query_quoted_ability_grants",
+        "test_fixed_source_characteristic_effects",
         "test_fixed_token_creation_effects",
         "test_public_query_effect_amounts",
         "test_public_query_action_registration",

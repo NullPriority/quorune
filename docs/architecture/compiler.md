@@ -1232,6 +1232,13 @@ Ordinary program registration validates the same scalar projection and the
 unchanged fixed effect and target shape before promoting a spell or activation.
 It requires the quantity capability and the full original dependency closure;
 a scalar descriptor alone cannot grant trust.
+Source-self results lower through the existing source-characteristic operation
+and logical-object-aware source reference. A departed or re-entered source
+cannot receive the old ability's modifier. A valid quantity resolving to zero
+is a no-op after payment; malformed fields remain rejected. Historical records
+retain their saved scalar operations and source references rather than being
+recompiled on load; records declaring superseded exact-runtime trust provenance
+are explicitly incompatible under the Game Record contract.
 `semantic_runtime/query_effect_amounts.py` validates and resolves that scalar,
 and `semantic_runtime/values.py` supplies the stack object's locked controller
 to the cycle-safe layer-5 quantity evaluator immediately before the unchanged

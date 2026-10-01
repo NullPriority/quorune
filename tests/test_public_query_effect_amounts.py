@@ -269,7 +269,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                 "is the number of creatures you control.",
                 "Generic Query Activation",
                 "Creature — Elf",
-                "$source",
+                "$source.zone_object",
                 1,
                 1,
             ),
@@ -278,7 +278,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                 "of turn, where X is the number of creatures you control.",
                 "Generic Query Trigger",
                 "Creature — Elf",
-                "$source",
+                "$source.zone_object",
                 1,
                 1,
             ),
@@ -320,18 +320,23 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                     )
                 )
                 self.assertEqual((), program.residuals)
+                expected_operation = (
+                    "apply_source_characteristics_until_end_of_turn"
+                    if reference == "$source.zone_object"
+                    else "modify_stats_until_end_of_turn"
+                )
                 ability = next(
                     ability
                     for ability in program.abilities
                     if any(
-                        effect.get("op") == "modify_stats_until_end_of_turn"
+                        effect.get("op") == expected_operation
                         for effect in ability.effects
                     )
                 )
                 modifier = next(
                     effect
                     for effect in ability.effects
-                    if effect.get("op") == "modify_stats_until_end_of_turn"
+                    if effect.get("op") == expected_operation
                 )
                 self.assertEqual(reference, modifier["card"])
                 for field, coefficient in (
@@ -350,7 +355,11 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                     ability.capability_dependencies,
                 )
                 self.assertIn(
-                    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                    (
+                        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+                        if reference == "$source.zone_object"
+                        else "continuous.resolution.fixed_characteristics_until_end_of_turn"
+                    ),
                     ability.capability_dependencies,
                 )
                 self.assertTrue(ability.capability_closure["trusted"])
