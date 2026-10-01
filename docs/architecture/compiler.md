@@ -1277,7 +1277,10 @@ targeting check. Fixed type/subtype unions, color, supertype, keyword, mana-valu
 and individual power/toughness comparisons may compose with controller, token,
 source-exclusion, and graveyard-owner facts. A source-or-another union preserves
 the independent source branch; existing productions retain precedence and their
-serialized descriptors. Entry reads committed current characteristics and
+serialized descriptors. Superseded reviewed execution views retire when this
+generic production owns the same printed ability; current games never execute
+both, while saved historical registries retain their pinned compatibility data.
+Entry reads committed current characteristics and
 departure reads sealed battlefield LKI, including when the observer also leaves.
 The shared layer-6 ability query controls discovery and the existing APNAP,
 target, effect, replacement, and replay owners execute the resulting trigger.

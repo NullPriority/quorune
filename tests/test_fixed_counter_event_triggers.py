@@ -1583,7 +1583,10 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 for node in mutated.faces[0].nodes
             )
         )
-        self.assertNotEqual("exact", mutated.status)
+        # The specialized owner must be lost by this mutation; the independently
+        # capability-bound qualified-query production remains a legal fallback.
+        self.assertEqual("exact", mutated.status)
+        self.assertIn("trigger.event.qualified_zone_change", mutated.faces[0].nodes[0].capability_dependencies)
 
     def test_optional_fixed_counter_event_triggers_compile_exactly(self):
         cases = (
@@ -2203,6 +2206,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         from quorune.compiler.fixed_counter_trigger_nodes import _zone_change_trigger_binding
 
         cases = (
+            ("Whenever another legendary creature you control enters, draw a card.", "permanent.enter"),
+            ("When a creature an opponent controls enters, return this creature to its owner's hand.", "permanent.enter"),
             ("Whenever another artifact dies, put a charge counter on this artifact.", "permanent.graveyard"),
             ("Whenever this artifact or another creature enters, put a charge counter on this artifact.", "permanent.enter"),
             ("Whenever another Human or Zombie you control enters, put a +1/+1 counter on this creature.", "permanent.enter"),
@@ -2745,7 +2750,6 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever you sacrifice one or more Foods, draw a card.",
             "Whenever one or more creature tokens you control deal combat "
             "damage to a player, draw a card.",
-            "Whenever another legendary creature you control enters, draw a card.",
             "Whenever you attack a player, draw a card.",
         )
         for text in cases:
@@ -3425,7 +3429,6 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "When this creature enters, you may return another creature you control to its owner's hand.",
             "When this creature enters, return X creatures you control to their owner's hand.",
             "When this creature enters, return another creature you control to its owner's hand, then draw a card.",
-            "When a creature an opponent controls enters, return this creature to its owner's hand.",
         )
         for text in exclusions:
             with self.subTest(excluded=text):

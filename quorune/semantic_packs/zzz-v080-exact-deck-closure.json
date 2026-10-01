@@ -2064,55 +2064,6 @@
       }
     },
     {
-      "key": "eb7a1f21-a66d-415b-8520-710b44890bb6:trigger:artifact-enter",
-      "label": "Simulacrum Synthesizer artifact-enter trigger",
-      "oracle_id": "eb7a1f21-a66d-415b-8520-710b44890bb6",
-      "ability_id": "trigger:artifact-enter",
-      "active_zone": "battlefield",
-      "event": "artifact.enter",
-      "event_condition": {
-        "all": [
-          {"field": "controller", "op": "eq", "value": "$source.controller"},
-          {"field": "card", "op": "ne", "value": "$source.ref"},
-          {"field": "mana_value", "op": "gte", "value": 3}
-        ]
-      },
-      "effects": [
-        {
-          "op": "create_token",
-          "controller": "$controller",
-          "name": "Construct",
-          "characteristics": {
-            "type_line": "Token Artifact Creature — Construct",
-            "colors": [],
-            "power": "0",
-            "toughness": "0",
-            "oracle_text": "This token gets +1/+1 for each artifact you control.",
-            "ability_fragments": [{
-              "kind": "dynamic_power_toughness",
-              "value": {
-                "schema_version": 1,
-                "count_kind": "controller_battlefield_artifacts",
-                "calculation": "per_matching_object",
-                "power": 1,
-                "toughness": 1,
-                "minimum_count": 0
-              }
-            }]
-          }
-        }
-      ],
-      "trust_level": "trusted",
-      "coverage": ["triggered_ability", "conditional_trigger", "token_creation", "dynamic_power_toughness"],
-      "tests": ["test_simulacrum_synthesizer_scry_and_construct_trigger"],
-      "provenance": {
-        "source_oracle_hash": "5f4ef63c1ac266b942fe09a97b284df7368eb8624172c0c09c895e4400fc3ae9",
-        "source_rulings_hash": "9afc50e800435a755311fe050e9ebc1c8bd06cdec076679803cdefbfe29998ba",
-        "authored_by": "v0.8-exact-deck-closure",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "9070c98b-fd01-4eeb-a4ec-fc464946c7c0:spell:front",
       "label": "Stridehangar Automaton",
       "oracle_id": "9070c98b-fd01-4eeb-a4ec-fc464946c7c0",

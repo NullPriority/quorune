@@ -435,6 +435,9 @@ def _decorate_outer_nodes(
         )
         if not dependencies:
             return None
+        # Decorating the created token refines the body, not the subscription.
+        # Retain explicit container/event owners already proven by the shell.
+        dependencies = tuple(sorted(set(dependencies) | set(outer.capability_dependencies)))
         closure = capability_registry.closure(
             dependencies, profile=capability_profile
         )

@@ -4582,8 +4582,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v229-qualified-zone-event-queries",
-      "compiler_version": "oracle-ir-v229",
+      "transition_id": "oracle-ir-v230-qualified-zone-event-queries",
+      "compiler_version": "oracle-ir-v230",
       "bundle_id": "bundle:qualified-zone-event-queries",
       "candidate_ids": ["bundle:qualified-zone-event-queries"],
       "family_ids": [

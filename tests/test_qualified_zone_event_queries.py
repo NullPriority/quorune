@@ -155,6 +155,18 @@ class QualifiedZoneEventCompilerTests(unittest.TestCase):
                         compiled = compile_oracle_card(row, capability_registry=self.registry, capability_profile="commander_review")
                         self.assertEqual("exact", compiled.status)
 
+    def test_quoted_token_body_preserves_qualified_subscription_dependency(self):
+        text = ('Whenever another legendary artifact you control enters, create a '
+                '1/1 colorless Servo artifact creature token with "{T}: Add {C}."')
+        compiled = self.compile(text)
+        self.assertEqual("exact", compiled.status)
+        outer = next(n for f in compiled.faces for n in f.nodes if n.event == "permanent.enter")
+        self.assertIn("trigger.event.qualified_zone_change", outer.capability_dependencies)
+        raw = json.loads((ROOT/"quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        row = next(r for r in raw["capabilities"] if r["id"] == "trigger.event.qualified_zone_change")
+        row.update(status="blocked", blockers=["constructed missing subscription owner"])
+        self.assertNotEqual("exact", self.compile(text, registry=CapabilityRegistry(raw)).status)
+
 
 class QualifiedZoneEventRuntimeTests(unittest.TestCase):
     @classmethod

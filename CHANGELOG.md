@@ -15,6 +15,8 @@ maintenance: "hand-maintained"
   the normalized zone-event owner, preserving source union, token and source
   exclusion, previous-controller LKI, ordinary APNAP placement and exact replay.
   Unsupported event queries and independently incomplete bodies stay residual.
+  Superseded reviewed execution views are removed from current-game packs so
+  promoted subscriptions do not place duplicate triggers.
 
 - Bind one explicit public target or shared player subject across bounded,
   mandatory effect components while retaining qualifiers, printed order,
