@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from types import SimpleNamespace
 import unittest
 
 from common import DB_PATH
@@ -10,6 +11,7 @@ from quorune.card_programs import (
     compute_match_trust_closure,
 )
 from quorune.card_programs.adapters import compile_card_program
+from quorune.compiler.activated_ability_catalog import with_activated_ability_catalog
 from quorune.card_programs.commands import runtime_component_status
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.rules.capabilities import (
@@ -340,6 +342,77 @@ class CardProgramTrustTests(unittest.TestCase):
             "capability:legacy_runtime_dependencies_unbound",
             binding["blockers"],
         )
+
+    def test_structural_catalog_binding_validates_metadata_without_excusing_rules(self):
+        from dataclasses import replace
+
+        record = replace(
+            _bolt(), type_line="Land", oracle_text=(
+                "{T}, Pay 1 life, Sacrifice this land: Search your library for "
+                "a Plains or Island card, put it onto the battlefield, then shuffle."
+            ),
+        )
+        catalog = with_activated_ability_catalog(
+            record, (), carrier_provenance={
+                "source_oracle_hash": "a" * 64,
+                "source_rulings_hash": "b" * 64,
+                "authored_by": "fixture-compiler",
+                "review_status": "generated_review_required",
+            },
+        )[0]
+        binding = bind_semantic_program_runtime(
+            catalog, capability_registry=self.capabilities,
+            profile="commander_review",
+        )
+        self.assertTrue(binding["strict"], binding["blockers"])
+        self.assertFalse(binding["compatibility_path"])
+        self.assertEqual([], binding["required_registered_capabilities"])
+
+        # Use untrusted input objects so the binding boundary itself is tested,
+        # rather than relying on SemanticProgram's earlier descriptor check.
+        descriptor = copy.deepcopy(dict(catalog.handlers[0]))
+        for change in (
+            {"schema_version": 999},
+            {"event": "resolve"},
+            {"ability": {**descriptor["ability"], "unknown": True}},
+        ):
+            with self.subTest(change=change):
+                malformed = SimpleNamespace(**{
+                    **vars_for_binding(catalog),
+                    "handlers": ({**descriptor, **change},),
+                })
+                rejected = bind_semantic_program_runtime(
+                    malformed, capability_registry=self.capabilities,
+                    profile="commander_review",
+                )
+                self.assertFalse(rejected["strict"])
+                self.assertTrue(rejected["blockers"])
+
+        for change in (
+            {"ability_id": "ability:ab1"},
+            {"effects": ({"op": "draw", "count": 1},)},
+        ):
+            with self.subTest(change=change):
+                behavioral = SimpleNamespace(**{
+                    **vars_for_binding(catalog), **change,
+                })
+                rejected = bind_semantic_program_runtime(
+                    behavioral, capability_registry=self.capabilities,
+                    profile="commander_review",
+                )
+                self.assertFalse(rejected["strict"])
+                if "effects" in change:
+                    self.assertIn(
+                        "capability:undeclared_runtime_dependency:zone.draw.library_to_hand",
+                        rejected["blockers"],
+                    )
+
+
+def vars_for_binding(program):
+    return {field: getattr(program, field) for field in (
+        "ability_id", "key", "effects", "handlers", "capability_dependencies",
+        "capability_closure", "trust_level", "provenance", "tests",
+    )}
 
 
 if __name__ == "__main__":

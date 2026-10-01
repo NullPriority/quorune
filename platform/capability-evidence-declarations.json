@@ -14723,6 +14723,14 @@
     {
       "capability_id": "damage.batch.fixed_set",
       "evidence_class": "positive",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_zero_cast_amounts_are_paid_no_ops_across_result_owners",
+      "official_rule_ids": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A trusted announced zero damage amount pays its price and delegates to the canonical no-damage boundary without marked damage or repeated effects."
+    },
+    {
+      "capability_id": "damage.batch.fixed_set",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_mass_damage.FixedDamageSetModelTests.test_fixed_set_snapshot_is_immutable_canonical_and_deduplicated",
       "official_rule_ids": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -21816,6 +21824,142 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact protected-object filtering and selected legal Aura attachment from a pinned continuation."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_declared_amount_survives_draw_choice_checkpoint_without_repeating_effects",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A Dredge choice resumes the actual draw/life instruction with its original declared value after checkpoint, save/load and exact replay, without repeating prior effects."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_public_activation_uses_resolution_count_locked_controller_and_stale_target_owner",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Actual targeted activation rejects an illegal controlled creature, pays and taps once, reads current membership for its locked controller, and rejects a departed/reentered target incarnation."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountValueTests.test_explicit_public_binding_is_frozen_and_independent_expressions_are_not",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Freeze only an explicitly shared instruction value; independent legacy expressions still read their own execution-time facts."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountValueTests.test_instruction_freezing_and_signed_cast_amount_mutants_are_killed",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Kill executable owner mutations that repeat the public query or discard a signed cost-X coefficient."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use four real principals, real offers, canonical multiple-X payment, and exact rollback and result assertions."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountValueTests.test_instruction_freezing_and_signed_cast_amount_mutants_are_killed",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Executable owner mutations omit declaration persistence or signed cost-X multiplication; semantic assertions kill both."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_declared_amount_capability_and_result_dependencies_cannot_be_omitted",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Omitted numeric or result dependencies and symbolic values outside closed result slots cannot promote a complete runtime program."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Independent identical modal declarations cannot share a cached value through an unowned nested instruction scope."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_undefined_x_dynamic_targets_and_open_definitions_remain_residual",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reject undefined X, varying target domains, unconsumed arithmetic, later-layer keywords, and hidden selected subjects."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountValueTests.test_amount_versions_and_cast_values_reject_malformed_inputs",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Preserve the independent amount codec and reject malformed versions, Boolean coefficients, and noninteger announced values."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_positive_cast_results_use_existing_damage_token_and_characteristic_owners",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Actual offered X-cost casts produce positive single-target and batch damage, X tokens with X/X characteristics, and signed temporary modifiers through existing owners."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_announced_spell_x_uses_existing_result_families",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Lower ordinary announced spell-cost X into existing numeric result owners while retaining their target and price authorities."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests.test_public_definition_can_bind_multiple_result_slots",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A closed public definition supplies several result slots in one instruction without changing target semantics."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "The acting player sees newly drawn identities while the other three principal projections do not."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay accepted canonical X-cost and priority commands from the pre-action checkpoint and compare complete authoritative hashes."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_public_definition_is_frozen_before_draw_and_replays",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use a real registered hand-count draw/life instruction and prove the first value and resulting state survive save/load and exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountValueTests.test_actual_v233_numeric_result_record_is_explicitly_incompatible_not_reinterpreted",
+      "official_rule_ids": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A genuine synthetic command record first replays under archived v233 source, then the current real replay path explicitly rejects superseded exact-runtime provenance without reinterpretation."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -29583,6 +29727,14 @@
       "official_rule_ids": ["400.7", "701.17", "701.17a", "701.17b", "701.17c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject a changed library top and a nonpositive typed intent without modifying the authoritative state hash."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_zero_mill_and_scry_consume_price_without_library_mutation",
+      "official_rule_ids": ["400.7", "701.17", "701.17a", "701.17b", "701.17c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Zero Mill snapshots no cards, pays the actual announced spell cost, leaves all four libraries unchanged and exactly replays."
     },
     {
       "capability_id": "zone.mill.fixed",

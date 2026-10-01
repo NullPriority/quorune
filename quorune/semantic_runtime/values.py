@@ -11,12 +11,13 @@ from ..attachment_references import (
 from ..station import StationAbilityError, station_resolution_power
 from ..query_effect_amount_model import (
     PUBLIC_QUERY_AMOUNT_KIND,
+    CAST_X_AMOUNT_KIND,
     PublicQueryAmountError,
 )
 
 from .context import SemanticNodeError
 from .explore import explore_source_controller
-from .query_effect_amounts import resolve_public_query_amount
+from .query_effect_amounts import resolve_public_query_amount, resolve_cast_x_amount
 
 
 _INDEX_GROUP = "index"
@@ -92,6 +93,11 @@ def resolve_semantic_value(
     if isinstance(value, Mapping) and value.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
         try:
             return resolve_public_query_amount(host, value, item)
+        except PublicQueryAmountError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get("kind") == CAST_X_AMOUNT_KIND:
+        try:
+            return resolve_cast_x_amount(value, item)
         except PublicQueryAmountError as exc:
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, dict):

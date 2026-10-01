@@ -240,9 +240,9 @@ def resolve_fixed_damage_set(
         (_REASON_FIELD, reason),
     ):
         require_nonempty_string(value, field=f"Fixed damage {field}")
-    if type(amount) is not int or amount <= 0:
+    if type(amount) is not int or amount < 0:
         raise FixedDamageSetError(
-            "Fixed damage set amount must be a positive integer"
+            "Fixed damage set amount must be a nonnegative integer"
         )
     snapshot = snapshot_fixed_damage_set(
         host,

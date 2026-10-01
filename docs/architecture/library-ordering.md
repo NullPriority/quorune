@@ -49,6 +49,15 @@ replay. New clients should use the ordered partition. Runtime code does not
 parse Oracle text, and ordinary top-card reordering remains a separate typed
 operation rather than a second Scry implementation.
 
+## Mill result counts
+
+The existing Mill preparation owner consumes a nonnegative resolved integer.
+Zero snapshots no library cards and commits no zone movement or Mill event;
+it does not interpret Python's empty slice as the entire library. Positive
+counts retain the ordinary current-top identity validation and simultaneous,
+replacement-aware zone transaction. Declared spell-cost or public-definition
+amounts require their separate numeric capability, not runtime Oracle parsing.
+
 ## Fixed Surveil
 
 `library.surveil.fixed_controller` owns one mandatory positive fixed-count

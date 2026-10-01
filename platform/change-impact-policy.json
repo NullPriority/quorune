@@ -896,6 +896,7 @@
     {
       "id": "public-query-effect-amount-contract",
       "patterns": [
+        "quorune/compiler/declared_effect_amounts.py",
         "quorune/compiler/program_generation.py",
         "quorune/compiler/effect_template_composition.py",
         "quorune/effect_runtime/objects_stack_and_tokens.py",
@@ -911,11 +912,13 @@
         "tests/test_public_query_effect_amounts.py",
         "tests/test_public_query_action_registration.py",
         "tests/fixtures/public-query-action-cards.json",
-        "tests/fixtures/records/public-query-self-v232-b066baab/**"
+        "tests/fixtures/records/public-query-self-v232-b066baab/**",
+        "tests/fixtures/records/declared-amounts-v233-ff7191fd/**"
       ],
       "test_modules": [
         "test_activated_draw_abilities",
         "test_damage_prevention_shields",
+        "test_declared_effect_amounts",
         "test_fixed_counter_event_triggers",
         "test_fixed_counter_player_cast_triggers",
         "test_fixed_damage_effect_clauses",

@@ -1216,6 +1216,22 @@ Required and excluded keyword predicates are both outside this layer-5 quantity
 boundary. Typed descriptor decoding rejects them before counting, including for
 a known-empty collection; they cannot silently produce a zero result.
 
+`compiler/declared_effect_amounts.py` binds ordinary announced spell-cost X or
+one complete public count definition to numeric result slots in existing typed
+instructions. Two fixed-value compilations must retain identical operations,
+target schemas, and dependencies; only supported result fields may vary. The
+original fixed template identity is retained for runtime admission. Public
+declarations carry explicit Oracle-node-scoped identities and persist their
+first execution-time value across sibling results and replacement resumption.
+Independent quantity expressions retain their separate execution-time reads.
+The casting owner remains the sole authority for choosing and paying cost X.
+Undefined X, X-dependent target domains or cardinalities, variable activation
+costs, nonordinary X mana costs, linked or source characteristics, open arithmetic,
+unrepresented result owners, and nested modal declarations remain residual.
+Ordinary Cycling explicitly
+declares the existing draw handler dependency beside its activation capability;
+runtime binding still rejects undeclared registered dependencies.
+
 `compiler/effect_template_composition.py` routes reviewed atomic effects into
 closed clause/program composition and gives query-derived amounts one shared
 entry point. `compiler/public_query_effect_amounts.py` reuses that same typed

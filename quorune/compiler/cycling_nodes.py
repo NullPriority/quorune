@@ -11,7 +11,7 @@ from ..cycling_abilities import (
 )
 from ..rules.capabilities import CapabilityRegistry
 from .activated_costs import activated_ability_cost
-from .dependency_gate import explicit_capability_gate
+from .dependency_gate import explicit_capability_gate, explicit_capabilities_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
 
 
@@ -136,8 +136,8 @@ def ordinary_cycling_keyword_node(
             mechanics=mechanics,
             residual_ids=(residual_id,),
         )
-    gate = explicit_capability_gate(
-        "activation.cycling.hand",
+    gate = explicit_capabilities_gate(
+        ("activation.cycling.hand", "zone.draw.library_to_hand"),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )

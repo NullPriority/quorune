@@ -9,6 +9,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .attachment_references import AttachmentReferenceKind
 from .aura import keyword_target_schema
 from .carddb import CardDatabase, CardRecord
+from .compiler.declared_effect_amounts import declared_spell_effect_compiler, scope_declared_card_faces
 from .cast_timing import (
     CAST_PERMISSION_ACTIVE_ZONE,
     CAST_PERMISSION_EVENT,
@@ -28,7 +29,7 @@ from .compiler.attached_granted_ability_nodes import (
     compile_keyword_or_attached_grant_nodes as _keyword_or_attached_grant_nodes,
 )
 from .compiler.effect_template_composition import (
-    reviewed_effect_template_composition,
+    reviewed_contextual_effect_template,
 )
 from .compiler.activated_mana_nodes import (
     activated_oracle_node,
@@ -168,7 +169,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v233"
+ORACLE_COMPILER_VERSION = "oracle-ir-v234"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -444,36 +445,10 @@ def _reviewed_atomic_effect_template(
     return optional.compiled() if optional is not None else compiled
 
 
-def _reviewed_effect_template(
-    text: str,
-    *,
-    card_name: str,
-    source_is_permanent: bool | None = None,
-    source_card_types: Sequence[str] = (),
-    source_attachment_relation: AttachmentReferenceKind | None = None,
-) -> tuple[
-    str | None,
-    tuple[Mapping[str, Any], ...],
-    Mapping[str, Any] | None,
-    tuple[str, ...],
-]:
-    return reviewed_effect_template_composition(
-        text,
-        source_name=card_name,
-        compile_atomic=partial(
-            _reviewed_atomic_effect_template,
-            card_name=card_name,
-            source_is_permanent=source_is_permanent,
-            source_card_types=source_card_types,
-            source_attachment_relation=source_attachment_relation,
-        ),
-        compile_fixed=partial(
-            _effect_template, card_name=card_name,
-            source_is_permanent=source_is_permanent,
-            source_card_types=source_card_types,
-            source_attachment_relation=source_attachment_relation,
-        ),
-    )
+_reviewed_effect_template = partial(
+    reviewed_contextual_effect_template,
+    compile_atomic=_reviewed_atomic_effect_template, compile_fixed=_effect_template,
+)
 
 
 def _contextual_effect_templates(
@@ -1212,7 +1187,7 @@ def _compile_face(
     if spell:
         typed_face = _typed_whole_spell_face(
             record, face_id=face_id, face_name=face_name, oracle_text=oracle_text,
-            material_rows=material_rows, effect_template=contextual_effect_template,
+            material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template),
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
         )
@@ -1317,7 +1292,7 @@ def _compile_face(
 
         ability_word = _ABILITY_WORD.match(material_line)
         body = ability_word.group("body") if ability_word else material_line
-        template, effects, target_schema, mechanics = contextual_effect_template(
+        template, effects, target_schema, mechanics = (declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template) if spell else contextual_effect_template)(
             body,
             card_name=face_name or record.name,
         )
@@ -1474,6 +1449,7 @@ def compile_oracle_card(
         )
         for face_id, face_name, type_line, oracle_text, keywords in face_values
     )
+    faces = scope_declared_card_faces(faces)
     oracle_hash = hashlib.sha256(
         record.oracle_text.encode("utf-8")
     ).hexdigest()

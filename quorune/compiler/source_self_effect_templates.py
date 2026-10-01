@@ -9,6 +9,7 @@ from .creature_power_damage_templates import (
 )
 from .damage_templates import source_pronoun_damage_effect_template
 from .explore_templates import single_explore_effect_template
+from .declared_effect_amounts import declared_effect_amount_template
 
 
 def source_self_contextual_effect_template(
@@ -34,7 +35,16 @@ def source_self_contextual_effect_template(
         else None
     )
     compiled = explored or creature_power or fixed_damage
-    return compiled.compiled() if compiled is not None else None
+    if compiled is not None:
+        return compiled.compiled()
+    if event_phrase not in {"enters", "dies"}:
+        return None
+    def compile_fixed(body: str):
+        leaf = source_pronoun_damage_effect_template(body)
+        return leaf.compiled() if leaf is not None else (None, (), None, ())
+    return declared_effect_amount_template(
+        text, source_name=card_name, compile_fixed=compile_fixed,
+    )
 
 
 __all__ = ["source_self_contextual_effect_template"]

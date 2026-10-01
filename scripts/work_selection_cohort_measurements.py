@@ -211,6 +211,7 @@ _PROBE_FIXED_HAND_INSPECTION = (
 )
 _PROBE_TEMPORARY_TARGET_INTERACTION = "temporary-target-interaction-closure-existing-owner-v1"
 _PROBE_BOUND_EFFECT_PROGRAM = "bound-effect-program-existing-owner-v1"
+_PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
@@ -566,6 +567,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_HAND_INSPECTION,
     _PROBE_TEMPORARY_TARGET_INTERACTION,
     _PROBE_BOUND_EFFECT_PROGRAM,
+    _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_QUALIFIED_ZONE_EVENT,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
@@ -1211,6 +1213,11 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_DECLARED_EFFECT_AMOUNT:
+        # This only bounds the cohort. Actual lowering and strict runtime
+        # binding below determine whether any card closes.
+        return bool(card_record is not None and not card_record.faces
+                    and re.search(r"\bX\b", source))
     if probe_id == _PROBE_QUALIFIED_ZONE_EVENT:
         if card_record is None:
             raise WorkSelectionCohortMeasurementError("Qualified zone query measurement requires card context")
@@ -5304,7 +5311,8 @@ def _measurement(
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
         )
-    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_QUALIFIED_ZONE_EVENT}:
+    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_QUALIFIED_ZONE_EVENT,
+                    _PROBE_DECLARED_EFFECT_AMOUNT}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8102,7 +8110,11 @@ def _bound_effect_program_measurement(
     if database is None:
         raise WorkSelectionCohortMeasurementError("Capability-closed harvest measurement requires the pinned database")
     registry = load_default_capability_registry()
-    capability = QUALIFIED_ZONE_CAPABILITY if probe_id == _PROBE_QUALIFIED_ZONE_EVENT else BOUND_EFFECT_PROGRAM_CAPABILITY
+    capability = {
+        _PROBE_QUALIFIED_ZONE_EVENT: QUALIFIED_ZONE_CAPABILITY,
+        _PROBE_BOUND_EFFECT_PROGRAM: BOUND_EFFECT_PROGRAM_CAPABILITY,
+        _PROBE_DECLARED_EFFECT_AMOUNT: "quantity_expression.declared_effect_amount",
+    }[probe_id]
     abilities = residuals = 0
     remaining: dict[str, int] = {}
     complete: set[str] = set()

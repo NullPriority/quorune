@@ -69,9 +69,9 @@ class FixedDamageSetHandler:
                 "Fixed damage-set effects require one represented source"
             )
         amount = effect.get("amount")
-        if type(amount) is not int or amount <= 0:
+        if type(amount) is not int or amount < 0:
             raise SemanticNodeError(
-                "Fixed damage-set amount must be a positive integer"
+                "Fixed damage-set amount must be a nonnegative integer"
             )
         try:
             spec = FixedDamageSetSpec.from_dict(

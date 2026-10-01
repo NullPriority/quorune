@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "source_commit": "ff7191fd121e0afb0e4614d0bb19dea36d2eadb5",
+  "compiler_version": "oracle-ir-v233",
+  "record_kind": "synthetic_historical_fixed_numeric_result_command_replay",
+  "construction": "Actual archived Git source with its packaged registry and evidence; a canonical generated trusted program; an offered targeted draw/life spell with actual mana payment and priority commands from a constructed generic four-player checkpoint.",
+  "historical_execution": "Target B draws two cards and loses two life; five accepted commands; exact replay passed under the archived implementation before extraction.",
+  "current_runtime_disposition": "explicit_runtime_trust_incompatibility",
+  "included_components": ["manifest.json", "semantics.json", "initial-checkpoint.json.gz", "commands.jsonl"]
+}

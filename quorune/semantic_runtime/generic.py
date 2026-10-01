@@ -103,8 +103,6 @@ class MillHandler:
         if set(effect) - {"op", "player", "count", "reason"}:
             raise SemanticNodeError("Mill effects have a closed schema")
         count = _count(effect)
-        if count <= 0:
-            raise SemanticNodeError("Mill count must be positive")
         player = context.query.require_active_seat(
             str(effect.get("player") or context.actor)
         )

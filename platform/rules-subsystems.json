@@ -4548,6 +4548,32 @@
           "measurement_probe_id": "bound-effect-program-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:declared-effect-amounts",
+          "member_family_ids": ["effect_clause:deal-damage", "effect_clause:draw", "quantity_expression:dynamic-quantity"],
+          "canonical_owner_ids": [
+            "capability:quantity_expression.declared_effect_amount",
+            "component:quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
+            "component:quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+            "component:quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount",
+            "component:quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount"
+          ],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["existing-result-operation", "instruction-scoped-public-count", "invariant-target-schema", "ordinary-announced-cast-X", "signed-unit-coefficient"],
+          "shared_dependencies": ["quantity_expression.public_query_effect_amount", "target.revalidate_resolution"],
+          "shared_grammar": "ordinary announced spell-cost X or a fully consumed public count definition in closed numeric result slots of existing fixed instructions; targets, payment, and result operations retain their typed owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Close reusable numeric damage, life, draw, token, Mill, Scry and temporary-characteristic carriers through existing cost, query, target, result and continuation owners.",
+          "explicit_exclusions": [
+            "X-dependent target domains or cardinalities, linked or source quantities and open arithmetic",
+            "nested declarations, independently unsupported effects and untrusted siblings",
+            "undefined or Oracle-defined cost X, variable activation costs and nonordinary X mana costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "declared-effect-amount-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:qualified-zone-event-queries",
           "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
           "canonical_owner_ids": [
@@ -4582,14 +4608,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v233-public-quantity-program-registration",
-      "compiler_version": "oracle-ir-v233",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "non_harvest_reason": "Restore ordinary trusted spell and activation registration for already admitted public-query effect amounts through their canonical fixed-shape and capability owners. Source-self characteristic quantities use the existing logical-object-aware source-characteristic operation, ignoring absent or re-entered source incarnations. No Oracle grammar is expanded.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v234-declared-effect-amounts",
+      "compiler_version": "oracle-ir-v234",
+      "bundle_id": "bundle:declared-effect-amounts",
+      "candidate_ids": ["compiler:declared-effect-amounts"],
+      "family_ids": ["effect_clause:deal-damage", "effect_clause:draw", "quantity_expression:dynamic-quantity"],
+      "capability_ids": ["quantity_expression.declared_effect_amount"],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:declared-effect-amounts"
     },
     "forecast_corrections": [
       {
