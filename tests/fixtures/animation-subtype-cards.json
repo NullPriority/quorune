@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed generic subtype-instruction and card-type-loss contrasts",
+  "cards": [
+    {"oracle_id":"00000000-0000-4000-8000-000000000921","name":"Generic Subtype Review Commander","mana_cost":"{U}","cmc":1,"type_line":"Legendary Creature — Human","oracle_text":"Vigilance","power":"2","toughness":"4","colors":["U"],"color_identity":["U"],"keywords":["Vigilance"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000922","name":"Generic Subtype Review Island","mana_cost":"","cmc":0,"type_line":"Basic Land — Island","oracle_text":"{T}: Add {U}.","colors":[],"color_identity":["U"],"keywords":[],"produced_mana":["U"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000923","name":"Generic Unspecified Creature Animation","mana_cost":"{U}","cmc":1,"type_line":"Instant","oracle_text":"Target creature becomes a 3/3 blue creature until end of turn.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000924","name":"Generic Subtype Review Elf","mana_cost":"{U}","cmc":1,"type_line":"Creature — Elf","oracle_text":"Vigilance","power":"2","toughness":"4","colors":["U"],"color_identity":["U"],"keywords":["Vigilance"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000925","name":"Generic Subtype Review Land Elf","mana_cost":"","cmc":0,"type_line":"Land Creature — Forest Elf","oracle_text":"Vigilance","power":"2","toughness":"4","colors":["G"],"color_identity":["G"],"keywords":["Vigilance"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000926","name":"Generic Unspecified Creature Set","mana_cost":"{U}","cmc":1,"type_line":"Instant","oracle_text":"Creatures you control become 3/3 blue creatures until end of turn.","colors":["U"],"color_identity":["U"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+  ],
+  "rulings": []
+}

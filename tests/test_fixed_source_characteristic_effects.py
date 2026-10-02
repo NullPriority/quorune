@@ -240,11 +240,131 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
         original=FixedResolutionCharacteristicsSpec.layer_operations
         def mutate(spec):
             return original(FixedResolutionCharacteristicsSpec(
-                card_types=spec.card_types,creature_subtypes=spec.creature_subtypes,
+                card_types=(('Creature',) if spec.card_types else None),creature_subtypes=spec.creature_subtypes,
                 colors=spec.colors,remove_all_abilities=spec.remove_all_abilities,
                 keywords=spec.keywords,base_power=spec.base_power,base_toughness=spec.base_toughness))
         with patch.object(FixedResolutionCharacteristicsSpec,'layer_operations',mutate):
             with self.assertRaises(AssertionError):self.test_fixed_animation_layer_operations_preserve_rule_distinctions()
+
+    def test_compiled_animation_absent_and_explicit_subtypes_have_distinct_results(self):
+        # CR 205.1a/b expectations are independent of the generated descriptor:
+        # no creature-subtype instruction preserves Elf, but losing Land
+        # removes Forest. An explicit Frog replaces only creature subtypes.
+        cases = (
+            ("Target creature becomes a 3/3 blue creature until end of turn.",
+             None, {"Creature"}, {"Elf"}),
+            ("Target creature becomes a 3/3 blue Frog creature until end of turn.",
+             ("Frog",), {"Creature"}, {"Frog"}),
+            ("Target creature becomes a 3/3 blue creature in addition to its other types until end of turn.",
+             None, {"Land", "Creature"}, {"Forest", "Elf"}),
+            ("Target land becomes a 3/3 blue Frog creature until end of turn. It's still a land.",
+             ("Frog",), {"Land", "Creature"}, {"Forest", "Elf", "Frog"}),
+            ("Target creature has base power and toughness 3/3 until end of turn.",
+             None, {"Land", "Creature"}, {"Forest", "Elf"}),
+            ("Target creature becomes a 3/3 blue artifact creature until end of turn.",
+             None, {"Artifact", "Land", "Creature"}, {"Forest", "Elf"}),
+            ("Target creature becomes a 3/3 blue Frog artifact creature until end of turn.",
+             ("Frog",), {"Artifact", "Land", "Creature"}, {"Forest", "Frog"}),
+        )
+        for text, expected_instruction, expected_types, expected_subtypes in cases:
+            with self.subTest(text=text):
+                compiled = self.compile(text, type_line="Instant")
+                self.assertEqual("exact", compiled.status, compiled.to_dict())
+                spec, _ = fixed_resolution_characteristic_instruction(
+                    compiled.faces[0].nodes[0].effects[0]
+                )
+                self.assertEqual(expected_instruction, spec.creature_subtypes)
+                initial = CharacteristicState(
+                    "Generic dual-type Elf", card_types={"Land", "Creature"},
+                    subtypes={"Forest", "Elf"}, supertypes={"Legendary"},
+                    abilities=["Vigilance"], power=2, toughness=4,
+                )
+                layers = [
+                    ContinuousEffect(
+                        effect_id=f"subtype-contrast:{index}", source_id="source",
+                        layer=layer, sublayer=sublayer, timestamp=1,
+                        operations=operations,
+                    )
+                    for index, (layer, sublayer, operations)
+                    in enumerate(spec.layer_operations())
+                ]
+                for lower_case in (False, True):
+                    if lower_case:
+                        initial.card_types = {value.casefold() for value in initial.card_types}
+                        initial.subtypes = {value.casefold() for value in initial.subtypes}
+                    current = evaluate_continuous_effects(initial, layers).characteristics
+                    self.assertEqual({value.casefold() for value in expected_types},
+                                     {value.casefold() for value in current["card_types"]})
+                    self.assertEqual({value.casefold() for value in expected_subtypes},
+                                     {value.casefold() for value in current["subtypes"]})
+                    self.assertEqual({"Legendary"}, set(current["supertypes"]))
+                    self.assertEqual(["Vigilance"], current["abilities"])
+                    self.assertEqual((3, 3), (current["power"], current["toughness"]))
+
+    def test_unspecified_animation_removes_lost_noncreature_subtypes_only(self):
+        spec = FixedResolutionCharacteristicsSpec(card_types=("Creature",), base_power=3, base_toughness=3)
+        for old_type, old_subtype in (
+            ("Land", "Forest"), ("Artifact", "Equipment"),
+            ("Enchantment", "Shrine"), ("Planeswalker", "Jace"),
+            ("Battle", "Siege"), ("Kindred", "Elf"),
+        ):
+            with self.subTest(old_type=old_type):
+                initial = CharacteristicState(
+                    "Generic typed Elf", card_types={"Creature", old_type},
+                    subtypes={"Elf", old_subtype}, power=2, toughness=4,
+                )
+                effects = [
+                    ContinuousEffect(effect_id=str(index), source_id="source", layer=layer,
+                                     sublayer=sublayer, timestamp=1, operations=operations)
+                    for index, (layer, sublayer, operations) in enumerate(spec.layer_operations())
+                ]
+                actual = evaluate_continuous_effects(initial, effects).characteristics
+                self.assertEqual({"Creature"}, set(actual["card_types"]))
+                self.assertEqual({"Elf"}, set(actual["subtypes"]))
+        with self.assertRaisesRegex(ValueError, "closed creature card-type set"):
+            FixedResolutionCharacteristicsSpec(card_types=("Creature", "Land"))
+
+    def test_unspecified_subtype_clear_mutant_is_killed(self):
+        from unittest.mock import patch
+
+        original = FixedResolutionCharacteristicsSpec.layer_operations
+
+        def mutate(spec):
+            layers = original(spec)
+            if spec.card_types is None or spec.retain_types or spec.creature_subtypes is not None:
+                return layers
+            return tuple(
+                (layer, sublayer, operations + (ContinuousOperation("set_types", (), field="subtypes"),))
+                if layer == Layer.TYPE else (layer, sublayer, operations)
+                for layer, sublayer, operations in layers
+            )
+
+        # Call a direct expectation, not a subTest whose failure is swallowed.
+        with patch.object(FixedResolutionCharacteristicsSpec, "layer_operations", mutate):
+            spec = FixedResolutionCharacteristicsSpec(card_types=("Creature",))
+            effects = [
+                ContinuousEffect(effect_id=str(index), source_id="source", layer=layer,
+                                 sublayer=sublayer, timestamp=1, operations=operations)
+                for index, (layer, sublayer, operations) in enumerate(spec.layer_operations())
+            ]
+            actual = evaluate_continuous_effects(
+                CharacteristicState("Generic", card_types={"Creature"}, subtypes={"Elf"}), effects
+            ).characteristics
+            with self.assertRaises(AssertionError):
+                self.assertEqual({"Elf"}, set(actual["subtypes"]))
+
+    def test_type_subtraction_matches_canonical_query_case(self):
+        # Live type_parts yields lower-case words; typed operations use title
+        # case. Both name the same rules subtype, including typographic quotes.
+        for subtypes in ({"elf", "forest", "urza’s"}, {"Elf", "Forest", "Urza's"}):
+            state = CharacteristicState("Generic", card_types={"Creature"}, subtypes=subtypes)
+            effect = ContinuousEffect(
+                effect_id="remove-land-type", source_id="source", layer=Layer.TYPE,
+                sublayer="4", timestamp=1,
+                operations=(ContinuousOperation("remove_types", ("Forest", "Urza's"), field="subtypes"),),
+            )
+            actual = evaluate_continuous_effects(state, (effect,)).characteristics
+            self.assertEqual({"elf"}, {value.casefold() for value in actual["subtypes"]})
 
     def test_source_characteristics_compile_across_shared_contexts(self):
         cases = (
@@ -407,6 +527,215 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
         )
         with self.assertRaises(ContinuousEffectError):
             ContinuousOperation("set_types", [], field="card_types")
+
+
+class AnimationSubtypeActionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "animation-subtypes.sqlite3"
+        build_fixture_database(
+            [ROOT / "tests/fixtures/animation-subtype-cards.json"], path
+        )
+        cls.db = CardDatabase(path)
+        cls.deck = DeckDefinition(
+            "Generic subtype review deck",
+            [DeckEntry("Generic Subtype Review Commander", 1, "commander"),
+             DeckEntry("Generic Subtype Review Island", 15)],
+            ["Generic Subtype Review Commander"],
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def session(self, seed):
+        from quorune.model import GameConfig
+
+        session = CommanderSession.create(
+            self.db, {seat: copy.deepcopy(self.deck) for seat in "ABCD"},
+            first_player="A", seed=seed,
+            config=GameConfig(seed=seed, auto_pass_empty_priority=False),
+        )
+        keep_all(session)
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        register_generated_programs(
+            self.db, engine.semantics, tuple(self.db.iter_cards()),
+            trust_level="trusted", capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review", promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        return session
+
+    def add(self, engine, name, ref, *, zone="battlefield", seat="A"):
+        row = self.db.lookup(name)
+        card = CardInstance(
+            object_id=f"animation-subtype:{ref}", ref=ref, oracle_id=row.oracle_id,
+            printed_name=row.name, owner=seat, controller=seat, zone=zone,
+            zone_timestamp=engine._next_zone_timestamp(),
+            known_to=list("ABCD") if zone == "battlefield" else [seat],
+        )
+        engine.state.cards[card.object_id] = card
+        engine.state.players[seat].zones[zone].append(card.object_id)
+        return card
+
+    def cast(self, session, spell, *, target=None):
+        engine = session.engine
+        programs = engine.semantics.programs_for_oracle(spell.oracle_id)
+        self.assertTrue(programs)
+        self.assertTrue(all(engine.semantic_program_is_current_trusted(p) for p in programs))
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.players["A"].mana_pool["U"] = 1
+        engine._grant_priority("A")
+        engine.pump()
+        action = next(
+            row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            if row["id"] == f"cast:{spell.ref}"
+        )
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+        if target is not None:
+            self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        command = {"action_id": action["id"], "pay": "auto"}
+        if target is not None:
+            command["targets"] = [target.ref]
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, sum(engine.state.players["A"].mana_pool.values()))
+
+    def resolve(self, session):
+        for _ in range(8):
+            if not session.engine.state.stack:
+                return
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("Generic animation did not resolve")
+
+    def assert_replay(self, session):
+        expected = authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "animation-subtype-record"
+            session.save(path)
+            self.assertEqual(
+                expected, authoritative_state_hash(CommanderSession.load(self.db, path).state)
+            )
+            result = replay_record(path, self.db, verify=True)
+        self.assertTrue(result["ok"], result)
+        self.assertEqual(expected, result["final_state_hash"])
+
+    def assert_elf_query(self, engine, card):
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.object_query import object_matches_query, object_query_result
+
+        effective = engine._effective_card_data(card)
+        row = object_query_result(
+            card, effective, type_parts=engine._type_parts(effective["type_line"]),
+            known_to_actor=True, attached_to_ref=None,
+        )
+        self.assertTrue(object_matches_query(
+            row, ObjectQuerySpec(zones=("battlefield",), subtypes_all=("elf",))
+        ))
+        return row
+
+    def test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay(self):
+        session = self.session(240457001)
+        engine = session.engine
+        target = self.add(engine, "Generic Subtype Review Elf", "ELF-TARGET")
+        target.counters["+1/+1"] = 1
+        spell = self.add(
+            engine, "Generic Unspecified Creature Animation", "ANIMATION-SPELL", zone="hand"
+        )
+        self.cast(session, spell, target=target)
+        self.resolve(session)
+        current = engine._effective_card_data(target)
+        self.assertEqual({"creature"}, engine._type_parts(current["type_line"])[0])
+        self.assertEqual({"elf"}, engine._type_parts(current["type_line"])[1])
+        self.assertEqual(("3", "3"), (current["power"], current["toughness"]))
+        self.assertEqual(["U"], current["colors"])
+        self.assertIn("Vigilance", current["keywords"])
+        row = self.assert_elf_query(engine, target)
+        self.assertEqual((4, 4), (row.effective_power, row.effective_toughness))
+        self.assertEqual({"+1/+1": 1}, target.counters)
+        self.assertEqual("graveyard", spell.zone)
+        for viewer in "ABCD":
+            public = json.dumps(StateProjector(self.db, engine.state)._snapshot(f"pilot:{viewer}"))
+            self.assertIn(target.ref, public)
+            self.assertNotIn("continuous_effects", public)
+            for seat in "ABCD":
+                if seat != viewer:
+                    for object_id in engine.state.players[seat].zones["hand"]:
+                        self.assertNotIn(engine.state.cards[object_id].ref, public)
+        self.assert_replay(session)
+        expire_end_of_turn_continuous_effects(engine.state)
+        restored = engine._effective_card_data(target)
+        self.assertEqual(("2", "4"), (restored["power"], restored["toughness"]))
+        self.assertEqual({"elf"}, engine._type_parts(restored["type_line"])[1])
+        row = self.assert_elf_query(engine, target)
+        self.assertEqual((3, 5), (row.effective_power, row.effective_toughness))
+
+    def test_trusted_unspecified_set_locks_membership_control_and_incarnations(self):
+        session = self.session(240457002)
+        engine = session.engine
+        first = self.add(engine, "Generic Subtype Review Land Elf", "SET-FIRST")
+        second = self.add(engine, "Generic Subtype Review Elf", "SET-SECOND")
+        outsider = self.add(engine, "Generic Subtype Review Elf", "SET-OUTSIDER", seat="B")
+        late = self.add(engine, "Generic Subtype Review Elf", "SET-LATE", zone="hand")
+        spell = self.add(engine, "Generic Unspecified Creature Set", "SET-SPELL", zone="hand")
+        self.cast(session, spell)
+        self.resolve(session)
+        self.assert_elf_query(engine, first)
+        self.assertEqual({"creature"}, engine._type_parts(engine._effective_card_data(first)["type_line"])[0])
+        self.assertEqual({"elf"}, engine._type_parts(engine._effective_card_data(first)["type_line"])[1])
+        self.assertEqual("2", engine._effective_card_data(outsider)["power"])
+        self.assert_replay(session)
+        # These post-replay owner diagnostics are not recorded commands.
+        engine.change_control(first.object_id, "D", reason="locked animation control contrast")
+        self.assertEqual("3", engine._effective_card_data(first)["power"])
+        self.assert_elf_query(engine, first)
+        engine.move_card(late.object_id, "battlefield", reason="late entry contrast")
+        self.assertEqual("2", engine._effective_card_data(late)["power"])
+        old_identity = second.logical_object_id
+        engine.move_card(second.object_id, "hand", reason="locked animation departure")
+        engine.move_card(second.object_id, "battlefield", reason="locked animation reentry")
+        self.assertNotEqual(old_identity, second.logical_object_id)
+        self.assertEqual("2", engine._effective_card_data(second)["power"])
+        expire_end_of_turn_continuous_effects(engine.state)
+        restored = engine._effective_card_data(first)
+        self.assertEqual({"land", "creature"}, engine._type_parts(restored["type_line"])[0])
+        self.assertEqual({"forest", "elf"}, engine._type_parts(restored["type_line"])[1])
+        self.assertEqual("D", first.controller)
+
+    def test_trusted_unspecified_animation_rejects_stale_reentered_target(self):
+        session = self.session(240457003)
+        engine = session.engine
+        target = self.add(engine, "Generic Subtype Review Elf", "STALE-ELF")
+        spell = self.add(engine, "Generic Unspecified Creature Animation", "STALE-SPELL", zone="hand")
+        self.cast(session, spell, target=target)
+        old_identity = target.logical_object_id
+        engine.move_card(target.object_id, "hand", reason="old target departure")
+        engine.move_card(target.object_id, "battlefield", reason="new target incarnation")
+        self.assertNotEqual(old_identity, target.logical_object_id)
+        self.resolve(session)
+        self.assertEqual("2", engine._effective_card_data(target)["power"])
+        self.assert_elf_query(engine, target)
+        self.assertFalse([
+            effect for effect in engine.state.continuous_effects
+            if any(identity.object_id == target.object_id for identity in effect.locked_objects)
+        ])
 
 
 class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):

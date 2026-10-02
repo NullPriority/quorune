@@ -16,7 +16,24 @@ PERMANENT_CHARACTERISTIC_CAPABILITY = (
     "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
 )
 CHARACTERISTIC_OPERATION = "apply_source_characteristics_until_end_of_turn"
-_CARD_TYPES = frozenset({"Artifact", "Creature", "Enchantment", "Land", "Planeswalker"})
+# CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
+# Every non-retaining animation in this closed model sets Creature alone.
+# Remove subtypes correlated with the lost types, not retained creature types.
+_LOST_NONCREATURE_SUBTYPES = tuple(sorted("""
+Attraction Blood Bobblehead Book Clue Contraption Equipment Food Fortification
+Gold Incubator Infinity Junk Lander Map Mutagen Powerstone Spacecraft Stone
+Treasure Vehicle Vibranium Aura Background Cartouche Case Class Curse Plan
+Role Room Rune Saga Shard Shrine Cave Desert Forest Gate Island Lair Locus Mine
+Mountain Plains Planet Power-Plant Sphere Swamp Tower Town Urza's
+Ajani Aminatou Angrath Arlinn Ashiok Bahamut Basri Bolas Calix Chandra Comet Dack
+Dakkon Daretti Davriel Dellian Dihada Domri Dovin Ellywick Elminster Elspeth
+Estrid Freyalise Garruk Gideon Grist Guff Huatli Jace Jared Jaya Jeska Kaito Karn
+Kasmina Kaya Kiora Koth Liliana Lolth Lukka Minsc Mordenkainen Nahiri Narset Niko
+Nissa Nixilis Oko Quintorius Ral Rowan Saheeli Samut Sarkhan Serra Sivitri Sorin
+Szat Tamiyo Tasha Teferi Teyo Tezzeret Tibalt Tyvar Ugin Urza Venser Vivien
+Vraska Vronos Will Windgrace Wrenn Xenagos Yanggu Yanling Zariel
+Adventure Arcane Lesson Omen Trap Siege
+""".split()))
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,11 +57,10 @@ class FixedResolutionCharacteristicsSpec:
                 raise ValueError("Characteristic flags must be strict booleans")
         if any(type(value) is not int or value < 0 for value in (self.base_power, self.base_toughness)):
             raise ValueError("Base characteristics must be nonnegative integers")
-        if self.card_types is not None and (
-            not self.card_types or len(set(self.card_types)) != len(self.card_types)
-            or not set(self.card_types) <= _CARD_TYPES or "Creature" not in self.card_types
-        ):
+        if self.card_types is not None and self.card_types not in (("Creature",), ("Artifact", "Creature")):
             raise ValueError("Animation requires a closed creature card-type set")
+        if self.card_types is not None and not self.retain_types and self.card_types != ("Creature",):
+            raise ValueError("Non-retaining animation replaces card types with Creature")
         if self.creature_subtypes is not None and (
             self.card_types is None or len(set(self.creature_subtypes)) != len(self.creature_subtypes)
             or any(type(value) is not str or canonical_creature_subtype(value) is None or value != canonical_creature_subtype(value).title() for value in self.creature_subtypes)
@@ -94,11 +110,13 @@ class FixedResolutionCharacteristicsSpec:
         if self.card_types is not None:
             types.append(ContinuousOperation("add_types" if self.retain_types else "set_types", self.card_types, field="card_types"))
             if not self.retain_types:
-                types.append(ContinuousOperation("set_types", (), field="subtypes"))
+                types.append(ContinuousOperation(
+                    "remove_types", _LOST_NONCREATURE_SUBTYPES, field="subtypes"
+                ))
             if self.creature_subtypes is not None:
-                if self.retain_types and not self.retain_creature_subtypes:
-                    # CR 205.1a/b replaces only the creature-subtype set when
-                    # prior types are retained, not land/artifact subtypes.
+                if not self.retain_creature_subtypes:
+                    # A specified creature subtype replaces that subtype set;
+                    # retained land/artifact subtype sets are not replaced.
                     types.append(ContinuousOperation("remove_types", tuple(sorted(value.title() for value in CREATURE_SUBTYPES)), field="subtypes"))
                 if self.creature_subtypes:
                     types.append(ContinuousOperation("add_types", self.creature_subtypes, field="subtypes"))

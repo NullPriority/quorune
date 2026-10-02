@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5048b03477f5e59a6312b144b4dcc78deba6ccda634644a313be9e281628ebed",
-  "declaration_source_fingerprint": "0e0ff22b57b8a050185cc7c5720fe54c561127147326f50a0fb26e67f255f7b9",
+  "registry_fingerprint": "6c7672d62c588679548631557b6334679098693f46e63fb9ed6c678361b899dc",
+  "declaration_source_fingerprint": "25a6242434ccf79be57fa792e38f2a42583a3c3dfe34a52b2da297bce789e82c",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -26631,8 +26631,57 @@
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_set_locks_membership_control_and_incarnations",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A trusted public-set cast preserves Elf while removing lost Forest; resolved membership survives control change but excludes late entrants and reentered incarnations, and cleanup restores the lost type and subtype."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_compiled_animation_absent_and_explicit_subtypes_have_distinct_results",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent compiler-to-layer contrasts distinguish absent and explicit subtype instructions, lost card types, explicit retention, base-only and qualified/unqualified artifact-creature animation."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_layer_operations_preserve_rule_distinctions",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26656,6 +26705,7 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_animation_updates_dynamic_counts_and_detaches_equipment",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26679,6 +26729,7 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_group_locks_controller_and_incarnation_membership",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26702,6 +26753,7 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_source_self_runtime_reference_distinguishes_incarnations",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26725,6 +26777,7 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26748,6 +26801,7 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26771,6 +26825,7 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_type_retention_mutant_is_killed",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26794,6 +26849,7 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_shape_is_closed_and_capability_bound",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26814,9 +26870,58 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_unspecified_subtype_clear_mutant_is_killed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill the exact unconditional subtype-clear mutation without deriving expected subtype preservation from the implementation under test."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_rejects_stale_reentered_target",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The offered and accepted trusted cast cannot apply its old target's characteristic effect to a new incarnation after departure and reentry."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_grammar_keeps_open_forms_residual",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26840,6 +26945,7 @@
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_dependency_blocking_and_current_target_revalidation",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26861,8 +26967,33 @@
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual registered trusted cast pays its offered cost, preserves the absent creature-subtype instruction and current Elf query, retains abilities and counters, and expires only the represented fixed result."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_and_base_setting_share_context_and_target_owners",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26886,6 +27017,7 @@
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristics_compile_across_shared_contexts",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26909,6 +27041,7 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_source_owner_zero_quantity_is_a_valid_no_op",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26932,6 +27065,7 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26955,6 +27089,7 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -26976,8 +27111,33 @@
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load and exact canonical replay begin before the actual offered cast and preserve the resolved subtype-sensitive query and full authoritative state."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -27001,6 +27161,7 @@
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -27024,6 +27185,7 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -27047,6 +27209,7 @@
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_source_incarnation_and_malformed_rollback",
       "official_rule_ids": [
+        "205.1a",
         "205.1b",
         "208.5",
         "611.2a",
@@ -72273,5 +72436,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "ae4eb8044582efa9e3db0a18f1e941b6040132dcb3ae9e5a1594da8681bddcbb"
+  "fingerprint": "c447059554bbac9579f5a4785691437e53ec20d789855b17780a5db443fa2b5f"
 }

@@ -10464,21 +10464,37 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject a replacement continuation whose target left and returned with a new logical identity before either the counter or keyword result mutates state."
     },
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"interaction","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_layer_operations_preserve_rule_distinctions","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Contrast retained types, artifact-creature replacement of creature subtypes, full type replacement, fixed colors, ability removal and later modifiers under the canonical layer evaluator."},
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_set_locks_membership_control_and_incarnations",
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A trusted public-set cast preserves Elf while removing lost Forest; resolved membership survives control change but excludes late entrants and reentered incarnations, and cleanup restores the lost type and subtype."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_compiled_animation_absent_and_explicit_subtypes_have_distinct_results",
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Independent compiler-to-layer contrasts distinguish absent and explicit subtype instructions, lost card types, explicit retention, base-only and qualified/unqualified artifact-creature animation."
+    },
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"interaction","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_layer_operations_preserve_rule_distinctions","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Contrast retained types, artifact-creature replacement of creature subtypes, full type replacement, fixed colors, ability removal and later modifiers under the canonical layer evaluator."},
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_animation_updates_dynamic_counts_and_detaches_equipment",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply the layer-4 animation before the cycle-safe layer-7a creature count and detach an Equipment that becomes a creature."
     },
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"interaction","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_group_locks_controller_and_incarnation_membership","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The shared multi-layer journal locks the current set, survives control changes, excludes later entrants and returned incarnations, and expires in cleanup."},
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"interaction","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_group_locks_controller_and_incarnation_membership","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The shared multi-layer journal locks the current set, survives control changes, excludes later entrants and returned incarnations, and expires in cleanup."},
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_source_self_runtime_reference_distinguishes_incarnations",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "The existing source owner applies to the current matching incarnation after control changes and ignores departed or re-entered incarnations."
     },
@@ -10486,35 +10502,59 @@
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Resolve one source animation in four-player state while preserving public characteristics and shared effect identity."
     },
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"multiplayer","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A genuinely trusted four-player land activation pays its ordinary cost and resolves through the shared characteristic owner."},
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"mutation","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_type_retention_mutant_is_killed","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An executable mutation replacing retained types is killed by the independent layer-result contract."},
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"multiplayer","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A genuinely trusted four-player land activation pays its ordinary cost and resolves through the shared characteristic owner."},
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"mutation","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_type_retention_mutant_is_killed","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An executable mutation replacing retained types is killed by the independent layer-result contract."},
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_shape_is_closed_and_capability_bound",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject source, layer, color, base-stat, dynamic-value, duplicate-keyword, and unknown-field mutations."
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_unspecified_subtype_clear_mutant_is_killed",
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Kill the exact unconditional subtype-clear mutation without deriving expected subtype preservation from the implementation under test."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_rejects_stale_reentered_target",
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "The offered and accepted trusted cast cannot apply its old target's characteristic effect to a new incarnation after departure and reentry."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_grammar_keeps_open_forms_residual",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep dynamic values, choices, unsupported keywords, land animation, declaration riders, copies, and mismatched source kinds residual."
     },
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"negative","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_dependency_blocking_and_current_target_revalidation","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Blocking the shared source capability withholds fixed v2 results; canonical current-target revalidation prevents departed targets from receiving a characteristic journal."},
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"positive","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_and_base_setting_share_context_and_target_owners","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Complete fixed animation and base-setting wording preserves exact source spans, explicit retention, ability removal and canonical source, target and set selection across carriers."},
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"negative","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_dependency_blocking_and_current_target_revalidation","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Blocking the shared source capability withholds fixed v2 results; canonical current-target revalidation prevents departed targets from receiving a characteristic journal."},
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "An actual registered trusted cast pays its offered cost, preserves the absent creature-subtype instruction and current Elf query, retains abilities and counters, and expires only the represented fixed result."
+    },
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"positive","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_and_base_setting_share_context_and_target_owners","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Complete fixed animation and base-setting wording preserves exact source spans, explicit retention, ability removal and canonical source, target and set selection across carriers."},
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristics_compile_across_shared_contexts",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile fixed source stats, multiple supported keywords, colors, and artifact animation through one identity-pinned owner."
     },
@@ -10522,7 +10562,7 @@
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_source_owner_zero_quantity_is_a_valid_no_op",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "A validated source-characteristic scalar resolving to zero produces no component or mutation; malformed fields remain independently rejected."
     },
@@ -10530,29 +10570,37 @@
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project public animated characteristics to every seat without exposing the continuous-effect journal."
     },
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"privacy","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the acting seat receives the activation decision; no public projection exposes the authoritative continuous-effect journal or opposing hidden references."},
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"privacy","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the acting seat receives the activation decision; no public projection exposes the authoritative continuous-effect journal or opposing hidden references."},
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save/load and exact canonical replay begin before the actual offered cast and preserve the resolved subtype-sensitive query and full authoritative state."
+    },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Save, load, and exactly replay one four-layer source animation with a shared timestamp."
     },
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"replay","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Save/load and exact command replay reconstruct the full paid multi-layer result from a checkpoint before the genuinely trusted activation."},
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"replay","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Save/load and exact command replay reconstruct the full paid multi-layer result from a checkpoint before the genuinely trusted activation."},
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
-      "official_rule_ids": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
+      "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "A real registered activation commits payment and resolves a zero source quantity as a no-op, preserving save/load and exact replay."
     },
-    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"rollback","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_source_incarnation_and_malformed_rollback","official_rule_ids":["205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A returned new source incarnation receives no effect from the old activation; malformed nonboolean retention changes no authoritative state."},
+    {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"rollback","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_source_incarnation_and_malformed_rollback","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A returned new source incarnation receives no effect from the old activation; malformed nonboolean retention changes no authoritative state."},
     {"capability_id":"continuous.resolution.temporary_target_interactions","evidence_class":"interaction","test_id":"tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_current_target_conditions_and_regeneration","official_rule_ids":["115.1","400.7","608.2b","608.2d","608.2h","611.2a","611.2c","611.2d","613.1f","613.4c","702.16"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Read the target's current public condition once and compose a temporary modifier with the canonical regeneration shield and destroy replacement."},
     {"capability_id":"continuous.resolution.temporary_target_interactions","evidence_class":"interaction","test_id":"tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_temporary_protection_uses_debt_and_current_chooser","official_rule_ids":["115.1","400.7","608.2b","608.2d","608.2h","611.2a","611.2c","611.2d","613.1f","613.4c","702.16"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Create typed temporary protection through a real activation and use current recipient controller for the resolving color choice."},
     {"capability_id":"continuous.resolution.temporary_target_interactions","evidence_class":"interaction","test_id":"tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_trusted_keyword_choice_and_unblockable_activation","official_rule_ids":["115.1","400.7","608.2b","608.2d","608.2h","611.2a","611.2c","611.2d","613.1f","613.4c","702.16"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resolve one chosen keyword and a qualified source-excluding unblockable activation through the existing choice, target, continuous and declaration owners."},

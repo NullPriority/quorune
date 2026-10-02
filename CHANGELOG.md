@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve unspecified creature subtypes during fixed animation, remove only
+  subtype sets correlated with lost card types, and retain the distinct
+  artifact-creature and explicitly retained-type behavior.
+
 - Preserve the nonland-permanent hand-selection domain by excluding cards with
   Land even when they also have another permanent type.
 
