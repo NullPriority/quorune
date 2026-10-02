@@ -11,6 +11,14 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile fixed resolution-time mana, life, discard and sacrifice payments with
+  independently typed conditional results through the existing optional-payment
+  choice and resumable cost owners. Preserve full payment, private selection,
+  target timing, replacement redirection and independent mandatory-sibling scope.
+- Emit the current fixed cast-cost modifier descriptor schema through its typed
+  canonical conversion while retaining historical schema decoding and strict
+  runtime binding.
+
 - Compile fixed end-of-turn permanent animation and base-characteristic setting
   through the existing identity-pinned multi-layer continuous-effect owner,
   preserving type retention, creature-subtype replacement, ability removal,

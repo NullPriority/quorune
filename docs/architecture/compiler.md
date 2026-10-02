@@ -367,7 +367,7 @@ modal or repeated choices, linked or conditional results, multiple effects in
 one optional body, and bodies without an independently exact typed owner remain
 source-spanned residuals.
 
-`compiler/optional_payment_templates.py` owns the distinct triggered clause
+`compiler/optional_payment_templates.py` owns the historical triggered clause
 `you may pay <cost>. If you do, <effect>` when the cost is one positive fixed
 ordinary generic, colored, or colorless mana vector and the body is one
 independently exact atomic effect. It preserves body-owned targets at trigger
@@ -377,6 +377,21 @@ canonical mana-payment intent before resuming the typed body; decline commits
 nothing. Variable, hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.
+
+`compiler/fixed_effect_payment_templates.py` extends that same registered
+payment choice with an explicit v2 payload across spell, activated and existing
+normalized-trigger carriers. One fixed ordinary mana vector, fixed positive
+life payment, one or two unqualified owned-card discards, one qualified owned
+card discard, or one controlled-permanent sacrifice precedes an independently
+closed typed consequence. A single exact mandatory prefix stays outside the
+payment scope. The compiler preserves every target and result owner and retains
+v1 precedence when its old one-mana/one-effect shape closes. Runtime rechecks
+full resources, current predicates and object incarnations, commits through
+canonical payment or simultaneous zone intents, then resumes the typed result.
+CR 118.12 depends on chosen payment, not the final destination after replacement.
+Alternative/compound/dynamic costs, random/named payments, paid-object or linked
+results, reflexive triggers, nested/repeated choices, unsupported leaf owners
+and wider grammar remain residual.
 
 `compiler/monarch_templates.py` owns the mandatory controller-becomes-monarch
 instruction. Its strict node shape declares only the existing canonical

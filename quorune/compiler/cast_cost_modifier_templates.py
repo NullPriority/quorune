@@ -817,7 +817,9 @@ def static_fixed_spell_cost_reduction_handler(
 
     modifier = public_cast_cost_modifier_template(text)
     if modifier is not None:
-        descriptor_version = 2
+        from ..cast_cost_modifiers import PublicCastCostModifierV2Spec
+        modifier = PublicCastCostModifierV2Spec.from_fixed_modifier(modifier)
+        descriptor_version = 3
     else:
         modifier = public_cast_cost_modifier_v2_template(text)
         descriptor_version = 3

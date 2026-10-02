@@ -1334,6 +1334,11 @@
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/optional_payment_templates.py",
+        "quorune/compiler/fixed_effect_payment_templates.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
+        "tests/fixtures/fixed-resolution-payment-cards.json",
         "quorune/rules/fixed_effect_clause_shapes.py",
         "quorune/semantic_choices/intent_host.py",
         "quorune/semantic_choices/payments.py",

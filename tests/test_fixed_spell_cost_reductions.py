@@ -92,6 +92,16 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
         )
 
+    def test_current_fixed_reducer_descriptor_binds_registered_schema(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        generic=_record('Red creature spells you cast cost {1} less to cast.',23711812)
+        database=type('Rulings',(),{'rulings':lambda self,record:()})()
+        program=compile_best_available_card_program(database,generic,semantic_registry=SemanticRegistry(),capability_registry=self.capabilities,capability_profile='commander_review')
+        binding=bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+
     def test_fixed_spell_reducers_compile_typed_query_descriptors(self):
         cases = (
             (
@@ -441,7 +451,8 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
         descriptor = dict(compiled[1])
         spec = FixedSpellCostReductionHandler().validate(descriptor)
         self.assertEqual(2, spec.generic_reduction)
-        self.assertEqual(("creature",), spec.predicate.types_all)
+        self.assertEqual(3, descriptor["schema_version"])
+        self.assertEqual(("creature",), spec.predicates_any[0].types_all)
 
         malformed = (
             {**descriptor, "generic_reduction": True},

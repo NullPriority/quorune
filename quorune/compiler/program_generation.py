@@ -16,6 +16,7 @@ from ..rules.capabilities import (
     capability_dependencies_for_node,
 )
 from .modal_program_closure import is_closed_fixed_modal_program
+from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_program
 from .declared_effect_amounts import is_closed_declared_amount_program
 from .public_query_effect_amounts import (
     PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC,
@@ -1257,6 +1258,7 @@ def _is_closed_fixed_public_zone_move_set_program(
 def _closed_effect_recognizers():
     return (
         is_closed_fixed_modal_program,
+        is_closed_fixed_effect_payment_program,
         _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
