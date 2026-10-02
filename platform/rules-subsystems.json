@@ -4662,7 +4662,7 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v239-fixed-resolution-payment",
+      "transition_id": "oracle-ir-v238-fixed-resolution-payment",
       "compiler_version": "oracle-ir-v239",
       "bundle_id": "bundle:fixed-resolution-payment",
       "candidate_ids": ["bundle:fixed-resolution-payment"],

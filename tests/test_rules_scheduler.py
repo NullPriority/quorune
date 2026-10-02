@@ -3585,6 +3585,26 @@ class RulesSchedulerTests(unittest.TestCase):
             _source_checkpoint_frontier(transition_id)["fingerprint"],
         )
 
+    def test_unmerged_harvest_compiler_revision_retains_original_frontier_identity(self):
+        transition_id = 'generic-unmerged-harvest'
+        original_frontier = {'fingerprint': 'original-frontier', 'cards': []}
+        raw = gzip.compress(json.dumps(original_frontier).encode('utf-8'), mtime=0)
+        outcome = {
+            'transition_id': transition_id,
+            'measurement_frontier_fingerprint': 'original-frontier',
+            'base_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'a' * 40}}},
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            history = Path(directory) / 'history.json'
+            history.write_text(json.dumps({'entries': [outcome]}), encoding='utf-8')
+            with mock.patch('scripts.update_work_selection_cohort_measurements.HARVEST_HISTORY', history), mock.patch(
+                'scripts.update_work_selection_cohort_measurements.subprocess.run',
+                return_value=SimpleNamespace(returncode=0, stdout=raw),
+            ) as git:
+                revised = {'transition_id': transition_id, 'compiler_version': 'oracle-ir-v999'}
+                self.assertEqual('original-frontier', _source_checkpoint_frontier(revised['transition_id'])['fingerprint'])
+            self.assertEqual(['git', 'cat-file', 'blob', 'a' * 40], git.call_args.args[0])
+
     def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
         outcome = self.work_inputs["harvest_outcome_history"]["entries"][-1]
         transition_id = outcome["transition_id"]
