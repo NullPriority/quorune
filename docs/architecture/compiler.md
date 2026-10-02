@@ -447,8 +447,11 @@ described above; standalone controller discards remain outside this owner.
 
 `compiler/hand_inspection_templates.py` owns the distinct targeted-hand
 inspection grammar. It preserves public reveal versus controller-only look in
-one typed descriptor, applies a closed current-characteristic hand predicate,
-and routes one mandatory controller-selected discard or exile—or one fixed
+one typed descriptor and applies a closed current-characteristic hand predicate.
+It keeps positive permanent-type membership conjunctive with explicit Land
+exclusion for nonland permanent cards. An unrestricted artifact predicate still
+admits a card that is also a land. The shared query owns both constraints.
+It routes one mandatory controller-selected discard or exile—or one fixed
 all-matching discard—through the ordinary simultaneous replacement-aware zone
 owner. The semantic-choice owner exposes the inspected identities only to
 authorized principals, revalidates the selected current hand object, and

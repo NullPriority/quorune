@@ -1441,6 +1441,7 @@
         "quorune/rules/hand_inspection_capability_shapes.py",
         "quorune/semantic_choices/hand_inspection.py",
         "tests/fixtures/fixed-hand-inspection-cards.json",
+        "tests/fixtures/nonland-permanent-hand-cards.json",
         "tests/test_fixed_hand_inspection.py"
       ],
       "test_modules": [

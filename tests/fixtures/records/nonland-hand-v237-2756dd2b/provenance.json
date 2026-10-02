@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_commit": "2756dd2baeb42196c5760b10ee7e26b7ee889a06",
+  "compiler_version": "oracle-ir-v237",
+  "record_kind": "synthetic_historical_nonland_hand_command_replay",
+  "construction": "Actual archived Git source with its packaged registry/evidence, small generic decks and correctly registered trusted generated spell; offered cast, accepted payment and projected hand selection used ordinary commands.",
+  "historical_execution": "The historical missing Land exclusion admitted Artifact Land and discarded it to its owner graveyard. Six-command pre-action exact replay passed under the archived implementation, documenting the original behavior rather than claiming it correct.",
+  "current_runtime_disposition": "explicit_runtime_trust_incompatibility",
+  "included_components": ["manifest.json", "semantics.json", "commands.jsonl"],
+  "omitted_components": "No private initial/final checkpoint or hidden library order is committed. Current real replay rejects incompatible runtime provenance before reading a checkpoint; no silent recompile or cross-version execution claim is made."
+}

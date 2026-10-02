@@ -94,6 +94,7 @@ def _quality_predicate(value: str) -> HandCardPredicateSpec | None:
             excluded_supertypes = ("basic",)
         elif quality == "nonland permanent":
             fields["types_any"] = tuple(sorted(_PERMANENT_TYPES - {"land"}))
+            fields["excluded_types"] = ("land",)
         elif quality in _CARD_TYPES:
             fields["types_all"] = (quality,)
         else:
