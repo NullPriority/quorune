@@ -1053,6 +1053,24 @@
       "resolution": "Update only the exact stale restricted-mana dependency assertion, retain actual restriction descriptors and token behavior, and select the token-production consumer for changes to the fixed-mana compiler/model/handler contract. The exact regression fails before the correction and passes afterward; compiler semantics and the live census fingerprint stay unchanged.",
       "run_id": 36976363489,
       "summary": "The shared fixed-mana runtime dependency correction left three nested token-production compiler expectations using the old single-capability declaration."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-03",
+        "PR / Windows / functional-03"
+      ],
+      "head_sha": "43300a2ffaaf0add7e46ceb86b109eadb615bd8b",
+      "id": "ci-20261002-62",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_public_static_modifiers_compile_closed_schema",
+        "test_change_impact.ChangeImpactTests.test_fixed_modifier_schema_selects_all_current_descriptor_consumers"
+      ],
+      "resolution": "Update the five exact integration cases to assert the current handler schema and GENERIC mana vector while retaining controller, turn, ordinal and origin checks. The source-to-consumer impact edges already existed; add an executable assertion preserving all current descriptor consumers. The exact unchanged-head regression fails with five KeyErrors and passes after correction. No production semantics or corpus input identity changes.",
+      "run_id": 36999856316,
+      "summary": "Current fixed-modifier emission was repaired to the registered schema, but a separate casting-surface integration consumer still asserted the historical generic-only field."
     }
   ],
   "known_flaky_tests": [],
@@ -1113,7 +1131,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "7e04bc1f354ef36c57889eade625223f4fe9f2478692b2e9c15a7f53f542ab17",
+  "source_fingerprint": "45554b7f5e74847fb5e35b5c2c9827e0b34ba14a10c27ae89c8de2c1d9792cf2",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1124,11 +1142,11 @@
       "generated_artifact_drift": 8,
       "infrastructure": 1,
       "missing_affected_test": 23,
-      "source_correctness": 17
+      "source_correctness": 18
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 55,
-    "escape_count": 61,
+    "deterministic_escape_count": 56,
+    "escape_count": 62,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

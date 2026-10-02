@@ -3,7 +3,7 @@
   "declarations": [
     {
       "evidence_class": "interaction",
-      "assurance_kind": "runtime_composition",
+      "assurance_kind": "pair_derived",
       "test_id": "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
       "piece_ids": ["capability.choice.affected_player.fixed_discard", "capability.effect.choice.optional_fixed_mana_payment", "capability.zone.change.destination_replacement"],
       "capability_ids": ["choice.affected_player.fixed_discard", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],
@@ -12,7 +12,7 @@
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "runtime_composition",
+      "assurance_kind": "pair_derived",
       "test_id": "test_trusted_etb_sacrifice_uses_locked_trigger_controller_and_replays",
       "piece_ids": ["capability.choice.affected_player.fixed_sacrifice", "capability.effect.choice.optional_fixed_mana_payment", "capability.trigger.event.normalized_zone_change"],
       "capability_ids": ["choice.affected_player.fixed_sacrifice", "effect.choice.optional_fixed_mana_payment", "trigger.event.normalized_zone_change"],

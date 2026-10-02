@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "7e04bc1f354ef36c57889eade625223f4fe9f2478692b2e9c15a7f53f542ab17"
+verified: "45554b7f5e74847fb5e35b5c2c9827e0b34ba14a10c27ae89c8de2c1d9792cf2"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 61
-- Deterministic escapes: 55
+- Escapes: 62
+- Deterministic escapes: 56
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -90,6 +90,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260909-59` | [34326504995](https://github.com/NullPriority/quorune/actions/runs/34326504995) | `generated_artifact_drift` | `not_applicable` | Cloud source checkpoints now require a clean tracked worktree before local pre-corpus validation, so uncommitted generated outputs cannot mask missing exact-commit content; the required module-classification output is committed with the corrected checkpoint. |
 | `ci-20261002-60` | [36958659433](https://github.com/NullPriority/quorune/actions/runs/36958659433) | `flaky_test` | `not_applicable` | A deterministic token-collision counterexample reproduces the old assertion. The witness copies the projected decision and excludes only its authorized top-level cap from card-data substring checks, retains capability presence, seat exclusion, replacement consequences and exact replay, and rejects an injected private reference in the actual context. The module already has primary shard ownership and was selected by the required complete gate. |
 | `ci-20261002-61` | [36976363489](https://github.com/NullPriority/quorune/actions/runs/36976363489) | `missing_affected_test` | `added` | Update only the exact stale restricted-mana dependency assertion, retain actual restriction descriptors and token behavior, and select the token-production consumer for changes to the fixed-mana compiler/model/handler contract. The exact regression fails before the correction and passes afterward; compiler semantics and the live census fingerprint stay unchanged. |
+| `ci-20261002-62` | [36999856316](https://github.com/NullPriority/quorune/actions/runs/36999856316) | `source_correctness` | `not_applicable` | Update the five exact integration cases to assert the current handler schema and GENERIC mana vector while retaining controller, turn, ordinal and origin checks. The source-to-consumer impact edges already existed; add an executable assertion preserving all current descriptor consumers. The exact unchanged-head regression fails with five KeyErrors and passes after correction. No production semantics or corpus input identity changes. |
 
 ## Measurement limitations
 

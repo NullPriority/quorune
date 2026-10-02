@@ -14,6 +14,12 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_fixed_modifier_schema_selects_all_current_descriptor_consumers(self):
+        expected = {'test_card_program_trust', 'test_fixed_casting_surface', 'test_fixed_spell_cost_reductions'}
+        for owner in ('quorune/cast_cost_modifiers.py', 'quorune/compiler/cast_cost_modifier_templates.py', 'quorune/compiler/public_cast_cost_modifiers.py', 'quorune/semantic_runtime/cast_costs.py'):
+            with self.subTest(owner=owner):
+                self.assertLessEqual(expected, set(classify_changes([owner]).test_modules))
+
     def test_rules_compiler_change_selects_compiler_and_evidence(self):
         plan = classify_changes(
             ["quorune/compiler/prevention_templates.py"]

@@ -123,6 +123,19 @@ def payment_continuation(effect) -> SemanticChoiceContinuation:
 
 
 class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
+    def test_fixed_payment_interaction_evidence_obeys_current_pair_contract(self):
+        import json
+        from common import ROOT
+        from quorune.reusable_pieces.interactions import validate_interaction_evidence
+        value=json.loads((ROOT/'platform/reusable-piece-interaction-evidence.json').read_text(encoding='utf-8'))
+        selected=[row for row in value['declarations']if row['test_id']in {
+            'test_payment_replacement_choice_resumes_once_after_save_load_and_replays',
+            'test_trusted_etb_sacrifice_uses_locked_trigger_controller_and_replays',
+            'test_fixed_payment_with_unrepresented_prevention_fails_closed',
+        }]
+        self.assertEqual(3,len(selected))
+        validate_interaction_evidence({'schema_version':2,'declarations':selected})
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.capabilities = load_default_capability_registry()
