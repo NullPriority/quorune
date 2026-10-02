@@ -4608,14 +4608,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v235-declared-effect-amounts",
-      "compiler_version": "oracle-ir-v235",
-      "bundle_id": "bundle:declared-effect-amounts",
-      "candidate_ids": ["bundle:declared-effect-amounts"],
-      "family_ids": ["effect_clause:deal-damage", "effect_clause:draw", "quantity_expression:dynamic-quantity"],
-      "capability_ids": ["quantity_expression.declared_effect_amount"],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:declared-effect-amounts"
+      "transition_id": "oracle-ir-v236-lifecycle-runtime-dependencies",
+      "compiler_version": "oracle-ir-v236",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": ["casting.lifecycle.fixed_public", "casting.lifecycle.fixed_zone_cast"],
+      "non_harvest_reason": "Correct the confirmed shared cast-lifecycle runtime dependency declaration mismatch without changing supported grammar, casting authority, or lifecycle effects.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {

@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Align fixed-cast lifecycle compiler declarations with the existing shared
+  runtime handler's full capability contract. Preserve canonical cast offers,
+  payment and resolution, and add a real Buyback action-and-replay witness.
+
 - Bind ordinary announced spell-cost X and complete public count definitions
   to existing typed numeric result owners without changing target or payment
   authority. Explicit public definitions retain one instruction-time value

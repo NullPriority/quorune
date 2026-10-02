@@ -10,10 +10,9 @@ from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleSpec,
-    FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
+    FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES,
     FIXED_CAST_LIFECYCLE_HANDLER_ID,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
-    FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
 )
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -59,10 +58,7 @@ class FixedCastLifecycleHandler:
         "702.62c",
         "702.62d",
     )
-    capability_dependencies: tuple[str, ...] = (
-        FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
-        FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
-    )
+    capability_dependencies: tuple[str, ...] = FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES
 
     def validate(
         self,

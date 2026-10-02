@@ -10,12 +10,16 @@ from unittest import mock
 from common import ROOT, keep_all, make_session
 from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from quorune.carddb import CardDatabase, CardRecord
+from quorune.card_programs import bind_card_program_runtime
+from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.cast_lifecycles import (
     FixedCastLifecycleKind,
     FixedCastLifecycleSpec,
     FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
     FIXED_CAST_LIFECYCLE_CONTEXT_FIELD,
     FIXED_CAST_LIFECYCLE_HANDLER_ID,
+    FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES,
+    FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
 )
 from quorune.compiler.cast_cost_modifier_templates import (
     static_fixed_spell_cost_reduction_handler,
@@ -48,6 +52,7 @@ from quorune.semantic_runtime.cast_lifecycles import (
     FixedCastLifecycleHandler,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from quorune.semantics import SemanticRegistry
 from quorune.session import CommanderSession
 from scripts.build_test_database import build_fixture_database
 
@@ -183,6 +188,85 @@ class FixedCastingSurfaceCompilerTests(unittest.TestCase):
                 ir = self.compile(_record(text, 160_011_000 + index))
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_all_current_lifecycle_nodes_declare_the_registered_handler_contract(self):
+        cases = (
+            ("Buyback {2}", "Buyback", "Instant"),
+            ("Dash {2}", "Dash", "Creature — Wizard"),
+            ("Warp {2}", "Warp", "Creature — Wizard"),
+            ("Retrace", "Retrace", "Instant"),
+            ("Suspend 2—{1}", "Suspend", "Instant"),
+            ("Foretell {2}", "Foretell", "Instant"),
+            ("Plot {2}", "Plot", "Sorcery"),
+            ("Escape—{2}, Exile two other cards from your graveyard.", "Escape", "Instant"),
+            ("Jump-start", "Jump-start", "Instant"),
+            ("Rebound", "Rebound", "Instant"),
+            ("Blitz {2}", "Blitz", "Creature — Wizard"),
+            ("Sneak {2}", "Sneak", "Creature — Wizard"),
+            ("Web-slinging {2}", "Web-slinging", "Creature — Wizard"),
+        )
+        required = set(FixedCastLifecycleHandler().capability_dependencies)
+        self.assertEqual(
+            {
+                FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
+                FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
+            },
+            required,
+        )
+        self.assertEqual(set(FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES), required)
+        for index, (text, keyword, type_line) in enumerate(cases):
+            with self.subTest(keyword=keyword):
+                ir = self.compile(
+                    _record(
+                        text, 236_013_000 + index,
+                        keywords=(keyword,), type_line=type_line,
+                    )
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertTrue(required.issubset(node.capability_dependencies))
+                self.assertIsNotNone(FixedCastLifecycleHandler().validate(node.handlers[0]))
+
+    def test_shared_lifecycle_handler_contract_fails_closed_when_a_required_owner_is_blocked(self):
+        record = _record(
+            "Buyback {2}", 236_014_000,
+            keywords=("Buyback",), type_line="Instant",
+        )
+        self.assertEqual("exact", self.compile(record).status)
+        for required in FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES:
+            with self.subTest(required=required):
+                raw = json.loads(
+                    (ROOT / "quorune/rules/capability-registry.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                row = next(row for row in raw["capabilities"] if row["id"] == required)
+                row.update(status="blocked", blockers=["lifecycle dependency mutation"])
+                blocked = CapabilityRegistry(raw)
+                blocked.mark_evidence_verified(self.capabilities.evidence_fingerprint)
+                ir = compile_oracle_card(
+                    record, capability_registry=blocked,
+                    capability_profile="commander_review",
+                )
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_lifecycle_dependency_omission_mutation_is_killed(self):
+        record = _record(
+            "Buyback {2}", 236_014_001,
+            keywords=("Buyback",), type_line="Instant",
+        )
+        required = set(FixedCastLifecycleHandler().capability_dependencies)
+        self.assertTrue(required.issubset(
+            self.compile(record).faces[0].nodes[0].capability_dependencies
+        ))
+        with mock.patch(
+            "quorune.compiler.cast_lifecycle_nodes.FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES",
+            (FIXED_CAST_LIFECYCLE_CAPABILITY_ID,),
+        ):
+            mutated = self.compile(record).faces[0].nodes[0]
+            with self.assertRaises(AssertionError):
+                self.assertTrue(required.issubset(mutated.capability_dependencies))
 
     def test_fixed_cast_lifecycles_compile_source_spanned_typed_programs(self):
         cases = (
@@ -931,6 +1015,55 @@ class FixedCastingSurfaceRuntimeTests(unittest.TestCase):
             countered_by="A",
         )
         self.assertEqual("graveyard", card.zone)
+
+    def test_generated_buyback_runtime_binding_covers_registered_requirements(self):
+        record = self.db.lookup("Buyback Spell Fixture", fuzzy=False)
+        program = compile_best_available_card_program(
+            self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(
+            program, capability_registry=self.capabilities,
+            profile="commander_review",
+        )
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+    def test_real_buyback_offer_payment_resolution_and_pre_action_replay(self):
+        # CR 702.27: the optional additional cost returns a successfully
+        # resolving spell to its owner's hand; payment still includes mana cost.
+        session = self.session(236_020_001, players=4)
+        engine = session.engine
+        card = self.add_card(session, name="Buyback Spell Fixture", ref="BUYBACK-ACTION")
+        engine.state.players["B"].mana_pool.update({"C": 3, "U": 1})
+        self.prepare_main(session)
+        projected = session.packet("pilot:B", full=True)["decision"]
+        self.assertIsNotNone(projected)
+        action = next(row for row in projected["ctx"]["legal"]["actions"]
+            if row.get("card") == card.ref and row.get("action") == "cast")
+        option = next(row for row in action["cost_options"] if row["id"] == "buyback")
+        self.assertEqual(3, option["requirements"]["GENERIC"])
+        self.assertEqual(1, option["requirements"]["U"])
+        initial_hand = len(engine.state.players["B"].zones["hand"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act("pilot:B", {
+            "action_id": action["id"], "cost_option": "buyback", "pay": "auto",
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, engine.state.players["B"].mana_pool.get("C", 0))
+        self.assertEqual(0, engine.state.players["B"].mana_pool.get("U", 0))
+        self.resolve_stack_with_passes(session)
+        self.assertEqual("hand", engine.state.cards[card.object_id].zone)
+        self.assertEqual(initial_hand + 1, len(engine.state.players["B"].zones["hand"]))
+        expected = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/"buyback-action"
+            session.save(path)
+            replay = replay_record(path, self.db, verify=True)
+            self.assertTrue(replay["ok"], replay)
+            self.assertEqual(expected, replay["final_state_hash"])
 
     def test_dash_and_warp_are_identity_pinned_through_delayed_resolution(self):
         for index, (name, option_id, destination) in enumerate(
