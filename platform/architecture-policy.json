@@ -140,6 +140,7 @@
     "quorune/dynamic_characteristics.py",
     "quorune/self_cast_reductions.py",
     "quorune/continuous_effect_state.py",
+    "quorune/resolution_characteristic_model.py",
     "quorune/continuous_effects.py",
     "quorune/continuous_effect_model.py",
     "quorune/control_history.py",

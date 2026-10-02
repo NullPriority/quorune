@@ -4574,6 +4574,33 @@
           "measurement_probe_id": "declared-effect-amount-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-resolution-animation",
+          "member_family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "effect_clause:ordered-effect-composition", "effect_clause:unparsed-until-end-of", "quantity_expression:dynamic-quantity"],
+          "canonical_owner_ids": [
+            "capability:continuous.resolution.fixed_characteristics_until_end_of_turn",
+            "capability:continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+            "component:quorune.compiler.fixed_resolution_characteristics.fixed_resolution_characteristics_effect_template",
+            "component:quorune.continuous_effect_state.create_resolution_continuous_effect_components",
+            "component:quorune.resolution_characteristic_model.FixedResolutionCharacteristicsSpec"
+          ],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["fixed-base-power-toughness", "fixed-colors-and-creature-subtypes", "fixed-public-set-or-single-target", "logical-source-incarnation", "type-retention-and-ability-removal"],
+          "shared_dependencies": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "state_query.permanent.public_state_predicate", "target.revalidate_resolution"],
+          "shared_grammar": "one complete fixed until-end-of-turn animation or base-characteristic instruction whose type, subtype, color, supported keyword, and all-ability removal components share the existing resolution journal and current target or public-set owner",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Close a cross-era fixed animation and base-stat cohort across existing spell, activation and normalized-trigger carriers without a parallel characteristic, targeting or ability-applicability path.",
+          "explicit_exclusions": [
+            "ability-qualified resolution sets and later-layer dynamic characteristic counts",
+            "conditional, optional, quoted, linked, indefinite and declaration-rider instructions",
+            "copy, text, control, dynamic, chosen and hidden characteristic values",
+            "new event grammar, unsupported keywords and independently unsupported siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-resolution-animation-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:qualified-zone-event-queries",
           "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
           "canonical_owner_ids": [
@@ -4608,14 +4635,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v236-lifecycle-runtime-dependencies",
-      "compiler_version": "oracle-ir-v236",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "non_harvest_reason": "Correct the confirmed shared cast-lifecycle runtime dependency declaration mismatch without changing supported grammar, casting authority, or lifecycle effects.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v237-fixed-resolution-animation",
+      "compiler_version": "oracle-ir-v237",
+      "bundle_id": "bundle:fixed-resolution-animation",
+      "candidate_ids": ["bundle:fixed-resolution-animation"],
+      "family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "effect_clause:ordered-effect-composition", "effect_clause:unparsed-until-end-of", "quantity_expression:dynamic-quantity"],
+      "capability_ids": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:fixed-resolution-animation"
     },
     "forecast_corrections": [
       {

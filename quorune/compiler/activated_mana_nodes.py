@@ -17,6 +17,7 @@ from ..color_set_mana_abilities import (
     compile_color_set_activated_mana_ability,
 )
 from ..fixed_mana_abilities import (
+    FIXED_MANA_HANDLER_CAPABILITIES,
     compile_fixed_activated_mana_ability,
     fixed_mana_handler_descriptor,
 )
@@ -85,13 +86,7 @@ def fixed_activated_mana_node(
     )
     if spec is None:
         return ability, None
-    capabilities = [
-        (
-            "mana.activated.restricted_fixed_output"
-            if spec.spend_restriction is not None
-            else "mana.activated.fixed_output"
-        )
-    ]
+    capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     capabilities.extend(activated_ability_cost_capabilities(ability))

@@ -46,6 +46,12 @@ class FixedManaAbilityError(ValueError):
     """A fixed-output mana descriptor is malformed or unsupported."""
 
 
+FIXED_MANA_HANDLER_CAPABILITIES = (
+    "mana.activated.fixed_output",
+    "mana.activated.restricted_fixed_output",
+)
+
+
 def _exact_fields(
     value: Mapping[str, Any], expected: set[str], *, field: str
 ) -> None:
@@ -566,6 +572,7 @@ def fixed_mana_handler_descriptor(
 
 
 __all__ = [
+    "FIXED_MANA_HANDLER_CAPABILITIES",
     "FIXED_MANA_HANDLER_ID",
     "FixedActivatedManaAbilitySpec",
     "FixedManaAbilityError",

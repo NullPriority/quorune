@@ -1036,6 +1036,23 @@
       "resolution": "A deterministic token-collision counterexample reproduces the old assertion. The witness copies the projected decision and excludes only its authorized top-level cap from card-data substring checks, retains capability presence, seat exclusion, replacement consequences and exact replay, and rejects an injected private reference in the actual context. The module already has primary shard ownership and was selected by the required complete gate.",
       "run_id": 36958659433,
       "summary": "The Bolster privacy witness searched serialized actor decision data including its authorized opaque capability. A random token contained the short hidden reference D04, causing a false privacy failure without exposing that reference in a card-data field."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-04",
+        "PR / Windows / functional-04"
+      ],
+      "head_sha": "e342f51ec8eb718465d4b62d215e9a30e07fa787",
+      "id": "ci-20261002-61",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions"
+      ],
+      "resolution": "Update only the exact stale restricted-mana dependency assertion, retain actual restriction descriptors and token behavior, and select the token-production consumer for changes to the fixed-mana compiler/model/handler contract. The exact regression fails before the correction and passes afterward; compiler semantics and the live census fingerprint stay unchanged.",
+      "run_id": 36976363489,
+      "summary": "The shared fixed-mana runtime dependency correction left three nested token-production compiler expectations using the old single-capability declaration."
     }
   ],
   "known_flaky_tests": [],
@@ -1051,7 +1068,7 @@
     "sample_size": 4,
     "started_at": "2026-08-25T03:52:06Z"
   },
-  "observed_at": "2026-10-02T04:10:47Z",
+  "observed_at": "2026-10-02T07:23:06Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1096,7 +1113,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "a70b05600fec99f24643036745254b3655839984200c9ce00cabd984b9a2045c",
+  "source_fingerprint": "7e04bc1f354ef36c57889eade625223f4fe9f2478692b2e9c15a7f53f542ab17",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1106,12 +1123,12 @@
       "flaky_test": 7,
       "generated_artifact_drift": 8,
       "infrastructure": 1,
-      "missing_affected_test": 22,
+      "missing_affected_test": 23,
       "source_correctness": 17
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 54,
-    "escape_count": 60,
+    "deterministic_escape_count": 55,
+    "escape_count": 61,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

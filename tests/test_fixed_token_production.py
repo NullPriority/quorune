@@ -312,7 +312,7 @@ class FixedTokenProductionTests(unittest.TestCase):
                     node.template_id,
                 )
                 self.assertEqual(
-                    ("mana.activated.restricted_fixed_output",),
+                    ("mana.activated.fixed_output", "mana.activated.restricted_fixed_output"),
                     node.capability_dependencies,
                 )
                 self.assertEqual(

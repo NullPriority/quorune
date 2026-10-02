@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "d13d179fbcf40ad565f248ba1801a00320a26b6b57fa7fc4a8e43a6682f7bb6f"
+verified: "411d51b4c0617adee3df80932316d137d747b77fe617be43323e76c44512d723"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -58,9 +58,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Ob Nixilis, the Adversary | 183 | 35 | 5 | 5 | 5 | 7 | `blocked` |
 | Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
+| Invasion of Zendikar // Awakened Skyclave | 181 | 21 | 5 | 5 | 6 | 18 | `blocked` |
 | Michiko's Reign of Truth // Portrait of Michiko | 181 | 22 | 7 | 5 | 7 | 6 | `blocked` |
 | Tribute to Horobi // Echo of Death's Wail | 181 | 20 | 7 | 6 | 8 | 6 | `blocked` |
 | Huatli, Poet of Unity // Roar of the Fifth People | 180 | 29 | 6 | 6 | 6 | 1 | `blocked` |
 | Ral, Monsoon Mage // Ral, Leyline Prodigy | 180 | 19 | 5 | 6 | 12 | 17 | `blocked` |
-| Era of Enlightenment // Hand of Enlightenment | 179 | 22 | 7 | 5 | 6 | 6 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

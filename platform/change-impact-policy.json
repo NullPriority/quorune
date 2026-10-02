@@ -1125,6 +1125,11 @@
       ]
     },
     {
+      "id": "fixed-mana-registered-dependency-contract",
+      "patterns": ["quorune/compiler/activated_mana_nodes.py", "quorune/fixed_mana_abilities.py", "quorune/semantic_runtime/mana_abilities.py"],
+      "test_modules": ["test_fixed_mana_abilities", "test_fixed_source_characteristic_effects", "test_fixed_token_production"]
+    },
+    {
       "id": "fixed-resolution-characteristic-effect-contract",
       "patterns": [
         "quorune/compiler/continuous_templates.py",
@@ -1142,6 +1147,9 @@
         "quorune/rules/node_capability_shapes.py",
         "quorune/semantic_runtime/continuous_components.py",
         "tests/fixtures/fixed-source-characteristic-effects.json",
+        "quorune/compiler/fixed_resolution_characteristics.py",
+        "quorune/resolution_characteristic_model.py",
+        "quorune/rules/resolution_characteristic_shapes.py",
         "tests/test_continuous_effect_duration.py",
         "tests/test_fixed_source_characteristic_effects.py"
       ],
