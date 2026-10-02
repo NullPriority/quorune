@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "cff94f7b2b1c8f28da9597eea22d42b5332eacb555d517a3a9073e40e9cb3a1e",
-  "declaration_source_fingerprint": "bf70459e28ce937ca4436da41b0c674d7b67d71004898867719f85240956c083",
+  "registry_fingerprint": "5048b03477f5e59a6312b144b4dcc78deba6ccda634644a313be9e281628ebed",
+  "declaration_source_fingerprint": "0e0ff22b57b8a050185cc7c5720fe54c561127147326f50a0fb26e67f255f7b9",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -15351,6 +15351,28 @@
     },
     {
       "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_hand_inspection.NonlandPermanentHandActionTests.test_nonland_hand_exclusion_mutant_is_killed",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An executed compiler mutation removes only the negative Land predicate while retaining positive permanent types; the distinguishing assertion fails, demonstrating prevention of the original dual-type admission defect."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionCompilerTests.test_hand_inspection_dependencies_fail_closed",
       "official_rule_ids": [
@@ -15392,6 +15414,28 @@
         "commander_review"
       ],
       "applicability_note": "Keep optional, random, named, multiple, cross-zone, bracketed alternate-text, delayed-link, and malformed descriptor variants material and nonexecutable."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_hand_inspection.NonlandPermanentHandActionTests.test_nonland_permanent_empty_domain_reveals_without_discarding_land",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A hand with only lands and a dual-type Artifact Land is revealed but has no eligible nonland permanent, so no selection or discard occurs; the actual cast resolves and replays."
     },
     {
       "capability_id": "choice.target_hand.fixed_inspection_move",
@@ -15439,6 +15483,50 @@
     },
     {
       "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_hand_inspection.NonlandPermanentHandActionTests.test_hand_predicate_compiler_preserves_positive_and_excluded_types",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Meaning-bearing nonland permanent descriptors require both permanent-type membership and Land exclusion across reveal/discard, look/discard and reveal/exile; artifact-only controls retain unrestricted artifact membership."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_hand_inspection.NonlandPermanentHandActionTests.test_trusted_nonland_permanent_selection_excludes_all_land_combinations",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A correctly registered trusted offered cast excludes Artifact Land, Enchantment Land and Land Creature, rejects invalid selection atomically, discards the eligible nonland artifact and exactly replays from before the action."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_public_reveal_private_look_projection_and_exact_replay",
       "official_rule_ids": [
@@ -15458,6 +15546,28 @@
         "commander_review"
       ],
       "applicability_note": "Expose a looked-at hand only to the resolving controller while public reveal exposes that hand to all seats and neither path leaks physical or logical object identity."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_hand_inspection.NonlandPermanentHandActionTests.test_private_look_public_exile_and_artifact_control_retain_real_action_semantics",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual private look excludes outsider hand identities, public reveal exposes them as instructed, exile/discard preserve their destinations and artifact selection legitimately admits Artifact Land; all accepted action paths replay."
     },
     {
       "capability_id": "choice.target_hand.fixed_inspection_move",
@@ -15502,6 +15612,28 @@
         "commander_review"
       ],
       "applicability_note": "Replay the public target, private hand observation, principal-specific knowledge state, and spell resolution to the identical final hash."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_hand_inspection.NonlandPermanentHandActionTests.test_actual_v237_hand_record_rejects_silent_current_reinterpretation",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A genuine archived v237 six-command replay demonstrates historical permissive Artifact Land selection; current real replay explicitly rejects changed runtime provenance before reading checkpoints rather than silently recompiling the old descriptor."
     },
     {
       "capability_id": "choice.target_hand.fixed_inspection_move",
@@ -72141,5 +72273,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "f32f93ab616171c94d4ad8efb1fb79aa37de077995b976f42087deace367de3a"
+  "fingerprint": "ae4eb8044582efa9e3db0a18f1e941b6040132dcb3ae9e5a1594da8681bddcbb"
 }

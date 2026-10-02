@@ -4662,14 +4662,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v238-fixed-resolution-payment",
-      "compiler_version": "oracle-ir-v239",
-      "bundle_id": "bundle:fixed-resolution-payment",
-      "candidate_ids": ["bundle:fixed-resolution-payment"],
-      "family_ids": ["effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "target_or_choice:conditional-effect"],
-      "capability_ids": ["casting.cost.modifier.fixed_query", "effect.choice.optional_fixed_mana_payment"],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-resolution-payment"
+      "transition_id": "oracle-ir-v240-nonland-permanent-hand-domain",
+      "compiler_version": "oracle-ir-v240",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Correct the confirmed nonland-permanent hand predicate by requiring permanent membership and explicit Land exclusion without widening admitted grammar or claiming a harvest gain.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {

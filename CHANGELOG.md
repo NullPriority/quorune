@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve the nonland-permanent hand-selection domain by excluding cards with
+  Land even when they also have another permanent type.
+
 - Align optional complete-card payments with published disjoint selection counts
   so the client offers decline or full payment and cannot advertise underpayment.
 

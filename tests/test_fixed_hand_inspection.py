@@ -703,5 +703,154 @@ class FixedHandInspectionRuntimeTests(unittest.TestCase):
         )
 
 
+class NonlandPermanentHandActionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'nonland-hand.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/nonland-permanent-hand-cards.json'],path)
+        cls.db=CardDatabase(path)
+        cls.deck=DeckDefinition('Generic hand review deck',[DeckEntry('Generic Hand Review Commander',1,'commander'),DeckEntry('Generic Hand Review Swamp',15)],['Generic Hand Review Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close();cls.temporary.cleanup()
+
+    def session(self,seed):
+        from quorune.model import GameConfig
+        from quorune.session import CommanderSession
+        from quorune.rules.capabilities import load_default_capability_registry
+        session=CommanderSession.create(self.db,{seat:copy.deepcopy(self.deck)for seat in 'ABCD'},first_player='A',seed=seed,config=GameConfig(seed=seed,auto_pass_empty_priority=False))
+        keep_all(session);engine=session.engine
+        engine.permissions.invalidate_current();engine.state.pending_decision=None;engine.state.priority_player=None;engine.state.priority_passes=[]
+        register_generated_programs(self.db,engine.semantics,tuple(self.db.iter_cards()),trust_level='trusted',capability_registry=load_default_capability_registry(),capability_profile='commander_review',promote_exact_runtime_handlers=True,promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
+        return session
+
+    def add(self,engine,name,seat,ref):
+        row=self.db.lookup(name)
+        card=CardInstance(object_id='nonland-hand:'+ref,ref=ref,oracle_id=row.oracle_id,printed_name=row.name,owner=seat,controller=seat,zone='hand',zone_timestamp=engine._next_zone_timestamp(),known_to=[seat])
+        engine.state.cards[card.object_id]=card;engine.state.players[seat].zones['hand'].append(card.object_id)
+        return card
+
+    def cast(self,session,spell):
+        engine=session.engine
+        programs=engine.semantics.programs_for_oracle(spell.oracle_id)
+        self.assertTrue(programs);self.assertTrue(all(engine.semantic_program_is_current_trusted(p)for p in programs))
+        engine.state.active_player='A';engine.state.started=True;engine.state.phase='precombat_main';engine.state.step='main';engine.state.players['A'].mana_pool['B']=1
+        engine._grant_priority('A');engine.pump()
+        action=next(row for row in session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']if row['id']==f'cast:{spell.ref}')
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        result=session.act('pilot:A',{'action_id':action['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(result.ok,result.summary)
+        for _ in range(8):
+            if engine.state.pending_decision and engine.state.pending_decision.kind=='semantic.choice':return
+            if not engine.state.stack:return
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'});self.assertTrue(result.ok,result.summary)
+        self.fail('Hand inspection did not resolve')
+
+    def replay(self,session):
+        from quorune.session import CommanderSession
+        expected=authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory()as directory:
+            path=Path(directory)/'nonland-hand-record';session.save(path)
+            self.assertEqual(expected,authoritative_state_hash(CommanderSession.load(self.db,path).state))
+            result=replay_record(path,self.db,verify=True)
+        self.assertTrue(result['ok'],result);self.assertEqual(expected,result['final_state_hash'])
+
+    def test_trusted_nonland_permanent_selection_excludes_all_land_combinations(self):
+        session=self.session(240442001);engine=session.engine
+        spell=self.add(engine,'Generic Nonland Hand Review Spell','A','HAND-REVIEW-SPELL')
+        artifact=self.add(engine,'Generic Hand Review Artifact','B','NONLAND-ARTIFACT')
+        artifact_land=self.add(engine,'Generic Hand Review Artifact Land','B','ARTIFACT-LAND')
+        enchantment_land=self.add(engine,'Generic Hand Review Enchantment Land','B','ENCHANTMENT-LAND')
+        land_creature=self.add(engine,'Generic Hand Review Land Creature','B','LAND-CREATURE')
+        instant=self.add(engine,'Generic Hand Review Instant','B','INSTANT')
+        self.cast(session,spell)
+        refs=session.packet('pilot:A',full=True)['decision']['legal_actions'][0]['choice_schema']['legal_refs']
+        self.assertIn(artifact.ref,refs);self.assertNotIn(instant.ref,refs)
+        self.assertNotIn(artifact_land.ref,refs)
+        self.assertNotIn(enchantment_land.ref,refs)
+        self.assertNotIn(land_creature.ref,refs)
+        before=authoritative_state_hash(engine.state)
+        invalid=session.act('pilot:A',{'action_id':'choose','card':artifact_land.ref})
+        self.assertFalse(invalid.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+        result=session.act('pilot:A',{'action_id':'choose','card':artifact.ref})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual('graveyard',engine.state.cards[artifact.object_id].zone)
+        self.assertEqual('hand',engine.state.cards[artifact_land.object_id].zone)
+        self.replay(session)
+
+    def test_hand_predicate_compiler_preserves_positive_and_excluded_types(self):
+        from quorune.rules.capabilities import load_default_capability_registry
+        registry=load_default_capability_registry()
+        for name in ('Generic Nonland Hand Review Spell','Generic Nonland Hand Look Spell','Generic Nonland Hand Exile Spell'):
+            with self.subTest(name=name):
+                ir=compile_oracle_card(self.db.lookup(name),capability_registry=registry,capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.to_dict())
+                query=ir.faces[0].nodes[0].effects[0]['predicate']['query']
+                self.assertEqual(['artifact','battle','creature','enchantment','planeswalker'],query['types_any'])
+                self.assertEqual(['land'],query['excluded_types'])
+        control=compile_oracle_card(self.db.lookup('Generic Artifact Hand Selection Spell'),capability_registry=registry,capability_profile='commander_review')
+        query=control.faces[0].nodes[0].effects[0]['predicate']['query']
+        self.assertEqual(['artifact'],query['types_all']);self.assertEqual([],query['excluded_types'])
+
+    def test_nonland_hand_exclusion_mutant_is_killed(self):
+        from quorune.compiler import hand_inspection_templates as owner
+        original=owner._quality_predicate
+        def omit_exclusion(text):
+            spec=original(text)
+            if text.casefold()=='a nonland permanent card':
+                return replace(spec,query=replace(spec.query,excluded_types=()))
+            return spec
+        with patch.object(owner,'_quality_predicate',omit_exclusion):
+            with self.assertRaises(AssertionError):
+                template=owner.fixed_hand_inspection_effect_template(self.db.lookup('Generic Nonland Hand Review Spell').oracle_text)
+                self.assertEqual(('land',),template.predicate.query.excluded_types)
+
+    def test_actual_v237_hand_record_rejects_silent_current_reinterpretation(self):
+        path=ROOT/'tests/fixtures/records/nonland-hand-v237-2756dd2b'
+        provenance=json.loads((path/'provenance.json').read_text(encoding='utf-8'))
+        self.assertEqual('oracle-ir-v237',provenance['compiler_version'])
+        self.assertEqual('explicit_runtime_trust_incompatibility',provenance['current_runtime_disposition'])
+        programs=json.loads((path/'semantics.json').read_text(encoding='utf-8'))['programs'].values()
+        program=next(row for row in programs if row['oracle_id']=='00000000-0000-4000-8000-000000000903')
+        self.assertEqual([],program['effects'][0]['predicate']['query']['excluded_types'])
+        self.assertEqual(6,len((path/'commands.jsonl').read_text(encoding='utf-8').splitlines()))
+        with self.assertRaisesRegex(ValueError,'Runtime trust provenance mismatch in record manifest'):
+            replay_record(path,self.db,verify=True)
+
+    def test_private_look_public_exile_and_artifact_control_retain_real_action_semantics(self):
+        cases=(('Generic Nonland Hand Look Spell','graveyard',False,False),('Generic Nonland Hand Exile Spell','exile',True,False),('Generic Artifact Hand Selection Spell','graveyard',True,True))
+        for index,(name,destination,public,artifact_control)in enumerate(cases):
+            with self.subTest(name=name):
+                session=self.session(240442010+index);engine=session.engine
+                spell=self.add(engine,name,'A','INSPECT-SPELL')
+                artifact=self.add(engine,'Generic Hand Review Artifact','B','SELECTED-ARTIFACT')
+                artifact_land=self.add(engine,'Generic Hand Review Artifact Land','B','CONTROL-ARTIFACT-LAND')
+                self.cast(session,spell)
+                projected=session.packet('pilot:A',full=True)['decision']
+                refs=projected['legal_actions'][0]['choice_schema']['legal_refs']
+                self.assertIn(artifact.ref,refs)
+                self.assertEqual(artifact_control,artifact_land.ref in refs)
+                outsider=json.dumps(StateProjector(self.db,engine.state)._snapshot('pilot:C'),sort_keys=True)
+                self.assertEqual(public,artifact.ref in outsider)
+                selected=artifact_land if artifact_control else artifact
+                result=session.act('pilot:A',{'action_id':'choose','card':selected.ref})
+                self.assertTrue(result.ok,result.summary)
+                self.assertEqual(destination,engine.state.cards[selected.object_id].zone)
+                self.replay(session)
+
+    def test_nonland_permanent_empty_domain_reveals_without_discarding_land(self):
+        session=self.session(240442020);engine=session.engine
+        spell=self.add(engine,'Generic Nonland Hand Review Spell','A','EMPTY-DOMAIN-SPELL')
+        artifact_land=self.add(engine,'Generic Hand Review Artifact Land','B','EMPTY-ARTIFACT-LAND')
+        self.cast(session,spell)
+        self.assertNotEqual('semantic.choice',engine.state.pending_decision.kind if engine.state.pending_decision else None)
+        self.assertEqual('hand',engine.state.cards[artifact_land.object_id].zone)
+        self.assertEqual('graveyard',engine.state.cards[spell.object_id].zone)
+        self.replay(session)
+
+
 if __name__ == "__main__":
     unittest.main()
