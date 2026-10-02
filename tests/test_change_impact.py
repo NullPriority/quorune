@@ -14,6 +14,11 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_payment_composition_selects_optional_wrapper_consumers(self):
+        for owner in ('quorune/compiler/fixed_effect_payment_templates.py', 'quorune/fixed_effect_payment.py', 'quorune/semantic_choices/fixed_effect_payment.py'):
+            with self.subTest(owner=owner):
+                self.assertIn('test_fixed_optional_effect_choices',classify_changes([owner]).test_modules)
+
     def test_fixed_modifier_schema_selects_all_current_descriptor_consumers(self):
         expected = {'test_card_program_trust', 'test_fixed_casting_surface', 'test_fixed_spell_cost_reductions'}
         for owner in ('quorune/cast_cost_modifiers.py', 'quorune/compiler/cast_cost_modifier_templates.py', 'quorune/compiler/public_cast_cost_modifiers.py', 'quorune/semantic_runtime/cast_costs.py'):

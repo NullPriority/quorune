@@ -1346,6 +1346,7 @@
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
+        "test_fixed_optional_effect_choices",
         "test_fixed_optional_mana_payment_triggers",
         "test_semantic_choice_characterization"
       ]

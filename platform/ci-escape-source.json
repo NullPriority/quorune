@@ -953,6 +953,18 @@
       "regressions": ["test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_public_static_modifiers_compile_closed_schema", "test_change_impact.ChangeImpactTests.test_fixed_modifier_schema_selects_all_current_descriptor_consumers"],
       "impact_edge_status": "not_applicable",
       "resolution": "Update the five exact integration cases to assert the current handler schema and GENERIC mana vector while retaining controller, turn, ordinal and origin checks. The source-to-consumer impact edges already existed; add an executable assertion preserving all current descriptor consumers. The exact unchanged-head regression fails with five KeyErrors and passes after correction. No production semantics or corpus input identity changes."
+    },
+    {
+      "id": "ci-20261002-63",
+      "run_id": 36999856316,
+      "head_sha": "43300a2ffaaf0add7e46ceb86b109eadb615bd8b",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "Whole-card optional-effect exclusions still treated an ordinary fixed mana payment as unsupported after the shared composition owner admitted it through the distinct payment owner.",
+      "failed_surfaces": ["PR / Windows / functional-12"],
+      "regressions": ["test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_exclusions_remain_material", "test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_whole_card_fixed_payment_uses_payment_not_optional_effect_owner", "test_change_impact.ChangeImpactTests.test_payment_composition_selects_optional_wrapper_consumers"],
+      "impact_edge_status": "added",
+      "resolution": "Keep a variable-cost constructed exclusion and add positive whole-card evidence that ordinary fixed payment uses the payment operation rather than the no-cost optional-effect operation. The unchanged relevant head fails on the now-supported literal; corrected exact tests pass. Add the payment-source to optional-wrapper consumer edge and executable assertion without changing production semantics or rerunning the corpus."
     }
   ],
   "recent_pull_requests": [

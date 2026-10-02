@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "411d51b4c0617adee3df80932316d137d747b77fe617be43323e76c44512d723"
+verified: "0a061fba277663932892e4ebc52adcc402a67d681d9813f4ceb3f303bfba8d74"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -51,6 +51,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Segovia // Caetus, Sea Tyrant of Segovia | 189 | 20 | 6 | 4 | 6 | 23 | `blocked` |
 | Okiba Reckoner Raid // Nezumi Road Captain | 189 | 24 | 7 | 6 | 6 | 6 | `blocked` |
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
+| Artist's Talent | 185 | 28 | 5 | 8 | 3 | 10 | `blocked` |
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Ticket Booth // Tunnel of Hate | 184 | 19 | 5 | 4 | 3 | 32 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Michiko's Reign of Truth // Portrait of Michiko | 181 | 22 | 7 | 5 | 7 | 6 | `blocked` |
 | Tribute to Horobi // Echo of Death's Wail | 181 | 20 | 7 | 6 | 8 | 6 | `blocked` |
 | Huatli, Poet of Unity // Roar of the Fifth People | 180 | 29 | 6 | 6 | 6 | 1 | `blocked` |
-| Ral, Monsoon Mage // Ral, Leyline Prodigy | 180 | 19 | 5 | 6 | 12 | 17 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
