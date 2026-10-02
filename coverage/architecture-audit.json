@@ -4808,12 +4808,12 @@
           "classification": "rules_value",
           "file": "quorune/semantic_choices/fixed_effect_payment.py",
           "flow_id": "card-identity-flow:6a03564093d16df5b203",
-          "line": 64,
+          "line": 91,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 64,
+          "source_line": 91,
           "symbol": "prepare_fixed_effect_payment"
         },
         {
@@ -12398,7 +12398,7 @@
       "covered_high_risk_pairs": 329,
       "covered_piece_pairs": 1005,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "7dd9a78fe731cb4c25911c46d774b819e59e131fb1b609a1d970fa907d7bb850",
+      "source_fingerprint": "849c44c8b4ddd97ea4de68fb04acaf7bae75a653bca1304bf23e7787ac50e944",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12787,7 +12787,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 236411,
+      "logical_lines": 236498,
       "methods": {
         "dunder": 591,
         "private": 946,
@@ -13426,18 +13426,18 @@
           "physical_lines": 778
         },
         {
+          "file": "quorune/semantic_choices/model.py",
+          "functions_and_methods": 34,
+          "language": "python",
+          "logical_lines": 711,
+          "physical_lines": 790
+        },
+        {
           "file": "quorune/combat_entry_activations.py",
           "functions_and_methods": 23,
           "language": "python",
           "logical_lines": 707,
           "physical_lines": 762
-        },
-        {
-          "file": "quorune/semantic_choices/model.py",
-          "functions_and_methods": 34,
-          "language": "python",
-          "logical_lines": 695,
-          "physical_lines": 774
         },
         {
           "file": "quorune/semantic_runtime/token_replacements.py",
@@ -13699,6 +13699,13 @@
           "physical_lines": 622
         },
         {
+          "file": "quorune/choice_forms.py",
+          "functions_and_methods": 15,
+          "language": "python",
+          "logical_lines": 549,
+          "physical_lines": 595
+        },
+        {
           "file": "quorune/deck.py",
           "functions_and_methods": 18,
           "language": "python",
@@ -13718,13 +13725,6 @@
           "language": "python",
           "logical_lines": 546,
           "physical_lines": 586
-        },
-        {
-          "file": "quorune/choice_forms.py",
-          "functions_and_methods": 15,
-          "language": "python",
-          "logical_lines": 545,
-          "physical_lines": 591
         },
         {
           "file": "quorune/enchant_spec.py",
@@ -14161,6 +14161,13 @@
           "physical_lines": 422
         },
         {
+          "file": "web/src/choices.ts",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 387,
+          "physical_lines": 406
+        },
+        {
           "file": "quorune/convoke.py",
           "functions_and_methods": 23,
           "language": "python",
@@ -14187,13 +14194,6 @@
           "language": "python",
           "logical_lines": 376,
           "physical_lines": 411
-        },
-        {
-          "file": "web/src/choices.ts",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 376,
-          "physical_lines": 395
         },
         {
           "file": "quorune/cast_cost_modifiers.py",
@@ -15673,6 +15673,13 @@
           "physical_lines": 167
         },
         {
+          "file": "quorune/semantic_choices/fixed_effect_payment.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 150,
+          "physical_lines": 159
+        },
+        {
           "file": "quorune/class_levels.py",
           "functions_and_methods": 6,
           "language": "python",
@@ -16462,13 +16469,6 @@
           "language": "python",
           "logical_lines": 94,
           "physical_lines": 107
-        },
-        {
-          "file": "quorune/semantic_choices/fixed_effect_payment.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 94,
-          "physical_lines": 103
         },
         {
           "file": "quorune/rules/activation_zone_change_costs.py",
@@ -18192,7 +18192,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 258251,
+      "physical_lines": 258338,
       "python_file_count": 704,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -26871,9 +26871,9 @@
           "symbol": "_complete_semantic_choice"
         },
         {
-          "condition": "set(effect) not in (fields|local,fields|local|{'cost'}) or effect.get('op')!='offer_optional_mana_payment' or type(effect.get('schema_version'))is not int or effect['schema_version']!=2",
+          "condition": "set(effect) not in (fields | local, fields | local | {'cost'}) or effect.get('op') != 'offer_optional_mana_payment' or type(effect.get('schema_version')) is not int or effect['schema_version'] != 2",
           "file": "quorune/semantic_choices/fixed_effect_payment.py",
-          "line": 24,
+          "line": 26,
           "string_literals": [
             "cost",
             "offer_optional_mana_payment",
@@ -26883,9 +26883,9 @@
           "symbol": "_validated"
         },
         {
-          "condition": "not isinstance(nested,Mapping) or nested.get('op')in {'offer_optional_effect','offer_optional_mana_payment'}",
+          "condition": "not isinstance(nested, Mapping) or nested.get('op') in {'offer_optional_effect', 'offer_optional_mana_payment'}",
           "file": "quorune/semantic_choices/fixed_effect_payment.py",
-          "line": 38,
+          "line": 47,
           "string_literals": [
             "offer_optional_effect",
             "offer_optional_mana_payment",
@@ -32633,7 +32633,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1473,
     "compiler_module_physical_lines": 1533,
-    "compiler_version": "oracle-ir-v238",
+    "compiler_version": "oracle-ir-v239",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -32910,22 +32910,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 718,
+          "interaction": 719,
           "multiplayer": 341,
           "mutation": 351,
           "negative": 621,
-          "positive": 674,
+          "positive": 675,
           "privacy": 301,
           "property": 15,
           "replay": 422,
           "rollback": 84
         },
-        "declaration_count": 3527,
-        "declaration_source_fingerprint": "b89b7d43aa974457d277c3e543ab63169eeedc917533ee6b48396a6502c49e36",
-        "fingerprint": "969aaa2297f825019a2b7f2b4d0a81af0beeea73cca5f0e16247f716ea474263",
-        "registry_fingerprint": "d4bf5edd88c78e38550684e0e64d81e8c1790382ea648e95c0d07310830ab2d6"
+        "declaration_count": 3529,
+        "declaration_source_fingerprint": "bf70459e28ce937ca4436da41b0c674d7b67d71004898867719f85240956c083",
+        "fingerprint": "f32f93ab616171c94d4ad8efb1fb79aa37de077995b976f42087deace367de3a",
+        "registry_fingerprint": "cff94f7b2b1c8f28da9597eea22d42b5332eacb555d517a3a9073e40e9cb3a1e"
       },
-      "fingerprint": "d4bf5edd88c78e38550684e0e64d81e8c1790382ea648e95c0d07310830ab2d6",
+      "fingerprint": "cff94f7b2b1c8f28da9597eea22d42b5332eacb555d517a3a9073e40e9cb3a1e",
       "implementation_mutation_status_counts": {
         "killed": 298,
         "not_run": 4
@@ -33264,7 +33264,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 681,
         "exact_nodes": 860,
-        "fingerprint": "0a8603ecb4e9e5e7d7973ee01f4b05fa28fecec34c48a415af83ccbf8bcad2b3",
+        "fingerprint": "ff07168149a4315de692a21653d445f3c999d3ffa77eff573ded4164d0b71bd2",
         "grammar_source_fingerprint": "8549d1e525f738eb577674c7c7427fc7142cc7eb8173a562d59d0e182e25a1ec",
         "identity_fingerprint": "3accdd312c991ea4485d59ed44854d2fae184945d115f696f121c790d0729608",
         "present": true,
@@ -33276,7 +33276,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 701,
         "exact_nodes": 890,
-        "fingerprint": "0ae72fa27995c00f96e38d7b744913a3faa04d5bcb933a9f0ec62b0242593f59",
+        "fingerprint": "eea160f365cf82218990bdad1dc9f159de0a800f86e5bf3b547eabaadfcbf1de",
         "grammar_source_fingerprint": "8549d1e525f738eb577674c7c7427fc7142cc7eb8173a562d59d0e182e25a1ec",
         "identity_fingerprint": "3d9eab1a2bbed0026b3dbccd457b4e39ab27a155a3976cdafdc24a380fc59f19",
         "present": true,
@@ -33295,7 +33295,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "1644f57fbff7982133193b6247326633a4f234e700201187d3e7256bf85ef9bd",
+      "fingerprint": "9b5e42baf8b354e8a31d7808cfa19edcbc2f0baf73fff93c8f8d5abf0cea3c91",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -34121,7 +34121,7 @@
   },
   "tests": {
     "browser": {
-      "node_unit_cases": 25,
+      "node_unit_cases": 26,
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
@@ -34153,11 +34153,11 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4470,
-      "discovered_total": 7779,
+      "conventional_ast_cases": 4477,
+      "discovered_total": 7786,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
-        "compiler_named": 243,
+        "compiler_named": 244,
         "fuzz_named": 1,
         "privacy_or_projection_named": 80,
         "replay_named": 367,
