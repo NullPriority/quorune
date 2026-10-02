@@ -356,7 +356,7 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
 
     def test_optional_effect_exclusions_remain_material(self):
         fixtures = (
-            "You may pay {1}. If you do, draw a card.",
+            "You may pay {X}. If you do, draw a card.",
             "You may choose target creature.",
             "You may have target creature gain flying until end of turn.",
             "You may destroy target artifact if you control a Wizard.",
@@ -368,6 +368,15 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
                 ir = self.compile(text)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_whole_card_fixed_payment_uses_payment_not_optional_effect_owner(self):
+        from quorune.compiler.optional_payment_templates import FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY, OPTIONAL_MANA_PAYMENT_OPERATION
+        ir=self.compile('You may pay {1}. If you do, draw a card.')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual(OPTIONAL_MANA_PAYMENT_OPERATION,node.effects[0]['op'])
+        self.assertIn(FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,node.capability_dependencies)
+        self.assertNotIn(FIXED_OPTIONAL_EFFECT_CAPABILITY,node.capability_dependencies)
 
     def test_optional_effect_shape_and_handler_mutants_fail_closed(self):
         text = "You may destroy target artifact."

@@ -4574,6 +4574,33 @@
           "measurement_probe_id": "declared-effect-amount-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-resolution-payment",
+          "member_family_ids": ["effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "target_or_choice:conditional-effect"],
+          "canonical_owner_ids": [
+            "capability:effect.choice.optional_fixed_mana_payment",
+            "component:quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
+            "component:quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+            "component:quorune.semantic_choices.counter_coordination.continue_semantic_completion",
+            "component:quorune.semantic_choices.payments.OptionalPaymentHandler"
+          ],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["closed-private-or-public-payment-predicate", "fixed-full-payment-count", "fixed-mana-life-discard-or-sacrifice", "independent-typed-result", "locked-resolving-controller"],
+          "shared_dependencies": ["choice.affected_player.fixed_discard", "choice.affected_player.fixed_sacrifice", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],
+          "shared_grammar": "one complete resolution-time optional fixed cost with an if-you-do typed result, preserving independent mandatory prefix scope and existing cast, activation and normalized-trigger placement through the shared payment-choice and resumable intent owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Close a cross-era conditional-payment cohort across spell, activated and normalized-trigger bodies while reusing full payment, target, replacement, private selection and replay owners.",
+          "explicit_exclusions": [
+            "alternative, compound, random, variable and named payment costs",
+            "independently unsupported grammar, result owners and sibling abilities",
+            "nested or repeated payment, reflexive when-you-do, linked paid-object and this-way consequences",
+            "opponent payment and unsupported hidden, chosen or current-characteristic predicates"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-resolution-payment-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-resolution-animation",
           "member_family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "effect_clause:ordered-effect-composition", "effect_clause:unparsed-until-end-of", "quantity_expression:dynamic-quantity"],
           "canonical_owner_ids": [
@@ -4635,14 +4662,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v237-fixed-resolution-animation",
-      "compiler_version": "oracle-ir-v237",
-      "bundle_id": "bundle:fixed-resolution-animation",
-      "candidate_ids": ["bundle:fixed-resolution-animation"],
-      "family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "effect_clause:ordered-effect-composition", "effect_clause:unparsed-until-end-of", "quantity_expression:dynamic-quantity"],
-      "capability_ids": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+      "transition_id": "oracle-ir-v238-fixed-resolution-payment",
+      "compiler_version": "oracle-ir-v239",
+      "bundle_id": "bundle:fixed-resolution-payment",
+      "candidate_ids": ["bundle:fixed-resolution-payment"],
+      "family_ids": ["effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "target_or_choice:conditional-effect"],
+      "capability_ids": ["casting.cost.modifier.fixed_query", "effect.choice.optional_fixed_mana_payment"],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-resolution-animation"
+      "measurement_id": "measurement:fixed-resolution-payment"
     },
     "forecast_corrections": [
       {

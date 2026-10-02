@@ -45,6 +45,24 @@ chooser identity, extra fields, and nested optional wrappers. Specialized
 optional choices such as fixed counter placement retain their historical
 operation and replay identity rather than being rewritten through this owner.
 
+The existing optional-payment choice also accepts a closed v2 fixed-cost
+descriptor. It uses the ordinary private/public object choice and resource
+affordability snapshot, pins selected zone incarnations, and returns only
+canonical full-payment intents before prepending independently represented
+consequences. A redirected discard or sacrifice still pays the chosen cost;
+optional object costs publish disjoint permitted cardinalities, so decline and
+full payment are the only executable alternatives rather than an inclusive
+selection range. Omitted cardinality metadata retains existing range choices.
+checkpoint replacement resumption reconstructs the same intent and runs the
+result once. Decline changes no cost/result state, and a mandatory sibling
+outside the descriptor remains outside its choice. Historical v1 payment
+payloads keep their prior preparation/completion path. Current candidate lists
+use stable public-reference ordering before continuation storage so checkpoint
+hydration cannot change command hashes. Historical payload execution is separate
+from historical record replay: records with incompatible runtime trust provenance
+are rejected explicitly before loading, rather than recompiled under current
+semantics.
+
 A fixed semantic-choice life gain uses `LifeChangeIntent` rather than writing a
 life total directly. The intent host prepares the canonical life-change batch;
 when multiple replacements apply, the ordinary private replacement task stores

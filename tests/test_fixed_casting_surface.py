@@ -168,8 +168,9 @@ class FixedCastingSurfaceCompilerTests(unittest.TestCase):
                     node.runtime_coverage,
                 )
                 modifier = node.handlers[0]["modifier"]
+                self.assertEqual(3, node.handlers[0]["schema_version"])
                 self.assertEqual(controller, modifier["affected_controller"])
-                self.assertEqual(adjustment, modifier["generic_adjustment"])
+                self.assertEqual({"GENERIC": adjustment}, modifier["mana_adjustment"])
                 self.assertEqual(turn, modifier["turn_relation"])
                 self.assertEqual(ordinal, modifier["ordinal"])
                 self.assertEqual(origins, modifier["cast_origin_zones"])

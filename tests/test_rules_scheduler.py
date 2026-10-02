@@ -1903,6 +1903,8 @@ class RulesSchedulerTests(unittest.TestCase):
             "coverage/card-program-coverage-commander.json"
         ]["semantic_sha256"] = "f" * 64
         corrected_head["card_program_material_residuals"] -= 1
+        corrected_declaration['compiler_version']='oracle-ir-v999'
+        corrected_head['compiler_version']='oracle-ir-v999'
 
         corrected = _replace_unlanded_content_entry(
             superseded,
@@ -1927,6 +1929,9 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             corrected_declaration["family_ids"], corrected["family_ids"]
         )
+        self.assertEqual('oracle-ir-v999',corrected['head_receipt']['compiler_version'])
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError,'compiler version'):
+            _replace_unlanded_content_entry(superseded,declaration=corrected_declaration,base=base,head=head)
 
     def test_unlanded_harvest_can_be_reclassified_as_non_harvest(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]
@@ -3584,6 +3589,26 @@ class RulesSchedulerTests(unittest.TestCase):
             expected,
             _source_checkpoint_frontier(transition_id)["fingerprint"],
         )
+
+    def test_unmerged_harvest_compiler_revision_retains_original_frontier_identity(self):
+        transition_id = 'generic-unmerged-harvest'
+        original_frontier = {'fingerprint': 'original-frontier', 'cards': []}
+        raw = gzip.compress(json.dumps(original_frontier).encode('utf-8'), mtime=0)
+        outcome = {
+            'transition_id': transition_id,
+            'measurement_frontier_fingerprint': 'original-frontier',
+            'base_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'a' * 40}}},
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            history = Path(directory) / 'history.json'
+            history.write_text(json.dumps({'entries': [outcome]}), encoding='utf-8')
+            with mock.patch('scripts.update_work_selection_cohort_measurements.HARVEST_HISTORY', history), mock.patch(
+                'scripts.update_work_selection_cohort_measurements.subprocess.run',
+                return_value=SimpleNamespace(returncode=0, stdout=raw),
+            ) as git:
+                revised = {'transition_id': transition_id, 'compiler_version': 'oracle-ir-v999'}
+                self.assertEqual('original-frontier', _source_checkpoint_frontier(revised['transition_id'])['fingerprint'])
+            self.assertEqual(['git', 'cat-file', 'blob', 'a' * 40], git.call_args.args[0])
 
     def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
         outcome = self.work_inputs["harvest_outcome_history"]["entries"][-1]

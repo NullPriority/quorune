@@ -3,6 +3,42 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_two_card_payment_decline_insufficient_stale_and_replaced_branches",
+      "piece_ids": ["capability.choice.affected_player.fixed_discard", "capability.effect.choice.optional_fixed_mana_payment", "capability.zone.change.destination_replacement"],
+      "capability_ids": ["choice.affected_player.fixed_discard", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],
+      "interaction_order": 3,
+      "assertion": "The trusted two-card optional cost retains complete-group payment across competing graveyard destination replacements and pending save/load; selected objects remain uncommitted until choices complete, then exactly one draw consequence occurs and command replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
+      "piece_ids": ["capability.choice.affected_player.fixed_discard", "capability.effect.choice.optional_fixed_mana_payment", "capability.zone.change.destination_replacement"],
+      "capability_ids": ["choice.affected_player.fixed_discard", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],
+      "interaction_order": 3,
+      "assertion": "A real trusted optional discard spell suspends for competing destination replacements before payment mutation, save/loads the choice, redirects the selected card, and executes the conditional draw once; pre-action command replay reproduces the entire transition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_trusted_etb_sacrifice_uses_locked_trigger_controller_and_replays",
+      "piece_ids": ["capability.choice.affected_player.fixed_sacrifice", "capability.effect.choice.optional_fixed_mana_payment", "capability.trigger.event.normalized_zone_change"],
+      "capability_ids": ["choice.affected_player.fixed_sacrifice", "effect.choice.optional_fixed_mana_payment", "trigger.event.normalized_zone_change"],
+      "interaction_order": 3,
+      "assertion": "Actual trusted cast and ETB trigger offer only lands controlled by the locked trigger controller, including an opponent-owned land, reject the opposite ownership/control case, sacrifice to the owner's graveyard and draw once with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_fixed_payment_with_unrepresented_prevention_fails_closed",
+      "piece_ids": ["capability.effect.choice.optional_fixed_mana_payment", "residual.replacement.damage-prevention"],
+      "capability_ids": ["effect.choice.optional_fixed_mana_payment"],
+      "interaction_order": 2,
+      "assertion": "An exact generic optional discard/draw activation does not erase a separate unrepresented damage-prevention instruction; both strict and compatible whole-card admission remain unavailable. This is rejection evidence rather than supported prevention composition."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_animation_and_mana_with_unrepresented_prevention_fail_closed",
       "piece_ids": ["capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn", "residual.replacement.damage-prevention"],

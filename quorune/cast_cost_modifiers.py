@@ -200,6 +200,16 @@ class PublicCastCostModifierV2Spec:
     ordinal: CastCostOrdinal = CastCostOrdinal.ANY
     schema_version: int = 2
 
+    @classmethod
+    def from_fixed_modifier(cls, value: PublicCastCostModifierSpec) -> "PublicCastCostModifierV2Spec":
+        """Lift an already closed fixed v1 value into the current typed schema."""
+        if not isinstance(value, PublicCastCostModifierSpec):
+            raise CastCostModifierError('Current fixed modifier conversion requires a typed legacy value')
+        return cls(affected_controller=value.affected_controller,predicates_any=value.predicates_any,
+            mana_adjustment=(("GENERIC",value.generic_adjustment),),
+            cast_origin_zones=value.cast_origin_zones,excluded_cast_origin_zones=value.excluded_cast_origin_zones,
+            turn_relation=value.turn_relation,ordinal=value.ordinal)
+
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version != 2:
             raise CastCostModifierError(

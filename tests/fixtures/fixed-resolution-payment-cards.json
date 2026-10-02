@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed generic fixed resolution-payment contracts",
+  "cards": [
+    {"oracle_id":"00000000-0000-4000-8000-000000000801","name":"Generic Payment Commander","mana_cost":"{W}","cmc":1,"type_line":"Legendary Creature — Human","oracle_text":"Vigilance","power":"2","toughness":"4","colors":["W"],"color_identity":["W"],"keywords":["Vigilance"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000802","name":"Generic Payment Plains","mana_cost":"","cmc":0,"type_line":"Basic Land — Plains","oracle_text":"{T}: Add {W}.","colors":[],"color_identity":["W"],"keywords":[],"produced_mana":["W"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000803","name":"Generic Discard Payment Spell","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"You may discard a card. If you do, draw two cards.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000804","name":"Generic Life Payment Source","mana_cost":"{W}","cmc":1,"type_line":"Creature — Human","oracle_text":"{1}: You may pay 2 life. If you do, draw a card.","power":"2","toughness":"4","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000805","name":"Generic Sacrifice Payment Source","mana_cost":"{W}","cmc":1,"type_line":"Creature — Human","oracle_text":"When this creature enters, you may sacrifice a land. If you do, draw a card.","power":"2","toughness":"4","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000806","name":"Generic Payment Prefix Spell","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"You gain 2 life. Then you may discard two cards. If you do, draw three cards.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000807","name":"Generic Payment Destination Replacement","mana_cost":"{W}","cmc":1,"type_line":"Enchantment","oracle_text":"If a card would be put into an opponent's graveyard from anywhere, instead exile it with a study counter on it.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000808","name":"Generic Payment Competing Replacement","mana_cost":"{W}","cmc":1,"type_line":"Enchantment","oracle_text":"If a card would be put into an opponent's graveyard from anywhere, instead exile it with a review counter on it.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000000809","name":"Generic Targeted Payment Spell","mana_cost":"{W}","cmc":1,"type_line":"Instant","oracle_text":"You may discard a card. If you do, tap target creature.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+  ],
+  "rulings": []
+}

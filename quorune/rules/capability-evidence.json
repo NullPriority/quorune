@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e9eb964a78de6ad4e8d250f5aa990ef10b363f375efaf5cc3dac239ac4b78c34",
-  "declaration_source_fingerprint": "e2f9006e03a710139c0ab87a90fcc7cd8fcce632684c362c24bea39313ed63a7",
+  "registry_fingerprint": "cff94f7b2b1c8f28da9597eea22d42b5332eacb555d517a3a9073e40e9cb3a1e",
+  "declaration_source_fingerprint": "bf70459e28ce937ca4436da41b0c674d7b67d71004898867719f85240956c083",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -9014,6 +9014,21 @@
         "commander_review"
       ],
       "applicability_note": "Compile fixed public caster, characteristic, turn, ordinal, origin, increase, and reduction facts into one closed typed modifier."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_current_fixed_reducer_descriptor_binds_registered_schema",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic fixed reducer emission uses the existing current typed conversion and binds the registered handler schema rather than relying on isolated parser acceptance."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -43503,6 +43518,25 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_with_unrepresented_prevention_fails_closed",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An independently unsupported prevention sibling retains material residuals and prevents strict and compatible runtime admission despite its exact payment activation."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
       "official_rule_ids": [
         "109.5",
@@ -43518,6 +43552,82 @@
         "commander_review"
       ],
       "applicability_note": "Compose a real Lifecrafter's Bestiary trigger with canonical mana payment and the private draw transaction, retaining zero mutation before the choice and committing payment before the draw."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real cast's chosen discard payment suspends for competing zone replacements, survives save/load, then produces its draw once even when payment is redirected to exile; exact replay begins before the cast."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_trusted_conditional_target_is_selected_before_payment_and_revalidated",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual offered and accepted casts choose legal creature targets before optional payment; the canonical all-targets-illegal path resolves no payment or consequence, and both branches replay exactly."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_trusted_etb_sacrifice_uses_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A correctly registered trusted cast produces its normalized ETB trigger, chooses a controlled opponent-owned land, commits to its owner's graveyard and draws once with rollback and pre-action replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_two_card_payment_decline_insufficient_stale_and_replaced_branches",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted two-card payment offers decline only with insufficient resources, preserves mandatory prefix scope on decline, rejects new logical incarnations and resumes a replacement-adjusted group once after save/load; all branches replay exactly."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -43537,6 +43647,44 @@
         "commander_review"
       ],
       "applicability_note": "Resolve the optional payment under a nonactive controller in four-player state without granting another seat authority over the decision."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A genuinely registered trusted four-seat spell is offered, cast and paid through existing owners while only the resolving controller can choose its own eligible payment cards."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_v2_payment_cost_before_consequence_mutant_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An executable mutant omitting the canonical payment intent while retaining the consequence is killed by the independent payment-before-result contract."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -43598,6 +43746,44 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_shape_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed wrapper/payment fields, mismatched target schema and blocked discard capability cannot acquire payment closure."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Alternative, variable, random, nested, linked and reflexive forms remain material rather than discarding unsupported syntax."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_nonfixed_nested_and_nonexact_forms_remain_residual",
       "official_rule_ids": [
         "109.5",
@@ -43636,6 +43822,25 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_v2_sacrifice_uses_current_controller_and_closed_characteristics",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A sacrifice cost selects currently controlled land characteristics rather than ownership, and revalidates control, characteristics and incarnation before returning its typed intent."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_composes_across_normalized_trigger_families",
       "official_rule_ids": [
         "109.5",
@@ -43651,6 +43856,25 @@
         "commander_review"
       ],
       "applicability_note": "Lower the same fixed payment grammar through scheduled, cast, entry, attack, damage, and source-zone normalized trigger bindings."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_resolution_payments_share_cost_result_and_carrier_owners",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lower complete fixed mana, life, discard and sacrifice payment/result instructions through one typed owner across spell, activation and existing trigger carriers."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -43673,6 +43897,25 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_two_card_payment_published_form_and_command_cardinalities_agree",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real trusted cast projects a form validated by the actual TypeScript client; only zero or two distinct cards are legal, invalid command submissions roll back, two cards enter one simultaneous move and exactly one consequence executes after pending save/load with pre-action replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
       "official_rule_ids": [
@@ -43692,6 +43935,44 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The actor-private payment choice excludes other players' hand references and nonacting seats receive no payment decision."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_v2_payment_candidates_are_independent_of_checkpoint_object_order",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reversed object snapshot order yields identical payment request and stored incarnation bindings, preventing hydration-order hash divergence."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
       "official_rule_ids": [
@@ -43708,6 +43989,82 @@
         "commander_review"
       ],
       "applicability_note": "Replay the controller choice, canonical mana payment, resumed private draw, and final authoritative state exactly."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_actual_v237_payment_record_is_explicitly_incompatible",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A genuine generic v237 record passed five-command historical replay; current real replay rejects changed runtime trust provenance before loading any authoritative checkpoint rather than silently reinterpreting it."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual cast, payment and draw commands save/load and replay from a checkpoint before the offered action, not a manually staged provisional stack item."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_v2_malformed_object_choices_fail_before_intent_creation",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed, unhashable, Boolean and contradictory object selections reject with the typed choice error before constructing any mutation intent."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_v2_zone_payment_choice_is_private_complete_and_identity_pinned",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Opponent, stale-incarnation and partial fixed-cost selections fail before payment intents or consequences are returned; decline commits neither."
     },
     {
       "capability_id": "format.commander.damage.physical_identity",
@@ -71784,5 +72141,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "505a2aec85c6dfd6d3c8e16c205477feb492a0a266b8fd012880b54371df374d"
+  "fingerprint": "f32f93ab616171c94d4ad8efb1fb79aa37de077995b976f42087deace367de3a"
 }

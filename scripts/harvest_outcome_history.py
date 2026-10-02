@@ -1476,8 +1476,6 @@ def _declaration_revises_unlanded_content_entry(
 
     return (
         declaration.get("outcome_kind") == "harvest"
-        and declaration.get("compiler_version")
-        == entry.get("head_receipt", {}).get("compiler_version")
         and all(
             declaration.get(field) == entry.get(field)
             for field in (
@@ -1509,6 +1507,10 @@ def _replace_unlanded_content_entry(
         )
     ):
         return None
+    if declaration.get('compiler_version') != head.get('compiler_version'):
+        raise HarvestOutcomeHistoryError(
+            'Corrected harvest compiler version does not match its head receipt'
+        )
     if not _semantic_receipts_match(
         validated["base_receipt"],
         base,

@@ -2373,6 +2373,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/fixed_effect_payment_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/fixed_entry_return_requirements.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4825,6 +4840,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/fixed_effect_payment.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/fixed_keyword_entry_counters.py",
       "layer": "domain",
       "owning_subsystem": "counter_placement",
@@ -6738,6 +6767,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/fixed_effect_payment_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/fixed_homogeneous_target_set_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -7687,6 +7730,21 @@
         "semantics"
       ],
       "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_choices/fixed_effect_payment.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
@@ -10108,5 +10166,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "23c1d5ef53e4e07544974fb09f8df0cc5abe34eedbb65be885ce6e71629cb0fc"
+  "fingerprint": "cbc74ca674cdaadc20ab31942796ee7bd95554bb825a77f636e568aedb5ab149"
 }

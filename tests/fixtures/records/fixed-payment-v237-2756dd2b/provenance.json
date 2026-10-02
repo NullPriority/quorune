@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_commit": "2756dd2baeb42196c5760b10ee7e26b7ee889a06",
+  "compiler_version": "oracle-ir-v237",
+  "record_kind": "synthetic_historical_fixed_optional_payment_command_replay",
+  "construction": "Actual archived Git source and packaged registry/evidence, isolated semantics and small generic decks. The canonical step-entry owner discovers a real trusted upkeep payment trigger; four-seat priority commands resolve it and its controller pays the fixed mana cost.",
+  "historical_execution": "The controller pays one white mana and draws one card; five accepted commands; exact replay passed under the archived implementation.",
+  "current_runtime_disposition": "explicit_runtime_trust_incompatibility",
+  "included_components": ["manifest.json", "semantics.json", "commands.jsonl"],
+  "omitted_components": "No authoritative checkpoints or hidden library state are included. Current real replay rejects incompatible runtime provenance before reading a checkpoint. Historical v1 instruction execution is separately retained; this fixture does not claim cross-version successful replay."
+}

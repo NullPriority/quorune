@@ -1334,6 +1334,14 @@
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/optional_payment_templates.py",
+        "quorune/compiler/fixed_effect_payment_templates.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
+        "quorune/semantic_choices/model.py",
+        "quorune/choice_forms.py",
+        "web/src/choices.ts",
+        "tests/fixtures/fixed-resolution-payment-cards.json",
         "quorune/rules/fixed_effect_clause_shapes.py",
         "quorune/semantic_choices/intent_host.py",
         "quorune/semantic_choices/payments.py",
@@ -1341,7 +1349,10 @@
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
+        "test_fixed_optional_effect_choices",
         "test_fixed_optional_mana_payment_triggers",
+        "test_choice_forms",
+        "test_semantic_choice_model",
         "test_semantic_choice_characterization"
       ]
     },
@@ -2014,6 +2025,8 @@
         "quorune/protocol.py",
         "quorune/projection.py",
         "quorune/choice_forms.py",
+        "quorune/semantic_choices/model.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
         "quorune/rules/action_catalog.py",
         "quorune/rules/action_explanations.py",
         "quorune/service.py"

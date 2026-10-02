@@ -91,6 +91,13 @@ names. Forms cover scalar, object, ordering, mode, target, grouped, assignment,
 payment, private search, and delegated rules choices. Unknown fields and
 unknown form versions fail closed.
 
+Object reference fields may declare `allowed_cardinalities` as a sorted set of
+permitted selection counts within their minimum and maximum. An optional fixed
+cost can therefore expose decline or complete payment without advertising the
+intervening counts. Absence retains the historical continuous range. Clients
+validate this constraint and distinct references; authoritative completion still
+revalidates the full cost and current object identities.
+
 Modal submissions are closed nonrepeating sets. The server validates their
 minimum, maximum, and membership, then canonicalizes every legal set into the
 printed order before target planning, stack construction, and execution. The

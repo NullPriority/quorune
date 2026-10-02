@@ -11,6 +11,8 @@ from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
 from .public_query_effect_amounts import public_query_effect_amount_template
 from .declared_effect_amounts import declared_effect_amount_template
 from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
+from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
+from .optional_payment_templates import fixed_optional_mana_payment_template
 
 
 CompiledEffectTemplate = tuple[
@@ -42,6 +44,19 @@ def reviewed_contextual_effect_template(
             source_card_types=tuple(source_context.get("source_card_types", ())),
         ) or current
 
+    # Preserve the certified v1 one-mana/one-leaf payload before using v2.
+    legacy_payment=fixed_optional_mana_payment_template(text,compile_effect=atomic_with_characteristics)
+    if legacy_payment is not None:
+        from ..rules.fixed_effect_clause_shapes import fixed_optional_mana_payment_node_capabilities
+        if fixed_optional_mana_payment_node_capabilities(effects=legacy_payment.effects,target_schema=legacy_payment.target_schema,mechanic_ids=legacy_payment.mechanics):
+            return legacy_payment.compiled()
+    def payment_body(body: str) -> CompiledEffectTemplate:
+        return reviewed_effect_template_composition(body,source_name=card_name,
+            compile_atomic=atomic_with_characteristics,
+            compile_fixed=partial(compile_fixed,card_name=card_name,**source_context))
+    fixed_payment=fixed_effect_payment_template(text,compile_effect=payment_body) or fixed_effect_payment_with_mandatory_prefix(text,compile_effect=payment_body)
+    if fixed_payment is not None:
+        return fixed_payment
     return reviewed_effect_template_composition(
         text, source_name=card_name,
         cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,

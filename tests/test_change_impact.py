@@ -14,6 +14,25 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_optional_payment_cardinality_selects_client_and_owner_contracts(self):
+        expected={'test_choice_forms','test_fixed_optional_mana_payment_triggers','test_semantic_choice_model'}
+        for owner in ('quorune/semantic_choices/model.py','quorune/semantic_choices/fixed_effect_payment.py','quorune/choice_forms.py','web/src/choices.ts'):
+            with self.subTest(owner=owner):
+                plan=classify_changes([owner])
+                self.assertLessEqual(expected,set(plan.test_modules))
+                self.assertTrue(plan.browser_full)
+
+    def test_payment_composition_selects_optional_wrapper_consumers(self):
+        for owner in ('quorune/compiler/fixed_effect_payment_templates.py', 'quorune/fixed_effect_payment.py', 'quorune/semantic_choices/fixed_effect_payment.py'):
+            with self.subTest(owner=owner):
+                self.assertIn('test_fixed_optional_effect_choices',classify_changes([owner]).test_modules)
+
+    def test_fixed_modifier_schema_selects_all_current_descriptor_consumers(self):
+        expected = {'test_card_program_trust', 'test_fixed_casting_surface', 'test_fixed_spell_cost_reductions'}
+        for owner in ('quorune/cast_cost_modifiers.py', 'quorune/compiler/cast_cost_modifier_templates.py', 'quorune/compiler/public_cast_cost_modifiers.py', 'quorune/semantic_runtime/cast_costs.py'):
+            with self.subTest(owner=owner):
+                self.assertLessEqual(expected, set(classify_changes([owner]).test_modules))
+
     def test_rules_compiler_change_selects_compiler_and_evidence(self):
         plan = classify_changes(
             ["quorune/compiler/prevention_templates.py"]

@@ -13,6 +13,9 @@ from quorune.compiler.optional_payment_templates import (
     OPTIONAL_MANA_PAYMENT_OPERATION,
 )
 from quorune.model import StackItem
+from quorune.fixed_effect_payment import FixedEffectPaymentSpec
+from quorune.object_predicate import ObjectQuerySpec
+from quorune.object_query import ObjectQueryResult
 from quorune.oracle_ir import compile_oracle_card
 from quorune.projection import StateProjector
 from quorune.record import checkpoint_envelope, replay_record
@@ -120,6 +123,19 @@ def payment_continuation(effect) -> SemanticChoiceContinuation:
 
 
 class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
+    def test_fixed_payment_interaction_evidence_obeys_current_pair_contract(self):
+        import json
+        from common import ROOT
+        from quorune.reusable_pieces.interactions import validate_interaction_evidence
+        value=json.loads((ROOT/'platform/reusable-piece-interaction-evidence.json').read_text(encoding='utf-8'))
+        selected=[row for row in value['declarations']if row['test_id']in {
+            'test_payment_replacement_choice_resumes_once_after_save_load_and_replays',
+            'test_trusted_etb_sacrifice_uses_locked_trigger_controller_and_replays',
+            'test_fixed_payment_with_unrepresented_prevention_fails_closed',
+        }]
+        self.assertEqual(3,len(selected))
+        validate_interaction_evidence({'schema_version':2,'declarations':selected})
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.capabilities = load_default_capability_registry()
@@ -199,6 +215,75 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
         self.assertEqual(OPTIONAL_MANA_PAYMENT_OPERATION, wrapper["op"])
         self.assertEqual(1, wrapper["cost"]["G"])
 
+    def test_fixed_resolution_payments_share_cost_result_and_carrier_owners(self):
+        cases=(
+            ('You may discard a card. If you do, draw two cards.','Instant','discard'),
+            ('{1}: You may sacrifice a land. If you do, draw a card.','Artifact','sacrifice'),
+            ('Whenever you cast a creature spell, you may pay 2 life. If you do, draw a card.','Creature — Fixture','life'),
+            ('At the beginning of your upkeep, you may pay {2}. If you do, draw a card and you lose 2 life.','Enchantment','mana'),
+        )
+        for text,type_line,kind in cases:
+            with self.subTest(text=text):
+                ir=compile_oracle_card(payment_record(text,type_line=type_line),capability_registry=self.capabilities,capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.to_dict())
+                node=ir.faces[0].nodes[0]
+                self.assertEqual(2,node.effects[0]['schema_version'])
+                self.assertEqual(kind,node.effects[0]['payment']['kind'])
+                self.assertIn(FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,node.capability_dependencies)
+                self.assertEqual(text,ir.faces[0].oracle_text[node.span.start:node.span.end])
+
+    def test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar(self):
+        cases=(
+            'You may discard a card at random. If you do, draw a card.',
+            'You may discard any number of cards. If you do, draw a card.',
+            'You may pay {X}. If you do, draw a card.',
+            'You may sacrifice a creature or discard a card. If you do, draw a card.',
+            'You may discard a card. When you do, draw a card.',
+            'You may discard a card. If you do, draw cards equal to its mana value.',
+            'You may discard a card. If you do, you may pay {1}. If you do, draw a card.',
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                ir=compile_oracle_card(payment_record(text,type_line='Instant'),capability_registry=self.capabilities,capability_profile='commander_review')
+                self.assertNotEqual('exact',ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_fixed_payment_shape_and_dependency_mutants_fail_closed(self):
+        from copy import deepcopy
+        from quorune.rules.capabilities import CapabilityRegistry
+        import json
+        from common import ROOT
+        text='You may discard a card. If you do, tap target creature.'
+        ir=compile_oracle_card(payment_record(text,type_line='Instant'),capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.to_dict())
+        node=ir.faces[0].nodes[0]
+        self.assertIn(FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,capability_dependencies_for_node(effects=node.effects,target_schema=node.target_schema,mechanic_ids=node.mechanics))
+        for path,value in ((('schema_version',),True),(('payment','amount'),True),(('payment','predicate','owner'),'$opponent'),(('effects',0,'unexpected'),True)):
+            wrapper=deepcopy(dict(node.effects[0]));cursor=wrapper
+            for key in path[:-1]:cursor=cursor[key]
+            cursor[path[-1]]=value
+            self.assertNotIn(FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,capability_dependencies_for_node(effects=(wrapper,),target_schema=node.target_schema,mechanic_ids=node.mechanics))
+        self.assertNotIn(FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,capability_dependencies_for_node(effects=node.effects,target_schema=None,mechanic_ids=node.mechanics))
+        data=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        capability=next(row for row in data['capabilities']if row['id']=='choice.affected_player.fixed_discard')
+        capability['status']='blocked';capability['blockers']=['Constructed cost dependency diagnostic']
+        blocked=compile_oracle_card(payment_record(text,type_line='Instant'),capability_registry=CapabilityRegistry(data),capability_profile='commander_review')
+        self.assertNotEqual('exact',blocked.status);self.assertTrue(blocked.material_residuals)
+
+    def test_fixed_payment_with_unrepresented_prevention_fails_closed(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        generic=payment_record('{1}: You may discard a card. If you do, draw two cards.\nPrevent all damage that would be dealt to this permanent by red spells.',type_line='Artifact')
+        ir=compile_oracle_card(generic,capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertTrue(ir.faces[0].nodes[0].exact);self.assertNotEqual('exact',ir.status);self.assertTrue(ir.material_residuals)
+        class Rulings:
+            def rulings(self,card):return ()
+        program=compile_best_available_card_program(Rulings(),generic,semantic_registry=SemanticRegistry(),capability_registry=self.capabilities,capability_profile='commander_review')
+        binding=bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready'],binding)
+        self.assertFalse(binding['compatible_ready'],binding)
+
     def test_nonfixed_nested_and_nonexact_forms_remain_residual(self):
         fixtures = (
             "Whenever you cast a creature spell, you may pay {X}. If you do, "
@@ -211,14 +296,14 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
             "draw a card.",
             "Whenever you cast a creature spell, you may pay {0}. If you do, "
             "draw a card.",
-            "Whenever you cast a creature spell, you may pay 2 life. If you do, "
+            "Whenever you cast a creature spell, you may pay X life. If you do, "
             "draw a card.",
             "Whenever you cast a creature spell, you may pay {G}. When you do, "
             "draw a card.",
             "Whenever you cast a creature spell, you may pay {G}. If you do, "
             "you may draw a card.",
             "Whenever you cast a creature spell, you may pay {G}. If you do, "
-            "draw a card, then discard a card.",
+            "draw a card, then discard that card.",
         )
         for text in fixtures:
             with self.subTest(text=text):
@@ -226,14 +311,14 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
 
-    def test_payment_wrapper_remains_trigger_only(self):
+    def test_variable_payment_remains_residual_in_spell_and_activated_contexts(self):
         fixtures = (
             (
-                "You may pay {G}. If you do, draw a card.",
+                "You may pay {X}. If you do, draw a card.",
                 "Instant",
             ),
             (
-                "{T}: You may pay {G}. If you do, draw a card.",
+                "{T}: You may pay {X}. If you do, draw a card.",
                 "Artifact",
             ),
         )
@@ -302,14 +387,152 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
             ),
         )
         with mock.patch(
-            "quorune.compiler.optional_payment_templates.fixed_optional_mana_payment_template",
-            return_value=None,
+            "quorune.compiler.optional_payment_templates.fixed_optional_mana_payment_template", return_value=None,
+        ), mock.patch(
+            "quorune.compiler.effect_template_composition.fixed_optional_mana_payment_template", return_value=None,
+        ), mock.patch(
+            "quorune.compiler.effect_template_composition.fixed_effect_payment_template", return_value=None,
+        ), mock.patch(
+            "quorune.compiler.effect_template_composition.fixed_effect_payment_with_mandatory_prefix", return_value=None,
         ):
             mutant = self.compile(text)
         self.assertNotEqual("exact", mutant.status)
 
 
 class FixedOptionalManaPaymentChoiceTests(unittest.TestCase):
+    def test_two_card_payment_publication_mutant_is_killed(self):
+        from quorune.semantic_choices.model import ObjectChoice
+        original=ObjectChoice.choice_schema
+        def omit_cardinality(choice):
+            return {key:value for key,value in original(choice).items()if key!='allowed_cardinalities'}
+        payment=FixedEffectPaymentSpec('discard',amount=2,predicate=ObjectQuerySpec(zones=('hand',),owner='A',known_to_actor=True))
+        rows=tuple(ObjectQueryResult(object_id=ref,ref=ref,printed_name='Generic card',owner='A',controller='A',zone='hand',logical_object_id=ref+':1')for ref in ('FIRST','SECOND'))
+        query=SnapshotSemanticChoiceQuery(seat_order=('A','B'),active_order=('A','B'),object_rows=rows)
+        effect={'op':OPTIONAL_MANA_PAYMENT_OPERATION,'schema_version':2,'player':'A','payment':payment.to_dict(),'effects':[{'op':'draw','player':'A','count':1,'private':True}]}
+        with mock.patch.object(ObjectChoice,'choice_schema',omit_cardinality):
+            prepared=payment_handler().prepare(effect,payment_context(query=query))
+            with self.assertRaises(KeyError):
+                self.assertEqual([0,2],prepared.request.choice.choice_schema()['allowed_cardinalities'])
+
+    def test_v2_sacrifice_uses_current_controller_and_closed_characteristics(self):
+        from dataclasses import replace
+        row = ObjectQueryResult(
+            object_id='land', ref='LAND', printed_name='Generic land', owner='B',
+            controller='A', zone='battlefield', types=('land',), logical_object_id='land:1',
+        )
+        other = replace(row, object_id='other', ref='OTHER', owner='A', controller='B')
+        effect = {
+            'op': OPTIONAL_MANA_PAYMENT_OPERATION, 'schema_version': 2, 'player': 'A',
+            'payment': FixedEffectPaymentSpec('sacrifice', predicate=ObjectQuerySpec(
+                zones=('battlefield',), controller='A', types_all=('land',),
+            )).to_dict(),
+            'effects': [{'op': 'draw', 'player': 'A', 'count': 1, 'private': True}],
+        }
+        query = SnapshotSemanticChoiceQuery(seat_order=('A', 'B'), active_order=('A', 'B'), object_rows=(row, other))
+        prepared = payment_handler().prepare(effect, payment_context(query=query))
+        self.assertEqual(('LAND',), prepared.request.choice.legal_refs)
+        self.assertEqual('public', prepared.request.choice.visibility)
+        completion = payment_handler().complete(payment_continuation(prepared.continuation_effect), {'cards': ['LAND']}, query)
+        self.assertEqual('sacrifice', completion.intents[0].transition_kind.value)
+        self.assertTrue(completion.intents[0].controlled_only)
+        self.assertFalse(completion.intents[0].owned_only)
+        for changed in (replace(row, controller='B'), replace(row, types=('creature',)), replace(row, logical_object_id='land:2')):
+            stale = SnapshotSemanticChoiceQuery(seat_order=query.seats, active_order=query.active_seats, object_rows=(changed, other))
+            with self.assertRaisesRegex(SemanticChoiceError, 'stale'):
+                payment_handler().complete(payment_continuation(prepared.continuation_effect), {'cards': ['LAND']}, stale)
+
+    def test_v2_malformed_object_choices_fail_before_intent_creation(self):
+        row = ObjectQueryResult(object_id='card', ref='CARD', printed_name='Generic card', owner='A', controller='A', zone='hand', logical_object_id='card:1')
+        query = SnapshotSemanticChoiceQuery(seat_order=('A', 'B'), active_order=('A', 'B'), object_rows=(row,))
+        effect = {
+            'op': OPTIONAL_MANA_PAYMENT_OPERATION, 'schema_version': 2, 'player': 'A',
+            'payment': FixedEffectPaymentSpec('discard', predicate=ObjectQuerySpec(zones=('hand',), owner='A', known_to_actor=True)).to_dict(),
+            'effects': [{'op': 'draw', 'player': 'A', 'count': 1, 'private': True}],
+        }
+        prepared = payment_handler().prepare(effect, payment_context(query=query))
+        for response in ({'cards': [{}]}, {'cards': [True]}, {'cards': 'CARD'}, {'cards': ['CARD'], 'pay': 1}, {'cards': ['CARD'], 'unexpected': True}):
+            with self.subTest(response=response), self.assertRaises(SemanticChoiceError):
+                payment_handler().complete(payment_continuation(prepared.continuation_effect), response, query)
+
+    def test_v2_payment_candidates_are_independent_of_checkpoint_object_order(self):
+        rows = tuple(
+            ObjectQueryResult(
+                object_id=ref, ref=ref, printed_name='Generic payment card',
+                owner='A', controller='A', zone='hand', logical_object_id=ref + ':1',
+            )
+            for ref in ('A02', 'A01')
+        )
+        payment = FixedEffectPaymentSpec(
+            'discard', predicate=ObjectQuerySpec(zones=('hand',), owner='A', known_to_actor=True),
+        )
+        effect = {
+            'op': OPTIONAL_MANA_PAYMENT_OPERATION, 'schema_version': 2, 'player': 'A',
+            'payment': payment.to_dict(),
+            'effects': [{'op': 'draw', 'player': 'A', 'count': 1, 'private': True}],
+        }
+        preparations = []
+        for ordered_rows in (rows, tuple(reversed(rows))):
+            query = SnapshotSemanticChoiceQuery(
+                seat_order=('A', 'B'), active_order=('A', 'B'), object_rows=ordered_rows,
+            )
+            preparations.append(payment_handler().prepare(effect, payment_context(query=query)))
+        self.assertEqual(preparations[0].continuation_effect, preparations[1].continuation_effect)
+        self.assertEqual(preparations[0].request, preparations[1].request)
+        self.assertEqual(('A01', 'A02'), preparations[0].request.choice.legal_refs)
+
+    def test_v2_payment_cost_before_consequence_mutant_is_killed(self):
+        from quorune.semantic_choices import fixed_effect_payment as owner
+        original=owner.complete_fixed_effect_payment
+        def omit_cost(continuation,response,query):
+            value=original(continuation,response,query)
+            from quorune.semantic_choices.model import SemanticChoiceCompletion
+            return SemanticChoiceCompletion(prepend_effects=value.prepend_effects)
+        with mock.patch.object(owner,'complete_fixed_effect_payment',omit_cost):
+            with self.assertRaises((AssertionError,IndexError)):
+                self.test_v2_zone_payment_choice_is_private_complete_and_identity_pinned()
+
+    def test_v2_zone_payment_choice_is_private_complete_and_identity_pinned(self):
+        row=ObjectQueryResult(object_id='owned',ref='OWNED',printed_name='Generic owned card',owner='A',controller='A',zone='hand',logical_object_id='owned:1')
+        other=ObjectQueryResult(object_id='other',ref='OTHER',printed_name='Generic opposing card',owner='B',controller='B',zone='hand',logical_object_id='other:1')
+        query=SnapshotSemanticChoiceQuery(seat_order=('A','B','C','D'),active_order=('A','B','C','D'),object_rows=(row,other))
+        payment=FixedEffectPaymentSpec('discard',predicate=ObjectQuerySpec(zones=('hand',),owner='A',known_to_actor=True))
+        effect={'op':OPTIONAL_MANA_PAYMENT_OPERATION,'schema_version':2,'player':'A','payment':payment.to_dict(),
+                'effects':[{'op':'draw','player':'A','count':2,'private':True}]}
+        handler=payment_handler();prepared=handler.prepare(effect,payment_context(query=query))
+        self.assertEqual(('OWNED',),prepared.request.choice.legal_refs)
+        self.assertEqual('actor_private',prepared.request.choice.visibility)
+        completion=handler.complete(payment_continuation(prepared.continuation_effect),{'cards':['OWNED']},query)
+        self.assertEqual('MoveObjectsSimultaneouslyIntent',type(completion.intents[0]).__name__)
+        self.assertEqual('discard',completion.intents[0].transition_kind.value)
+        self.assertEqual(2,completion.prepend_effects[0]['count'])
+        decline=handler.complete(payment_continuation(prepared.continuation_effect),{'cards':[]},query)
+        self.assertFalse(decline.intents);self.assertFalse(decline.prepend_effects)
+        from dataclasses import replace
+        stale=SnapshotSemanticChoiceQuery(seat_order=query.seats,active_order=query.active_seats,object_rows=(replace(row,logical_object_id='owned:2'),other))
+        with self.assertRaisesRegex(SemanticChoiceError,'stale'):
+            handler.complete(payment_continuation(prepared.continuation_effect),{'cards':['OWNED']},stale)
+        with self.assertRaisesRegex(SemanticChoiceError,'stale'):
+            handler.complete(payment_continuation(prepared.continuation_effect),{'cards':['OTHER']},query)
+        two=FixedEffectPaymentSpec('discard',amount=2,predicate=payment.predicate)
+        insufficient=handler.prepare({**effect,'payment':two.to_dict()},payment_context(query=query))
+        self.assertEqual(0,insufficient.request.choice.maximum)
+        with self.assertRaisesRegex(SemanticChoiceError,'malformed'):
+            handler.complete(payment_continuation(insufficient.continuation_effect),{'cards':['OWNED']},query)
+
+    def test_v2_life_payment_and_malformed_inputs_fail_before_mutation(self):
+        query=SnapshotSemanticChoiceQuery(seat_order=('A','B'),active_order=('A','B'),life_by_seat={'A':2,'B':40})
+        effect={'op':OPTIONAL_MANA_PAYMENT_OPERATION,'schema_version':2,'player':'A','payment':FixedEffectPaymentSpec('life',amount=2).to_dict(),
+                'effects':[{'op':'draw','player':'A','count':1,'private':True}]}
+        handler=payment_handler();prepared=handler.prepare(effect,payment_context(query=query))
+        completion=handler.complete(payment_continuation(prepared.continuation_effect),{'pay':True},query)
+        self.assertEqual('PayLifeIntent',type(completion.intents[0]).__name__)
+        low=SnapshotSemanticChoiceQuery(seat_order=('A','B'),active_order=('A','B'),life_by_seat={'A':1,'B':40})
+        self.assertEqual((False,),handler.prepare(effect,payment_context(query=low)).request.choice.legal_values)
+        with self.assertRaisesRegex(SemanticChoiceError,'no longer payable'):
+            handler.complete(payment_continuation(prepared.continuation_effect),{'pay':True},low)
+        with self.assertRaises(SemanticChoiceError):
+            handler.complete(payment_continuation(prepared.continuation_effect),{'pay':1},query)
+
     def setUp(self) -> None:
         self.handler = payment_handler()
         self.effect = {
@@ -480,6 +703,349 @@ class FixedOptionalManaPaymentIntegrationTests(unittest.TestCase):
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+
+class FixedResolutionPaymentActionTests(unittest.TestCase):
+    def test_two_card_payment_published_form_and_command_cardinalities_agree(self):
+        import json
+        import shutil
+        import subprocess
+        from common import ROOT
+        from quorune.record import authoritative_state_hash
+        session = self.session(2381181210)
+        engine = session.engine
+        spell = self.add(engine, 'Generic Payment Prefix Spell', zone='hand', ref='TWO-CARD-PAYMENT')
+        first = self.add(engine, 'Generic Payment Plains', zone='hand', ref='TWO-CARD-FIRST')
+        second = self.add(engine, 'Generic Payment Plains', zone='hand', ref='TWO-CARD-SECOND')
+        third = self.add(engine, 'Generic Payment Plains', zone='hand', ref='TWO-CARD-EXCESS')
+        action = self.ready(session, spell, {'W': 1})
+        session.initial_checkpoint=checkpoint_envelope(engine.state)
+        session.commands.clear();session.decisions.clear()
+        cast = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve(session)
+        packet = session.packet('pilot:A', full=True)
+        choice = next(row for row in packet['decision']['legal_actions'] if row['id'] == 'choose')
+        form = choice['form']
+        self.assertEqual([0,2],choice['choice_schema']['allowed_cardinalities'])
+        for seat in ('B','C','D'):
+            self.assertIsNone(session.packet(f'pilot:{seat}',full=True)['decision'])
+        node = shutil.which('node')
+        self.assertIsNotNone(node, 'The client/form witness requires the repository Node runtime')
+        validator = "import {validateChoices} from './web/src/choices.ts'; let data=''; for await (const chunk of process.stdin) data+=chunk; const {form,values}=JSON.parse(data); process.stdout.write(JSON.stringify(validateChoices(form,values)));"
+        client_results = {}
+        for refs in ([], [first.ref], [first.ref, second.ref], [first.ref, second.ref, third.ref]):
+            client = subprocess.run(
+                [node, '--experimental-strip-types', '--input-type=module', '-e', validator],
+                cwd=ROOT, input=json.dumps({'form': form, 'values': {'cards': refs}}),
+                text=True, encoding='utf-8', stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20,
+            )
+            self.assertEqual(0, client.returncode, client.stderr)
+            client_results[len(refs)] = json.loads(client.stdout)
+        self.assertFalse(client_results[0])
+        self.assertFalse(client_results[2])
+        self.assertTrue(client_results[3])
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act('pilot:A', {'action_id': 'choose', 'cards': [first.ref]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        excess=session.act('pilot:A',{'action_id':'choose','cards':[first.ref,second.ref,third.ref]})
+        self.assertFalse(excess.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+        # This assertion distinguishes the publication defect from underpayment
+        # acceptance: authoritative completion already rejects one card.
+        self.assertTrue(client_results[1], 'The published form must reject incomplete two-card payment')
+        from quorune.session import CommanderSession
+        with tempfile.TemporaryDirectory()as directory:
+            path=Path(directory)/'pending-two-card-payment';session.save(path)
+            session=CommanderSession.load(self.db,path)
+        engine=session.engine
+        self.assertEqual([0,2],session.packet('pilot:A',full=True)['decision']['legal_actions'][0]['form']['fields'][0]['allowed_cardinalities'])
+        hand_before=len(engine.state.players['A'].zones['hand'])
+        with mock.patch.object(engine,'_move_cards_simultaneously',wraps=engine._move_cards_simultaneously)as movement:
+            paid=session.act('pilot:A',{'action_id':'choose','cards':[first.ref,second.ref]})
+        self.assertTrue(paid.ok,paid.summary)
+        self.assertTrue(any({object_id for object_id,_destination in call.args[0]}=={first.object_id,second.object_id}for call in movement.call_args_list))
+        self.assertEqual('graveyard',engine.state.cards[first.object_id].zone)
+        self.assertEqual('graveyard',engine.state.cards[second.object_id].zone)
+        self.assertEqual(hand_before+1,len(engine.state.players['A'].zones['hand']))
+        self.replay(session)
+
+    def test_two_card_payment_decline_insufficient_stale_and_replaced_branches(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.session import CommanderSession
+        for branch in ('insufficient','decline','stale','replacement'):
+            with self.subTest(branch=branch):
+                session=self.session(2381181220+len(branch));engine=session.engine
+                spell=self.add(engine,'Generic Payment Prefix Spell',zone='hand',ref='BRANCH-PAYMENT')
+                keep=1 if branch=='insufficient'else 2
+                for object_id in tuple(engine.state.players['A'].zones['hand']):
+                    engine.move_card(object_id,'library',reason='Constructed minimal hand')
+                cards=[self.add(engine,'Generic Payment Plains',zone='hand',ref=f'BRANCH-CARD-{index}')for index in range(keep)]
+                # Minimal hand setup moved the added spell too; restore it through
+                # the canonical zone owner rather than editing its zone field.
+                engine.move_card(spell.object_id,'hand',reason='Constructed payment spell')
+                if branch=='replacement':
+                    self.add(engine,'Generic Payment Destination Replacement',seat='B',ref='BRANCH-REPLACEMENT-ONE')
+                    self.add(engine,'Generic Payment Competing Replacement',seat='C',ref='BRANCH-REPLACEMENT-TWO')
+                action=self.ready(session,spell,{'W':1})
+                session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+                self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok);self.resolve(session)
+                projected=session.packet('pilot:A',full=True)['decision']['legal_actions'][0]
+                expected=[0]if branch=='insufficient'else[0,2]
+                self.assertEqual(expected,projected['choice_schema']['allowed_cardinalities'])
+                if branch=='stale':
+                    engine.move_card(cards[0].object_id,'graveyard',reason='Constructed departure')
+                    engine.move_card(cards[0].object_id,'hand',reason='Constructed new incarnation')
+                    session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+                    before=authoritative_state_hash(engine.state)
+                    bad=session.act('pilot:A',{'action_id':'choose','cards':[card.ref for card in cards]})
+                    self.assertFalse(bad.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+                hand_before=len(engine.state.players['A'].zones['hand'])
+                if branch!='replacement':
+                    declined=session.act('pilot:A',{'action_id':'choose','cards':[]})
+                    self.assertTrue(declined.ok,declined.summary)
+                    self.assertEqual(hand_before,len(engine.state.players['A'].zones['hand']))
+                else:
+                    chosen=session.act('pilot:A',{'action_id':'choose','cards':[card.ref for card in cards]})
+                    self.assertTrue(chosen.ok,chosen.summary)
+                    self.assertIn('replacement',engine.state.pending_decision.kind)
+                    self.assertTrue(all(engine.state.cards[card.object_id].zone=='hand'for card in cards))
+                    with tempfile.TemporaryDirectory()as directory:
+                        path=Path(directory)/'two-card-replacement';session.save(path);session=CommanderSession.load(self.db,path)
+                    engine=session.engine
+                    for _ in range(8):
+                        if not engine.state.pending_decision or 'replacement'not in engine.state.pending_decision.kind:break
+                        decision=session.packet('pilot:A',full=True)['decision']
+                        result=session.act('pilot:A',{'action_id':'choose','replacement':decision['ctx']['options'][0]['id']})
+                        self.assertTrue(result.ok,result.summary)
+                    self.assertTrue(all(engine.state.cards[card.object_id].zone=='exile'for card in cards))
+                    self.assertEqual(hand_before+1,len(engine.state.players['A'].zones['hand']))
+                    self.assertEqual(2,sum(sum(engine.state.cards[card.object_id].counters.values())for card in cards))
+                self.replay(session)
+
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'fixed-payment.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/fixed-resolution-payment-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Generic payment deck',[DeckEntry('Generic Payment Commander',1,'commander'),DeckEntry('Generic Payment Plains',30)],['Generic Payment Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close();cls.temporary.cleanup()
+
+    def session(self,seed):
+        from copy import deepcopy
+        from quorune.model import GameConfig
+        from quorune.session import CommanderSession
+        from quorune.oracle_ir import register_generated_programs
+        session=CommanderSession.create(self.db,{seat:deepcopy(self.deck)for seat in 'ABCD'},first_player='A',seed=seed,config=GameConfig(seed=seed,auto_pass_empty_priority=False))
+        keep_all(session);engine=session.engine
+        engine.permissions.invalidate_current();engine.state.pending_decision=None;engine.state.priority_player=None;engine.state.priority_passes=[]
+        register_generated_programs(self.db,engine.semantics,tuple(self.db.iter_cards()),trust_level='trusted',capability_registry=self.registry,capability_profile='commander_review',
+            promote_exact_runtime_handlers=True,promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
+        return session
+
+    def add(self,engine,name,*,zone='battlefield',seat='A',ref):
+        from quorune.model import CardInstance
+        row=self.db.lookup(name)
+        card=CardInstance(object_id='payment:'+ref,ref=ref,oracle_id=row.oracle_id,printed_name=row.name,owner=seat,controller=seat,zone=zone,
+            zone_timestamp=engine._next_zone_timestamp(),known_to=list(engine.seats)if zone!='hand'else[seat],revealed_to=list(engine.seats)if zone!='hand'else[])
+        engine.state.cards[card.object_id]=card;engine.state.players[seat].zones[zone].append(card.object_id)
+        return card
+
+    def ready(self,session,source,mana):
+        engine=session.engine;engine.permissions.invalidate_current();engine.state.pending_decision=None
+        engine.state.active_player='A';engine.state.started=True;engine.state.phase='precombat_main';engine.state.step='main'
+        engine.state.players['A'].mana_pool.update(mana);engine._grant_priority('A');engine.pump()
+        programs=engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertTrue(programs);self.assertTrue(all(engine.semantic_program_is_current_trusted(p)for p in programs))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        return next(a for a in actions if a['id']==f'cast:{source.ref}'or a['id'].startswith(f'activate:{source.ref}:'))
+
+    def resolve(self,session):
+        for _ in range(16):
+            if session.state.pending_decision and session.state.pending_decision.kind!='priority':return
+            if not session.state.stack:return
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        self.fail('Fixed payment stack did not resolve')
+
+    def replay(self,session):
+        from quorune.record import authoritative_state_hash
+        expected=authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory()as directory:
+            path=Path(directory)/'fixed-payment-record';session.save(path)
+            from quorune.session import CommanderSession
+            self.assertEqual(expected,authoritative_state_hash(CommanderSession.load(self.db,path).state))
+            result=replay_record(path,self.db,verify=True)
+        self.assertTrue(result['ok'],result);self.assertEqual(expected,result['final_state_hash'])
+
+    def test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay(self):
+        from quorune.record import authoritative_state_hash
+        session=self.session(2381181201);engine=session.engine
+        spell=self.add(engine,'Generic Discard Payment Spell',zone='hand',ref='PAYMENT-SPELL')
+        payment=self.add(engine,'Generic Payment Plains',zone='hand',ref='PAYMENT-OWNED')
+        opponent=self.add(engine,'Generic Payment Plains',zone='hand',seat='B',ref='PAYMENT-OPPONENT')
+        action=self.ready(session,spell,{'W':1})
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        cast=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(cast.ok,cast.summary);self.resolve(session)
+        self.assertEqual('semantic.choice',engine.state.pending_decision.kind)
+        decision=session.packet('pilot:A',full=True)['decision']
+        self.assertIn(payment.ref,decision['ctx']['legal_actions'][0]['choice_schema']['legal_refs'])
+        self.assertNotIn(opponent.ref,str(decision['ctx']))
+        for seat in ('B','C','D'):self.assertIsNone(session.packet(f'pilot:{seat}',full=True)['decision'])
+        before=authoritative_state_hash(engine.state)
+        bad=session.act('pilot:A',{'action_id':'choose','cards':[opponent.ref]})
+        self.assertFalse(bad.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+        hand_before=len(engine.state.players['A'].zones['hand'])
+        paid=session.act('pilot:A',{'action_id':'choose','cards':[payment.ref]})
+        self.assertTrue(paid.ok,paid.summary)
+        self.assertEqual('graveyard',engine.state.cards[payment.object_id].zone)
+        self.assertEqual(hand_before+1,len(engine.state.players['A'].zones['hand']))
+        self.assertEqual('graveyard',engine.state.cards[spell.object_id].zone)
+        self.replay(session)
+
+    def test_actual_v237_payment_record_is_explicitly_incompatible(self):
+        import json
+        from common import ROOT
+        path=ROOT/'tests/fixtures/records/fixed-payment-v237-2756dd2b'
+        provenance=json.loads((path/'provenance.json').read_text(encoding='utf-8'))
+        self.assertEqual('oracle-ir-v237',provenance['compiler_version'])
+        self.assertEqual('explicit_runtime_trust_incompatibility',provenance['current_runtime_disposition'])
+        programs=json.loads((path/'semantics.json').read_text(encoding='utf-8'))['programs'].values()
+        historical=next(p for p in programs if p['oracle_id']=='00000000-0000-4000-8000-000000000810')
+        self.assertEqual(OPTIONAL_MANA_PAYMENT_OPERATION,historical['effects'][0]['op'])
+        self.assertNotIn('schema_version',historical['effects'][0])
+        self.assertEqual(5,len((path/'commands.jsonl').read_text(encoding='utf-8').splitlines()))
+        with self.assertRaisesRegex(ValueError,'Runtime trust provenance mismatch in record manifest'):
+            replay_record(path,self.db,verify=True)
+
+    def test_payment_replacement_choice_resumes_once_after_save_load_and_replays(self):
+        from quorune.session import CommanderSession
+        session=self.session(2381181202);engine=session.engine
+        spell=self.add(engine,'Generic Discard Payment Spell',zone='hand',ref='REPLACED-SPELL')
+        payment=self.add(engine,'Generic Payment Plains',zone='hand',ref='REPLACED-PAYMENT')
+        self.add(engine,'Generic Payment Destination Replacement',seat='B',ref='PAYMENT-EXILE-ONE')
+        self.add(engine,'Generic Payment Competing Replacement',seat='C',ref='PAYMENT-EXILE-TWO')
+        action=self.ready(session,spell,{'W':1})
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok);self.resolve(session)
+        before=len(engine.state.players['A'].zones['hand'])
+        paid=session.act('pilot:A',{'action_id':'choose','cards':[payment.ref]})
+        self.assertTrue(paid.ok,paid.summary)
+        self.assertIn('replacement',engine.state.pending_decision.kind)
+        self.assertEqual('hand',payment.zone)
+        with tempfile.TemporaryDirectory()as directory:
+            path=Path(directory)/'pending-payment';session.save(path);session=CommanderSession.load(self.db,path)
+        engine=session.engine
+        for _ in range(4):
+            if engine.state.pending_decision is None or 'replacement'not in engine.state.pending_decision.kind:break
+            decision=session.packet('pilot:A',full=True)['decision']
+            choice=session.act('pilot:A',{'action_id':'choose','replacement':decision['ctx']['options'][0]['id']})
+            self.assertTrue(choice.ok,choice.summary)
+        card=engine.state.cards[payment.object_id]
+        self.assertEqual('exile',card.zone)
+        self.assertEqual(1,sum(card.counters.values()))
+        self.assertEqual(before+1,len(engine.state.players['A'].zones['hand']))
+        # The resolving spell itself can encounter the same destination owner.
+        for _ in range(4):
+            if not engine.state.pending_decision or 'replacement'not in engine.state.pending_decision.kind:break
+            decision=session.packet('pilot:A',full=True)['decision']
+            result=session.act('pilot:A',{'action_id':'choose','replacement':decision['ctx']['options'][0]['id']})
+            self.assertTrue(result.ok,result.summary)
+        self.replay(session)
+
+    def test_trusted_life_activation_and_declined_prefix_preserve_cost_scope(self):
+        session=self.session(2381181203);engine=session.engine
+        source=self.add(engine,'Generic Life Payment Source',ref='LIFE-PAYMENT-SOURCE')
+        action=self.ready(session,source,{'C':1})
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        hand_before=len(engine.state.players['A'].zones['hand']);life_before=engine.state.players['A'].life
+        activated=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(activated.ok,activated.summary);self.resolve(session)
+        self.assertEqual(life_before,engine.state.players['A'].life)
+        paid=session.act('pilot:A',{'action_id':'choose','pay':True})
+        self.assertTrue(paid.ok,paid.summary)
+        self.assertEqual(life_before-2,engine.state.players['A'].life)
+        self.assertEqual(hand_before+1,len(engine.state.players['A'].zones['hand']))
+        self.replay(session)
+        spell=self.add(engine,'Generic Payment Prefix Spell',zone='hand',ref='PREFIX-PAYMENT-SPELL')
+        action=self.ready(session,spell,{'W':1});life_before=engine.state.players['A'].life
+        hand_before=len(engine.state.players['A'].zones['hand'])
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok);self.resolve(session)
+        self.assertEqual(life_before+2,engine.state.players['A'].life)
+        declined=session.act('pilot:A',{'action_id':'choose','cards':[]})
+        self.assertTrue(declined.ok,declined.summary)
+        self.assertEqual(hand_before-1,len(engine.state.players['A'].zones['hand']))
+        self.assertEqual('graveyard',spell.zone)
+
+    def test_trusted_etb_sacrifice_uses_locked_trigger_controller_and_replays(self):
+        from quorune.record import authoritative_state_hash
+        session=self.session(2381181204);engine=session.engine
+        source=self.add(engine,'Generic Sacrifice Payment Source',zone='hand',ref='SACRIFICE-SOURCE')
+        payment=self.add(engine,'Generic Payment Plains',ref='SACRIFICE-LAND')
+        payment.owner='B'
+        opponent=self.add(engine,'Generic Payment Plains',seat='B',ref='OPPOSING-LAND')
+        action=self.ready(session,source,{'W':1})
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok);self.resolve(session)
+        self.assertEqual('semantic.choice',engine.state.pending_decision.kind)
+        legal=session.packet('pilot:A',full=True)['decision']['ctx']['legal_actions'][0]['choice_schema']['legal_refs']
+        self.assertIn(payment.ref,legal);self.assertNotIn(opponent.ref,legal)
+        before=authoritative_state_hash(engine.state)
+        rejected=session.act('pilot:A',{'action_id':'choose','cards':[opponent.ref]})
+        self.assertFalse(rejected.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+        before_hand=len(engine.state.players['A'].zones['hand'])
+        result=session.act('pilot:A',{'action_id':'choose','cards':[payment.ref]})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual('graveyard',engine.state.cards[payment.object_id].zone)
+        self.assertIn(payment.object_id,engine.state.players['B'].zones['graveyard'])
+        self.assertEqual('battlefield',engine.state.cards[opponent.object_id].zone)
+        self.assertEqual(before_hand+1,len(engine.state.players['A'].zones['hand']))
+        self.replay(session)
+
+    def test_trusted_conditional_target_is_selected_before_payment_and_revalidated(self):
+        from quorune.record import authoritative_state_hash
+        for leaves in (False,True):
+            with self.subTest(leaves=leaves):
+                session=self.session(2381181205+leaves);engine=session.engine
+                spell=self.add(engine,'Generic Targeted Payment Spell',zone='hand',ref='TARGETED-PAYMENT')
+                payment=self.add(engine,'Generic Payment Plains',zone='hand',ref='TARGETED-PAYMENT-CARD')
+                target=self.add(engine,'Generic Life Payment Source',seat='B',ref='PAYMENT-TARGET')
+                noncreature=self.add(engine,'Generic Payment Plains',seat='B',ref='NOT-CREATURE')
+                action=self.ready(session,spell,{'W':1})
+                self.assertIn(target.ref,action['target_schema']['legal_refs'])
+                self.assertNotIn(noncreature.ref,action['target_schema']['legal_refs'])
+                before=authoritative_state_hash(engine.state)
+                invalid=session.act('pilot:A',{'action_id':action['id'],'targets':[noncreature.ref],'pay':'auto'})
+                self.assertFalse(invalid.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+                engine=session.engine
+                session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+                cast=session.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+                self.assertTrue(cast.ok,cast.summary)
+                if leaves:
+                    engine.move_card(target.object_id,'hand',reason='Constructed pre-resolution target departure')
+                    # The departure is a separate fixture transition; replay the
+                    # remaining canonical priority commands from its checkpoint.
+                    session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+                self.resolve(session)
+                if leaves:
+                    self.assertNotEqual('semantic.choice',engine.state.pending_decision.kind if engine.state.pending_decision else None)
+                    self.assertEqual('hand',engine.state.cards[payment.object_id].zone)
+                else:
+                    self.assertEqual('semantic.choice',engine.state.pending_decision.kind)
+                    result=session.act('pilot:A',{'action_id':'choose','cards':[payment.ref]})
+                    self.assertTrue(result.ok,result.summary)
+                    self.assertTrue(engine.state.cards[target.object_id].tapped)
+                    self.assertEqual('graveyard',engine.state.cards[payment.object_id].zone)
+                self.replay(session)
 
 
 if __name__ == "__main__":

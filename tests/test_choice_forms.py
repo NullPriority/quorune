@@ -10,6 +10,19 @@ from quorune.choice_forms import (
 
 
 class ChoiceFormTests(unittest.TestCase):
+    def test_disjoint_object_cardinalities_are_preserved_in_projected_form(self):
+        action={'id':'choose','action':'choose','choice_schema':{'field':'cards','legal_refs':['A01','A02'],'minimum':0,'maximum':2,'optional':True,'distinct':True,'allowed_cardinalities':[0,2]}}
+        form=build_action_form(action,decision_kind='semantic.choice',context={})
+        field=form['fields'][0]
+        self.assertEqual('refs',field['control'])
+        self.assertEqual([0,2],field['allowed_cardinalities'])
+        self.assertTrue(field['distinct'])
+        self.assertEqual({'cards'},delegated_choice_fields(action,decision_kind='semantic.choice',context={}))
+        legacy={**action,'choice_schema':{key:value for key,value in action['choice_schema'].items()if key!='allowed_cardinalities'}}
+        legacy_field=build_action_form(legacy,decision_kind='semantic.choice',context={})['fields'][0]
+        self.assertNotIn('allowed_cardinalities',legacy_field)
+        self.assertNotIn('distinct',legacy_field)
+
     def test_ordered_partition_preserves_private_scry_groups(self):
         action = {
             "id": "choose",

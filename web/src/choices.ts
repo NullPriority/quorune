@@ -264,6 +264,17 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
   } else if (control === "refs") {
     const selected = list(value).map(String);
     const count = selected.length;
+    if (field.allowed_cardinalities !== undefined) {
+      const cardinalities = list(field.allowed_cardinalities);
+      if (!Array.isArray(field.allowed_cardinalities)
+        || !cardinalities.every((size) => typeof size === "number" && Number.isInteger(size) && size >= 0)
+        || !cardinalities.includes(count)) {
+        errors.push(`${label} requires ${cardinalities.join(" or ")} selection(s).`);
+      }
+    }
+    if (field.distinct && new Set(selected).size !== count) {
+      errors.push(`${label} requires distinct selections.`);
+    }
     if (field.minimum !== undefined && count < Number(field.minimum)) {
       errors.push(`${label} requires at least ${field.minimum} selection(s).`);
     }

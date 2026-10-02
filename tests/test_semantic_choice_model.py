@@ -150,6 +150,16 @@ class SemanticChoiceModelTests(unittest.TestCase):
             payload["legal_actions"][0]["choice_schema"]["legal_values"],
         )
 
+    def test_object_choice_disjoint_cardinalities_preserve_legacy_ranges(self):
+        from quorune.semantic_choices.model import ObjectChoice
+        legacy = ObjectChoice(field_name='cards', legal_refs=('A01','A02'), zones=('hand',), minimum=0, maximum=2, optional=True)
+        self.assertNotIn('allowed_cardinalities',legacy.choice_schema())
+        exact = ObjectChoice(field_name='cards', legal_refs=('A01','A02'), zones=('hand',), minimum=0, maximum=2, optional=True, allowed_cardinalities=(0,2))
+        self.assertEqual([0,2],exact.choice_schema()['allowed_cardinalities'])
+        for counts in ((),(0,True),(2,0),(0,1),(0,2,3),(0,0,2)):
+            with self.subTest(counts=counts),self.assertRaises(SemanticChoiceError):
+                ObjectChoice(field_name='cards',legal_refs=('A01','A02'),zones=('hand',),minimum=0,maximum=2,optional=True,allowed_cardinalities=counts)
+
     def test_preparation_requires_choice_or_explicit_auto_continue(self):
         with self.assertRaisesRegex(SemanticChoiceError, "issue a request"):
             SemanticChoicePreparation(
