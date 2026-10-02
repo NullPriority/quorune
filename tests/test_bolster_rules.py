@@ -507,9 +507,9 @@ class BolsterRuntimeTests(unittest.TestCase):
         projector = StateProjector(self.database, engine.state)
         self.assertIsNotNone(projector._decision("pilot:A"))
         self.assertIsNone(projector._decision("pilot:B"))
-        initial_packet = json.dumps(
-            projector._decision("pilot:A"), sort_keys=True
-        )
+        decision_without_capability = dict(projector._decision("pilot:A"))
+        self.assertIsInstance(decision_without_capability.pop("cap"), str)
+        initial_packet = json.dumps(decision_without_capability, sort_keys=True)
         for seat in engine.seats:
             for object_id in engine.state.players[seat].zones["hand"]:
                 self.assertNotIn(engine.state.cards[object_id].ref, initial_packet)
@@ -535,6 +535,36 @@ class BolsterRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(2, replay["commands"])
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_bolster_privacy_distinguishes_opaque_tokens_from_private_fields(self):
+        original_decision = StateProjector._decision
+
+        def projected_decision(projector, principal, *, leak=False):
+            decision = original_decision(projector, principal)
+            if decision is None:
+                return None
+            hidden_ref = next(
+                projector.state.cards[object_id].ref
+                for player in projector.state.players.values()
+                for object_id in player.zones["hand"]
+            )
+            decision = {
+                **decision,
+                "cap": f"c_{hidden_ref}_opaque_token_collision",
+            }
+            if leak:
+                decision["ctx"] = {**decision["ctx"], "private_ref": hidden_ref}
+            return decision
+
+        with patch.object(StateProjector, "_decision", projected_decision):
+            self.test_bolster_quantity_replacement_is_seat_scoped_and_replays_exactly()
+
+        def leaked_decision(projector, principal):
+            return projected_decision(projector, principal, leak=True)
+
+        with patch.object(StateProjector, "_decision", leaked_decision):
+            with self.assertRaisesRegex(AssertionError, "unexpectedly found"):
+                self.test_bolster_quantity_replacement_is_seat_scoped_and_replays_exactly()
 
 
 if __name__ == "__main__":

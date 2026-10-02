@@ -18,7 +18,10 @@ from quorune.rules_scheduler import (
 from quorune.util import stable_json
 from quorune.work_selection import selected_work_candidate
 from quorune.work_selection_bundles import validate_bundle_policy
-from scripts.harvest_outcome_history import build_harvest_outcome_history
+from scripts.harvest_outcome_history import (
+    build_harvest_outcome_history,
+    validated_semantic_transition_declaration,
+)
 
 
 JSON_OUTPUT = ROOT / "coverage" / "rules-dependency-queue.json"
@@ -212,6 +215,9 @@ def main() -> int:
     work_policy = catalog.get("work_selection") or {}
     if args.validate_policy:
         validate_bundle_policy(work_policy.get("coverage_family") or {})
+        declaration = work_policy.get("semantic_transition_declaration")
+        if declaration is not None:
+            validated_semantic_transition_declaration(declaration)
         return 0
     harvest_history = build_harvest_outcome_history(
         ROOT,

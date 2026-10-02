@@ -11,6 +11,7 @@ from ..cast_lifecycles import (
     FixedCastLifecycleKind,
     fixed_cast_lifecycle_handler_descriptor,
     FIXED_CAST_LIFECYCLE_CAPABILITY_ID,
+    FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES,
     FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
 )
@@ -245,6 +246,7 @@ def fixed_cast_lifecycle_keyword_node(
         FixedCastLifecycleKind.REBOUND,
     }
     dependencies = (
+        *FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES,
         (
             FIXED_COMBAT_ENTRY_LIFECYCLE_CAPABILITY_ID
             if spec.kind

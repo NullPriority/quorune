@@ -4187,6 +4187,14 @@
     {
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_lifecycle_dependency_omission_mutation_is_killed",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Omit the shared zone-cast requirement from compiler emission and require the independent registered-handler dependency assertion to kill the original declaration mismatch."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_lifecycle_descriptors_are_closed_and_dependency_gated",
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -4215,6 +4223,14 @@
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject cost-text drift and remove exact admission when the lifecycle capability is not trusted."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceCompilerTests.test_shared_lifecycle_handler_contract_fails_closed_when_a_required_owner_is_blocked",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Independently block either capability required by the existing shared lifecycle handler and retain material residuals instead of exact admission."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",
@@ -4291,6 +4307,14 @@
     {
       "capability_id": "casting.lifecycle.fixed_public",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_real_buyback_offer_payment_resolution_and_pre_action_replay",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Use a correctly generated trusted Buyback card through the actual offered additional cost, authenticated cast command, payment, successful resolution and owner-hand return."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "positive",
       "test_id": "tests.test_suspend_rules.SuspendCompilerTests.test_fixed_suspend_compiles_to_the_shared_cast_lifecycle",
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -4343,6 +4367,14 @@
       "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the fixed Warp cost, stack transition, battlefield incarnation, delayed exile, and later-turn permission exactly."
+    },
+    {
+      "capability_id": "casting.lifecycle.fixed_public",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_casting_surface.FixedCastingSurfaceRuntimeTests.test_real_buyback_offer_payment_resolution_and_pre_action_replay",
+      "official_rule_ids": ["601.2b", "601.2f", "601.2h", "702.27", "702.62", "702.62a", "702.62b", "702.62c", "702.62d", "702.81", "702.109", "702.185"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay the real Buyback cast, payment and full resolution from a checkpoint before the player action and compare authoritative state hashes."
     },
     {
       "capability_id": "casting.lifecycle.fixed_public",

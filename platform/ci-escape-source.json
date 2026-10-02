@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-09-09T08:02:13Z",
+  "observed_at": "2026-10-02T04:10:47Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -917,6 +917,18 @@
       ],
       "impact_edge_status": "not_applicable",
       "resolution": "Cloud source checkpoints now require a clean tracked worktree before local pre-corpus validation, so uncommitted generated outputs cannot mask missing exact-commit content; the required module-classification output is committed with the corrected checkpoint."
+    },
+    {
+      "id": "ci-20261002-60",
+      "run_id": 36958659433,
+      "head_sha": "96313bde98a0277025989f941b3bc9feede8b7c9",
+      "category": "flaky_test",
+      "deterministic": false,
+      "summary": "The Bolster privacy witness searched serialized actor decision data including its authorized opaque capability. A random token contained the short hidden reference D04, causing a false privacy failure without exposing that reference in a card-data field.",
+      "failed_surfaces": ["PR / Windows / functional-02 (job 110687732626)", "PR / Windows Certification (dependent)", "PR / Certification (dependent)"],
+      "regressions": ["test_bolster_rules.BolsterRuntimeTests.test_bolster_privacy_distinguishes_opaque_tokens_from_private_fields", "test_bolster_rules.BolsterRuntimeTests.test_bolster_quantity_replacement_is_seat_scoped_and_replays_exactly"],
+      "impact_edge_status": "not_applicable",
+      "resolution": "A deterministic token-collision counterexample reproduces the old assertion. The witness copies the projected decision and excludes only its authorized top-level cap from card-data substring checks, retains capability presence, seat exclusion, replacement consequences and exact replay, and rejects an injected private reference in the actual context. The module already has primary shard ownership and was selected by the required complete gate."
     }
   ],
   "recent_pull_requests": [

@@ -1017,6 +1017,25 @@
       "resolution": "Cloud source checkpoints now require a clean tracked worktree before local pre-corpus validation, so uncommitted generated outputs cannot mask missing exact-commit content; the required module-classification output is committed with the corrected checkpoint.",
       "run_id": 34326504995,
       "summary": "The cloud source checkpoint omitted freshly generated module classifications for four new production modules, while the local pre-push architecture check read those unstaged worktree bytes and incorrectly passed the commit."
+    },
+    {
+      "category": "flaky_test",
+      "deterministic": false,
+      "failed_surfaces": [
+        "PR / Windows / functional-02 (job 110687732626)",
+        "PR / Windows Certification (dependent)",
+        "PR / Certification (dependent)"
+      ],
+      "head_sha": "96313bde98a0277025989f941b3bc9feede8b7c9",
+      "id": "ci-20261002-60",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_bolster_rules.BolsterRuntimeTests.test_bolster_privacy_distinguishes_opaque_tokens_from_private_fields",
+        "test_bolster_rules.BolsterRuntimeTests.test_bolster_quantity_replacement_is_seat_scoped_and_replays_exactly"
+      ],
+      "resolution": "A deterministic token-collision counterexample reproduces the old assertion. The witness copies the projected decision and excludes only its authorized top-level cap from card-data substring checks, retains capability presence, seat exclusion, replacement consequences and exact replay, and rejects an injected private reference in the actual context. The module already has primary shard ownership and was selected by the required complete gate.",
+      "run_id": 36958659433,
+      "summary": "The Bolster privacy witness searched serialized actor decision data including its authorized opaque capability. A random token contained the short hidden reference D04, causing a false privacy failure without exposing that reference in a card-data field."
     }
   ],
   "known_flaky_tests": [],
@@ -1032,7 +1051,7 @@
     "sample_size": 4,
     "started_at": "2026-08-25T03:52:06Z"
   },
-  "observed_at": "2026-09-09T08:02:13Z",
+  "observed_at": "2026-10-02T04:10:47Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1077,14 +1096,14 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "3bf02f0d35207b96a44e4572be4ed0ec688156f84e37524c94d3cae0d5172a42",
+  "source_fingerprint": "a70b05600fec99f24643036745254b3655839984200c9ce00cabd984b9a2045c",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
     "average_slot_b_inactive_seconds": null,
     "category_counts": {
       "browser_integration": 5,
-      "flaky_test": 6,
+      "flaky_test": 7,
       "generated_artifact_drift": 8,
       "infrastructure": 1,
       "missing_affected_test": 22,
@@ -1092,7 +1111,7 @@
     },
     "current_missing_impact_edges": [],
     "deterministic_escape_count": 54,
-    "escape_count": 59,
+    "escape_count": 60,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

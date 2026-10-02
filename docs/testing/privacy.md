@@ -25,3 +25,11 @@ Test reconnect and process restart because fresh delivery paths can bypass an
 otherwise correct live projection. Search serialized packets and journals, not
 only parsed UI state. Any new state field is private by default until its
 visibility contract and negative tests are explicit.
+
+An acting seat's decision `cap` is an authorized opaque token, not card data.
+Copy the projected decision and remove only that top-level field before scanning
+serialized card-data content for hidden reference substrings; random token bytes
+can coincidentally contain short references. Keep capability presence and
+nonacting-seat exclusion assertions, and prove that an injected private
+reference in a real projection field still fails. Do not omit other fields or
+ignore capability exposure to unauthorized principals.
