@@ -1903,6 +1903,8 @@ class RulesSchedulerTests(unittest.TestCase):
             "coverage/card-program-coverage-commander.json"
         ]["semantic_sha256"] = "f" * 64
         corrected_head["card_program_material_residuals"] -= 1
+        corrected_declaration['compiler_version']='oracle-ir-v999'
+        corrected_head['compiler_version']='oracle-ir-v999'
 
         corrected = _replace_unlanded_content_entry(
             superseded,
@@ -1927,6 +1929,9 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(
             corrected_declaration["family_ids"], corrected["family_ids"]
         )
+        self.assertEqual('oracle-ir-v999',corrected['head_receipt']['compiler_version'])
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError,'compiler version'):
+            _replace_unlanded_content_entry(superseded,declaration=corrected_declaration,base=base,head=head)
 
     def test_unlanded_harvest_can_be_reclassified_as_non_harvest(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]

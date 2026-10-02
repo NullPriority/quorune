@@ -1089,6 +1089,23 @@
       "resolution": "Keep a variable-cost constructed exclusion and add positive whole-card evidence that ordinary fixed payment uses the payment operation rather than the no-cost optional-effect operation. The unchanged relevant head fails on the now-supported literal; corrected exact tests pass. Add the payment-source to optional-wrapper consumer edge and executable assertion without changing production semantics or rerunning the corpus.",
       "run_id": 36999856316,
       "summary": "Whole-card optional-effect exclusions still treated an ordinary fixed mana payment as unsupported after the shared composition owner admitted it through the distinct payment owner."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Rules scheduler"
+      ],
+      "head_sha": "bbc3be88d88a3b19b15b95c4f8992303057ef0a0",
+      "id": "ci-20261002-64",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_corrected_unlanded_transition_replaces_superseded_receipt",
+        "test_rules_scheduler.RulesSchedulerTests.test_unmerged_harvest_compiler_revision_retains_original_frontier_identity"
+      ],
+      "resolution": "Match the same unlanded transition, bundle and candidate identities independently of the superseded compiler version, while requiring the corrected declaration compiler to match its new head receipt and retaining durable-main base and landed-entry guards. The changed-compiler regression fails on unchanged owner by returning no replacement, then passes with malformed corrected-head version rejection. Preserve the original base-frontier identity. Existing scheduler impact selection already covers these tests; corrected corpus and frontier content keys remain identical and are reused.",
+      "run_id": 37016142451,
+      "summary": "The unlanded harvest receipt replacement predicate matched the superseded compiler version as part of immutable transition identity, preventing a review-driven pre-merge semantic compiler revision from replacing its existing materialized receipt."
     }
   ],
   "known_flaky_tests": [],
@@ -1149,7 +1166,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "e14ce77d9b5d699a530217665c85a41372c78d4a3955f1ad3439769c4b51ffa0",
+  "source_fingerprint": "214b29cdd1ef5ed1660dfe9bfe797199e2f66ac30cedaa1752747cb477fe4599",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1160,11 +1177,11 @@
       "generated_artifact_drift": 8,
       "infrastructure": 1,
       "missing_affected_test": 24,
-      "source_correctness": 18
+      "source_correctness": 19
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 57,
-    "escape_count": 63,
+    "deterministic_escape_count": 58,
+    "escape_count": 64,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

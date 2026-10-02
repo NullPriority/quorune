@@ -965,6 +965,18 @@
       "regressions": ["test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_exclusions_remain_material", "test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_whole_card_fixed_payment_uses_payment_not_optional_effect_owner", "test_change_impact.ChangeImpactTests.test_payment_composition_selects_optional_wrapper_consumers"],
       "impact_edge_status": "added",
       "resolution": "Keep a variable-cost constructed exclusion and add positive whole-card evidence that ordinary fixed payment uses the payment operation rather than the no-cost optional-effect operation. The unchanged relevant head fails on the now-supported literal; corrected exact tests pass. Add the payment-source to optional-wrapper consumer edge and executable assertion without changing production semantics or rerunning the corpus."
+    },
+    {
+      "id": "ci-20261002-64",
+      "run_id": 37016142451,
+      "head_sha": "bbc3be88d88a3b19b15b95c4f8992303057ef0a0",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The unlanded harvest receipt replacement predicate matched the superseded compiler version as part of immutable transition identity, preventing a review-driven pre-merge semantic compiler revision from replacing its existing materialized receipt.",
+      "failed_surfaces": ["Generated cloud / Rules scheduler"],
+      "regressions": ["test_rules_scheduler.RulesSchedulerTests.test_corrected_unlanded_transition_replaces_superseded_receipt", "test_rules_scheduler.RulesSchedulerTests.test_unmerged_harvest_compiler_revision_retains_original_frontier_identity"],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Match the same unlanded transition, bundle and candidate identities independently of the superseded compiler version, while requiring the corrected declaration compiler to match its new head receipt and retaining durable-main base and landed-entry guards. The changed-compiler regression fails on unchanged owner by returning no replacement, then passes with malformed corrected-head version rejection. Preserve the original base-frontier identity. Existing scheduler impact selection already covers these tests; corrected corpus and frontier content keys remain identical and are reused."
     }
   ],
   "recent_pull_requests": [

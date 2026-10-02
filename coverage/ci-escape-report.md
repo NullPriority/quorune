@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "e14ce77d9b5d699a530217665c85a41372c78d4a3955f1ad3439769c4b51ffa0"
+verified: "214b29cdd1ef5ed1660dfe9bfe797199e2f66ac30cedaa1752747cb477fe4599"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 63
-- Deterministic escapes: 57
+- Escapes: 64
+- Deterministic escapes: 58
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -92,6 +92,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261002-61` | [36976363489](https://github.com/NullPriority/quorune/actions/runs/36976363489) | `missing_affected_test` | `added` | Update only the exact stale restricted-mana dependency assertion, retain actual restriction descriptors and token behavior, and select the token-production consumer for changes to the fixed-mana compiler/model/handler contract. The exact regression fails before the correction and passes afterward; compiler semantics and the live census fingerprint stay unchanged. |
 | `ci-20261002-62` | [36999856316](https://github.com/NullPriority/quorune/actions/runs/36999856316) | `source_correctness` | `not_applicable` | Update the five exact integration cases to assert the current handler schema and GENERIC mana vector while retaining controller, turn, ordinal and origin checks. The source-to-consumer impact edges already existed; add an executable assertion preserving all current descriptor consumers. The exact unchanged-head regression fails with five KeyErrors and passes after correction. No production semantics or corpus input identity changes. |
 | `ci-20261002-63` | [36999856316](https://github.com/NullPriority/quorune/actions/runs/36999856316) | `missing_affected_test` | `added` | Keep a variable-cost constructed exclusion and add positive whole-card evidence that ordinary fixed payment uses the payment operation rather than the no-cost optional-effect operation. The unchanged relevant head fails on the now-supported literal; corrected exact tests pass. Add the payment-source to optional-wrapper consumer edge and executable assertion without changing production semantics or rerunning the corpus. |
+| `ci-20261002-64` | [37016142451](https://github.com/NullPriority/quorune/actions/runs/37016142451) | `source_correctness` | `not_applicable` | Match the same unlanded transition, bundle and candidate identities independently of the superseded compiler version, while requiring the corrected declaration compiler to match its new head receipt and retaining durable-main base and landed-entry guards. The changed-compiler regression fails on unchanged owner by returning no replacement, then passes with malformed corrected-head version rejection. Preserve the original base-frontier identity. Existing scheduler impact selection already covers these tests; corrected corpus and frontier content keys remain identical and are reused. |
 
 ## Measurement limitations
 
