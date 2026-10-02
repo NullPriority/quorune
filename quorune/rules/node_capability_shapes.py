@@ -982,6 +982,10 @@ def fixed_source_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed source characteristic effect."""
 
+    if any(effect.get('schema_version') == 2 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
+        from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+        return fixed_resolution_characteristic_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
         target_schema is not None

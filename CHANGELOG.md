@@ -11,6 +11,13 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile fixed end-of-turn permanent animation and base-characteristic setting
+  through the existing identity-pinned multi-layer continuous-effect owner,
+  preserving type retention, creature-subtype replacement, ability removal,
+  fixed keywords, locked groups, current targets, and the historical v1 path.
+  Declare the complete fixed-output mana handler dependency contract without
+  changing spending or payment legality.
+
 - Align fixed-cast lifecycle compiler declarations with the existing shared
   runtime handler's full capability contract. Preserve canonical cast offers,
   payment and resolution, and add a real Buyback action-and-replay witness.

@@ -381,7 +381,7 @@ class FixedManaCompilerTests(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            [("mana.activated.fixed_output",)] * 2,
+            [("mana.activated.fixed_output", "mana.activated.restricted_fixed_output")] * 2,
             [node.capability_dependencies for node in ir.faces[0].nodes],
         )
 

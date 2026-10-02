@@ -12,7 +12,13 @@ from quorune.compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
     fixed_source_characteristics_effect_template,
 )
-from quorune.continuous_effects import ContinuousEffectError, ContinuousOperation, Layer
+from quorune.continuous_effects import (
+    CharacteristicState, ContinuousEffect, ContinuousEffectError,
+    ContinuousOperation, Layer, evaluate_continuous_effects,
+)
+from quorune.resolution_characteristic_model import (
+    FixedResolutionCharacteristicsSpec, fixed_resolution_characteristic_instruction,
+)
 from quorune.continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
 )
@@ -30,6 +36,7 @@ from quorune.rules.capabilities import (
     capability_dependencies_for_node,
     load_default_capability_registry,
 )
+from quorune.semantic_runtime.mana_abilities import FixedActivatedManaAbilityHandler
 from quorune.session import CommanderSession
 from scripts.build_test_database import build_fixture_database
 
@@ -81,6 +88,146 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
             capability_registry=self.capabilities,
             capability_profile="commander_review",
         )
+
+    def test_fixed_animation_and_base_setting_share_context_and_target_owners(self):
+        cases = (
+            ("{1}: This land becomes a 2/1 blue Faerie creature with flying until end of turn. It's still a land.","Land — Forest",True,False),
+            ("Target land you control becomes a 3/3 Elemental creature until end of turn. It's still a land.","Instant",True,False),
+            ("Until end of turn, target creature loses all abilities and becomes a blue Frog with base power and toughness 1/1.","Instant",False,True),
+            ("Target creature has base power and toughness 4/4 until end of turn.","Instant",False,False),
+            ("Whenever you cast a creature spell, this enchantment becomes a 4/4 Illusion creature with flying in addition to its other types until end of turn.","Enchantment",True,False),
+            ("Creatures your opponents control have base power and toughness 0/1 until end of turn.","Instant",False,False),
+            ("Until end of turn, target artifact or creature becomes a Dinosaur artifact creature with base power and toughness 4/3 in addition to its other types.","Instant",True,False),
+        )
+        for text,type_line,retains,removes in cases:
+            with self.subTest(text=text):
+                compiled=self.compile(text,type_line=type_line)
+                self.assertEqual('exact',compiled.status,compiled.to_dict())
+                node=compiled.faces[0].nodes[0]
+                spec,_=fixed_resolution_characteristic_instruction(node.effects[0])
+                self.assertEqual(retains,spec.retain_types)
+                self.assertEqual(removes,spec.remove_all_abilities)
+                self.assertIn(SOURCE_CAPABILITY,node.capability_dependencies)
+                self.assertEqual(text,compiled.faces[0].oracle_text[node.span.start:node.span.end])
+
+    def test_fixed_animation_near_misses_remain_material(self):
+        cases=(
+            "Target land becomes an X/X creature until end of turn. It's still a land.",
+            "Target land becomes a 2/2 creature until your next turn. It's still a land.",
+            "Target creature becomes a copy of another creature until end of turn.",
+            "Target land becomes a 2/2 creature with banding until end of turn. It's still a land.",
+            "Target land becomes a 2/2 creature until end of turn. It can't be blocked this turn.",
+            "Target creature has base power and toughness 2/2 until end of turn, then draw a card.",
+            "Target creature becomes a blue Robot with base power and toughness 2/2 in addition to its other colors and types until end of turn.",
+            "Target land becomes a 2/2 mystery creature until end of turn. It's still a land.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                compiled=self.compile(text,type_line='Instant')
+                self.assertNotEqual('exact',compiled.status)
+                self.assertTrue(compiled.material_residuals)
+
+    def test_fixed_animation_versioned_schema_rejects_nonboolean_and_open_fields(self):
+        compiled=self.compile('Target land becomes a 2/2 creature until end of turn. It\'s still a land.',type_line='Instant')
+        effect=compiled.faces[0].nodes[0].effects[0]
+        for field,value in (('retain_types',1),('retain_creature_subtypes','true'),('remove_all_abilities',None),('base_power',True),('keywords',['Banding']),('schema_version',True)):
+            with self.subTest(field=field):
+                mutated=copy.deepcopy(effect);mutated['characteristics'][field]=value
+                with self.assertRaises(ValueError):fixed_resolution_characteristic_instruction(mutated)
+                self.assertNotIn(SOURCE_CAPABILITY,capability_dependencies_for_node(effects=(mutated,),target_schema=compiled.faces[0].nodes[0].target_schema,mechanic_ids=compiled.faces[0].nodes[0].mechanics))
+        mutated=copy.deepcopy(effect);mutated['extra']='open'
+        with self.assertRaises(ValueError):fixed_resolution_characteristic_instruction(mutated)
+
+    def test_animation_carrier_mana_node_declares_registered_dependency_contract(self):
+        # An ordinary mana sibling must bind before an animated land can be
+        # claimed fully closed. This does not alter mana spending permissions.
+        compiled=self.compile('{T}: Add {U}.',type_line='Land')
+        self.assertEqual('exact',compiled.status,compiled.to_dict())
+        node=compiled.faces[0].nodes[0]
+        self.assertLessEqual(set(FixedActivatedManaAbilityHandler().capability_dependencies),set(node.capability_dependencies))
+        for text in ('{T}: Add {G}.','{T}: Add {G}. Spend this mana only to cast a creature spell.'):
+            ir=self.compile(text,type_line='Land')
+            self.assertEqual('exact',ir.status,ir.to_dict())
+            self.assertLessEqual(set(FixedActivatedManaAbilityHandler().capability_dependencies),set(ir.faces[0].nodes[0].capability_dependencies))
+
+    def test_fixed_animation_does_not_promote_unbound_sibling(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        generic=record("{1}: This land becomes a 2/1 creature until end of turn. It's still a land.\nWhenever a creature is remembered by the moon, draw a card.",type_line='Land')
+        program=compile_best_available_card_program(self, generic,semantic_registry=SemanticRegistry(),capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertFalse(bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')['strict_capability_ready'])
+
+    def test_fixed_animation_generated_probe_requires_real_capability_closure(self):
+        from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
+        generic=record('Target creature has base power and toughness 4/4 until end of turn.',type_line='Instant')
+        ir=self.compile(generic.oracle_text,type_line='Instant')
+        ability={'face_id':'front','ability_id':ir.faces[0].nodes[0].node_id,'status':'unresolved','residuals':[{}]}
+        frontier={'cards':[{'oracle_id':generic.oracle_id,'oracle_ir_status':'unresolved','abilities':[ability]}]}
+        measurement=_bound_effect_program_measurement(frontier=frontier,bundle_id='bundle:fixed-resolution-animation',probe_id='fixed-resolution-animation-existing-owner-v1',cards_by_oracle_id={generic.oracle_id:generic},coverage={'minimum_complete_card_gain':50,'minimum_exact_ability_gain':100,'minimum_material_residual_reduction':100},cohort_fingerprint='0'*64,database=self)
+        self.assertEqual(1,measurement['complete_card_gain'])
+        self.assertEqual(1,measurement['exact_ability_gain'])
+        self.assertFalse(measurement['grants_gameplay_trust'])
+        self.assertEqual('retired_below_harvest_floor',measurement['decision'])
+
+    @staticmethod
+    def rulings(_record):return ()
+
+    def test_fixed_animation_layer_operations_preserve_rule_distinctions(self):
+        # Independently authored CR 205.1b / 613.4b expectations: retained
+        # types do not erase Forest, while creature-type replacement erases Elf.
+        def evaluate(spec):
+            state=CharacteristicState('Generic',card_types={'Land','Creature'},subtypes={'Forest','Elf'},supertypes={'Legendary'},colors={'G'},abilities=['Flying'],power=7,toughness=8)
+            effects=[ContinuousEffect(effect_id=f'fixed:{index}',source_id='source',layer=layer,sublayer=sublayer,timestamp=1,operations=operations)
+                     for index,(layer,sublayer,operations) in enumerate(spec.layer_operations())]
+            effects.append(ContinuousEffect(effect_id='counter-control',source_id='counter',layer=Layer.POWER_TOUGHNESS,sublayer='7c',timestamp=2,operations=(ContinuousOperation('modify_power_toughness',(1,1)),)))
+            return evaluate_continuous_effects(state,effects).characteristics
+        retained=evaluate(FixedResolutionCharacteristicsSpec(card_types=('Creature',),creature_subtypes=('Faerie',),retain_types=True,retain_creature_subtypes=True,base_power=2,base_toughness=1))
+        self.assertEqual({'Land','Creature'},set(retained['card_types']))
+        self.assertEqual({'Forest','Elf','Faerie'},set(retained['subtypes']))
+        self.assertEqual((3,2),(retained['power'],retained['toughness']))
+        artifact=evaluate(FixedResolutionCharacteristicsSpec(card_types=('Artifact','Creature'),creature_subtypes=('Faerie',),retain_types=True,base_power=2,base_toughness=1))
+        self.assertEqual({'Land','Creature','Artifact'},set(artifact['card_types']))
+        self.assertEqual({'Forest','Faerie'},set(artifact['subtypes']))
+        replaced=evaluate(FixedResolutionCharacteristicsSpec(card_types=('Creature',),creature_subtypes=('Frog',),colors=('U',),remove_all_abilities=True,base_power=1,base_toughness=1))
+        self.assertEqual({'Creature'},set(replaced['card_types']))
+        self.assertEqual({'Frog'},set(replaced['subtypes']))
+        self.assertEqual({'Legendary'},set(replaced['supertypes']))
+        self.assertEqual({'U'},set(replaced['colors']))
+        self.assertEqual([],replaced['abilities'])
+        # The type component continues even though that same effect removes
+        # the source's ability in layer 6 (CR 613.6), while later keyword
+        # additions still use normal layer-6 timestamp ordering.
+        spec=FixedResolutionCharacteristicsSpec(card_types=('Creature',),creature_subtypes=('Frog',),remove_all_abilities=True,keywords=('Haste',),base_power=0,base_toughness=1)
+        state=CharacteristicState('Same effect',card_types={'Creature'},abilities=['Flying'],power=4,toughness=4)
+        layers=[ContinuousEffect(effect_id=f'shared:{i}',source_id='source',layer=l,sublayer=s,timestamp=1,operations=o)for i,(l,s,o)in enumerate(spec.layer_operations())]
+        layers.append(ContinuousEffect(effect_id='later-grant',source_id='other',layer=Layer.ABILITY,sublayer='6',timestamp=2,operations=(ContinuousOperation('add_ability','Vigilance'),)))
+        actual=evaluate_continuous_effects(state,layers).characteristics
+        self.assertEqual({'Haste','Vigilance'},set(actual['abilities']))
+        self.assertEqual({'Frog'},set(actual['subtypes']))
+        self.assertEqual((0,1),(actual['power'],actual['toughness']))
+        for retained in (False,True):
+            for base_power in (0,1,7):
+                for counter_delta in (-1,0,2):
+                    value=FixedResolutionCharacteristicsSpec(card_types=('Creature',),creature_subtypes=('Frog',),retain_types=retained,retain_creature_subtypes=retained,base_power=base_power,base_toughness=1)
+                    self.assertEqual(base_power,value.base_power)
+                    self.assertEqual('add_types'if retained else 'set_types',value.layer_operations()[0][2][0].op)
+                    state=CharacteristicState('Property',power=9,toughness=9,card_types={'Creature'})
+                    layers=[ContinuousEffect(effect_id=str(i),source_id='source',layer=l,sublayer=s,timestamp=1,operations=o)for i,(l,s,o)in enumerate(value.layer_operations())]
+                    layers.append(ContinuousEffect(effect_id='delta',source_id='counter',layer=Layer.POWER_TOUGHNESS,sublayer='7c',timestamp=2,operations=(ContinuousOperation('modify_power_toughness',(counter_delta,counter_delta)),)))
+                    actual=evaluate_continuous_effects(state,layers).characteristics
+                    self.assertEqual(base_power+counter_delta,actual['power'])
+
+    def test_fixed_animation_type_retention_mutant_is_killed(self):
+        from unittest.mock import patch
+        original=FixedResolutionCharacteristicsSpec.layer_operations
+        def mutate(spec):
+            return original(FixedResolutionCharacteristicsSpec(
+                card_types=spec.card_types,creature_subtypes=spec.creature_subtypes,
+                colors=spec.colors,remove_all_abilities=spec.remove_all_abilities,
+                keywords=spec.keywords,base_power=spec.base_power,base_toughness=spec.base_toughness))
+        with patch.object(FixedResolutionCharacteristicsSpec,'layer_operations',mutate):
+            with self.assertRaises(AssertionError):self.test_fixed_animation_layer_operations_preserve_rule_distinctions()
 
     def test_source_characteristics_compile_across_shared_contexts(self):
         cases = (
@@ -169,7 +316,7 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 "Creature — Test",
             ),
             (
-                "{2}: This land becomes a 2/2 creature until end of turn. It's still a land.",
+                "{2}: This land becomes a 2/2 creature until your next turn. It's still a land.",
                 "Land",
             ),
             (
@@ -309,6 +456,7 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
         seat: str = "A",
         zone: str = "battlefield",
         register: bool = True,
+        trusted: bool = False,
     ) -> CardInstance:
         engine = session.engine
         record_value = self.db.lookup(name)
@@ -331,7 +479,7 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
                 self.db,
                 engine.semantics,
                 (record_value,),
-                trust_level="provisional",
+                trust_level="trusted" if trusted else "provisional",
                 capability_registry=self.capabilities,
                 capability_profile="commander_review",
                 promote_exact_runtime_handlers=True,
@@ -340,6 +488,193 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
                 promote_exact_capability_declarations=True,
             )
         return card
+
+    def assert_replay(self, session) -> None:
+        expected=authoritative_state_hash(session.engine.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            path=Path(temporary)/'fixed-animation-replay'
+            session.save(path)
+            loaded=CommanderSession.load(self.db,path)
+            self.assertEqual(expected,authoritative_state_hash(loaded.engine.state))
+            replay=replay_record(path,self.db,verify=True)
+        self.assertTrue(replay['ok'],replay)
+        self.assertEqual(expected,replay['final_state_hash'])
+
+    def test_trusted_land_animation_offer_payment_multilayer_result_and_replay(self):
+        session=self.session(237020001,players=4);engine=session.engine
+        source=self.add_card(session,name='Fixed Land Animation Fixture',ref='LAND-RESULT',trusted=True)
+        programs=engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertTrue(programs)
+        self.assertTrue(all(engine.semantic_program_is_current_trusted(p) for p in programs))
+        engine.state.players['A'].mana_pool['C']=1
+        self.prepare_main(session)
+        offer=self.activation_offer(session,source)
+        for seat in ('B','C','D'):
+            self.assertIsNone(session.packet(f'pilot:{seat}',full=True)['decision'])
+        engine.state.players['A'].mana_pool['C']=0
+        source.tapped=True
+        for seat in engine.seats:
+            for object_id in engine.state.players[seat].zones['battlefield']:
+                engine.state.cards[object_id].tapped=True
+        before=authoritative_state_hash(engine.state)
+        declined=session.act('pilot:A',{'action_id':offer['id'],'pay':'auto'})
+        self.assertFalse(declined.ok)
+        self.assertEqual(before,authoritative_state_hash(engine.state))
+        engine.state.players['A'].mana_pool['C']=1
+        source.tapped=False
+        self.prepare_main(session);offer=self.activation_offer(session,source)
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        result=session.act('pilot:A',{'action_id':offer['id'],'pay':'auto'})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual(0,sum(engine.state.players['A'].mana_pool.values()))
+        self.resolve_stack(session)
+        current=engine._effective_card_data(source)
+        types,subtypes,supertypes=engine._type_parts(current['type_line'])
+        self.assertEqual({'land','creature'},types)
+        self.assertEqual({'forest','faerie'},subtypes)
+        self.assertIn('legendary',supertypes)
+        self.assertEqual(['U'],current['colors'])
+        self.assertEqual(('2','1'),(current['power'],current['toughness']))
+        self.assertIn('Flying',current['keywords'])
+        self.assertEqual(1,len({e.timestamp for e in engine.state.continuous_effects if e.source_id==source.object_id}))
+        for viewer in engine.seats:
+            snapshot=StateProjector(self.db,engine.state)._snapshot(f'pilot:{viewer}')
+            serialized=json.dumps(snapshot)
+            self.assertNotIn('continuous_effects',serialized)
+            for seat in engine.seats:
+                if seat==viewer:continue
+                for object_id in engine.state.players[seat].zones['hand']:
+                    self.assertNotIn(engine.state.cards[object_id].ref,serialized)
+        self.assert_replay(session)
+        expire_end_of_turn_continuous_effects(engine.state)
+        self.assertEqual({'land'},engine._type_parts(engine._effective_card_data(source)['type_line'])[0])
+
+    def test_trusted_frog_cast_revalidates_target_and_replays_full_result(self):
+        session=self.session(237020002,players=4);engine=session.engine
+        spell=self.add_card(session,name='Fixed Frog Result Fixture',ref='FROG-SPELL',zone='hand',trusted=True)
+        target=self.add_card(session,name='Source Keywords Fixture',ref='FROG-TARGET',seat='B',trusted=True)
+        target.temporary_keywords=['Flying']
+        engine.state.players['A'].mana_pool['U']=1
+        self.prepare_main(session);engine.pump()
+        decision=session.packet('pilot:A',full=True)['decision']
+        action=next(a for a in decision['ctx']['legal']['actions'] if a['id']==f'cast:{spell.ref}')
+        self.assertIn(target.ref,action['target_schema']['legal_refs'])
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        result=session.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(result.ok,result.summary)
+        self.resolve_stack(session)
+        current=engine._effective_card_data(target)
+        self.assertEqual({'frog'},engine._type_parts(current['type_line'])[1])
+        self.assertEqual(('1','1'),(current['power'],current['toughness']))
+        self.assertEqual(['U'],current['colors'])
+        self.assertNotIn('Flying',current['keywords'])
+        self.assertEqual((),engine._activated_abilities(target))
+        self.assertEqual('graveyard',spell.zone)
+        self.assert_replay(session)
+
+    def test_fixed_animation_source_incarnation_and_malformed_rollback(self):
+        session=self.session(237020003);engine=session.engine
+        source=self.add_card(session,name='Fixed Land Animation Fixture',ref='STALE-ANIMATION',trusted=True)
+        engine.state.players['A'].mana_pool['C']=1
+        self.prepare_main(session);offer=self.activation_offer(session,source)
+        result=session.act('pilot:A',{'action_id':offer['id'],'pay':'auto'})
+        self.assertTrue(result.ok,result.summary)
+        old=source.logical_object_id
+        engine.move_card(source.object_id,'hand',reason='bounded departure')
+        engine.move_card(source.object_id,'battlefield',reason='bounded reentry')
+        self.assertNotEqual(old,source.logical_object_id)
+        self.resolve_stack(session)
+        self.assertEqual({'land'},engine._type_parts(engine._effective_card_data(source)['type_line'])[0])
+        self.assertFalse([effect for effect in engine.state.continuous_effects if effect.source_id==source.object_id])
+        node=self.compile_runtime_fixture('Fixed Land Animation Fixture').faces[0].nodes[-1]
+        effect=copy.deepcopy(node.effects[0]);effect['card']=source.ref
+        effect['characteristics']['retain_types']=1
+        before=authoritative_state_hash(engine.state)
+        with self.assertRaises(GameRuleError):engine.apply_effect(effect,actor='A')
+        self.assertEqual(before,authoritative_state_hash(engine.state))
+
+    def compile_runtime_fixture(self,name):
+        return compile_oracle_card(self.db.lookup(name),capability_registry=self.capabilities,capability_profile='commander_review')
+
+    def test_fixed_animation_group_locks_controller_and_incarnation_membership(self):
+        session=self.session(237020004,players=4);engine=session.engine
+        first=self.add_card(session,name='Fixed Land Animation Fixture',ref='SET-LAND-A',trusted=True)
+        second=self.add_card(session,name='Forest',ref='SET-LAND-B',seat='B',register=False)
+        late=self.add_card(session,name='Forest',ref='SET-LAND-LATE',seat='C',zone='hand',register=False)
+        node=self.compile_runtime_fixture('Fixed Land Set Fixture').faces[0].nodes[0]
+        effect=engine._semantic_value(dict(node.effects[0]),self.stack_context(engine,'A'))
+        engine.apply_effect(effect,actor='A')
+        self.assertIn('creature',engine._type_parts(engine._effective_card_data(first)['type_line'])[0])
+        self.assertIn('creature',engine._type_parts(engine._effective_card_data(second)['type_line'])[0])
+        engine.move_card(late.object_id,'battlefield',reason='later entrant')
+        self.assertNotIn('creature',engine._type_parts(engine._effective_card_data(late)['type_line'])[0])
+        engine.change_control(second.object_id,'D',reason='control change')
+        self.assertIn('creature',engine._type_parts(engine._effective_card_data(second)['type_line'])[0])
+        engine.move_card(second.object_id,'hand',reason='leave set')
+        engine.move_card(second.object_id,'battlefield',reason='new incarnation')
+        self.assertNotIn('creature',engine._type_parts(engine._effective_card_data(second)['type_line'])[0])
+        expire_end_of_turn_continuous_effects(engine.state)
+        self.assertNotIn('creature',engine._type_parts(engine._effective_card_data(first)['type_line'])[0])
+
+    def test_historical_v1_characteristic_instruction_keeps_its_execution_path(self):
+        # Genuine historical payload generated by the unchanged v1 leaf owner,
+        # compared to that archived operation's exact layer result. This is a
+        # descriptor-execution witness, not a claim that old records replay
+        # across incompatible runtime fingerprints.
+        session=self.session(237020006);engine=session.engine
+        source=self.add_card(session,name='Artifact Animation Fixture',ref='V1-RESULT')
+        descriptor=fixed_source_characteristics_effect_template(
+            'This artifact becomes a 2/2 white and blue Bird artifact creature with flying until end of turn.',
+            source_is_permanent=True,source_card_types=('artifact',)).effects[0]
+        self.assertNotIn('schema_version',descriptor)
+        effect=copy.deepcopy(descriptor);effect['card']=source.ref
+        engine.apply_effect(effect,actor='A')
+        current=engine._effective_card_data(source)
+        self.assertEqual({'artifact','creature'},engine._type_parts(current['type_line'])[0])
+        self.assertEqual({'bird'},engine._type_parts(current['type_line'])[1])
+        self.assertEqual(('2','2'),(current['power'],current['toughness']))
+        self.assertEqual(['W','U'],current['colors'])
+
+    def test_actual_v236_animation_record_fails_closed_before_reinterpretation(self):
+        path=ROOT/'tests/fixtures/records/fixed-animation-v236-467d7008'
+        provenance=json.loads((path/'provenance.json').read_text(encoding='utf-8'))
+        self.assertEqual('oracle-ir-v236',provenance['compiler_version'])
+        self.assertEqual('explicit_runtime_trust_incompatibility',provenance['current_runtime_disposition'])
+        programs=json.loads((path/'semantics.json').read_text(encoding='utf-8'))['programs'].values()
+        animation=next(p for p in programs if p['oracle_id']=='19000000-0000-4000-8000-000000000101')
+        self.assertEqual('apply_source_characteristics_until_end_of_turn',animation['effects'][0]['op'])
+        self.assertNotIn('schema_version',animation['effects'][0])
+        self.assertEqual(5,len((path/'commands.jsonl').read_text(encoding='utf-8').splitlines()))
+        with self.assertRaisesRegex(ValueError,'Runtime trust provenance mismatch in record manifest'):
+            replay_record(path,self.db,verify=True)
+
+    def test_fixed_animation_dependency_blocking_and_current_target_revalidation(self):
+        # Exact-source capability failure is distinct from a legal target
+        # becoming illegal after the cast has committed.
+        blocked=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        row=next(value for value in blocked['capabilities'] if value['id']==SOURCE_CAPABILITY)
+        row['status']='blocked';row['blockers']=['bounded dependency witness']
+        from quorune.rules.capabilities import CapabilityRegistry
+        registry=CapabilityRegistry(blocked)
+        ir=compile_oracle_card(record('Target creature has base power and toughness 4/4 until end of turn.',type_line='Instant'),capability_registry=registry,capability_profile='commander_review')
+        self.assertNotEqual('exact',ir.status)
+        session=self.session(237020005);engine=session.engine
+        spell=self.add_card(session,name='Fixed Frog Result Fixture',ref='REVALIDATE-SPELL',zone='hand',trusted=True)
+        target=self.add_card(session,name='Source Growth Fixture',ref='REVALIDATE-TARGET',seat='B',trusted=True)
+        engine.state.players['A'].mana_pool['U']=1
+        self.prepare_main(session)
+        action_id=f'cast:{spell.ref}'
+        result=session.act('pilot:A',{'action_id':action_id,'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(result.ok,result.summary)
+        engine.move_card(target.object_id,'hand',reason='target departure')
+        self.resolve_stack(session)
+        self.assertEqual('graveyard',spell.zone)
+        self.assertFalse([effect for effect in engine.state.continuous_effects if any(identity.object_id==target.object_id for identity in effect.locked_objects)])
+
+    @staticmethod
+    def stack_context(engine,controller):
+        from quorune.model import StackItem
+        return StackItem(stack_id='fixed-set-context',ref='FIXED-SET-CONTEXT',kind='ability',controller=controller,label='Generic fixed set',targets=[])
 
     @staticmethod
     def prepare_main(session) -> None:

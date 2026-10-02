@@ -3,6 +3,15 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_fixed_animation_layer_operations_preserve_rule_distinctions",
+      "piece_ids": ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+      "capability_ids": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+      "interaction_order": 2,
+      "assertion": "Fixed v2 type, color, ability removal and base-stat components share canonical layers; retained land/artifact subtypes remain, creature subtypes replace only when required, later layer-6 grants survive and layer-7c modifiers apply after base setting."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_discard_zone_with_multiple_damage_recipients_fails_closed",
       "piece_ids": ["capability.zone.change.destination_replacement", "residual.target_or_choice.multiple-damage-recipients"],

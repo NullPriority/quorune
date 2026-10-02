@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_commit": "467d70080548cb559198ec272f93b1f1217a5bfa",
+  "compiler_version": "oracle-ir-v236",
+  "record_kind": "synthetic_historical_fixed_source_animation_command_replay",
+  "construction": "Actual archived Git source with its packaged registry and evidence, isolated semantic registry, constructed small decks and one generic artifact animation activation through actual offered action, payment and four-seat priority commands.",
+  "historical_execution": "The artifact becomes a 2/2 white and blue Bird artifact creature with flying; five accepted commands; exact replay passed under the archived implementation.",
+  "current_runtime_disposition": "explicit_runtime_trust_incompatibility",
+  "included_components": ["manifest.json", "semantics.json", "commands.jsonl"],
+  "omitted_components": "No initial or final authoritative checkpoint is included. The real replay path rejects incompatible runtime provenance before reading a checkpoint; source v1 instruction execution is tested separately. This is not a claim of cross-version successful replay."
+}

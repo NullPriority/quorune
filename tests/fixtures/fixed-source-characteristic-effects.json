@@ -116,6 +116,38 @@
       "layout": "normal",
       "released_at": "2026-01-01",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "19000000-0000-4000-8000-000000000107",
+      "name": "Fixed Land Animation Fixture",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Legendary Land — Forest",
+      "oracle_text": "{1}: This land becomes a 2/1 blue Faerie creature with flying until end of turn. It's still a land.",
+      "power": null, "toughness": null, "loyalty": null, "defense": null,
+      "colors": [], "color_identity": ["U", "G"], "keywords": [],
+      "produced_mana": ["G"], "layout": "normal", "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "19000000-0000-4000-8000-000000000108",
+      "name": "Fixed Frog Result Fixture",
+      "mana_cost": "{U}", "cmc": 1.0, "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature loses all abilities and becomes a blue Frog with base power and toughness 1/1.",
+      "power": null, "toughness": null, "loyalty": null, "defense": null,
+      "colors": ["U"], "color_identity": ["U"], "keywords": [],
+      "produced_mana": [], "layout": "normal", "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "19000000-0000-4000-8000-000000000109",
+      "name": "Fixed Land Set Fixture",
+      "mana_cost": "{G}", "cmc": 1.0, "type_line": "Instant",
+      "oracle_text": "All lands become 2/2 creatures until end of turn. They're still lands.",
+      "power": null, "toughness": null, "loyalty": null, "defense": null,
+      "colors": ["G"], "color_identity": ["G"], "keywords": [],
+      "produced_mana": [], "layout": "normal", "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
     }
   ],
   "rulings": []

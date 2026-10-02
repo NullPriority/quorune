@@ -225,6 +225,47 @@ def matching_battlefield_objects(
     return tuple(matches)
 
 
+def apply_fixed_resolution_characteristics(
+    host: Any, effect: Mapping[str, Any], *, actor: str, reason: str,
+) -> list[str]:
+    """Commit a versioned fixed result through the existing multi-layer owner."""
+    from .resolution_characteristic_model import fixed_resolution_characteristic_instruction
+    from .errors import GameRuleError
+
+    instruction = {key:value for key,value in effect.items() if key != '_runtime_source'}
+    if instruction.get('card',True) is None:
+        # The canonical semantic source/target resolver pins incarnations and
+        # clears a stale reference before this instruction reaches its owner.
+        instruction['card']='stale-resolved-reference'
+        try:
+            fixed_resolution_characteristic_instruction(instruction)
+        except (TypeError,ValueError,KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return []
+    try:
+        spec, selection = fixed_resolution_characteristic_instruction(instruction)
+        if isinstance(selection, ObjectQuerySpec):
+            from .rules.resolution_characteristic_shapes import fixed_resolution_characteristic_set_is_closed
+            if not fixed_resolution_characteristic_set_is_closed(selection):
+                raise GameRuleError('Fixed characteristic set query is unavailable')
+            affected = matching_battlefield_objects(host,selection)
+        else:
+            try:
+                affected = (host._resolve_object(actor,selection,zones={'battlefield'}),)
+            except GameRuleError:
+                return []
+        components = tuple(ResolutionContinuousComponent(*value) for value in spec.layer_operations())
+        create_resolution_continuous_effect_components(
+            host,source=resolution_effect_source(host,effect,fallback_card=affected[0] if affected else None),
+            targets=affected,components=components)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    refs = [card.ref for card in affected]
+    host._log(actor,'permanent.characteristics','Fixed characteristics changed until end of turn.',
+              {'objects':refs,'reason':reason},importance=1,changed_objects=[card.object_id for card in affected])
+    return refs
+
+
 def create_resolution_continuous_effect(
     host: ContinuousEffectStateHost,
     *,

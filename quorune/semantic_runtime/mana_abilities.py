@@ -5,6 +5,7 @@ from functools import lru_cache
 from typing import Any, Mapping
 
 from ..fixed_mana_abilities import (
+    FIXED_MANA_HANDLER_CAPABILITIES,
     FIXED_MANA_HANDLER_ID,
     FixedActivatedManaAbilitySpec,
     FixedManaAbilityError,
@@ -26,10 +27,7 @@ class FixedActivatedManaAbilityHandler:
         "605.3a",
         "605.3b",
     )
-    capability_dependencies: tuple[str, ...] = (
-        "mana.activated.fixed_output",
-        "mana.activated.restricted_fixed_output",
-    )
+    capability_dependencies: tuple[str, ...] = FIXED_MANA_HANDLER_CAPABILITIES
 
     def validate(
         self, descriptor: Mapping[str, Any]

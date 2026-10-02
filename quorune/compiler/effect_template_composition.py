@@ -10,6 +10,7 @@ from .bound_effect_programs import bound_effect_program_template
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
 from .public_query_effect_amounts import public_query_effect_amount_template
 from .declared_effect_amounts import declared_effect_amount_template
+from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
 
 
 CompiledEffectTemplate = tuple[
@@ -29,10 +30,22 @@ def reviewed_contextual_effect_template(
     **source_context: Any,
 ) -> CompiledEffectTemplate:
     """Bind source context before composing the same closed leaf owners."""
+
+    def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        current = compile_atomic(body, card_name=card_name, **source_context)
+        if current[0] is not None:
+            return current
+        return fixed_resolution_characteristics_effect_template(
+            body,
+            source_name=card_name,
+            source_is_permanent=source_context.get("source_is_permanent"),
+            source_card_types=tuple(source_context.get("source_card_types", ())),
+        ) or current
+
     return reviewed_effect_template_composition(
         text, source_name=card_name,
         cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
-        compile_atomic=partial(compile_atomic,card_name=card_name,**source_context),
+        compile_atomic=atomic_with_characteristics,
         compile_fixed=partial(compile_fixed,card_name=card_name,**source_context),
     )
 

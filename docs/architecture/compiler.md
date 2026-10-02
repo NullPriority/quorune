@@ -215,10 +215,29 @@ timestamp and one locked source incarnation. The same canonical keyword map
 extends targeted spell and activated effects without a family-local ability
 check. Layer-4 animation feeds the existing cycle-safe dynamic-characteristic
 boundary before layer-7a counts, and the state-based owner detaches Equipment
-that becomes a creature. Land animation and retains-type riders, dynamic or
+that becomes a creature. Dynamic or
 chosen values, copies, text or control changes, declaration riders,
 Protection, landwalk, Banding, unsupported keywords, and non-until-end-of-turn
 durations remain source-spanned residuals.
+
+The same resolution-characteristic owner accepts a closed version-2 fixed
+animation or base-setting instruction. `compiler/fixed_resolution_characteristics.py`
+preserves source-incarnation, qualified direct-target, or represented fixed
+public-set selection. Its typed value distinguishes replacing types from
+retaining prior types and creature subtypes, and can set literal colors and
+base power/toughness, remove all abilities, and add supported keywords with
+one end-of-turn timestamp. Artifact-creature wording retains prior noncreature
+types/subtypes under CR 205.1b; an explicit "still" or "in addition" rider also
+retains prior creature subtypes. Existing version-1 source descriptors retain
+their historical operation path. Copy, dynamic/chosen values, text/control,
+attached-object subjects, declarations, quoted grants, conditional/optional
+instructions, unsupported keywords, and other durations remain residual.
+An actual pre-extension action record is rejected at the existing versioned
+runtime-trust boundary before reinterpretation; preserved v1 instruction
+execution and current exact replay are separate tested claims.
+Fixed base setting does not erase counters or layer-7c modifiers. Resolution
+membership excludes phased-out permanents and is locked to current logical
+objects, so later entries and new incarnations cannot join the effect.
 
 The existing attached-characteristic handler in
 `compiler/continuous_templates.py` lowers closed enchanted, equipped, and
@@ -1069,6 +1088,10 @@ hand-cast instant or sorcery resolution, then schedules one identity-pinned
 next-upkeep optional cast through the existing one-shot exile owner. A
 countered initial spell and an exile card that left and returned do not
 Rebound.
+
+Fixed-output mana nodes also declare the unchanged shared handler's complete
+capability contract. This does not restrict otherwise unrestricted mana or add
+payment authority; the existing typed spending predicate remains authoritative.
 
 The separate fixed public alternative-cost owner lowers complete-card-admitted
 plain “rather than pay” declarations and fixed ordinary-mana Freerunning,

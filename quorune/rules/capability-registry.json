@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 164,
+  "registry_version": 165,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3775,28 +3775,28 @@
     },
     {
       "id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
-      "version": 2,
+      "version": 3,
       "official_rules": ["205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Create one identity-pinned fixed source characteristic effect whose type, subtype, color, supported abilities, base power/toughness, and fixed modifiers share one timestamp across their represented layers until cleanup.",
-        "inputs": ["typed resolving source physical and logical identity", "one current battlefield source permanent", "fixed card types and creature subtypes", "fixed WUBRG color set or colorless result", "fixed supported keyword set", "fixed base or modified power/toughness", "until-end-of-turn duration"],
+        "summary": "Create one fixed source, qualified target or public-set characteristic effect whose type retention, creature subtypes, colors, ability removal, supported keywords and base power/toughness share one timestamp across represented layers until cleanup, preserving historical source v1 execution.",
+        "inputs": ["typed resolving source physical and logical identity", "one current battlefield source, qualified direct target or closed public affected set", "fixed card types and creature subtypes with explicit retention", "fixed WUBRG color set or colorless result", "strict all-ability removal and supported keyword set", "fixed base or modified power/toughness", "until-end-of-turn duration"],
         "outputs": ["atomic immutable continuous-effect component set", "one shared timestamp across layers 4, 5, 6, 7b, and 7c", "shared effective-ability applicability", "cycle-safe dynamic characteristic counts after earlier layers", "cleanup expiration", "no effect on a returned source incarnation"],
-        "exclusions": ["land animation and retains-type riders", "unvalidated dynamic values", "choice-dependent characteristics", "copy, text, control, protection, landwalk, Banding, and unsupported keyword effects", "declaration riders", "attachment-relative and indefinite effects", "same-layer dependency interactions"]
+        "exclusions": ["unvalidated dynamic values", "choice-dependent characteristics", "copy, text, control, protection, landwalk, Banding, and unsupported keyword effects", "declaration riders", "attachment-relative and indefinite effects", "ability-qualified public sets and same-layer dependency interactions"]
       },
       "dependencies": ["continuous.resolution.fixed_characteristics_until_end_of_turn"],
       "implementation_components": ["quorune.compiler.fixed_target_effect_sequences.FixedSourceCharacteristicsTemplate", "quorune.compiler.fixed_target_effect_sequences.fixed_source_characteristics_effect_template", "quorune.rules.node_capability_shapes.fixed_source_characteristics_node_capabilities", "quorune.continuous_effect_state.ResolutionContinuousComponent", "quorune.continuous_effect_state.create_resolution_continuous_effect_components", "quorune.effect_runtime.objects_stack_and_tokens._apply_source_characteristics_until_end_of_turn", "quorune.keyword_abilities.FIXED_CHARACTERISTIC_KEYWORDS", "quorune.continuous_effects.evaluate_continuous_effects"],
-      "positive_tests": ["test_source_characteristics_compile_across_shared_contexts", "test_artifact_animation_uses_one_multilayer_timestamp_and_replays", "test_source_owner_zero_quantity_is_a_valid_no_op", "test_current_trusted_zero_source_quantity_pays_and_replays_without_effect"],
-      "negative_tests": ["test_source_characteristic_grammar_keeps_open_forms_residual", "test_malformed_source_characteristics_roll_back_atomically"],
-      "interaction_tests": ["test_source_effects_follow_incarnation_control_and_cleanup_boundaries", "test_animation_updates_dynamic_counts_and_detaches_equipment"],
-      "multiplayer_tests": ["test_artifact_animation_uses_one_multilayer_timestamp_and_replays"],
-      "privacy_tests": ["test_artifact_animation_uses_one_multilayer_timestamp_and_replays"],
-      "replay_tests": ["test_artifact_animation_uses_one_multilayer_timestamp_and_replays"],
+      "positive_tests": ["test_source_characteristics_compile_across_shared_contexts", "test_artifact_animation_uses_one_multilayer_timestamp_and_replays", "test_source_owner_zero_quantity_is_a_valid_no_op", "test_current_trusted_zero_source_quantity_pays_and_replays_without_effect", "test_fixed_animation_and_base_setting_share_context_and_target_owners", "test_trusted_land_animation_offer_payment_multilayer_result_and_replay"],
+      "negative_tests": ["test_source_characteristic_grammar_keeps_open_forms_residual", "test_malformed_source_characteristics_roll_back_atomically", "test_fixed_animation_near_misses_remain_material", "test_fixed_animation_versioned_schema_rejects_nonboolean_and_open_fields"],
+      "interaction_tests": ["test_source_effects_follow_incarnation_control_and_cleanup_boundaries", "test_animation_updates_dynamic_counts_and_detaches_equipment", "test_fixed_animation_layer_operations_preserve_rule_distinctions", "test_fixed_animation_group_locks_controller_and_incarnation_membership"],
+      "multiplayer_tests": ["test_artifact_animation_uses_one_multilayer_timestamp_and_replays", "test_trusted_land_animation_offer_payment_multilayer_result_and_replay"],
+      "privacy_tests": ["test_artifact_animation_uses_one_multilayer_timestamp_and_replays", "test_trusted_land_animation_offer_payment_multilayer_result_and_replay"],
+      "replay_tests": ["test_artifact_animation_uses_one_multilayer_timestamp_and_replays", "test_trusted_land_animation_offer_payment_multilayer_result_and_replay", "test_trusted_frog_cast_revalidates_target_and_replays_full_result"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the existing fixed resolution characteristic capability prevents the source-specific multi-layer producer from receiving trusted closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_source_characteristic_shape_is_closed_and_capability_bound rejects source, layer, color, base-stat, dynamic-value, duplicate-keyword, and unknown-field mutations before trusted admission.",
+      "implementation_mutation_rationale": "test_source_characteristic_shape_is_closed_and_capability_bound rejects malformed historical descriptors; test_fixed_animation_type_retention_mutant_is_killed executes and rejects a mutant that replaces types required to be retained by CR 205.1b.",
       "blockers": [],
       "status": "trusted"
     },
