@@ -226,10 +226,13 @@ preserves source-incarnation, qualified direct-target, or represented fixed
 public-set selection. Its typed value distinguishes replacing types from
 retaining prior types and creature subtypes, and can set literal colors and
 base power/toughness, remove all abilities, and add supported keywords with
-one end-of-turn timestamp. Artifact-creature wording retains prior noncreature
-types/subtypes under CR 205.1b; an explicit "still" or "in addition" rider also
-retains prior creature subtypes. Existing version-1 source descriptors retain
-their historical operation path. Copy, dynamic/chosen values, text/control,
+one end-of-turn timestamp. An absent creature-subtype instruction preserves
+prior creature subtypes; replacing card types removes the subtype sets
+correlated with lost types under CR 205.1a. Unqualified artifact-creature
+wording retains all prior types and subtypes, while a specified creature subtype
+replaces only creature subtypes under CR 205.1b. An explicit "still" or
+"in addition" rider retains all prior subtype sets. Existing version-1 source
+descriptors retain their historical operation path. Copy, dynamic/chosen values, text/control,
 attached-object subjects, declarations, quoted grants, conditional/optional
 instructions, unsupported keywords, and other durations remain residual.
 An actual pre-extension action record is rejected at the existing versioned

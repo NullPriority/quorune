@@ -432,6 +432,12 @@ def _apply_operation(
             setattr(state, target, values)
         elif op == "add_types":
             current.update(values)
+        elif target == "subtypes":
+            removed = {word.casefold().replace("’", "'") for word in values}
+            current.difference_update({
+                word for word in current
+                if word.casefold().replace("’", "'") in removed
+            })
         else:
             current.difference_update(values)
         return
