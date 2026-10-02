@@ -3,6 +3,24 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_animation_and_mana_with_unrepresented_prevention_fail_closed",
+      "piece_ids": ["capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn", "residual.replacement.damage-prevention"],
+      "capability_ids": ["continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
+      "interaction_order": 2,
+      "assertion": "A constructed permanent retains its exact fixed animation activation, but an independently unrepresented damage-prevention instruction keeps the complete CardProgram unavailable at strict and compatible runtime admission. This is rejection evidence, not successful prevention composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_animation_and_mana_with_unrepresented_prevention_fail_closed",
+      "piece_ids": ["capability.mana.activated.restricted_fixed_output", "residual.replacement.damage-prevention"],
+      "capability_ids": ["mana.activated.restricted_fixed_output"],
+      "interaction_order": 2,
+      "assertion": "A constructed permanent retains its exact restricted fixed-output mana activation, but an independently unrepresented damage-prevention instruction prevents strict and compatible whole-card runtime admission. The ordinary mana owner does not authorize unsupported prevention."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
       "test_id": "test_fixed_animation_layer_operations_preserve_rule_distinctions",
       "piece_ids": ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],

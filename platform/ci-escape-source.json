@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-02T04:10:47Z",
+  "observed_at": "2026-10-02T07:23:06Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -929,6 +929,18 @@
       "regressions": ["test_bolster_rules.BolsterRuntimeTests.test_bolster_privacy_distinguishes_opaque_tokens_from_private_fields", "test_bolster_rules.BolsterRuntimeTests.test_bolster_quantity_replacement_is_seat_scoped_and_replays_exactly"],
       "impact_edge_status": "not_applicable",
       "resolution": "A deterministic token-collision counterexample reproduces the old assertion. The witness copies the projected decision and excludes only its authorized top-level cap from card-data substring checks, retains capability presence, seat exclusion, replacement consequences and exact replay, and rejects an injected private reference in the actual context. The module already has primary shard ownership and was selected by the required complete gate."
+    },
+    {
+      "id": "ci-20261002-61",
+      "run_id": 36976363489,
+      "head_sha": "e342f51ec8eb718465d4b62d215e9a30e07fa787",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The shared fixed-mana runtime dependency correction left three nested token-production compiler expectations using the old single-capability declaration.",
+      "failed_surfaces": ["PR / Python / functional-04", "PR / Windows / functional-04"],
+      "regressions": ["test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions"],
+      "impact_edge_status": "added",
+      "resolution": "Update only the exact stale restricted-mana dependency assertion, retain actual restriction descriptors and token behavior, and select the token-production consumer for changes to the fixed-mana compiler/model/handler contract. The exact regression fails before the correction and passes afterward; compiler semantics and the live census fingerprint stay unchanged."
     }
   ],
   "recent_pull_requests": [

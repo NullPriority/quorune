@@ -158,6 +158,23 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
         program=compile_best_available_card_program(self, generic,semantic_registry=SemanticRegistry(),capability_registry=self.capabilities,capability_profile='commander_review')
         self.assertFalse(bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')['strict_capability_ready'])
 
+    def test_animation_and_mana_with_unrepresented_prevention_fail_closed(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        prevention='Prevent all damage that would be dealt to this permanent by red spells.'
+        for source in ("{1}: This land becomes a 2/1 creature until end of turn. It's still a land.",'{T}: Add {G}. Spend this mana only to cast a creature spell.'):
+            with self.subTest(source=source):
+                generic=record(source+'\n'+prevention,type_line='Land')
+                ir=compile_oracle_card(generic,capability_registry=self.capabilities,capability_profile='commander_review')
+                self.assertTrue(ir.faces[0].nodes[0].exact)
+                self.assertNotEqual('exact',ir.status)
+                self.assertTrue(ir.material_residuals)
+                program=compile_best_available_card_program(self,generic,semantic_registry=SemanticRegistry(),capability_registry=self.capabilities,capability_profile='commander_review')
+                binding=bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')
+                self.assertFalse(binding['strict_capability_ready'],binding)
+                self.assertFalse(binding['compatible_ready'],binding)
+
     def test_fixed_animation_generated_probe_requires_real_capability_closure(self):
         from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
         generic=record('Target creature has base power and toughness 4/4 until end of turn.',type_line='Instant')
