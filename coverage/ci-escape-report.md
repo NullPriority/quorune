@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "3bf02f0d35207b96a44e4572be4ed0ec688156f84e37524c94d3cae0d5172a42"
+verified: "a70b05600fec99f24643036745254b3655839984200c9ce00cabd984b9a2045c"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,7 +15,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 59
+- Escapes: 60
 - Deterministic escapes: 54
 - Current missing impact edges: 0
 - Known flaky tests: 0
@@ -88,6 +88,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20260909-57` | [34300857260](https://github.com/NullPriority/quorune/actions/runs/34300857260) | `generated_artifact_drift` | `not_applicable` | An inherited cache miss now validates against staged dependency outputs and invokes its canonical writer only when that validation proves the tracked output stale, preserving cheap inheritance when output-triggered dependencies remain unchanged. |
 | `ci-20260909-58` | [34302005779](https://github.com/NullPriority/quorune/actions/runs/34302005779) | `generated_artifact_drift` | `not_applicable` | Harvest receipts now exclude capability-evidence provenance from compiler semantic projections and reproject historical compiler blobs under the current algorithm, while status counts, card states, and frontier content remain semantic and fail closed. |
 | `ci-20260909-59` | [34326504995](https://github.com/NullPriority/quorune/actions/runs/34326504995) | `generated_artifact_drift` | `not_applicable` | Cloud source checkpoints now require a clean tracked worktree before local pre-corpus validation, so uncommitted generated outputs cannot mask missing exact-commit content; the required module-classification output is committed with the corrected checkpoint. |
+| `ci-20261002-60` | [36958659433](https://github.com/NullPriority/quorune/actions/runs/36958659433) | `flaky_test` | `not_applicable` | A deterministic token-collision counterexample reproduces the old assertion. The witness copies the projected decision and excludes only its authorized top-level cap from card-data substring checks, retains capability presence, seat exclusion, replacement consequences and exact replay, and rejects an injected private reference in the actual context. The module already has primary shard ownership and was selected by the required complete gate. |
 
 ## Measurement limitations
 

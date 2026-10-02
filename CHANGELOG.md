@@ -16,6 +16,8 @@ maintenance: "hand-maintained"
   payment and resolution, and add a real Buyback action-and-replay witness.
   Source preflight validates semantic-transition metadata through its existing
   canonical parser before cloud generation or PR evidence publication.
+  Privacy witnesses distinguish authorized opaque capability bytes from card
+  data while still rejecting injected private references and preserving replay.
 
 - Bind ordinary announced spell-cost X and complete public count definitions
   to existing typed numeric result owners without changing target or payment
